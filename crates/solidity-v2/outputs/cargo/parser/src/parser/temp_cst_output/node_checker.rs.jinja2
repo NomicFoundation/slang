@@ -55,15 +55,15 @@ pub trait NodeChecker {
     }
 }
 
-/// Extract the first element that satisfies the predicate, and remove it from the vector.
-fn extract_first<T>(v: &mut Vec<T>, finder: impl Fn(&T) -> bool) -> Option<T> {
-    let idx = v.iter().position(finder)?;
-    Some(v.remove(idx))
-}
+// TODO(v2): Consider using a struct like `Helper` in 
+// crates/solidity/outputs/cargo/wasm/src/wrappers/ast/selectors.generated.rs
 
 /// Extract the first edge with the given label, and remove it from the vector.
-fn extract_first_with_label(v: &mut Vec<(Edge, TextIndex)>, label: EdgeLabel) -> Option<(Edge, TextIndex)> {
-    extract_first(v, |(child, _): &(Edge, TextIndex)| child.label == label)
+fn extract_with_label(v: &mut Vec<(Edge, TextIndex)>, label: EdgeLabel) -> Option<(Edge, TextIndex)> {
+    if v[0].0.label == label {
+        return Some(v.remove(0));
+    }
+    None
 }
 
 /// Compute children with their text offsets, filtering out trivia and separators.
@@ -136,7 +136,7 @@ impl NodeChecker for {{ parent_type }} {
                 {% set edge_label = field.label | pascal_case %}
             {% endif %}
 
-            if let Some((child, child_offset)) = extract_first_with_label(&mut children, EdgeLabel::{{ edge_label }}) {
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::{{ edge_label }}) {
                 let child_errors = {{ field.label | snake_case }}.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
             } else {
@@ -145,7 +145,7 @@ impl NodeChecker for {{ parent_type }} {
         } {% if field.is_optional -%}
         else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::{{ edge_label }}) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::{{ edge_label }}) {
                 errors.push(NodeCheckerError::new(format!("Expected {{ field.label }} to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }

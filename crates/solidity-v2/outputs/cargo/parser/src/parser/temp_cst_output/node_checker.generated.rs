@@ -54,18 +54,18 @@ pub trait NodeChecker {
     }
 }
 
-/// Extract the first element that satisfies the predicate, and remove it from the vector.
-fn extract_first<T>(v: &mut Vec<T>, finder: impl Fn(&T) -> bool) -> Option<T> {
-    let idx = v.iter().position(finder)?;
-    Some(v.remove(idx))
-}
+// TODO(v2): Consider using a struct like `Helper` in
+// crates/solidity/outputs/cargo/wasm/src/wrappers/ast/selectors.generated.rs
 
 /// Extract the first edge with the given label, and remove it from the vector.
-fn extract_first_with_label(
+fn extract_with_label(
     v: &mut Vec<(Edge, TextIndex)>,
     label: EdgeLabel,
 ) -> Option<(Edge, TextIndex)> {
-    extract_first(v, |(child, _): &(Edge, TextIndex)| child.label == label)
+    if v[0].0.label == label {
+        return Some(v.remove(0));
+    }
+    None
 }
 
 /// Compute children with their text offsets, filtering out trivia and separators.
@@ -125,7 +125,7 @@ impl NodeChecker for AbicoderPragma {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::AbicoderKeyword)
+                extract_with_label(&mut children, EdgeLabel::AbicoderKeyword)
             {
                 let child_errors =
                     abicoder_keyword.check_node_with_offset(&child.node, child_offset);
@@ -147,7 +147,7 @@ impl NodeChecker for AbicoderPragma {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Version)
+                extract_with_label(&mut children, EdgeLabel::Version)
             {
                 let child_errors = version.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -199,7 +199,7 @@ impl NodeChecker for AdditiveExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::LeftOperand)
+                extract_with_label(&mut children, EdgeLabel::LeftOperand)
             {
                 let child_errors = left_operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -222,7 +222,7 @@ impl NodeChecker for AdditiveExpression {
             // Special case for operator fields that are merged together
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Operator)
+                extract_with_label(&mut children, EdgeLabel::Operator)
             {
                 let child_errors = expression_additive_expression_operator
                     .check_node_with_offset(&child.node, child_offset);
@@ -240,7 +240,7 @@ impl NodeChecker for AdditiveExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::RightOperand)
+                extract_with_label(&mut children, EdgeLabel::RightOperand)
             {
                 let child_errors = right_operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -292,7 +292,7 @@ impl NodeChecker for AddressType {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::AddressKeyword)
+                extract_with_label(&mut children, EdgeLabel::AddressKeyword)
             {
                 let child_errors =
                     address_keyword.check_node_with_offset(&child.node, child_offset);
@@ -310,7 +310,7 @@ impl NodeChecker for AddressType {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::PayableKeyword)
+                extract_with_label(&mut children, EdgeLabel::PayableKeyword)
             {
                 let child_errors =
                     payable_keyword.check_node_with_offset(&child.node, child_offset);
@@ -323,9 +323,7 @@ impl NodeChecker for AddressType {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) =
-                extract_first_with_label(&mut children, EdgeLabel::PayableKeyword)
-            {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::PayableKeyword) {
                 errors.push(NodeCheckerError::new(format!("Expected payable_keyword to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
@@ -370,7 +368,7 @@ impl NodeChecker for AndExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::LeftOperand)
+                extract_with_label(&mut children, EdgeLabel::LeftOperand)
             {
                 let child_errors = left_operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -390,7 +388,7 @@ impl NodeChecker for AndExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Operator)
+                extract_with_label(&mut children, EdgeLabel::Operator)
             {
                 let child_errors = operator.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -410,7 +408,7 @@ impl NodeChecker for AndExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::RightOperand)
+                extract_with_label(&mut children, EdgeLabel::RightOperand)
             {
                 let child_errors = right_operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -462,7 +460,7 @@ impl NodeChecker for ArrayExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenBracket)
+                extract_with_label(&mut children, EdgeLabel::OpenBracket)
             {
                 let child_errors = open_bracket.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -481,8 +479,7 @@ impl NodeChecker for ArrayExpression {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Items)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Items)
             {
                 let child_errors = items.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -502,7 +499,7 @@ impl NodeChecker for ArrayExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseBracket)
+                extract_with_label(&mut children, EdgeLabel::CloseBracket)
             {
                 let child_errors = close_bracket.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -554,7 +551,7 @@ impl NodeChecker for ArrayTypeName {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Operand)
+                extract_with_label(&mut children, EdgeLabel::Operand)
             {
                 let child_errors = operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -574,7 +571,7 @@ impl NodeChecker for ArrayTypeName {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenBracket)
+                extract_with_label(&mut children, EdgeLabel::OpenBracket)
             {
                 let child_errors = open_bracket.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -590,8 +587,7 @@ impl NodeChecker for ArrayTypeName {
         if let Some(index) = &self.index {
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Index)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Index)
             {
                 let child_errors = index.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -603,7 +599,7 @@ impl NodeChecker for ArrayTypeName {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Index) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Index) {
                 errors.push(NodeCheckerError::new(
                     format!(
                         "Expected index to not be present in the CST, but it was there: {child:#?}"
@@ -621,7 +617,7 @@ impl NodeChecker for ArrayTypeName {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseBracket)
+                extract_with_label(&mut children, EdgeLabel::CloseBracket)
             {
                 let child_errors = close_bracket.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -673,7 +669,7 @@ impl NodeChecker for AssemblyFlagsDeclaration {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenParen)
+                extract_with_label(&mut children, EdgeLabel::OpenParen)
             {
                 let child_errors = open_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -692,8 +688,7 @@ impl NodeChecker for AssemblyFlagsDeclaration {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Flags)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Flags)
             {
                 let child_errors = flags.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -713,7 +708,7 @@ impl NodeChecker for AssemblyFlagsDeclaration {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseParen)
+                extract_with_label(&mut children, EdgeLabel::CloseParen)
             {
                 let child_errors = close_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -765,7 +760,7 @@ impl NodeChecker for AssemblyStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::AssemblyKeyword)
+                extract_with_label(&mut children, EdgeLabel::AssemblyKeyword)
             {
                 let child_errors =
                     assembly_keyword.check_node_with_offset(&child.node, child_offset);
@@ -783,8 +778,7 @@ impl NodeChecker for AssemblyStatement {
         if let Some(label) = &self.label {
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Label)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Label)
             {
                 let child_errors = label.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -796,7 +790,7 @@ impl NodeChecker for AssemblyStatement {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Label) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Label) {
                 errors.push(NodeCheckerError::new(
                     format!(
                         "Expected label to not be present in the CST, but it was there: {child:#?}"
@@ -810,8 +804,7 @@ impl NodeChecker for AssemblyStatement {
         if let Some(flags) = &self.flags {
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Flags)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Flags)
             {
                 let child_errors = flags.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -823,7 +816,7 @@ impl NodeChecker for AssemblyStatement {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Flags) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Flags) {
                 errors.push(NodeCheckerError::new(
                     format!(
                         "Expected flags to not be present in the CST, but it was there: {child:#?}"
@@ -840,8 +833,7 @@ impl NodeChecker for AssemblyStatement {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Body)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Body)
             {
                 let child_errors = body.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -893,7 +885,7 @@ impl NodeChecker for AssignmentExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::LeftOperand)
+                extract_with_label(&mut children, EdgeLabel::LeftOperand)
             {
                 let child_errors = left_operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -916,7 +908,7 @@ impl NodeChecker for AssignmentExpression {
             // Special case for operator fields that are merged together
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Operator)
+                extract_with_label(&mut children, EdgeLabel::Operator)
             {
                 let child_errors = expression_assignment_expression_operator
                     .check_node_with_offset(&child.node, child_offset);
@@ -934,7 +926,7 @@ impl NodeChecker for AssignmentExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::RightOperand)
+                extract_with_label(&mut children, EdgeLabel::RightOperand)
             {
                 let child_errors = right_operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -986,7 +978,7 @@ impl NodeChecker for BitwiseAndExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::LeftOperand)
+                extract_with_label(&mut children, EdgeLabel::LeftOperand)
             {
                 let child_errors = left_operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1006,7 +998,7 @@ impl NodeChecker for BitwiseAndExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Operator)
+                extract_with_label(&mut children, EdgeLabel::Operator)
             {
                 let child_errors = operator.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1026,7 +1018,7 @@ impl NodeChecker for BitwiseAndExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::RightOperand)
+                extract_with_label(&mut children, EdgeLabel::RightOperand)
             {
                 let child_errors = right_operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1078,7 +1070,7 @@ impl NodeChecker for BitwiseOrExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::LeftOperand)
+                extract_with_label(&mut children, EdgeLabel::LeftOperand)
             {
                 let child_errors = left_operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1098,7 +1090,7 @@ impl NodeChecker for BitwiseOrExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Operator)
+                extract_with_label(&mut children, EdgeLabel::Operator)
             {
                 let child_errors = operator.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1118,7 +1110,7 @@ impl NodeChecker for BitwiseOrExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::RightOperand)
+                extract_with_label(&mut children, EdgeLabel::RightOperand)
             {
                 let child_errors = right_operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1170,7 +1162,7 @@ impl NodeChecker for BitwiseXorExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::LeftOperand)
+                extract_with_label(&mut children, EdgeLabel::LeftOperand)
             {
                 let child_errors = left_operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1190,7 +1182,7 @@ impl NodeChecker for BitwiseXorExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Operator)
+                extract_with_label(&mut children, EdgeLabel::Operator)
             {
                 let child_errors = operator.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1210,7 +1202,7 @@ impl NodeChecker for BitwiseXorExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::RightOperand)
+                extract_with_label(&mut children, EdgeLabel::RightOperand)
             {
                 let child_errors = right_operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1262,7 +1254,7 @@ impl NodeChecker for Block {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenBrace)
+                extract_with_label(&mut children, EdgeLabel::OpenBrace)
             {
                 let child_errors = open_brace.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1282,7 +1274,7 @@ impl NodeChecker for Block {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Statements)
+                extract_with_label(&mut children, EdgeLabel::Statements)
             {
                 let child_errors = statements.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1302,7 +1294,7 @@ impl NodeChecker for Block {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseBrace)
+                extract_with_label(&mut children, EdgeLabel::CloseBrace)
             {
                 let child_errors = close_brace.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1354,7 +1346,7 @@ impl NodeChecker for BreakStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::BreakKeyword)
+                extract_with_label(&mut children, EdgeLabel::BreakKeyword)
             {
                 let child_errors = break_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1374,7 +1366,7 @@ impl NodeChecker for BreakStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Semicolon)
+                extract_with_label(&mut children, EdgeLabel::Semicolon)
             {
                 let child_errors = semicolon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1426,7 +1418,7 @@ impl NodeChecker for CallOptionsExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Operand)
+                extract_with_label(&mut children, EdgeLabel::Operand)
             {
                 let child_errors = operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1446,7 +1438,7 @@ impl NodeChecker for CallOptionsExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenBrace)
+                extract_with_label(&mut children, EdgeLabel::OpenBrace)
             {
                 let child_errors = open_brace.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1466,7 +1458,7 @@ impl NodeChecker for CallOptionsExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Options)
+                extract_with_label(&mut children, EdgeLabel::Options)
             {
                 let child_errors = options.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1486,7 +1478,7 @@ impl NodeChecker for CallOptionsExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseBrace)
+                extract_with_label(&mut children, EdgeLabel::CloseBrace)
             {
                 let child_errors = close_brace.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1538,7 +1530,7 @@ impl NodeChecker for CatchClause {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CatchKeyword)
+                extract_with_label(&mut children, EdgeLabel::CatchKeyword)
             {
                 let child_errors = catch_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1554,8 +1546,7 @@ impl NodeChecker for CatchClause {
         if let Some(error) = &self.error {
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Error)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Error)
             {
                 let child_errors = error.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1567,7 +1558,7 @@ impl NodeChecker for CatchClause {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Error) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Error) {
                 errors.push(NodeCheckerError::new(
                     format!(
                         "Expected error to not be present in the CST, but it was there: {child:#?}"
@@ -1584,8 +1575,7 @@ impl NodeChecker for CatchClause {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Body)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Body)
             {
                 let child_errors = body.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1633,8 +1623,7 @@ impl NodeChecker for CatchClauseError {
         if let Some(name) = &self.name {
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Name)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1646,7 +1635,7 @@ impl NodeChecker for CatchClauseError {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Name) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Name) {
                 errors.push(NodeCheckerError::new(
                     format!(
                         "Expected name to not be present in the CST, but it was there: {child:#?}"
@@ -1664,7 +1653,7 @@ impl NodeChecker for CatchClauseError {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Parameters)
+                extract_with_label(&mut children, EdgeLabel::Parameters)
             {
                 let child_errors = parameters.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1716,7 +1705,7 @@ impl NodeChecker for ConditionalExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Operand)
+                extract_with_label(&mut children, EdgeLabel::Operand)
             {
                 let child_errors = operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1736,7 +1725,7 @@ impl NodeChecker for ConditionalExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::QuestionMark)
+                extract_with_label(&mut children, EdgeLabel::QuestionMark)
             {
                 let child_errors = question_mark.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1756,7 +1745,7 @@ impl NodeChecker for ConditionalExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::TrueExpression)
+                extract_with_label(&mut children, EdgeLabel::TrueExpression)
             {
                 let child_errors =
                     true_expression.check_node_with_offset(&child.node, child_offset);
@@ -1776,8 +1765,7 @@ impl NodeChecker for ConditionalExpression {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Colon)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Colon)
             {
                 let child_errors = colon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1797,7 +1785,7 @@ impl NodeChecker for ConditionalExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::FalseExpression)
+                extract_with_label(&mut children, EdgeLabel::FalseExpression)
             {
                 let child_errors =
                     false_expression.check_node_with_offset(&child.node, child_offset);
@@ -1851,7 +1839,7 @@ impl NodeChecker for ConstantDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::TypeName)
+                extract_with_label(&mut children, EdgeLabel::TypeName)
             {
                 let child_errors = type_name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1871,7 +1859,7 @@ impl NodeChecker for ConstantDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::ConstantKeyword)
+                extract_with_label(&mut children, EdgeLabel::ConstantKeyword)
             {
                 let child_errors =
                     constant_keyword.check_node_with_offset(&child.node, child_offset);
@@ -1892,8 +1880,7 @@ impl NodeChecker for ConstantDefinition {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Name)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1912,8 +1899,7 @@ impl NodeChecker for ConstantDefinition {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Equal)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Equal)
             {
                 let child_errors = equal.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1932,8 +1918,7 @@ impl NodeChecker for ConstantDefinition {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Value)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Value)
             {
                 let child_errors = value.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -1953,7 +1938,7 @@ impl NodeChecker for ConstantDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Semicolon)
+                extract_with_label(&mut children, EdgeLabel::Semicolon)
             {
                 let child_errors = semicolon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2005,7 +1990,7 @@ impl NodeChecker for ConstructorDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::ConstructorKeyword)
+                extract_with_label(&mut children, EdgeLabel::ConstructorKeyword)
             {
                 let child_errors =
                     constructor_keyword.check_node_with_offset(&child.node, child_offset);
@@ -2027,7 +2012,7 @@ impl NodeChecker for ConstructorDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Parameters)
+                extract_with_label(&mut children, EdgeLabel::Parameters)
             {
                 let child_errors = parameters.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2047,7 +2032,7 @@ impl NodeChecker for ConstructorDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Attributes)
+                extract_with_label(&mut children, EdgeLabel::Attributes)
             {
                 let child_errors = attributes.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2066,8 +2051,7 @@ impl NodeChecker for ConstructorDefinition {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Body)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Body)
             {
                 let child_errors = body.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2119,7 +2103,7 @@ impl NodeChecker for ContinueStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::ContinueKeyword)
+                extract_with_label(&mut children, EdgeLabel::ContinueKeyword)
             {
                 let child_errors =
                     continue_keyword.check_node_with_offset(&child.node, child_offset);
@@ -2141,7 +2125,7 @@ impl NodeChecker for ContinueStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Semicolon)
+                extract_with_label(&mut children, EdgeLabel::Semicolon)
             {
                 let child_errors = semicolon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2190,7 +2174,7 @@ impl NodeChecker for ContractDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::AbstractKeyword)
+                extract_with_label(&mut children, EdgeLabel::AbstractKeyword)
             {
                 let child_errors =
                     abstract_keyword.check_node_with_offset(&child.node, child_offset);
@@ -2204,8 +2188,7 @@ impl NodeChecker for ContractDefinition {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) =
-                extract_first_with_label(&mut children, EdgeLabel::AbstractKeyword)
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::AbstractKeyword)
             {
                 errors.push(NodeCheckerError::new(format!("Expected abstract_keyword to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
@@ -2219,7 +2202,7 @@ impl NodeChecker for ContractDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::ContractKeyword)
+                extract_with_label(&mut children, EdgeLabel::ContractKeyword)
             {
                 let child_errors =
                     contract_keyword.check_node_with_offset(&child.node, child_offset);
@@ -2240,8 +2223,7 @@ impl NodeChecker for ContractDefinition {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Name)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2261,7 +2243,7 @@ impl NodeChecker for ContractDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Specifiers)
+                extract_with_label(&mut children, EdgeLabel::Specifiers)
             {
                 let child_errors = specifiers.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2281,7 +2263,7 @@ impl NodeChecker for ContractDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenBrace)
+                extract_with_label(&mut children, EdgeLabel::OpenBrace)
             {
                 let child_errors = open_brace.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2301,7 +2283,7 @@ impl NodeChecker for ContractDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Members)
+                extract_with_label(&mut children, EdgeLabel::Members)
             {
                 let child_errors = members.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2321,7 +2303,7 @@ impl NodeChecker for ContractDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseBrace)
+                extract_with_label(&mut children, EdgeLabel::CloseBrace)
             {
                 let child_errors = close_brace.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2373,7 +2355,7 @@ impl NodeChecker for DecimalNumberExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Literal)
+                extract_with_label(&mut children, EdgeLabel::Literal)
             {
                 let child_errors = literal.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2389,8 +2371,7 @@ impl NodeChecker for DecimalNumberExpression {
         if let Some(unit) = &self.unit {
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Unit)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Unit)
             {
                 let child_errors = unit.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2402,7 +2383,7 @@ impl NodeChecker for DecimalNumberExpression {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Unit) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Unit) {
                 errors.push(NodeCheckerError::new(
                     format!(
                         "Expected unit to not be present in the CST, but it was there: {child:#?}"
@@ -2452,7 +2433,7 @@ impl NodeChecker for DoWhileStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::DoKeyword)
+                extract_with_label(&mut children, EdgeLabel::DoKeyword)
             {
                 let child_errors = do_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2471,8 +2452,7 @@ impl NodeChecker for DoWhileStatement {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Body)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Body)
             {
                 let child_errors = body.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2492,7 +2472,7 @@ impl NodeChecker for DoWhileStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::WhileKeyword)
+                extract_with_label(&mut children, EdgeLabel::WhileKeyword)
             {
                 let child_errors = while_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2512,7 +2492,7 @@ impl NodeChecker for DoWhileStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenParen)
+                extract_with_label(&mut children, EdgeLabel::OpenParen)
             {
                 let child_errors = open_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2532,7 +2512,7 @@ impl NodeChecker for DoWhileStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Condition)
+                extract_with_label(&mut children, EdgeLabel::Condition)
             {
                 let child_errors = condition.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2552,7 +2532,7 @@ impl NodeChecker for DoWhileStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseParen)
+                extract_with_label(&mut children, EdgeLabel::CloseParen)
             {
                 let child_errors = close_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2572,7 +2552,7 @@ impl NodeChecker for DoWhileStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Semicolon)
+                extract_with_label(&mut children, EdgeLabel::Semicolon)
             {
                 let child_errors = semicolon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2624,7 +2604,7 @@ impl NodeChecker for ElseBranch {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::ElseKeyword)
+                extract_with_label(&mut children, EdgeLabel::ElseKeyword)
             {
                 let child_errors = else_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2643,8 +2623,7 @@ impl NodeChecker for ElseBranch {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Body)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Body)
             {
                 let child_errors = body.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2696,7 +2675,7 @@ impl NodeChecker for EmitStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::EmitKeyword)
+                extract_with_label(&mut children, EdgeLabel::EmitKeyword)
             {
                 let child_errors = emit_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2715,8 +2694,7 @@ impl NodeChecker for EmitStatement {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Event)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Event)
             {
                 let child_errors = event.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2736,7 +2714,7 @@ impl NodeChecker for EmitStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Arguments)
+                extract_with_label(&mut children, EdgeLabel::Arguments)
             {
                 let child_errors = arguments.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2756,7 +2734,7 @@ impl NodeChecker for EmitStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Semicolon)
+                extract_with_label(&mut children, EdgeLabel::Semicolon)
             {
                 let child_errors = semicolon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2808,7 +2786,7 @@ impl NodeChecker for EnumDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::EnumKeyword)
+                extract_with_label(&mut children, EdgeLabel::EnumKeyword)
             {
                 let child_errors = enum_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2827,8 +2805,7 @@ impl NodeChecker for EnumDefinition {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Name)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2848,7 +2825,7 @@ impl NodeChecker for EnumDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenBrace)
+                extract_with_label(&mut children, EdgeLabel::OpenBrace)
             {
                 let child_errors = open_brace.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2868,7 +2845,7 @@ impl NodeChecker for EnumDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Members)
+                extract_with_label(&mut children, EdgeLabel::Members)
             {
                 let child_errors = members.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2888,7 +2865,7 @@ impl NodeChecker for EnumDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseBrace)
+                extract_with_label(&mut children, EdgeLabel::CloseBrace)
             {
                 let child_errors = close_brace.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2940,7 +2917,7 @@ impl NodeChecker for EqualityExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::LeftOperand)
+                extract_with_label(&mut children, EdgeLabel::LeftOperand)
             {
                 let child_errors = left_operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -2963,7 +2940,7 @@ impl NodeChecker for EqualityExpression {
             // Special case for operator fields that are merged together
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Operator)
+                extract_with_label(&mut children, EdgeLabel::Operator)
             {
                 let child_errors = expression_equality_expression_operator
                     .check_node_with_offset(&child.node, child_offset);
@@ -2981,7 +2958,7 @@ impl NodeChecker for EqualityExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::RightOperand)
+                extract_with_label(&mut children, EdgeLabel::RightOperand)
             {
                 let child_errors = right_operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -3033,7 +3010,7 @@ impl NodeChecker for ErrorDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::ErrorKeyword)
+                extract_with_label(&mut children, EdgeLabel::ErrorKeyword)
             {
                 let child_errors = error_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -3052,8 +3029,7 @@ impl NodeChecker for ErrorDefinition {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Name)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -3073,7 +3049,7 @@ impl NodeChecker for ErrorDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Members)
+                extract_with_label(&mut children, EdgeLabel::Members)
             {
                 let child_errors = members.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -3093,7 +3069,7 @@ impl NodeChecker for ErrorDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Semicolon)
+                extract_with_label(&mut children, EdgeLabel::Semicolon)
             {
                 let child_errors = semicolon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -3145,7 +3121,7 @@ impl NodeChecker for ErrorParameter {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::TypeName)
+                extract_with_label(&mut children, EdgeLabel::TypeName)
             {
                 let child_errors = type_name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -3161,8 +3137,7 @@ impl NodeChecker for ErrorParameter {
         if let Some(name) = &self.name {
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Name)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -3174,7 +3149,7 @@ impl NodeChecker for ErrorParameter {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Name) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Name) {
                 errors.push(NodeCheckerError::new(
                     format!(
                         "Expected name to not be present in the CST, but it was there: {child:#?}"
@@ -3224,7 +3199,7 @@ impl NodeChecker for ErrorParametersDeclaration {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenParen)
+                extract_with_label(&mut children, EdgeLabel::OpenParen)
             {
                 let child_errors = open_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -3244,7 +3219,7 @@ impl NodeChecker for ErrorParametersDeclaration {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Parameters)
+                extract_with_label(&mut children, EdgeLabel::Parameters)
             {
                 let child_errors = parameters.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -3264,7 +3239,7 @@ impl NodeChecker for ErrorParametersDeclaration {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseParen)
+                extract_with_label(&mut children, EdgeLabel::CloseParen)
             {
                 let child_errors = close_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -3316,7 +3291,7 @@ impl NodeChecker for EventDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::EventKeyword)
+                extract_with_label(&mut children, EdgeLabel::EventKeyword)
             {
                 let child_errors = event_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -3335,8 +3310,7 @@ impl NodeChecker for EventDefinition {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Name)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -3356,7 +3330,7 @@ impl NodeChecker for EventDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Parameters)
+                extract_with_label(&mut children, EdgeLabel::Parameters)
             {
                 let child_errors = parameters.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -3373,7 +3347,7 @@ impl NodeChecker for EventDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::AnonymousKeyword)
+                extract_with_label(&mut children, EdgeLabel::AnonymousKeyword)
             {
                 let child_errors =
                     anonymous_keyword.check_node_with_offset(&child.node, child_offset);
@@ -3387,8 +3361,7 @@ impl NodeChecker for EventDefinition {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) =
-                extract_first_with_label(&mut children, EdgeLabel::AnonymousKeyword)
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::AnonymousKeyword)
             {
                 errors.push(NodeCheckerError::new(format!("Expected anonymous_keyword to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
@@ -3402,7 +3375,7 @@ impl NodeChecker for EventDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Semicolon)
+                extract_with_label(&mut children, EdgeLabel::Semicolon)
             {
                 let child_errors = semicolon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -3454,7 +3427,7 @@ impl NodeChecker for EventParameter {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::TypeName)
+                extract_with_label(&mut children, EdgeLabel::TypeName)
             {
                 let child_errors = type_name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -3471,7 +3444,7 @@ impl NodeChecker for EventParameter {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::IndexedKeyword)
+                extract_with_label(&mut children, EdgeLabel::IndexedKeyword)
             {
                 let child_errors =
                     indexed_keyword.check_node_with_offset(&child.node, child_offset);
@@ -3484,9 +3457,7 @@ impl NodeChecker for EventParameter {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) =
-                extract_first_with_label(&mut children, EdgeLabel::IndexedKeyword)
-            {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::IndexedKeyword) {
                 errors.push(NodeCheckerError::new(format!("Expected indexed_keyword to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
@@ -3495,8 +3466,7 @@ impl NodeChecker for EventParameter {
         if let Some(name) = &self.name {
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Name)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -3508,7 +3478,7 @@ impl NodeChecker for EventParameter {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Name) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Name) {
                 errors.push(NodeCheckerError::new(
                     format!(
                         "Expected name to not be present in the CST, but it was there: {child:#?}"
@@ -3558,7 +3528,7 @@ impl NodeChecker for EventParametersDeclaration {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenParen)
+                extract_with_label(&mut children, EdgeLabel::OpenParen)
             {
                 let child_errors = open_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -3578,7 +3548,7 @@ impl NodeChecker for EventParametersDeclaration {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Parameters)
+                extract_with_label(&mut children, EdgeLabel::Parameters)
             {
                 let child_errors = parameters.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -3598,7 +3568,7 @@ impl NodeChecker for EventParametersDeclaration {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseParen)
+                extract_with_label(&mut children, EdgeLabel::CloseParen)
             {
                 let child_errors = close_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -3650,7 +3620,7 @@ impl NodeChecker for ExperimentalPragma {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::ExperimentalKeyword)
+                extract_with_label(&mut children, EdgeLabel::ExperimentalKeyword)
             {
                 let child_errors =
                     experimental_keyword.check_node_with_offset(&child.node, child_offset);
@@ -3672,7 +3642,7 @@ impl NodeChecker for ExperimentalPragma {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Feature)
+                extract_with_label(&mut children, EdgeLabel::Feature)
             {
                 let child_errors = feature.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -3724,7 +3694,7 @@ impl NodeChecker for ExponentiationExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::LeftOperand)
+                extract_with_label(&mut children, EdgeLabel::LeftOperand)
             {
                 let child_errors = left_operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -3747,7 +3717,7 @@ impl NodeChecker for ExponentiationExpression {
             // Special case for operator fields that are merged together
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Operator)
+                extract_with_label(&mut children, EdgeLabel::Operator)
             {
                 let child_errors = expression_exponentiation_expression_operator
                     .check_node_with_offset(&child.node, child_offset);
@@ -3765,7 +3735,7 @@ impl NodeChecker for ExponentiationExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::RightOperand)
+                extract_with_label(&mut children, EdgeLabel::RightOperand)
             {
                 let child_errors = right_operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -3817,7 +3787,7 @@ impl NodeChecker for ExpressionStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Expression)
+                extract_with_label(&mut children, EdgeLabel::Expression)
             {
                 let child_errors = expression.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -3837,7 +3807,7 @@ impl NodeChecker for ExpressionStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Semicolon)
+                extract_with_label(&mut children, EdgeLabel::Semicolon)
             {
                 let child_errors = semicolon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -3889,7 +3859,7 @@ impl NodeChecker for FallbackFunctionDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::FallbackKeyword)
+                extract_with_label(&mut children, EdgeLabel::FallbackKeyword)
             {
                 let child_errors =
                     fallback_keyword.check_node_with_offset(&child.node, child_offset);
@@ -3911,7 +3881,7 @@ impl NodeChecker for FallbackFunctionDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Parameters)
+                extract_with_label(&mut children, EdgeLabel::Parameters)
             {
                 let child_errors = parameters.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -3931,7 +3901,7 @@ impl NodeChecker for FallbackFunctionDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Attributes)
+                extract_with_label(&mut children, EdgeLabel::Attributes)
             {
                 let child_errors = attributes.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -3948,7 +3918,7 @@ impl NodeChecker for FallbackFunctionDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Returns)
+                extract_with_label(&mut children, EdgeLabel::Returns)
             {
                 let child_errors = returns.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -3960,7 +3930,7 @@ impl NodeChecker for FallbackFunctionDefinition {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Returns) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Returns) {
                 errors.push(NodeCheckerError::new(format!("Expected returns to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
@@ -3972,8 +3942,7 @@ impl NodeChecker for FallbackFunctionDefinition {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Body)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Body)
             {
                 let child_errors = body.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4025,7 +3994,7 @@ impl NodeChecker for ForStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::ForKeyword)
+                extract_with_label(&mut children, EdgeLabel::ForKeyword)
             {
                 let child_errors = for_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4045,7 +4014,7 @@ impl NodeChecker for ForStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenParen)
+                extract_with_label(&mut children, EdgeLabel::OpenParen)
             {
                 let child_errors = open_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4065,7 +4034,7 @@ impl NodeChecker for ForStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Initialization)
+                extract_with_label(&mut children, EdgeLabel::Initialization)
             {
                 let child_errors = initialization.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4085,7 +4054,7 @@ impl NodeChecker for ForStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Condition)
+                extract_with_label(&mut children, EdgeLabel::Condition)
             {
                 let child_errors = condition.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4102,7 +4071,7 @@ impl NodeChecker for ForStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Iterator)
+                extract_with_label(&mut children, EdgeLabel::Iterator)
             {
                 let child_errors = iterator.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4114,7 +4083,7 @@ impl NodeChecker for ForStatement {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Iterator) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Iterator) {
                 errors.push(NodeCheckerError::new(format!("Expected iterator to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
@@ -4127,7 +4096,7 @@ impl NodeChecker for ForStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseParen)
+                extract_with_label(&mut children, EdgeLabel::CloseParen)
             {
                 let child_errors = close_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4146,8 +4115,7 @@ impl NodeChecker for ForStatement {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Body)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Body)
             {
                 let child_errors = body.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4199,7 +4167,7 @@ impl NodeChecker for FunctionCallExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Operand)
+                extract_with_label(&mut children, EdgeLabel::Operand)
             {
                 let child_errors = operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4219,7 +4187,7 @@ impl NodeChecker for FunctionCallExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Arguments)
+                extract_with_label(&mut children, EdgeLabel::Arguments)
             {
                 let child_errors = arguments.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4271,7 +4239,7 @@ impl NodeChecker for FunctionDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::FunctionKeyword)
+                extract_with_label(&mut children, EdgeLabel::FunctionKeyword)
             {
                 let child_errors =
                     function_keyword.check_node_with_offset(&child.node, child_offset);
@@ -4292,8 +4260,7 @@ impl NodeChecker for FunctionDefinition {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Name)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4313,7 +4280,7 @@ impl NodeChecker for FunctionDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Parameters)
+                extract_with_label(&mut children, EdgeLabel::Parameters)
             {
                 let child_errors = parameters.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4333,7 +4300,7 @@ impl NodeChecker for FunctionDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Attributes)
+                extract_with_label(&mut children, EdgeLabel::Attributes)
             {
                 let child_errors = attributes.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4350,7 +4317,7 @@ impl NodeChecker for FunctionDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Returns)
+                extract_with_label(&mut children, EdgeLabel::Returns)
             {
                 let child_errors = returns.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4362,7 +4329,7 @@ impl NodeChecker for FunctionDefinition {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Returns) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Returns) {
                 errors.push(NodeCheckerError::new(format!("Expected returns to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
@@ -4374,8 +4341,7 @@ impl NodeChecker for FunctionDefinition {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Body)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Body)
             {
                 let child_errors = body.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4427,7 +4393,7 @@ impl NodeChecker for FunctionType {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::FunctionKeyword)
+                extract_with_label(&mut children, EdgeLabel::FunctionKeyword)
             {
                 let child_errors =
                     function_keyword.check_node_with_offset(&child.node, child_offset);
@@ -4449,7 +4415,7 @@ impl NodeChecker for FunctionType {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Parameters)
+                extract_with_label(&mut children, EdgeLabel::Parameters)
             {
                 let child_errors = parameters.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4469,7 +4435,7 @@ impl NodeChecker for FunctionType {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Attributes)
+                extract_with_label(&mut children, EdgeLabel::Attributes)
             {
                 let child_errors = attributes.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4486,7 +4452,7 @@ impl NodeChecker for FunctionType {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Returns)
+                extract_with_label(&mut children, EdgeLabel::Returns)
             {
                 let child_errors = returns.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4498,7 +4464,7 @@ impl NodeChecker for FunctionType {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Returns) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Returns) {
                 errors.push(NodeCheckerError::new(format!("Expected returns to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
@@ -4543,7 +4509,7 @@ impl NodeChecker for HexNumberExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Literal)
+                extract_with_label(&mut children, EdgeLabel::Literal)
             {
                 let child_errors = literal.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4559,8 +4525,7 @@ impl NodeChecker for HexNumberExpression {
         if let Some(unit) = &self.unit {
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Unit)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Unit)
             {
                 let child_errors = unit.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4572,7 +4537,7 @@ impl NodeChecker for HexNumberExpression {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Unit) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Unit) {
                 errors.push(NodeCheckerError::new(
                     format!(
                         "Expected unit to not be present in the CST, but it was there: {child:#?}"
@@ -4622,7 +4587,7 @@ impl NodeChecker for IfStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::IfKeyword)
+                extract_with_label(&mut children, EdgeLabel::IfKeyword)
             {
                 let child_errors = if_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4642,7 +4607,7 @@ impl NodeChecker for IfStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenParen)
+                extract_with_label(&mut children, EdgeLabel::OpenParen)
             {
                 let child_errors = open_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4662,7 +4627,7 @@ impl NodeChecker for IfStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Condition)
+                extract_with_label(&mut children, EdgeLabel::Condition)
             {
                 let child_errors = condition.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4682,7 +4647,7 @@ impl NodeChecker for IfStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseParen)
+                extract_with_label(&mut children, EdgeLabel::CloseParen)
             {
                 let child_errors = close_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4701,8 +4666,7 @@ impl NodeChecker for IfStatement {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Body)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Body)
             {
                 let child_errors = body.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4719,7 +4683,7 @@ impl NodeChecker for IfStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::ElseBranch)
+                extract_with_label(&mut children, EdgeLabel::ElseBranch)
             {
                 let child_errors = else_branch.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4731,8 +4695,7 @@ impl NodeChecker for IfStatement {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::ElseBranch)
-            {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::ElseBranch) {
                 errors.push(NodeCheckerError::new(format!("Expected else_branch to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
@@ -4777,7 +4740,7 @@ impl NodeChecker for ImportAlias {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::AsKeyword)
+                extract_with_label(&mut children, EdgeLabel::AsKeyword)
             {
                 let child_errors = as_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4797,7 +4760,7 @@ impl NodeChecker for ImportAlias {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Identifier)
+                extract_with_label(&mut children, EdgeLabel::Identifier)
             {
                 let child_errors = identifier.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4849,7 +4812,7 @@ impl NodeChecker for ImportDeconstruction {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenBrace)
+                extract_with_label(&mut children, EdgeLabel::OpenBrace)
             {
                 let child_errors = open_brace.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4869,7 +4832,7 @@ impl NodeChecker for ImportDeconstruction {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Symbols)
+                extract_with_label(&mut children, EdgeLabel::Symbols)
             {
                 let child_errors = symbols.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4889,7 +4852,7 @@ impl NodeChecker for ImportDeconstruction {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseBrace)
+                extract_with_label(&mut children, EdgeLabel::CloseBrace)
             {
                 let child_errors = close_brace.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4909,7 +4872,7 @@ impl NodeChecker for ImportDeconstruction {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::FromKeyword)
+                extract_with_label(&mut children, EdgeLabel::FromKeyword)
             {
                 let child_errors = from_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4928,8 +4891,7 @@ impl NodeChecker for ImportDeconstruction {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Path)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Path)
             {
                 let child_errors = path.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4980,8 +4942,7 @@ impl NodeChecker for ImportDeconstructionSymbol {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Name)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -4997,8 +4958,7 @@ impl NodeChecker for ImportDeconstructionSymbol {
         if let Some(alias) = &self.alias {
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Alias)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Alias)
             {
                 let child_errors = alias.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -5010,7 +4970,7 @@ impl NodeChecker for ImportDeconstructionSymbol {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Alias) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Alias) {
                 errors.push(NodeCheckerError::new(
                     format!(
                         "Expected alias to not be present in the CST, but it was there: {child:#?}"
@@ -5060,7 +5020,7 @@ impl NodeChecker for ImportDirective {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::ImportKeyword)
+                extract_with_label(&mut children, EdgeLabel::ImportKeyword)
             {
                 let child_errors = import_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -5080,7 +5040,7 @@ impl NodeChecker for ImportDirective {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Clause)
+                extract_with_label(&mut children, EdgeLabel::Clause)
             {
                 let child_errors = clause.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -5100,7 +5060,7 @@ impl NodeChecker for ImportDirective {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Semicolon)
+                extract_with_label(&mut children, EdgeLabel::Semicolon)
             {
                 let child_errors = semicolon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -5151,8 +5111,7 @@ impl NodeChecker for IndexAccessEnd {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Colon)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Colon)
             {
                 let child_errors = colon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -5168,9 +5127,7 @@ impl NodeChecker for IndexAccessEnd {
         if let Some(end) = &self.end {
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::End)
-            {
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::End) {
                 let child_errors = end.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
             } else {
@@ -5181,7 +5138,7 @@ impl NodeChecker for IndexAccessEnd {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::End) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::End) {
                 errors.push(NodeCheckerError::new(
                     format!(
                         "Expected end to not be present in the CST, but it was there: {child:#?}"
@@ -5231,7 +5188,7 @@ impl NodeChecker for IndexAccessExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Operand)
+                extract_with_label(&mut children, EdgeLabel::Operand)
             {
                 let child_errors = operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -5251,7 +5208,7 @@ impl NodeChecker for IndexAccessExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenBracket)
+                extract_with_label(&mut children, EdgeLabel::OpenBracket)
             {
                 let child_errors = open_bracket.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -5267,8 +5224,7 @@ impl NodeChecker for IndexAccessExpression {
         if let Some(start) = &self.start {
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Start)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Start)
             {
                 let child_errors = start.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -5280,7 +5236,7 @@ impl NodeChecker for IndexAccessExpression {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Start) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Start) {
                 errors.push(NodeCheckerError::new(
                     format!(
                         "Expected start to not be present in the CST, but it was there: {child:#?}"
@@ -5294,9 +5250,7 @@ impl NodeChecker for IndexAccessExpression {
         if let Some(end) = &self.end {
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::End)
-            {
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::End) {
                 let child_errors = end.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
             } else {
@@ -5307,7 +5261,7 @@ impl NodeChecker for IndexAccessExpression {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::End) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::End) {
                 errors.push(NodeCheckerError::new(
                     format!(
                         "Expected end to not be present in the CST, but it was there: {child:#?}"
@@ -5325,7 +5279,7 @@ impl NodeChecker for IndexAccessExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseBracket)
+                extract_with_label(&mut children, EdgeLabel::CloseBracket)
             {
                 let child_errors = close_bracket.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -5377,7 +5331,7 @@ impl NodeChecker for InequalityExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::LeftOperand)
+                extract_with_label(&mut children, EdgeLabel::LeftOperand)
             {
                 let child_errors = left_operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -5400,7 +5354,7 @@ impl NodeChecker for InequalityExpression {
             // Special case for operator fields that are merged together
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Operator)
+                extract_with_label(&mut children, EdgeLabel::Operator)
             {
                 let child_errors = expression_inequality_expression_operator
                     .check_node_with_offset(&child.node, child_offset);
@@ -5418,7 +5372,7 @@ impl NodeChecker for InequalityExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::RightOperand)
+                extract_with_label(&mut children, EdgeLabel::RightOperand)
             {
                 let child_errors = right_operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -5470,7 +5424,7 @@ impl NodeChecker for InheritanceSpecifier {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::IsKeyword)
+                extract_with_label(&mut children, EdgeLabel::IsKeyword)
             {
                 let child_errors = is_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -5489,8 +5443,7 @@ impl NodeChecker for InheritanceSpecifier {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Types)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Types)
             {
                 let child_errors = types.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -5542,7 +5495,7 @@ impl NodeChecker for InheritanceType {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::TypeName)
+                extract_with_label(&mut children, EdgeLabel::TypeName)
             {
                 let child_errors = type_name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -5559,7 +5512,7 @@ impl NodeChecker for InheritanceType {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Arguments)
+                extract_with_label(&mut children, EdgeLabel::Arguments)
             {
                 let child_errors = arguments.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -5571,8 +5524,7 @@ impl NodeChecker for InheritanceType {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Arguments)
-            {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Arguments) {
                 errors.push(NodeCheckerError::new(format!("Expected arguments to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
@@ -5617,7 +5569,7 @@ impl NodeChecker for InterfaceDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::InterfaceKeyword)
+                extract_with_label(&mut children, EdgeLabel::InterfaceKeyword)
             {
                 let child_errors =
                     interface_keyword.check_node_with_offset(&child.node, child_offset);
@@ -5638,8 +5590,7 @@ impl NodeChecker for InterfaceDefinition {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Name)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -5656,7 +5607,7 @@ impl NodeChecker for InterfaceDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Inheritance)
+                extract_with_label(&mut children, EdgeLabel::Inheritance)
             {
                 let child_errors = inheritance.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -5668,9 +5619,7 @@ impl NodeChecker for InterfaceDefinition {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) =
-                extract_first_with_label(&mut children, EdgeLabel::Inheritance)
-            {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Inheritance) {
                 errors.push(NodeCheckerError::new(format!("Expected inheritance to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
@@ -5683,7 +5632,7 @@ impl NodeChecker for InterfaceDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenBrace)
+                extract_with_label(&mut children, EdgeLabel::OpenBrace)
             {
                 let child_errors = open_brace.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -5703,7 +5652,7 @@ impl NodeChecker for InterfaceDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Members)
+                extract_with_label(&mut children, EdgeLabel::Members)
             {
                 let child_errors = members.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -5723,7 +5672,7 @@ impl NodeChecker for InterfaceDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseBrace)
+                extract_with_label(&mut children, EdgeLabel::CloseBrace)
             {
                 let child_errors = close_brace.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -5775,7 +5724,7 @@ impl NodeChecker for LibraryDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::LibraryKeyword)
+                extract_with_label(&mut children, EdgeLabel::LibraryKeyword)
             {
                 let child_errors =
                     library_keyword.check_node_with_offset(&child.node, child_offset);
@@ -5795,8 +5744,7 @@ impl NodeChecker for LibraryDefinition {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Name)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -5816,7 +5764,7 @@ impl NodeChecker for LibraryDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenBrace)
+                extract_with_label(&mut children, EdgeLabel::OpenBrace)
             {
                 let child_errors = open_brace.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -5836,7 +5784,7 @@ impl NodeChecker for LibraryDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Members)
+                extract_with_label(&mut children, EdgeLabel::Members)
             {
                 let child_errors = members.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -5856,7 +5804,7 @@ impl NodeChecker for LibraryDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseBrace)
+                extract_with_label(&mut children, EdgeLabel::CloseBrace)
             {
                 let child_errors = close_brace.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -5908,7 +5856,7 @@ impl NodeChecker for MappingKey {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::KeyType)
+                extract_with_label(&mut children, EdgeLabel::KeyType)
             {
                 let child_errors = key_type.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -5924,8 +5872,7 @@ impl NodeChecker for MappingKey {
         if let Some(name) = &self.name {
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Name)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -5937,7 +5884,7 @@ impl NodeChecker for MappingKey {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Name) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Name) {
                 errors.push(NodeCheckerError::new(
                     format!(
                         "Expected name to not be present in the CST, but it was there: {child:#?}"
@@ -5987,7 +5934,7 @@ impl NodeChecker for MappingType {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::MappingKeyword)
+                extract_with_label(&mut children, EdgeLabel::MappingKeyword)
             {
                 let child_errors =
                     mapping_keyword.check_node_with_offset(&child.node, child_offset);
@@ -6008,7 +5955,7 @@ impl NodeChecker for MappingType {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenParen)
+                extract_with_label(&mut children, EdgeLabel::OpenParen)
             {
                 let child_errors = open_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6028,7 +5975,7 @@ impl NodeChecker for MappingType {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::KeyType)
+                extract_with_label(&mut children, EdgeLabel::KeyType)
             {
                 let child_errors = key_type.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6048,7 +5995,7 @@ impl NodeChecker for MappingType {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::EqualGreaterThan)
+                extract_with_label(&mut children, EdgeLabel::EqualGreaterThan)
             {
                 let child_errors =
                     equal_greater_than.check_node_with_offset(&child.node, child_offset);
@@ -6070,7 +6017,7 @@ impl NodeChecker for MappingType {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::ValueType)
+                extract_with_label(&mut children, EdgeLabel::ValueType)
             {
                 let child_errors = value_type.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6090,7 +6037,7 @@ impl NodeChecker for MappingType {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseParen)
+                extract_with_label(&mut children, EdgeLabel::CloseParen)
             {
                 let child_errors = close_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6142,7 +6089,7 @@ impl NodeChecker for MappingValue {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::TypeName)
+                extract_with_label(&mut children, EdgeLabel::TypeName)
             {
                 let child_errors = type_name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6158,8 +6105,7 @@ impl NodeChecker for MappingValue {
         if let Some(name) = &self.name {
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Name)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6171,7 +6117,7 @@ impl NodeChecker for MappingValue {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Name) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Name) {
                 errors.push(NodeCheckerError::new(
                     format!(
                         "Expected name to not be present in the CST, but it was there: {child:#?}"
@@ -6221,7 +6167,7 @@ impl NodeChecker for MemberAccessExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Operand)
+                extract_with_label(&mut children, EdgeLabel::Operand)
             {
                 let child_errors = operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6241,7 +6187,7 @@ impl NodeChecker for MemberAccessExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Period)
+                extract_with_label(&mut children, EdgeLabel::Period)
             {
                 let child_errors = period.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6261,7 +6207,7 @@ impl NodeChecker for MemberAccessExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Member)
+                extract_with_label(&mut children, EdgeLabel::Member)
             {
                 let child_errors = member.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6313,7 +6259,7 @@ impl NodeChecker for ModifierDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::ModifierKeyword)
+                extract_with_label(&mut children, EdgeLabel::ModifierKeyword)
             {
                 let child_errors =
                     modifier_keyword.check_node_with_offset(&child.node, child_offset);
@@ -6334,8 +6280,7 @@ impl NodeChecker for ModifierDefinition {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Name)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6352,7 +6297,7 @@ impl NodeChecker for ModifierDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Parameters)
+                extract_with_label(&mut children, EdgeLabel::Parameters)
             {
                 let child_errors = parameters.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6364,8 +6309,7 @@ impl NodeChecker for ModifierDefinition {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Parameters)
-            {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Parameters) {
                 errors.push(NodeCheckerError::new(format!("Expected parameters to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
@@ -6378,7 +6322,7 @@ impl NodeChecker for ModifierDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Attributes)
+                extract_with_label(&mut children, EdgeLabel::Attributes)
             {
                 let child_errors = attributes.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6397,8 +6341,7 @@ impl NodeChecker for ModifierDefinition {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Body)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Body)
             {
                 let child_errors = body.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6449,8 +6392,7 @@ impl NodeChecker for ModifierInvocation {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Name)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6467,7 +6409,7 @@ impl NodeChecker for ModifierInvocation {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Arguments)
+                extract_with_label(&mut children, EdgeLabel::Arguments)
             {
                 let child_errors = arguments.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6479,8 +6421,7 @@ impl NodeChecker for ModifierInvocation {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Arguments)
-            {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Arguments) {
                 errors.push(NodeCheckerError::new(format!("Expected arguments to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
@@ -6525,7 +6466,7 @@ impl NodeChecker for MultiplicativeExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::LeftOperand)
+                extract_with_label(&mut children, EdgeLabel::LeftOperand)
             {
                 let child_errors = left_operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6548,7 +6489,7 @@ impl NodeChecker for MultiplicativeExpression {
             // Special case for operator fields that are merged together
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Operator)
+                extract_with_label(&mut children, EdgeLabel::Operator)
             {
                 let child_errors = expression_multiplicative_expression_operator
                     .check_node_with_offset(&child.node, child_offset);
@@ -6566,7 +6507,7 @@ impl NodeChecker for MultiplicativeExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::RightOperand)
+                extract_with_label(&mut children, EdgeLabel::RightOperand)
             {
                 let child_errors = right_operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6617,8 +6558,7 @@ impl NodeChecker for NamedArgument {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Name)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6637,8 +6577,7 @@ impl NodeChecker for NamedArgument {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Colon)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Colon)
             {
                 let child_errors = colon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6657,8 +6596,7 @@ impl NodeChecker for NamedArgument {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Value)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Value)
             {
                 let child_errors = value.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6710,7 +6648,7 @@ impl NodeChecker for NamedArgumentGroup {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenBrace)
+                extract_with_label(&mut children, EdgeLabel::OpenBrace)
             {
                 let child_errors = open_brace.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6730,7 +6668,7 @@ impl NodeChecker for NamedArgumentGroup {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Arguments)
+                extract_with_label(&mut children, EdgeLabel::Arguments)
             {
                 let child_errors = arguments.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6750,7 +6688,7 @@ impl NodeChecker for NamedArgumentGroup {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseBrace)
+                extract_with_label(&mut children, EdgeLabel::CloseBrace)
             {
                 let child_errors = close_brace.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6802,7 +6740,7 @@ impl NodeChecker for NamedArgumentsDeclaration {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenParen)
+                extract_with_label(&mut children, EdgeLabel::OpenParen)
             {
                 let child_errors = open_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6819,7 +6757,7 @@ impl NodeChecker for NamedArgumentsDeclaration {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Arguments)
+                extract_with_label(&mut children, EdgeLabel::Arguments)
             {
                 let child_errors = arguments.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6831,8 +6769,7 @@ impl NodeChecker for NamedArgumentsDeclaration {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Arguments)
-            {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Arguments) {
                 errors.push(NodeCheckerError::new(format!("Expected arguments to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
@@ -6845,7 +6782,7 @@ impl NodeChecker for NamedArgumentsDeclaration {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseParen)
+                extract_with_label(&mut children, EdgeLabel::CloseParen)
             {
                 let child_errors = close_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6897,7 +6834,7 @@ impl NodeChecker for NamedImport {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Asterisk)
+                extract_with_label(&mut children, EdgeLabel::Asterisk)
             {
                 let child_errors = asterisk.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6916,8 +6853,7 @@ impl NodeChecker for NamedImport {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Alias)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Alias)
             {
                 let child_errors = alias.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6937,7 +6873,7 @@ impl NodeChecker for NamedImport {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::FromKeyword)
+                extract_with_label(&mut children, EdgeLabel::FromKeyword)
             {
                 let child_errors = from_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -6956,8 +6892,7 @@ impl NodeChecker for NamedImport {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Path)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Path)
             {
                 let child_errors = path.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -7009,7 +6944,7 @@ impl NodeChecker for NewExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::NewKeyword)
+                extract_with_label(&mut children, EdgeLabel::NewKeyword)
             {
                 let child_errors = new_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -7029,7 +6964,7 @@ impl NodeChecker for NewExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::TypeName)
+                extract_with_label(&mut children, EdgeLabel::TypeName)
             {
                 let child_errors = type_name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -7081,7 +7016,7 @@ impl NodeChecker for OrExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::LeftOperand)
+                extract_with_label(&mut children, EdgeLabel::LeftOperand)
             {
                 let child_errors = left_operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -7101,7 +7036,7 @@ impl NodeChecker for OrExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Operator)
+                extract_with_label(&mut children, EdgeLabel::Operator)
             {
                 let child_errors = operator.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -7121,7 +7056,7 @@ impl NodeChecker for OrExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::RightOperand)
+                extract_with_label(&mut children, EdgeLabel::RightOperand)
             {
                 let child_errors = right_operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -7173,7 +7108,7 @@ impl NodeChecker for OverridePathsDeclaration {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenParen)
+                extract_with_label(&mut children, EdgeLabel::OpenParen)
             {
                 let child_errors = open_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -7192,8 +7127,7 @@ impl NodeChecker for OverridePathsDeclaration {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Paths)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Paths)
             {
                 let child_errors = paths.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -7213,7 +7147,7 @@ impl NodeChecker for OverridePathsDeclaration {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseParen)
+                extract_with_label(&mut children, EdgeLabel::CloseParen)
             {
                 let child_errors = close_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -7265,7 +7199,7 @@ impl NodeChecker for OverrideSpecifier {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OverrideKeyword)
+                extract_with_label(&mut children, EdgeLabel::OverrideKeyword)
             {
                 let child_errors =
                     override_keyword.check_node_with_offset(&child.node, child_offset);
@@ -7284,7 +7218,7 @@ impl NodeChecker for OverrideSpecifier {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Overridden)
+                extract_with_label(&mut children, EdgeLabel::Overridden)
             {
                 let child_errors = overridden.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -7296,8 +7230,7 @@ impl NodeChecker for OverrideSpecifier {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Overridden)
-            {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Overridden) {
                 errors.push(NodeCheckerError::new(format!("Expected overridden to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
@@ -7342,7 +7275,7 @@ impl NodeChecker for Parameter {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::TypeName)
+                extract_with_label(&mut children, EdgeLabel::TypeName)
             {
                 let child_errors = type_name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -7359,7 +7292,7 @@ impl NodeChecker for Parameter {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::StorageLocation)
+                extract_with_label(&mut children, EdgeLabel::StorageLocation)
             {
                 let child_errors =
                     storage_location.check_node_with_offset(&child.node, child_offset);
@@ -7373,8 +7306,7 @@ impl NodeChecker for Parameter {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) =
-                extract_first_with_label(&mut children, EdgeLabel::StorageLocation)
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::StorageLocation)
             {
                 errors.push(NodeCheckerError::new(format!("Expected storage_location to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
@@ -7384,8 +7316,7 @@ impl NodeChecker for Parameter {
         if let Some(name) = &self.name {
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Name)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -7397,7 +7328,7 @@ impl NodeChecker for Parameter {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Name) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Name) {
                 errors.push(NodeCheckerError::new(
                     format!(
                         "Expected name to not be present in the CST, but it was there: {child:#?}"
@@ -7447,7 +7378,7 @@ impl NodeChecker for ParametersDeclaration {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenParen)
+                extract_with_label(&mut children, EdgeLabel::OpenParen)
             {
                 let child_errors = open_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -7467,7 +7398,7 @@ impl NodeChecker for ParametersDeclaration {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Parameters)
+                extract_with_label(&mut children, EdgeLabel::Parameters)
             {
                 let child_errors = parameters.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -7487,7 +7418,7 @@ impl NodeChecker for ParametersDeclaration {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseParen)
+                extract_with_label(&mut children, EdgeLabel::CloseParen)
             {
                 let child_errors = close_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -7538,8 +7469,7 @@ impl NodeChecker for PathImport {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Path)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Path)
             {
                 let child_errors = path.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -7555,8 +7485,7 @@ impl NodeChecker for PathImport {
         if let Some(alias) = &self.alias {
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Alias)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Alias)
             {
                 let child_errors = alias.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -7568,7 +7497,7 @@ impl NodeChecker for PathImport {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Alias) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Alias) {
                 errors.push(NodeCheckerError::new(
                     format!(
                         "Expected alias to not be present in the CST, but it was there: {child:#?}"
@@ -7618,7 +7547,7 @@ impl NodeChecker for PositionalArgumentsDeclaration {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenParen)
+                extract_with_label(&mut children, EdgeLabel::OpenParen)
             {
                 let child_errors = open_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -7638,7 +7567,7 @@ impl NodeChecker for PositionalArgumentsDeclaration {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Arguments)
+                extract_with_label(&mut children, EdgeLabel::Arguments)
             {
                 let child_errors = arguments.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -7658,7 +7587,7 @@ impl NodeChecker for PositionalArgumentsDeclaration {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseParen)
+                extract_with_label(&mut children, EdgeLabel::CloseParen)
             {
                 let child_errors = close_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -7710,7 +7639,7 @@ impl NodeChecker for PostfixExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Operand)
+                extract_with_label(&mut children, EdgeLabel::Operand)
             {
                 let child_errors = operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -7733,7 +7662,7 @@ impl NodeChecker for PostfixExpression {
             // Special case for operator fields that are merged together
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Operator)
+                extract_with_label(&mut children, EdgeLabel::Operator)
             {
                 let child_errors = expression_postfix_expression_operator
                     .check_node_with_offset(&child.node, child_offset);
@@ -7783,7 +7712,7 @@ impl NodeChecker for PragmaDirective {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::PragmaKeyword)
+                extract_with_label(&mut children, EdgeLabel::PragmaKeyword)
             {
                 let child_errors = pragma_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -7803,7 +7732,7 @@ impl NodeChecker for PragmaDirective {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Pragma)
+                extract_with_label(&mut children, EdgeLabel::Pragma)
             {
                 let child_errors = pragma.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -7823,7 +7752,7 @@ impl NodeChecker for PragmaDirective {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Semicolon)
+                extract_with_label(&mut children, EdgeLabel::Semicolon)
             {
                 let child_errors = semicolon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -7877,7 +7806,7 @@ impl NodeChecker for PrefixExpression {
             // Special case for operator fields that are merged together
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Operator)
+                extract_with_label(&mut children, EdgeLabel::Operator)
             {
                 let child_errors = expression_prefix_expression_operator
                     .check_node_with_offset(&child.node, child_offset);
@@ -7895,7 +7824,7 @@ impl NodeChecker for PrefixExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Operand)
+                extract_with_label(&mut children, EdgeLabel::Operand)
             {
                 let child_errors = operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -7947,7 +7876,7 @@ impl NodeChecker for ReceiveFunctionDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::ReceiveKeyword)
+                extract_with_label(&mut children, EdgeLabel::ReceiveKeyword)
             {
                 let child_errors =
                     receive_keyword.check_node_with_offset(&child.node, child_offset);
@@ -7968,7 +7897,7 @@ impl NodeChecker for ReceiveFunctionDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Parameters)
+                extract_with_label(&mut children, EdgeLabel::Parameters)
             {
                 let child_errors = parameters.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -7988,7 +7917,7 @@ impl NodeChecker for ReceiveFunctionDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Attributes)
+                extract_with_label(&mut children, EdgeLabel::Attributes)
             {
                 let child_errors = attributes.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8007,8 +7936,7 @@ impl NodeChecker for ReceiveFunctionDefinition {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Body)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Body)
             {
                 let child_errors = body.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8060,7 +7988,7 @@ impl NodeChecker for ReturnStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::ReturnKeyword)
+                extract_with_label(&mut children, EdgeLabel::ReturnKeyword)
             {
                 let child_errors = return_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8077,7 +8005,7 @@ impl NodeChecker for ReturnStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Expression)
+                extract_with_label(&mut children, EdgeLabel::Expression)
             {
                 let child_errors = expression.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8089,8 +8017,7 @@ impl NodeChecker for ReturnStatement {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Expression)
-            {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Expression) {
                 errors.push(NodeCheckerError::new(format!("Expected expression to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
@@ -8103,7 +8030,7 @@ impl NodeChecker for ReturnStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Semicolon)
+                extract_with_label(&mut children, EdgeLabel::Semicolon)
             {
                 let child_errors = semicolon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8155,7 +8082,7 @@ impl NodeChecker for ReturnsDeclaration {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::ReturnsKeyword)
+                extract_with_label(&mut children, EdgeLabel::ReturnsKeyword)
             {
                 let child_errors =
                     returns_keyword.check_node_with_offset(&child.node, child_offset);
@@ -8176,7 +8103,7 @@ impl NodeChecker for ReturnsDeclaration {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Variables)
+                extract_with_label(&mut children, EdgeLabel::Variables)
             {
                 let child_errors = variables.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8228,7 +8155,7 @@ impl NodeChecker for RevertStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::RevertKeyword)
+                extract_with_label(&mut children, EdgeLabel::RevertKeyword)
             {
                 let child_errors = revert_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8247,8 +8174,7 @@ impl NodeChecker for RevertStatement {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Error)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Error)
             {
                 let child_errors = error.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8268,7 +8194,7 @@ impl NodeChecker for RevertStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Arguments)
+                extract_with_label(&mut children, EdgeLabel::Arguments)
             {
                 let child_errors = arguments.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8288,7 +8214,7 @@ impl NodeChecker for RevertStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Semicolon)
+                extract_with_label(&mut children, EdgeLabel::Semicolon)
             {
                 let child_errors = semicolon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8340,7 +8266,7 @@ impl NodeChecker for ShiftExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::LeftOperand)
+                extract_with_label(&mut children, EdgeLabel::LeftOperand)
             {
                 let child_errors = left_operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8362,7 +8288,7 @@ impl NodeChecker for ShiftExpression {
             // Special case for operator fields that are merged together
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Operator)
+                extract_with_label(&mut children, EdgeLabel::Operator)
             {
                 let child_errors = expression_shift_expression_operator
                     .check_node_with_offset(&child.node, child_offset);
@@ -8380,7 +8306,7 @@ impl NodeChecker for ShiftExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::RightOperand)
+                extract_with_label(&mut children, EdgeLabel::RightOperand)
             {
                 let child_errors = right_operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8432,7 +8358,7 @@ impl NodeChecker for SourceUnit {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Members)
+                extract_with_label(&mut children, EdgeLabel::Members)
             {
                 let child_errors = members.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8484,7 +8410,7 @@ impl NodeChecker for StateVariableDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::TypeName)
+                extract_with_label(&mut children, EdgeLabel::TypeName)
             {
                 let child_errors = type_name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8504,7 +8430,7 @@ impl NodeChecker for StateVariableDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Attributes)
+                extract_with_label(&mut children, EdgeLabel::Attributes)
             {
                 let child_errors = attributes.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8523,8 +8449,7 @@ impl NodeChecker for StateVariableDefinition {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Name)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8540,8 +8465,7 @@ impl NodeChecker for StateVariableDefinition {
         if let Some(value) = &self.value {
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Value)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Value)
             {
                 let child_errors = value.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8553,7 +8477,7 @@ impl NodeChecker for StateVariableDefinition {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Value) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Value) {
                 errors.push(NodeCheckerError::new(
                     format!(
                         "Expected value to not be present in the CST, but it was there: {child:#?}"
@@ -8571,7 +8495,7 @@ impl NodeChecker for StateVariableDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Semicolon)
+                extract_with_label(&mut children, EdgeLabel::Semicolon)
             {
                 let child_errors = semicolon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8622,8 +8546,7 @@ impl NodeChecker for StateVariableDefinitionValue {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Equal)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Equal)
             {
                 let child_errors = equal.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8642,8 +8565,7 @@ impl NodeChecker for StateVariableDefinitionValue {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Value)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Value)
             {
                 let child_errors = value.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8695,7 +8617,7 @@ impl NodeChecker for StorageLayoutSpecifier {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::LayoutKeyword)
+                extract_with_label(&mut children, EdgeLabel::LayoutKeyword)
             {
                 let child_errors = layout_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8715,7 +8637,7 @@ impl NodeChecker for StorageLayoutSpecifier {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::AtKeyword)
+                extract_with_label(&mut children, EdgeLabel::AtKeyword)
             {
                 let child_errors = at_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8735,7 +8657,7 @@ impl NodeChecker for StorageLayoutSpecifier {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Expression)
+                extract_with_label(&mut children, EdgeLabel::Expression)
             {
                 let child_errors = expression.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8787,7 +8709,7 @@ impl NodeChecker for StructDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::StructKeyword)
+                extract_with_label(&mut children, EdgeLabel::StructKeyword)
             {
                 let child_errors = struct_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8806,8 +8728,7 @@ impl NodeChecker for StructDefinition {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Name)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8827,7 +8748,7 @@ impl NodeChecker for StructDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenBrace)
+                extract_with_label(&mut children, EdgeLabel::OpenBrace)
             {
                 let child_errors = open_brace.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8847,7 +8768,7 @@ impl NodeChecker for StructDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Members)
+                extract_with_label(&mut children, EdgeLabel::Members)
             {
                 let child_errors = members.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8867,7 +8788,7 @@ impl NodeChecker for StructDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseBrace)
+                extract_with_label(&mut children, EdgeLabel::CloseBrace)
             {
                 let child_errors = close_brace.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8919,7 +8840,7 @@ impl NodeChecker for StructMember {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::TypeName)
+                extract_with_label(&mut children, EdgeLabel::TypeName)
             {
                 let child_errors = type_name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8938,8 +8859,7 @@ impl NodeChecker for StructMember {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Name)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -8959,7 +8879,7 @@ impl NodeChecker for StructMember {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Semicolon)
+                extract_with_label(&mut children, EdgeLabel::Semicolon)
             {
                 let child_errors = semicolon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9011,7 +8931,7 @@ impl NodeChecker for ThrowStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::ThrowKeyword)
+                extract_with_label(&mut children, EdgeLabel::ThrowKeyword)
             {
                 let child_errors = throw_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9031,7 +8951,7 @@ impl NodeChecker for ThrowStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Semicolon)
+                extract_with_label(&mut children, EdgeLabel::Semicolon)
             {
                 let child_errors = semicolon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9083,7 +9003,7 @@ impl NodeChecker for TryStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::TryKeyword)
+                extract_with_label(&mut children, EdgeLabel::TryKeyword)
             {
                 let child_errors = try_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9103,7 +9023,7 @@ impl NodeChecker for TryStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Expression)
+                extract_with_label(&mut children, EdgeLabel::Expression)
             {
                 let child_errors = expression.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9120,7 +9040,7 @@ impl NodeChecker for TryStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Returns)
+                extract_with_label(&mut children, EdgeLabel::Returns)
             {
                 let child_errors = returns.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9132,7 +9052,7 @@ impl NodeChecker for TryStatement {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Returns) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Returns) {
                 errors.push(NodeCheckerError::new(format!("Expected returns to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
@@ -9144,8 +9064,7 @@ impl NodeChecker for TryStatement {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Body)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Body)
             {
                 let child_errors = body.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9165,7 +9084,7 @@ impl NodeChecker for TryStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CatchClauses)
+                extract_with_label(&mut children, EdgeLabel::CatchClauses)
             {
                 let child_errors = catch_clauses.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9214,7 +9133,7 @@ impl NodeChecker for TupleDeconstructionElement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Member)
+                extract_with_label(&mut children, EdgeLabel::Member)
             {
                 let child_errors = member.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9226,7 +9145,7 @@ impl NodeChecker for TupleDeconstructionElement {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Member) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Member) {
                 errors.push(NodeCheckerError::new(format!("Expected member to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
@@ -9268,7 +9187,7 @@ impl NodeChecker for TupleDeconstructionStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::VarKeyword)
+                extract_with_label(&mut children, EdgeLabel::VarKeyword)
             {
                 let child_errors = var_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9280,8 +9199,7 @@ impl NodeChecker for TupleDeconstructionStatement {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::VarKeyword)
-            {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::VarKeyword) {
                 errors.push(NodeCheckerError::new(format!("Expected var_keyword to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
@@ -9294,7 +9212,7 @@ impl NodeChecker for TupleDeconstructionStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenParen)
+                extract_with_label(&mut children, EdgeLabel::OpenParen)
             {
                 let child_errors = open_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9314,7 +9232,7 @@ impl NodeChecker for TupleDeconstructionStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Elements)
+                extract_with_label(&mut children, EdgeLabel::Elements)
             {
                 let child_errors = elements.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9334,7 +9252,7 @@ impl NodeChecker for TupleDeconstructionStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseParen)
+                extract_with_label(&mut children, EdgeLabel::CloseParen)
             {
                 let child_errors = close_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9353,8 +9271,7 @@ impl NodeChecker for TupleDeconstructionStatement {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Equal)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Equal)
             {
                 let child_errors = equal.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9374,7 +9291,7 @@ impl NodeChecker for TupleDeconstructionStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Expression)
+                extract_with_label(&mut children, EdgeLabel::Expression)
             {
                 let child_errors = expression.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9394,7 +9311,7 @@ impl NodeChecker for TupleDeconstructionStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Semicolon)
+                extract_with_label(&mut children, EdgeLabel::Semicolon)
             {
                 let child_errors = semicolon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9446,7 +9363,7 @@ impl NodeChecker for TupleExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenParen)
+                extract_with_label(&mut children, EdgeLabel::OpenParen)
             {
                 let child_errors = open_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9465,8 +9382,7 @@ impl NodeChecker for TupleExpression {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Items)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Items)
             {
                 let child_errors = items.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9486,7 +9402,7 @@ impl NodeChecker for TupleExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseParen)
+                extract_with_label(&mut children, EdgeLabel::CloseParen)
             {
                 let child_errors = close_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9535,7 +9451,7 @@ impl NodeChecker for TupleValue {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Expression)
+                extract_with_label(&mut children, EdgeLabel::Expression)
             {
                 let child_errors = expression.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9547,8 +9463,7 @@ impl NodeChecker for TupleValue {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Expression)
-            {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Expression) {
                 errors.push(NodeCheckerError::new(format!("Expected expression to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
@@ -9593,7 +9508,7 @@ impl NodeChecker for TypeExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::TypeKeyword)
+                extract_with_label(&mut children, EdgeLabel::TypeKeyword)
             {
                 let child_errors = type_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9613,7 +9528,7 @@ impl NodeChecker for TypeExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenParen)
+                extract_with_label(&mut children, EdgeLabel::OpenParen)
             {
                 let child_errors = open_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9633,7 +9548,7 @@ impl NodeChecker for TypeExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::TypeName)
+                extract_with_label(&mut children, EdgeLabel::TypeName)
             {
                 let child_errors = type_name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9653,7 +9568,7 @@ impl NodeChecker for TypeExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseParen)
+                extract_with_label(&mut children, EdgeLabel::CloseParen)
             {
                 let child_errors = close_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9705,7 +9620,7 @@ impl NodeChecker for TypedTupleMember {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::TypeName)
+                extract_with_label(&mut children, EdgeLabel::TypeName)
             {
                 let child_errors = type_name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9722,7 +9637,7 @@ impl NodeChecker for TypedTupleMember {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::StorageLocation)
+                extract_with_label(&mut children, EdgeLabel::StorageLocation)
             {
                 let child_errors =
                     storage_location.check_node_with_offset(&child.node, child_offset);
@@ -9736,8 +9651,7 @@ impl NodeChecker for TypedTupleMember {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) =
-                extract_first_with_label(&mut children, EdgeLabel::StorageLocation)
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::StorageLocation)
             {
                 errors.push(NodeCheckerError::new(format!("Expected storage_location to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
@@ -9750,8 +9664,7 @@ impl NodeChecker for TypedTupleMember {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Name)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9803,7 +9716,7 @@ impl NodeChecker for UncheckedBlock {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::UncheckedKeyword)
+                extract_with_label(&mut children, EdgeLabel::UncheckedKeyword)
             {
                 let child_errors =
                     unchecked_keyword.check_node_with_offset(&child.node, child_offset);
@@ -9824,8 +9737,7 @@ impl NodeChecker for UncheckedBlock {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Block)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Block)
             {
                 let child_errors = block.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9877,7 +9789,7 @@ impl NodeChecker for UnnamedFunctionDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::FunctionKeyword)
+                extract_with_label(&mut children, EdgeLabel::FunctionKeyword)
             {
                 let child_errors =
                     function_keyword.check_node_with_offset(&child.node, child_offset);
@@ -9899,7 +9811,7 @@ impl NodeChecker for UnnamedFunctionDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Parameters)
+                extract_with_label(&mut children, EdgeLabel::Parameters)
             {
                 let child_errors = parameters.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9919,7 +9831,7 @@ impl NodeChecker for UnnamedFunctionDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Attributes)
+                extract_with_label(&mut children, EdgeLabel::Attributes)
             {
                 let child_errors = attributes.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9938,8 +9850,7 @@ impl NodeChecker for UnnamedFunctionDefinition {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Body)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Body)
             {
                 let child_errors = body.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -9988,7 +9899,7 @@ impl NodeChecker for UntypedTupleMember {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::StorageLocation)
+                extract_with_label(&mut children, EdgeLabel::StorageLocation)
             {
                 let child_errors =
                     storage_location.check_node_with_offset(&child.node, child_offset);
@@ -10002,8 +9913,7 @@ impl NodeChecker for UntypedTupleMember {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) =
-                extract_first_with_label(&mut children, EdgeLabel::StorageLocation)
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::StorageLocation)
             {
                 errors.push(NodeCheckerError::new(format!("Expected storage_location to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
@@ -10016,8 +9926,7 @@ impl NodeChecker for UntypedTupleMember {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Name)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10069,7 +9978,7 @@ impl NodeChecker for UserDefinedValueTypeDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::TypeKeyword)
+                extract_with_label(&mut children, EdgeLabel::TypeKeyword)
             {
                 let child_errors = type_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10088,8 +9997,7 @@ impl NodeChecker for UserDefinedValueTypeDefinition {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Name)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10109,7 +10017,7 @@ impl NodeChecker for UserDefinedValueTypeDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::IsKeyword)
+                extract_with_label(&mut children, EdgeLabel::IsKeyword)
             {
                 let child_errors = is_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10129,7 +10037,7 @@ impl NodeChecker for UserDefinedValueTypeDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::ValueType)
+                extract_with_label(&mut children, EdgeLabel::ValueType)
             {
                 let child_errors = value_type.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10149,7 +10057,7 @@ impl NodeChecker for UserDefinedValueTypeDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Semicolon)
+                extract_with_label(&mut children, EdgeLabel::Semicolon)
             {
                 let child_errors = semicolon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10201,7 +10109,7 @@ impl NodeChecker for UsingAlias {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::AsKeyword)
+                extract_with_label(&mut children, EdgeLabel::AsKeyword)
             {
                 let child_errors = as_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10221,7 +10129,7 @@ impl NodeChecker for UsingAlias {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Operator)
+                extract_with_label(&mut children, EdgeLabel::Operator)
             {
                 let child_errors = operator.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10273,7 +10181,7 @@ impl NodeChecker for UsingDeconstruction {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenBrace)
+                extract_with_label(&mut children, EdgeLabel::OpenBrace)
             {
                 let child_errors = open_brace.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10293,7 +10201,7 @@ impl NodeChecker for UsingDeconstruction {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Symbols)
+                extract_with_label(&mut children, EdgeLabel::Symbols)
             {
                 let child_errors = symbols.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10313,7 +10221,7 @@ impl NodeChecker for UsingDeconstruction {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseBrace)
+                extract_with_label(&mut children, EdgeLabel::CloseBrace)
             {
                 let child_errors = close_brace.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10364,8 +10272,7 @@ impl NodeChecker for UsingDeconstructionSymbol {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Name)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10381,8 +10288,7 @@ impl NodeChecker for UsingDeconstructionSymbol {
         if let Some(alias) = &self.alias {
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Alias)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Alias)
             {
                 let child_errors = alias.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10394,7 +10300,7 @@ impl NodeChecker for UsingDeconstructionSymbol {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Alias) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Alias) {
                 errors.push(NodeCheckerError::new(
                     format!(
                         "Expected alias to not be present in the CST, but it was there: {child:#?}"
@@ -10444,7 +10350,7 @@ impl NodeChecker for UsingDirective {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::UsingKeyword)
+                extract_with_label(&mut children, EdgeLabel::UsingKeyword)
             {
                 let child_errors = using_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10464,7 +10370,7 @@ impl NodeChecker for UsingDirective {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Clause)
+                extract_with_label(&mut children, EdgeLabel::Clause)
             {
                 let child_errors = clause.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10484,7 +10390,7 @@ impl NodeChecker for UsingDirective {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::ForKeyword)
+                extract_with_label(&mut children, EdgeLabel::ForKeyword)
             {
                 let child_errors = for_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10504,7 +10410,7 @@ impl NodeChecker for UsingDirective {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Target)
+                extract_with_label(&mut children, EdgeLabel::Target)
             {
                 let child_errors = target.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10521,7 +10427,7 @@ impl NodeChecker for UsingDirective {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::GlobalKeyword)
+                extract_with_label(&mut children, EdgeLabel::GlobalKeyword)
             {
                 let child_errors = global_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10533,9 +10439,7 @@ impl NodeChecker for UsingDirective {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) =
-                extract_first_with_label(&mut children, EdgeLabel::GlobalKeyword)
-            {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::GlobalKeyword) {
                 errors.push(NodeCheckerError::new(format!("Expected global_keyword to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
@@ -10548,7 +10452,7 @@ impl NodeChecker for UsingDirective {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Semicolon)
+                extract_with_label(&mut children, EdgeLabel::Semicolon)
             {
                 let child_errors = semicolon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10600,7 +10504,7 @@ impl NodeChecker for VariableDeclarationStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::VariableType)
+                extract_with_label(&mut children, EdgeLabel::VariableType)
             {
                 let child_errors = variable_type.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10617,7 +10521,7 @@ impl NodeChecker for VariableDeclarationStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::StorageLocation)
+                extract_with_label(&mut children, EdgeLabel::StorageLocation)
             {
                 let child_errors =
                     storage_location.check_node_with_offset(&child.node, child_offset);
@@ -10631,8 +10535,7 @@ impl NodeChecker for VariableDeclarationStatement {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) =
-                extract_first_with_label(&mut children, EdgeLabel::StorageLocation)
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::StorageLocation)
             {
                 errors.push(NodeCheckerError::new(format!("Expected storage_location to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
@@ -10645,8 +10548,7 @@ impl NodeChecker for VariableDeclarationStatement {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Name)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10662,8 +10564,7 @@ impl NodeChecker for VariableDeclarationStatement {
         if let Some(value) = &self.value {
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Value)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Value)
             {
                 let child_errors = value.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10675,7 +10576,7 @@ impl NodeChecker for VariableDeclarationStatement {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Value) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Value) {
                 errors.push(NodeCheckerError::new(
                     format!(
                         "Expected value to not be present in the CST, but it was there: {child:#?}"
@@ -10693,7 +10594,7 @@ impl NodeChecker for VariableDeclarationStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Semicolon)
+                extract_with_label(&mut children, EdgeLabel::Semicolon)
             {
                 let child_errors = semicolon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10744,8 +10645,7 @@ impl NodeChecker for VariableDeclarationValue {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Equal)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Equal)
             {
                 let child_errors = equal.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10765,7 +10665,7 @@ impl NodeChecker for VariableDeclarationValue {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Expression)
+                extract_with_label(&mut children, EdgeLabel::Expression)
             {
                 let child_errors = expression.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10817,7 +10717,7 @@ impl NodeChecker for VersionPragma {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::SolidityKeyword)
+                extract_with_label(&mut children, EdgeLabel::SolidityKeyword)
             {
                 let child_errors =
                     solidity_keyword.check_node_with_offset(&child.node, child_offset);
@@ -10838,8 +10738,7 @@ impl NodeChecker for VersionPragma {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Sets)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Sets)
             {
                 let child_errors = sets.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10890,8 +10789,7 @@ impl NodeChecker for VersionRange {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Start)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Start)
             {
                 let child_errors = start.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10910,8 +10808,7 @@ impl NodeChecker for VersionRange {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Minus)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Minus)
             {
                 let child_errors = minus.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10930,9 +10827,7 @@ impl NodeChecker for VersionRange {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::End)
-            {
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::End) {
                 let child_errors = end.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
             } else {
@@ -10980,7 +10875,7 @@ impl NodeChecker for VersionTerm {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Operator)
+                extract_with_label(&mut children, EdgeLabel::Operator)
             {
                 let child_errors = operator.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -10992,7 +10887,7 @@ impl NodeChecker for VersionTerm {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Operator) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Operator) {
                 errors.push(NodeCheckerError::new(format!("Expected operator to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
@@ -11005,7 +10900,7 @@ impl NodeChecker for VersionTerm {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Literal)
+                extract_with_label(&mut children, EdgeLabel::Literal)
             {
                 let child_errors = literal.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11057,7 +10952,7 @@ impl NodeChecker for WhileStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::WhileKeyword)
+                extract_with_label(&mut children, EdgeLabel::WhileKeyword)
             {
                 let child_errors = while_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11077,7 +10972,7 @@ impl NodeChecker for WhileStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenParen)
+                extract_with_label(&mut children, EdgeLabel::OpenParen)
             {
                 let child_errors = open_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11097,7 +10992,7 @@ impl NodeChecker for WhileStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Condition)
+                extract_with_label(&mut children, EdgeLabel::Condition)
             {
                 let child_errors = condition.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11117,7 +11012,7 @@ impl NodeChecker for WhileStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseParen)
+                extract_with_label(&mut children, EdgeLabel::CloseParen)
             {
                 let child_errors = close_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11136,8 +11031,7 @@ impl NodeChecker for WhileStatement {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Body)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Body)
             {
                 let child_errors = body.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11189,7 +11083,7 @@ impl NodeChecker for YulBlock {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenBrace)
+                extract_with_label(&mut children, EdgeLabel::OpenBrace)
             {
                 let child_errors = open_brace.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11209,7 +11103,7 @@ impl NodeChecker for YulBlock {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Statements)
+                extract_with_label(&mut children, EdgeLabel::Statements)
             {
                 let child_errors = statements.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11229,7 +11123,7 @@ impl NodeChecker for YulBlock {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseBrace)
+                extract_with_label(&mut children, EdgeLabel::CloseBrace)
             {
                 let child_errors = close_brace.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11281,7 +11175,7 @@ impl NodeChecker for YulBreakStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::BreakKeyword)
+                extract_with_label(&mut children, EdgeLabel::BreakKeyword)
             {
                 let child_errors = break_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11332,8 +11226,7 @@ impl NodeChecker for YulColonAndEqual {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Colon)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Colon)
             {
                 let child_errors = colon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11352,8 +11245,7 @@ impl NodeChecker for YulColonAndEqual {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Equal)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Equal)
             {
                 let child_errors = equal.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11405,7 +11297,7 @@ impl NodeChecker for YulContinueStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::ContinueKeyword)
+                extract_with_label(&mut children, EdgeLabel::ContinueKeyword)
             {
                 let child_errors =
                     continue_keyword.check_node_with_offset(&child.node, child_offset);
@@ -11459,7 +11351,7 @@ impl NodeChecker for YulDefaultCase {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::DefaultKeyword)
+                extract_with_label(&mut children, EdgeLabel::DefaultKeyword)
             {
                 let child_errors =
                     default_keyword.check_node_with_offset(&child.node, child_offset);
@@ -11479,8 +11371,7 @@ impl NodeChecker for YulDefaultCase {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Body)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Body)
             {
                 let child_errors = body.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11531,8 +11422,7 @@ impl NodeChecker for YulEqualAndColon {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Equal)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Equal)
             {
                 let child_errors = equal.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11551,8 +11441,7 @@ impl NodeChecker for YulEqualAndColon {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Colon)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Colon)
             {
                 let child_errors = colon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11604,7 +11493,7 @@ impl NodeChecker for YulForStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::ForKeyword)
+                extract_with_label(&mut children, EdgeLabel::ForKeyword)
             {
                 let child_errors = for_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11624,7 +11513,7 @@ impl NodeChecker for YulForStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Initialization)
+                extract_with_label(&mut children, EdgeLabel::Initialization)
             {
                 let child_errors = initialization.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11644,7 +11533,7 @@ impl NodeChecker for YulForStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Condition)
+                extract_with_label(&mut children, EdgeLabel::Condition)
             {
                 let child_errors = condition.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11664,7 +11553,7 @@ impl NodeChecker for YulForStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Iterator)
+                extract_with_label(&mut children, EdgeLabel::Iterator)
             {
                 let child_errors = iterator.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11683,8 +11572,7 @@ impl NodeChecker for YulForStatement {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Body)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Body)
             {
                 let child_errors = body.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11736,7 +11624,7 @@ impl NodeChecker for YulFunctionCallExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Operand)
+                extract_with_label(&mut children, EdgeLabel::Operand)
             {
                 let child_errors = operand.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11756,7 +11644,7 @@ impl NodeChecker for YulFunctionCallExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenParen)
+                extract_with_label(&mut children, EdgeLabel::OpenParen)
             {
                 let child_errors = open_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11776,7 +11664,7 @@ impl NodeChecker for YulFunctionCallExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Arguments)
+                extract_with_label(&mut children, EdgeLabel::Arguments)
             {
                 let child_errors = arguments.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11796,7 +11684,7 @@ impl NodeChecker for YulFunctionCallExpression {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseParen)
+                extract_with_label(&mut children, EdgeLabel::CloseParen)
             {
                 let child_errors = close_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11848,7 +11736,7 @@ impl NodeChecker for YulFunctionDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::FunctionKeyword)
+                extract_with_label(&mut children, EdgeLabel::FunctionKeyword)
             {
                 let child_errors =
                     function_keyword.check_node_with_offset(&child.node, child_offset);
@@ -11869,8 +11757,7 @@ impl NodeChecker for YulFunctionDefinition {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Name)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Name)
             {
                 let child_errors = name.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11890,7 +11777,7 @@ impl NodeChecker for YulFunctionDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Parameters)
+                extract_with_label(&mut children, EdgeLabel::Parameters)
             {
                 let child_errors = parameters.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11907,7 +11794,7 @@ impl NodeChecker for YulFunctionDefinition {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Returns)
+                extract_with_label(&mut children, EdgeLabel::Returns)
             {
                 let child_errors = returns.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11919,7 +11806,7 @@ impl NodeChecker for YulFunctionDefinition {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Returns) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Returns) {
                 errors.push(NodeCheckerError::new(format!("Expected returns to not be present in the CST, but it was there: {child:#?}"), node_range.clone()));
             }
         }
@@ -11931,8 +11818,7 @@ impl NodeChecker for YulFunctionDefinition {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Body)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Body)
             {
                 let child_errors = body.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -11984,7 +11870,7 @@ impl NodeChecker for YulIfStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::IfKeyword)
+                extract_with_label(&mut children, EdgeLabel::IfKeyword)
             {
                 let child_errors = if_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -12004,7 +11890,7 @@ impl NodeChecker for YulIfStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Condition)
+                extract_with_label(&mut children, EdgeLabel::Condition)
             {
                 let child_errors = condition.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -12023,8 +11909,7 @@ impl NodeChecker for YulIfStatement {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Body)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Body)
             {
                 let child_errors = body.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -12075,8 +11960,7 @@ impl NodeChecker for YulLabel {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Label)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Label)
             {
                 let child_errors = label.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -12095,8 +11979,7 @@ impl NodeChecker for YulLabel {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Colon)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Colon)
             {
                 let child_errors = colon.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -12148,7 +12031,7 @@ impl NodeChecker for YulLeaveStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::LeaveKeyword)
+                extract_with_label(&mut children, EdgeLabel::LeaveKeyword)
             {
                 let child_errors = leave_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -12200,7 +12083,7 @@ impl NodeChecker for YulParametersDeclaration {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::OpenParen)
+                extract_with_label(&mut children, EdgeLabel::OpenParen)
             {
                 let child_errors = open_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -12220,7 +12103,7 @@ impl NodeChecker for YulParametersDeclaration {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Parameters)
+                extract_with_label(&mut children, EdgeLabel::Parameters)
             {
                 let child_errors = parameters.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -12240,7 +12123,7 @@ impl NodeChecker for YulParametersDeclaration {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CloseParen)
+                extract_with_label(&mut children, EdgeLabel::CloseParen)
             {
                 let child_errors = close_paren.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -12292,7 +12175,7 @@ impl NodeChecker for YulReturnsDeclaration {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::MinusGreaterThan)
+                extract_with_label(&mut children, EdgeLabel::MinusGreaterThan)
             {
                 let child_errors =
                     minus_greater_than.check_node_with_offset(&child.node, child_offset);
@@ -12314,7 +12197,7 @@ impl NodeChecker for YulReturnsDeclaration {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Variables)
+                extract_with_label(&mut children, EdgeLabel::Variables)
             {
                 let child_errors = variables.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -12366,7 +12249,7 @@ impl NodeChecker for YulStackAssignmentStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Assignment)
+                extract_with_label(&mut children, EdgeLabel::Assignment)
             {
                 let child_errors = assignment.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -12386,7 +12269,7 @@ impl NodeChecker for YulStackAssignmentStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Variable)
+                extract_with_label(&mut children, EdgeLabel::Variable)
             {
                 let child_errors = variable.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -12438,7 +12321,7 @@ impl NodeChecker for YulSwitchStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::SwitchKeyword)
+                extract_with_label(&mut children, EdgeLabel::SwitchKeyword)
             {
                 let child_errors = switch_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -12458,7 +12341,7 @@ impl NodeChecker for YulSwitchStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Expression)
+                extract_with_label(&mut children, EdgeLabel::Expression)
             {
                 let child_errors = expression.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -12477,8 +12360,7 @@ impl NodeChecker for YulSwitchStatement {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Cases)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Cases)
             {
                 let child_errors = cases.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -12530,7 +12412,7 @@ impl NodeChecker for YulValueCase {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::CaseKeyword)
+                extract_with_label(&mut children, EdgeLabel::CaseKeyword)
             {
                 let child_errors = case_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -12549,8 +12431,7 @@ impl NodeChecker for YulValueCase {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Value)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Value)
             {
                 let child_errors = value.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -12569,8 +12450,7 @@ impl NodeChecker for YulValueCase {
 
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Body)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Body)
             {
                 let child_errors = body.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -12622,7 +12502,7 @@ impl NodeChecker for YulVariableAssignmentStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Variables)
+                extract_with_label(&mut children, EdgeLabel::Variables)
             {
                 let child_errors = variables.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -12642,7 +12522,7 @@ impl NodeChecker for YulVariableAssignmentStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Assignment)
+                extract_with_label(&mut children, EdgeLabel::Assignment)
             {
                 let child_errors = assignment.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -12662,7 +12542,7 @@ impl NodeChecker for YulVariableAssignmentStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Expression)
+                extract_with_label(&mut children, EdgeLabel::Expression)
             {
                 let child_errors = expression.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -12714,7 +12594,7 @@ impl NodeChecker for YulVariableDeclarationStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::LetKeyword)
+                extract_with_label(&mut children, EdgeLabel::LetKeyword)
             {
                 let child_errors = let_keyword.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -12734,7 +12614,7 @@ impl NodeChecker for YulVariableDeclarationStatement {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Variables)
+                extract_with_label(&mut children, EdgeLabel::Variables)
             {
                 let child_errors = variables.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -12750,8 +12630,7 @@ impl NodeChecker for YulVariableDeclarationStatement {
         if let Some(value) = &self.value {
             // Prepare edge label
 
-            if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Value)
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Value)
             {
                 let child_errors = value.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -12763,7 +12642,7 @@ impl NodeChecker for YulVariableDeclarationStatement {
             }
         } else {
             // If it's not there on the AST, it shouldn't be in the CST
-            if let Some((child, _)) = extract_first_with_label(&mut children, EdgeLabel::Value) {
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Value) {
                 errors.push(NodeCheckerError::new(
                     format!(
                         "Expected value to not be present in the CST, but it was there: {child:#?}"
@@ -12813,7 +12692,7 @@ impl NodeChecker for YulVariableDeclarationValue {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Assignment)
+                extract_with_label(&mut children, EdgeLabel::Assignment)
             {
                 let child_errors = assignment.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
@@ -12833,7 +12712,7 @@ impl NodeChecker for YulVariableDeclarationValue {
             // Prepare edge label
 
             if let Some((child, child_offset)) =
-                extract_first_with_label(&mut children, EdgeLabel::Expression)
+                extract_with_label(&mut children, EdgeLabel::Expression)
             {
                 let child_errors = expression.check_node_with_offset(&child.node, child_offset);
                 errors.extend(child_errors);
