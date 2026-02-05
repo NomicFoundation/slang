@@ -411,7 +411,10 @@ impl Pass<'_> {
                 resolution
             };
 
-            scope_id = resolution
+            // NOTE: we need to follow symbol aliases to resolve the next scope to use
+            scope_id = self
+                .binder
+                .follow_symbol_aliases(&resolution)
                 .as_definition_id()
                 .and_then(|definition_id| self.binder.scope_id_for_node_id(definition_id));
 

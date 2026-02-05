@@ -20,12 +20,12 @@ References (13):
 - Ref: ["Lib" @ main.sol:7:7] -> #2
 - Ref: ["a" @ main.sol:11:9] -> #7
 - Ref: ["nop" @ main.sol:11:11] -> #3
-- Ref: ["foo" @ main.sol:12:9] -> #10
+- Ref: ["foo" @ main.sol:12:9] -> #1
 - Ref: ["a" @ main.sol:12:13] -> #7
 - Ref: ["nop" @ main.sol:12:16] -> #3
 - Ref: ["a" @ main.sol:17:5] -> #9
 - Ref: ["nop" @ main.sol:17:7] -> #3
-- Ref: ["foo" @ main.sol:18:5] -> #10
+- Ref: ["foo" @ main.sol:18:5] -> #1
 - Ref: ["a" @ main.sol:18:9] -> #9
 - Ref: ["nop" @ main.sol:18:12] -> #3
 - Ref: ["a" @ other.sol:2:12] -> #11
@@ -73,7 +73,7 @@ Bindings:
     │            ╰─── ref: 3
  12 │         foo(a).nop();
     │         ─┬─ ┬  ─┬─  
-    │          ╰────────── ref: 10
+    │          ╰────────── ref: 1
     │             │   │   
     │             ╰─────── ref: 7
     │                 │   
@@ -91,7 +91,7 @@ Bindings:
     │        ╰─── ref: 3
  18 │     foo(a).nop();
     │     ─┬─ ┬  ─┬─  
-    │      ╰────────── ref: 10
+    │      ╰────────── ref: 1
     │         │   │   
     │         ╰─────── ref: 9
     │             │   

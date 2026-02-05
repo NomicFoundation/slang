@@ -23,7 +23,7 @@ Definitions (4):
 
 References (4):
 - Ref: ["Counter" @ main.sol:1:9] -> unresolved
-- Ref: ["Counter" @ main.sol:4:19] -> unresolved
+- Ref: ["Counter" @ main.sol:4:19] -> #1
 - Ref: ["c" @ main.sol:5:9] -> #4
 - Ref: ["increment" @ main.sol:5:11] -> unresolved
 
@@ -53,7 +53,7 @@ Bindings:
    │              ──┬─ ───┬───        ┬  
    │                ╰──────────────────── name: 3
    │                      │           │  
-   │                      ╰────────────── unresolved
+   │                      ╰────────────── ref: 1
    │                                  │  
    │                                  ╰── name: 4
  5 │         c.increment();
