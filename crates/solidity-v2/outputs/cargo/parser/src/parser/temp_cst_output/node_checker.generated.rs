@@ -62,10 +62,10 @@ fn extract_with_label(
     v: &mut Vec<(Edge, TextIndex)>,
     label: EdgeLabel,
 ) -> Option<(Edge, TextIndex)> {
-    if v[0].0.label == label {
-        return Some(v.remove(0));
+    match v.first() {
+        Some((edge, _)) if edge.label == label => Some(v.remove(0)),
+        _ => None,
     }
-    None
 }
 
 /// Compute children with their text offsets, filtering out trivia and separators.
