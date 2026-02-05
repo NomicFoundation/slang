@@ -644,7 +644,13 @@ impl Visitor for Pass<'_> {
             let definition_id = self
                 .binder
                 .find_reference_by_identifier_node_id(node.error.last().unwrap().id())
-                .and_then(|reference| reference.resolution.as_definition_id());
+                .and_then(|reference| {
+                    // Follow symbol aliases as the error type argument to
+                    // revert could be an imported symbol
+                    self.binder
+                        .follow_symbol_aliases(&reference.resolution)
+                        .as_definition_id()
+                });
             self.resolve_named_arguments(named_arguments, definition_id);
         }
     }

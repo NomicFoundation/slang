@@ -1,5 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-reference `FOO` at main.sol:6:26 failed to resolve in new binder
-
-Definitions and/or references from binding graph and new binder DIFFER

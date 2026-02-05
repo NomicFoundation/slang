@@ -9,6 +9,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
 use anyhow::Result;
+use codegen_v2_cst::structured_cst::model::StructuredCstModel;
 use codegen_v2_parser::ParserModel as ParserModelV2;
 use indexmap::IndexSet;
 use infra_utils::cargo::CargoWorkspace;
@@ -100,6 +101,8 @@ struct RuntimeModelV2 {
     parser: ParserModelV2,
 
     language: LanguageModelV2,
+
+    structured_cst_model: StructuredCstModel,
 }
 
 impl RuntimeModelV2 {
@@ -107,6 +110,7 @@ impl RuntimeModelV2 {
         Self {
             parser: ParserModelV2::from_language(language),
             language: LanguageModelV2::from_language(language),
+            structured_cst_model: StructuredCstModel::from_language(language),
         }
     }
 }

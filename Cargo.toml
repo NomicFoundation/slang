@@ -13,6 +13,7 @@ members = [
     "crates/codegen/spec",
     "crates/codegen/testing",
 
+    "crates/codegen-v2/cst",
     "crates/codegen-v2/parser",
 
     "crates/infra/cli",
@@ -50,6 +51,7 @@ members = [
 
     "crates/solidity-v2/inputs/language",
 
+    "crates/solidity-v2/outputs/cargo/cst",
     "crates/solidity-v2/outputs/cargo/common",
     "crates/solidity-v2/outputs/cargo/parser",
 ]
@@ -64,6 +66,7 @@ codegen_runner = { path = "crates/codegen/runner", version = "1.3.2" }
 codegen_spec = { path = "crates/codegen/spec", version = "1.3.2" }
 codegen_testing = { path = "crates/codegen/testing", version = "1.3.2" }
 
+codegen_v2_cst = { path = "crates/codegen-v2/cst", version = "1.3.2" }
 codegen_v2_parser = { path = "crates/codegen-v2/parser", version = "1.3.2" }
 
 infra_cli = { path = "crates/infra/cli", version = "1.3.2" }
@@ -101,6 +104,7 @@ solidity_testing_utils = { path = "crates/solidity/testing/utils", version = "1.
 
 solidity_v2_language = { path = "crates/solidity-v2/inputs/language", version = "1.3.2" }
 
+slang_solidity_v2_cst = { path = "crates/solidity-v2/outputs/cargo/cst", version = "1.3.2" }
 slang_solidity_v2_common = { path = "crates/solidity-v2/outputs/cargo/common", version = "1.3.2" }
 slang_solidity_v2_parser = { path = "crates/solidity-v2/outputs/cargo/parser", version = "1.3.2" }
 
