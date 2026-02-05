@@ -122,14 +122,26 @@ impl<'a> Pass<'a> {
             } else {
                 Resolution::Unresolved
             };
-            let definition_id = resolution.as_definition_id();
 
             let reference = Reference::new(Rc::clone(identifier), resolution.clone());
             self.binder.insert_reference(reference);
 
+            // Unless we used namespace resolution and in order to continue
+            // resolving the identifier path, we should ensure we've followed
+            // through any symbol alias (ie. import deconstruction symbol). This
+            // is not needed for namespaced resolution because there cannot be
+            // import directives inside contracts, interfaces or libraries which
+            // changes the lookup mode (see below).
+            let resolution = if use_lexical_resolution {
+                self.binder.follow_symbol_aliases(&resolution)
+            } else {
+                resolution
+            };
+
             // recurse into file scopes pointed by the resolved definition
             // to resolve the next identifier in the path
-            scope_id = definition_id
+            scope_id = resolution
+                .as_definition_id()
                 .and_then(|node_id| self.binder.find_definition_by_id(node_id))
                 .and_then(|definition| match definition {
                     Definition::Import(ImportDefinition {

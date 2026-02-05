@@ -2,7 +2,6 @@ pub use solidity::SolidityDefinition;
 
 language_v2_macros::compile!(Language(
     name = Solidity,
-    binding_rules_file = "crates/solidity/inputs/language/bindings/rules.msgb",
     root_item = SourceUnit,
     leading_trivia = OneOrMore(Choice([
         Trivia(Whitespace),

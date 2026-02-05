@@ -1,5 +1,4 @@
 use std::collections::BTreeSet;
-use std::path::PathBuf;
 
 use indexmap::IndexSet;
 use language_v2_internal_macros::{derive_spanned_type, ParseInputTokens, WriteOutputTokens};
@@ -9,21 +8,29 @@ use serde::{Deserialize, Serialize};
 use super::BuiltIn;
 use crate::model::{BuiltInContext, Field, Identifier, Item, TriviaParser, VersionSpecifier};
 
+/// A representation of a Language definition
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 pub struct Language {
+    /// The name of the language
     pub name: Identifier,
 
-    pub binding_rules_file: PathBuf,
-
+    /// Each language must have a single root item
     pub root_item: Identifier,
 
+    /// The leading trivia parser
     pub leading_trivia: TriviaParser,
+
+    /// The trailing trivia parser
     pub trailing_trivia: TriviaParser,
 
+    /// The supported versions of the language
     pub versions: IndexSet<Version>,
 
+    /// The sections of the language
     pub sections: Vec<Section>,
+
+    /// The built-in contexts
     pub built_ins: Vec<BuiltInContext>,
 }
 
@@ -57,7 +64,7 @@ impl Language {
 
         let mut add_spec = |spec: &Option<VersionSpecifier>| {
             if let Some(spec) = spec {
-                res.extend(spec.versions().cloned());
+                res.extend(spec.breaking_versions().cloned());
             }
         };
 
@@ -130,7 +137,7 @@ impl Language {
 
         let mut add_spec = |spec: &Option<VersionSpecifier>| {
             if let Some(spec) = spec {
-                res.extend(spec.versions().cloned());
+                res.extend(spec.breaking_versions().cloned());
             }
         };
 
@@ -160,6 +167,7 @@ impl Language {
     }
 }
 
+/// A section is a named container for topics, used for organizing the large grammar definition in user documentation.  
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 pub struct Section {
@@ -174,6 +182,7 @@ impl Section {
     }
 }
 
+/// A topic is a named container for items, used for organizing the large grammar definition in user documentation.  
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 pub struct Topic {

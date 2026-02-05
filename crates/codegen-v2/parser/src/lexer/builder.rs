@@ -95,16 +95,22 @@ impl LexerModelBuilder {
                     }
                     Lexeme::Keyword { kind, reserved, .. } => {
                         if match reserved {
-                            None => true,
-                            Some(VersionSpecifier::Never) => false,
-                            Some(VersionSpecifier::From { .. }) => true,
-                            Some(VersionSpecifier::Till { .. }) => true,
-                            Some(VersionSpecifier::Range { .. }) => true,
+                            VersionSpecifier::Always => true,
+                            VersionSpecifier::Never => false,
+                            VersionSpecifier::From { .. } => true,
+                            VersionSpecifier::Till { .. } => true,
+                            VersionSpecifier::Range { .. } => true,
                         } {
                             kinds.insert(format!("{kind}_Reserved"));
                         }
 
-                        if reserved.is_some() {
+                        if match reserved {
+                            VersionSpecifier::Always => false,
+                            VersionSpecifier::Never => true,
+                            VersionSpecifier::From { .. } => true,
+                            VersionSpecifier::Till { .. } => true,
+                            VersionSpecifier::Range { .. } => true,
+                        } {
                             kinds.insert(format!("{kind}_Unreserved"));
                         }
                     }
@@ -126,7 +132,7 @@ impl LexerModelBuilder {
         item.definitions.iter().map(|def| Lexeme::Keyword {
             kind: item.name.to_string(),
             regex: self.convert_keyword_value(&def.value),
-            reserved: def.reserved.clone(),
+            reserved: def.reserved.clone().unwrap_or_default(),
         })
     }
 

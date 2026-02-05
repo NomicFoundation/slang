@@ -1,5 +1,5 @@
 error: An expression with the name 'Expression1' already exists.
-  --> src/fail/p1_definitions/duplicate_expression_name/test.rs:34:36
+  --> src/fail/p1_definitions/duplicate_expression_name/test.rs:33:36
    |
-34 | ...                   name = Expression1,
+33 | ...                   name = Expression1,
    |                              ^^^^^^^^^^^
