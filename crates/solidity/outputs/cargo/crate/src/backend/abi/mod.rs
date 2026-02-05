@@ -18,7 +18,7 @@ pub struct ContractAbi {
     pub node_id: NodeId,
     pub name: String,
     pub file_id: String,
-    pub functions: Vec<FunctionAbi>,
+    pub entries: Vec<AbiEntry>,
     pub storage_layout: Vec<StorageItem>,
 }
 
@@ -50,7 +50,7 @@ impl TryFrom<&input_ir::FunctionKind> for AbiType {
     }
 }
 
-pub struct FunctionAbi {
+pub struct AbiEntry {
     pub node_id: NodeId,
     pub name: Option<String>,
     pub r#type: AbiType,
@@ -79,44 +79,44 @@ impl ContractDefinitionStruct {
     // navigation
     pub fn compute_abi_with_file_id(&self, file_id: String) -> Option<ContractAbi> {
         let name = self.ir_node.name.unparse();
-        let functions = self.compute_abi_functions()?;
+        let entries = self.compute_abi_entries()?;
         let storage_layout = self.compute_storage_layout()?;
         Some(ContractAbi {
             node_id: self.ir_node.node_id,
             name,
             file_id,
-            functions,
+            entries,
             storage_layout,
         })
     }
 
-    fn compute_abi_functions(&self) -> Option<Vec<FunctionAbi>> {
-        let mut functions = Vec::new();
+    fn compute_abi_entries(&self) -> Option<Vec<AbiEntry>> {
+        let mut entries = Vec::new();
         if let Some(constructor) = self.constructor() {
-            functions.push(constructor.compute_abi()?);
+            entries.push(constructor.compute_abi()?);
         }
         for function in &self.compute_linearised_functions() {
             if function.is_externally_visible() {
-                functions.push(function.compute_abi()?);
+                entries.push(function.compute_abi()?);
             }
         }
         for state_variable in &self.compute_linearised_state_variables() {
             if state_variable.is_externally_visible() {
-                functions.push(state_variable.compute_abi()?);
+                entries.push(state_variable.compute_abi()?);
             }
         }
         for error in &self.compute_linearised_errors() {
-            functions.push(error.compute_abi()?);
+            entries.push(error.compute_abi()?);
         }
         for event in &self.compute_linearised_events() {
-            functions.push(event.compute_abi()?);
+            entries.push(event.compute_abi()?);
         }
 
-        functions.sort_by(|a, b| match a.r#type.cmp(&b.r#type) {
+        entries.sort_by(|a, b| match a.r#type.cmp(&b.r#type) {
             Ordering::Equal => a.name.cmp(&b.name),
             other => other,
         });
-        Some(functions)
+        Some(entries)
     }
 
     fn compute_storage_layout(&self) -> Option<Vec<StorageItem>> {
@@ -172,7 +172,7 @@ impl FunctionDefinitionStruct {
         )
     }
 
-    pub fn compute_abi(&self) -> Option<FunctionAbi> {
+    pub fn compute_abi(&self) -> Option<AbiEntry> {
         if !self.is_externally_visible() {
             return None;
         }
@@ -183,7 +183,7 @@ impl FunctionDefinitionStruct {
             Vec::new()
         };
 
-        Some(FunctionAbi {
+        Some(AbiEntry {
             node_id: self.ir_node.node_id,
             name: self.ir_node.name.as_ref().map(|name| name.unparse()),
             r#type: (&self.ir_node.kind).try_into().ok()?,
@@ -256,13 +256,13 @@ impl StateVariableDefinitionStruct {
             .extract_function_type_parameters_abi(definition.getter_type_id?)
     }
 
-    pub fn compute_abi(&self) -> Option<FunctionAbi> {
+    pub fn compute_abi(&self) -> Option<AbiEntry> {
         if !self.is_externally_visible() {
             return None;
         }
         let (inputs, outputs) = self.extract_getter_type_parameters_abi()?;
 
-        Some(FunctionAbi {
+        Some(AbiEntry {
             node_id: self.ir_node.node_id,
             name: Some(self.ir_node.name.unparse()),
             r#type: AbiType::Function,
@@ -328,10 +328,10 @@ fn selector_from_signature(signature: &str) -> u32 {
 }
 
 impl ErrorDefinitionStruct {
-    pub fn compute_abi(&self) -> Option<FunctionAbi> {
+    pub fn compute_abi(&self) -> Option<AbiEntry> {
         let inputs = self.parameters().compute_abi()?;
 
-        Some(FunctionAbi {
+        Some(AbiEntry {
             node_id: self.ir_node.node_id,
             name: Some(self.ir_node.name.unparse()),
             r#type: AbiType::Error,
@@ -343,10 +343,10 @@ impl ErrorDefinitionStruct {
 }
 
 impl EventDefinitionStruct {
-    pub fn compute_abi(&self) -> Option<FunctionAbi> {
+    pub fn compute_abi(&self) -> Option<AbiEntry> {
         let inputs = self.parameters().compute_abi()?;
 
-        Some(FunctionAbi {
+        Some(AbiEntry {
             node_id: self.ir_node.node_id,
             name: Some(self.ir_node.name.unparse()),
             r#type: AbiType::Event,

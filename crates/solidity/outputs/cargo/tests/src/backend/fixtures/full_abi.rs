@@ -21,6 +21,8 @@ contract Test is Base {
     event Event(uint indexed a, bytes32 b);
     error InsufficientBalance(uint256 available, uint256 required);
     function foo(uint a) public { emit Event(a, b); }
+    receive() external payable { }
+    fallback() external { }
 }
 "#;
 
