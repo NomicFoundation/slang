@@ -16,6 +16,7 @@ pub enum Type {
     Bytes(BytesType),
     Contract(ContractType),
     Enum(EnumType),
+    FixedSizeArray(FixedSizeArrayType),
     FixedPointNumber(FixedPointNumberType),
     Function(FunctionType),
     Integer(IntegerType),
@@ -55,6 +56,7 @@ define_type_variant!(ByteArray);
 define_type_variant!(Bytes);
 define_type_variant!(Contract);
 define_type_variant!(Enum);
+define_type_variant!(FixedSizeArray);
 define_type_variant!(FixedPointNumber);
 define_type_variant!(Function);
 define_type_variant!(Integer);
@@ -79,6 +81,9 @@ impl Type {
             types::Type::Bytes { .. } => Self::Bytes(BytesType { type_id, semantic }),
             types::Type::Contract { .. } => Self::Contract(ContractType { type_id, semantic }),
             types::Type::Enum { .. } => Self::Enum(EnumType { type_id, semantic }),
+            types::Type::FixedSizeArray { .. } => {
+                Self::FixedSizeArray(FixedSizeArrayType { type_id, semantic })
+            }
             types::Type::FixedPointNumber { .. } => {
                 Self::FixedPointNumber(FixedPointNumberType { type_id, semantic })
             }
@@ -106,6 +111,7 @@ impl Type {
             Type::Bytes(details) => details.type_id,
             Type::Contract(details) => details.type_id,
             Type::Enum(details) => details.type_id,
+            Type::FixedSizeArray(details) => details.type_id,
             Type::FixedPointNumber(details) => details.type_id,
             Type::Function(details) => details.type_id,
             Type::Integer(details) => details.type_id,
@@ -180,6 +186,27 @@ impl EnumType {
             unreachable!("invalid enum type");
         };
         Definition::try_create(*definition_id, &self.semantic).expect("invalid enum definition")
+    }
+}
+
+impl FixedSizeArrayType {
+    pub fn element_type(&self) -> Type {
+        let types::Type::FixedSizeArray { element_type, .. } = self.internal_type() else {
+            unreachable!("invalid fixed-size array type");
+        };
+        Type::create(*element_type, &self.semantic)
+    }
+    pub fn location(&self) -> DataLocation {
+        let types::Type::FixedSizeArray { location, .. } = self.internal_type() else {
+            unreachable!("invalid fixed-size array type");
+        };
+        *location
+    }
+    pub fn size(&self) -> usize {
+        let types::Type::FixedSizeArray { size, .. } = self.internal_type() else {
+            unreachable!("invalid fixed-size array type");
+        };
+        *size
     }
 }
 
