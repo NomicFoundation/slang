@@ -168,7 +168,6 @@ fn check_fields(analysis: &mut Analysis, fields: &IndexMap<Spanned<Identifier>, 
 fn check_keyword(analysis: &mut Analysis, item: &SpannedKeywordItem) {
     let SpannedKeywordItem {
         name: _,
-        identifier: _,
         enabled,
         definitions,
     } = item;

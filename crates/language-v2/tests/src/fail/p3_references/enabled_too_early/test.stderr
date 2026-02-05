@@ -1,5 +1,5 @@
 error: Parent scope is only enabled in '2.0.0..3.0.0'.
-  --> src/fail/p3_references/enabled_too_early/test.rs:28:79
+  --> src/fail/p3_references/enabled_too_early/test.rs:29:83
    |
-28 |                     fields = (field_1 = Optional(reference = Three, enabled = From("1.0.0")))
-   |                                                                               ^^^^
+29 |                         fields = (field_1 = Optional(reference = Three, enabled = From("1.0.0")))
+   |                                                                                   ^^^^

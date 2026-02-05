@@ -1,11 +1,11 @@
 error: Item 'Baz1' is not reachable from grammar root.
-  --> src/fail/p4_unreachabe_items/unreachable/test.rs:19:31
+  --> src/fail/p4_unreachabe_items/unreachable/test.rs:20:35
    |
-19 |                 Struct(name = Baz1, fields = (field = Required(Baz2))),
-   |                               ^^^^
+20 |                     Struct(name = Baz1, fields = (field = Required(Baz2))),
+   |                                   ^^^^
 
 error: Item 'Baz2' is not reachable from grammar root.
-  --> src/fail/p4_unreachabe_items/unreachable/test.rs:20:31
+  --> src/fail/p4_unreachabe_items/unreachable/test.rs:21:35
    |
-20 |                 Struct(name = Baz2, fields = (field = Required(Baz1)))
-   |                               ^^^^
+21 |                     Struct(name = Baz2, fields = (field = Required(Baz1)))
+   |                                   ^^^^

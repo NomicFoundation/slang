@@ -6,21 +6,23 @@ language_v2_macros::compile!(Language(
     leading_trivia = Sequence([]),
     trailing_trivia = Sequence([]),
     versions = ["1.0.0"],
-    sections = [Section(
-        title = "Section One",
-        topics = [Topic(
-            title = "Topic One",
-            lexical_context = Foo,
-            items = [
-                Struct(
-                    name = One,
-                    fields = (
-                        field_1 = Optional(reference = Two, enabled = From("3.0.0")),
-                        field_2 = Optional(reference = Two)
-                    )
-                ),
-                Token(name = Two, definitions = [TokenDefinition(Atom("two"))])
-            ]
+    contexts = [LexicalContext(
+        name = Foo,
+        sections = [Section(
+            title = "Section One",
+            topics = [Topic(
+                title = "Topic One",
+                items = [
+                    Struct(
+                        name = One,
+                        fields = (
+                            field_1 = Optional(reference = Two, enabled = From("3.0.0")),
+                            field_2 = Optional(reference = Two)
+                        )
+                    ),
+                    Token(name = Two, definitions = [TokenDefinition(Atom("two"))])
+                ]
+            )]
         )]
     )],
     built_ins = []

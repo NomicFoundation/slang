@@ -4,7 +4,7 @@
 
 ## Lexical Contexts
 
-- Made `Topic::lexical_context` required, instead of creating a "default" context behind the scenes.
+- Group `Section` entries under a new top-level `Language::contexts` field, where each `LexicalContext` defines the `identifier_token` for its keywords (replacing `Keyword::identifier`).
 
 ## Terminals
 

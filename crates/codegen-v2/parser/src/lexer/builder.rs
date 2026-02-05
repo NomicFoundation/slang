@@ -49,11 +49,11 @@ impl LexerModelBuilder {
         // For now, we just collect trivia and duplicate them into all contexts:
         let mut common_trivia = Vec::<Lexeme>::new();
 
-        for topic in language.topics() {
-            let context_name = topic.lexical_context.to_string();
-            let context = non_trivia.entry(context_name).or_default();
+        for context in &language.contexts {
+            let context_name = context.name.to_string();
+            let entry = non_trivia.entry(context_name).or_default();
 
-            for item in &topic.items {
+            for item in context.items() {
                 match item {
                     Item::Struct { .. } => {}
                     Item::Enum { .. } => {}
@@ -62,8 +62,8 @@ impl LexerModelBuilder {
                     Item::Precedence { .. } => {}
 
                     Item::Trivia { item } => common_trivia.push(self.convert_trivia(item)),
-                    Item::Keyword { item } => context.extend(self.convert_keyword(item)),
-                    Item::Token { item } => context.extend(self.convert_token(item)),
+                    Item::Keyword { item } => entry.extend(self.convert_keyword(item)),
+                    Item::Token { item } => entry.extend(self.convert_token(item)),
 
                     Item::Fragment { .. } => {}
                 }

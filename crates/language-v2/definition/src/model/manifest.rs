@@ -27,22 +27,17 @@ pub struct Language {
     /// The supported versions of the language
     pub versions: IndexSet<Version>,
 
-    /// The sections of the language
-    pub sections: Vec<Section>,
+    /// The lexical contexts of the language, splitting grammar elements based on which lexer can recognize their terminals.
+    pub contexts: Vec<LexicalContext>,
 
     /// The built-in contexts
     pub built_ins: Vec<BuiltInContext>,
 }
 
 impl Language {
-    /// Returns every topic in the language definition (across all sections).
-    pub fn topics(&self) -> impl Iterator<Item = &Topic> {
-        self.sections.iter().flat_map(|section| &section.topics)
-    }
-
-    /// Returns every item in the language definition (across all sections and topics).
+    /// Returns every item in the language definition (across all contexts).
     pub fn items(&self) -> impl Iterator<Item = &Item> {
-        self.topics().flat_map(|topic| &topic.items)
+        self.contexts.iter().flat_map(|context| context.items())
     }
 
     /// Collects all versions that change the language in a breaking way.
@@ -170,6 +165,21 @@ impl Language {
 /// A section is a named container for topics, used for organizing the large grammar definition in user documentation.  
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
+pub struct LexicalContext {
+    pub name: Identifier,
+    pub identifier_token: Option<Identifier>,
+    pub sections: Vec<Section>,
+}
+
+impl LexicalContext {
+    /// Returns every item in that context (across all sections).
+    pub fn items(&self) -> impl Iterator<Item = &Item> {
+        self.sections.iter().flat_map(|section| section.items())
+    }
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 pub struct Section {
     pub title: String,
     pub topics: Vec<Topic>,
@@ -187,7 +197,6 @@ impl Section {
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 pub struct Topic {
     pub title: String,
-    pub lexical_context: Identifier,
     pub items: Vec<Item>,
 }
 
