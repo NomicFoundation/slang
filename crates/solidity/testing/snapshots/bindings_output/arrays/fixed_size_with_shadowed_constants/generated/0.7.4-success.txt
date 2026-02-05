@@ -1,0 +1,99 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ uint constant X = 1;
+    │               ┬  
+    │               ╰── name: 1
+  2 │ uint constant Y = X + 3;
+    │               ┬   ┬  
+    │               ╰────── name: 2
+    │                   │  
+    │                   ╰── ref: 1
+    │ 
+  4 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 3
+  5 │     uint constant X = 2; // shadows the global constant
+    │                   ┬  
+    │                   ╰── name: 4
+    │ 
+  7 │     using Lib for uint[4];
+    │           ─┬─  
+    │            ╰─── ref: 7
+  8 │     using Lib for uint[5];
+    │           ─┬─  
+    │            ╰─── ref: 7
+    │ 
+ 10 │     function test() internal {
+    │              ──┬─  
+    │                ╰─── name: 5
+ 11 │         uint[Y] memory x;
+    │              ┬         ┬  
+    │              ╰──────────── ref: 2
+    │                        │  
+    │                        ╰── name: 6
+ 12 │         x.nop(); // should bind to the first definition of nop() only
+    │         ┬ ─┬─  
+    │         ╰────── ref: 6
+    │            │   
+    │            ╰─── refs: 8, 10
+    │ 
+ 16 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 7
+ 17 │     function nop(uint[4] memory self) internal {}
+    │              ─┬─                ──┬─  
+    │               ╰─────────────────────── name: 8
+    │                                   │   
+    │                                   ╰─── name: 9
+ 18 │     function nop(uint[5] memory self) internal {}
+    │              ─┬─                ──┬─  
+    │               ╰─────────────────────── name: 10
+    │                                   │   
+    │                                   ╰─── name: 11
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │         uint constant X = 1;
+    │         ──────────┬──────────  
+    │                   ╰──────────── definiens: 1
+  2 │ │       uint constant Y = X + 3;
+    │ │       ────────────┬────────────  
+    │ │                   ╰────────────── definiens: 2
+  3 │ ╭─────▶ 
+    ┆ ┆       
+  5 │ │           uint constant X = 2; // shadows the global constant
+    │ │       ────────────────────────────┬───────────────────────────  
+    │ │                                   ╰───────────────────────────── definiens: 4
+    ┆ ┆       
+  9 │ │ ╭───▶ 
+    ┆ ┆ ┆     
+ 11 │ │ │             uint[Y] memory x;
+    │ │ │     ─────────────┬────────────  
+    │ │ │                  ╰────────────── definiens: 6
+    ┆ ┆ ┆     
+ 13 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 5
+ 14 │ ├───│ ▶ }
+    │ │   │       
+    │ ╰─────────── definiens: 3
+ 15 │     ╭─▶ 
+    ┆     ┆   
+ 17 │     │       function nop(uint[4] memory self) internal {}
+    │     │   ─────────────────────────┬┬───────────────────────  
+    │     │                            ╰────────────────────────── definiens: 8
+    │     │                             │                         
+    │     │                             ╰───────────────────────── definiens: 9
+ 18 │     │       function nop(uint[5] memory self) internal {}
+    │     │   ─────────────────────────┬┬───────────────────────  
+    │     │                            ╰────────────────────────── definiens: 10
+    │     │                             │                         
+    │     │                             ╰───────────────────────── definiens: 11
+ 19 │     ├─▶ }
+    │     │       
+    │     ╰─────── definiens: 7
+────╯
