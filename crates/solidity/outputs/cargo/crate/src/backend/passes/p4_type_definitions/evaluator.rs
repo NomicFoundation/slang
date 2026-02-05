@@ -8,23 +8,25 @@ use num_traits::Num;
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
 use crate::cst::{TerminalKind, TerminalNode};
 
-pub(crate) fn evaluate_fixed_array_size(
+pub(crate) fn evaluate_fixed_array_size<Scope>(
     expression: &input_ir::Expression,
-    identifier_resolver: &dyn ConstantIdentifierResolver,
+    start_scope: Scope,
+    identifier_resolver: &dyn ConstantIdentifierResolver<Scope>,
 ) -> Option<usize> {
-    evaluate_compile_time_constant(expression, identifier_resolver)
+    evaluate_compile_time_constant(expression, start_scope, identifier_resolver)
         .and_then(|value| value.as_usize())
 }
 
-fn evaluate_compile_time_constant(
+fn evaluate_compile_time_constant<Scope>(
     expression: &input_ir::Expression,
-    identifier_resolver: &dyn ConstantIdentifierResolver,
+    start_scope: Scope,
+    identifier_resolver: &dyn ConstantIdentifierResolver<Scope>,
 ) -> Option<ConstantValue> {
     let mut evaluator = CompileConstantEvaluator {
         identifier_resolver,
-        depth: 0,
+        scope_stack: Vec::new(),
     };
-    evaluator.evaluate_expression(expression)
+    evaluator.evaluate_expression_in_scope(expression, start_scope)
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -39,16 +41,43 @@ impl ConstantValue {
     }
 }
 
-pub(crate) trait ConstantIdentifierResolver {
-    fn resolve_identifier(&self, identifier: &str) -> Option<input_ir::Expression>;
+pub(crate) trait ConstantIdentifierResolver<Scope> {
+    /// Resolve an identifier to a constant in the given context, returning the
+    /// value expression of the constant and the scope in which the value
+    /// expression should be resolved. Returns `None` if the identifier cannot
+    /// be resolved to a constant.
+    fn resolve_identifier_in_scope(
+        &self,
+        identifier: &str,
+        scope: &Scope,
+    ) -> Option<(input_ir::Expression, Scope)>;
 }
 
-struct CompileConstantEvaluator<'a> {
-    identifier_resolver: &'a dyn ConstantIdentifierResolver,
-    depth: usize,
+struct CompileConstantEvaluator<'a, Scope> {
+    identifier_resolver: &'a dyn ConstantIdentifierResolver<Scope>,
+    scope_stack: Vec<Scope>,
 }
 
-impl CompileConstantEvaluator<'_> {
+impl<Scope> CompileConstantEvaluator<'_, Scope> {
+    const MAX_SCOPE_DEPTH: usize = 10;
+
+    fn evaluate_expression_in_scope(
+        &mut self,
+        expression: &input_ir::Expression,
+        scope: Scope,
+    ) -> Option<ConstantValue> {
+        if self.scope_stack.len() >= Self::MAX_SCOPE_DEPTH {
+            // TODO(validation): cyclic dependency in constant resolution or max depth reached
+            return None;
+        }
+        self.scope_stack.push(scope);
+        let result = self.evaluate_expression(expression);
+        self.scope_stack
+            .pop()
+            .expect("scope stack should not be empty");
+        result
+    }
+
     fn evaluate_expression(&mut self, expression: &input_ir::Expression) -> Option<ConstantValue> {
         match expression {
             input_ir::Expression::BitwiseOrExpression(bitwise_or_expression) => {
@@ -259,27 +288,12 @@ impl CompileConstantEvaluator<'_> {
         BigInt::from_str(&decimal).ok().map(ConstantValue::Integer)
     }
 
-    const MAX_RESOLUTION_DEPTH: usize = 10;
-
-    fn evaluate_expression_recursively(
-        &mut self,
-        expression: &input_ir::Expression,
-    ) -> Option<ConstantValue> {
-        self.depth += 1;
-        if self.depth >= Self::MAX_RESOLUTION_DEPTH {
-            // TODO(validation): cyclic dependency in constant resolution or max depth reached
-            return None;
-        }
-        let result = self.evaluate_expression(expression);
-        self.depth -= 1;
-        result
-    }
-
     fn evaluate_identifier(&mut self, identifier: &Rc<TerminalNode>) -> Option<ConstantValue> {
-        let target_expression = self
+        let current_scope = self.scope_stack.last().expect("scope stack is empty");
+        let (target_expression, target_scope) = self
             .identifier_resolver
-            .resolve_identifier(&identifier.unparse())?;
-        self.evaluate_expression_recursively(&target_expression)
+            .resolve_identifier_in_scope(&identifier.unparse(), current_scope)?;
+        self.evaluate_expression_in_scope(&target_expression, target_scope)
     }
 
     fn evaluate_tuple_expression(
@@ -314,9 +328,13 @@ mod tests {
     struct MapResolver {
         context: HashMap<String, input_ir::Expression>,
     }
-    impl ConstantIdentifierResolver for MapResolver {
-        fn resolve_identifier(&self, identifier: &str) -> Option<input_ir::Expression> {
-            self.context.get(identifier).cloned()
+    impl ConstantIdentifierResolver<()> for MapResolver {
+        fn resolve_identifier_in_scope(
+            &self,
+            identifier: &str,
+            (): &(),
+        ) -> Option<(input_ir::Expression, ())> {
+            self.context.get(identifier).map(|expr| (expr.clone(), ()))
         }
     }
 
@@ -329,7 +347,7 @@ mod tests {
 
     fn eval_string_in_version(input: &str, version: &Version) -> Option<ConstantValue> {
         let ir2 = parse_string_in_version(input, version)?;
-        evaluate_compile_time_constant(&ir2, &MapResolver::default())
+        evaluate_compile_time_constant(&ir2, (), &MapResolver::default())
     }
 
     fn eval_string(input: &str) -> Option<ConstantValue> {
@@ -347,7 +365,7 @@ mod tests {
             .collect();
         let ir2 = parse_string_in_version(input, version)?;
 
-        evaluate_compile_time_constant(&ir2, &MapResolver { context })
+        evaluate_compile_time_constant(&ir2, (), &MapResolver { context })
     }
 
     #[test]

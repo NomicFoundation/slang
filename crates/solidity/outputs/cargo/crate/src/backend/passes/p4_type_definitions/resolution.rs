@@ -2,9 +2,7 @@ use std::rc::Rc;
 
 use super::evaluator::{evaluate_fixed_array_size, ConstantIdentifierResolver};
 use super::Pass;
-use crate::backend::binder::{
-    Binder, Definition, ImportDefinition, Reference, Resolution, ScopeId,
-};
+use crate::backend::binder::{Definition, ImportDefinition, Reference, Resolution, ScopeId};
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
 use crate::backend::types::{DataLocation, FunctionType, Type, TypeId};
 
@@ -97,16 +95,15 @@ impl Pass<'_> {
                     self.resolve_type_name(&array_type_name.operand, Some(data_location))
                         .map(|element_type| {
                             if let Some(size_expression) = &array_type_name.index {
-                                let resolver = ConstantResolver {
-                                    binder: self.binder,
-                                    scope_id: self.current_contract_or_file_scope_id(),
-                                };
-
                                 // TODO(validation): if the size of the array
                                 // cannot be evaluated, it's not a compile-time
                                 // constant
-                                let size = evaluate_fixed_array_size(size_expression, &resolver)
-                                    .unwrap_or_default();
+                                let size = evaluate_fixed_array_size(
+                                    size_expression,
+                                    self.current_contract_or_file_scope_id(),
+                                    self,
+                                )
+                                .unwrap_or_default();
                                 self.types.register_type(Type::FixedSizeArray {
                                     element_type,
                                     size,
@@ -196,17 +193,20 @@ impl Pass<'_> {
     }
 }
 
-struct ConstantResolver<'a> {
-    binder: &'a Binder,
-    scope_id: ScopeId,
-}
-
-impl ConstantIdentifierResolver for ConstantResolver<'_> {
-    fn resolve_identifier(&self, identifier: &str) -> Option<input_ir::Expression> {
-        let resolution = self.binder.resolve_in_scope(self.scope_id, identifier);
+impl ConstantIdentifierResolver<ScopeId> for Pass<'_> {
+    fn resolve_identifier_in_scope(
+        &self,
+        identifier: &str,
+        scope_id: &ScopeId,
+    ) -> Option<(input_ir::Expression, ScopeId)> {
+        let resolution = self.binder.resolve_in_scope(*scope_id, identifier);
         let definition_id = resolution.as_definition_id()?;
         match self.binder.find_definition_by_id(definition_id)? {
-            Definition::Constant(constant_definition) => constant_definition.ir_node.value.clone(),
+            Definition::Constant(constant_definition) => constant_definition
+                .ir_node
+                .value
+                .as_ref()
+                .map(|value| (value.clone(), *scope_id)),
             _ => None,
         }
     }
