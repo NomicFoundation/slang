@@ -14,7 +14,7 @@ pub struct ParserOptions {
     pub pubb: bool,
 
     /// Verbatim code to insert into the parser rule.
-    /// 
+    ///
     /// Helpful to solve complex parsing situations.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub verbatim: Option<String>,
