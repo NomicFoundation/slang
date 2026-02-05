@@ -1,13 +1,15 @@
+use std::cmp::Ordering;
 use std::ops::Div;
 
 use sha3::{Digest, Keccak256};
 
 use super::binder::Definition;
 use super::ir::ast::{
-    ContractDefinitionStruct, FunctionDefinitionStruct, FunctionKind, FunctionMutability,
-    FunctionVisibility, ParametersStruct, StateVariableDefinitionStruct, StateVariableMutability,
-    StateVariableVisibility,
+    ContractDefinitionStruct, ErrorDefinitionStruct, EventDefinitionStruct,
+    FunctionDefinitionStruct, FunctionMutability, FunctionVisibility, ParametersStruct,
+    StateVariableDefinitionStruct, StateVariableMutability, StateVariableVisibility,
 };
+use super::ir::ir2_flat_contracts as input_ir;
 use super::types::{Type, TypeId};
 use super::SemanticAnalysis;
 use crate::cst::NodeId;
@@ -20,10 +22,38 @@ pub struct ContractAbi {
     pub storage_layout: Vec<StorageItem>,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq, PartialOrd, Ord)]
+pub enum AbiType {
+    Constructor,
+    Error,
+    Event,
+    Fallback,
+    Function,
+    Receive,
+}
+
+impl TryFrom<&input_ir::FunctionKind> for AbiType {
+    type Error = &'static str;
+
+    fn try_from(
+        value: &input_ir::FunctionKind,
+    ) -> Result<Self, <AbiType as TryFrom<&input_ir::FunctionKind>>::Error> {
+        match value {
+            input_ir::FunctionKind::Regular => Ok(Self::Function),
+            input_ir::FunctionKind::Constructor => Ok(Self::Constructor),
+            input_ir::FunctionKind::Unnamed | input_ir::FunctionKind::Fallback => {
+                Ok(Self::Fallback)
+            }
+            input_ir::FunctionKind::Receive => Ok(Self::Receive),
+            input_ir::FunctionKind::Modifier => Err("modifiers are not part of the ABI"),
+        }
+    }
+}
+
 pub struct FunctionAbi {
     pub node_id: NodeId,
     pub name: Option<String>,
-    pub kind: FunctionKind,
+    pub r#type: AbiType,
     pub inputs: Vec<FunctionParameter>,
     pub outputs: Vec<FunctionParameter>,
     pub state_mutability: FunctionMutability,
@@ -75,8 +105,17 @@ impl ContractDefinitionStruct {
                 functions.push(state_variable.compute_abi()?);
             }
         }
+        for error in &self.compute_linearised_errors() {
+            functions.push(error.compute_abi()?);
+        }
+        for event in &self.compute_linearised_events() {
+            functions.push(event.compute_abi()?);
+        }
 
-        functions.sort_by(|a, b| a.name.cmp(&b.name));
+        functions.sort_by(|a, b| match a.r#type.cmp(&b.r#type) {
+            Ordering::Equal => a.name.cmp(&b.name),
+            other => other,
+        });
         Some(functions)
     }
 
@@ -147,7 +186,7 @@ impl FunctionDefinitionStruct {
         Some(FunctionAbi {
             node_id: self.ir_node.node_id,
             name: self.ir_node.name.as_ref().map(|name| name.unparse()),
-            kind: self.kind(),
+            r#type: (&self.ir_node.kind).try_into().ok()?,
             inputs,
             outputs,
             state_mutability: self.mutability(),
@@ -226,7 +265,7 @@ impl StateVariableDefinitionStruct {
         Some(FunctionAbi {
             node_id: self.ir_node.node_id,
             name: Some(self.ir_node.name.unparse()),
-            kind: FunctionKind::Regular,
+            r#type: AbiType::Function,
             inputs,
             outputs,
             state_mutability: FunctionMutability::View,
@@ -286,4 +325,34 @@ fn selector_from_signature(signature: &str) -> u32 {
 
     let selector_bytes: [u8; 4] = result[0..4].try_into().unwrap();
     u32::from_be_bytes(selector_bytes)
+}
+
+impl ErrorDefinitionStruct {
+    pub fn compute_abi(&self) -> Option<FunctionAbi> {
+        let inputs = self.parameters().compute_abi()?;
+
+        Some(FunctionAbi {
+            node_id: self.ir_node.node_id,
+            name: Some(self.ir_node.name.unparse()),
+            r#type: AbiType::Error,
+            inputs,
+            outputs: Vec::new(),
+            state_mutability: FunctionMutability::Pure,
+        })
+    }
+}
+
+impl EventDefinitionStruct {
+    pub fn compute_abi(&self) -> Option<FunctionAbi> {
+        let inputs = self.parameters().compute_abi()?;
+
+        Some(FunctionAbi {
+            node_id: self.ir_node.node_id,
+            name: Some(self.ir_node.name.unparse()),
+            r#type: AbiType::Event,
+            inputs,
+            outputs: Vec::new(),
+            state_mutability: FunctionMutability::Pure,
+        })
+    }
 }

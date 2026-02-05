@@ -1,5 +1,5 @@
 use anyhow::Result;
-use slang_solidity::backend::semantic::ast::FunctionKind;
+use slang_solidity::backend::abi::{AbiType, FunctionAbi};
 
 use crate::backend::fixtures;
 
@@ -16,40 +16,40 @@ fn test_get_contracts_abi() -> Result<()> {
 
     let functions = &contracts[0].functions;
 
-    assert!(matches!(functions[0].kind, FunctionKind::Constructor));
+    assert!(matches!(functions[0].r#type, AbiType::Constructor));
     assert!(functions[0].name.is_none());
 
-    assert!(matches!(functions[1].kind, FunctionKind::Regular));
+    assert!(matches!(functions[1].r#type, AbiType::Function));
     assert!(functions[1]
         .name
         .as_ref()
         .is_some_and(|name| name == "click"));
 
-    assert!(matches!(functions[2].kind, FunctionKind::Regular));
+    assert!(matches!(functions[2].r#type, AbiType::Function));
     assert!(functions[2]
         .name
         .as_ref()
         .is_some_and(|name| name == "count"));
 
-    assert!(matches!(functions[3].kind, FunctionKind::Regular));
+    assert!(matches!(functions[3].r#type, AbiType::Function));
     assert!(functions[3]
         .name
         .as_ref()
         .is_some_and(|name| name == "disable"));
 
-    assert!(matches!(functions[4].kind, FunctionKind::Regular));
+    assert!(matches!(functions[4].r#type, AbiType::Function));
     assert!(functions[4]
         .name
         .as_ref()
         .is_some_and(|name| name == "enable"));
 
-    assert!(matches!(functions[5].kind, FunctionKind::Regular));
+    assert!(matches!(functions[5].r#type, AbiType::Function));
     assert!(functions[5]
         .name
         .as_ref()
         .is_some_and(|name| name == "increment"));
 
-    assert!(matches!(functions[6].kind, FunctionKind::Regular));
+    assert!(matches!(functions[6].r#type, AbiType::Function));
     assert!(functions[6]
         .name
         .as_ref()
@@ -140,6 +140,53 @@ fn test_function_selector() -> Result<()> {
     assert_eq!(state_variables[1].compute_selector(), None); // _state
     assert_eq!(state_variables[2].compute_selector(), Some(0x0666_1abd_u32)); // count()
     assert_eq!(state_variables[3].compute_selector(), None); // _clickers
+
+    Ok(())
+}
+
+#[test]
+fn test_full_abi_with_events_and_errors() -> Result<()> {
+    let compilation_unit = fixtures::FullAbi::build_compilation_unit()?;
+    let semantic_analysis = compilation_unit.semantic_analysis();
+
+    let contracts_abi = semantic_analysis.get_contracts_abi();
+    assert_eq!(contracts_abi.len(), 1);
+    assert_eq!(contracts_abi[0].name, "Test");
+
+    let abi = &contracts_abi[0].functions;
+    assert_eq!(abi.len(), 7);
+
+    assert!(matches!(abi[0], FunctionAbi { r#type, .. } if r#type == AbiType::Constructor));
+    assert!(matches!(
+        abi[1],
+        FunctionAbi { r#type, ref name, .. } if r#type == AbiType::Error
+            && name.as_ref().is_some_and(|name| name  == "InsufficientBalance"),
+    ));
+    assert!(matches!(
+        abi[2],
+        FunctionAbi { r#type, ref name, .. } if r#type == AbiType::Error
+            && name.as_ref().is_some_and(|name| name  == "SomethingWrong"),
+    ));
+    assert!(matches!(
+        abi[3],
+        FunctionAbi { r#type, ref name, .. } if r#type == AbiType::Event
+            && name.as_ref().is_some_and(|name| name == "BaseEvent"),
+    ));
+    assert!(matches!(
+        abi[4],
+        FunctionAbi { r#type, ref name, .. } if r#type == AbiType::Event
+            && name.as_ref().is_some_and(|name| name == "Event"),
+    ));
+    assert!(matches!(
+        abi[5],
+        FunctionAbi { r#type, ref name, .. } if r#type == AbiType::Function
+            && name.as_ref().is_some_and(|name| name == "b"),
+    ));
+    assert!(matches!(
+        abi[6],
+        FunctionAbi { r#type, ref name, .. } if r#type == AbiType::Function
+            && name.as_ref().is_some_and(|name| name == "foo"),
+    ));
 
     Ok(())
 }
