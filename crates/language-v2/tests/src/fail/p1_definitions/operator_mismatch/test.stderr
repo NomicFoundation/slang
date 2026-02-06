@@ -1,5 +1,5 @@
 error: All operators under the same expression must have the same model and type.
-  --> src/fail/p1_definitions/operator_mismatch/test.rs:18:32
+  --> src/fail/p1_definitions/operator_mismatch/test.rs:19:36
    |
-18 |                         name = Foo,
-   |                                ^^^
+19 | ...                   name = Foo,
+   |                              ^^^

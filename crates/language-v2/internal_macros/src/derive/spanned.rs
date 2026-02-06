@@ -127,6 +127,7 @@ fn get_spanned_type(input: Type) -> Type {
         | "KeywordDefinition"
         | "KeywordItem"
         | "KeywordValue"
+        | "LexicalContext"
         | "PrecedenceExpression"
         | "PrecedenceItem"
         | "PrecedenceOperator"

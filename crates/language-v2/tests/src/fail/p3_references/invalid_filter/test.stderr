@@ -1,5 +1,5 @@
 error: Reference 'Baz' of kind 'Fragment' is not valid. Expected: [Struct, Enum, Repeated, Separated, Precedence, Keyword, Token]
-  --> src/fail/p3_references/invalid_filter/test.rs:15:63
+  --> src/fail/p3_references/invalid_filter/test.rs:16:67
    |
-15 |                 Struct(name = Bar, fields = (field = Required(Baz))),
-   |                                                               ^^^
+16 |                     Struct(name = Bar, fields = (field = Required(Baz))),
+   |                                                                   ^^^

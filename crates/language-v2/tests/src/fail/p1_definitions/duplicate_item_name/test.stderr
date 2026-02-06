@@ -1,5 +1,5 @@
 error: An item with the name 'Bar1' already exists.
-  --> src/fail/p1_definitions/duplicate_item_name/test.rs:16:31
+  --> src/fail/p1_definitions/duplicate_item_name/test.rs:17:35
    |
-16 |                 Struct(name = Bar1, fields = (field = Required(Bar2))),
-   |                               ^^^^
+17 |                     Struct(name = Bar1, fields = (field = Required(Bar2))),
+   |                                   ^^^^

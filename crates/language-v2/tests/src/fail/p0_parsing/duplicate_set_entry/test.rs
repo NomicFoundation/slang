@@ -6,14 +6,16 @@ language_v2_macros::compile!(Language(
     leading_trivia = Sequence([]),
     trailing_trivia = Sequence([]),
     versions = ["1.0.0", "1.0.0", "3.0.0"],
-    sections = [Section(
-        title = "Section One",
-        topics = [Topic(
-            title = "Topic One",
-            lexical_context = Foo,
-            items = [Token(
-                name = Bar,
-                definitions = [TokenDefinition(Atom("bar"))]
+    contexts = [LexicalContext(
+        name = Foo,
+        sections = [Section(
+            title = "Section One",
+            topics = [Topic(
+                title = "Topic One",
+                items = [Token(
+                    name = Bar,
+                    definitions = [TokenDefinition(Atom("bar"))]
+                )]
             )]
         )]
     )],

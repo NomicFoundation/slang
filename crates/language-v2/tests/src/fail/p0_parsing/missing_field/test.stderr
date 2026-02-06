@@ -1,5 +1,5 @@
 error: Expected field: 'title'.
-  --> src/fail/p0_parsing/missing_field/test.rs:11:9
+  --> src/fail/p0_parsing/missing_field/test.rs:13:13
    |
-11 |         topics = []
-   |         ^^^^^^
+13 |             topics = []
+   |             ^^^^^^

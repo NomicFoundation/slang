@@ -66,8 +66,9 @@ impl Analysis {
 
 impl SpannedLanguage {
     fn items(&self) -> impl Iterator<Item = &SpannedItem> {
-        self.sections
+        self.contexts
             .iter()
+            .flat_map(|context| &context.sections)
             .flat_map(|section| &section.topics)
             .flat_map(|topic| &topic.items)
     }

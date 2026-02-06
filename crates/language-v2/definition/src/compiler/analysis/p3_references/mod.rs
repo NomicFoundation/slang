@@ -296,15 +296,12 @@ fn check_trivia(analysis: &mut Analysis, item: &SpannedTriviaItem, enablement: &
 
 fn check_keyword(analysis: &mut Analysis, item: &SpannedKeywordItem, enablement: &VersionSet) {
     let SpannedKeywordItem {
-        name,
-        identifier,
+        name: _,
         enabled,
         definitions: _,
     } = item;
 
-    let enablement = update_enablement(analysis, enablement, enabled.as_ref());
-
-    check_reference(analysis, Some(name), identifier, &enablement, &[Token]);
+    let _ = update_enablement(analysis, enablement, enabled.as_ref());
 }
 
 fn check_token(analysis: &mut Analysis, item: &SpannedTokenItem, enablement: &VersionSet) {
