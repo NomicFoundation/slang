@@ -62,7 +62,9 @@ impl LexerModelBuilder {
                     Item::Precedence { .. } => {}
 
                     Item::Trivia { item } => common_trivia.push(self.convert_trivia(item)),
-                    Item::Keyword { item } => entry.extend(self.convert_keyword(item)),
+                    Item::Keyword { item } => {
+                        entry.extend(self.convert_keyword(item, context.identifier_token.as_ref()));
+                    }
                     Item::Token { item } => entry.extend(self.convert_token(item)),
 
                     Item::Fragment { .. } => {}
@@ -128,9 +130,14 @@ impl LexerModelBuilder {
         }
     }
 
-    fn convert_keyword<'a>(&'a self, item: &'a KeywordItem) -> impl Iterator<Item = Lexeme> + 'a {
-        item.definitions.iter().map(|def| Lexeme::Keyword {
+    fn convert_keyword<'a>(
+        &'a self,
+        item: &'a KeywordItem,
+        identifier: Option<&'a Identifier>,
+    ) -> impl Iterator<Item = Lexeme> + 'a {
+        item.definitions.iter().map(move |def| Lexeme::Keyword {
             kind: item.name.to_string(),
+            identifier: identifier.map(|id| id.to_string()),
             regex: self.convert_keyword_value(&def.value),
             reserved: def.reserved.clone().unwrap_or_default(),
         })

@@ -1,0 +1,4180 @@
+// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+use crate::lexer::lexemes;
+use slang_solidity_v2_cst::structured_cst::nodes::*;
+use crate::parser::nodes::*;
+
+grammar<'source>(source: &'source str);
+
+Sep<S, T>: Vec<T> = {
+    => vec![],
+    SepOne<S, T> => <>,
+};
+
+SepOne<S, T>: Vec<T> = {
+    <e:T> => {
+        vec![e]
+    },
+    <mut v: SepOne<S, T>> S <e: T> => {
+        v.push(e);
+        v
+    },
+};
+
+#[inline]
+Rep<T>: Vec<T> = {
+    => vec![],
+    RepOne<T> => <>,
+};
+
+RepOne<T>: Vec<T> = {
+    <T> => {
+        vec![<>]
+    },
+    <mut v: RepOne<T>> <e: T> => {
+        v.push(e);
+        v
+    },
+};
+
+// Rules for section Pragma
+
+// Rules for topic Pragma Directives
+    Pragma: Pragma = {
+        <_VersionPragma: VersionPragma>  => new_pragma_version_pragma(<>),
+        <_AbicoderPragma: AbicoderPragma>  => new_pragma_abicoder_pragma(<>),
+        <_ExperimentalPragma: ExperimentalPragma>  => new_pragma_experimental_pragma(<>),
+        
+    };
+    AbicoderPragma: AbicoderPragma = {
+        <_abicoder_keyword: AbicoderKeyword>  <_version: AbicoderVersion>  => new_abicoder_pragma(<>),
+        
+    };
+    ExperimentalPragma: ExperimentalPragma = {
+        <_experimental_keyword: ExperimentalKeyword>  <_feature: ExperimentalFeature>  => new_experimental_pragma(<>),
+        
+    };
+    AbicoderVersion: AbicoderVersion = {
+        <_AbicoderV1Keyword: AbicoderV1Keyword>  => new_abicoder_version_abicoder_v1_keyword(<>),
+        <_AbicoderV2Keyword: AbicoderV2Keyword>  => new_abicoder_version_abicoder_v2_keyword(<>),
+        
+    };
+    ExperimentalFeature: ExperimentalFeature = {
+        <_ABIEncoderV2Keyword: ABIEncoderV2Keyword>  => new_experimental_feature_abi_encoder_v2_keyword(<>),
+        <_SMTCheckerKeyword: SMTCheckerKeyword>  => new_experimental_feature_smt_checker_keyword(<>),
+        <_StringLiteral: StringLiteral>  => new_experimental_feature_string_literal(<>),
+        
+    };
+    VersionPragma: VersionPragma = {
+        <_solidity_keyword: SolidityKeyword>  <_sets: VersionExpressionSets>  => new_version_pragma(<>),
+        
+    };
+    VersionExpressionSets: VersionExpressionSets = {
+        <_VersionExpressionSet: SepOne<BarBar, <VersionExpressionSet>>>  => new_version_expression_sets(<>),
+        
+    };
+    VersionExpressionSet: VersionExpressionSet = {
+        <_VersionExpression: RepOne<<VersionExpression>>>  => new_version_expression_set(<>),
+        
+    };
+    VersionExpression: VersionExpression = {
+        <_VersionRange: VersionRange>  => new_version_expression_version_range(<>),
+        <_VersionTerm: VersionTerm>  => new_version_expression_version_term(<>),
+        
+    };
+    VersionRange: VersionRange = {
+        <_start: VersionLiteral>  <_minus: Minus>  <_end: VersionLiteral>  => new_version_range(<>),
+        
+    };
+    VersionTerm: VersionTerm = {
+        <_operator: (VersionOperator)?>  <_literal: VersionLiteral>  => new_version_term(<>),
+        
+    };
+    VersionOperator: VersionOperator = {
+        <_Caret: Caret>  => new_version_operator_caret(<>),
+        <_Tilde: Tilde>  => new_version_operator_tilde(<>),
+        <_Equal: Equal>  => new_version_operator_equal(<>),
+        <_LessThan: LessThan>  => new_version_operator_less_than(<>),
+        <_GreaterThan: GreaterThan>  => new_version_operator_greater_than(<>),
+        <_LessThanEqual: LessThanEqual>  => new_version_operator_less_than_equal(<>),
+        <_GreaterThanEqual: GreaterThanEqual>  => new_version_operator_greater_than_equal(<>),
+        
+    };
+    VersionLiteral: VersionLiteral = {
+        <_SimpleVersionLiteral: SimpleVersionLiteral>  => new_version_literal_simple_version_literal(<>),
+        <_SingleQuotedVersionLiteral: SingleQuotedVersionLiteral>  => new_version_literal_single_quoted_version_literal(<>),
+        <_DoubleQuotedVersionLiteral: DoubleQuotedVersionLiteral>  => new_version_literal_double_quoted_version_literal(<>),
+        
+    };
+    SimpleVersionLiteral: SimpleVersionLiteral = {
+        <_VersionSpecifier: SepOne<Period, <VersionSpecifier>>>  => new_simple_version_literal(<>),
+        
+    };
+    
+
+// Rules for topic Pragma Keywords
+    
+
+
+
+
+// Rules for section File Structure
+
+// Rules for topic Source Unit
+    pub SourceUnit: SourceUnit = {
+        <_members: SourceUnitMembers>  => new_source_unit(<>),
+        
+    };
+    SourceUnitMembers: SourceUnitMembers = {
+        <_SourceUnitMember: Rep<<SourceUnitMember>>>  => new_source_unit_members(<>),
+        
+    };
+    SourceUnitMember: SourceUnitMember = {
+        <_PragmaDirective: PragmaDirective>  => new_source_unit_member_pragma_directive(<>),
+        <_ImportDirective: ImportDirective>  => new_source_unit_member_import_directive(<>),
+        <_ContractDefinition: ContractDefinition>  => new_source_unit_member_contract_definition(<>),
+        <_InterfaceDefinition: InterfaceDefinition>  => new_source_unit_member_interface_definition(<>),
+        <_LibraryDefinition: LibraryDefinition>  => new_source_unit_member_library_definition(<>),
+        <_StructDefinition: StructDefinition>  => new_source_unit_member_struct_definition(<>),
+        <_EnumDefinition: EnumDefinition>  => new_source_unit_member_enum_definition(<>),
+        <_FunctionDefinition: FunctionDefinition>  => new_source_unit_member_function_definition(<>),
+        <_ErrorDefinition: ErrorDefinition>  => new_source_unit_member_error_definition(<>),
+        <_UserDefinedValueTypeDefinition: UserDefinedValueTypeDefinition>  => new_source_unit_member_user_defined_value_type_definition(<>),
+        <_UsingDirective: UsingDirective>  => new_source_unit_member_using_directive(<>),
+        <_EventDefinition: EventDefinition>  => new_source_unit_member_event_definition(<>),
+        <_ConstantDefinition: ConstantDefinition>  => new_source_unit_member_constant_definition(<>),
+        
+    };
+    
+    
+PragmaDirective: PragmaDirective = {
+    <_pragma_keyword: PragmaKeyword>  ! <_semicolon: Semicolon>  => {
+    let abicoder = new_pragma_abicoder_pragma(new_abicoder_pragma(new_abicoder_keyword(0..0, source), new_abicoder_version_abicoder_v1_keyword(new_abicoder_v1_keyword(0..0, source))));
+    new_pragma_directive(_pragma_keyword, abicoder , _semicolon)
+    }
+};
+
+    ImportDirective: ImportDirective = {
+        <_import_keyword: ImportKeyword>  <_clause: ImportClause>  <_semicolon: Semicolon>  => new_import_directive(<>),
+        
+    };
+    UsingDirective: UsingDirective = {
+        <_using_keyword: UsingKeyword>  <_clause: UsingClause>  <_for_keyword: ForKeyword>  <_target: UsingTarget>  <_global_keyword: (GlobalKeyword)?>  <_semicolon: Semicolon>  => new_using_directive(<>),
+        
+    };
+    
+
+// Rules for topic Import Directives
+    ImportClause: ImportClause = {
+        <_PathImport: PathImport>  => new_import_clause_path_import(<>),
+        <_NamedImport: NamedImport>  => new_import_clause_named_import(<>),
+        <_ImportDeconstruction: ImportDeconstruction>  => new_import_clause_import_deconstruction(<>),
+        
+    };
+    PathImport: PathImport = {
+        <_path: StringLiteral>  <_alias: (ImportAlias)?>  => new_path_import(<>),
+        
+    };
+    NamedImport: NamedImport = {
+        <_asterisk: Asterisk>  <_alias: ImportAlias>  <_from_keyword: FromKeyword>  <_path: StringLiteral>  => new_named_import(<>),
+        
+    };
+    ImportDeconstruction: ImportDeconstruction = {
+        <_open_brace: OpenBrace>  <_symbols: ImportDeconstructionSymbols>  <_close_brace: CloseBrace>  <_from_keyword: FromKeyword>  <_path: StringLiteral>  => new_import_deconstruction(<>),
+        
+    };
+    ImportDeconstructionSymbols: ImportDeconstructionSymbols = {
+        <_ImportDeconstructionSymbol: SepOne<Comma, <ImportDeconstructionSymbol>>>  => new_import_deconstruction_symbols(<>),
+        
+    };
+    ImportDeconstructionSymbol: ImportDeconstructionSymbol = {
+        <_name: Identifier>  <_alias: (ImportAlias)?>  => new_import_deconstruction_symbol(<>),
+        
+    };
+    ImportAlias: ImportAlias = {
+        <_as_keyword: AsKeyword>  <_identifier: Identifier>  => new_import_alias(<>),
+        
+    };
+    
+
+// Rules for topic Using Directives
+    UsingClause: UsingClause = {
+        <_IdentifierPath: IdentifierPath>  => new_using_clause_identifier_path(<>),
+        <_UsingDeconstruction: UsingDeconstruction>  => new_using_clause_using_deconstruction(<>),
+        
+    };
+    UsingDeconstruction: UsingDeconstruction = {
+        <_open_brace: OpenBrace>  <_symbols: UsingDeconstructionSymbols>  <_close_brace: CloseBrace>  => new_using_deconstruction(<>),
+        
+    };
+    UsingDeconstructionSymbols: UsingDeconstructionSymbols = {
+        <_UsingDeconstructionSymbol: SepOne<Comma, <UsingDeconstructionSymbol>>>  => new_using_deconstruction_symbols(<>),
+        
+    };
+    UsingDeconstructionSymbol: UsingDeconstructionSymbol = {
+        <_name: IdentifierPath>  <_alias: (UsingAlias)?>  => new_using_deconstruction_symbol(<>),
+        
+    };
+    UsingAlias: UsingAlias = {
+        <_as_keyword: AsKeyword>  <_operator: UsingOperator>  => new_using_alias(<>),
+        
+    };
+    UsingOperator: UsingOperator = {
+        <_Ampersand: Ampersand>  => new_using_operator_ampersand(<>),
+        <_Asterisk: Asterisk>  => new_using_operator_asterisk(<>),
+        <_BangEqual: BangEqual>  => new_using_operator_bang_equal(<>),
+        <_Bar: Bar>  => new_using_operator_bar(<>),
+        <_Caret: Caret>  => new_using_operator_caret(<>),
+        <_EqualEqual: EqualEqual>  => new_using_operator_equal_equal(<>),
+        <_GreaterThan: GreaterThan>  => new_using_operator_greater_than(<>),
+        <_GreaterThanEqual: GreaterThanEqual>  => new_using_operator_greater_than_equal(<>),
+        <_LessThan: LessThan>  => new_using_operator_less_than(<>),
+        <_LessThanEqual: LessThanEqual>  => new_using_operator_less_than_equal(<>),
+        <_Minus: Minus>  => new_using_operator_minus(<>),
+        <_Percent: Percent>  => new_using_operator_percent(<>),
+        <_Plus: Plus>  => new_using_operator_plus(<>),
+        <_Slash: Slash>  => new_using_operator_slash(<>),
+        <_Tilde: Tilde>  => new_using_operator_tilde(<>),
+        
+    };
+    UsingTarget: UsingTarget = {
+        <_TypeName: TypeName>  => new_using_target_type_name(<>),
+        <_Asterisk: Asterisk>  => new_using_target_asterisk(<>),
+        
+    };
+    
+
+// Rules for topic Trivia
+    
+
+// Rules for topic Keywords
+    
+
+// Rules for topic Punctuation
+    
+
+
+
+
+// Rules for section Definitions
+
+// Rules for topic Contracts
+    
+    
+// Contracts are syntactically complex (for an LR parser) since the storage layout specifier
+// has a trailing expression, which can have a trailing option call (`{ ... }`), which conflicts
+// with the contract members block.
+//
+// In order to solve this we use a trailing expression that captures both the expression and the members,
+// and then extract the members from it.
+pub ContractDefinition: ContractDefinition = {
+    // If no specifiers are present, we simply capture the members directly
+    <_abstract_keyword: (AbstractKeyword)?>  <_contract_keyword: ContractKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => {
+        new_contract_definition(_abstract_keyword, _contract_keyword, _name, new_contract_specifiers(vec![]), _open_brace, _members, _close_brace)
+    },
+    // If specifiers are present, we extract the trailing members from them
+    <_abstract_keyword: (AbstractKeyword)?>  <_contract_keyword: ContractKeyword>  <_name: Identifier>  <_specifiers: ContractSpecifiersTrailingMembers>  => {
+        let (specifiers, (_open_brace, _members, _close_brace)) = _specifiers;
+        new_contract_definition(_abstract_keyword, _contract_keyword, _name, specifiers, _open_brace, _members, _close_brace)
+    },
+};
+
+    
+    
+// In this case, we require at least one specifier, the case with zero is handled above.
+// Note that the return type now includes the trailing members
+ContractSpecifiersTrailingMembers: (ContractSpecifiers, (OpenBrace, ContractMembers, CloseBrace)) = {
+    <mut _ContractSpecifier: Rep<<ContractSpecifier>>> <_tail: ContractSpecifierTrailingMembers>  => {
+        let (specifier, tail) = _tail;
+        _ContractSpecifier.push(specifier);
+        (new_contract_specifiers(_ContractSpecifier), tail)
+    },
+};
+ContractSpecifierTrailingMembers: (ContractSpecifier, (OpenBrace, ContractMembers, CloseBrace)) = {
+    // Since there's no conflict with inheritance specifiers, we can parse them directly and
+    // then parse the members
+    <_InheritanceSpecifier: InheritanceSpecifier> <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => {
+        (new_contract_specifier_inheritance_specifier(_InheritanceSpecifier), (_open_brace, _members, _close_brace))
+    },
+    // For storage layout specifiers, we need to extract the trailing members from them
+    <_StorageLayoutSpecifier: StorageLayoutSpecifierTrailingMembers>  => {
+        let (storage_layout_specifier, tail) = _StorageLayoutSpecifier;
+        (new_contract_specifier_storage_layout_specifier(storage_layout_specifier), tail)
+    },
+};
+
+StorageLayoutSpecifierTrailingMembers: (StorageLayoutSpecifier, (OpenBrace, ContractMembers, CloseBrace)) = {
+    // Instead of parsing a regular Expression, we parse one that captures the trailing members
+    <_layout_keyword: LayoutKeyword>  <_at_keyword: AtKeyword>  <_expression: ExpressionTrailingMembers>  => {
+        let (expr, tail) = _expression;
+        (new_storage_layout_specifier(_layout_keyword, _at_keyword, expr), tail)
+    },
+};
+
+// An expression followed by contract members
+// See the Expression rule for details
+ExpressionTrailingMembers: (Expression, (OpenBrace, ContractMembers, CloseBrace)) = {
+        <Expression: Expression19<BracedContractMembers>>  => <>,
+};
+BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
+    <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => {
+        (_open_brace, _members, _close_brace)
+    },
+};
+
+    ContractSpecifier: ContractSpecifier = {
+        <_InheritanceSpecifier: InheritanceSpecifier>  => new_contract_specifier_inheritance_specifier(<>),
+        <_StorageLayoutSpecifier: StorageLayoutSpecifier>  => new_contract_specifier_storage_layout_specifier(<>),
+        
+    };
+    InheritanceSpecifier: InheritanceSpecifier = {
+        <_is_keyword: IsKeyword>  <_types: InheritanceTypes>  => new_inheritance_specifier(<>),
+        
+    };
+    InheritanceTypes: InheritanceTypes = {
+        <_InheritanceType: SepOne<Comma, <InheritanceType>>>  => new_inheritance_types(<>),
+        
+    };
+    InheritanceType: InheritanceType = {
+        <_type_name: IdentifierPath>  <_arguments: (ArgumentsDeclaration)?>  => new_inheritance_type(<>),
+        
+    };
+    StorageLayoutSpecifier: StorageLayoutSpecifier = {
+        <_layout_keyword: LayoutKeyword>  <_at_keyword: AtKeyword>  <_expression: Expression>  => new_storage_layout_specifier(<>),
+        
+    };
+    ContractMembers: ContractMembers = {
+        <_ContractMember: Rep<<ContractMember>>>  => new_contract_members(<>),
+        
+    };
+    ContractMember: ContractMember = {
+        <_UsingDirective: UsingDirective>  => new_contract_member_using_directive(<>),
+        <_FunctionDefinition: FunctionDefinition>  => new_contract_member_function_definition(<>),
+        <_ConstructorDefinition: ConstructorDefinition>  => new_contract_member_constructor_definition(<>),
+        <_ReceiveFunctionDefinition: ReceiveFunctionDefinition>  => new_contract_member_receive_function_definition(<>),
+        <_FallbackFunctionDefinition: FallbackFunctionDefinition>  => new_contract_member_fallback_function_definition(<>),
+        <_ModifierDefinition: ModifierDefinition>  => new_contract_member_modifier_definition(<>),
+        <_StructDefinition: StructDefinition>  => new_contract_member_struct_definition(<>),
+        <_EnumDefinition: EnumDefinition>  => new_contract_member_enum_definition(<>),
+        <_EventDefinition: EventDefinition>  => new_contract_member_event_definition(<>),
+        <_ErrorDefinition: ErrorDefinition>  => new_contract_member_error_definition(<>),
+        <_UserDefinedValueTypeDefinition: UserDefinedValueTypeDefinition>  => new_contract_member_user_defined_value_type_definition(<>),
+        <_StateVariableDefinition: StateVariableDefinition>  => new_contract_member_state_variable_definition(<>),
+        
+    };
+    
+
+// Rules for topic Interfaces
+    InterfaceDefinition: InterfaceDefinition = {
+        <_interface_keyword: InterfaceKeyword>  <_name: Identifier>  <_inheritance: (InheritanceSpecifier)?>  <_open_brace: OpenBrace>  <_members: InterfaceMembers>  <_close_brace: CloseBrace>  => new_interface_definition(<>),
+        
+    };
+    InterfaceMembers: InterfaceMembers = {
+        <_ContractMember: Rep<<ContractMember>>>  => new_interface_members(<>),
+        
+    };
+    
+
+// Rules for topic Libraries
+    LibraryDefinition: LibraryDefinition = {
+        <_library_keyword: LibraryKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: LibraryMembers>  <_close_brace: CloseBrace>  => new_library_definition(<>),
+        
+    };
+    LibraryMembers: LibraryMembers = {
+        <_ContractMember: Rep<<ContractMember>>>  => new_library_members(<>),
+        
+    };
+    
+
+// Rules for topic Structs
+    StructDefinition: StructDefinition = {
+        <_struct_keyword: StructKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: StructMembers>  <_close_brace: CloseBrace>  => new_struct_definition(<>),
+        
+    };
+    StructMembers: StructMembers = {
+        <_StructMember: Rep<<StructMember>>>  => new_struct_members(<>),
+        
+    };
+    StructMember: StructMember = {
+        <_type_name: TypeName>  <_name: Identifier>  <_semicolon: Semicolon>  => new_struct_member(<>),
+        
+    };
+    
+
+// Rules for topic Enums
+    EnumDefinition: EnumDefinition = {
+        <_enum_keyword: EnumKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: EnumMembers>  <_close_brace: CloseBrace>  => new_enum_definition(<>),
+        
+    };
+    EnumMembers: EnumMembers = {
+        <_Identifier: Sep<Comma, <Identifier>>>  => new_enum_members(<>),
+        
+    };
+    
+
+// Rules for topic Constants
+    ConstantDefinition: ConstantDefinition = {
+        <_type_name: TypeName>  <_constant_keyword: ConstantKeyword>  <_name: Identifier>  <_equal: Equal>  <_value: Expression>  <_semicolon: Semicolon>  => new_constant_definition(<>),
+        
+    };
+    
+
+// Rules for topic State Variables
+    
+    
+// State variable definitions have a conflict when used with function types, since some attributes
+// can be both function type attributes and state variable attributes.
+// For example in `function (uint a) internal internal foo;`, the first `internal` is a function type attribute,
+// while the second `internal` is a state variable attribute.
+//
+// To disambiguate in these cases we need to count, everything from the second attribute onwards
+// belongs to the state variable. This is very hard to do in LR(1) grammars, so we resort to letting
+// the function type capture all compatible attributes, and then extract the trailing ones to use them in the state variable.
+// 
+// This is done by splitting the state variable rules into two cases, one where any type is allowed, except function types
+// that do not specify a return; and one where only function types without return are allowed.
+//
+// Another issue comes from the `error` keyword, since it's not reserved it can also be used as an identifier.
+// This conflicts with state variables since `error foo...` could be the beginning of either an
+// error definition or a state variable definition.
+//
+// To solve this we match against state variables where the type is exactly `error` as a special case.
+StateVariableDefinition: StateVariableDefinition = {
+    // When allowing any type except function types without return, we can parse normally.
+    // Note the `IdentifierPathNoError`, it avoids matching against `error` as an identifier.
+    <_type_name: TypeName1<FunctionTypeInternalReturn, IndexAccessPath<IdentifierPathNoError>>>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(<>),
+
+    // Special case for `error` type
+    <l:@L> L_ErrorKeyword_Unreserved <r:@R>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon> => {
+        let identifier = new_identifier(l..r, source);
+        let iap = new_index_access_path_from_identifier_path(new_identifier_path(vec![new_identifier_path_element_identifier(identifier)]));
+        let type_name = new_type_name_index_access_path(iap);
+
+        new_state_variable_definition(type_name, _attributes, _name, _value, _semicolon)
+    },
+
+
+    // If the function type has no return, then we don't directly parse state variable attributes, we only do it if
+    // we see a special one (one that can be a state variable attribute but not a function type attribute).
+    <_type_name: FunctionTypeInternalNoReturn> <special_attributes: (<SpecialStateVariableAttribute> <StateVariableAttributes>)?> <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => {
+        let (function_type, mut extra_attributes) = extract_extra_attributes(_type_name);
+        if let Some(special_attributes) = special_attributes {
+            extra_attributes.push(special_attributes.0);
+            extra_attributes.extend(special_attributes.1.elements);
+        }
+        new_state_variable_definition(new_type_name_function_type(function_type), new_state_variable_attributes(extra_attributes), _name, _value, _semicolon)
+    },
+};
+
+// Match an identifier path that, if it's a single element, is not `error`
+IdentifierPathNoError: IdentifierPath = {
+    // We either have any identifier with a tail (ie a period)
+    <_head: Identifier>  <mut _tail: IdentifierPathTail>  => {
+        _tail.insert(0, new_identifier_path_element_identifier(_head));
+        new_identifier_path(_tail)
+    },
+    // or a single identifier that is not `error`
+    <_head: SomeIdentifier<"ErrorKeyword_Unreserved">>  => new_identifier_path(vec![new_identifier_path_element_identifier(<>)]),
+};
+
+// These are the attributes that can appear in a state variable but not a function,
+// they can work as a limit between these definitions.
+SpecialStateVariableAttribute: StateVariableAttribute = {
+        <_OverrideSpecifier: OverrideSpecifier>  => new_state_variable_attribute_override_specifier(<>),
+        <_ImmutableKeyword: ImmutableKeyword>  => new_state_variable_attribute_immutable_keyword(<>),
+        <_TransientKeyword: TransientKeyword>  => new_state_variable_attribute_transient_keyword(<>),
+};
+
+    StateVariableDefinitionValue: StateVariableDefinitionValue = {
+        <_equal: Equal>  <_value: Expression>  => new_state_variable_definition_value(<>),
+        
+    };
+    #[inline]
+    StateVariableAttributes: StateVariableAttributes = {
+        <_StateVariableAttribute: Rep<<StateVariableAttribute>>>  => new_state_variable_attributes(<>),
+        
+    };
+    StateVariableAttribute: StateVariableAttribute = {
+        <_OverrideSpecifier: OverrideSpecifier>  => new_state_variable_attribute_override_specifier(<>),
+        <_ConstantKeyword: ConstantKeyword>  => new_state_variable_attribute_constant_keyword(<>),
+        <_InternalKeyword: InternalKeyword>  => new_state_variable_attribute_internal_keyword(<>),
+        <_PrivateKeyword: PrivateKeyword>  => new_state_variable_attribute_private_keyword(<>),
+        <_PublicKeyword: PublicKeyword>  => new_state_variable_attribute_public_keyword(<>),
+        <_ImmutableKeyword: ImmutableKeyword>  => new_state_variable_attribute_immutable_keyword(<>),
+        <_TransientKeyword: TransientKeyword>  => new_state_variable_attribute_transient_keyword(<>),
+        
+    };
+    
+
+// Rules for topic Functions
+    FunctionDefinition: FunctionDefinition = {
+        <_function_keyword: FunctionKeyword>  <_name: FunctionName>  <_parameters: ParametersDeclaration>  <_attributes: FunctionAttributes>  <_returns: (ReturnsDeclaration)?>  <_body: FunctionBody>  => new_function_definition(<>),
+        
+    };
+    FunctionName: FunctionName = {
+        <_Identifier: Identifier>  => new_function_name_identifier(<>),
+        <_FallbackKeyword: FallbackKeyword>  => new_function_name_fallback_keyword(<>),
+        <_ReceiveKeyword: ReceiveKeyword>  => new_function_name_receive_keyword(<>),
+        
+    };
+    ParametersDeclaration: ParametersDeclaration = {
+        <_open_paren: OpenParen>  <_parameters: Parameters>  <_close_paren: CloseParen>  => new_parameters_declaration(<>),
+        
+    };
+    Parameters: Parameters = {
+        <_Parameter: Sep<Comma, <Parameter>>>  => new_parameters(<>),
+        
+    };
+    Parameter: Parameter = {
+        <_type_name: TypeName>  <_storage_location: (StorageLocation)?>  <_name: (Identifier)?>  => new_parameter(<>),
+        
+    };
+    FunctionAttributes: FunctionAttributes = {
+        <_FunctionAttribute: Rep<<FunctionAttribute>>>  => new_function_attributes(<>),
+        
+    };
+    FunctionAttribute: FunctionAttribute = {
+        <_ModifierInvocation: ModifierInvocation>  => new_function_attribute_modifier_invocation(<>),
+        <_OverrideSpecifier: OverrideSpecifier>  => new_function_attribute_override_specifier(<>),
+        <_ExternalKeyword: ExternalKeyword>  => new_function_attribute_external_keyword(<>),
+        <_InternalKeyword: InternalKeyword>  => new_function_attribute_internal_keyword(<>),
+        <_PayableKeyword: PayableKeyword>  => new_function_attribute_payable_keyword(<>),
+        <_PrivateKeyword: PrivateKeyword>  => new_function_attribute_private_keyword(<>),
+        <_PublicKeyword: PublicKeyword>  => new_function_attribute_public_keyword(<>),
+        <_PureKeyword: PureKeyword>  => new_function_attribute_pure_keyword(<>),
+        <_ViewKeyword: ViewKeyword>  => new_function_attribute_view_keyword(<>),
+        <_VirtualKeyword: VirtualKeyword>  => new_function_attribute_virtual_keyword(<>),
+        
+    };
+    OverrideSpecifier: OverrideSpecifier = {
+        <_override_keyword: OverrideKeyword>  <_overridden: (OverridePathsDeclaration)?>  => new_override_specifier(<>),
+        
+    };
+    OverridePathsDeclaration: OverridePathsDeclaration = {
+        <_open_paren: OpenParen>  <_paths: OverridePaths>  <_close_paren: CloseParen>  => new_override_paths_declaration(<>),
+        
+    };
+    OverridePaths: OverridePaths = {
+        <_IdentifierPath: SepOne<Comma, <IdentifierPath>>>  => new_override_paths(<>),
+        
+    };
+    ReturnsDeclaration: ReturnsDeclaration = {
+        <_returns_keyword: ReturnsKeyword>  <_variables: ParametersDeclaration>  => new_returns_declaration(<>),
+        
+    };
+    FunctionBody: FunctionBody = {
+        <_Block: Block>  => new_function_body_block(<>),
+        <_Semicolon: Semicolon>  => new_function_body_semicolon(<>),
+        
+    };
+    ConstructorDefinition: ConstructorDefinition = {
+        <_constructor_keyword: ConstructorKeyword>  <_parameters: ParametersDeclaration>  <_attributes: ConstructorAttributes>  <_body: Block>  => new_constructor_definition(<>),
+        
+    };
+    ConstructorAttributes: ConstructorAttributes = {
+        <_ConstructorAttribute: Rep<<ConstructorAttribute>>>  => new_constructor_attributes(<>),
+        
+    };
+    ConstructorAttribute: ConstructorAttribute = {
+        <_ModifierInvocation: ModifierInvocation>  => new_constructor_attribute_modifier_invocation(<>),
+        <_InternalKeyword: InternalKeyword>  => new_constructor_attribute_internal_keyword(<>),
+        <_PayableKeyword: PayableKeyword>  => new_constructor_attribute_payable_keyword(<>),
+        <_PublicKeyword: PublicKeyword>  => new_constructor_attribute_public_keyword(<>),
+        
+    };
+    FallbackFunctionDefinition: FallbackFunctionDefinition = {
+        <_fallback_keyword: FallbackKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FallbackFunctionAttributes>  <_returns: (ReturnsDeclaration)?>  <_body: FunctionBody>  => new_fallback_function_definition(<>),
+        
+    };
+    FallbackFunctionAttributes: FallbackFunctionAttributes = {
+        <_FallbackFunctionAttribute: Rep<<FallbackFunctionAttribute>>>  => new_fallback_function_attributes(<>),
+        
+    };
+    FallbackFunctionAttribute: FallbackFunctionAttribute = {
+        <_ModifierInvocation: ModifierInvocation>  => new_fallback_function_attribute_modifier_invocation(<>),
+        <_OverrideSpecifier: OverrideSpecifier>  => new_fallback_function_attribute_override_specifier(<>),
+        <_ExternalKeyword: ExternalKeyword>  => new_fallback_function_attribute_external_keyword(<>),
+        <_PayableKeyword: PayableKeyword>  => new_fallback_function_attribute_payable_keyword(<>),
+        <_PureKeyword: PureKeyword>  => new_fallback_function_attribute_pure_keyword(<>),
+        <_ViewKeyword: ViewKeyword>  => new_fallback_function_attribute_view_keyword(<>),
+        <_VirtualKeyword: VirtualKeyword>  => new_fallback_function_attribute_virtual_keyword(<>),
+        
+    };
+    ReceiveFunctionDefinition: ReceiveFunctionDefinition = {
+        <_receive_keyword: ReceiveKeyword>  <_parameters: ParametersDeclaration>  <_attributes: ReceiveFunctionAttributes>  <_body: FunctionBody>  => new_receive_function_definition(<>),
+        
+    };
+    ReceiveFunctionAttributes: ReceiveFunctionAttributes = {
+        <_ReceiveFunctionAttribute: Rep<<ReceiveFunctionAttribute>>>  => new_receive_function_attributes(<>),
+        
+    };
+    ReceiveFunctionAttribute: ReceiveFunctionAttribute = {
+        <_ModifierInvocation: ModifierInvocation>  => new_receive_function_attribute_modifier_invocation(<>),
+        <_OverrideSpecifier: OverrideSpecifier>  => new_receive_function_attribute_override_specifier(<>),
+        <_ExternalKeyword: ExternalKeyword>  => new_receive_function_attribute_external_keyword(<>),
+        <_PayableKeyword: PayableKeyword>  => new_receive_function_attribute_payable_keyword(<>),
+        <_VirtualKeyword: VirtualKeyword>  => new_receive_function_attribute_virtual_keyword(<>),
+        
+    };
+    
+
+// Rules for topic Modifiers
+    ModifierDefinition: ModifierDefinition = {
+        <_modifier_keyword: ModifierKeyword>  <_name: Identifier>  <_parameters: (ParametersDeclaration)?>  <_attributes: ModifierAttributes>  <_body: FunctionBody>  => new_modifier_definition(<>),
+        
+    };
+    ModifierAttributes: ModifierAttributes = {
+        <_ModifierAttribute: Rep<<ModifierAttribute>>>  => new_modifier_attributes(<>),
+        
+    };
+    ModifierAttribute: ModifierAttribute = {
+        <_OverrideSpecifier: OverrideSpecifier>  => new_modifier_attribute_override_specifier(<>),
+        <_VirtualKeyword: VirtualKeyword>  => new_modifier_attribute_virtual_keyword(<>),
+        
+    };
+    ModifierInvocation: ModifierInvocation = {
+        <_name: IdentifierPath>  <_arguments: (ArgumentsDeclaration)?>  => new_modifier_invocation(<>),
+        
+    };
+    
+
+// Rules for topic Events
+    EventDefinition: EventDefinition = {
+        <_event_keyword: EventKeyword>  <_name: Identifier>  <_parameters: EventParametersDeclaration>  <_anonymous_keyword: (AnonymousKeyword)?>  <_semicolon: Semicolon>  => new_event_definition(<>),
+        
+    };
+    EventParametersDeclaration: EventParametersDeclaration = {
+        <_open_paren: OpenParen>  <_parameters: EventParameters>  <_close_paren: CloseParen>  => new_event_parameters_declaration(<>),
+        
+    };
+    EventParameters: EventParameters = {
+        <_EventParameter: Sep<Comma, <EventParameter>>>  => new_event_parameters(<>),
+        
+    };
+    EventParameter: EventParameter = {
+        <_type_name: TypeName>  <_indexed_keyword: (IndexedKeyword)?>  <_name: (Identifier)?>  => new_event_parameter(<>),
+        
+    };
+    
+
+// Rules for topic User Defined Value Types
+    UserDefinedValueTypeDefinition: UserDefinedValueTypeDefinition = {
+        <_type_keyword: TypeKeyword>  <_name: Identifier>  <_is_keyword: IsKeyword>  <_value_type: ElementaryType>  <_semicolon: Semicolon>  => new_user_defined_value_type_definition(<>),
+        
+    };
+    
+
+// Rules for topic Errors
+    #[inline]
+    ErrorDefinition: ErrorDefinition = {
+        <_error_keyword: ErrorKeyword>  <_name: Identifier>  <_members: ErrorParametersDeclaration>  <_semicolon: Semicolon>  => new_error_definition(<>),
+        
+    };
+    ErrorParametersDeclaration: ErrorParametersDeclaration = {
+        <_open_paren: OpenParen>  <_parameters: ErrorParameters>  <_close_paren: CloseParen>  => new_error_parameters_declaration(<>),
+        
+    };
+    ErrorParameters: ErrorParameters = {
+        <_ErrorParameter: Sep<Comma, <ErrorParameter>>>  => new_error_parameters(<>),
+        
+    };
+    ErrorParameter: ErrorParameter = {
+        <_type_name: TypeName>  <_name: (Identifier)?>  => new_error_parameter(<>),
+        
+    };
+    
+
+
+
+
+// Rules for section Types
+
+// Rules for topic Advanced Types
+    
+    
+// TypeName has two peculiarities:
+// 1. We need to parametrize the FunctionRule to allow StateVariableDefinition to disable FunctionTypes without returns.
+//    Note that the ArrayTypeName doesn't respect this; most of these manual cases care about trailing constructs, as
+//    soon as an extra `[]` is added, the ambiguities disappear.
+// 2. A TypeName that can be represented as an `IndexAccessPath` can conflict with a `MemberAccess`, for example
+//    `a.b[c]` can be either a member access over an identifier path, or array type, depending on what comes next.
+//    This means we need to treat these constructs as IAPs for as long as possible, and only convert them to TypeNames
+//    when it's certainly a type. `new_type_name_index_access_path` transforms an IAP into a TypeName.
+//    However, since a IAP and an array type conflict, we need to make sure that array types are only matched against
+//    base types that are not IAPs, hence the parametric IAPRule.
+TypeName0<FunctionRule, IAPRule>: TypeName = {
+    <_FunctionType: FunctionRule> => new_type_name_function_type(<>),
+    <_MappingType: MappingType>  => new_type_name_mapping_type(<>),
+    <_IndexAccessPath: IAPRule> => new_type_name_index_access_path(<>),
+};
+TypeName1<FunctionRule, IAPRule>: TypeName = {
+    <_TypeName: ArrayTypeName>  => new_type_name_array_type_name(<>),
+    <TypeName: TypeName0<FunctionRule, IAPRule>>  => <>,
+};
+TypeName: TypeName = {
+    // A regular type can have any function type and an IAP
+    <TypeName: TypeName1<FunctionType, IndexAccessPath<IdentifierPath>>>  => <>,
+};
+
+#[inline]
+ArrayTypeName: ArrayTypeName = {
+    // The base expression shouldn't end in a trailing IAP, if it does (like `a.b[c]`) it will be
+    // handled by `new_type_name_index_access_path` above
+    <_TypeName: TypeName1<FunctionType, NoIndexAccessPath>>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => new_array_type_name(<>),
+};
+
+// An empty rule to disable IAPs
+NoIndexAccessPath: IndexAccessPath = {};
+
+    
+    
+// The only reason to split FunctionType into two rules is to allow StateVariableDefinition
+// to choose whether to allow FunctionTypes without returns or not.
+// Note: This could be solved with macros, but is short enough to be explicit
+FunctionType: FunctionType = {
+    FunctionTypeInternalNoReturn => <>,
+    FunctionTypeInternalReturn => <>,
+};
+
+FunctionTypeInternalNoReturn: FunctionType = {
+    <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes>   => new_function_type(_function_keyword, _parameters, _attributes, None),
+};
+FunctionTypeInternalReturn: FunctionType = {
+    <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes>  <_returns: ReturnsDeclaration>  => new_function_type(_function_keyword, _parameters, _attributes, Some(_returns)),
+    
+};
+
+    FunctionTypeAttributes: FunctionTypeAttributes = {
+        <_FunctionTypeAttribute: Rep<<FunctionTypeAttribute>>>  => new_function_type_attributes(<>),
+        
+    };
+    FunctionTypeAttribute: FunctionTypeAttribute = {
+        <_InternalKeyword: InternalKeyword>  => new_function_type_attribute_internal_keyword(<>),
+        <_ExternalKeyword: ExternalKeyword>  => new_function_type_attribute_external_keyword(<>),
+        <_PrivateKeyword: PrivateKeyword>  => new_function_type_attribute_private_keyword(<>),
+        <_PublicKeyword: PublicKeyword>  => new_function_type_attribute_public_keyword(<>),
+        <_PureKeyword: PureKeyword>  => new_function_type_attribute_pure_keyword(<>),
+        <_ViewKeyword: ViewKeyword>  => new_function_type_attribute_view_keyword(<>),
+        <_PayableKeyword: PayableKeyword>  => new_function_type_attribute_payable_keyword(<>),
+        
+    };
+    MappingType: MappingType = {
+        <_mapping_keyword: MappingKeyword>  <_open_paren: OpenParen>  <_key_type: MappingKey>  <_equal_greater_than: EqualGreaterThan>  <_value_type: MappingValue>  <_close_paren: CloseParen>  => new_mapping_type(<>),
+        
+    };
+    MappingKey: MappingKey = {
+        <_key_type: MappingKeyType>  <_name: (Identifier)?>  => new_mapping_key(<>),
+        
+    };
+    MappingKeyType: MappingKeyType = {
+        <_ElementaryType: ElementaryType>  => new_mapping_key_type_elementary_type(<>),
+        <_IdentifierPath: IdentifierPath>  => new_mapping_key_type_identifier_path(<>),
+        
+    };
+    MappingValue: MappingValue = {
+        <_type_name: TypeName>  <_name: (Identifier)?>  => new_mapping_value(<>),
+        
+    };
+    
+
+// Rules for topic Elementary Types
+    ElementaryType: ElementaryType = {
+        <_BoolKeyword: BoolKeyword>  => new_elementary_type_bool_keyword(<>),
+        <_StringKeyword: StringKeyword>  => new_elementary_type_string_keyword(<>),
+        <_AddressType: AddressType>  => new_elementary_type_address_type(<>),
+        <_BytesKeyword: BytesKeyword>  => new_elementary_type_bytes_keyword(<>),
+        <_IntKeyword: IntKeyword>  => new_elementary_type_int_keyword(<>),
+        <_UintKeyword: UintKeyword>  => new_elementary_type_uint_keyword(<>),
+        <_FixedKeyword: FixedKeyword>  => new_elementary_type_fixed_keyword(<>),
+        <_UfixedKeyword: UfixedKeyword>  => new_elementary_type_ufixed_keyword(<>),
+        
+    };
+    AddressType: AddressType = {
+        <_address_keyword: AddressKeyword>  <_payable_keyword: (PayableKeyword)?>  => new_address_type(<>),
+        
+    };
+    
+
+
+
+
+// Rules for section Statements
+
+// Rules for topic Blocks
+    Block: Block = {
+        <_open_brace: OpenBrace>  <_statements: Statements>  <_close_brace: CloseBrace>  => new_block(<>),
+        
+    };
+    Statements: Statements = {
+        <_Statement: Rep<<Statement>>>  => new_statements(<>),
+        
+    };
+    
+    
+// There's two issues with `Statement`:
+//
+// This is a common problem in grammars[1]. To not reinvent the wheel we follow advice from
+// LALRPOP community[2].
+// Briefly, we parametrize statements on whether they allow a trailing else or not, forcing `else`s to attach to
+// the innermost `if`` possible.
+//
+// [1]: https://en.wikipedia.org/wiki/Dangling_else
+// [2]: https://github.com/lalrpop/lalrpop/issues/67#issuecomment-188951041
+//
+// On top of that, the `revert` keyword is unreserved, meaning that a variable declaration like
+// `revert x = ...;` is valid.
+// From the perspective of the parser there's an ambiguity when looking at a statement starting with `revert x ...`
+//
+// To solve it we introduce a special `VariableDeclarationStatement` that handles this case specifically,
+// since both this and `RevertStatement` are inlined, the parser doesn't need to reduce until it has seen the
+// entire statement.
+_Statement<TrailingElse>: Statement = {
+    <_IfStatement: IfStatement<TrailingElse>>  => new_statement_if_statement(<>),
+    <_ForStatement: ForStatement<TrailingElse>>  => new_statement_for_statement(<>),
+    <_WhileStatement: WhileStatement<TrailingElse>>  => new_statement_while_statement(<>),
+    <_DoWhileStatement: DoWhileStatement>  => new_statement_do_while_statement(<>),
+    <_ContinueStatement: ContinueStatement>  => new_statement_continue_statement(<>),
+    <_BreakStatement: BreakStatement>  => new_statement_break_statement(<>),
+    <_ReturnStatement: ReturnStatement>  => new_statement_return_statement(<>),
+    <_EmitStatement: EmitStatement>  => new_statement_emit_statement(<>),
+    <_TryStatement: TryStatement>  => new_statement_try_statement(<>),
+    <_RevertStatement: RevertStatement>  => new_statement_revert_statement(<>),
+    <_AssemblyStatement: AssemblyStatement>  => new_statement_assembly_statement(<>),
+    <_Block: Block>  => new_statement_block(<>),
+    <_UncheckedBlock: UncheckedBlock>  => new_statement_unchecked_block(<>),
+    <_VariableDeclarationStatement: VariableDeclarationStatementSpecialRevert>  => new_statement_variable_declaration_statement(<>),
+    <_ExpressionStatement: ExpressionStatement>  => new_statement_expression_statement(<>),
+};
+
+// By default statements allow dangling `else`s
+Statement = _Statement<"True">;
+
+// A VariableDeclarationStatement that has a `revert` type as a special case, this allows
+// to disambiguate between a revert statement and a variable declaration with type `revert`
+//
+// Note: They need to be inline together with `RevertStatement` to actually avoid shift/reduce conflicts
+#[inline]
+VariableDeclarationStatementSpecialRevert: VariableDeclarationStatement = {
+    <_target: VariableDeclarationOptionSpecialRevert>  <_semicolon: Semicolon>  => new_variable_declaration_statement(<>),
+};
+#[inline]
+VariableDeclarationOptionSpecialRevert: VariableDeclarationOption = {
+    <_SingleTypedDeclaration: SingleTypedDeclarationSpecialRevert>  => new_variable_declaration_option_single_typed_declaration(<>),
+    <_MultiTypedDeclaration: MultiTypedDeclaration>  => new_variable_declaration_option_multi_typed_declaration(<>),
+};
+#[inline]
+SingleTypedDeclarationSpecialRevert: SingleTypedDeclaration = {
+    <_declaration: VariableDeclarationSpecialRevert>  <_value: (VariableDeclarationValue)?>  => new_single_typed_declaration(<>),
+};
+#[inline]
+VariableDeclarationSpecialRevert: VariableDeclaration = {
+    // A regular type that is not `revert`
+    //
+    // Note: we're tempted to inline TypeNames, but they are recursive, that's why we extract the special case
+    <_type_name: TypeName1<FunctionType, IndexAccessPath<IdentifierPathNoRevert>>>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => new_variable_declaration(<>),
+    // The special `revert` type
+    <l:@L> L_RevertKeyword_Unreserved <r:@R>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => {
+        let identifier = new_identifier(l..r, source);
+        let iap = new_index_access_path_from_identifier_path(new_identifier_path(vec![new_identifier_path_element_identifier(identifier)]));
+        let type_name = new_type_name_index_access_path(iap);
+        new_variable_declaration(type_name, _storage_location, _name)
+    }
+};
+
+// An IdentifierPath that cannot be `revert`, used to disambiguate from the `revert` type
+#[inline]
+IdentifierPathNoRevert: IdentifierPath = {
+    // We either have any identifier with a tail (ie a period)
+    <_head: Identifier> <mut _tail: IdentifierPathTail>  => {
+        _tail.insert(0, new_identifier_path_element_identifier(_head));
+        new_identifier_path(_tail)
+    },
+    // or a single identifier that is not `revert`
+    <_head: SomeIdentifier<"RevertKeyword_Unreserved">>  => new_identifier_path(vec![new_identifier_path_element_identifier(<>)]),
+};
+
+    UncheckedBlock: UncheckedBlock = {
+        <_unchecked_keyword: UncheckedKeyword>  <_block: Block>  => new_unchecked_block(<>),
+        
+    };
+    ExpressionStatement: ExpressionStatement = {
+        <_expression: Expression>  <_semicolon: Semicolon>  => new_expression_statement(<>),
+        
+    };
+    AssemblyStatement: AssemblyStatement = {
+        <_assembly_keyword: AssemblyKeyword>  <_label: (StringLiteral)?>  <_flags: (AssemblyFlagsDeclaration)?>  <_body: YulBlock>  => new_assembly_statement(<>),
+        
+    };
+    AssemblyFlagsDeclaration: AssemblyFlagsDeclaration = {
+        <_open_paren: OpenParen>  <_flags: AssemblyFlags>  <_close_paren: CloseParen>  => new_assembly_flags_declaration(<>),
+        
+    };
+    AssemblyFlags: AssemblyFlags = {
+        <_StringLiteral: SepOne<Comma, <StringLiteral>>>  => new_assembly_flags(<>),
+        
+    };
+    
+
+// Rules for topic Declaration Statements
+    VariableDeclaration: VariableDeclaration = {
+        <_type_name: TypeName>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => new_variable_declaration(<>),
+        
+    };
+    VariableDeclarationStatement: VariableDeclarationStatement = {
+        <_target: VariableDeclarationOption>  <_semicolon: Semicolon>  => new_variable_declaration_statement(<>),
+        
+    };
+    VariableDeclarationOption: VariableDeclarationOption = {
+        <_SingleTypedDeclaration: SingleTypedDeclaration>  => new_variable_declaration_option_single_typed_declaration(<>),
+        <_MultiTypedDeclaration: MultiTypedDeclaration>  => new_variable_declaration_option_multi_typed_declaration(<>),
+        
+    };
+    SingleTypedDeclaration: SingleTypedDeclaration = {
+        <_declaration: VariableDeclaration>  <_value: (VariableDeclarationValue)?>  => new_single_typed_declaration(<>),
+        
+    };
+    MultiTypedDeclaration: MultiTypedDeclaration = {
+        <_open_paren: OpenParen>  <_elements: MultiTypedDeclarationElements>  <_close_paren: CloseParen>  <_value: VariableDeclarationValue>  => new_multi_typed_declaration(<>),
+        
+    };
+    
+    
+// MultiTypedDeclaration conflict with tuple expression, for example, the following is ambiguous:
+//
+// |--------|  => Assignment expression
+// |--|        => Tuple expression
+// (,,) = foo;
+// |--------|  => MultiTypedDeclaration
+//
+// In order to fix that, we give priority to assignment expressions, except an actual declaration (`uint bar`)
+// is seen.
+//
+// Since they also share a prefix (`(,,,`) we need to have a common prefix rule to avoid reduce/reduce conflicts.
+MultiTypedDeclarationElements: MultiTypedDeclarationElements = {
+    <prefix: TuplePrefix> <differentiator: VariableDeclaration> <_TypedTupleDeconstructionElement: (Comma <SepOne<Comma, <MultiTypedDeclarationElement>>>)?>  => {
+        let mut elements = vec![new_multi_typed_declaration_element(None); prefix];
+        elements.push(new_multi_typed_declaration_element(Some(differentiator)));
+        elements.extend(_TypedTupleDeconstructionElement.unwrap_or(vec![]));
+        new_multi_typed_declaration_elements(elements)
+    },
+    
+};
+
+// TuplePrefix counts how many leading commas we have in a tuple deconstruction or
+// in a tuple expression, this helps avoid reduce/reduce conflicts
+TuplePrefix: usize = {
+    // Count how many commas we have at the start, each comma represents an unnamed element
+    Comma  <_rest: TuplePrefix>  => 1 + _rest,
+    => 0,
+};
+
+    MultiTypedDeclarationElement: MultiTypedDeclarationElement = {
+        <_member: (VariableDeclaration)?>  => new_multi_typed_declaration_element(<>),
+        
+    };
+    VariableDeclarationValue: VariableDeclarationValue = {
+        <_equal: Equal>  <_expression: Expression>  => new_variable_declaration_value(<>),
+        
+    };
+    StorageLocation: StorageLocation = {
+        <_MemoryKeyword: MemoryKeyword>  => new_storage_location_memory_keyword(<>),
+        <_StorageKeyword: StorageKeyword>  => new_storage_location_storage_keyword(<>),
+        <_CallDataKeyword: CallDataKeyword>  => new_storage_location_call_data_keyword(<>),
+        
+    };
+    
+
+// Rules for topic Control Statements
+    
+    
+// As explained in the `Statement` rule, this solves the dangling else problem
+IfStatement<TrailingElse>: IfStatement = {
+    // IfStatement only allows `if`s without an else if TrailingElse == "True"
+    <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"True">> if TrailingElse == "True"  => new_if_statement(<>, None),
+    <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"False">>  <_else_keyword: ElseKeyword>  <_else_branch: _Statement<TrailingElse>>  => new_if_statement(_if_keyword, _open_paren, _condition, _close_paren, _body, Some(new_else_branch(_else_keyword, _else_branch))),
+};
+
+    ElseBranch: ElseBranch = {
+        <_else_keyword: ElseKeyword>  <_body: Statement>  => new_else_branch(<>),
+        
+    };
+    
+    
+// As explained in the `Statement` rule, this solves the dangling else problem
+//
+// Since a `ForStatement` can have a trailing `Statement` we need to parametrize it as well
+ForStatement<TrailingElse>: ForStatement = {
+        <_for_keyword: ForKeyword>  <_open_paren: OpenParen>  <_initialization: ForStatementInitialization>  <_condition: ForStatementCondition>  <_iterator: (Expression)?>  <_close_paren: CloseParen>  <_body: _Statement<TrailingElse>>  => new_for_statement(<>),
+};
+    ForStatementInitialization: ForStatementInitialization = {
+        <_VariableDeclarationStatement: VariableDeclarationStatement>  => new_for_statement_initialization_variable_declaration_statement(<>),
+        <_ExpressionStatement: ExpressionStatement>  => new_for_statement_initialization_expression_statement(<>),
+        <_Semicolon: Semicolon>  => new_for_statement_initialization_semicolon(<>),
+        
+    };
+    ForStatementCondition: ForStatementCondition = {
+        <_ExpressionStatement: ExpressionStatement>  => new_for_statement_condition_expression_statement(<>),
+        <_Semicolon: Semicolon>  => new_for_statement_condition_semicolon(<>),
+        
+    };
+    
+    
+// As explained in the `Statement` rule, this solves the dangling else problem
+//
+// Since a `WhileStatement` can have a trailing `Statement` we need to parametrize it as well
+WhileStatement<TrailingElse>: WhileStatement = {
+        <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<TrailingElse>>  => new_while_statement(<>),
+};
+    DoWhileStatement: DoWhileStatement = {
+        <_do_keyword: DoKeyword>  <_body: Statement>  <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_semicolon: Semicolon>  => new_do_while_statement(<>),
+        
+    };
+    ContinueStatement: ContinueStatement = {
+        <_continue_keyword: ContinueKeyword>  <_semicolon: Semicolon>  => new_continue_statement(<>),
+        
+    };
+    BreakStatement: BreakStatement = {
+        <_break_keyword: BreakKeyword>  <_semicolon: Semicolon>  => new_break_statement(<>),
+        
+    };
+    ReturnStatement: ReturnStatement = {
+        <_return_keyword: ReturnKeyword>  <_expression: (Expression)?>  <_semicolon: Semicolon>  => new_return_statement(<>),
+        
+    };
+    EmitStatement: EmitStatement = {
+        <_emit_keyword: EmitKeyword>  <_event: IdentifierPath>  <_arguments: ArgumentsDeclaration>  <_semicolon: Semicolon>  => new_emit_statement(<>),
+        
+    };
+    
+
+// Rules for topic Error Handling
+    
+    
+// A try statement conflicts with expressions since an expression can have named arguments (similar to a block)
+// at the end. For example, if the parser sees `try foo { a` it doesn't know whether foo is an expression and it should
+// start parsing a block (a reduce) or whether it should keep parsing a call options expression (a shift).
+//
+// We use expressions with a trailing block to solve this, and steal the block from there.
+TryStatement: TryStatement = {
+    // a `ReturnsDeclaration` acts as a disambiguator
+    <_try_keyword: TryKeyword>  <_expression: Expression>  <_returns: ReturnsDeclaration>  <_body: Block>  <_catch_clauses: CatchClauses>  => {
+        new_try_statement(_try_keyword, _expression, Some(_returns), _body, _catch_clauses)
+    },
+    <_try_keyword: TryKeyword>  <_expression: ExpressionTrailingBlock>   <_catch_clauses: CatchClauses>  => {
+        let (expr, body) = _expression;
+        new_try_statement(_try_keyword, expr, None, body, _catch_clauses)
+    },
+};
+
+// An expression followed by a block
+ExpressionTrailingBlock: (Expression, Block) = {
+        <Expression: Expression19<Block>>  => <>,
+};
+
+    CatchClauses: CatchClauses = {
+        <_CatchClause: RepOne<<CatchClause>>>  => new_catch_clauses(<>),
+        
+    };
+    CatchClause: CatchClause = {
+        <_catch_keyword: CatchKeyword>  <_error: (CatchClauseError)?>  <_body: Block>  => new_catch_clause(<>),
+        
+    };
+    CatchClauseError: CatchClauseError = {
+        <_name: (Identifier)?>  <_parameters: ParametersDeclaration>  => new_catch_clause_error(<>),
+        
+    };
+    #[inline]
+    RevertStatement: RevertStatement = {
+        <_revert_keyword: RevertKeyword>  <_error: IdentifierPath>  <_arguments: ArgumentsDeclaration>  <_semicolon: Semicolon>  => new_revert_statement(<>),
+        
+    };
+    
+
+
+
+
+// Rules for section Expressions
+
+// Rules for topic Base Expressions
+    
+    
+// Expression has a lot of tricky cases:
+// 1. There's conflicts with `TypeName`, for example `a.b[c]` can be either a member access over an identifier path, or
+//    an array type, depending on what comes next. As explained on the `TypeName` rule, we need to delay reduction of
+//    these constructs as long as possible, only converting them to `Expression` at new_expression_index_access_path.
+//    Note: That there's no `ElementaryType` rule, it's handled as an IAP
+// 2. But this creates another problem, since we still want to have `MemberAccess` and `IndexAccess` as expressions,
+//    but now they conflict with IAP; for example, `a.b` can be either a member access or an IAP, therefore we have to
+//    disable member access and index access over IAPs that can be types, we do this by parametrizing the
+//    `IndexAccessPathRule`
+// 3. Also, new expressions are problematic, since they have a trailing `TypeName`, allowing this example to be parsed
+//    in two different ambiguous ways:
+//
+//        |--------| => IndexAccessExpression
+//        |-----|    => NewExpression
+//            |-|    => TypeName
+//        new foo[]
+//            |---|  => TypeName (an array type)
+//        |-------|  => NewExpression
+//
+//    We want to fix this by giving priority to the internal typename, therefore we parametrize over `NewExpressionRule`
+//    disallowing `MemberAccess` and `IndexAccess` over new expressions.
+// 4. `Expression` are often at a trailing position, for example in storage layout specifiers,
+//    to facilitate fixing ambiguities in those cases, we allow `Expression` to be parametrized over a trailing element,
+//    that will be matched against when possible, and lifted up through the recursion.
+//    This seems to not have any effect, but it allows the parser to postpone reductions.
+// 5. Finally, expressions have multiple precedence levels and associativity, we handle this explicitely here.
+Expression0<IndexAccessPathRule, NewExpressionRule>: Expression = {
+    // The Rule used here is parametric
+    <_IndexAccessPath: IndexAccessPathRule> => new_expression_index_access_path(<>),
+    // The Rule used here is parametric
+    <_NewExpression: NewExpressionRule> => new_expression_new_expression(<>),
+    <_TupleExpression: TupleExpression>  => new_expression_tuple_expression(<>),
+    <_TypeExpression: TypeExpression>  => new_expression_type_expression(<>),
+    <_ArrayExpression: ArrayExpression>  => new_expression_array_expression(<>),
+    <_HexNumberExpression: HexNumberExpression>  => new_expression_hex_number_expression(<>),
+    <_DecimalNumberExpression: DecimalNumberExpression>  => new_expression_decimal_number_expression(<>),
+    <_StringExpression: StringExpression>  => new_expression_string_expression(<>),
+    <_PayableKeyword: PayableKeyword>  => new_expression_payable_keyword(<>),
+    <_ThisKeyword: ThisKeyword>  => new_expression_this_keyword(<>),
+    <_SuperKeyword: SuperKeyword>  => new_expression_super_keyword(<>),
+    <_TrueKeyword: TrueKeyword>  => new_expression_true_keyword(<>),
+    <_FalseKeyword: FalseKeyword>  => new_expression_false_keyword(<>),
+};
+
+// An IAP that doesn't match anything
+NoIndexAccessPath_Expr: IndexAccessPath = {};
+
+// We simplifiy all these levels of expressions into a single one, there's no need
+// for precedence here
+Expression1<IndexAccessPathRule, NewExpressionRule>: Expression = {
+    // When parsing an index acces expression, the sub expression shouldn't trail in an index access path
+    // Nor should it trail on a NewExpression
+    <_Expression: Expression1<NoIndexAccessPath_Expr, NoNewExpression>>  <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => new_expression_index_access_expression(new_index_access_expression(<>)),
+    // When parsing a member access expression, the sub expression shouldn't trail in a path
+    // Nor should it trail on a NewExpression
+    <_Expression: Expression1<IndexAccessPath<NoIdentPath>, NoNewExpression>>  <_period: Period>  <_member: IdentifierPathElement>  => new_expression_member_access_expression(new_member_access_expression(<>)),
+
+    // Both the braces and the arguments declaration serve as markers for disambiguation, therefore
+    // resetting the parametric rules.
+    <_Expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>>  <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => new_expression_call_options_expression(new_call_options_expression(<>)),
+    <_Expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>>  <_arguments: ArgumentsDeclaration>  => new_expression_function_call_expression(new_function_call_expression(<>)),
+
+    <Expression: Expression0<IndexAccessPathRule, NewExpressionRule>>  => <>,
+};
+
+// A Matcher for an empty NewExpression 
+NoNewExpression: NewExpression = {};
+
+// Tail is a rule identifying what comes after the expression, whatever is captured is added to the tuple result
+Expression5<Tail>: (Expression, Tail) = {
+    <_Expression_PrefixExpression_Operator: Expression_PrefixExpression_Operator>  <_Expression: Expression5<Tail>>  => {
+        let (expr, tail) = _Expression;
+        (new_expression_prefix_expression(new_prefix_expression(_Expression_PrefixExpression_Operator, expr)), tail)
+    },
+    
+    // A tail can appear just after a postfix or primary expression
+    <Expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>> <tail: Tail> => {
+        (Expression, tail)
+    },
+};
+Expression6<Tail>: (Expression, Tail) = {
+    // This is the only other postfix expression that can overwrite a trailing element
+    // Note that the recursive call expects no tail at all
+    <_Expression: Expression6<EmptyTail>>  <_Expression_PostfixExpression_Operator: Expression_PostfixExpression_Operator> <tail: Tail>  => {
+        let (expr, _) = _Expression;
+        (new_expression_postfix_expression(new_postfix_expression(expr, _Expression_PostfixExpression_Operator)), tail)
+    },
+    
+    <Expression: Expression5<Tail>>  => <>,
+};
+Expression7<Tail>: (Expression, Tail) = {
+    // Note that only the right recursive rule matches a tail, the left recursive expects no tail
+    <_Expression: Expression6<EmptyTail>>  <_operator: Expression_ExponentiationExpression_Operator>  <_Expression_2: Expression7<Tail>>  => {
+        let (e, _) = _Expression;
+        let (e2, tail) = _Expression_2;
+        (new_expression_exponentiation_expression(new_exponentiation_expression(e, _operator, e2)), tail)
+    },
+    
+    <Expression: Expression6<Tail>>  => <>,
+};
+Expression8<Tail>: (Expression, Tail) = {
+    <_Expression: Expression8<EmptyTail>>  <_Expression_MultiplicativeExpression_Operator: Expression_MultiplicativeExpression_Operator>  <_Expression_2: Expression7<Tail>>  => {
+        let (e, _) = _Expression;
+        let (e2, tail) = _Expression_2;
+        (new_expression_multiplicative_expression(new_multiplicative_expression(e, _Expression_MultiplicativeExpression_Operator, e2)), tail)
+    },
+    
+    <Expression: Expression7<Tail>>  => <>,
+};
+Expression9<Tail>: (Expression, Tail) = {
+    <_Expression: Expression9<EmptyTail>>  <_Expression_AdditiveExpression_Operator: Expression_AdditiveExpression_Operator>  <_Expression_2: Expression8<Tail>>  => {
+        let (e, _) = _Expression;
+        let (e2, tail) = _Expression_2;
+        (new_expression_additive_expression(new_additive_expression(e, _Expression_AdditiveExpression_Operator, e2)), tail)
+    },
+    
+    <Expression: Expression8<Tail>>  => <>,
+};
+Expression10<Tail>: (Expression, Tail) = {
+    <_Expression: Expression10<EmptyTail>>  <_Expression_ShiftExpression_Operator: Expression_ShiftExpression_Operator>  <_Expression_2: Expression9<Tail>>  => {
+        let (e, _) = _Expression;
+        let (e2, tail) = _Expression_2;
+        (new_expression_shift_expression(new_shift_expression(e, _Expression_ShiftExpression_Operator, e2)), tail)
+    },
+    
+    <Expression: Expression9<Tail>>  => <>,
+};
+Expression11<Tail>: (Expression, Tail) = {
+    <_Expression: Expression11<EmptyTail>>  <_operator: Ampersand>  <_Expression_2: Expression10<Tail>>  => {
+        let (e, _) = _Expression;
+        let (e2, tail) = _Expression_2;
+        (new_expression_bitwise_and_expression(new_bitwise_and_expression(e, _operator, e2)), tail)
+    },
+    
+    <Expression: Expression10<Tail>>  => <>,
+};
+Expression12<Tail>: (Expression, Tail) = {
+    <_Expression: Expression12<EmptyTail>>  <_operator: Caret>  <_Expression_2: Expression11<Tail>>  => {
+        let (e, _) = _Expression;
+        let (e2, tail) = _Expression_2;
+        (new_expression_bitwise_xor_expression(new_bitwise_xor_expression(e, _operator, e2)), tail)
+    },
+    
+    <Expression: Expression11<Tail>>  => <>,
+};
+Expression13<Tail>: (Expression, Tail) = {
+    <_Expression: Expression13<EmptyTail>>  <_operator: Bar>  <_Expression_2: Expression12<Tail>>  => {
+        let (e, _) = _Expression;
+        let (e2, tail) = _Expression_2;
+        (new_expression_bitwise_or_expression(new_bitwise_or_expression(e, _operator, e2)), tail)
+    },
+    
+    <Expression: Expression12<Tail>>  => <>,
+};
+Expression14<Tail>: (Expression, Tail) = {
+    <_Expression: Expression14<EmptyTail>>  <_Expression_InequalityExpression_Operator: Expression_InequalityExpression_Operator>  <_Expression_2: Expression13<Tail>>  => {
+        let (e, _) = _Expression;
+        let (e2, tail) = _Expression_2;
+        (new_expression_inequality_expression(new_inequality_expression(e, _Expression_InequalityExpression_Operator, e2)), tail)
+    },
+    
+    <Expression: Expression13<Tail>>  => <>,
+};
+Expression15<Tail>: (Expression, Tail) = {
+    <_Expression: Expression15<EmptyTail>>  <_Expression_EqualityExpression_Operator: Expression_EqualityExpression_Operator>  <_Expression_2: Expression14<Tail>>  => {
+        let (e, _) = _Expression;
+        let (e2, tail) = _Expression_2;
+        (new_expression_equality_expression(new_equality_expression(e, _Expression_EqualityExpression_Operator, e2)), tail)
+    },
+    
+    <Expression: Expression14<Tail>>  => <>,
+};
+Expression16<Tail>: (Expression, Tail) = {
+    <_Expression: Expression16<EmptyTail>>  <_operator: AmpersandAmpersand>  <_Expression_2: Expression15<Tail>>  => {
+        let (e, _) = _Expression;
+        let (e2, tail) = _Expression_2;
+        (new_expression_and_expression(new_and_expression(e, _operator, e2)), tail)
+    },
+    
+    <Expression: Expression15<Tail>>  => <>,
+};
+Expression17<Tail>: (Expression, Tail) = {
+    <_Expression: Expression17<EmptyTail>>  <_operator: BarBar>  <_Expression_2: Expression16<Tail>>  => {
+        let (e, _) = _Expression;
+        let (e2, tail) = _Expression_2;
+        (new_expression_or_expression(new_or_expression(e, _operator, e2)), tail)
+    },
+    
+    <Expression: Expression16<Tail>>  => <>,
+};
+Expression18<Tail>: (Expression, Tail) = {
+    <_Expression: Expression17<EmptyTail>>  <_question_mark: QuestionMark>  <_true_expression: Expression18<EmptyTail>>  <_colon: Colon>  <_false_expression: Expression18<Tail>>  => {
+        let (cond_expr, _) = _Expression;
+        let (true_expr, _) = _true_expression;
+        let (false_expr, tail) = _false_expression;
+        (new_expression_conditional_expression(new_conditional_expression(cond_expr, _question_mark, true_expr, _colon, false_expr)), tail)
+    },
+    
+    <Expression: Expression17<Tail>>  => <>,
+};
+Expression19<Tail>: (Expression, Tail) = {
+    <_Expression: Expression19<EmptyTail>>  <_Expression_AssignmentExpression_Operator: Expression_AssignmentExpression_Operator>  <_Expression_2: Expression18<Tail>>  => {
+        let (e, _) = _Expression;
+        let (e2, tail) = _Expression_2;
+        (new_expression_assignment_expression(new_assignment_expression(e, _Expression_AssignmentExpression_Operator, e2)), tail)
+    },
+    
+    <Expression: Expression18<Tail>>  => <>,
+};
+
+// Expression is public
+pub Expression: Expression = {
+    // By default, we expect no tail
+    <Expression: Expression19<EmptyTail>>  => Expression.0,
+};
+
+// An empty tail is the default behaviour
+EmptyTail: () = {
+    () => (),
+};
+
+// The different operators are used like choices, and wrapped accordingly
+Expression_PrefixExpression_Operator: Expression_PrefixExpression_Operator = {
+    <_operator: PlusPlus>  => new_expression_prefix_expression_operator_plus_plus(<>),
+    <_operator: MinusMinus>  => new_expression_prefix_expression_operator_minus_minus(<>),
+    <_operator: Tilde>  => new_expression_prefix_expression_operator_tilde(<>),
+    <_operator: Bang>  => new_expression_prefix_expression_operator_bang(<>),
+    <_operator: Minus>  => new_expression_prefix_expression_operator_minus(<>),
+    <_operator: DeleteKeyword>  => new_expression_prefix_expression_operator_delete_keyword(<>),
+};
+Expression_PostfixExpression_Operator: Expression_PostfixExpression_Operator = {
+    <_operator: PlusPlus>  => new_expression_postfix_expression_operator_plus_plus(<>),
+    <_operator: MinusMinus>  => new_expression_postfix_expression_operator_minus_minus(<>),
+};
+Expression_ExponentiationExpression_Operator: Expression_ExponentiationExpression_Operator = {
+    <_operator: AsteriskAsterisk>  => new_expression_exponentiation_expression_operator_asterisk_asterisk(<>),
+};
+Expression_MultiplicativeExpression_Operator: Expression_MultiplicativeExpression_Operator = {
+    <_operator: Asterisk>  => new_expression_multiplicative_expression_operator_asterisk(<>),
+    <_operator: Slash>  => new_expression_multiplicative_expression_operator_slash(<>),
+    <_operator: Percent>  => new_expression_multiplicative_expression_operator_percent(<>),
+};
+Expression_AdditiveExpression_Operator: Expression_AdditiveExpression_Operator = {
+    <_operator: Plus>  => new_expression_additive_expression_operator_plus(<>),
+    <_operator: Minus>  => new_expression_additive_expression_operator_minus(<>),
+};
+Expression_ShiftExpression_Operator: Expression_ShiftExpression_Operator = {
+    <_operator: LessThanLessThan>  => new_expression_shift_expression_operator_less_than_less_than(<>),
+    <_operator: GreaterThanGreaterThan>  => new_expression_shift_expression_operator_greater_than_greater_than(<>),
+    <_operator: GreaterThanGreaterThanGreaterThan>  => new_expression_shift_expression_operator_greater_than_greater_than_greater_than(<>),
+};
+Expression_InequalityExpression_Operator: Expression_InequalityExpression_Operator = {
+    <_operator: LessThan>  => new_expression_inequality_expression_operator_less_than(<>),
+    <_operator: GreaterThan>  => new_expression_inequality_expression_operator_greater_than(<>),
+    <_operator: LessThanEqual>  => new_expression_inequality_expression_operator_less_than_equal(<>),
+    <_operator: GreaterThanEqual>  => new_expression_inequality_expression_operator_greater_than_equal(<>),
+};
+Expression_EqualityExpression_Operator: Expression_EqualityExpression_Operator = {
+    <_operator: EqualEqual>  => new_expression_equality_expression_operator_equal_equal(<>),
+    <_operator: BangEqual>  => new_expression_equality_expression_operator_bang_equal(<>),
+};
+Expression_AssignmentExpression_Operator: Expression_AssignmentExpression_Operator = {
+    <_operator: Equal>  => new_expression_assignment_expression_operator_equal(<>),
+    <_operator: BarEqual>  => new_expression_assignment_expression_operator_bar_equal(<>),
+    <_operator: PlusEqual>  => new_expression_assignment_expression_operator_plus_equal(<>),
+    <_operator: MinusEqual>  => new_expression_assignment_expression_operator_minus_equal(<>),
+    <_operator: CaretEqual>  => new_expression_assignment_expression_operator_caret_equal(<>),
+    <_operator: SlashEqual>  => new_expression_assignment_expression_operator_slash_equal(<>),
+    <_operator: PercentEqual>  => new_expression_assignment_expression_operator_percent_equal(<>),
+    <_operator: AsteriskEqual>  => new_expression_assignment_expression_operator_asterisk_equal(<>),
+    <_operator: AmpersandEqual>  => new_expression_assignment_expression_operator_ampersand_equal(<>),
+    <_operator: LessThanLessThanEqual>  => new_expression_assignment_expression_operator_less_than_less_than_equal(<>),
+    <_operator: GreaterThanGreaterThanEqual>  => new_expression_assignment_expression_operator_greater_than_greater_than_equal(<>),
+    <_operator: GreaterThanGreaterThanGreaterThanEqual>  => new_expression_assignment_expression_operator_greater_than_greater_than_greater_than_equal(<>),
+};
+
+// A rule matching en empty `IdentifierPath`
+NoIdentPath: IdentifierPath = {};
+
+// An Index Access Path that is parametric over the IdentifierPath rule used for member access and index access
+IndexAccessPath<IdentPathRule>: IndexAccessPath = {
+    // As before, we usually care about trailing constructs, so the brackets serve as markers to reset the parametric rule
+    <iap: IndexAccessPath<IdentifierPath>> <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => index_access_path_add_index(<>),
+    <IndexAccessPath1<IdentPathRule>>  => <>,
+};
+IndexAccessPath1<IdentPathRule>: IndexAccessPath = {
+    <_Identifier: IdentPathRule> => new_index_access_path_from_identifier_path(<>),
+    <_ElementaryType: ElementaryType>  => new_index_access_path_from_elementary_type(<>),
+};
+
+    IndexAccessEnd: IndexAccessEnd = {
+        <_colon: Colon>  <_end: (Expression)?>  => new_index_access_end(<>),
+        
+    };
+    
+
+// Rules for topic Function Calls
+    ArgumentsDeclaration: ArgumentsDeclaration = {
+        <_PositionalArgumentsDeclaration: PositionalArgumentsDeclaration>  => new_arguments_declaration_positional_arguments_declaration(<>),
+        <_NamedArgumentsDeclaration: NamedArgumentsDeclaration>  => new_arguments_declaration_named_arguments_declaration(<>),
+        
+    };
+    PositionalArgumentsDeclaration: PositionalArgumentsDeclaration = {
+        <_open_paren: OpenParen>  <_arguments: PositionalArguments>  <_close_paren: CloseParen>  => new_positional_arguments_declaration(<>),
+        
+    };
+    PositionalArguments: PositionalArguments = {
+        <_Expression: Sep<Comma, <Expression>>>  => new_positional_arguments(<>),
+        
+    };
+    NamedArgumentsDeclaration: NamedArgumentsDeclaration = {
+        <_open_paren: OpenParen>  <_arguments: NamedArgumentGroup>  <_close_paren: CloseParen>  => new_named_arguments_declaration(<>),
+        
+    };
+    NamedArgumentGroup: NamedArgumentGroup = {
+        <_open_brace: OpenBrace>  <_arguments: NamedArguments>  <_close_brace: CloseBrace>  => new_named_argument_group(<>),
+        
+    };
+    NamedArguments: NamedArguments = {
+        <_NamedArgument: Sep<Comma, <NamedArgument>>>  => new_named_arguments(<>),
+        
+    };
+    CallOptions: CallOptions = {
+        <_NamedArgument: SepOne<Comma, <NamedArgument>>>  => new_call_options(<>),
+        
+    };
+    NamedArgument: NamedArgument = {
+        <_name: Identifier>  <_colon: Colon>  <_value: Expression>  => new_named_argument(<>),
+        
+    };
+    
+
+// Rules for topic Primary Expressions
+    TypeExpression: TypeExpression = {
+        <_type_keyword: TypeKeyword>  <_open_paren: OpenParen>  <_type_name: TypeName>  <_close_paren: CloseParen>  => new_type_expression(<>),
+        
+    };
+    
+    
+// We avoid function types entirely in new expressions, this is ok since they're not allowed
+// in Solidity, but the error will be syntactic rather than semantic, which may be confusing.
+//
+// We do this to avoid the amibiguity of `try new function () returns (uint) ...`, where the returns clause may be
+// parsed either as part of the function type or as part of a try statement.
+NewExpression: NewExpression = {
+    <_new_keyword: NewKeyword>  <_type_name: TypeName1<NoFunctionType, IndexAccessPath<IdentifierPath>>>  => new_new_expression(<>),
+    
+};
+
+NoFunctionType: FunctionType = {};
+
+    TupleExpression: TupleExpression = {
+        <_open_paren: OpenParen>  <_items: TupleValues>  <_close_paren: CloseParen>  => new_tuple_expression(<>),
+        
+    };
+    
+    
+// See the comment around TupleDeconstructionStatement for an explanation of this rule.
+#[inline]
+TupleValues: TupleValues = {
+    <prefix: TuplePrefix> => {
+        // We need to add an extra empty element here, since the trailing comma indicates
+        // an additional empty tuple value.
+        let elements = vec![new_tuple_value(None); prefix + 1];
+        new_tuple_values(elements)
+    },
+    <prefix: TuplePrefix> <differentiator: Expression> <_TupleValue: (Comma <SepOne<Comma, <TupleValue>>>)?>  => {
+        let mut elements = vec![new_tuple_value(None); prefix];
+        elements.push(new_tuple_value(Some(differentiator)));
+        elements.extend(_TupleValue.unwrap_or(vec![]));
+        new_tuple_values(elements)
+    },
+    
+};
+
+    TupleValue: TupleValue = {
+        <_expression: (Expression)?>  => new_tuple_value(<>),
+        
+    };
+    ArrayExpression: ArrayExpression = {
+        <_open_bracket: OpenBracket>  <_items: ArrayValues>  <_close_bracket: CloseBracket>  => new_array_expression(<>),
+        
+    };
+    ArrayValues: ArrayValues = {
+        <_Expression: SepOne<Comma, <Expression>>>  => new_array_values(<>),
+        
+    };
+    
+
+// Rules for topic Numbers
+    
+    
+// This rule shouldn't be manual, but the node constructor takes an optional argument that is not
+// enabled in 0.8.30, therefore we don't have it automatically generated
+HexNumberExpression: HexNumberExpression = {
+        <_literal: HexLiteral>  => new_hex_number_expression(<>, None),
+};
+    DecimalNumberExpression: DecimalNumberExpression = {
+        <_literal: DecimalLiteral>  <_unit: (NumberUnit)?>  => new_decimal_number_expression(<>),
+        
+    };
+    NumberUnit: NumberUnit = {
+        <_WeiKeyword: WeiKeyword>  => new_number_unit_wei_keyword(<>),
+        <_GweiKeyword: GweiKeyword>  => new_number_unit_gwei_keyword(<>),
+        <_EtherKeyword: EtherKeyword>  => new_number_unit_ether_keyword(<>),
+        <_SecondsKeyword: SecondsKeyword>  => new_number_unit_seconds_keyword(<>),
+        <_MinutesKeyword: MinutesKeyword>  => new_number_unit_minutes_keyword(<>),
+        <_HoursKeyword: HoursKeyword>  => new_number_unit_hours_keyword(<>),
+        <_DaysKeyword: DaysKeyword>  => new_number_unit_days_keyword(<>),
+        <_WeeksKeyword: WeeksKeyword>  => new_number_unit_weeks_keyword(<>),
+        
+    };
+    
+
+// Rules for topic Strings
+    StringExpression: StringExpression = {
+        <_StringLiterals: StringLiterals>  => new_string_expression_string_literals(<>),
+        <_HexStringLiterals: HexStringLiterals>  => new_string_expression_hex_string_literals(<>),
+        <_UnicodeStringLiterals: UnicodeStringLiterals>  => new_string_expression_unicode_string_literals(<>),
+        
+    };
+    StringLiterals: StringLiterals = {
+        <_StringLiteral: RepOne<<StringLiteral>>>  => new_string_literals(<>),
+        
+    };
+    StringLiteral: StringLiteral = {
+        <_SingleQuotedStringLiteral: SingleQuotedStringLiteral>  => new_string_literal_single_quoted_string_literal(<>),
+        <_DoubleQuotedStringLiteral: DoubleQuotedStringLiteral>  => new_string_literal_double_quoted_string_literal(<>),
+        
+    };
+    HexStringLiterals: HexStringLiterals = {
+        <_HexStringLiteral: RepOne<<HexStringLiteral>>>  => new_hex_string_literals(<>),
+        
+    };
+    HexStringLiteral: HexStringLiteral = {
+        <_SingleQuotedHexStringLiteral: SingleQuotedHexStringLiteral>  => new_hex_string_literal_single_quoted_hex_string_literal(<>),
+        <_DoubleQuotedHexStringLiteral: DoubleQuotedHexStringLiteral>  => new_hex_string_literal_double_quoted_hex_string_literal(<>),
+        
+    };
+    UnicodeStringLiterals: UnicodeStringLiterals = {
+        <_UnicodeStringLiteral: RepOne<<UnicodeStringLiteral>>>  => new_unicode_string_literals(<>),
+        
+    };
+    UnicodeStringLiteral: UnicodeStringLiteral = {
+        <_SingleQuotedUnicodeStringLiteral: SingleQuotedUnicodeStringLiteral>  => new_unicode_string_literal_single_quoted_unicode_string_literal(<>),
+        <_DoubleQuotedUnicodeStringLiteral: DoubleQuotedUnicodeStringLiteral>  => new_unicode_string_literal_double_quoted_unicode_string_literal(<>),
+        
+    };
+    
+
+// Rules for topic Identifiers
+    
+    
+// We need to force this to differentiate the first element from not being
+// an `AddressKeyword`
+IdentifierPath: IdentifierPath = {
+    <_head: Identifier>  <mut _tail: (IdentifierPathTail)?>  => {
+        match _tail {
+            Some(mut tail) => {
+                tail.insert(0, new_identifier_path_element_identifier(_head));
+                new_identifier_path(tail)
+            },
+            None => new_identifier_path(vec![new_identifier_path_element_identifier(_head)]),
+        }
+    },
+    
+};
+IdentifierPathTail: Vec<IdentifierPathElement> = {
+    Period  <_elements: IdentifierPathTailElements>  => <>,
+    
+};
+IdentifierPathTailElements: Vec<IdentifierPathElement> = {
+    <_MemberAccessIdentifier: SepOne<Period, <IdentifierPathElement>>>  => <>,
+    
+};
+
+    IdentifierPathElement: IdentifierPathElement = {
+        <_Identifier: Identifier>  => new_identifier_path_element_identifier(<>),
+        <_AddressKeyword: AddressKeyword>  => new_identifier_path_element_address_keyword(<>),
+        
+    };
+    
+
+
+
+
+// Rules for section Yul
+
+// Rules for topic Yul Statements
+    
+    
+YulBlock: YulBlock = {
+    <_open_brace: OpenBrace>  !  <_close_brace: CloseBrace>  => {
+        new_yul_block(_open_brace, new_yul_statements(vec![]), _close_brace)
+    }
+};
+
+    YulStatements: YulStatements = {
+        <_YulStatement: Rep<<YulStatement>>>  => new_yul_statements(<>),
+        
+    };
+    YulStatement: YulStatement = {
+        <_YulBlock: YulBlock>  => new_yul_statement_yul_block(<>),
+        <_YulFunctionDefinition: YulFunctionDefinition>  => new_yul_statement_yul_function_definition(<>),
+        <_YulIfStatement: YulIfStatement>  => new_yul_statement_yul_if_statement(<>),
+        <_YulForStatement: YulForStatement>  => new_yul_statement_yul_for_statement(<>),
+        <_YulSwitchStatement: YulSwitchStatement>  => new_yul_statement_yul_switch_statement(<>),
+        <_YulLeaveStatement: YulLeaveStatement>  => new_yul_statement_yul_leave_statement(<>),
+        <_YulBreakStatement: YulBreakStatement>  => new_yul_statement_yul_break_statement(<>),
+        <_YulContinueStatement: YulContinueStatement>  => new_yul_statement_yul_continue_statement(<>),
+        <_YulVariableAssignmentStatement: YulVariableAssignmentStatement>  => new_yul_statement_yul_variable_assignment_statement(<>),
+        <_YulVariableDeclarationStatement: YulVariableDeclarationStatement>  => new_yul_statement_yul_variable_declaration_statement(<>),
+        <_YulExpression: YulExpression>  => new_yul_statement_yul_expression(<>),
+        
+    };
+    YulFunctionDefinition: YulFunctionDefinition = {
+        <_function_keyword: YulFunctionKeyword>  <_name: YulIdentifier>  <_parameters: YulParametersDeclaration>  <_returns: (YulReturnsDeclaration)?>  <_body: YulBlock>  => new_yul_function_definition(<>),
+        
+    };
+    YulParametersDeclaration: YulParametersDeclaration = {
+        <_open_paren: OpenParen>  <_parameters: YulParameters>  <_close_paren: CloseParen>  => new_yul_parameters_declaration(<>),
+        
+    };
+    YulParameters: YulParameters = {
+        <_YulIdentifier: Sep<Comma, <YulIdentifier>>>  => new_yul_parameters(<>),
+        
+    };
+    YulReturnsDeclaration: YulReturnsDeclaration = {
+        <_minus_greater_than: MinusGreaterThan>  <_variables: YulVariableNames>  => new_yul_returns_declaration(<>),
+        
+    };
+    YulVariableNames: YulVariableNames = {
+        <_YulIdentifier: SepOne<Comma, <YulIdentifier>>>  => new_yul_variable_names(<>),
+        
+    };
+    YulVariableDeclarationStatement: YulVariableDeclarationStatement = {
+        <_let_keyword: YulLetKeyword>  <_variables: YulVariableNames>  <_value: (YulVariableDeclarationValue)?>  => new_yul_variable_declaration_statement(<>),
+        
+    };
+    YulVariableDeclarationValue: YulVariableDeclarationValue = {
+        <_assignment: YulAssignmentOperator>  <_expression: YulExpression>  => new_yul_variable_declaration_value(<>),
+        
+    };
+    YulVariableAssignmentStatement: YulVariableAssignmentStatement = {
+        <_variables: YulPaths>  <_assignment: YulAssignmentOperator>  <_expression: YulExpression>  => new_yul_variable_assignment_statement(<>),
+        
+    };
+    YulAssignmentOperator: YulAssignmentOperator = {
+        <_ColonEqual: ColonEqual>  => new_yul_assignment_operator_colon_equal(<>),
+        
+    };
+    YulIfStatement: YulIfStatement = {
+        <_if_keyword: YulIfKeyword>  <_condition: YulExpression>  <_body: YulBlock>  => new_yul_if_statement(<>),
+        
+    };
+    YulForStatement: YulForStatement = {
+        <_for_keyword: YulForKeyword>  <_initialization: YulBlock>  <_condition: YulExpression>  <_iterator: YulBlock>  <_body: YulBlock>  => new_yul_for_statement(<>),
+        
+    };
+    YulSwitchStatement: YulSwitchStatement = {
+        <_switch_keyword: YulSwitchKeyword>  <_expression: YulExpression>  <_cases: YulSwitchCases>  => new_yul_switch_statement(<>),
+        
+    };
+    YulSwitchCases: YulSwitchCases = {
+        <_YulSwitchCase: RepOne<<YulSwitchCase>>>  => new_yul_switch_cases(<>),
+        
+    };
+    YulSwitchCase: YulSwitchCase = {
+        <_YulDefaultCase: YulDefaultCase>  => new_yul_switch_case_yul_default_case(<>),
+        <_YulValueCase: YulValueCase>  => new_yul_switch_case_yul_value_case(<>),
+        
+    };
+    YulDefaultCase: YulDefaultCase = {
+        <_default_keyword: YulDefaultKeyword>  <_body: YulBlock>  => new_yul_default_case(<>),
+        
+    };
+    YulValueCase: YulValueCase = {
+        <_case_keyword: YulCaseKeyword>  <_value: YulLiteral>  <_body: YulBlock>  => new_yul_value_case(<>),
+        
+    };
+    YulLeaveStatement: YulLeaveStatement = {
+        <_leave_keyword: YulLeaveKeyword>  => new_yul_leave_statement(<>),
+        
+    };
+    YulBreakStatement: YulBreakStatement = {
+        <_break_keyword: YulBreakKeyword>  => new_yul_break_statement(<>),
+        
+    };
+    YulContinueStatement: YulContinueStatement = {
+        <_continue_keyword: YulContinueKeyword>  => new_yul_continue_statement(<>),
+        
+    };
+    
+
+// Rules for topic Yul Expressions
+    YulExpression0: YulExpression = {
+        <_YulLiteral: YulLiteral>  => new_yul_expression_yul_literal(<>),
+        <_YulPath: YulPath>  => new_yul_expression_yul_path(<>),
+        
+    };
+    #[inline]
+    YulFunctionCallExpression: YulFunctionCallExpression = {
+        <_YulExpression: YulExpression1>  <_open_paren: OpenParen>  <_arguments: YulArguments>  <_close_paren: CloseParen>  => new_yul_function_call_expression(<>),
+        
+    };
+    YulExpression1: YulExpression = {
+        <_YulExpression: YulFunctionCallExpression>  => new_yul_expression_yul_function_call_expression(<>),
+        <YulExpression: YulExpression0>  => <>,
+        
+    };
+    YulExpression: YulExpression = {
+        <YulExpression: YulExpression1>  => <>,
+        
+    };
+    YulArguments: YulArguments = {
+        <_YulExpression: Sep<Comma, <YulExpression>>>  => new_yul_arguments(<>),
+        
+    };
+    YulPaths: YulPaths = {
+        <_YulPath: SepOne<Comma, <YulPath>>>  => new_yul_paths(<>),
+        
+    };
+    YulPath: YulPath = {
+        <_YulIdentifier: SepOne<Period, <YulIdentifier>>>  => new_yul_path(<>),
+        
+    };
+    YulLiteral: YulLiteral = {
+        <_YulTrueKeyword: YulTrueKeyword>  => new_yul_literal_yul_true_keyword(<>),
+        <_YulFalseKeyword: YulFalseKeyword>  => new_yul_literal_yul_false_keyword(<>),
+        <_YulDecimalLiteral: YulDecimalLiteral>  => new_yul_literal_yul_decimal_literal(<>),
+        <_YulHexLiteral: YulHexLiteral>  => new_yul_literal_yul_hex_literal(<>),
+        <_HexStringLiteral: HexStringLiteral>  => new_yul_literal_hex_string_literal(<>),
+        <_StringLiteral: StringLiteral>  => new_yul_literal_string_literal(<>),
+        
+    };
+    
+
+// Rules for topic Yul Keywords
+    
+
+
+
+
+
+
+// Lexemes formatting
+//
+// A given terminal can actually match against multiple lexemes,
+// so we generate a rule per terminal that matches against all its lexemes.
+//
+// An example is `YulIdentifier` which matches the `L_YulIdentifier` lexeme,
+// but also all the unreserved keywords that are valid Yul identifiers.
+#[inline]
+ABIEncoderV2Keyword: ABIEncoderV2Keyword = {
+
+        <l:@L> L_ABIEncoderV2Keyword_Reserved <r:@L> => new_abi_encoder_v2_keyword(l..r, source),
+
+};
+#[inline]
+AbicoderKeyword: AbicoderKeyword = {
+
+        <l:@L> L_AbicoderKeyword_Reserved <r:@L> => new_abicoder_keyword(l..r, source),
+
+};
+#[inline]
+AbicoderV1Keyword: AbicoderV1Keyword = {
+
+        <l:@L> L_AbicoderV1Keyword_Reserved <r:@L> => new_abicoder_v1_keyword(l..r, source),
+
+};
+#[inline]
+AbicoderV2Keyword: AbicoderV2Keyword = {
+
+        <l:@L> L_AbicoderV2Keyword_Reserved <r:@L> => new_abicoder_v2_keyword(l..r, source),
+
+};
+#[inline]
+AbstractKeyword: AbstractKeyword = {
+
+        <l:@L> L_AbstractKeyword_Reserved <r:@L> => new_abstract_keyword(l..r, source),
+
+};
+#[inline]
+AddressKeyword: AddressKeyword = {
+
+        <l:@L> L_AddressKeyword_Reserved <r:@L> => new_address_keyword(l..r, source),
+
+};
+#[inline]
+AfterKeyword: AfterKeyword = {
+
+        <l:@L> L_AfterKeyword_Reserved <r:@L> => new_after_keyword(l..r, source),
+
+};
+#[inline]
+AliasKeyword: AliasKeyword = {
+
+        <l:@L> L_AliasKeyword_Reserved <r:@L> => new_alias_keyword(l..r, source),
+
+};
+#[inline]
+Ampersand: Ampersand = {
+
+        <l:@L> L_Ampersand <r:@L> => new_ampersand(l..r, source),
+
+};
+#[inline]
+AmpersandAmpersand: AmpersandAmpersand = {
+
+        <l:@L> L_AmpersandAmpersand <r:@L> => new_ampersand_ampersand(l..r, source),
+
+};
+#[inline]
+AmpersandEqual: AmpersandEqual = {
+
+        <l:@L> L_AmpersandEqual <r:@L> => new_ampersand_equal(l..r, source),
+
+};
+#[inline]
+AnonymousKeyword: AnonymousKeyword = {
+
+        <l:@L> L_AnonymousKeyword_Reserved <r:@L> => new_anonymous_keyword(l..r, source),
+
+};
+#[inline]
+ApplyKeyword: ApplyKeyword = {
+
+        <l:@L> L_ApplyKeyword_Reserved <r:@L> => new_apply_keyword(l..r, source),
+
+};
+#[inline]
+AsKeyword: AsKeyword = {
+
+        <l:@L> L_AsKeyword_Reserved <r:@L> => new_as_keyword(l..r, source),
+
+};
+#[inline]
+AssemblyKeyword: AssemblyKeyword = {
+
+        <l:@L> L_AssemblyKeyword_Reserved <r:@L> => new_assembly_keyword(l..r, source),
+
+};
+#[inline]
+Asterisk: Asterisk = {
+
+        <l:@L> L_Asterisk <r:@L> => new_asterisk(l..r, source),
+
+};
+#[inline]
+AsteriskAsterisk: AsteriskAsterisk = {
+
+        <l:@L> L_AsteriskAsterisk <r:@L> => new_asterisk_asterisk(l..r, source),
+
+};
+#[inline]
+AsteriskEqual: AsteriskEqual = {
+
+        <l:@L> L_AsteriskEqual <r:@L> => new_asterisk_equal(l..r, source),
+
+};
+#[inline]
+AtKeyword: AtKeyword = {
+
+        <l:@L> L_AtKeyword_Unreserved <r:@L> => new_at_keyword(l..r, source),
+
+};
+#[inline]
+AutoKeyword: AutoKeyword = {
+
+        <l:@L> L_AutoKeyword_Reserved <r:@L> => new_auto_keyword(l..r, source),
+
+};
+#[inline]
+Bang: Bang = {
+
+        <l:@L> L_Bang <r:@L> => new_bang(l..r, source),
+
+};
+#[inline]
+BangEqual: BangEqual = {
+
+        <l:@L> L_BangEqual <r:@L> => new_bang_equal(l..r, source),
+
+};
+#[inline]
+Bar: Bar = {
+
+        <l:@L> L_Bar <r:@L> => new_bar(l..r, source),
+
+};
+#[inline]
+BarBar: BarBar = {
+
+        <l:@L> L_BarBar <r:@L> => new_bar_bar(l..r, source),
+
+};
+#[inline]
+BarEqual: BarEqual = {
+
+        <l:@L> L_BarEqual <r:@L> => new_bar_equal(l..r, source),
+
+};
+#[inline]
+BoolKeyword: BoolKeyword = {
+
+        <l:@L> L_BoolKeyword_Reserved <r:@L> => new_bool_keyword(l..r, source),
+
+};
+#[inline]
+BreakKeyword: BreakKeyword = {
+
+        <l:@L> L_BreakKeyword_Reserved <r:@L> => new_break_keyword(l..r, source),
+
+};
+#[inline]
+ByteKeyword: ByteKeyword = {
+
+        <l:@L> L_ByteKeyword_Reserved <r:@L> => new_byte_keyword(l..r, source),
+
+};
+#[inline]
+BytesKeyword: BytesKeyword = {
+
+        <l:@L> L_BytesKeyword_Reserved <r:@L> => new_bytes_keyword(l..r, source),
+
+};
+#[inline]
+CallDataKeyword: CallDataKeyword = {
+
+        <l:@L> L_CallDataKeyword_Reserved <r:@L> => new_call_data_keyword(l..r, source),
+
+};
+#[inline]
+Caret: Caret = {
+
+        <l:@L> L_Caret <r:@L> => new_caret(l..r, source),
+
+};
+#[inline]
+CaretEqual: CaretEqual = {
+
+        <l:@L> L_CaretEqual <r:@L> => new_caret_equal(l..r, source),
+
+};
+#[inline]
+CaseKeyword: CaseKeyword = {
+
+        <l:@L> L_CaseKeyword_Reserved <r:@L> => new_case_keyword(l..r, source),
+
+};
+#[inline]
+CatchKeyword: CatchKeyword = {
+
+        <l:@L> L_CatchKeyword_Reserved <r:@L> => new_catch_keyword(l..r, source),
+
+};
+#[inline]
+CloseBrace: CloseBrace = {
+
+        <l:@L> L_CloseBrace <r:@L> => new_close_brace(l..r, source),
+
+};
+#[inline]
+CloseBracket: CloseBracket = {
+
+        <l:@L> L_CloseBracket <r:@L> => new_close_bracket(l..r, source),
+
+};
+#[inline]
+CloseParen: CloseParen = {
+
+        <l:@L> L_CloseParen <r:@L> => new_close_paren(l..r, source),
+
+};
+#[inline]
+Colon: Colon = {
+
+        <l:@L> L_Colon <r:@L> => new_colon(l..r, source),
+
+};
+#[inline]
+ColonEqual: ColonEqual = {
+
+        <l:@L> L_ColonEqual <r:@L> => new_colon_equal(l..r, source),
+
+};
+#[inline]
+Comma: Comma = {
+
+        <l:@L> L_Comma <r:@L> => new_comma(l..r, source),
+
+};
+#[inline]
+ConstantKeyword: ConstantKeyword = {
+
+        <l:@L> L_ConstantKeyword_Reserved <r:@L> => new_constant_keyword(l..r, source),
+
+};
+#[inline]
+ConstructorKeyword: ConstructorKeyword = {
+
+        <l:@L> L_ConstructorKeyword_Reserved <r:@L> => new_constructor_keyword(l..r, source),
+
+};
+#[inline]
+ContinueKeyword: ContinueKeyword = {
+
+        <l:@L> L_ContinueKeyword_Reserved <r:@L> => new_continue_keyword(l..r, source),
+
+};
+#[inline]
+ContractKeyword: ContractKeyword = {
+
+        <l:@L> L_ContractKeyword_Reserved <r:@L> => new_contract_keyword(l..r, source),
+
+};
+#[inline]
+CopyOfKeyword: CopyOfKeyword = {
+
+        <l:@L> L_CopyOfKeyword_Reserved <r:@L> => new_copy_of_keyword(l..r, source),
+
+};
+#[inline]
+DaysKeyword: DaysKeyword = {
+
+        <l:@L> L_DaysKeyword_Reserved <r:@L> => new_days_keyword(l..r, source),
+
+};
+#[inline]
+DecimalLiteral: DecimalLiteral = {
+
+        <l:@L> L_DecimalLiteral <r:@L> => new_decimal_literal(l..r, source),
+
+};
+#[inline]
+DefaultKeyword: DefaultKeyword = {
+
+        <l:@L> L_DefaultKeyword_Reserved <r:@L> => new_default_keyword(l..r, source),
+
+};
+#[inline]
+DefineKeyword: DefineKeyword = {
+
+        <l:@L> L_DefineKeyword_Reserved <r:@L> => new_define_keyword(l..r, source),
+
+};
+#[inline]
+DeleteKeyword: DeleteKeyword = {
+
+        <l:@L> L_DeleteKeyword_Reserved <r:@L> => new_delete_keyword(l..r, source),
+
+};
+#[inline]
+DoKeyword: DoKeyword = {
+
+        <l:@L> L_DoKeyword_Reserved <r:@L> => new_do_keyword(l..r, source),
+
+};
+#[inline]
+DoubleQuotedHexStringLiteral: DoubleQuotedHexStringLiteral = {
+
+        <l:@L> L_DoubleQuotedHexStringLiteral <r:@L> => new_double_quoted_hex_string_literal(l..r, source),
+
+};
+#[inline]
+DoubleQuotedStringLiteral: DoubleQuotedStringLiteral = {
+
+        <l:@L> L_DoubleQuotedStringLiteral <r:@L> => new_double_quoted_string_literal(l..r, source),
+
+};
+#[inline]
+DoubleQuotedUnicodeStringLiteral: DoubleQuotedUnicodeStringLiteral = {
+
+        <l:@L> L_DoubleQuotedUnicodeStringLiteral <r:@L> => new_double_quoted_unicode_string_literal(l..r, source),
+
+};
+#[inline]
+DoubleQuotedVersionLiteral: DoubleQuotedVersionLiteral = {
+
+        <l:@L> L_DoubleQuotedVersionLiteral <r:@L> => new_double_quoted_version_literal(l..r, source),
+
+};
+#[inline]
+ElseKeyword: ElseKeyword = {
+
+        <l:@L> L_ElseKeyword_Reserved <r:@L> => new_else_keyword(l..r, source),
+
+};
+#[inline]
+EmitKeyword: EmitKeyword = {
+
+        <l:@L> L_EmitKeyword_Reserved <r:@L> => new_emit_keyword(l..r, source),
+
+};
+#[inline]
+EndOfLine: EndOfLine = {
+
+        <l:@L> L_EndOfLine <r:@L> => new_end_of_line(l..r, source),
+
+};
+#[inline]
+EnumKeyword: EnumKeyword = {
+
+        <l:@L> L_EnumKeyword_Reserved <r:@L> => new_enum_keyword(l..r, source),
+
+};
+#[inline]
+Equal: Equal = {
+
+        <l:@L> L_Equal <r:@L> => new_equal(l..r, source),
+
+};
+#[inline]
+EqualColon: EqualColon = {
+
+        <l:@L> L_EqualColon <r:@L> => new_equal_colon(l..r, source),
+
+};
+#[inline]
+EqualEqual: EqualEqual = {
+
+        <l:@L> L_EqualEqual <r:@L> => new_equal_equal(l..r, source),
+
+};
+#[inline]
+EqualGreaterThan: EqualGreaterThan = {
+
+        <l:@L> L_EqualGreaterThan <r:@L> => new_equal_greater_than(l..r, source),
+
+};
+#[inline]
+ErrorKeyword: ErrorKeyword = {
+
+        <l:@L> L_ErrorKeyword_Unreserved <r:@L> => new_error_keyword(l..r, source),
+
+};
+#[inline]
+EtherKeyword: EtherKeyword = {
+
+        <l:@L> L_EtherKeyword_Reserved <r:@L> => new_ether_keyword(l..r, source),
+
+};
+#[inline]
+EventKeyword: EventKeyword = {
+
+        <l:@L> L_EventKeyword_Reserved <r:@L> => new_event_keyword(l..r, source),
+
+};
+#[inline]
+ExperimentalKeyword: ExperimentalKeyword = {
+
+        <l:@L> L_ExperimentalKeyword_Reserved <r:@L> => new_experimental_keyword(l..r, source),
+
+};
+#[inline]
+ExternalKeyword: ExternalKeyword = {
+
+        <l:@L> L_ExternalKeyword_Reserved <r:@L> => new_external_keyword(l..r, source),
+
+};
+#[inline]
+FallbackKeyword: FallbackKeyword = {
+
+        <l:@L> L_FallbackKeyword_Reserved <r:@L> => new_fallback_keyword(l..r, source),
+
+};
+#[inline]
+FalseKeyword: FalseKeyword = {
+
+        <l:@L> L_FalseKeyword_Reserved <r:@L> => new_false_keyword(l..r, source),
+
+};
+#[inline]
+FinalKeyword: FinalKeyword = {
+
+        <l:@L> L_FinalKeyword_Reserved <r:@L> => new_final_keyword(l..r, source),
+
+};
+#[inline]
+FinneyKeyword: FinneyKeyword = {
+
+        <l:@L> L_FinneyKeyword_Unreserved <r:@L> => new_finney_keyword(l..r, source),
+
+};
+#[inline]
+FixedKeyword: FixedKeyword = {
+
+        <l:@L> L_FixedKeyword_Reserved <r:@L> => new_fixed_keyword(l..r, source),
+
+};
+#[inline]
+ForKeyword: ForKeyword = {
+
+        <l:@L> L_ForKeyword_Reserved <r:@L> => new_for_keyword(l..r, source),
+
+};
+#[inline]
+FromKeyword: FromKeyword = {
+
+        <l:@L> L_FromKeyword_Unreserved <r:@L> => new_from_keyword(l..r, source),
+
+};
+#[inline]
+FunctionKeyword: FunctionKeyword = {
+
+        <l:@L> L_FunctionKeyword_Reserved <r:@L> => new_function_keyword(l..r, source),
+
+};
+#[inline]
+GlobalKeyword: GlobalKeyword = {
+
+        <l:@L> L_GlobalKeyword_Unreserved <r:@L> => new_global_keyword(l..r, source),
+
+};
+#[inline]
+GreaterThan: GreaterThan = {
+
+        <l:@L> L_GreaterThan <r:@L> => new_greater_than(l..r, source),
+
+};
+#[inline]
+GreaterThanEqual: GreaterThanEqual = {
+
+        <l:@L> L_GreaterThanEqual <r:@L> => new_greater_than_equal(l..r, source),
+
+};
+#[inline]
+GreaterThanGreaterThan: GreaterThanGreaterThan = {
+
+        <l:@L> L_GreaterThanGreaterThan <r:@L> => new_greater_than_greater_than(l..r, source),
+
+};
+#[inline]
+GreaterThanGreaterThanEqual: GreaterThanGreaterThanEqual = {
+
+        <l:@L> L_GreaterThanGreaterThanEqual <r:@L> => new_greater_than_greater_than_equal(l..r, source),
+
+};
+#[inline]
+GreaterThanGreaterThanGreaterThan: GreaterThanGreaterThanGreaterThan = {
+
+        <l:@L> L_GreaterThanGreaterThanGreaterThan <r:@L> => new_greater_than_greater_than_greater_than(l..r, source),
+
+};
+#[inline]
+GreaterThanGreaterThanGreaterThanEqual: GreaterThanGreaterThanGreaterThanEqual = {
+
+        <l:@L> L_GreaterThanGreaterThanGreaterThanEqual <r:@L> => new_greater_than_greater_than_greater_than_equal(l..r, source),
+
+};
+#[inline]
+GweiKeyword: GweiKeyword = {
+
+        <l:@L> L_GweiKeyword_Reserved <r:@L> => new_gwei_keyword(l..r, source),
+
+};
+#[inline]
+HexKeyword: HexKeyword = {
+
+        <l:@L> L_HexKeyword_Reserved <r:@L> => new_hex_keyword(l..r, source),
+
+};
+#[inline]
+HexLiteral: HexLiteral = {
+
+        <l:@L> L_HexLiteral <r:@L> => new_hex_literal(l..r, source),
+
+};
+#[inline]
+HoursKeyword: HoursKeyword = {
+
+        <l:@L> L_HoursKeyword_Reserved <r:@L> => new_hours_keyword(l..r, source),
+
+};
+#[inline]
+Identifier: Identifier = {
+    SomeIdentifier<""> => <>,
+};
+
+// Making an Identifier inline generates an explosion of states, so DON'T
+//
+// We allow to pass parameters for certain tokens that are disallowed,
+// this is an easy way to express "Any identifier except `X`" as `SomeIdentifier<"X">`
+SomeIdentifier<Except>: Identifier = {
+
+        <l:@L> L_AtKeyword_Unreserved <r:@L> if Except !~ "AtKeyword_Unreserved" => new_identifier(l..r, source),
+
+        <l:@L> L_ErrorKeyword_Unreserved <r:@L> if Except !~ "ErrorKeyword_Unreserved" => new_identifier(l..r, source),
+
+        <l:@L> L_FinneyKeyword_Unreserved <r:@L> if Except !~ "FinneyKeyword_Unreserved" => new_identifier(l..r, source),
+
+        <l:@L> L_FromKeyword_Unreserved <r:@L> if Except !~ "FromKeyword_Unreserved" => new_identifier(l..r, source),
+
+        <l:@L> L_GlobalKeyword_Unreserved <r:@L> if Except !~ "GlobalKeyword_Unreserved" => new_identifier(l..r, source),
+
+        <l:@L> L_Identifier <r:@L> if Except !~ "Identifier" => new_identifier(l..r, source),
+
+        <l:@L> L_LayoutKeyword_Unreserved <r:@L> if Except !~ "LayoutKeyword_Unreserved" => new_identifier(l..r, source),
+
+        <l:@L> L_RevertKeyword_Unreserved <r:@L> if Except !~ "RevertKeyword_Unreserved" => new_identifier(l..r, source),
+
+        <l:@L> L_SzaboKeyword_Unreserved <r:@L> if Except !~ "SzaboKeyword_Unreserved" => new_identifier(l..r, source),
+
+        <l:@L> L_TransientKeyword_Unreserved <r:@L> if Except !~ "TransientKeyword_Unreserved" => new_identifier(l..r, source),
+
+};
+#[inline]
+IfKeyword: IfKeyword = {
+
+        <l:@L> L_IfKeyword_Reserved <r:@L> => new_if_keyword(l..r, source),
+
+};
+#[inline]
+ImmutableKeyword: ImmutableKeyword = {
+
+        <l:@L> L_ImmutableKeyword_Reserved <r:@L> => new_immutable_keyword(l..r, source),
+
+};
+#[inline]
+ImplementsKeyword: ImplementsKeyword = {
+
+        <l:@L> L_ImplementsKeyword_Reserved <r:@L> => new_implements_keyword(l..r, source),
+
+};
+#[inline]
+ImportKeyword: ImportKeyword = {
+
+        <l:@L> L_ImportKeyword_Reserved <r:@L> => new_import_keyword(l..r, source),
+
+};
+#[inline]
+InKeyword: InKeyword = {
+
+        <l:@L> L_InKeyword_Reserved <r:@L> => new_in_keyword(l..r, source),
+
+};
+#[inline]
+IndexedKeyword: IndexedKeyword = {
+
+        <l:@L> L_IndexedKeyword_Reserved <r:@L> => new_indexed_keyword(l..r, source),
+
+};
+#[inline]
+InlineKeyword: InlineKeyword = {
+
+        <l:@L> L_InlineKeyword_Reserved <r:@L> => new_inline_keyword(l..r, source),
+
+};
+#[inline]
+IntKeyword: IntKeyword = {
+
+        <l:@L> L_IntKeyword_Reserved <r:@L> => new_int_keyword(l..r, source),
+
+};
+#[inline]
+InterfaceKeyword: InterfaceKeyword = {
+
+        <l:@L> L_InterfaceKeyword_Reserved <r:@L> => new_interface_keyword(l..r, source),
+
+};
+#[inline]
+InternalKeyword: InternalKeyword = {
+
+        <l:@L> L_InternalKeyword_Reserved <r:@L> => new_internal_keyword(l..r, source),
+
+};
+#[inline]
+IsKeyword: IsKeyword = {
+
+        <l:@L> L_IsKeyword_Reserved <r:@L> => new_is_keyword(l..r, source),
+
+};
+#[inline]
+LayoutKeyword: LayoutKeyword = {
+
+        <l:@L> L_LayoutKeyword_Unreserved <r:@L> => new_layout_keyword(l..r, source),
+
+};
+#[inline]
+LessThan: LessThan = {
+
+        <l:@L> L_LessThan <r:@L> => new_less_than(l..r, source),
+
+};
+#[inline]
+LessThanEqual: LessThanEqual = {
+
+        <l:@L> L_LessThanEqual <r:@L> => new_less_than_equal(l..r, source),
+
+};
+#[inline]
+LessThanLessThan: LessThanLessThan = {
+
+        <l:@L> L_LessThanLessThan <r:@L> => new_less_than_less_than(l..r, source),
+
+};
+#[inline]
+LessThanLessThanEqual: LessThanLessThanEqual = {
+
+        <l:@L> L_LessThanLessThanEqual <r:@L> => new_less_than_less_than_equal(l..r, source),
+
+};
+#[inline]
+LetKeyword: LetKeyword = {
+
+        <l:@L> L_LetKeyword_Reserved <r:@L> => new_let_keyword(l..r, source),
+
+};
+#[inline]
+LibraryKeyword: LibraryKeyword = {
+
+        <l:@L> L_LibraryKeyword_Reserved <r:@L> => new_library_keyword(l..r, source),
+
+};
+#[inline]
+MacroKeyword: MacroKeyword = {
+
+        <l:@L> L_MacroKeyword_Reserved <r:@L> => new_macro_keyword(l..r, source),
+
+};
+#[inline]
+MappingKeyword: MappingKeyword = {
+
+        <l:@L> L_MappingKeyword_Reserved <r:@L> => new_mapping_keyword(l..r, source),
+
+};
+#[inline]
+MatchKeyword: MatchKeyword = {
+
+        <l:@L> L_MatchKeyword_Reserved <r:@L> => new_match_keyword(l..r, source),
+
+};
+#[inline]
+MemoryKeyword: MemoryKeyword = {
+
+        <l:@L> L_MemoryKeyword_Reserved <r:@L> => new_memory_keyword(l..r, source),
+
+};
+#[inline]
+Minus: Minus = {
+
+        <l:@L> L_Minus <r:@L> => new_minus(l..r, source),
+
+};
+#[inline]
+MinusEqual: MinusEqual = {
+
+        <l:@L> L_MinusEqual <r:@L> => new_minus_equal(l..r, source),
+
+};
+#[inline]
+MinusGreaterThan: MinusGreaterThan = {
+
+        <l:@L> L_MinusGreaterThan <r:@L> => new_minus_greater_than(l..r, source),
+
+};
+#[inline]
+MinusMinus: MinusMinus = {
+
+        <l:@L> L_MinusMinus <r:@L> => new_minus_minus(l..r, source),
+
+};
+#[inline]
+MinutesKeyword: MinutesKeyword = {
+
+        <l:@L> L_MinutesKeyword_Reserved <r:@L> => new_minutes_keyword(l..r, source),
+
+};
+#[inline]
+ModifierKeyword: ModifierKeyword = {
+
+        <l:@L> L_ModifierKeyword_Reserved <r:@L> => new_modifier_keyword(l..r, source),
+
+};
+#[inline]
+MultiLineComment: MultiLineComment = {
+
+        <l:@L> L_MultiLineComment <r:@L> => new_multi_line_comment(l..r, source),
+
+};
+#[inline]
+MultiLineNatSpecComment: MultiLineNatSpecComment = {
+
+        <l:@L> L_MultiLineNatSpecComment <r:@L> => new_multi_line_nat_spec_comment(l..r, source),
+
+};
+#[inline]
+MutableKeyword: MutableKeyword = {
+
+        <l:@L> L_MutableKeyword_Reserved <r:@L> => new_mutable_keyword(l..r, source),
+
+};
+#[inline]
+NewKeyword: NewKeyword = {
+
+        <l:@L> L_NewKeyword_Reserved <r:@L> => new_new_keyword(l..r, source),
+
+};
+#[inline]
+NullKeyword: NullKeyword = {
+
+        <l:@L> L_NullKeyword_Reserved <r:@L> => new_null_keyword(l..r, source),
+
+};
+#[inline]
+OfKeyword: OfKeyword = {
+
+        <l:@L> L_OfKeyword_Reserved <r:@L> => new_of_keyword(l..r, source),
+
+};
+#[inline]
+OpenBrace: OpenBrace = {
+
+        <l:@L> L_OpenBrace <r:@L> => new_open_brace(l..r, source),
+
+};
+#[inline]
+OpenBracket: OpenBracket = {
+
+        <l:@L> L_OpenBracket <r:@L> => new_open_bracket(l..r, source),
+
+};
+#[inline]
+OpenParen: OpenParen = {
+
+        <l:@L> L_OpenParen <r:@L> => new_open_paren(l..r, source),
+
+};
+#[inline]
+OverrideKeyword: OverrideKeyword = {
+
+        <l:@L> L_OverrideKeyword_Reserved <r:@L> => new_override_keyword(l..r, source),
+
+};
+#[inline]
+PartialKeyword: PartialKeyword = {
+
+        <l:@L> L_PartialKeyword_Reserved <r:@L> => new_partial_keyword(l..r, source),
+
+};
+#[inline]
+PayableKeyword: PayableKeyword = {
+
+        <l:@L> L_PayableKeyword_Reserved <r:@L> => new_payable_keyword(l..r, source),
+
+};
+#[inline]
+Percent: Percent = {
+
+        <l:@L> L_Percent <r:@L> => new_percent(l..r, source),
+
+};
+#[inline]
+PercentEqual: PercentEqual = {
+
+        <l:@L> L_PercentEqual <r:@L> => new_percent_equal(l..r, source),
+
+};
+#[inline]
+Period: Period = {
+
+        <l:@L> L_Period <r:@L> => new_period(l..r, source),
+
+};
+#[inline]
+Plus: Plus = {
+
+        <l:@L> L_Plus <r:@L> => new_plus(l..r, source),
+
+};
+#[inline]
+PlusEqual: PlusEqual = {
+
+        <l:@L> L_PlusEqual <r:@L> => new_plus_equal(l..r, source),
+
+};
+#[inline]
+PlusPlus: PlusPlus = {
+
+        <l:@L> L_PlusPlus <r:@L> => new_plus_plus(l..r, source),
+
+};
+#[inline]
+PragmaKeyword: PragmaKeyword = {
+
+        <l:@L> L_PragmaKeyword_Reserved <r:@L> => new_pragma_keyword(l..r, source),
+
+};
+#[inline]
+PrivateKeyword: PrivateKeyword = {
+
+        <l:@L> L_PrivateKeyword_Reserved <r:@L> => new_private_keyword(l..r, source),
+
+};
+#[inline]
+PromiseKeyword: PromiseKeyword = {
+
+        <l:@L> L_PromiseKeyword_Reserved <r:@L> => new_promise_keyword(l..r, source),
+
+};
+#[inline]
+PublicKeyword: PublicKeyword = {
+
+        <l:@L> L_PublicKeyword_Reserved <r:@L> => new_public_keyword(l..r, source),
+
+};
+#[inline]
+PureKeyword: PureKeyword = {
+
+        <l:@L> L_PureKeyword_Reserved <r:@L> => new_pure_keyword(l..r, source),
+
+};
+#[inline]
+QuestionMark: QuestionMark = {
+
+        <l:@L> L_QuestionMark <r:@L> => new_question_mark(l..r, source),
+
+};
+#[inline]
+ReceiveKeyword: ReceiveKeyword = {
+
+        <l:@L> L_ReceiveKeyword_Reserved <r:@L> => new_receive_keyword(l..r, source),
+
+};
+#[inline]
+ReferenceKeyword: ReferenceKeyword = {
+
+        <l:@L> L_ReferenceKeyword_Reserved <r:@L> => new_reference_keyword(l..r, source),
+
+};
+#[inline]
+RelocatableKeyword: RelocatableKeyword = {
+
+        <l:@L> L_RelocatableKeyword_Reserved <r:@L> => new_relocatable_keyword(l..r, source),
+
+};
+#[inline]
+ReturnKeyword: ReturnKeyword = {
+
+        <l:@L> L_ReturnKeyword_Reserved <r:@L> => new_return_keyword(l..r, source),
+
+};
+#[inline]
+ReturnsKeyword: ReturnsKeyword = {
+
+        <l:@L> L_ReturnsKeyword_Reserved <r:@L> => new_returns_keyword(l..r, source),
+
+};
+#[inline]
+RevertKeyword: RevertKeyword = {
+
+        <l:@L> L_RevertKeyword_Unreserved <r:@L> => new_revert_keyword(l..r, source),
+
+};
+#[inline]
+SMTCheckerKeyword: SMTCheckerKeyword = {
+
+        <l:@L> L_SMTCheckerKeyword_Reserved <r:@L> => new_smt_checker_keyword(l..r, source),
+
+};
+#[inline]
+SealedKeyword: SealedKeyword = {
+
+        <l:@L> L_SealedKeyword_Reserved <r:@L> => new_sealed_keyword(l..r, source),
+
+};
+#[inline]
+SecondsKeyword: SecondsKeyword = {
+
+        <l:@L> L_SecondsKeyword_Reserved <r:@L> => new_seconds_keyword(l..r, source),
+
+};
+#[inline]
+Semicolon: Semicolon = {
+
+        <l:@L> L_Semicolon <r:@L> => new_semicolon(l..r, source),
+
+};
+#[inline]
+SingleLineComment: SingleLineComment = {
+
+        <l:@L> L_SingleLineComment <r:@L> => new_single_line_comment(l..r, source),
+
+};
+#[inline]
+SingleLineNatSpecComment: SingleLineNatSpecComment = {
+
+        <l:@L> L_SingleLineNatSpecComment <r:@L> => new_single_line_nat_spec_comment(l..r, source),
+
+};
+#[inline]
+SingleQuotedHexStringLiteral: SingleQuotedHexStringLiteral = {
+
+        <l:@L> L_SingleQuotedHexStringLiteral <r:@L> => new_single_quoted_hex_string_literal(l..r, source),
+
+};
+#[inline]
+SingleQuotedStringLiteral: SingleQuotedStringLiteral = {
+
+        <l:@L> L_SingleQuotedStringLiteral <r:@L> => new_single_quoted_string_literal(l..r, source),
+
+};
+#[inline]
+SingleQuotedUnicodeStringLiteral: SingleQuotedUnicodeStringLiteral = {
+
+        <l:@L> L_SingleQuotedUnicodeStringLiteral <r:@L> => new_single_quoted_unicode_string_literal(l..r, source),
+
+};
+#[inline]
+SingleQuotedVersionLiteral: SingleQuotedVersionLiteral = {
+
+        <l:@L> L_SingleQuotedVersionLiteral <r:@L> => new_single_quoted_version_literal(l..r, source),
+
+};
+#[inline]
+SizeOfKeyword: SizeOfKeyword = {
+
+        <l:@L> L_SizeOfKeyword_Reserved <r:@L> => new_size_of_keyword(l..r, source),
+
+};
+#[inline]
+Slash: Slash = {
+
+        <l:@L> L_Slash <r:@L> => new_slash(l..r, source),
+
+};
+#[inline]
+SlashEqual: SlashEqual = {
+
+        <l:@L> L_SlashEqual <r:@L> => new_slash_equal(l..r, source),
+
+};
+#[inline]
+SolidityKeyword: SolidityKeyword = {
+
+        <l:@L> L_SolidityKeyword_Reserved <r:@L> => new_solidity_keyword(l..r, source),
+
+};
+#[inline]
+StaticKeyword: StaticKeyword = {
+
+        <l:@L> L_StaticKeyword_Reserved <r:@L> => new_static_keyword(l..r, source),
+
+};
+#[inline]
+StorageKeyword: StorageKeyword = {
+
+        <l:@L> L_StorageKeyword_Reserved <r:@L> => new_storage_keyword(l..r, source),
+
+};
+#[inline]
+StringKeyword: StringKeyword = {
+
+        <l:@L> L_StringKeyword_Reserved <r:@L> => new_string_keyword(l..r, source),
+
+};
+#[inline]
+StructKeyword: StructKeyword = {
+
+        <l:@L> L_StructKeyword_Reserved <r:@L> => new_struct_keyword(l..r, source),
+
+};
+#[inline]
+SuperKeyword: SuperKeyword = {
+
+        <l:@L> L_SuperKeyword_Reserved <r:@L> => new_super_keyword(l..r, source),
+
+};
+#[inline]
+SupportsKeyword: SupportsKeyword = {
+
+        <l:@L> L_SupportsKeyword_Reserved <r:@L> => new_supports_keyword(l..r, source),
+
+};
+#[inline]
+SwitchKeyword: SwitchKeyword = {
+
+        <l:@L> L_SwitchKeyword_Reserved <r:@L> => new_switch_keyword(l..r, source),
+
+};
+#[inline]
+SzaboKeyword: SzaboKeyword = {
+
+        <l:@L> L_SzaboKeyword_Unreserved <r:@L> => new_szabo_keyword(l..r, source),
+
+};
+#[inline]
+ThisKeyword: ThisKeyword = {
+
+        <l:@L> L_ThisKeyword_Reserved <r:@L> => new_this_keyword(l..r, source),
+
+};
+#[inline]
+ThrowKeyword: ThrowKeyword = {
+
+        <l:@L> L_ThrowKeyword_Reserved <r:@L> => new_throw_keyword(l..r, source),
+
+};
+#[inline]
+Tilde: Tilde = {
+
+        <l:@L> L_Tilde <r:@L> => new_tilde(l..r, source),
+
+};
+#[inline]
+TransientKeyword: TransientKeyword = {
+
+        <l:@L> L_TransientKeyword_Unreserved <r:@L> => new_transient_keyword(l..r, source),
+
+};
+#[inline]
+TrueKeyword: TrueKeyword = {
+
+        <l:@L> L_TrueKeyword_Reserved <r:@L> => new_true_keyword(l..r, source),
+
+};
+#[inline]
+TryKeyword: TryKeyword = {
+
+        <l:@L> L_TryKeyword_Reserved <r:@L> => new_try_keyword(l..r, source),
+
+};
+#[inline]
+TypeDefKeyword: TypeDefKeyword = {
+
+        <l:@L> L_TypeDefKeyword_Reserved <r:@L> => new_type_def_keyword(l..r, source),
+
+};
+#[inline]
+TypeKeyword: TypeKeyword = {
+
+        <l:@L> L_TypeKeyword_Reserved <r:@L> => new_type_keyword(l..r, source),
+
+};
+#[inline]
+TypeOfKeyword: TypeOfKeyword = {
+
+        <l:@L> L_TypeOfKeyword_Reserved <r:@L> => new_type_of_keyword(l..r, source),
+
+};
+#[inline]
+UfixedKeyword: UfixedKeyword = {
+
+        <l:@L> L_UfixedKeyword_Reserved <r:@L> => new_ufixed_keyword(l..r, source),
+
+};
+#[inline]
+UintKeyword: UintKeyword = {
+
+        <l:@L> L_UintKeyword_Reserved <r:@L> => new_uint_keyword(l..r, source),
+
+};
+#[inline]
+UncheckedKeyword: UncheckedKeyword = {
+
+        <l:@L> L_UncheckedKeyword_Reserved <r:@L> => new_unchecked_keyword(l..r, source),
+
+};
+#[inline]
+UsingKeyword: UsingKeyword = {
+
+        <l:@L> L_UsingKeyword_Reserved <r:@L> => new_using_keyword(l..r, source),
+
+};
+#[inline]
+VarKeyword: VarKeyword = {
+
+        <l:@L> L_VarKeyword_Reserved <r:@L> => new_var_keyword(l..r, source),
+
+};
+#[inline]
+VersionSpecifier: VersionSpecifier = {
+
+        <l:@L> L_VersionSpecifier <r:@L> => new_version_specifier(l..r, source),
+
+};
+#[inline]
+ViewKeyword: ViewKeyword = {
+
+        <l:@L> L_ViewKeyword_Reserved <r:@L> => new_view_keyword(l..r, source),
+
+};
+#[inline]
+VirtualKeyword: VirtualKeyword = {
+
+        <l:@L> L_VirtualKeyword_Reserved <r:@L> => new_virtual_keyword(l..r, source),
+
+};
+#[inline]
+WeeksKeyword: WeeksKeyword = {
+
+        <l:@L> L_WeeksKeyword_Reserved <r:@L> => new_weeks_keyword(l..r, source),
+
+};
+#[inline]
+WeiKeyword: WeiKeyword = {
+
+        <l:@L> L_WeiKeyword_Reserved <r:@L> => new_wei_keyword(l..r, source),
+
+};
+#[inline]
+WhileKeyword: WhileKeyword = {
+
+        <l:@L> L_WhileKeyword_Reserved <r:@L> => new_while_keyword(l..r, source),
+
+};
+#[inline]
+Whitespace: Whitespace = {
+
+        <l:@L> L_Whitespace <r:@L> => new_whitespace(l..r, source),
+
+};
+#[inline]
+YearsKeyword: YearsKeyword = {
+
+        <l:@L> L_YearsKeyword_Reserved <r:@L> => new_years_keyword(l..r, source),
+
+};
+#[inline]
+YulAbstractKeyword: YulAbstractKeyword = {
+
+        <l:@L> L_YulAbstractKeyword_Unreserved <r:@L> => new_yul_abstract_keyword(l..r, source),
+
+};
+#[inline]
+YulAfterKeyword: YulAfterKeyword = {
+
+        <l:@L> L_YulAfterKeyword_Unreserved <r:@L> => new_yul_after_keyword(l..r, source),
+
+};
+#[inline]
+YulAliasKeyword: YulAliasKeyword = {
+
+        <l:@L> L_YulAliasKeyword_Unreserved <r:@L> => new_yul_alias_keyword(l..r, source),
+
+};
+#[inline]
+YulAnonymousKeyword: YulAnonymousKeyword = {
+
+        <l:@L> L_YulAnonymousKeyword_Unreserved <r:@L> => new_yul_anonymous_keyword(l..r, source),
+
+};
+#[inline]
+YulApplyKeyword: YulApplyKeyword = {
+
+        <l:@L> L_YulApplyKeyword_Unreserved <r:@L> => new_yul_apply_keyword(l..r, source),
+
+};
+#[inline]
+YulAsKeyword: YulAsKeyword = {
+
+        <l:@L> L_YulAsKeyword_Unreserved <r:@L> => new_yul_as_keyword(l..r, source),
+
+};
+#[inline]
+YulAssemblyKeyword: YulAssemblyKeyword = {
+
+        <l:@L> L_YulAssemblyKeyword_Unreserved <r:@L> => new_yul_assembly_keyword(l..r, source),
+
+};
+#[inline]
+YulAutoKeyword: YulAutoKeyword = {
+
+        <l:@L> L_YulAutoKeyword_Unreserved <r:@L> => new_yul_auto_keyword(l..r, source),
+
+};
+#[inline]
+YulBoolKeyword: YulBoolKeyword = {
+
+        <l:@L> L_YulBoolKeyword_Unreserved <r:@L> => new_yul_bool_keyword(l..r, source),
+
+};
+#[inline]
+YulBreakKeyword: YulBreakKeyword = {
+
+        <l:@L> L_YulBreakKeyword_Reserved <r:@L> => new_yul_break_keyword(l..r, source),
+
+};
+#[inline]
+YulBytesKeyword: YulBytesKeyword = {
+
+        <l:@L> L_YulBytesKeyword_Unreserved <r:@L> => new_yul_bytes_keyword(l..r, source),
+
+};
+#[inline]
+YulCallDataKeyword: YulCallDataKeyword = {
+
+        <l:@L> L_YulCallDataKeyword_Unreserved <r:@L> => new_yul_call_data_keyword(l..r, source),
+
+};
+#[inline]
+YulCaseKeyword: YulCaseKeyword = {
+
+        <l:@L> L_YulCaseKeyword_Reserved <r:@L> => new_yul_case_keyword(l..r, source),
+
+};
+#[inline]
+YulCatchKeyword: YulCatchKeyword = {
+
+        <l:@L> L_YulCatchKeyword_Unreserved <r:@L> => new_yul_catch_keyword(l..r, source),
+
+};
+#[inline]
+YulConstantKeyword: YulConstantKeyword = {
+
+        <l:@L> L_YulConstantKeyword_Unreserved <r:@L> => new_yul_constant_keyword(l..r, source),
+
+};
+#[inline]
+YulConstructorKeyword: YulConstructorKeyword = {
+
+        <l:@L> L_YulConstructorKeyword_Unreserved <r:@L> => new_yul_constructor_keyword(l..r, source),
+
+};
+#[inline]
+YulContinueKeyword: YulContinueKeyword = {
+
+        <l:@L> L_YulContinueKeyword_Reserved <r:@L> => new_yul_continue_keyword(l..r, source),
+
+};
+#[inline]
+YulContractKeyword: YulContractKeyword = {
+
+        <l:@L> L_YulContractKeyword_Unreserved <r:@L> => new_yul_contract_keyword(l..r, source),
+
+};
+#[inline]
+YulCopyOfKeyword: YulCopyOfKeyword = {
+
+        <l:@L> L_YulCopyOfKeyword_Unreserved <r:@L> => new_yul_copy_of_keyword(l..r, source),
+
+};
+#[inline]
+YulDaysKeyword: YulDaysKeyword = {
+
+        <l:@L> L_YulDaysKeyword_Unreserved <r:@L> => new_yul_days_keyword(l..r, source),
+
+};
+#[inline]
+YulDecimalLiteral: YulDecimalLiteral = {
+
+        <l:@L> L_YulDecimalLiteral <r:@L> => new_yul_decimal_literal(l..r, source),
+
+};
+#[inline]
+YulDefaultKeyword: YulDefaultKeyword = {
+
+        <l:@L> L_YulDefaultKeyword_Reserved <r:@L> => new_yul_default_keyword(l..r, source),
+
+};
+#[inline]
+YulDefineKeyword: YulDefineKeyword = {
+
+        <l:@L> L_YulDefineKeyword_Unreserved <r:@L> => new_yul_define_keyword(l..r, source),
+
+};
+#[inline]
+YulDeleteKeyword: YulDeleteKeyword = {
+
+        <l:@L> L_YulDeleteKeyword_Unreserved <r:@L> => new_yul_delete_keyword(l..r, source),
+
+};
+#[inline]
+YulDoKeyword: YulDoKeyword = {
+
+        <l:@L> L_YulDoKeyword_Unreserved <r:@L> => new_yul_do_keyword(l..r, source),
+
+};
+#[inline]
+YulElseKeyword: YulElseKeyword = {
+
+        <l:@L> L_YulElseKeyword_Unreserved <r:@L> => new_yul_else_keyword(l..r, source),
+
+};
+#[inline]
+YulEmitKeyword: YulEmitKeyword = {
+
+        <l:@L> L_YulEmitKeyword_Unreserved <r:@L> => new_yul_emit_keyword(l..r, source),
+
+};
+#[inline]
+YulEnumKeyword: YulEnumKeyword = {
+
+        <l:@L> L_YulEnumKeyword_Unreserved <r:@L> => new_yul_enum_keyword(l..r, source),
+
+};
+#[inline]
+YulEtherKeyword: YulEtherKeyword = {
+
+        <l:@L> L_YulEtherKeyword_Unreserved <r:@L> => new_yul_ether_keyword(l..r, source),
+
+};
+#[inline]
+YulEventKeyword: YulEventKeyword = {
+
+        <l:@L> L_YulEventKeyword_Unreserved <r:@L> => new_yul_event_keyword(l..r, source),
+
+};
+#[inline]
+YulExternalKeyword: YulExternalKeyword = {
+
+        <l:@L> L_YulExternalKeyword_Unreserved <r:@L> => new_yul_external_keyword(l..r, source),
+
+};
+#[inline]
+YulFallbackKeyword: YulFallbackKeyword = {
+
+        <l:@L> L_YulFallbackKeyword_Unreserved <r:@L> => new_yul_fallback_keyword(l..r, source),
+
+};
+#[inline]
+YulFalseKeyword: YulFalseKeyword = {
+
+        <l:@L> L_YulFalseKeyword_Reserved <r:@L> => new_yul_false_keyword(l..r, source),
+
+};
+#[inline]
+YulFinalKeyword: YulFinalKeyword = {
+
+        <l:@L> L_YulFinalKeyword_Unreserved <r:@L> => new_yul_final_keyword(l..r, source),
+
+};
+#[inline]
+YulFinneyKeyword: YulFinneyKeyword = {
+
+        <l:@L> L_YulFinneyKeyword_Unreserved <r:@L> => new_yul_finney_keyword(l..r, source),
+
+};
+#[inline]
+YulFixedKeyword: YulFixedKeyword = {
+
+        <l:@L> L_YulFixedKeyword_Unreserved <r:@L> => new_yul_fixed_keyword(l..r, source),
+
+};
+#[inline]
+YulForKeyword: YulForKeyword = {
+
+        <l:@L> L_YulForKeyword_Reserved <r:@L> => new_yul_for_keyword(l..r, source),
+
+};
+#[inline]
+YulFunctionKeyword: YulFunctionKeyword = {
+
+        <l:@L> L_YulFunctionKeyword_Reserved <r:@L> => new_yul_function_keyword(l..r, source),
+
+};
+#[inline]
+YulGweiKeyword: YulGweiKeyword = {
+
+        <l:@L> L_YulGweiKeyword_Unreserved <r:@L> => new_yul_gwei_keyword(l..r, source),
+
+};
+#[inline]
+YulHexKeyword: YulHexKeyword = {
+
+        <l:@L> L_YulHexKeyword_Reserved <r:@L> => new_yul_hex_keyword(l..r, source),
+
+};
+#[inline]
+YulHexLiteral: YulHexLiteral = {
+
+        <l:@L> L_YulHexLiteral <r:@L> => new_yul_hex_literal(l..r, source),
+
+};
+#[inline]
+YulHoursKeyword: YulHoursKeyword = {
+
+        <l:@L> L_YulHoursKeyword_Unreserved <r:@L> => new_yul_hours_keyword(l..r, source),
+
+};
+#[inline]
+YulIdentifier: YulIdentifier = {
+
+        <l:@L> L_YulAbstractKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulAfterKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulAliasKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulAnonymousKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulApplyKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulAsKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulAssemblyKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulAutoKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulBoolKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulBytesKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulCallDataKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulCatchKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulConstantKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulConstructorKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulContractKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulCopyOfKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulDaysKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulDefineKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulDeleteKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulDoKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulElseKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulEmitKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulEnumKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulEtherKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulEventKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulExternalKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulFallbackKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulFinalKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulFinneyKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulFixedKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulGweiKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulHoursKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulIdentifier <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulImmutableKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulImplementsKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulImportKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulInKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulIndexedKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulInlineKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulIntKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulInterfaceKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulInternalKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulIsKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulLibraryKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulMacroKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulMappingKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulMatchKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulMemoryKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulMinutesKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulModifierKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulMutableKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulNewKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulNullKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulOfKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulOverrideKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulPartialKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulPayableKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulPragmaKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulPrivateKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulPromiseKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulPublicKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulPureKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulReceiveKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulReferenceKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulRelocatableKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulReturnsKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulSealedKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulSecondsKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulSizeOfKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulStaticKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulStorageKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulStringKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulStructKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulSupportsKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulSzaboKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulThrowKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulTryKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulTypeDefKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulTypeKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulTypeOfKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulUfixedKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulUintKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulUncheckedKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulUsingKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulVarKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulViewKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulVirtualKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulWeeksKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulWeiKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulWhileKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+        <l:@L> L_YulYearsKeyword_Unreserved <r:@L> => new_yul_identifier(l..r, source),
+
+};
+#[inline]
+YulIfKeyword: YulIfKeyword = {
+
+        <l:@L> L_YulIfKeyword_Reserved <r:@L> => new_yul_if_keyword(l..r, source),
+
+};
+#[inline]
+YulImmutableKeyword: YulImmutableKeyword = {
+
+        <l:@L> L_YulImmutableKeyword_Unreserved <r:@L> => new_yul_immutable_keyword(l..r, source),
+
+};
+#[inline]
+YulImplementsKeyword: YulImplementsKeyword = {
+
+        <l:@L> L_YulImplementsKeyword_Unreserved <r:@L> => new_yul_implements_keyword(l..r, source),
+
+};
+#[inline]
+YulImportKeyword: YulImportKeyword = {
+
+        <l:@L> L_YulImportKeyword_Unreserved <r:@L> => new_yul_import_keyword(l..r, source),
+
+};
+#[inline]
+YulInKeyword: YulInKeyword = {
+
+        <l:@L> L_YulInKeyword_Unreserved <r:@L> => new_yul_in_keyword(l..r, source),
+
+};
+#[inline]
+YulIndexedKeyword: YulIndexedKeyword = {
+
+        <l:@L> L_YulIndexedKeyword_Unreserved <r:@L> => new_yul_indexed_keyword(l..r, source),
+
+};
+#[inline]
+YulInlineKeyword: YulInlineKeyword = {
+
+        <l:@L> L_YulInlineKeyword_Unreserved <r:@L> => new_yul_inline_keyword(l..r, source),
+
+};
+#[inline]
+YulIntKeyword: YulIntKeyword = {
+
+        <l:@L> L_YulIntKeyword_Unreserved <r:@L> => new_yul_int_keyword(l..r, source),
+
+};
+#[inline]
+YulInterfaceKeyword: YulInterfaceKeyword = {
+
+        <l:@L> L_YulInterfaceKeyword_Unreserved <r:@L> => new_yul_interface_keyword(l..r, source),
+
+};
+#[inline]
+YulInternalKeyword: YulInternalKeyword = {
+
+        <l:@L> L_YulInternalKeyword_Unreserved <r:@L> => new_yul_internal_keyword(l..r, source),
+
+};
+#[inline]
+YulIsKeyword: YulIsKeyword = {
+
+        <l:@L> L_YulIsKeyword_Unreserved <r:@L> => new_yul_is_keyword(l..r, source),
+
+};
+#[inline]
+YulLeaveKeyword: YulLeaveKeyword = {
+
+        <l:@L> L_YulLeaveKeyword_Reserved <r:@L> => new_yul_leave_keyword(l..r, source),
+
+};
+#[inline]
+YulLetKeyword: YulLetKeyword = {
+
+        <l:@L> L_YulLetKeyword_Reserved <r:@L> => new_yul_let_keyword(l..r, source),
+
+};
+#[inline]
+YulLibraryKeyword: YulLibraryKeyword = {
+
+        <l:@L> L_YulLibraryKeyword_Unreserved <r:@L> => new_yul_library_keyword(l..r, source),
+
+};
+#[inline]
+YulMacroKeyword: YulMacroKeyword = {
+
+        <l:@L> L_YulMacroKeyword_Unreserved <r:@L> => new_yul_macro_keyword(l..r, source),
+
+};
+#[inline]
+YulMappingKeyword: YulMappingKeyword = {
+
+        <l:@L> L_YulMappingKeyword_Unreserved <r:@L> => new_yul_mapping_keyword(l..r, source),
+
+};
+#[inline]
+YulMatchKeyword: YulMatchKeyword = {
+
+        <l:@L> L_YulMatchKeyword_Unreserved <r:@L> => new_yul_match_keyword(l..r, source),
+
+};
+#[inline]
+YulMemoryKeyword: YulMemoryKeyword = {
+
+        <l:@L> L_YulMemoryKeyword_Unreserved <r:@L> => new_yul_memory_keyword(l..r, source),
+
+};
+#[inline]
+YulMinutesKeyword: YulMinutesKeyword = {
+
+        <l:@L> L_YulMinutesKeyword_Unreserved <r:@L> => new_yul_minutes_keyword(l..r, source),
+
+};
+#[inline]
+YulModifierKeyword: YulModifierKeyword = {
+
+        <l:@L> L_YulModifierKeyword_Unreserved <r:@L> => new_yul_modifier_keyword(l..r, source),
+
+};
+#[inline]
+YulMutableKeyword: YulMutableKeyword = {
+
+        <l:@L> L_YulMutableKeyword_Unreserved <r:@L> => new_yul_mutable_keyword(l..r, source),
+
+};
+#[inline]
+YulNewKeyword: YulNewKeyword = {
+
+        <l:@L> L_YulNewKeyword_Unreserved <r:@L> => new_yul_new_keyword(l..r, source),
+
+};
+#[inline]
+YulNullKeyword: YulNullKeyword = {
+
+        <l:@L> L_YulNullKeyword_Unreserved <r:@L> => new_yul_null_keyword(l..r, source),
+
+};
+#[inline]
+YulOfKeyword: YulOfKeyword = {
+
+        <l:@L> L_YulOfKeyword_Unreserved <r:@L> => new_yul_of_keyword(l..r, source),
+
+};
+#[inline]
+YulOverrideKeyword: YulOverrideKeyword = {
+
+        <l:@L> L_YulOverrideKeyword_Unreserved <r:@L> => new_yul_override_keyword(l..r, source),
+
+};
+#[inline]
+YulPartialKeyword: YulPartialKeyword = {
+
+        <l:@L> L_YulPartialKeyword_Unreserved <r:@L> => new_yul_partial_keyword(l..r, source),
+
+};
+#[inline]
+YulPayableKeyword: YulPayableKeyword = {
+
+        <l:@L> L_YulPayableKeyword_Unreserved <r:@L> => new_yul_payable_keyword(l..r, source),
+
+};
+#[inline]
+YulPragmaKeyword: YulPragmaKeyword = {
+
+        <l:@L> L_YulPragmaKeyword_Unreserved <r:@L> => new_yul_pragma_keyword(l..r, source),
+
+};
+#[inline]
+YulPrivateKeyword: YulPrivateKeyword = {
+
+        <l:@L> L_YulPrivateKeyword_Unreserved <r:@L> => new_yul_private_keyword(l..r, source),
+
+};
+#[inline]
+YulPromiseKeyword: YulPromiseKeyword = {
+
+        <l:@L> L_YulPromiseKeyword_Unreserved <r:@L> => new_yul_promise_keyword(l..r, source),
+
+};
+#[inline]
+YulPublicKeyword: YulPublicKeyword = {
+
+        <l:@L> L_YulPublicKeyword_Unreserved <r:@L> => new_yul_public_keyword(l..r, source),
+
+};
+#[inline]
+YulPureKeyword: YulPureKeyword = {
+
+        <l:@L> L_YulPureKeyword_Unreserved <r:@L> => new_yul_pure_keyword(l..r, source),
+
+};
+#[inline]
+YulReceiveKeyword: YulReceiveKeyword = {
+
+        <l:@L> L_YulReceiveKeyword_Unreserved <r:@L> => new_yul_receive_keyword(l..r, source),
+
+};
+#[inline]
+YulReferenceKeyword: YulReferenceKeyword = {
+
+        <l:@L> L_YulReferenceKeyword_Unreserved <r:@L> => new_yul_reference_keyword(l..r, source),
+
+};
+#[inline]
+YulRelocatableKeyword: YulRelocatableKeyword = {
+
+        <l:@L> L_YulRelocatableKeyword_Unreserved <r:@L> => new_yul_relocatable_keyword(l..r, source),
+
+};
+#[inline]
+YulReturnsKeyword: YulReturnsKeyword = {
+
+        <l:@L> L_YulReturnsKeyword_Unreserved <r:@L> => new_yul_returns_keyword(l..r, source),
+
+};
+#[inline]
+YulSealedKeyword: YulSealedKeyword = {
+
+        <l:@L> L_YulSealedKeyword_Unreserved <r:@L> => new_yul_sealed_keyword(l..r, source),
+
+};
+#[inline]
+YulSecondsKeyword: YulSecondsKeyword = {
+
+        <l:@L> L_YulSecondsKeyword_Unreserved <r:@L> => new_yul_seconds_keyword(l..r, source),
+
+};
+#[inline]
+YulSizeOfKeyword: YulSizeOfKeyword = {
+
+        <l:@L> L_YulSizeOfKeyword_Unreserved <r:@L> => new_yul_size_of_keyword(l..r, source),
+
+};
+#[inline]
+YulStaticKeyword: YulStaticKeyword = {
+
+        <l:@L> L_YulStaticKeyword_Unreserved <r:@L> => new_yul_static_keyword(l..r, source),
+
+};
+#[inline]
+YulStorageKeyword: YulStorageKeyword = {
+
+        <l:@L> L_YulStorageKeyword_Unreserved <r:@L> => new_yul_storage_keyword(l..r, source),
+
+};
+#[inline]
+YulStringKeyword: YulStringKeyword = {
+
+        <l:@L> L_YulStringKeyword_Unreserved <r:@L> => new_yul_string_keyword(l..r, source),
+
+};
+#[inline]
+YulStructKeyword: YulStructKeyword = {
+
+        <l:@L> L_YulStructKeyword_Unreserved <r:@L> => new_yul_struct_keyword(l..r, source),
+
+};
+#[inline]
+YulSuperKeyword: YulSuperKeyword = {
+
+        <l:@L> L_YulSuperKeyword_Reserved <r:@L> => new_yul_super_keyword(l..r, source),
+
+};
+#[inline]
+YulSupportsKeyword: YulSupportsKeyword = {
+
+        <l:@L> L_YulSupportsKeyword_Unreserved <r:@L> => new_yul_supports_keyword(l..r, source),
+
+};
+#[inline]
+YulSwitchKeyword: YulSwitchKeyword = {
+
+        <l:@L> L_YulSwitchKeyword_Reserved <r:@L> => new_yul_switch_keyword(l..r, source),
+
+};
+#[inline]
+YulSzaboKeyword: YulSzaboKeyword = {
+
+        <l:@L> L_YulSzaboKeyword_Unreserved <r:@L> => new_yul_szabo_keyword(l..r, source),
+
+};
+#[inline]
+YulThisKeyword: YulThisKeyword = {
+
+        <l:@L> L_YulThisKeyword_Reserved <r:@L> => new_yul_this_keyword(l..r, source),
+
+};
+#[inline]
+YulThrowKeyword: YulThrowKeyword = {
+
+        <l:@L> L_YulThrowKeyword_Unreserved <r:@L> => new_yul_throw_keyword(l..r, source),
+
+};
+#[inline]
+YulTrueKeyword: YulTrueKeyword = {
+
+        <l:@L> L_YulTrueKeyword_Reserved <r:@L> => new_yul_true_keyword(l..r, source),
+
+};
+#[inline]
+YulTryKeyword: YulTryKeyword = {
+
+        <l:@L> L_YulTryKeyword_Unreserved <r:@L> => new_yul_try_keyword(l..r, source),
+
+};
+#[inline]
+YulTypeDefKeyword: YulTypeDefKeyword = {
+
+        <l:@L> L_YulTypeDefKeyword_Unreserved <r:@L> => new_yul_type_def_keyword(l..r, source),
+
+};
+#[inline]
+YulTypeKeyword: YulTypeKeyword = {
+
+        <l:@L> L_YulTypeKeyword_Unreserved <r:@L> => new_yul_type_keyword(l..r, source),
+
+};
+#[inline]
+YulTypeOfKeyword: YulTypeOfKeyword = {
+
+        <l:@L> L_YulTypeOfKeyword_Unreserved <r:@L> => new_yul_type_of_keyword(l..r, source),
+
+};
+#[inline]
+YulUfixedKeyword: YulUfixedKeyword = {
+
+        <l:@L> L_YulUfixedKeyword_Unreserved <r:@L> => new_yul_ufixed_keyword(l..r, source),
+
+};
+#[inline]
+YulUintKeyword: YulUintKeyword = {
+
+        <l:@L> L_YulUintKeyword_Unreserved <r:@L> => new_yul_uint_keyword(l..r, source),
+
+};
+#[inline]
+YulUncheckedKeyword: YulUncheckedKeyword = {
+
+        <l:@L> L_YulUncheckedKeyword_Unreserved <r:@L> => new_yul_unchecked_keyword(l..r, source),
+
+};
+#[inline]
+YulUsingKeyword: YulUsingKeyword = {
+
+        <l:@L> L_YulUsingKeyword_Unreserved <r:@L> => new_yul_using_keyword(l..r, source),
+
+};
+#[inline]
+YulVarKeyword: YulVarKeyword = {
+
+        <l:@L> L_YulVarKeyword_Unreserved <r:@L> => new_yul_var_keyword(l..r, source),
+
+};
+#[inline]
+YulViewKeyword: YulViewKeyword = {
+
+        <l:@L> L_YulViewKeyword_Unreserved <r:@L> => new_yul_view_keyword(l..r, source),
+
+};
+#[inline]
+YulVirtualKeyword: YulVirtualKeyword = {
+
+        <l:@L> L_YulVirtualKeyword_Unreserved <r:@L> => new_yul_virtual_keyword(l..r, source),
+
+};
+#[inline]
+YulWeeksKeyword: YulWeeksKeyword = {
+
+        <l:@L> L_YulWeeksKeyword_Unreserved <r:@L> => new_yul_weeks_keyword(l..r, source),
+
+};
+#[inline]
+YulWeiKeyword: YulWeiKeyword = {
+
+        <l:@L> L_YulWeiKeyword_Unreserved <r:@L> => new_yul_wei_keyword(l..r, source),
+
+};
+#[inline]
+YulWhileKeyword: YulWhileKeyword = {
+
+        <l:@L> L_YulWhileKeyword_Unreserved <r:@L> => new_yul_while_keyword(l..r, source),
+
+};
+#[inline]
+YulYearsKeyword: YulYearsKeyword = {
+
+        <l:@L> L_YulYearsKeyword_Unreserved <r:@L> => new_yul_years_keyword(l..r, source),
+
+};
+
+
+
+extern {
+    type Location = usize;
+    // TODO(v2): error recovery
+    type Error = ();
+
+    enum lexemes::LexemeKind {
+        L_ABIEncoderV2Keyword_Reserved => lexemes::LexemeKind::ABIEncoderV2Keyword_Reserved,
+        L_AbicoderKeyword_Reserved => lexemes::LexemeKind::AbicoderKeyword_Reserved,
+        L_AbicoderV1Keyword_Reserved => lexemes::LexemeKind::AbicoderV1Keyword_Reserved,
+        L_AbicoderV2Keyword_Reserved => lexemes::LexemeKind::AbicoderV2Keyword_Reserved,
+        L_AbstractKeyword_Reserved => lexemes::LexemeKind::AbstractKeyword_Reserved,
+        L_AddressKeyword_Reserved => lexemes::LexemeKind::AddressKeyword_Reserved,
+        L_AfterKeyword_Reserved => lexemes::LexemeKind::AfterKeyword_Reserved,
+        L_AliasKeyword_Reserved => lexemes::LexemeKind::AliasKeyword_Reserved,
+        L_AliasKeyword_Unreserved => lexemes::LexemeKind::AliasKeyword_Unreserved,
+        L_Ampersand => lexemes::LexemeKind::Ampersand,
+        L_AmpersandAmpersand => lexemes::LexemeKind::AmpersandAmpersand,
+        L_AmpersandEqual => lexemes::LexemeKind::AmpersandEqual,
+        L_AnonymousKeyword_Reserved => lexemes::LexemeKind::AnonymousKeyword_Reserved,
+        L_ApplyKeyword_Reserved => lexemes::LexemeKind::ApplyKeyword_Reserved,
+        L_ApplyKeyword_Unreserved => lexemes::LexemeKind::ApplyKeyword_Unreserved,
+        L_AsKeyword_Reserved => lexemes::LexemeKind::AsKeyword_Reserved,
+        L_AssemblyKeyword_Reserved => lexemes::LexemeKind::AssemblyKeyword_Reserved,
+        L_Asterisk => lexemes::LexemeKind::Asterisk,
+        L_AsteriskAsterisk => lexemes::LexemeKind::AsteriskAsterisk,
+        L_AsteriskEqual => lexemes::LexemeKind::AsteriskEqual,
+        L_AtKeyword_Unreserved => lexemes::LexemeKind::AtKeyword_Unreserved,
+        L_AutoKeyword_Reserved => lexemes::LexemeKind::AutoKeyword_Reserved,
+        L_AutoKeyword_Unreserved => lexemes::LexemeKind::AutoKeyword_Unreserved,
+        L_Bang => lexemes::LexemeKind::Bang,
+        L_BangEqual => lexemes::LexemeKind::BangEqual,
+        L_Bar => lexemes::LexemeKind::Bar,
+        L_BarBar => lexemes::LexemeKind::BarBar,
+        L_BarEqual => lexemes::LexemeKind::BarEqual,
+        L_BoolKeyword_Reserved => lexemes::LexemeKind::BoolKeyword_Reserved,
+        L_BreakKeyword_Reserved => lexemes::LexemeKind::BreakKeyword_Reserved,
+        L_ByteKeyword_Reserved => lexemes::LexemeKind::ByteKeyword_Reserved,
+        L_BytesKeyword_Reserved => lexemes::LexemeKind::BytesKeyword_Reserved,
+        L_CallDataKeyword_Reserved => lexemes::LexemeKind::CallDataKeyword_Reserved,
+        L_CallDataKeyword_Unreserved => lexemes::LexemeKind::CallDataKeyword_Unreserved,
+        L_Caret => lexemes::LexemeKind::Caret,
+        L_CaretEqual => lexemes::LexemeKind::CaretEqual,
+        L_CaseKeyword_Reserved => lexemes::LexemeKind::CaseKeyword_Reserved,
+        L_CatchKeyword_Reserved => lexemes::LexemeKind::CatchKeyword_Reserved,
+        L_CloseBrace => lexemes::LexemeKind::CloseBrace,
+        L_CloseBracket => lexemes::LexemeKind::CloseBracket,
+        L_CloseParen => lexemes::LexemeKind::CloseParen,
+        L_Colon => lexemes::LexemeKind::Colon,
+        L_ColonEqual => lexemes::LexemeKind::ColonEqual,
+        L_Comma => lexemes::LexemeKind::Comma,
+        L_ConstantKeyword_Reserved => lexemes::LexemeKind::ConstantKeyword_Reserved,
+        L_ConstructorKeyword_Reserved => lexemes::LexemeKind::ConstructorKeyword_Reserved,
+        L_ConstructorKeyword_Unreserved => lexemes::LexemeKind::ConstructorKeyword_Unreserved,
+        L_ContinueKeyword_Reserved => lexemes::LexemeKind::ContinueKeyword_Reserved,
+        L_ContractKeyword_Reserved => lexemes::LexemeKind::ContractKeyword_Reserved,
+        L_CopyOfKeyword_Reserved => lexemes::LexemeKind::CopyOfKeyword_Reserved,
+        L_CopyOfKeyword_Unreserved => lexemes::LexemeKind::CopyOfKeyword_Unreserved,
+        L_DaysKeyword_Reserved => lexemes::LexemeKind::DaysKeyword_Reserved,
+        L_DecimalLiteral => lexemes::LexemeKind::DecimalLiteral,
+        L_DefaultKeyword_Reserved => lexemes::LexemeKind::DefaultKeyword_Reserved,
+        L_DefineKeyword_Reserved => lexemes::LexemeKind::DefineKeyword_Reserved,
+        L_DefineKeyword_Unreserved => lexemes::LexemeKind::DefineKeyword_Unreserved,
+        L_DeleteKeyword_Reserved => lexemes::LexemeKind::DeleteKeyword_Reserved,
+        L_DoKeyword_Reserved => lexemes::LexemeKind::DoKeyword_Reserved,
+        L_DoubleQuotedHexStringLiteral => lexemes::LexemeKind::DoubleQuotedHexStringLiteral,
+        L_DoubleQuotedStringLiteral => lexemes::LexemeKind::DoubleQuotedStringLiteral,
+        L_DoubleQuotedUnicodeStringLiteral => lexemes::LexemeKind::DoubleQuotedUnicodeStringLiteral,
+        L_DoubleQuotedVersionLiteral => lexemes::LexemeKind::DoubleQuotedVersionLiteral,
+        L_ElseKeyword_Reserved => lexemes::LexemeKind::ElseKeyword_Reserved,
+        L_EmitKeyword_Reserved => lexemes::LexemeKind::EmitKeyword_Reserved,
+        L_EmitKeyword_Unreserved => lexemes::LexemeKind::EmitKeyword_Unreserved,
+        L_EndOfLine => lexemes::LexemeKind::EndOfLine,
+        L_EnumKeyword_Reserved => lexemes::LexemeKind::EnumKeyword_Reserved,
+        L_Equal => lexemes::LexemeKind::Equal,
+        L_EqualColon => lexemes::LexemeKind::EqualColon,
+        L_EqualEqual => lexemes::LexemeKind::EqualEqual,
+        L_EqualGreaterThan => lexemes::LexemeKind::EqualGreaterThan,
+        L_ErrorKeyword_Unreserved => lexemes::LexemeKind::ErrorKeyword_Unreserved,
+        L_EtherKeyword_Reserved => lexemes::LexemeKind::EtherKeyword_Reserved,
+        L_EventKeyword_Reserved => lexemes::LexemeKind::EventKeyword_Reserved,
+        L_ExperimentalKeyword_Reserved => lexemes::LexemeKind::ExperimentalKeyword_Reserved,
+        L_ExternalKeyword_Reserved => lexemes::LexemeKind::ExternalKeyword_Reserved,
+        L_FallbackKeyword_Reserved => lexemes::LexemeKind::FallbackKeyword_Reserved,
+        L_FallbackKeyword_Unreserved => lexemes::LexemeKind::FallbackKeyword_Unreserved,
+        L_FalseKeyword_Reserved => lexemes::LexemeKind::FalseKeyword_Reserved,
+        L_FinalKeyword_Reserved => lexemes::LexemeKind::FinalKeyword_Reserved,
+        L_FinneyKeyword_Reserved => lexemes::LexemeKind::FinneyKeyword_Reserved,
+        L_FinneyKeyword_Unreserved => lexemes::LexemeKind::FinneyKeyword_Unreserved,
+        L_FixedKeyword_Reserved => lexemes::LexemeKind::FixedKeyword_Reserved,
+        L_FixedKeyword_Unreserved => lexemes::LexemeKind::FixedKeyword_Unreserved,
+        L_ForKeyword_Reserved => lexemes::LexemeKind::ForKeyword_Reserved,
+        L_FromKeyword_Unreserved => lexemes::LexemeKind::FromKeyword_Unreserved,
+        L_FunctionKeyword_Reserved => lexemes::LexemeKind::FunctionKeyword_Reserved,
+        L_GlobalKeyword_Unreserved => lexemes::LexemeKind::GlobalKeyword_Unreserved,
+        L_GreaterThan => lexemes::LexemeKind::GreaterThan,
+        L_GreaterThanEqual => lexemes::LexemeKind::GreaterThanEqual,
+        L_GreaterThanGreaterThan => lexemes::LexemeKind::GreaterThanGreaterThan,
+        L_GreaterThanGreaterThanEqual => lexemes::LexemeKind::GreaterThanGreaterThanEqual,
+        L_GreaterThanGreaterThanGreaterThan => lexemes::LexemeKind::GreaterThanGreaterThanGreaterThan,
+        L_GreaterThanGreaterThanGreaterThanEqual => lexemes::LexemeKind::GreaterThanGreaterThanGreaterThanEqual,
+        L_GweiKeyword_Reserved => lexemes::LexemeKind::GweiKeyword_Reserved,
+        L_GweiKeyword_Unreserved => lexemes::LexemeKind::GweiKeyword_Unreserved,
+        L_HexKeyword_Reserved => lexemes::LexemeKind::HexKeyword_Reserved,
+        L_HexLiteral => lexemes::LexemeKind::HexLiteral,
+        L_HoursKeyword_Reserved => lexemes::LexemeKind::HoursKeyword_Reserved,
+        L_Identifier => lexemes::LexemeKind::Identifier,
+        L_IfKeyword_Reserved => lexemes::LexemeKind::IfKeyword_Reserved,
+        L_ImmutableKeyword_Reserved => lexemes::LexemeKind::ImmutableKeyword_Reserved,
+        L_ImmutableKeyword_Unreserved => lexemes::LexemeKind::ImmutableKeyword_Unreserved,
+        L_ImplementsKeyword_Reserved => lexemes::LexemeKind::ImplementsKeyword_Reserved,
+        L_ImplementsKeyword_Unreserved => lexemes::LexemeKind::ImplementsKeyword_Unreserved,
+        L_ImportKeyword_Reserved => lexemes::LexemeKind::ImportKeyword_Reserved,
+        L_InKeyword_Reserved => lexemes::LexemeKind::InKeyword_Reserved,
+        L_IndexedKeyword_Reserved => lexemes::LexemeKind::IndexedKeyword_Reserved,
+        L_InlineKeyword_Reserved => lexemes::LexemeKind::InlineKeyword_Reserved,
+        L_IntKeyword_Reserved => lexemes::LexemeKind::IntKeyword_Reserved,
+        L_InterfaceKeyword_Reserved => lexemes::LexemeKind::InterfaceKeyword_Reserved,
+        L_InternalKeyword_Reserved => lexemes::LexemeKind::InternalKeyword_Reserved,
+        L_IsKeyword_Reserved => lexemes::LexemeKind::IsKeyword_Reserved,
+        L_LayoutKeyword_Unreserved => lexemes::LexemeKind::LayoutKeyword_Unreserved,
+        L_LessThan => lexemes::LexemeKind::LessThan,
+        L_LessThanEqual => lexemes::LexemeKind::LessThanEqual,
+        L_LessThanLessThan => lexemes::LexemeKind::LessThanLessThan,
+        L_LessThanLessThanEqual => lexemes::LexemeKind::LessThanLessThanEqual,
+        L_LetKeyword_Reserved => lexemes::LexemeKind::LetKeyword_Reserved,
+        L_LibraryKeyword_Reserved => lexemes::LexemeKind::LibraryKeyword_Reserved,
+        L_MacroKeyword_Reserved => lexemes::LexemeKind::MacroKeyword_Reserved,
+        L_MacroKeyword_Unreserved => lexemes::LexemeKind::MacroKeyword_Unreserved,
+        L_MappingKeyword_Reserved => lexemes::LexemeKind::MappingKeyword_Reserved,
+        L_MatchKeyword_Reserved => lexemes::LexemeKind::MatchKeyword_Reserved,
+        L_MemoryKeyword_Reserved => lexemes::LexemeKind::MemoryKeyword_Reserved,
+        L_Minus => lexemes::LexemeKind::Minus,
+        L_MinusEqual => lexemes::LexemeKind::MinusEqual,
+        L_MinusGreaterThan => lexemes::LexemeKind::MinusGreaterThan,
+        L_MinusMinus => lexemes::LexemeKind::MinusMinus,
+        L_MinutesKeyword_Reserved => lexemes::LexemeKind::MinutesKeyword_Reserved,
+        L_ModifierKeyword_Reserved => lexemes::LexemeKind::ModifierKeyword_Reserved,
+        L_MultiLineComment => lexemes::LexemeKind::MultiLineComment,
+        L_MultiLineNatSpecComment => lexemes::LexemeKind::MultiLineNatSpecComment,
+        L_MutableKeyword_Reserved => lexemes::LexemeKind::MutableKeyword_Reserved,
+        L_MutableKeyword_Unreserved => lexemes::LexemeKind::MutableKeyword_Unreserved,
+        L_NewKeyword_Reserved => lexemes::LexemeKind::NewKeyword_Reserved,
+        L_NullKeyword_Reserved => lexemes::LexemeKind::NullKeyword_Reserved,
+        L_OfKeyword_Reserved => lexemes::LexemeKind::OfKeyword_Reserved,
+        L_OpenBrace => lexemes::LexemeKind::OpenBrace,
+        L_OpenBracket => lexemes::LexemeKind::OpenBracket,
+        L_OpenParen => lexemes::LexemeKind::OpenParen,
+        L_OverrideKeyword_Reserved => lexemes::LexemeKind::OverrideKeyword_Reserved,
+        L_OverrideKeyword_Unreserved => lexemes::LexemeKind::OverrideKeyword_Unreserved,
+        L_PartialKeyword_Reserved => lexemes::LexemeKind::PartialKeyword_Reserved,
+        L_PartialKeyword_Unreserved => lexemes::LexemeKind::PartialKeyword_Unreserved,
+        L_PayableKeyword_Reserved => lexemes::LexemeKind::PayableKeyword_Reserved,
+        L_Percent => lexemes::LexemeKind::Percent,
+        L_PercentEqual => lexemes::LexemeKind::PercentEqual,
+        L_Period => lexemes::LexemeKind::Period,
+        L_Plus => lexemes::LexemeKind::Plus,
+        L_PlusEqual => lexemes::LexemeKind::PlusEqual,
+        L_PlusPlus => lexemes::LexemeKind::PlusPlus,
+        L_PragmaKeyword_Reserved => lexemes::LexemeKind::PragmaKeyword_Reserved,
+        L_PrivateKeyword_Reserved => lexemes::LexemeKind::PrivateKeyword_Reserved,
+        L_PromiseKeyword_Reserved => lexemes::LexemeKind::PromiseKeyword_Reserved,
+        L_PromiseKeyword_Unreserved => lexemes::LexemeKind::PromiseKeyword_Unreserved,
+        L_PublicKeyword_Reserved => lexemes::LexemeKind::PublicKeyword_Reserved,
+        L_PureKeyword_Reserved => lexemes::LexemeKind::PureKeyword_Reserved,
+        L_QuestionMark => lexemes::LexemeKind::QuestionMark,
+        L_ReceiveKeyword_Reserved => lexemes::LexemeKind::ReceiveKeyword_Reserved,
+        L_ReceiveKeyword_Unreserved => lexemes::LexemeKind::ReceiveKeyword_Unreserved,
+        L_ReferenceKeyword_Reserved => lexemes::LexemeKind::ReferenceKeyword_Reserved,
+        L_ReferenceKeyword_Unreserved => lexemes::LexemeKind::ReferenceKeyword_Unreserved,
+        L_RelocatableKeyword_Reserved => lexemes::LexemeKind::RelocatableKeyword_Reserved,
+        L_ReturnKeyword_Reserved => lexemes::LexemeKind::ReturnKeyword_Reserved,
+        L_ReturnsKeyword_Reserved => lexemes::LexemeKind::ReturnsKeyword_Reserved,
+        L_RevertKeyword_Unreserved => lexemes::LexemeKind::RevertKeyword_Unreserved,
+        L_SMTCheckerKeyword_Reserved => lexemes::LexemeKind::SMTCheckerKeyword_Reserved,
+        L_SealedKeyword_Reserved => lexemes::LexemeKind::SealedKeyword_Reserved,
+        L_SealedKeyword_Unreserved => lexemes::LexemeKind::SealedKeyword_Unreserved,
+        L_SecondsKeyword_Reserved => lexemes::LexemeKind::SecondsKeyword_Reserved,
+        L_Semicolon => lexemes::LexemeKind::Semicolon,
+        L_SingleLineComment => lexemes::LexemeKind::SingleLineComment,
+        L_SingleLineNatSpecComment => lexemes::LexemeKind::SingleLineNatSpecComment,
+        L_SingleQuotedHexStringLiteral => lexemes::LexemeKind::SingleQuotedHexStringLiteral,
+        L_SingleQuotedStringLiteral => lexemes::LexemeKind::SingleQuotedStringLiteral,
+        L_SingleQuotedUnicodeStringLiteral => lexemes::LexemeKind::SingleQuotedUnicodeStringLiteral,
+        L_SingleQuotedVersionLiteral => lexemes::LexemeKind::SingleQuotedVersionLiteral,
+        L_SizeOfKeyword_Reserved => lexemes::LexemeKind::SizeOfKeyword_Reserved,
+        L_SizeOfKeyword_Unreserved => lexemes::LexemeKind::SizeOfKeyword_Unreserved,
+        L_Slash => lexemes::LexemeKind::Slash,
+        L_SlashEqual => lexemes::LexemeKind::SlashEqual,
+        L_SolidityKeyword_Reserved => lexemes::LexemeKind::SolidityKeyword_Reserved,
+        L_StaticKeyword_Reserved => lexemes::LexemeKind::StaticKeyword_Reserved,
+        L_StorageKeyword_Reserved => lexemes::LexemeKind::StorageKeyword_Reserved,
+        L_StringKeyword_Reserved => lexemes::LexemeKind::StringKeyword_Reserved,
+        L_StructKeyword_Reserved => lexemes::LexemeKind::StructKeyword_Reserved,
+        L_SuperKeyword_Reserved => lexemes::LexemeKind::SuperKeyword_Reserved,
+        L_SuperKeyword_Unreserved => lexemes::LexemeKind::SuperKeyword_Unreserved,
+        L_SupportsKeyword_Reserved => lexemes::LexemeKind::SupportsKeyword_Reserved,
+        L_SupportsKeyword_Unreserved => lexemes::LexemeKind::SupportsKeyword_Unreserved,
+        L_SwitchKeyword_Reserved => lexemes::LexemeKind::SwitchKeyword_Reserved,
+        L_SzaboKeyword_Reserved => lexemes::LexemeKind::SzaboKeyword_Reserved,
+        L_SzaboKeyword_Unreserved => lexemes::LexemeKind::SzaboKeyword_Unreserved,
+        L_ThisKeyword_Reserved => lexemes::LexemeKind::ThisKeyword_Reserved,
+        L_ThisKeyword_Unreserved => lexemes::LexemeKind::ThisKeyword_Unreserved,
+        L_ThrowKeyword_Reserved => lexemes::LexemeKind::ThrowKeyword_Reserved,
+        L_Tilde => lexemes::LexemeKind::Tilde,
+        L_TransientKeyword_Unreserved => lexemes::LexemeKind::TransientKeyword_Unreserved,
+        L_TrueKeyword_Reserved => lexemes::LexemeKind::TrueKeyword_Reserved,
+        L_TryKeyword_Reserved => lexemes::LexemeKind::TryKeyword_Reserved,
+        L_TypeDefKeyword_Reserved => lexemes::LexemeKind::TypeDefKeyword_Reserved,
+        L_TypeDefKeyword_Unreserved => lexemes::LexemeKind::TypeDefKeyword_Unreserved,
+        L_TypeKeyword_Reserved => lexemes::LexemeKind::TypeKeyword_Reserved,
+        L_TypeOfKeyword_Reserved => lexemes::LexemeKind::TypeOfKeyword_Reserved,
+        L_UfixedKeyword_Reserved => lexemes::LexemeKind::UfixedKeyword_Reserved,
+        L_UfixedKeyword_Unreserved => lexemes::LexemeKind::UfixedKeyword_Unreserved,
+        L_UintKeyword_Reserved => lexemes::LexemeKind::UintKeyword_Reserved,
+        L_UncheckedKeyword_Reserved => lexemes::LexemeKind::UncheckedKeyword_Reserved,
+        L_UncheckedKeyword_Unreserved => lexemes::LexemeKind::UncheckedKeyword_Unreserved,
+        L_UsingKeyword_Reserved => lexemes::LexemeKind::UsingKeyword_Reserved,
+        L_VarKeyword_Reserved => lexemes::LexemeKind::VarKeyword_Reserved,
+        L_VersionSpecifier => lexemes::LexemeKind::VersionSpecifier,
+        L_ViewKeyword_Reserved => lexemes::LexemeKind::ViewKeyword_Reserved,
+        L_VirtualKeyword_Reserved => lexemes::LexemeKind::VirtualKeyword_Reserved,
+        L_VirtualKeyword_Unreserved => lexemes::LexemeKind::VirtualKeyword_Unreserved,
+        L_WeeksKeyword_Reserved => lexemes::LexemeKind::WeeksKeyword_Reserved,
+        L_WeiKeyword_Reserved => lexemes::LexemeKind::WeiKeyword_Reserved,
+        L_WhileKeyword_Reserved => lexemes::LexemeKind::WhileKeyword_Reserved,
+        L_Whitespace => lexemes::LexemeKind::Whitespace,
+        L_YearsKeyword_Reserved => lexemes::LexemeKind::YearsKeyword_Reserved,
+        L_YulAbstractKeyword_Reserved => lexemes::LexemeKind::YulAbstractKeyword_Reserved,
+        L_YulAbstractKeyword_Unreserved => lexemes::LexemeKind::YulAbstractKeyword_Unreserved,
+        L_YulAfterKeyword_Reserved => lexemes::LexemeKind::YulAfterKeyword_Reserved,
+        L_YulAfterKeyword_Unreserved => lexemes::LexemeKind::YulAfterKeyword_Unreserved,
+        L_YulAliasKeyword_Reserved => lexemes::LexemeKind::YulAliasKeyword_Reserved,
+        L_YulAliasKeyword_Unreserved => lexemes::LexemeKind::YulAliasKeyword_Unreserved,
+        L_YulAnonymousKeyword_Reserved => lexemes::LexemeKind::YulAnonymousKeyword_Reserved,
+        L_YulAnonymousKeyword_Unreserved => lexemes::LexemeKind::YulAnonymousKeyword_Unreserved,
+        L_YulApplyKeyword_Reserved => lexemes::LexemeKind::YulApplyKeyword_Reserved,
+        L_YulApplyKeyword_Unreserved => lexemes::LexemeKind::YulApplyKeyword_Unreserved,
+        L_YulAsKeyword_Reserved => lexemes::LexemeKind::YulAsKeyword_Reserved,
+        L_YulAsKeyword_Unreserved => lexemes::LexemeKind::YulAsKeyword_Unreserved,
+        L_YulAssemblyKeyword_Reserved => lexemes::LexemeKind::YulAssemblyKeyword_Reserved,
+        L_YulAssemblyKeyword_Unreserved => lexemes::LexemeKind::YulAssemblyKeyword_Unreserved,
+        L_YulAutoKeyword_Reserved => lexemes::LexemeKind::YulAutoKeyword_Reserved,
+        L_YulAutoKeyword_Unreserved => lexemes::LexemeKind::YulAutoKeyword_Unreserved,
+        L_YulBoolKeyword_Reserved => lexemes::LexemeKind::YulBoolKeyword_Reserved,
+        L_YulBoolKeyword_Unreserved => lexemes::LexemeKind::YulBoolKeyword_Unreserved,
+        L_YulBreakKeyword_Reserved => lexemes::LexemeKind::YulBreakKeyword_Reserved,
+        L_YulBytesKeyword_Reserved => lexemes::LexemeKind::YulBytesKeyword_Reserved,
+        L_YulBytesKeyword_Unreserved => lexemes::LexemeKind::YulBytesKeyword_Unreserved,
+        L_YulCallDataKeyword_Reserved => lexemes::LexemeKind::YulCallDataKeyword_Reserved,
+        L_YulCallDataKeyword_Unreserved => lexemes::LexemeKind::YulCallDataKeyword_Unreserved,
+        L_YulCaseKeyword_Reserved => lexemes::LexemeKind::YulCaseKeyword_Reserved,
+        L_YulCatchKeyword_Reserved => lexemes::LexemeKind::YulCatchKeyword_Reserved,
+        L_YulCatchKeyword_Unreserved => lexemes::LexemeKind::YulCatchKeyword_Unreserved,
+        L_YulConstantKeyword_Reserved => lexemes::LexemeKind::YulConstantKeyword_Reserved,
+        L_YulConstantKeyword_Unreserved => lexemes::LexemeKind::YulConstantKeyword_Unreserved,
+        L_YulConstructorKeyword_Reserved => lexemes::LexemeKind::YulConstructorKeyword_Reserved,
+        L_YulConstructorKeyword_Unreserved => lexemes::LexemeKind::YulConstructorKeyword_Unreserved,
+        L_YulContinueKeyword_Reserved => lexemes::LexemeKind::YulContinueKeyword_Reserved,
+        L_YulContractKeyword_Reserved => lexemes::LexemeKind::YulContractKeyword_Reserved,
+        L_YulContractKeyword_Unreserved => lexemes::LexemeKind::YulContractKeyword_Unreserved,
+        L_YulCopyOfKeyword_Reserved => lexemes::LexemeKind::YulCopyOfKeyword_Reserved,
+        L_YulCopyOfKeyword_Unreserved => lexemes::LexemeKind::YulCopyOfKeyword_Unreserved,
+        L_YulDaysKeyword_Reserved => lexemes::LexemeKind::YulDaysKeyword_Reserved,
+        L_YulDaysKeyword_Unreserved => lexemes::LexemeKind::YulDaysKeyword_Unreserved,
+        L_YulDecimalLiteral => lexemes::LexemeKind::YulDecimalLiteral,
+        L_YulDefaultKeyword_Reserved => lexemes::LexemeKind::YulDefaultKeyword_Reserved,
+        L_YulDefineKeyword_Reserved => lexemes::LexemeKind::YulDefineKeyword_Reserved,
+        L_YulDefineKeyword_Unreserved => lexemes::LexemeKind::YulDefineKeyword_Unreserved,
+        L_YulDeleteKeyword_Reserved => lexemes::LexemeKind::YulDeleteKeyword_Reserved,
+        L_YulDeleteKeyword_Unreserved => lexemes::LexemeKind::YulDeleteKeyword_Unreserved,
+        L_YulDoKeyword_Reserved => lexemes::LexemeKind::YulDoKeyword_Reserved,
+        L_YulDoKeyword_Unreserved => lexemes::LexemeKind::YulDoKeyword_Unreserved,
+        L_YulElseKeyword_Reserved => lexemes::LexemeKind::YulElseKeyword_Reserved,
+        L_YulElseKeyword_Unreserved => lexemes::LexemeKind::YulElseKeyword_Unreserved,
+        L_YulEmitKeyword_Reserved => lexemes::LexemeKind::YulEmitKeyword_Reserved,
+        L_YulEmitKeyword_Unreserved => lexemes::LexemeKind::YulEmitKeyword_Unreserved,
+        L_YulEnumKeyword_Reserved => lexemes::LexemeKind::YulEnumKeyword_Reserved,
+        L_YulEnumKeyword_Unreserved => lexemes::LexemeKind::YulEnumKeyword_Unreserved,
+        L_YulEtherKeyword_Reserved => lexemes::LexemeKind::YulEtherKeyword_Reserved,
+        L_YulEtherKeyword_Unreserved => lexemes::LexemeKind::YulEtherKeyword_Unreserved,
+        L_YulEventKeyword_Reserved => lexemes::LexemeKind::YulEventKeyword_Reserved,
+        L_YulEventKeyword_Unreserved => lexemes::LexemeKind::YulEventKeyword_Unreserved,
+        L_YulExternalKeyword_Reserved => lexemes::LexemeKind::YulExternalKeyword_Reserved,
+        L_YulExternalKeyword_Unreserved => lexemes::LexemeKind::YulExternalKeyword_Unreserved,
+        L_YulFallbackKeyword_Reserved => lexemes::LexemeKind::YulFallbackKeyword_Reserved,
+        L_YulFallbackKeyword_Unreserved => lexemes::LexemeKind::YulFallbackKeyword_Unreserved,
+        L_YulFalseKeyword_Reserved => lexemes::LexemeKind::YulFalseKeyword_Reserved,
+        L_YulFinalKeyword_Reserved => lexemes::LexemeKind::YulFinalKeyword_Reserved,
+        L_YulFinalKeyword_Unreserved => lexemes::LexemeKind::YulFinalKeyword_Unreserved,
+        L_YulFinneyKeyword_Reserved => lexemes::LexemeKind::YulFinneyKeyword_Reserved,
+        L_YulFinneyKeyword_Unreserved => lexemes::LexemeKind::YulFinneyKeyword_Unreserved,
+        L_YulFixedKeyword_Reserved => lexemes::LexemeKind::YulFixedKeyword_Reserved,
+        L_YulFixedKeyword_Unreserved => lexemes::LexemeKind::YulFixedKeyword_Unreserved,
+        L_YulForKeyword_Reserved => lexemes::LexemeKind::YulForKeyword_Reserved,
+        L_YulFunctionKeyword_Reserved => lexemes::LexemeKind::YulFunctionKeyword_Reserved,
+        L_YulGweiKeyword_Reserved => lexemes::LexemeKind::YulGweiKeyword_Reserved,
+        L_YulGweiKeyword_Unreserved => lexemes::LexemeKind::YulGweiKeyword_Unreserved,
+        L_YulHexKeyword_Reserved => lexemes::LexemeKind::YulHexKeyword_Reserved,
+        L_YulHexLiteral => lexemes::LexemeKind::YulHexLiteral,
+        L_YulHoursKeyword_Reserved => lexemes::LexemeKind::YulHoursKeyword_Reserved,
+        L_YulHoursKeyword_Unreserved => lexemes::LexemeKind::YulHoursKeyword_Unreserved,
+        L_YulIdentifier => lexemes::LexemeKind::YulIdentifier,
+        L_YulIfKeyword_Reserved => lexemes::LexemeKind::YulIfKeyword_Reserved,
+        L_YulImmutableKeyword_Reserved => lexemes::LexemeKind::YulImmutableKeyword_Reserved,
+        L_YulImmutableKeyword_Unreserved => lexemes::LexemeKind::YulImmutableKeyword_Unreserved,
+        L_YulImplementsKeyword_Reserved => lexemes::LexemeKind::YulImplementsKeyword_Reserved,
+        L_YulImplementsKeyword_Unreserved => lexemes::LexemeKind::YulImplementsKeyword_Unreserved,
+        L_YulImportKeyword_Reserved => lexemes::LexemeKind::YulImportKeyword_Reserved,
+        L_YulImportKeyword_Unreserved => lexemes::LexemeKind::YulImportKeyword_Unreserved,
+        L_YulInKeyword_Reserved => lexemes::LexemeKind::YulInKeyword_Reserved,
+        L_YulInKeyword_Unreserved => lexemes::LexemeKind::YulInKeyword_Unreserved,
+        L_YulIndexedKeyword_Reserved => lexemes::LexemeKind::YulIndexedKeyword_Reserved,
+        L_YulIndexedKeyword_Unreserved => lexemes::LexemeKind::YulIndexedKeyword_Unreserved,
+        L_YulInlineKeyword_Reserved => lexemes::LexemeKind::YulInlineKeyword_Reserved,
+        L_YulInlineKeyword_Unreserved => lexemes::LexemeKind::YulInlineKeyword_Unreserved,
+        L_YulIntKeyword_Reserved => lexemes::LexemeKind::YulIntKeyword_Reserved,
+        L_YulIntKeyword_Unreserved => lexemes::LexemeKind::YulIntKeyword_Unreserved,
+        L_YulInterfaceKeyword_Reserved => lexemes::LexemeKind::YulInterfaceKeyword_Reserved,
+        L_YulInterfaceKeyword_Unreserved => lexemes::LexemeKind::YulInterfaceKeyword_Unreserved,
+        L_YulInternalKeyword_Reserved => lexemes::LexemeKind::YulInternalKeyword_Reserved,
+        L_YulInternalKeyword_Unreserved => lexemes::LexemeKind::YulInternalKeyword_Unreserved,
+        L_YulIsKeyword_Reserved => lexemes::LexemeKind::YulIsKeyword_Reserved,
+        L_YulIsKeyword_Unreserved => lexemes::LexemeKind::YulIsKeyword_Unreserved,
+        L_YulLeaveKeyword_Reserved => lexemes::LexemeKind::YulLeaveKeyword_Reserved,
+        L_YulLeaveKeyword_Unreserved => lexemes::LexemeKind::YulLeaveKeyword_Unreserved,
+        L_YulLetKeyword_Reserved => lexemes::LexemeKind::YulLetKeyword_Reserved,
+        L_YulLibraryKeyword_Reserved => lexemes::LexemeKind::YulLibraryKeyword_Reserved,
+        L_YulLibraryKeyword_Unreserved => lexemes::LexemeKind::YulLibraryKeyword_Unreserved,
+        L_YulMacroKeyword_Reserved => lexemes::LexemeKind::YulMacroKeyword_Reserved,
+        L_YulMacroKeyword_Unreserved => lexemes::LexemeKind::YulMacroKeyword_Unreserved,
+        L_YulMappingKeyword_Reserved => lexemes::LexemeKind::YulMappingKeyword_Reserved,
+        L_YulMappingKeyword_Unreserved => lexemes::LexemeKind::YulMappingKeyword_Unreserved,
+        L_YulMatchKeyword_Reserved => lexemes::LexemeKind::YulMatchKeyword_Reserved,
+        L_YulMatchKeyword_Unreserved => lexemes::LexemeKind::YulMatchKeyword_Unreserved,
+        L_YulMemoryKeyword_Reserved => lexemes::LexemeKind::YulMemoryKeyword_Reserved,
+        L_YulMemoryKeyword_Unreserved => lexemes::LexemeKind::YulMemoryKeyword_Unreserved,
+        L_YulMinutesKeyword_Reserved => lexemes::LexemeKind::YulMinutesKeyword_Reserved,
+        L_YulMinutesKeyword_Unreserved => lexemes::LexemeKind::YulMinutesKeyword_Unreserved,
+        L_YulModifierKeyword_Reserved => lexemes::LexemeKind::YulModifierKeyword_Reserved,
+        L_YulModifierKeyword_Unreserved => lexemes::LexemeKind::YulModifierKeyword_Unreserved,
+        L_YulMutableKeyword_Reserved => lexemes::LexemeKind::YulMutableKeyword_Reserved,
+        L_YulMutableKeyword_Unreserved => lexemes::LexemeKind::YulMutableKeyword_Unreserved,
+        L_YulNewKeyword_Reserved => lexemes::LexemeKind::YulNewKeyword_Reserved,
+        L_YulNewKeyword_Unreserved => lexemes::LexemeKind::YulNewKeyword_Unreserved,
+        L_YulNullKeyword_Reserved => lexemes::LexemeKind::YulNullKeyword_Reserved,
+        L_YulNullKeyword_Unreserved => lexemes::LexemeKind::YulNullKeyword_Unreserved,
+        L_YulOfKeyword_Reserved => lexemes::LexemeKind::YulOfKeyword_Reserved,
+        L_YulOfKeyword_Unreserved => lexemes::LexemeKind::YulOfKeyword_Unreserved,
+        L_YulOverrideKeyword_Reserved => lexemes::LexemeKind::YulOverrideKeyword_Reserved,
+        L_YulOverrideKeyword_Unreserved => lexemes::LexemeKind::YulOverrideKeyword_Unreserved,
+        L_YulPartialKeyword_Reserved => lexemes::LexemeKind::YulPartialKeyword_Reserved,
+        L_YulPartialKeyword_Unreserved => lexemes::LexemeKind::YulPartialKeyword_Unreserved,
+        L_YulPayableKeyword_Reserved => lexemes::LexemeKind::YulPayableKeyword_Reserved,
+        L_YulPayableKeyword_Unreserved => lexemes::LexemeKind::YulPayableKeyword_Unreserved,
+        L_YulPragmaKeyword_Reserved => lexemes::LexemeKind::YulPragmaKeyword_Reserved,
+        L_YulPragmaKeyword_Unreserved => lexemes::LexemeKind::YulPragmaKeyword_Unreserved,
+        L_YulPrivateKeyword_Reserved => lexemes::LexemeKind::YulPrivateKeyword_Reserved,
+        L_YulPrivateKeyword_Unreserved => lexemes::LexemeKind::YulPrivateKeyword_Unreserved,
+        L_YulPromiseKeyword_Reserved => lexemes::LexemeKind::YulPromiseKeyword_Reserved,
+        L_YulPromiseKeyword_Unreserved => lexemes::LexemeKind::YulPromiseKeyword_Unreserved,
+        L_YulPublicKeyword_Reserved => lexemes::LexemeKind::YulPublicKeyword_Reserved,
+        L_YulPublicKeyword_Unreserved => lexemes::LexemeKind::YulPublicKeyword_Unreserved,
+        L_YulPureKeyword_Reserved => lexemes::LexemeKind::YulPureKeyword_Reserved,
+        L_YulPureKeyword_Unreserved => lexemes::LexemeKind::YulPureKeyword_Unreserved,
+        L_YulReceiveKeyword_Reserved => lexemes::LexemeKind::YulReceiveKeyword_Reserved,
+        L_YulReceiveKeyword_Unreserved => lexemes::LexemeKind::YulReceiveKeyword_Unreserved,
+        L_YulReferenceKeyword_Reserved => lexemes::LexemeKind::YulReferenceKeyword_Reserved,
+        L_YulReferenceKeyword_Unreserved => lexemes::LexemeKind::YulReferenceKeyword_Unreserved,
+        L_YulRelocatableKeyword_Reserved => lexemes::LexemeKind::YulRelocatableKeyword_Reserved,
+        L_YulRelocatableKeyword_Unreserved => lexemes::LexemeKind::YulRelocatableKeyword_Unreserved,
+        L_YulReturnsKeyword_Reserved => lexemes::LexemeKind::YulReturnsKeyword_Reserved,
+        L_YulReturnsKeyword_Unreserved => lexemes::LexemeKind::YulReturnsKeyword_Unreserved,
+        L_YulSealedKeyword_Reserved => lexemes::LexemeKind::YulSealedKeyword_Reserved,
+        L_YulSealedKeyword_Unreserved => lexemes::LexemeKind::YulSealedKeyword_Unreserved,
+        L_YulSecondsKeyword_Reserved => lexemes::LexemeKind::YulSecondsKeyword_Reserved,
+        L_YulSecondsKeyword_Unreserved => lexemes::LexemeKind::YulSecondsKeyword_Unreserved,
+        L_YulSizeOfKeyword_Reserved => lexemes::LexemeKind::YulSizeOfKeyword_Reserved,
+        L_YulSizeOfKeyword_Unreserved => lexemes::LexemeKind::YulSizeOfKeyword_Unreserved,
+        L_YulStaticKeyword_Reserved => lexemes::LexemeKind::YulStaticKeyword_Reserved,
+        L_YulStaticKeyword_Unreserved => lexemes::LexemeKind::YulStaticKeyword_Unreserved,
+        L_YulStorageKeyword_Reserved => lexemes::LexemeKind::YulStorageKeyword_Reserved,
+        L_YulStorageKeyword_Unreserved => lexemes::LexemeKind::YulStorageKeyword_Unreserved,
+        L_YulStringKeyword_Reserved => lexemes::LexemeKind::YulStringKeyword_Reserved,
+        L_YulStringKeyword_Unreserved => lexemes::LexemeKind::YulStringKeyword_Unreserved,
+        L_YulStructKeyword_Reserved => lexemes::LexemeKind::YulStructKeyword_Reserved,
+        L_YulStructKeyword_Unreserved => lexemes::LexemeKind::YulStructKeyword_Unreserved,
+        L_YulSuperKeyword_Reserved => lexemes::LexemeKind::YulSuperKeyword_Reserved,
+        L_YulSuperKeyword_Unreserved => lexemes::LexemeKind::YulSuperKeyword_Unreserved,
+        L_YulSupportsKeyword_Reserved => lexemes::LexemeKind::YulSupportsKeyword_Reserved,
+        L_YulSupportsKeyword_Unreserved => lexemes::LexemeKind::YulSupportsKeyword_Unreserved,
+        L_YulSwitchKeyword_Reserved => lexemes::LexemeKind::YulSwitchKeyword_Reserved,
+        L_YulSzaboKeyword_Reserved => lexemes::LexemeKind::YulSzaboKeyword_Reserved,
+        L_YulSzaboKeyword_Unreserved => lexemes::LexemeKind::YulSzaboKeyword_Unreserved,
+        L_YulThisKeyword_Reserved => lexemes::LexemeKind::YulThisKeyword_Reserved,
+        L_YulThisKeyword_Unreserved => lexemes::LexemeKind::YulThisKeyword_Unreserved,
+        L_YulThrowKeyword_Reserved => lexemes::LexemeKind::YulThrowKeyword_Reserved,
+        L_YulThrowKeyword_Unreserved => lexemes::LexemeKind::YulThrowKeyword_Unreserved,
+        L_YulTrueKeyword_Reserved => lexemes::LexemeKind::YulTrueKeyword_Reserved,
+        L_YulTryKeyword_Reserved => lexemes::LexemeKind::YulTryKeyword_Reserved,
+        L_YulTryKeyword_Unreserved => lexemes::LexemeKind::YulTryKeyword_Unreserved,
+        L_YulTypeDefKeyword_Reserved => lexemes::LexemeKind::YulTypeDefKeyword_Reserved,
+        L_YulTypeDefKeyword_Unreserved => lexemes::LexemeKind::YulTypeDefKeyword_Unreserved,
+        L_YulTypeKeyword_Reserved => lexemes::LexemeKind::YulTypeKeyword_Reserved,
+        L_YulTypeKeyword_Unreserved => lexemes::LexemeKind::YulTypeKeyword_Unreserved,
+        L_YulTypeOfKeyword_Reserved => lexemes::LexemeKind::YulTypeOfKeyword_Reserved,
+        L_YulTypeOfKeyword_Unreserved => lexemes::LexemeKind::YulTypeOfKeyword_Unreserved,
+        L_YulUfixedKeyword_Reserved => lexemes::LexemeKind::YulUfixedKeyword_Reserved,
+        L_YulUfixedKeyword_Unreserved => lexemes::LexemeKind::YulUfixedKeyword_Unreserved,
+        L_YulUintKeyword_Reserved => lexemes::LexemeKind::YulUintKeyword_Reserved,
+        L_YulUintKeyword_Unreserved => lexemes::LexemeKind::YulUintKeyword_Unreserved,
+        L_YulUncheckedKeyword_Reserved => lexemes::LexemeKind::YulUncheckedKeyword_Reserved,
+        L_YulUncheckedKeyword_Unreserved => lexemes::LexemeKind::YulUncheckedKeyword_Unreserved,
+        L_YulUsingKeyword_Reserved => lexemes::LexemeKind::YulUsingKeyword_Reserved,
+        L_YulUsingKeyword_Unreserved => lexemes::LexemeKind::YulUsingKeyword_Unreserved,
+        L_YulVarKeyword_Reserved => lexemes::LexemeKind::YulVarKeyword_Reserved,
+        L_YulVarKeyword_Unreserved => lexemes::LexemeKind::YulVarKeyword_Unreserved,
+        L_YulViewKeyword_Reserved => lexemes::LexemeKind::YulViewKeyword_Reserved,
+        L_YulViewKeyword_Unreserved => lexemes::LexemeKind::YulViewKeyword_Unreserved,
+        L_YulVirtualKeyword_Reserved => lexemes::LexemeKind::YulVirtualKeyword_Reserved,
+        L_YulVirtualKeyword_Unreserved => lexemes::LexemeKind::YulVirtualKeyword_Unreserved,
+        L_YulWeeksKeyword_Reserved => lexemes::LexemeKind::YulWeeksKeyword_Reserved,
+        L_YulWeeksKeyword_Unreserved => lexemes::LexemeKind::YulWeeksKeyword_Unreserved,
+        L_YulWeiKeyword_Reserved => lexemes::LexemeKind::YulWeiKeyword_Reserved,
+        L_YulWeiKeyword_Unreserved => lexemes::LexemeKind::YulWeiKeyword_Unreserved,
+        L_YulWhileKeyword_Reserved => lexemes::LexemeKind::YulWhileKeyword_Reserved,
+        L_YulWhileKeyword_Unreserved => lexemes::LexemeKind::YulWhileKeyword_Unreserved,
+        L_YulYearsKeyword_Reserved => lexemes::LexemeKind::YulYearsKeyword_Reserved,
+        L_YulYearsKeyword_Unreserved => lexemes::LexemeKind::YulYearsKeyword_Unreserved,
+        
+    }
+}

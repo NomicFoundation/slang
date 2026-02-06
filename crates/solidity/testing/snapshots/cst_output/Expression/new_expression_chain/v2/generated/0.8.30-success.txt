@@ -1,0 +1,47 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+FunctionCallExpression(
+    FunctionCallExpressionStruct {
+        operand: NewExpression(
+            NewExpressionStruct {
+                new_keyword: NewKeyword {
+                    range: 0..3,
+                },
+                type_name: IdentifierPath(
+                    IdentifierPath {
+                        elements: [
+                            Identifier(
+                                Identifier {
+                                    range: 4..5,
+                                },
+                            ),
+                            Identifier(
+                                Identifier {
+                                    range: 6..7,
+                                },
+                            ),
+                            Identifier(
+                                Identifier {
+                                    range: 8..9,
+                                },
+                            ),
+                        ],
+                    },
+                ),
+            },
+        ),
+        arguments: PositionalArgumentsDeclaration(
+            PositionalArgumentsDeclarationStruct {
+                open_paren: OpenParen {
+                    range: 9..10,
+                },
+                arguments: PositionalArguments {
+                    elements: [],
+                },
+                close_paren: CloseParen {
+                    range: 10..11,
+                },
+            },
+        ),
+    },
+)

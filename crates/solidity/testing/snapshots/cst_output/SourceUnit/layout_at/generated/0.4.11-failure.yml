@@ -1,0 +1,36 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract SafeMath layout at 123  {                                               │ 0..34
+  2  │ }                                                                                │ 35..36
+  3  │                                                                                  │ 37..37
+  4  │ contract SafeMath layout at foo{gas:123}  {                                      │ 38..81
+  5  │ }                                                                                │ 82..83
+  6  │                                                                                  │ 84..84
+  7  │ contract SafeMath layout at foo()  {                                             │ 85..121
+  8  │ }                                                                                │ 122..123
+  9  │                                                                                  │ 124..124
+  10 │ contract SafeMath layout at 123 + foo  {                                         │ 125..165
+  11 │ }                                                                                │ 166..167
+
+Errors: # 1 total
+  - >
+    Error: Expected IsKeyword or OpenBrace.
+        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/layout_at/input.sol:1:18]
+        │
+      1 │ ╭─▶ contract SafeMath layout at 123  {
+        ┆ ┆   
+     11 │ ├─▶ }
+        │ │       
+        │ ╰─────── Error occurred here.
+    ────╯
+
+Tree:
+  - (root꞉ SourceUnit): # "contract SafeMath layout at 123  {\n}\n\ncontract Saf..." (0..168)
+      - (members꞉ SourceUnitMembers): # "contract SafeMath" (0..17)
+          - (item꞉ SourceUnitMember) ► (variant꞉ ContractDefinition): # "contract SafeMath" (0..17)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (leading_trivia꞉ Whitespace): " " # (8..9)
+              - (name꞉ Identifier): "SafeMath" # (9..17)
+              - (specifiers꞉ ContractSpecifiers): [] # (17..17)
+      - (unrecognized꞉ UNRECOGNIZED): " layout at 123  {\n}\n\ncontract SafeMath layout at f..." # (17..168)
