@@ -242,23 +242,23 @@ impl ContractDefinitionStruct {
     fn compute_abi_entries(&self) -> Option<Vec<AbiEntry>> {
         let mut entries = Vec::new();
         if let Some(constructor) = self.constructor() {
-            entries.push(constructor.compute_abi()?);
+            entries.push(constructor.compute_abi_entry()?);
         }
         for function in &self.compute_linearised_functions() {
             if function.is_externally_visible() {
-                entries.push(function.compute_abi()?);
+                entries.push(function.compute_abi_entry()?);
             }
         }
         for state_variable in &self.compute_linearised_state_variables() {
             if state_variable.is_externally_visible() {
-                entries.push(state_variable.compute_abi()?);
+                entries.push(state_variable.compute_abi_entry()?);
             }
         }
         for error in &self.compute_linearised_errors() {
-            entries.push(error.compute_abi()?);
+            entries.push(error.compute_abi_entry()?);
         }
         for event in &self.compute_linearised_events() {
-            entries.push(event.compute_abi()?);
+            entries.push(event.compute_abi_entry()?);
         }
 
         entries.sort();
@@ -318,13 +318,13 @@ impl FunctionDefinitionStruct {
         )
     }
 
-    pub fn compute_abi(&self) -> Option<AbiEntry> {
+    pub fn compute_abi_entry(&self) -> Option<AbiEntry> {
         if !self.is_externally_visible() {
             return None;
         }
-        let inputs = self.parameters().compute_abi()?;
+        let inputs = self.parameters().compute_abi_parameters()?;
         let outputs = if let Some(returns) = self.returns() {
-            returns.compute_abi()?
+            returns.compute_abi_parameters()?
         } else {
             Vec::new()
         };
@@ -375,7 +375,7 @@ impl FunctionDefinitionStruct {
 }
 
 impl ParametersStruct {
-    pub(crate) fn compute_abi(&self) -> Option<Vec<AbiParameter>> {
+    pub(crate) fn compute_abi_parameters(&self) -> Option<Vec<AbiParameter>> {
         let mut result = Vec::new();
         for parameter in &self.ir_nodes {
             let node_id = parameter.node_id;
@@ -424,7 +424,7 @@ impl StateVariableDefinitionStruct {
             .extract_function_type_parameters_abi(definition.getter_type_id?)
     }
 
-    pub fn compute_abi(&self) -> Option<AbiEntry> {
+    pub fn compute_abi_entry(&self) -> Option<AbiEntry> {
         if !self.is_externally_visible() {
             return None;
         }
@@ -533,8 +533,8 @@ fn selector_from_signature(signature: &str) -> u32 {
 }
 
 impl ErrorDefinitionStruct {
-    pub fn compute_abi(&self) -> Option<AbiEntry> {
-        let inputs = self.parameters().compute_abi()?;
+    pub fn compute_abi_entry(&self) -> Option<AbiEntry> {
+        let inputs = self.parameters().compute_abi_parameters()?;
 
         Some(AbiEntry::Error {
             node_id: self.ir_node.node_id,
@@ -545,8 +545,8 @@ impl ErrorDefinitionStruct {
 }
 
 impl EventDefinitionStruct {
-    pub fn compute_abi(&self) -> Option<AbiEntry> {
-        let inputs = self.parameters().compute_abi()?;
+    pub fn compute_abi_entry(&self) -> Option<AbiEntry> {
+        let inputs = self.parameters().compute_abi_parameters()?;
 
         Some(AbiEntry::Event {
             node_id: self.ir_node.node_id,
