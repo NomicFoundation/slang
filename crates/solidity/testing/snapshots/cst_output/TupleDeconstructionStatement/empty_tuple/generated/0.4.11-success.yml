@@ -1,0 +1,28 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ (,,,,) = rhs;                                                                    │ 0..13
+
+Errors: []
+
+Tree:
+  - (root꞉ TupleDeconstructionStatement): # "(,,,,) = rhs;\n" (0..14)
+      - (open_paren꞉ OpenParen): "(" # (0..1)
+      - (elements꞉ TupleDeconstructionElements): # ",,,," (1..5)
+          - (item꞉ TupleDeconstructionElement): [] # (1..1)
+          - (separator꞉ Comma): "," # (1..2)
+          - (item꞉ TupleDeconstructionElement): [] # (2..2)
+          - (separator꞉ Comma): "," # (2..3)
+          - (item꞉ TupleDeconstructionElement): [] # (3..3)
+          - (separator꞉ Comma): "," # (3..4)
+          - (item꞉ TupleDeconstructionElement): [] # (4..4)
+          - (separator꞉ Comma): "," # (4..5)
+          - (item꞉ TupleDeconstructionElement): [] # (5..5)
+      - (close_paren꞉ CloseParen): ")" # (5..6)
+      - (leading_trivia꞉ Whitespace): " " # (6..7)
+      - (equal꞉ Equal): "=" # (7..8)
+      - (expression꞉ Expression): # " rhs" (8..12)
+          - (leading_trivia꞉ Whitespace): " " # (8..9)
+          - (variant꞉ Identifier): "rhs" # (9..12)
+      - (semicolon꞉ Semicolon): ";" # (12..13)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (13..14)
