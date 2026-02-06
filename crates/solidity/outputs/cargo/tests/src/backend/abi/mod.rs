@@ -1,5 +1,5 @@
 use anyhow::Result;
-use slang_solidity::backend::abi::AbiEntry;
+use slang_solidity::backend::abi::{AbiEntry, ParameterComponent};
 
 use crate::backend::fixtures;
 
@@ -136,6 +136,128 @@ fn test_full_abi_with_events_and_errors() -> Result<()> {
     assert!(matches!(entries[6], AbiEntry::Function { ref name, .. } if name == "b"));
     assert!(matches!(entries[7], AbiEntry::Function { ref name, .. } if name == "foo"));
     assert!(matches!(entries[8], AbiEntry::Receive { .. }));
+
+    Ok(())
+}
+
+#[test]
+fn test_abi_entries_with_tuples() -> Result<()> {
+    let compilation_unit = fixtures::AbiWithTuples::build_compilation_unit()?;
+    let semantic_analysis = compilation_unit.semantic_analysis();
+
+    let contracts_abi = semantic_analysis.get_contracts_abi();
+    assert_eq!(contracts_abi.len(), 1);
+    assert_eq!(contracts_abi[0].name, "Test");
+
+    let entries = &contracts_abi[0].entries;
+
+    let AbiEntry::Function {
+        name,
+        inputs,
+        outputs,
+        ..
+    } = &entries[0]
+    else {
+        panic!("expected ABI for function");
+    };
+    assert_eq!(name, "f");
+    assert_eq!(inputs.len(), 3);
+    assert!(inputs[0].name.is_none());
+    assert_eq!(inputs[0].r#type, "tuple");
+    assert_eq!(
+        inputs[0].components,
+        vec![
+            ParameterComponent {
+                name: "a".to_string(),
+                r#type: "uint256".to_string(),
+                components: Vec::new()
+            },
+            ParameterComponent {
+                name: "b".to_string(),
+                r#type: "uint256[]".to_string(),
+                components: Vec::new()
+            },
+            ParameterComponent {
+                name: "c".to_string(),
+                r#type: "tuple[]".to_string(),
+                components: vec![
+                    ParameterComponent {
+                        name: "x".to_string(),
+                        r#type: "uint256".to_string(),
+                        components: Vec::new()
+                    },
+                    ParameterComponent {
+                        name: "y".to_string(),
+                        r#type: "uint256".to_string(),
+                        components: Vec::new()
+                    },
+                ]
+            },
+        ]
+    );
+
+    assert!(inputs[1].name.is_none());
+    assert_eq!(inputs[1].r#type, "tuple");
+    assert_eq!(
+        inputs[1].components,
+        vec![
+            ParameterComponent {
+                name: "x".to_string(),
+                r#type: "uint256".to_string(),
+                components: Vec::new()
+            },
+            ParameterComponent {
+                name: "y".to_string(),
+                r#type: "uint256".to_string(),
+                components: Vec::new()
+            },
+        ]
+    );
+
+    assert!(inputs[2].name.is_none());
+    assert_eq!(inputs[2].r#type, "uint256");
+    assert!(inputs[2].components.is_empty());
+    assert!(outputs.is_empty());
+
+    let AbiEntry::Function {
+        name,
+        inputs,
+        outputs,
+        ..
+    } = &entries[1]
+    else {
+        panic!("expected ABI for function");
+    };
+    assert_eq!(name, "g");
+    assert!(inputs.is_empty());
+    assert_eq!(outputs.len(), 3);
+    assert!(outputs[0].name.is_none());
+    assert_eq!(outputs[0].r#type, "tuple");
+    assert_eq!(outputs[0].components.len(), 3);
+    assert!(outputs[1].name.is_none());
+    assert_eq!(outputs[1].r#type, "tuple");
+    assert_eq!(outputs[1].components.len(), 2);
+    assert!(outputs[2].name.is_none());
+    assert_eq!(outputs[2].r#type, "uint256");
+    assert!(outputs[2].components.is_empty());
+
+    Ok(())
+}
+
+#[test]
+fn test_selectors_for_functions_with_tuple_parameters() -> Result<()> {
+    let compilation_unit = fixtures::AbiWithTuples::build_compilation_unit()?;
+    let semantic_analysis = compilation_unit.semantic_analysis();
+
+    let test = semantic_analysis
+        .find_contract_by_name("Test")
+        .expect("contract is found");
+    let functions = test.functions();
+
+    // f((uint256,uint256[],(uint256,uint256)[]),(uint256,uint256),uint256)
+    assert_eq!(functions[0].compute_selector(), Some(0x6f2b_e728_u32));
+    // g()
+    assert_eq!(functions[1].compute_selector(), Some(0xe217_9b8e_u32));
 
     Ok(())
 }

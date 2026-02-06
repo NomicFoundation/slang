@@ -197,13 +197,14 @@ impl PartialOrd for AbiEntry {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ParameterComponent {
     pub name: String,
     pub r#type: String,
+    pub components: Vec<ParameterComponent>,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct AbiParameter {
     pub node_id: Option<NodeId>, // will be `None` if the function is a generated getter
     pub name: Option<String>,
@@ -212,7 +213,7 @@ pub struct AbiParameter {
     pub indexed: bool,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct StorageItem {
     pub node_id: NodeId,
     pub label: String,
@@ -293,7 +294,7 @@ impl ContractDefinitionStruct {
             let label = state_variable.ir_node.name.unparse();
             let slot = ptr.div(SemanticAnalysis::SLOT_SIZE);
             let offset = ptr % SemanticAnalysis::SLOT_SIZE;
-            let r#type = self.semantic.type_canonical_name(variable_type_id);
+            let r#type = self.semantic.type_internal_name(variable_type_id);
             storage_layout.push(StorageItem {
                 node_id,
                 label,
@@ -379,12 +380,10 @@ impl ParametersStruct {
         for parameter in &self.ir_nodes {
             let node_id = parameter.node_id;
             let name = parameter.name.as_ref().map(|name| name.unparse());
+            let indexed = parameter.indexed;
             // Bail out with `None` if any of the parameters fails typing
             let type_id = self.semantic.binder.node_typing(node_id).as_type_id()?;
-            let r#type = self.semantic.type_canonical_name(type_id);
-            // TODO: implement components expansion for tuple types (ie. structs)
-            let components = Vec::new();
-            let indexed = parameter.indexed;
+            let (r#type, components) = self.semantic.type_as_abi_parameter(type_id)?;
             result.push(AbiParameter {
                 node_id: Some(node_id),
                 name,
@@ -402,7 +401,7 @@ impl ParametersStruct {
             let node_id = parameter.node_id;
             // Bail out with `None` if any of the parameters fails typing
             let type_id = self.semantic.binder.node_typing(node_id).as_type_id()?;
-            result.push(self.semantic.type_canonical_name(type_id));
+            result.push(self.semantic.type_canonical_name(type_id)?);
         }
         Some(result.join(","))
     }
@@ -468,25 +467,59 @@ impl SemanticAnalysis {
         let Type::Function(function_type) = self.types.get_type_by_id(type_id) else {
             return None;
         };
-        let inputs = function_type
-            .parameter_types
-            .iter()
-            .map(|parameter_type_id| AbiParameter {
+        let mut inputs = Vec::new();
+        for parameter_type_id in &function_type.parameter_types {
+            let (r#type, components) = self.type_as_abi_parameter(*parameter_type_id)?;
+            inputs.push(AbiParameter {
                 node_id: None,
                 name: None,
-                r#type: self.type_canonical_name(*parameter_type_id),
-                components: Vec::new(), // TODO: expand components for tuple types
+                r#type,
+                components,
                 indexed: false,
-            })
-            .collect();
+            });
+        }
+        let (r#type, components) = self.type_as_abi_parameter(function_type.return_type)?;
         let outputs = vec![AbiParameter {
             node_id: None,
             name: None,
-            r#type: self.type_canonical_name(function_type.return_type),
-            components: Vec::new(),
+            r#type,
+            components,
             indexed: false,
         }];
         Some((inputs, outputs))
+    }
+
+    fn type_as_abi_parameter(&self, type_id: TypeId) -> Option<(String, Vec<ParameterComponent>)> {
+        match self.types.get_type_by_id(type_id) {
+            Type::Array { element_type, .. } => {
+                let (element_type_name, element_components) =
+                    self.type_as_abi_parameter(*element_type)?;
+                Some((format!("{element_type_name}[]"), element_components))
+            }
+            Type::Struct { definition_id, .. } => {
+                // We need to recursively expand the struct fields as components
+                let Definition::Struct(definition) = self
+                    .binder
+                    .find_definition_by_id(*definition_id)
+                    .expect("the definition of a type exists")
+                else {
+                    unreachable!("the definition of a struct type is a struct");
+                };
+                let mut components = Vec::new();
+                for member in &definition.ir_node.members {
+                    let name = member.name.unparse();
+                    let member_type_id = self.binder.node_typing(member.node_id).as_type_id()?;
+                    let (r#type, subcomponents) = self.type_as_abi_parameter(member_type_id)?;
+                    components.push(ParameterComponent {
+                        name,
+                        r#type,
+                        components: subcomponents,
+                    });
+                }
+                Some(("tuple".to_string(), components))
+            }
+            _ => Some((self.type_canonical_name(type_id)?, Vec::new())),
+        }
     }
 }
 
