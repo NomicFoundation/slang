@@ -206,7 +206,7 @@ impl ConstantIdentifierResolver<ScopeId> for Pass<'_> {
                 .ir_node
                 .value
                 .as_ref()
-                .map(|value| (value.clone(), *scope_id)),
+                .map(|value| (value.clone(), constant_definition.scope_id)),
             _ => None,
         }
     }

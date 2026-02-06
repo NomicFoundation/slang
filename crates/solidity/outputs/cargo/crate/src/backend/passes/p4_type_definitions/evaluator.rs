@@ -326,15 +326,17 @@ mod tests {
 
     #[derive(Default)]
     struct MapResolver {
-        context: HashMap<String, input_ir::Expression>,
+        // qualified identifier => (target expression, target scope)
+        // qualified identifier is the concatenation of the scope and identifier
+        context: HashMap<String, (input_ir::Expression, String)>,
     }
-    impl ConstantIdentifierResolver<()> for MapResolver {
+    impl ConstantIdentifierResolver<String> for MapResolver {
         fn resolve_identifier_in_scope(
             &self,
             identifier: &str,
-            (): &(),
-        ) -> Option<(input_ir::Expression, ())> {
-            self.context.get(identifier).map(|expr| (expr.clone(), ()))
+            scope: &String,
+        ) -> Option<(input_ir::Expression, String)> {
+            self.context.get(&format!("{scope}{identifier}")).cloned()
         }
     }
 
@@ -347,25 +349,37 @@ mod tests {
 
     fn eval_string_in_version(input: &str, version: &Version) -> Option<ConstantValue> {
         let ir2 = parse_string_in_version(input, version)?;
-        evaluate_compile_time_constant(&ir2, (), &MapResolver::default())
+        evaluate_compile_time_constant(&ir2, String::new(), &MapResolver::default())
     }
 
     fn eval_string(input: &str) -> Option<ConstantValue> {
         eval_string_in_version(input, &LanguageFacts::LATEST_VERSION)
     }
 
-    fn eval_string_with_context(input: &str, context: &[(&str, &str)]) -> Option<ConstantValue> {
+    // `context` is given as a list of constants defined as:
+    // - the qualified identifier
+    // - the target expression (to be parsed)
+    // - the target scope
+    // Resolution always start at the empty string scope in these tests.
+    fn eval_string_with_context(
+        input: &str,
+        context: &[(&str, &str, &str)],
+    ) -> Option<ConstantValue> {
         let version = &LanguageFacts::LATEST_VERSION;
-        let context: HashMap<String, input_ir::Expression> = context
+        let context: HashMap<String, (input_ir::Expression, String)> = context
             .iter()
-            .filter_map(|(name, input)| {
-                parse_string_in_version(input, version)
-                    .map(|expression| ((*name).to_string(), expression))
+            .filter_map(|(name, input, target_scope)| {
+                parse_string_in_version(input, version).map(|expression| {
+                    (
+                        (*name).to_string(),
+                        (expression, (*target_scope).to_string()),
+                    )
+                })
             })
             .collect();
         let ir2 = parse_string_in_version(input, version)?;
 
-        evaluate_compile_time_constant(&ir2, (), &MapResolver { context })
+        evaluate_compile_time_constant(&ir2, String::new(), &MapResolver { context })
     }
 
     #[test]
@@ -427,15 +441,24 @@ mod tests {
 
     #[test]
     fn test_identifier_lookup() {
-        assert!(eval_string_with_context("FOO", &[("FOO", "1")])
+        assert!(eval_string_with_context("FOO", &[("FOO", "1", "")])
             .is_some_and(|value| value == ConstantValue::Integer(1.to_bigint().unwrap())));
         assert!(
-            eval_string_with_context("FOO + 2*BAR", &[("FOO", "1"), ("BAR", "5")])
+            eval_string_with_context("FOO + 2*BAR", &[("FOO", "1", ""), ("BAR", "5", "")])
                 .is_some_and(|value| value == ConstantValue::Integer(11.to_bigint().unwrap()))
         );
         // undefined symbols
         assert!(eval_string_with_context("FOO", &[]).is_none());
         // cyclic references
-        assert!(eval_string_with_context("FOO", &[("FOO", "BAR"), ("BAR", "FOO")]).is_none());
+        assert!(
+            eval_string_with_context("FOO", &[("FOO", "BAR", ""), ("BAR", "FOO", "")]).is_none()
+        );
+        // switching contexts: the value of FOO should resolve in the CTX.
+        // context, where BAR is defined
+        assert!(eval_string_with_context(
+            "FOO",
+            &[("FOO", "BAR", "CTX."), ("CTX.BAR", "42", "CTX.")]
+        )
+        .is_some_and(|value| value == ConstantValue::Integer(42.to_bigint().unwrap())));
     }
 }
