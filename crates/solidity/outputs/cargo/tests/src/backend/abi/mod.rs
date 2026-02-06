@@ -1,5 +1,5 @@
 use anyhow::Result;
-use slang_solidity::backend::abi::{AbiEntry, AbiType};
+use slang_solidity::backend::abi::AbiEntry;
 
 use crate::backend::fixtures;
 
@@ -16,38 +16,13 @@ fn test_get_contracts_abi() -> Result<()> {
 
     let entries = &contracts[0].entries;
 
-    assert!(matches!(entries[0].r#type, AbiType::Constructor));
-    assert!(entries[0].name.is_none());
-
-    assert!(matches!(entries[1].r#type, AbiType::Function));
-    assert!(entries[1].name.as_ref().is_some_and(|name| name == "click"));
-
-    assert!(matches!(entries[2].r#type, AbiType::Function));
-    assert!(entries[2].name.as_ref().is_some_and(|name| name == "count"));
-
-    assert!(matches!(entries[3].r#type, AbiType::Function));
-    assert!(entries[3]
-        .name
-        .as_ref()
-        .is_some_and(|name| name == "disable"));
-
-    assert!(matches!(entries[4].r#type, AbiType::Function));
-    assert!(entries[4]
-        .name
-        .as_ref()
-        .is_some_and(|name| name == "enable"));
-
-    assert!(matches!(entries[5].r#type, AbiType::Function));
-    assert!(entries[5]
-        .name
-        .as_ref()
-        .is_some_and(|name| name == "increment"));
-
-    assert!(matches!(entries[6].r#type, AbiType::Function));
-    assert!(entries[6]
-        .name
-        .as_ref()
-        .is_some_and(|name| name == "isEnabled"));
+    assert!(matches!(entries[0], AbiEntry::Constructor { .. }));
+    assert!(matches!(entries[1], AbiEntry::Function { ref name, .. } if name == "click"));
+    assert!(matches!(entries[2], AbiEntry::Function { ref name, .. } if name == "count"));
+    assert!(matches!(entries[3], AbiEntry::Function { ref name, .. } if name == "disable"));
+    assert!(matches!(entries[4], AbiEntry::Function { ref name, .. } if name == "enable"));
+    assert!(matches!(entries[5], AbiEntry::Function { ref name, .. } if name == "increment"));
+    assert!(matches!(entries[6], AbiEntry::Function { ref name, .. } if name == "isEnabled"));
 
     Ok(())
 }
@@ -150,47 +125,17 @@ fn test_full_abi_with_events_and_errors() -> Result<()> {
     let entries = &contracts_abi[0].entries;
     assert_eq!(entries.len(), 9);
 
-    assert!(matches!(entries[0], AbiEntry { r#type, .. } if r#type == AbiType::Constructor));
-    assert!(matches!(
-        entries[1],
-        AbiEntry { r#type, ref name, .. } if r#type == AbiType::Error
-            && name.as_ref().is_some_and(|name| name  == "InsufficientBalance"),
-    ));
-    assert!(matches!(
-        entries[2],
-        AbiEntry { r#type, ref name, .. } if r#type == AbiType::Error
-            && name.as_ref().is_some_and(|name| name  == "SomethingWrong"),
-    ));
-    assert!(matches!(
-        entries[3],
-        AbiEntry { r#type, ref name, .. } if r#type == AbiType::Event
-            && name.as_ref().is_some_and(|name| name == "BaseEvent"),
-    ));
-    assert!(matches!(
-        entries[4],
-        AbiEntry { r#type, ref name, .. } if r#type == AbiType::Event
-            && name.as_ref().is_some_and(|name| name == "Event"),
-    ));
-    assert!(matches!(
-        entries[5],
-        AbiEntry { r#type, ref name, .. } if r#type == AbiType::Fallback
-            && name.is_none(),
-    ));
-    assert!(matches!(
-        entries[6],
-        AbiEntry { r#type, ref name, .. } if r#type == AbiType::Function
-            && name.as_ref().is_some_and(|name| name == "b"),
-    ));
-    assert!(matches!(
-        entries[7],
-        AbiEntry { r#type, ref name, .. } if r#type == AbiType::Function
-            && name.as_ref().is_some_and(|name| name == "foo"),
-    ));
-    assert!(matches!(
-        entries[8],
-        AbiEntry { r#type, ref name, .. } if r#type == AbiType::Receive
-            && name.is_none(),
-    ));
+    assert!(matches!(entries[0], AbiEntry::Constructor { .. }));
+    assert!(
+        matches!(entries[1], AbiEntry::Error { ref name, .. } if name == "InsufficientBalance")
+    );
+    assert!(matches!(entries[2], AbiEntry::Error { ref name, .. } if name == "SomethingWrong"));
+    assert!(matches!(entries[3], AbiEntry::Event { ref name, .. } if name == "BaseEvent"));
+    assert!(matches!(entries[4], AbiEntry::Event { ref name, .. } if name == "Event"));
+    assert!(matches!(entries[5], AbiEntry::Fallback { .. }));
+    assert!(matches!(entries[6], AbiEntry::Function { ref name, .. } if name == "b"));
+    assert!(matches!(entries[7], AbiEntry::Function { ref name, .. } if name == "foo"));
+    assert!(matches!(entries[8], AbiEntry::Receive { .. }));
 
     Ok(())
 }

@@ -6,8 +6,8 @@ use sha3::{Digest, Keccak256};
 use super::binder::Definition;
 use super::ir::ast::{
     ContractDefinitionStruct, ErrorDefinitionStruct, EventDefinitionStruct,
-    FunctionDefinitionStruct, FunctionMutability, FunctionVisibility, ParametersStruct,
-    StateVariableDefinitionStruct, StateVariableMutability, StateVariableVisibility,
+    FunctionDefinitionStruct, FunctionVisibility, ParametersStruct, StateVariableDefinitionStruct,
+    StateVariableMutability, StateVariableVisibility,
 };
 use super::ir::ir2_flat_contracts as input_ir;
 use super::types::{Type, TypeId};
@@ -22,49 +22,197 @@ pub struct ContractAbi {
     pub storage_layout: Vec<StorageItem>,
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq, PartialOrd, Ord)]
-pub enum AbiType {
-    Constructor,
-    Error,
-    Event,
-    Fallback,
-    Function,
-    Receive,
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum AbiMutability {
+    Pure,
+    View,
+    NonPayable,
+    Payable,
 }
 
-impl TryFrom<&input_ir::FunctionKind> for AbiType {
-    type Error = &'static str;
-
-    fn try_from(
-        value: &input_ir::FunctionKind,
-    ) -> Result<Self, <AbiType as TryFrom<&input_ir::FunctionKind>>::Error> {
+impl From<input_ir::FunctionMutability> for AbiMutability {
+    fn from(value: input_ir::FunctionMutability) -> Self {
         match value {
-            input_ir::FunctionKind::Regular => Ok(Self::Function),
-            input_ir::FunctionKind::Constructor => Ok(Self::Constructor),
-            input_ir::FunctionKind::Unnamed | input_ir::FunctionKind::Fallback => {
-                Ok(Self::Fallback)
-            }
-            input_ir::FunctionKind::Receive => Ok(Self::Receive),
-            input_ir::FunctionKind::Modifier => Err("modifiers are not part of the ABI"),
+            input_ir::FunctionMutability::Pure => Self::Pure,
+            input_ir::FunctionMutability::View => Self::View,
+            input_ir::FunctionMutability::NonPayable => Self::NonPayable,
+            input_ir::FunctionMutability::Payable => Self::Payable,
         }
     }
 }
 
-pub struct AbiEntry {
-    pub node_id: NodeId,
-    pub name: Option<String>,
-    pub r#type: AbiType,
-    pub inputs: Vec<FunctionParameter>,
-    pub outputs: Vec<FunctionParameter>,
-    pub state_mutability: FunctionMutability,
+#[derive(Clone, Debug)]
+pub enum AbiEntry {
+    Constructor {
+        node_id: NodeId,
+        inputs: Vec<AbiParameter>,
+        state_mutability: AbiMutability,
+    },
+    Error {
+        node_id: NodeId,
+        name: String,
+        inputs: Vec<AbiParameter>,
+    },
+    Event {
+        node_id: NodeId,
+        name: String,
+        inputs: Vec<AbiParameter>,
+        anonymous: bool,
+    },
+    Fallback {
+        node_id: NodeId,
+        state_mutability: AbiMutability,
+    },
+    Function {
+        node_id: NodeId,
+        name: String,
+        inputs: Vec<AbiParameter>,
+        outputs: Vec<AbiParameter>,
+        state_mutability: AbiMutability,
+    },
+    Receive {
+        node_id: NodeId,
+        state_mutability: AbiMutability,
+    },
 }
 
-pub struct FunctionParameter {
-    pub node_id: Option<NodeId>, // will be `None` if the function is a generated getter
-    pub name: Option<String>,
+impl PartialEq for AbiEntry {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (
+                Self::Constructor {
+                    node_id: self_node_id,
+                    ..
+                },
+                Self::Constructor {
+                    node_id: other_node_id,
+                    ..
+                },
+            )
+            | (
+                Self::Error {
+                    node_id: self_node_id,
+                    ..
+                },
+                Self::Error {
+                    node_id: other_node_id,
+                    ..
+                },
+            )
+            | (
+                Self::Event {
+                    node_id: self_node_id,
+                    ..
+                },
+                Self::Event {
+                    node_id: other_node_id,
+                    ..
+                },
+            )
+            | (
+                Self::Fallback {
+                    node_id: self_node_id,
+                    ..
+                },
+                Self::Fallback {
+                    node_id: other_node_id,
+                    ..
+                },
+            )
+            | (
+                Self::Function {
+                    node_id: self_node_id,
+                    ..
+                },
+                Self::Function {
+                    node_id: other_node_id,
+                    ..
+                },
+            )
+            | (
+                Self::Receive {
+                    node_id: self_node_id,
+                    ..
+                },
+                Self::Receive {
+                    node_id: other_node_id,
+                    ..
+                },
+            ) => self_node_id == other_node_id,
+            _ => false,
+        }
+    }
+}
+
+impl Eq for AbiEntry {}
+
+impl Ord for AbiEntry {
+    fn cmp(&self, other: &Self) -> Ordering {
+        match (self, other) {
+            (Self::Constructor { .. }, Self::Constructor { .. })
+            | (Self::Fallback { .. }, Self::Fallback { .. })
+            | (Self::Receive { .. }, Self::Receive { .. }) => Ordering::Equal,
+            (
+                Self::Error {
+                    name: self_name, ..
+                },
+                Self::Error {
+                    name: other_name, ..
+                },
+            )
+            | (
+                Self::Event {
+                    name: self_name, ..
+                },
+                Self::Event {
+                    name: other_name, ..
+                },
+            )
+            | (
+                Self::Function {
+                    name: self_name, ..
+                },
+                Self::Function {
+                    name: other_name, ..
+                },
+            ) => self_name.cmp(other_name),
+
+            (Self::Constructor { .. }, _) => Ordering::Less,
+            (_, Self::Constructor { .. }) => Ordering::Greater,
+            (Self::Error { .. }, _) => Ordering::Less,
+            (_, Self::Error { .. }) => Ordering::Greater,
+            (Self::Event { .. }, _) => Ordering::Less,
+            (_, Self::Event { .. }) => Ordering::Greater,
+            (Self::Fallback { .. }, _) => Ordering::Less,
+            (_, Self::Fallback { .. }) => Ordering::Greater,
+            (Self::Function { .. }, _) => Ordering::Less,
+            (_, Self::Function { .. }) => Ordering::Greater,
+        }
+    }
+}
+
+impl PartialOrd for AbiEntry {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct ParameterComponent {
+    pub name: String,
     pub r#type: String,
 }
 
+#[derive(Clone, Debug)]
+pub struct AbiParameter {
+    pub node_id: Option<NodeId>, // will be `None` if the function is a generated getter
+    pub name: Option<String>,
+    pub r#type: String,
+    pub components: Vec<ParameterComponent>,
+    pub indexed: bool,
+}
+
+#[derive(Clone, Debug)]
 pub struct StorageItem {
     pub node_id: NodeId,
     pub label: String,
@@ -112,10 +260,7 @@ impl ContractDefinitionStruct {
             entries.push(event.compute_abi()?);
         }
 
-        entries.sort_by(|a, b| match a.r#type.cmp(&b.r#type) {
-            Ordering::Equal => a.name.cmp(&b.name),
-            other => other,
-        });
+        entries.sort();
         Some(entries)
     }
 
@@ -183,14 +328,35 @@ impl FunctionDefinitionStruct {
             Vec::new()
         };
 
-        Some(AbiEntry {
-            node_id: self.ir_node.node_id,
-            name: self.ir_node.name.as_ref().map(|name| name.unparse()),
-            r#type: (&self.ir_node.kind).try_into().ok()?,
-            inputs,
-            outputs,
-            state_mutability: self.mutability(),
-        })
+        let node_id = self.ir_node.node_id;
+        let name = self.ir_node.name.as_ref().map(|name| name.unparse());
+        let state_mutability: AbiMutability = self.ir_node.mutability.clone().into();
+
+        match self.ir_node.kind {
+            input_ir::FunctionKind::Regular => Some(AbiEntry::Function {
+                node_id,
+                name: name?,
+                inputs,
+                outputs,
+                state_mutability,
+            }),
+            input_ir::FunctionKind::Constructor => Some(AbiEntry::Constructor {
+                node_id,
+                inputs,
+                state_mutability,
+            }),
+            input_ir::FunctionKind::Unnamed | input_ir::FunctionKind::Fallback => {
+                Some(AbiEntry::Fallback {
+                    node_id,
+                    state_mutability,
+                })
+            }
+            input_ir::FunctionKind::Receive => Some(AbiEntry::Receive {
+                node_id,
+                state_mutability,
+            }),
+            input_ir::FunctionKind::Modifier => None,
+        }
     }
 
     pub fn compute_selector(&self) -> Option<u32> {
@@ -208,7 +374,7 @@ impl FunctionDefinitionStruct {
 }
 
 impl ParametersStruct {
-    pub(crate) fn compute_abi(&self) -> Option<Vec<FunctionParameter>> {
+    pub(crate) fn compute_abi(&self) -> Option<Vec<AbiParameter>> {
         let mut result = Vec::new();
         for parameter in &self.ir_nodes {
             let node_id = parameter.node_id;
@@ -216,10 +382,15 @@ impl ParametersStruct {
             // Bail out with `None` if any of the parameters fails typing
             let type_id = self.semantic.binder.node_typing(node_id).as_type_id()?;
             let r#type = self.semantic.type_canonical_name(type_id);
-            result.push(FunctionParameter {
+            // TODO: implement components expansion for tuple types (ie. structs)
+            let components = Vec::new();
+            let indexed = parameter.indexed;
+            result.push(AbiParameter {
                 node_id: Some(node_id),
                 name,
                 r#type,
+                components,
+                indexed,
             });
         }
         Some(result)
@@ -242,9 +413,7 @@ impl StateVariableDefinitionStruct {
         matches!(self.visibility(), StateVariableVisibility::Public)
     }
 
-    fn extract_getter_type_parameters_abi(
-        &self,
-    ) -> Option<(Vec<FunctionParameter>, Vec<FunctionParameter>)> {
+    fn extract_getter_type_parameters_abi(&self) -> Option<(Vec<AbiParameter>, Vec<AbiParameter>)> {
         let Definition::StateVariable(definition) = self
             .semantic
             .binder
@@ -262,13 +431,12 @@ impl StateVariableDefinitionStruct {
         }
         let (inputs, outputs) = self.extract_getter_type_parameters_abi()?;
 
-        Some(AbiEntry {
+        Some(AbiEntry::Function {
             node_id: self.ir_node.node_id,
-            name: Some(self.ir_node.name.unparse()),
-            r#type: AbiType::Function,
+            name: self.ir_node.name.unparse(),
             inputs,
             outputs,
-            state_mutability: FunctionMutability::View,
+            state_mutability: AbiMutability::View,
         })
     }
 
@@ -296,23 +464,27 @@ impl SemanticAnalysis {
     fn extract_function_type_parameters_abi(
         &self,
         type_id: TypeId,
-    ) -> Option<(Vec<FunctionParameter>, Vec<FunctionParameter>)> {
+    ) -> Option<(Vec<AbiParameter>, Vec<AbiParameter>)> {
         let Type::Function(function_type) = self.types.get_type_by_id(type_id) else {
             return None;
         };
         let inputs = function_type
             .parameter_types
             .iter()
-            .map(|parameter_type_id| FunctionParameter {
+            .map(|parameter_type_id| AbiParameter {
                 node_id: None,
                 name: None,
                 r#type: self.type_canonical_name(*parameter_type_id),
+                components: Vec::new(), // TODO: expand components for tuple types
+                indexed: false,
             })
             .collect();
-        let outputs = vec![FunctionParameter {
+        let outputs = vec![AbiParameter {
             node_id: None,
             name: None,
             r#type: self.type_canonical_name(function_type.return_type),
+            components: Vec::new(),
+            indexed: false,
         }];
         Some((inputs, outputs))
     }
@@ -331,13 +503,10 @@ impl ErrorDefinitionStruct {
     pub fn compute_abi(&self) -> Option<AbiEntry> {
         let inputs = self.parameters().compute_abi()?;
 
-        Some(AbiEntry {
+        Some(AbiEntry::Error {
             node_id: self.ir_node.node_id,
-            name: Some(self.ir_node.name.unparse()),
-            r#type: AbiType::Error,
+            name: self.ir_node.name.unparse(),
             inputs,
-            outputs: Vec::new(),
-            state_mutability: FunctionMutability::Pure,
         })
     }
 }
@@ -346,13 +515,11 @@ impl EventDefinitionStruct {
     pub fn compute_abi(&self) -> Option<AbiEntry> {
         let inputs = self.parameters().compute_abi()?;
 
-        Some(AbiEntry {
+        Some(AbiEntry::Event {
             node_id: self.ir_node.node_id,
-            name: Some(self.ir_node.name.unparse()),
-            r#type: AbiType::Event,
+            name: self.ir_node.name.unparse(),
             inputs,
-            outputs: Vec::new(),
-            state_mutability: FunctionMutability::Pure,
+            anonymous: self.ir_node.anonymous_keyword,
         })
     }
 }
