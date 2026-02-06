@@ -2,290 +2,290 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/supported-versions/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/01-file-structure/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/01-file-structure/01-source-unit/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/01-file-structure/02-pragma-directives/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/01-file-structure/03-import-directives/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/01-file-structure/04-using-directives/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/01-file-structure/05-trivia/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/01-file-structure/06-keywords/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/01-file-structure/07-punctuation/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/02-definitions/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/02-definitions/01-contracts/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/02-definitions/02-interfaces/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/02-definitions/03-libraries/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/02-definitions/04-structs/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/02-definitions/05-enums/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/02-definitions/06-constants/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/02-definitions/07-state-variables/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/02-definitions/08-functions/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/02-definitions/09-modifiers/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/02-definitions/10-events/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/02-definitions/11-user-defined-value-types/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/02-definitions/12-errors/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/03-types/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/03-types/01-advanced-types/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/03-types/02-elementary-types/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/04-statements/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/04-statements/01-blocks/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/04-statements/02-declaration-statements/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/04-statements/03-control-statements/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/04-statements/04-error-handling/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/05-expressions/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/05-expressions/01-base-expressions/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/05-expressions/02-function-calls/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/05-expressions/03-primary-expressions/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/05-expressions/04-numbers/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/05-expressions/05-strings/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/05-expressions/06-identifiers/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/06-yul/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/06-yul/01-yul-statements/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/06-yul/02-yul-expressions/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/06-yul/03-yul-keywords/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/01-introduction/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/02-powered-by-slang/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/03-concepts/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/04-getting-started/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/04-getting-started/01-installation/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/04-getting-started/02-choosing-a-solidity-version/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/05-syntax-trees/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/05-syntax-trees/01-parsing-source-code/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/05-syntax-trees/02-handling-syntax-errors/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/05-syntax-trees/03-navigating-with-cursors/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/05-syntax-trees/04-using-ast-types/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/06-query-language/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/06-query-language/01-query-syntax/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/06-query-language/02-executing-queries/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/07-semantic-analysis/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/07-semantic-analysis/01-compilation-units/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/07-semantic-analysis/02-binding-graph/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/07-semantic-analysis/03-solidity-builtins/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/08-examples/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/08-examples/01-list-functions-in-contract/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/08-examples/02-find-usages/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/08-examples/03-jump-to-definition/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/08-examples/04-find-unused-definitions/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/08-examples/05-remove-unused-definitions/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/08-examples/06-inject-logging/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/09-appendix/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/09-appendix/01-slang-versioning-policy/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/09-appendix/02-slang-memory-management/</loc>
-         <lastmod>2026-02-05</lastmod>
+         <lastmod>2026-02-06</lastmod>
     </url>
 </urlset>
