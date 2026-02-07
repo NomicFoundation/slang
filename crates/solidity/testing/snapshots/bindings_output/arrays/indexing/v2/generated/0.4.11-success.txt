@@ -5,7 +5,7 @@ Definitions (6):
 - Def: #2 ["Value" @ input.sol:2:12] (struct)
 - Def: #3 ["value" @ input.sol:3:14] (struct member, type: uint256)
 - Def: #4 ["values" @ input.sol:6:13] (state var, type: Value storage[] storage)
-- Def: #5 ["matrix" @ input.sol:7:16] (state var, type: Value storage[] storage[] storage)
+- Def: #5 ["matrix" @ input.sol:7:16] (state var, type: Value storage[] storage[5] storage)
 - Def: #6 ["test" @ input.sol:9:14] (function, type: function () returns void)
 
 ------------------------------------------------------------------------

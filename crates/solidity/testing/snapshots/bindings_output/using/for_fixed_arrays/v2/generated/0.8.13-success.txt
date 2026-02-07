@@ -2,8 +2,8 @@
 
 Definitions (4):
 - Def: #1 ["ArrayHelper" @ input.sol:1:9] (library)
-- Def: #2 ["asArray" @ input.sol:2:14] (function, type: function (string memory[] memory) returns void)
-- Def: #3 ["items" @ input.sol:2:39] (parameter, type: string memory[] memory)
+- Def: #2 ["asArray" @ input.sol:2:14] (function, type: function (string memory[1] memory) returns void)
+- Def: #3 ["items" @ input.sol:2:39] (parameter, type: string memory[1] memory)
 - Def: #4 ["test" @ input.sol:7:10] (function, type: function () returns void)
 
 ------------------------------------------------------------------------

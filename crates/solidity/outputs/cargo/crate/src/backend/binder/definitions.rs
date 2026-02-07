@@ -39,6 +39,7 @@ pub enum Definition {
 #[derive(Debug)]
 pub struct ConstantDefinition {
     pub(crate) ir_node: output_ir::ConstantDefinition,
+    pub scope_id: ScopeId,
 }
 
 #[derive(Debug)]
@@ -301,9 +302,12 @@ impl Definition {
         }
     }
 
-    pub(crate) fn new_constant(ir_node: &output_ir::ConstantDefinition) -> Self {
+    pub(crate) fn new_constant(ir_node: &output_ir::ConstantDefinition, scope_id: ScopeId) -> Self {
+        // for constants we store the scope_id where it's defined to use for
+        // evaluation of compile-time constants (eg. fixed arrays size)
         Self::Constant(ConstantDefinition {
             ir_node: Rc::clone(ir_node),
+            scope_id,
         })
     }
 

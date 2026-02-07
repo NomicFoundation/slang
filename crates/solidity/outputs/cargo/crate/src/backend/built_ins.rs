@@ -562,6 +562,10 @@ impl<'a> BuiltInsResolver<'a> {
             }
             Type::Enum { .. } => None,
             Type::FixedPointNumber { .. } => None,
+            Type::FixedSizeArray { .. } => match symbol {
+                "length" => Some(BuiltIn::Length),
+                _ => None,
+            },
             Type::Function(FunctionType { external, .. }) => {
                 // Solidity < 0.5.0 didn't require explicit visibility attributes
                 if *external || self.language_version < VERSION_0_5_0 {

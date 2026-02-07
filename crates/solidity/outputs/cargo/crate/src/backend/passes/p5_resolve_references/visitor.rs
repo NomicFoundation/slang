@@ -364,7 +364,15 @@ impl Visitor for Pass<'_> {
                 let range_access = node.end.is_some();
                 let operand_type = self.types.get_type_by_id(operand_type_id);
                 match operand_type {
-                    Type::Array { element_type, .. } => {
+                    Type::Array { element_type, .. }
+                    | Type::FixedSizeArray { element_type, .. } => {
+                        // TODO(validation): for fixed-size arrays, if the range
+                        // is resolvable at compile time we should check for out
+                        // of bounds accesses.
+                        // TODO(validation): array slices should only be
+                        // implemented for calldata arrays (as of 0.8.33).
+                        // TODO(validation): we should return a new
+                        // (intermediate) type for array slices.
                         if range_access {
                             Typing::Resolved(operand_type_id)
                         } else {
@@ -434,8 +442,9 @@ impl Visitor for Pass<'_> {
                 .as_type_id()
             {
                 let element_type = self.types.reified_type(element_type);
-                let type_id = self.types.register_type(Type::Array {
+                let type_id = self.types.register_type(Type::FixedSizeArray {
                     element_type,
+                    size: node.items.len(),
                     location: DataLocation::Memory,
                 });
                 Typing::Resolved(type_id)

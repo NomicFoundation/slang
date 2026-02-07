@@ -32,6 +32,16 @@ fn fixed_arrays() -> Result<()> {
 }
 
 #[test]
+fn fixed_size_arrays() -> Result<()> {
+    run(T, "fixed_size_arrays")
+}
+
+#[test]
+fn fixed_size_with_shadowed_constants() -> Result<()> {
+    run(T, "fixed_size_with_shadowed_constants")
+}
+
+#[test]
 fn indexing() -> Result<()> {
     run(T, "indexing")
 }

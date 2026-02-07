@@ -1,0 +1,116 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (12):
+- Def: #1 ["Base" @ input.sol:1:10] (contract)
+- Def: #2 ["BASE_SIZE" @ input.sol:2:19] (constant, type: uint256)
+- Def: #3 ["Test" @ input.sol:5:10] (contract)
+- Def: #4 ["TEST_SIZE" @ input.sol:6:19] (constant, type: uint256)
+- Def: #5 ["test" @ input.sol:10:14] (function, type: function () returns void)
+- Def: #6 ["a" @ input.sol:11:24] (variable, type: uint256[4] memory)
+- Def: #7 ["b" @ input.sol:12:32] (variable, type: uint256[4] memory)
+- Def: #8 ["c" @ input.sol:13:32] (variable, type: uint256[4] memory)
+- Def: #9 ["d" @ input.sol:14:50] (variable, type: uint256[4] memory)
+- Def: #10 ["Lib" @ input.sol:22:9] (library)
+- Def: #11 ["nop" @ input.sol:23:14] (function, type: function (uint256[4] memory) returns void)
+- Def: #12 ["self" @ input.sol:23:33] (parameter, type: uint256[4] memory)
+
+------------------------------------------------------------------------
+
+References (14):
+- Ref: ["Base" @ input.sol:5:18] -> #1
+- Ref: ["Lib" @ input.sol:8:11] -> #10
+- Ref: ["TEST_SIZE" @ input.sol:12:14] -> #4
+- Ref: ["BASE_SIZE" @ input.sol:13:14] -> #2
+- Ref: ["BASE_SIZE" @ input.sol:14:15] -> #2
+- Ref: ["TEST_SIZE" @ input.sol:14:27] -> #4
+- Ref: ["a" @ input.sol:15:9] -> #6
+- Ref: ["nop" @ input.sol:15:11] -> #11
+- Ref: ["b" @ input.sol:16:9] -> #7
+- Ref: ["nop" @ input.sol:16:11] -> #11
+- Ref: ["c" @ input.sol:17:9] -> #8
+- Ref: ["nop" @ input.sol:17:11] -> #11
+- Ref: ["d" @ input.sol:18:9] -> #9
+- Ref: ["nop" @ input.sol:18:11] -> #11
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Base {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     uint constant BASE_SIZE = 4;
+    │                   ────┬────  
+    │                       ╰────── name: 2
+    │ 
+  5 │ contract Test is Base {
+    │          ──┬─    ──┬─  
+    │            ╰─────────── name: 3
+    │                    │   
+    │                    ╰─── ref: 1
+  6 │     uint constant TEST_SIZE = 4;
+    │                   ────┬────  
+    │                       ╰────── name: 4
+    │ 
+  8 │     using Lib for uint[4];
+    │           ─┬─  
+    │            ╰─── ref: 10
+    │ 
+ 10 │     function test() internal {
+    │              ──┬─  
+    │                ╰─── name: 5
+ 11 │         uint[4] memory a;
+    │                        ┬  
+    │                        ╰── name: 6
+ 12 │         uint[TEST_SIZE] memory b;
+    │              ────┬────         ┬  
+    │                  ╰──────────────── ref: 4
+    │                                │  
+    │                                ╰── name: 7
+ 13 │         uint[BASE_SIZE] memory c;
+    │              ────┬────         ┬  
+    │                  ╰──────────────── ref: 2
+    │                                │  
+    │                                ╰── name: 8
+ 14 │         uint[(BASE_SIZE + TEST_SIZE) / 2] memory d;
+    │               ────┬────   ────┬────              ┬  
+    │                   ╰───────────────────────────────── ref: 2
+    │                               │                  │  
+    │                               ╰───────────────────── ref: 4
+    │                                                  │  
+    │                                                  ╰── name: 9
+ 15 │         a.nop();
+    │         ┬ ─┬─  
+    │         ╰────── ref: 6
+    │            │   
+    │            ╰─── ref: 11
+ 16 │         b.nop();
+    │         ┬ ─┬─  
+    │         ╰────── ref: 7
+    │            │   
+    │            ╰─── ref: 11
+ 17 │         c.nop();
+    │         ┬ ─┬─  
+    │         ╰────── ref: 8
+    │            │   
+    │            ╰─── ref: 11
+ 18 │         d.nop();
+    │         ┬ ─┬─  
+    │         ╰────── ref: 9
+    │            │   
+    │            ╰─── ref: 11
+    │ 
+ 22 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 10
+ 23 │     function nop(uint[4] memory self) internal {}
+    │              ─┬─                ──┬─  
+    │               ╰─────────────────────── name: 11
+    │                                   │   
+    │                                   ╰─── name: 12
+────╯
