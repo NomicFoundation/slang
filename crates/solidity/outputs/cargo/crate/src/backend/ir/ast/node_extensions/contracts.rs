@@ -5,7 +5,9 @@ use super::super::{
     ContractDefinition, ContractDefinitionStruct, ContractMember, ContractMembersStruct,
     Definition, FunctionDefinition, FunctionKind, InterfaceDefinition, StateVariableDefinition,
 };
-use crate::backend::ir::ast::FunctionDefinitionStruct;
+use crate::backend::ir::ast::{
+    ErrorDefinition, EventDefinition, FunctionDefinitionStruct, InterfaceMembersStruct,
+};
 
 pub enum ContractBase {
     Contract(ContractDefinition),
@@ -70,7 +72,7 @@ impl ContractDefinitionStruct {
             let ContractBase::Contract(contract) = base else {
                 continue;
             };
-            state_variables.extend(contract.state_variables());
+            state_variables.extend(contract.members().iter_state_variable_definitions());
         }
         state_variables
     }
@@ -143,6 +145,46 @@ impl ContractDefinitionStruct {
         });
         functions
     }
+
+    pub fn errors(&self) -> Vec<ErrorDefinition> {
+        self.members().iter_error_definitions().collect()
+    }
+
+    pub fn compute_linearised_errors(&self) -> Vec<ErrorDefinition> {
+        let mut errors = Vec::new();
+        let bases = self.compute_linearised_bases();
+        for base in bases.iter().rev() {
+            match base {
+                ContractBase::Contract(contract) => {
+                    errors.extend(contract.members().iter_error_definitions());
+                }
+                ContractBase::Interface(interface) => {
+                    errors.extend(interface.members().iter_error_definitions());
+                }
+            }
+        }
+        errors
+    }
+
+    pub fn events(&self) -> Vec<EventDefinition> {
+        self.members().iter_event_definitions().collect()
+    }
+
+    pub fn compute_linearised_events(&self) -> Vec<EventDefinition> {
+        let mut events = Vec::new();
+        let bases = self.compute_linearised_bases();
+        for base in bases.iter().rev() {
+            match base {
+                ContractBase::Contract(contract) => {
+                    events.extend(contract.members().iter_event_definitions());
+                }
+                ContractBase::Interface(interface) => {
+                    events.extend(interface.members().iter_event_definitions());
+                }
+            }
+        }
+        events
+    }
 }
 
 impl ContractMembersStruct {
@@ -164,6 +206,48 @@ impl ContractMembersStruct {
         self.iter().filter_map(|member| {
             if let ContractMember::StateVariableDefinition(state_variable) = member {
                 Some(state_variable)
+            } else {
+                None
+            }
+        })
+    }
+
+    pub(crate) fn iter_error_definitions(&self) -> impl Iterator<Item = ErrorDefinition> + use<'_> {
+        self.iter().filter_map(|member| {
+            if let ContractMember::ErrorDefinition(error_definition) = member {
+                Some(error_definition)
+            } else {
+                None
+            }
+        })
+    }
+
+    pub(crate) fn iter_event_definitions(&self) -> impl Iterator<Item = EventDefinition> + use<'_> {
+        self.iter().filter_map(|member| {
+            if let ContractMember::EventDefinition(event_definition) = member {
+                Some(event_definition)
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl InterfaceMembersStruct {
+    pub(crate) fn iter_error_definitions(&self) -> impl Iterator<Item = ErrorDefinition> + use<'_> {
+        self.iter().filter_map(|member| {
+            if let ContractMember::ErrorDefinition(error_definition) = member {
+                Some(error_definition)
+            } else {
+                None
+            }
+        })
+    }
+
+    pub(crate) fn iter_event_definitions(&self) -> impl Iterator<Item = EventDefinition> + use<'_> {
+        self.iter().filter_map(|member| {
+            if let ContractMember::EventDefinition(event_definition) = member {
+                Some(event_definition)
             } else {
                 None
             }
