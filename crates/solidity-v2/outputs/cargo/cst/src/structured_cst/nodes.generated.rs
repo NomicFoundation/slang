@@ -4184,26 +4184,17 @@ pub fn new_unicode_string_literal_double_quoted_unicode_string_literal(
 #[derive(Clone, Debug)]
 pub enum UnnamedFunctionAttribute {
     ModifierInvocation(ModifierInvocation),
-    ConstantKeyword(ConstantKeyword),
     ExternalKeyword(ExternalKeyword),
     InternalKeyword(InternalKeyword),
     PayableKeyword(PayableKeyword),
     PrivateKeyword(PrivateKeyword),
     PublicKeyword(PublicKeyword),
-    PureKeyword(PureKeyword),
-    ViewKeyword(ViewKeyword),
 }
 
 pub fn new_unnamed_function_attribute_modifier_invocation(
     element: ModifierInvocation,
 ) -> UnnamedFunctionAttribute {
     UnnamedFunctionAttribute::ModifierInvocation(element)
-}
-
-pub fn new_unnamed_function_attribute_constant_keyword(
-    element: ConstantKeyword,
-) -> UnnamedFunctionAttribute {
-    UnnamedFunctionAttribute::ConstantKeyword(element)
 }
 
 pub fn new_unnamed_function_attribute_external_keyword(
@@ -4234,18 +4225,6 @@ pub fn new_unnamed_function_attribute_public_keyword(
     element: PublicKeyword,
 ) -> UnnamedFunctionAttribute {
     UnnamedFunctionAttribute::PublicKeyword(element)
-}
-
-pub fn new_unnamed_function_attribute_pure_keyword(
-    element: PureKeyword,
-) -> UnnamedFunctionAttribute {
-    UnnamedFunctionAttribute::PureKeyword(element)
-}
-
-pub fn new_unnamed_function_attribute_view_keyword(
-    element: ViewKeyword,
-) -> UnnamedFunctionAttribute {
-    UnnamedFunctionAttribute::ViewKeyword(element)
 }
 
 #[derive(Clone, Debug)]

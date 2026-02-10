@@ -15293,10 +15293,6 @@ impl NodeChecker for UnnamedFunctionAttribute {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             }
 
-            Self::ConstantKeyword(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-
             Self::ExternalKeyword(element) => {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             }
@@ -15314,14 +15310,6 @@ impl NodeChecker for UnnamedFunctionAttribute {
             }
 
             Self::PublicKeyword(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-
-            Self::PureKeyword(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-
-            Self::ViewKeyword(element) => {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             }
         }
