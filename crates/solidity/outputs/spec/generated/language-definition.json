@@ -3639,14 +3639,11 @@
                   "enabled": { "Till": { "till": "0.6.0" } },
                   "variants": [
                     { "reference": "ModifierInvocation" },
-                    { "reference": "ConstantKeyword", "enabled": { "Till": { "till": "0.5.0" } } },
                     { "reference": "ExternalKeyword" },
                     { "reference": "InternalKeyword", "enabled": { "Till": { "till": "0.5.0" } } },
                     { "reference": "PayableKeyword" },
                     { "reference": "PrivateKeyword", "enabled": { "Till": { "till": "0.5.0" } } },
-                    { "reference": "PublicKeyword", "enabled": { "Till": { "till": "0.5.0" } } },
-                    { "reference": "PureKeyword", "enabled": { "Range": { "from": "0.4.16", "till": "0.6.0" } } },
-                    { "reference": "ViewKeyword", "enabled": { "Range": { "from": "0.4.16", "till": "0.6.0" } } }
+                    { "reference": "PublicKeyword", "enabled": { "Till": { "till": "0.5.0" } } }
                   ]
                 }
               }

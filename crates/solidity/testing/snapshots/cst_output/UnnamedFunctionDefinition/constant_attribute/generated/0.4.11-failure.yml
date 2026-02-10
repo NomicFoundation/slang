@@ -4,7 +4,15 @@ Source: >
   1  │ // Split into `view` and `pure` in 0.4.16                                        │ 0..41
   2  │ function () constant {}                                                          │ 42..65
 
-Errors: []
+Errors: # 1 total
+  - >
+    Error: Expected ExternalKeyword or Identifier or InternalKeyword or OpenBrace or PayableKeyword or PrivateKeyword or PublicKeyword or Semicolon.
+       ╭─[crates/solidity/testing/snapshots/cst_output/UnnamedFunctionDefinition/constant_attribute/input.sol:2:12]
+       │
+     2 │ function () constant {}
+       │            ──────┬──────  
+       │                  ╰──────── Error occurred here.
+    ───╯
 
 Tree:
   - (root꞉ UnnamedFunctionDefinition): # "// Split into `view` and `pure` in 0.4.16\nfunction..." (0..66)
@@ -16,13 +24,5 @@ Tree:
           - (open_paren꞉ OpenParen): "(" # (51..52)
           - (parameters꞉ Parameters): [] # (52..52)
           - (close_paren꞉ CloseParen): ")" # (52..53)
-      - (attributes꞉ UnnamedFunctionAttributes): # " constant" (53..62)
-          - (item꞉ UnnamedFunctionAttribute): # " constant" (53..62)
-              - (leading_trivia꞉ Whitespace): " " # (53..54)
-              - (variant꞉ ConstantKeyword): "constant" # (54..62)
-      - (body꞉ FunctionBody) ► (variant꞉ Block): # " {}\n" (62..66)
-          - (leading_trivia꞉ Whitespace): " " # (62..63)
-          - (open_brace꞉ OpenBrace): "{" # (63..64)
-          - (statements꞉ Statements): [] # (64..64)
-          - (close_brace꞉ CloseBrace): "}" # (64..65)
-          - (trailing_trivia꞉ EndOfLine): "\n" # (65..66)
+      - (attributes꞉ UnnamedFunctionAttributes): [] # (53..53)
+      - (unrecognized꞉ UNRECOGNIZED): " constant {}\n" # (53..66)

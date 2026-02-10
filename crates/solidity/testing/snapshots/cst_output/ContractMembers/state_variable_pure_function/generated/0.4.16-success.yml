@@ -1,0 +1,25 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ function() pure foo;                                                             │ 0..20
+
+Errors: []
+
+Tree:
+  - (root꞉ ContractMembers): # "function() pure foo;\n" (0..21)
+      - (item꞉ ContractMember) ► (variant꞉ StateVariableDefinition): # "function() pure foo;\n" (0..21)
+          - (type_name꞉ TypeName) ► (variant꞉ FunctionType): # "function() pure" (0..15)
+              - (function_keyword꞉ FunctionKeyword): "function" # (0..8)
+              - (parameters꞉ ParametersDeclaration): # "()" (8..10)
+                  - (open_paren꞉ OpenParen): "(" # (8..9)
+                  - (parameters꞉ Parameters): [] # (9..9)
+                  - (close_paren꞉ CloseParen): ")" # (9..10)
+              - (attributes꞉ FunctionTypeAttributes): # " pure" (10..15)
+                  - (item꞉ FunctionTypeAttribute): # " pure" (10..15)
+                      - (leading_trivia꞉ Whitespace): " " # (10..11)
+                      - (variant꞉ PureKeyword): "pure" # (11..15)
+          - (attributes꞉ StateVariableAttributes): [] # (15..15)
+          - (leading_trivia꞉ Whitespace): " " # (15..16)
+          - (name꞉ Identifier): "foo" # (16..19)
+          - (semicolon꞉ Semicolon): ";" # (19..20)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (20..21)
