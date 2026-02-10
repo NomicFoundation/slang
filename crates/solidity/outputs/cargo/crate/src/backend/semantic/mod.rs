@@ -237,13 +237,13 @@ impl SemanticAnalysis {
             .unparse()
     }
 
-    pub fn type_canonical_name(&self, type_id: TypeId) -> String {
+    pub fn type_internal_name(&self, type_id: TypeId) -> String {
         match self.types.get_type_by_id(type_id) {
             Type::Address { .. } => "address".to_string(),
             Type::Array { element_type, .. } => {
                 format!(
                     "{element}[]",
-                    element = self.type_canonical_name(*element_type)
+                    element = self.type_internal_name(*element_type)
                 )
             }
             Type::Boolean => "bool".to_string(),
@@ -262,7 +262,7 @@ impl SemanticAnalysis {
             } => {
                 format!(
                     "{element}[{size}]",
-                    element = self.type_canonical_name(*element_type)
+                    element = self.type_internal_name(*element_type),
                 )
             }
             Type::Function(_) => "function".to_string(),
@@ -276,15 +276,15 @@ impl SemanticAnalysis {
                 value_type_id,
             } => format!(
                 "mapping({key_type} => {value_type})",
-                key_type = self.type_canonical_name(*key_type_id),
-                value_type = self.type_canonical_name(*value_type_id)
+                key_type = self.type_internal_name(*key_type_id),
+                value_type = self.type_internal_name(*value_type_id)
             ),
             Type::String { .. } => "string".to_string(),
             Type::Tuple { types } => format!(
                 "({types})",
                 types = types
                     .iter()
-                    .map(|type_id| self.type_canonical_name(*type_id))
+                    .map(|type_id| self.type_internal_name(*type_id))
                     .collect::<Vec<_>>()
                     .join(",")
             ),
@@ -296,6 +296,63 @@ impl SemanticAnalysis {
                 self.definition_canonical_name(*definition_id)
             }
             Type::Void => "void".to_string(),
+        }
+    }
+
+    pub fn type_canonical_name(&self, type_id: TypeId) -> Option<String> {
+        match self.types.get_type_by_id(type_id) {
+            Type::Address { .. }
+            | Type::Boolean
+            | Type::ByteArray { .. }
+            | Type::Bytes { .. }
+            | Type::FixedPointNumber { .. }
+            | Type::Function(_)
+            | Type::Integer { .. }
+            | Type::String { .. } => Some(self.type_internal_name(type_id)),
+
+            Type::Array { element_type, .. } => self
+                .type_canonical_name(*element_type)
+                .map(|element| format!("{element}[]",)),
+            Type::FixedSizeArray {
+                element_type, size, ..
+            } => self
+                .type_canonical_name(*element_type)
+                .map(|element| format!("{element}[{size}]",)),
+
+            Type::Contract { .. } | Type::Interface { .. } => Some("address".to_string()),
+
+            Type::Enum { .. } => Some("uint8".to_string()),
+
+            Type::Struct { definition_id, .. } => {
+                let binder::Definition::Struct(struct_) = self
+                    .binder
+                    .find_definition_by_id(*definition_id)
+                    .expect("definition in type exists")
+                else {
+                    unreachable!("definition in struct type is not a struct");
+                };
+                let mut fields = Vec::new();
+                for member in &struct_.ir_node.members {
+                    let member_type_id = self.binder.node_typing(member.node_id).as_type_id()?;
+                    let field_type = self.type_canonical_name(member_type_id)?;
+                    fields.push(field_type);
+                }
+                Some(format!("({fields})", fields = fields.join(",")))
+            }
+
+            Type::UserDefinedValue { definition_id } => {
+                let binder::Definition::UserDefinedValueType(udvt) = self
+                    .binder
+                    .find_definition_by_id(*definition_id)
+                    .expect("definition in type exists")
+                else {
+                    unreachable!("definition in user defined value type is not a UDVT");
+                };
+                udvt.target_type_id
+                    .and_then(|type_id| self.type_canonical_name(type_id))
+            }
+
+            Type::Literal(_) | Type::Mapping { .. } | Type::Tuple { .. } | Type::Void => None,
         }
     }
 
