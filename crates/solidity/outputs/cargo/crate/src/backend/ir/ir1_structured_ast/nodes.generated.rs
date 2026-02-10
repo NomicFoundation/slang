@@ -1347,14 +1347,11 @@ pub enum ConstructorAttribute {
 #[derive(Clone, Debug)]
 pub enum UnnamedFunctionAttribute {
     ModifierInvocation(ModifierInvocation),
-    ConstantKeyword,
     ExternalKeyword,
     InternalKeyword,
     PayableKeyword,
     PrivateKeyword,
     PublicKeyword,
-    PureKeyword,
-    ViewKeyword,
 }
 
 #[derive(Clone, Debug)]

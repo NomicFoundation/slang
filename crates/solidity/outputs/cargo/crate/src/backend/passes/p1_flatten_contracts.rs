@@ -797,9 +797,6 @@ impl Pass {
                 input::UnnamedFunctionAttribute::PayableKeyword => {
                     output::FunctionMutability::Payable
                 }
-                input::UnnamedFunctionAttribute::PureKeyword => output::FunctionMutability::Pure,
-                input::UnnamedFunctionAttribute::ConstantKeyword
-                | input::UnnamedFunctionAttribute::ViewKeyword => output::FunctionMutability::View,
                 _ => mutability,
             },
         )

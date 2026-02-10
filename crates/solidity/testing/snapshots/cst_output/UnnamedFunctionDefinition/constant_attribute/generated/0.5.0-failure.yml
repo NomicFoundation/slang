@@ -6,7 +6,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected ExternalKeyword or Identifier or OpenBrace or PayableKeyword or PureKeyword or Semicolon or ViewKeyword.
+    Error: Expected ExternalKeyword or Identifier or OpenBrace or PayableKeyword or Semicolon.
        ╭─[crates/solidity/testing/snapshots/cst_output/UnnamedFunctionDefinition/constant_attribute/input.sol:2:12]
        │
      2 │ function () constant {}

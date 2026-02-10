@@ -2094,14 +2094,11 @@ pub trait Rewriter {
                     self.rewrite_modifier_invocation(modifier_invocation),
                 )
             }
-            UnnamedFunctionAttribute::ConstantKeyword => UnnamedFunctionAttribute::ConstantKeyword,
             UnnamedFunctionAttribute::ExternalKeyword => UnnamedFunctionAttribute::ExternalKeyword,
             UnnamedFunctionAttribute::InternalKeyword => UnnamedFunctionAttribute::InternalKeyword,
             UnnamedFunctionAttribute::PayableKeyword => UnnamedFunctionAttribute::PayableKeyword,
             UnnamedFunctionAttribute::PrivateKeyword => UnnamedFunctionAttribute::PrivateKeyword,
             UnnamedFunctionAttribute::PublicKeyword => UnnamedFunctionAttribute::PublicKeyword,
-            UnnamedFunctionAttribute::PureKeyword => UnnamedFunctionAttribute::PureKeyword,
-            UnnamedFunctionAttribute::ViewKeyword => UnnamedFunctionAttribute::ViewKeyword,
         }
     }
     fn rewrite_unnamed_function_attribute(

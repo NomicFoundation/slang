@@ -5522,13 +5522,6 @@ impl Parser {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.modifier_invocation(input);
                 choice.consider(input, result)?;
-                if !self.version_is_at_least_0_5_0 {
-                    let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TerminalKind::ConstantKeyword,
-                    );
-                    choice.consider(input, result)?;
-                }
                 let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::ExternalKeyword,
@@ -5557,20 +5550,6 @@ impl Parser {
                     let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::PublicKeyword,
-                    );
-                    choice.consider(input, result)?;
-                }
-                if self.version_is_at_least_0_4_16 && !self.version_is_at_least_0_6_0 {
-                    let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TerminalKind::PureKeyword,
-                    );
-                    choice.consider(input, result)?;
-                }
-                if self.version_is_at_least_0_4_16 && !self.version_is_at_least_0_6_0 {
-                    let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TerminalKind::ViewKeyword,
                     );
                     choice.consider(input, result)?;
                 }
