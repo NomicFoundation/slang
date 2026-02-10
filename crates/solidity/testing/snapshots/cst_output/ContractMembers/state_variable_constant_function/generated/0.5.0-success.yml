@@ -1,0 +1,25 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ function() constant foo;                                                         │ 0..24
+
+Errors: []
+
+Tree:
+  - (root꞉ ContractMembers): # "function() constant foo;\n" (0..25)
+      - (item꞉ ContractMember) ► (variant꞉ StateVariableDefinition): # "function() constant foo;\n" (0..25)
+          - (type_name꞉ TypeName) ► (variant꞉ FunctionType): # "function()" (0..10)
+              - (function_keyword꞉ FunctionKeyword): "function" # (0..8)
+              - (parameters꞉ ParametersDeclaration): # "()" (8..10)
+                  - (open_paren꞉ OpenParen): "(" # (8..9)
+                  - (parameters꞉ Parameters): [] # (9..9)
+                  - (close_paren꞉ CloseParen): ")" # (9..10)
+              - (attributes꞉ FunctionTypeAttributes): [] # (10..10)
+          - (attributes꞉ StateVariableAttributes): # " constant" (10..19)
+              - (item꞉ StateVariableAttribute): # " constant" (10..19)
+                  - (leading_trivia꞉ Whitespace): " " # (10..11)
+                  - (variant꞉ ConstantKeyword): "constant" # (11..19)
+          - (leading_trivia꞉ Whitespace): " " # (19..20)
+          - (name꞉ Identifier): "foo" # (20..23)
+          - (semicolon꞉ Semicolon): ";" # (23..24)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (24..25)

@@ -3124,9 +3124,6 @@ pub fn build_unnamed_function_attribute(
                 nonterminal_node(variant),
             )?)
         }
-        NodeKind::Terminal(TerminalKind::ConstantKeyword) => {
-            UnnamedFunctionAttribute::ConstantKeyword
-        }
         NodeKind::Terminal(TerminalKind::ExternalKeyword) => {
             UnnamedFunctionAttribute::ExternalKeyword
         }
@@ -3140,8 +3137,6 @@ pub fn build_unnamed_function_attribute(
             UnnamedFunctionAttribute::PrivateKeyword
         }
         NodeKind::Terminal(TerminalKind::PublicKeyword) => UnnamedFunctionAttribute::PublicKeyword,
-        NodeKind::Terminal(TerminalKind::PureKeyword) => UnnamedFunctionAttribute::PureKeyword,
-        NodeKind::Terminal(TerminalKind::ViewKeyword) => UnnamedFunctionAttribute::ViewKeyword,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             unreachable!(
                 "unexpected variant node of kind {kind}",

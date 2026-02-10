@@ -1,0 +1,30 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ function() view foo;                                                             │ 0..20
+
+Errors: # 1 total
+  - >
+    Error: Expected ConstantKeyword or Identifier or InternalKeyword or PrivateKeyword or PublicKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/state_variable_view_function/input.sol:1:12]
+       │
+     1 │ function() view foo;
+       │            ────┬───  
+       │                ╰───── Error occurred here.
+    ───╯
+
+Tree:
+  - (root꞉ ContractMembers): # "function() view foo;\n" (0..21)
+      - (item꞉ ContractMember) ► (variant꞉ StateVariableDefinition): # "function() view foo;\n" (0..21)
+          - (type_name꞉ TypeName) ► (variant꞉ FunctionType): # "function()" (0..10)
+              - (function_keyword꞉ FunctionKeyword): "function" # (0..8)
+              - (parameters꞉ ParametersDeclaration): # "()" (8..10)
+                  - (open_paren꞉ OpenParen): "(" # (8..9)
+                  - (parameters꞉ Parameters): [] # (9..9)
+                  - (close_paren꞉ CloseParen): ")" # (9..10)
+              - (attributes꞉ FunctionTypeAttributes): [] # (10..10)
+          - (attributes꞉ StateVariableAttributes): [] # (10..10)
+          - (leading_trivia꞉ Whitespace): " " # (10..11)
+          - (unrecognized꞉ UNRECOGNIZED): "view foo" # (11..19)
+          - (semicolon꞉ Semicolon): ";" # (19..20)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (20..21)
