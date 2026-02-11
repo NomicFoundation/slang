@@ -36,7 +36,7 @@ impl CargoController {
     pub fn execute(&self) -> Result<()> {
         if !self.no_deps {
             Self::install_valgrind();
-            CargoWorkspace::install_binary("iai-callgrind-runner")?;
+            CargoWorkspace::install_binary("gungraun-runner")?;
             CargoWorkspace::install_binary("bencher_cli")?;
 
             Self::install_graphviz();
@@ -126,11 +126,11 @@ impl CargoController {
         run_bench(
             self.dry_run.get(),
             bencher_project,
-            "rust_iai_callgrind",
+            "rust_gungraun",
             &test_runner,
         );
 
-        let reports_dir = Path::repo_path("target/iai")
+        let reports_dir = Path::repo_path("target/gungraun")
             .join(package_name)
             .join(bench_name);
 

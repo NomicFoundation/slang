@@ -57,5 +57,5 @@ jobs:
         uses: "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
         with:
           name: "benchmarking-data"
-          path: "target/iai"
+          path: "target/gungraun"
           if-no-files-found: "error"
