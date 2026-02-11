@@ -42,11 +42,6 @@
       "enabled": false
     },
     {
-      "description": "iai-callgrind: disabled pending migration to gungraun (issue #1690); crate was renamed upstream",
-      "matchPackageNames": ["iai-callgrind", "iai-callgrind-runner"],
-      "enabled": false
-    },
-    {
       "description": "cargo: group minor/patch; majors stay individual",
       "matchManagers": ["cargo"],
       "matchUpdateTypes": ["minor", "patch"],
@@ -108,13 +103,6 @@
   },
   "osvVulnerabilityAlerts": true,
   "vulnerabilityAlerts": {
-    "enabled": true,
-    "packageRules": [
-      {
-        "description": "Allow vulnerability fix PRs for iai-callgrind which is otherwise disabled",
-        "matchPackageNames": ["iai-callgrind", "iai-callgrind-runner"],
-        "enabled": true
-      }
-    ]
+    "enabled": true
   }
 }

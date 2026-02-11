@@ -2,9 +2,9 @@
 
 use std::hint::black_box;
 
-use iai_callgrind::{
-    library_benchmark, library_benchmark_group, main, Direction, FlamegraphConfig,
-    LibraryBenchmarkConfig, Tool, ValgrindTool,
+use gungraun::{
+    library_benchmark, library_benchmark_group, main, Callgrind, Dhat, Direction, FlamegraphConfig,
+    LibraryBenchmarkConfig,
 };
 use paste::paste;
 use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit;
@@ -35,7 +35,7 @@ macro_rules! slang_v2_define_tests {
     ($prj:ident) => {
         /*
          * WARNING:
-         * The reported `iai` benchmark ID is constructed from: `{file_name}::{group_name}::{function_name}`
+         * The reported `gungraun` benchmark ID is constructed from: `{file_name}::{group_name}::{function_name}`
          * Changing any of the above would change the resulting benchmark ID, and disconnect it from previous results.
          *
          * __SLANG_V2_INFRA_BENCHMARKS_LIST__ (keep in sync)
@@ -90,7 +90,7 @@ slang_v2_define_tests!(merkle_proof);
 
 main!(
     config = LibraryBenchmarkConfig::default()
-        // 'valgrind' supports many tools. By default, it runs 'callgrind', which reports these metrics:
+        // 'valgrind' supports many tools. We run 'callgrind', which reports these metrics:
         // https://kcachegrind.github.io/html/Home.html
         //
         // Instructions:            Total CPU instructions executed.
@@ -100,6 +100,10 @@ main!(
         // Total read+write:        Total memory reads/writes during the entire execution.
         // Estimated Cycles:        Number of CPU cycles (estimated) that went by during the entire execution.
         //
+        // We also enable flame graphs into Cargo's 'target' directory.
+        // They will be listed by 'infra perf' at the end of the run:
+        .tool(Callgrind::default().flamegraph(FlamegraphConfig::default().direction(Direction::BottomToTop)))
+
         // We also enable the 'DHAT' tool below, which reports these metrics:
         // https://valgrind.org/docs/manual/dh-manual.html
         //
@@ -111,11 +115,7 @@ main!(
         // At t-end blocks:         How many heap blocks were alive at the end of execution (were not explicitly freed).
         // Reads bytes:             How many bytes within heap blocks were read during the entire execution.
         // Writes bytes:            How many bytes within heap blocks were written during the entire execution.
-        .tool(Tool::new(ValgrindTool::DHAT))
-
-        // This enables generating flame graphs into Cargo's 'target' directory.
-        // They will be listed by 'infra perf' at the end of the run:
-        .flamegraph(FlamegraphConfig::default().direction(Direction::BottomToTop))
+        .tool(Dhat::default())
 
         // 'valgrind' executes tests without any environment variables set by default.
         // Let's disable this behavior to be able to execute our infra utilities:
