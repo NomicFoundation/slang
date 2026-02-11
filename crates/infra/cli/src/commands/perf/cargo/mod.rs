@@ -70,7 +70,7 @@ impl CargoController {
                 binaries::install_valgrind()?;
                 binaries::install_graphviz()?;
             }
-            binaries::install_iai_callgrind_runner()?;
+            binaries::install_gungraun_runner()?;
             binaries::install_bencher_cli()?;
         }
 
@@ -89,19 +89,19 @@ impl CargoController {
         }
 
         // Bencher supports multiple languages/frameworks: https://bencher.dev/docs/explanation/adapters/
-        // We currently only have one benchmark suite (Rust/iai), but we can add more here in the future.
+        // We currently only have one benchmark suite (Rust/gungraun), but we can add more here in the future.
         match self.bench {
-            Benches::Slang => self.run_iai_bench(
+            Benches::Slang => self.run_gungraun_bench(
                 "solidity_testing_perf_cargo",
                 "slang",
                 DEFAULT_BENCHER_PROJECT_SLANG,
             ),
-            Benches::Comparison => self.run_iai_bench(
+            Benches::Comparison => self.run_gungraun_bench(
                 "solidity_testing_perf_cargo",
                 "comparison",
                 DEFAULT_BENCHER_PROJECT_CMP,
             ),
-            Benches::SlangV2 => self.run_iai_bench(
+            Benches::SlangV2 => self.run_gungraun_bench(
                 "solidity_testing_perf_cargo",
                 "slang_v2",
                 DEFAULT_BENCHER_PROJECT_SLANG_V2,
@@ -110,10 +110,10 @@ impl CargoController {
         Ok(())
     }
 
-    fn run_iai_bench(&self, package_name: &str, bench_name: &str, bencher_project: &str) {
+    fn run_gungraun_bench(&self, package_name: &str, bench_name: &str, bencher_project: &str) {
         let test_runner = format!("cargo bench --package {package_name} --bench {bench_name}");
 
-        // iai-callgrind's metrics come from valgrind's simulation, so they're deterministic: any change reflects a
+        // gungraun's metrics come from valgrind's simulation, so they're deterministic: any change reflects a
         // real code change, not noise.
         // We also keep the window small (only 1 measurement), for the same reason.
         let threshold = |measure, upper_boundary| {
@@ -134,7 +134,7 @@ impl CargoController {
             self.dry_run.get(),
             self.pr_benchmark.is_some(),
             bencher_project,
-            "rust_iai_callgrind",
+            "rust_gungraun",
             &[
                 // Most measures use a tight 1% threshold:
                 threshold("estimated-cycles", "0.01"),
@@ -158,18 +158,18 @@ impl CargoController {
                 threshold("at-t-gmax-blocks", "1"),
                 threshold("reads-bytes", "1"),
                 threshold("writes-bytes", "1"),
-                // l1-hits, l2-hits, and ram-hits have no simple
+                // l1-hits, ll-hits, and ram-hits have no simple
                 // rule that could catch all cases (ie more l1-hits is better if total bytes read remains the same,
                 // but less l1-hits is also better if it decreases total bytes read).
                 threshold("l1-hits", "1"),
-                threshold("l2-hits", "1"),
+                threshold("ll-hits", "1"),
                 threshold("ram-hits", "1"),
             ],
             bench_env,
             &test_runner,
         );
 
-        let reports_dir = Path::repo_path("target/iai")
+        let reports_dir = Path::repo_path("target/gungraun")
             .join(package_name)
             .join(bench_name);
 
