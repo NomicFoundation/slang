@@ -3095,10 +3095,10 @@ Statement = _Statement<"True">;
 // Note: They need to be inline together with `RevertStatement` to actually avoid shift/reduce conflicts
 #[inline]
 VariableDeclarationStatementSpecialRevert: VariableDeclarationStatement = {
-    <_target: VariableDeclarationOptionSpecialRevert>  <_semicolon: Semicolon>  => new_variable_declaration_statement(<>),
+    <_target: VariableDeclarationTargetSpecialRevert>  <_semicolon: Semicolon>  => new_variable_declaration_statement(<>),
 };
 #[inline]
-VariableDeclarationOptionSpecialRevert: VariableDeclarationOption = {
+VariableDeclarationTargetSpecialRevert: VariableDeclarationTarget = {
     <_SingleTypedDeclaration: SingleTypedDeclarationSpecialRevert>  => new_variable_declaration_option_single_typed_declaration(<>),
     <_MultiTypedDeclaration: MultiTypedDeclaration>  => new_variable_declaration_option_multi_typed_declaration(<>),
 };
