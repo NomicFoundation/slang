@@ -16516,17 +16516,31 @@ impl NodeChecker for FunctionTypeAttributes {
     }
 }
 
-/// Generic `NodeChecker` for repeated and separated
+/// `NodeChecker` for `HexStringLiterals` - V2 always uses HexStringLiterals (plural),
+/// but V1 uses HexStringLiteral (singular) before 0.5.14
+/// TODO(v2): This check should probably be versioned
 impl NodeChecker for HexStringLiterals {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
+        // V1 uses HexStringLiteral (singular) before 0.5.14
+        if node.kind() == NodeKind::Nonterminal(NonterminalKind::HexStringLiteral) {
+            if self.elements.len() != 1 {
+                return vec![NodeCheckerError::new(
+                    format!(
+                        "V1 has HexStringLiteral (singular) but V2 has {} elements in HexStringLiterals",
+                        self.elements.len()
+                    ),
+                    node_range,
+                )];
+            }
+            return self.elements[0].check_node_with_offset(node, text_offset);
+        }
+
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::HexStringLiterals) {
-            // Don't even check the rest
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected node kind to be {}, but it was {}",
-                    NonterminalKind::HexStringLiterals,
+                    "Expected node kind to be HexStringLiterals or HexStringLiteral, but it was {}",
                     node.kind()
                 ),
                 node_range,
@@ -17194,17 +17208,31 @@ impl NodeChecker for Statements {
     }
 }
 
-/// Generic `NodeChecker` for repeated and separated
+/// `NodeChecker` for `StringLiterals` - V2 always uses StringLiterals (plural),
+/// but V1 uses StringLiteral (singular) before 0.5.14
+/// TODO(v2): This check should probably be versioned
 impl NodeChecker for StringLiterals {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
+        // V1 uses StringLiteral (singular) before 0.5.14
+        if node.kind() == NodeKind::Nonterminal(NonterminalKind::StringLiteral) {
+            if self.elements.len() != 1 {
+                return vec![NodeCheckerError::new(
+                    format!(
+                        "V1 has StringLiteral (singular) but V2 has {} elements in StringLiterals",
+                        self.elements.len()
+                    ),
+                    node_range,
+                )];
+            }
+            return self.elements[0].check_node_with_offset(node, text_offset);
+        }
+
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::StringLiterals) {
-            // Don't even check the rest
             return vec![NodeCheckerError::new(
                 format!(
-                    "Expected node kind to be {}, but it was {}",
-                    NonterminalKind::StringLiterals,
+                    "Expected node kind to be StringLiterals or StringLiteral, but it was {}",
                     node.kind()
                 ),
                 node_range,

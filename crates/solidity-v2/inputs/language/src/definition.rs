@@ -1,5 +1,29 @@
 pub use solidity::SolidityDefinition;
 
+// Conflicting keywords
+// - this and super: Before version 0.8.0 they were regular identifiers, from 0.8.0 they still are identifiers, but they
+//   are not allowed in certain declarations.
+//   https://docs.soliditylang.org/en/latest/080-breaking-changes.html
+//   I propose to treat them as identifiers, with a later pass to check that they're not used in invalid places.
+// - HexStringLiteral and StringLiteral: before only a single literal was allows, after version 0.5.14 multiple
+//   literals are allowed. This presents a conflict, i propose only allowing the plural forms, with a later
+//   pass to check that the singular forms are not used after 0.5.14
+// - Disabled when unreserved: These cases have no overlap between being unreserved and being enabled, so it makes no sense
+//   to treat the unreserved lexeme as a keyword; or, alternatively, the lexer could emit an identifier lexeme instead
+//   Cases:
+//   - calldata
+//   - override
+//   - unchecked
+//   - virtual
+// - fallback and receive: I think they should be disabled when unreserved, since they werent used as keywords in that range
+//   Note: Leaving this commented from now, I think this should be enabled from 0.6.0,
+//   together with the uses of it. Then it'll fall into the category of keywords
+//   that are only used as keywords while reserved (a lot easier to solve)
+//   Note: fallback and receive are strange, since they can be used as identifiers in functions
+// - a bunch of fixed/ufixed cases: similar to fallback and receive, they should be disabled when unreserved (since they
+//   were identifiers). This is a bit trickier since they are single definitions within a keyword that has other
+//   definitions that should be enabled throughout. We should discuss this a bit more.
+
 language_v2_macros::compile!(Language(
     name = Solidity,
     root_item = SourceUnit,
@@ -662,7 +686,7 @@ PragmaDirective: PragmaDirective = {
                                     name = CallDataKeyword,
                                     enabled = From("0.5.0"),
                                     definitions = [KeywordDefinition(
-                                        // TODO(v2) removing conflict - calldata unreserved conflicts with identifier in Parameter
+                                        // TODO(v2) Check header
                                         // reserved = From("0.5.0"),
                                         value = Atom("calldata")
                                     )]
@@ -769,11 +793,7 @@ PragmaDirective: PragmaDirective = {
                                 Keyword(
                                     name = FallbackKeyword,
                                     definitions = [KeywordDefinition(
-                                                                        // TODO(v2) removing conflict - fallback unreserved before 0.6.0 conflicts with FunctionName
-                                // Note: Leaving this commented from now, I think this should be enabled from 0.6.0,
-                                // together with the uses of it. Then it'll fall into the category of keywords
-                                // that are only used as keywords while reserved (a lot easier to solve)
-
+                                        // TODO(v2) check header
                                         // reserved = From("0.6.0"),
                                         value = Atom("fallback")
                                     )]
@@ -894,7 +914,7 @@ PragmaDirective: PragmaDirective = {
                                             ])
                                         ),
                                         KeywordDefinition(
-                                    // TODO(v2) removing conflict
+                                            // TODO(v2) check header
                                             // reserved = From("0.4.14"),
                                             value = Sequence([
                                                 Atom("fixed"),
@@ -958,7 +978,7 @@ PragmaDirective: PragmaDirective = {
                                             ])
                                         ),
                                         KeywordDefinition(
-                                    // TODO(v2) removing conflict
+                                            // TODO(v2) check header
                                             // reserved = From("0.4.14"),
                                             value = Sequence([
                                                 Atom("fixed"),
@@ -1276,7 +1296,7 @@ PragmaDirective: PragmaDirective = {
                                     name = OverrideKeyword,
                                     enabled = From("0.6.0"),
                                     definitions = [KeywordDefinition(
-                                // TODO(v2) removing conflict - override unreserved before 0.5.0 conflicts with ModifierInvocation
+                                        // TODO(v2) check header 
                                         // reserved = From("0.5.0"),
                                         value = Atom("override")
                                     )]
@@ -1321,7 +1341,7 @@ PragmaDirective: PragmaDirective = {
                                 Keyword(
                                     name = ReceiveKeyword,
                                     definitions = [KeywordDefinition(
-                                // TODO(v2) removing conflict - receive unreserved before 0.6.0 conflicts with FunctionName
+                                        // TODO(v2) check header 
                                         // reserved = From("0.6.0"),
                                         value = Atom("receive")
                                     )]
@@ -1395,7 +1415,7 @@ PragmaDirective: PragmaDirective = {
                                 Keyword(
                                     name = SuperKeyword,
                                     definitions = [KeywordDefinition(
-                                // TODO(v2) this needs manual handling
+                                        // TODO(v2) Check header
                                         // reserved = From("0.8.0"),
                                         value = Atom("super")
                                     )]
@@ -1424,7 +1444,7 @@ PragmaDirective: PragmaDirective = {
                                 Keyword(
                                     name = ThisKeyword,
                                     definitions = [KeywordDefinition(
-                                // TODO(v2) This needs manual handling
+                                        // TODO(v2) Check header
                                         // reserved = From("0.8.0"),
                                         value = Atom("this")
                                     )]
@@ -1568,7 +1588,7 @@ PragmaDirective: PragmaDirective = {
                                             ])
                                         ),
                                         KeywordDefinition(
-                                    // TODO(v2) removing conflict
+                                            // TODO(v2) check header
                                             // reserved = From("0.4.14"),
                                             value = Sequence([
                                                 Atom("ufixed"),
@@ -1632,7 +1652,7 @@ PragmaDirective: PragmaDirective = {
                                             ])
                                         ),
                                         KeywordDefinition(
-                                    // TODO(v2) removing conflict
+                                            // TODO(v2) check header
                                             // reserved = From("0.4.14"),
                                             value = Sequence([
                                                 Atom("ufixed"),
@@ -1794,7 +1814,7 @@ PragmaDirective: PragmaDirective = {
                                     name = UncheckedKeyword,
                                     enabled = From("0.8.0"),
                                     definitions = [KeywordDefinition(
-                                // TODO(v2) removing conflict - unchecked unreserved before 0.5.0 conflicts with identifier in UncheckedBlock
+                                        // TODO(v2) check header
                                         // reserved = From("0.5.0"),
                                         value = Atom("unchecked")
                                     )]
@@ -1817,7 +1837,7 @@ PragmaDirective: PragmaDirective = {
                                     name = VirtualKeyword,
                                     enabled = From("0.6.0"),
                                     definitions = [KeywordDefinition(
-                                // TODO(v2) removing conflict - virtual unreserved before 0.6.0 conflicts with ModifierInvocation
+                                        // TODO(v2) check header 
                                         // reserved = From("0.6.0"),
                                         value = Atom("virtual")
                                     )]
@@ -2141,7 +2161,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
                                             reference = FallbackFunctionDefinition,
                                             enabled = From("0.6.0")
                                         ),
-                                // TODO(v2) removing conflict - UnnamedFunctionDefinition conflicts with FunctionDefinition
+                                        // TODO(v2) removing conflict - UnnamedFunctionDefinition conflicts with FunctionDefinition
                                         // EnumVariant(
                                         //     reference = UnnamedFunctionDefinition,
                                         //     enabled = Till("0.6.0")
@@ -2576,7 +2596,7 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                                         )
                                     ]
                                 ),
-                        // TODO(v2) removing conflict - UnnamedFunctionDefinition conflicts with FunctionDefinition
+                                // TODO(v2) removing conflict - UnnamedFunctionDefinition conflicts with FunctionDefinition
                                 // Struct(
                                 //     name = UnnamedFunctionDefinition,
                                 //     enabled = Till("0.6.0"),
@@ -4579,7 +4599,7 @@ HexNumberExpression: HexNumberExpression = {
                                 Enum(
                                     name = StringExpression,
                                     variants = [
-                                // TODO(v2) this conflicts with the one below
+                                        // TODO(v2) this conflicts with the one below
                                         // EnumVariant(
                                         //     reference = StringLiteral,
                                         //     enabled = Till("0.5.14")
@@ -4588,7 +4608,7 @@ HexNumberExpression: HexNumberExpression = {
                                             reference = StringLiterals,
                                             enabled = From("0.5.14")
                                         ),
-                                // TODO(v2) this conflicts with the one below
+                                        // TODO(v2) this conflicts with the one below
                                         // EnumVariant(
                                         //     reference = HexStringLiteral,
                                         //     enabled = Till("0.5.14")
