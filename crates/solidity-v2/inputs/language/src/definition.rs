@@ -2920,12 +2920,12 @@ language_v2_macros::compile!(Language(
                                     name = VariableDeclarationStatement,
                                     error_recovery = FieldsErrorRecovery(terminator = semicolon),
                                     fields = (
-                                        target = Required(VariableDeclarationOption),
+                                        target = Required(VariableDeclarationTarget),
                                         semicolon = Required(Semicolon)
                                     )
                                 ),
                                 Enum(
-                                    name = VariableDeclarationOption,
+                                    name = VariableDeclarationTarget,
                                     variants = [
                                         EnumVariant(reference = SingleTypedDeclaration),
                                         EnumVariant(reference = MultiTypedDeclaration),

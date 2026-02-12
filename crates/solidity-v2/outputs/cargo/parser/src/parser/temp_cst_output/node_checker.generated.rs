@@ -15585,10 +15585,10 @@ impl NodeChecker for UsingTarget {
     }
 }
 
-/// `NodeChecker` for `VariableDeclarationOption` - no direct V1 equivalent, delegate to variants
-impl NodeChecker for VariableDeclarationOption {
+/// `NodeChecker` for `VariableDeclarationTarget` - no direct V1 equivalent, delegate to variants
+impl NodeChecker for VariableDeclarationTarget {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
-        // VariableDeclarationOption doesn't exist in V1, so we skip the kind check
+        // VariableDeclarationTarget doesn't exist in V1, so we skip the kind check
         // and directly delegate to the variant's checker
         match self {
             Self::SingleTypedDeclaration(element) => {

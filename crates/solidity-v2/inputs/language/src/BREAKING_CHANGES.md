@@ -64,8 +64,8 @@ Major restructuring to consolidate `TupleDeconstructionStatement` and `VariableD
     - `TupleDeconstructionStatement`: `var_keyword?`, `open_paren`, `elements`, `close_paren`, `equal`, `expression`, `semicolon`
 
 - **After (V2)**: Single unified statement with three variants:
-    - `VariableDeclarationStatement`: Contains `target: VariableDeclarationOption`, `semicolon`
-    - `VariableDeclarationOption`: Enum with three variants:
+    - `VariableDeclarationStatement`: Contains `target: VariableDeclarationTarget`, `semicolon`
+    - `VariableDeclarationTarget`: Enum with three variants:
         1. `SingleTypedDeclaration`: For `int x = ...` syntax (with optional value)
         2. `MultiTypedDeclaration`: For `(bool a, , int b) = ...` syntax (value required)
         3. `UntypedDeclaration`: For `var a = ...` or `var (a, , b) = ...` syntax (till 0.5.0, value required)
@@ -84,7 +84,7 @@ Removed types from V1:
 Added types in V2:
 
 - `VariableDeclaration`
-- `VariableDeclarationOption`
+- `VariableDeclarationTarget`
 - `SingleTypedDeclaration`, `MultiTypedDeclaration`, `UntypedDeclaration`
 - `MultiTypedDeclarationElements`, `MultiTypedDeclarationElement`
 - `UntypedDeclarationNames`, `UntypedTupleDeclaration`

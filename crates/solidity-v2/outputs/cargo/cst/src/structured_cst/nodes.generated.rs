@@ -2250,12 +2250,12 @@ pub type VariableDeclarationStatement = Rc<VariableDeclarationStatementStruct>;
 
 #[derive(Clone, Debug)]
 pub struct VariableDeclarationStatementStruct {
-    pub target: VariableDeclarationOption,
+    pub target: VariableDeclarationTarget,
     pub semicolon: Semicolon,
 }
 
 pub fn new_variable_declaration_statement(
-    target: VariableDeclarationOption,
+    target: VariableDeclarationTarget,
     semicolon: Semicolon,
 ) -> VariableDeclarationStatement {
     Rc::new(VariableDeclarationStatementStruct { target, semicolon })
@@ -4372,28 +4372,28 @@ pub fn new_using_target_asterisk(element: Asterisk) -> UsingTarget {
 }
 
 #[derive(Clone, Debug)]
-pub enum VariableDeclarationOption {
+pub enum VariableDeclarationTarget {
     SingleTypedDeclaration(SingleTypedDeclaration),
     MultiTypedDeclaration(MultiTypedDeclaration),
     UntypedDeclaration(UntypedDeclaration),
 }
 
-pub fn new_variable_declaration_option_single_typed_declaration(
+pub fn new_variable_declaration_target_single_typed_declaration(
     element: SingleTypedDeclaration,
-) -> VariableDeclarationOption {
-    VariableDeclarationOption::SingleTypedDeclaration(element)
+) -> VariableDeclarationTarget {
+    VariableDeclarationTarget::SingleTypedDeclaration(element)
 }
 
-pub fn new_variable_declaration_option_multi_typed_declaration(
+pub fn new_variable_declaration_target_multi_typed_declaration(
     element: MultiTypedDeclaration,
-) -> VariableDeclarationOption {
-    VariableDeclarationOption::MultiTypedDeclaration(element)
+) -> VariableDeclarationTarget {
+    VariableDeclarationTarget::MultiTypedDeclaration(element)
 }
 
-pub fn new_variable_declaration_option_untyped_declaration(
+pub fn new_variable_declaration_target_untyped_declaration(
     element: UntypedDeclaration,
-) -> VariableDeclarationOption {
-    VariableDeclarationOption::UntypedDeclaration(element)
+) -> VariableDeclarationTarget {
+    VariableDeclarationTarget::UntypedDeclaration(element)
 }
 
 #[derive(Clone, Debug)]
