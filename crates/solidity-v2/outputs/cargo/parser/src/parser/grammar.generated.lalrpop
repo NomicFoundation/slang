@@ -452,6 +452,7 @@ ConstantDefinition: ConstantDefinition = {
 // error definition or a state variable definition.
 //
 // To solve this we match against state variables where the type is exactly `error` as a special case.
+#[inline]
 StateVariableDefinition: StateVariableDefinition = {
     // When allowing any type except function types without return, we can parse normally.
     // Note the `IdentifierPathNoError`, it avoids matching against `error` as an identifier.
@@ -752,6 +753,7 @@ FunctionType: FunctionType = {
     FunctionTypeInternalReturn => <>,
 };
 
+#[inline]
 FunctionTypeInternalNoReturn: FunctionType = {
     <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes>   => new_function_type(_function_keyword, _parameters, _attributes, None),
 };
@@ -760,6 +762,7 @@ FunctionTypeInternalReturn: FunctionType = {
     
 };
 
+    #[inline]
     FunctionTypeAttributes: FunctionTypeAttributes = {
         <_FunctionTypeAttribute: Rep<<FunctionTypeAttribute>>>  => new_function_type_attributes(<>),
         

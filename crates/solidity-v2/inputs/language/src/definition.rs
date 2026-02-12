@@ -23,6 +23,10 @@ pub use solidity::SolidityDefinition;
 // - a bunch of fixed/ufixed cases: similar to fallback and receive, they should be disabled when unreserved (since they
 //   were identifiers). This is a bit trickier since they are single definitions within a keyword that has other
 //   definitions that should be enabled throughout. We should discuss this a bit more.
+// - unnamedfunction:
+//   - 'function() foo;' this can be either an unnamed function with modifier foo, or a state variable.
+//     in solc theres a validation where a non implemented function can't have a modifier.
+//     I'd like to double check this in the reference.
 
 language_v2_macros::compile!(Language(
     name = Solidity,
@@ -2354,6 +2358,7 @@ ConstantDefinition: ConstantDefinition = {
 // error definition or a state variable definition.
 //
 // To solve this we match against state variables where the type is exactly `error` as a special case.
+#[inline]
 StateVariableDefinition: StateVariableDefinition = {
     // When allowing any type except function types without return, we can parse normally.
     // Note the `IdentifierPathNoError`, it avoids matching against `error` as an identifier.
@@ -2597,55 +2602,89 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                                     ]
                                 ),
                                 // TODO(v2) removing conflict - UnnamedFunctionDefinition conflicts with FunctionDefinition
-                                // Struct(
-                                //     name = UnnamedFunctionDefinition,
-                                //     enabled = Till("0.6.0"),
-                                //     fields = (
-                                //         function_keyword = Required(FunctionKeyword),
-                                //         parameters = Required(ParametersDeclaration),
-                                //         attributes = Required(UnnamedFunctionAttributes),
-                                //         body = Required(FunctionBody)
-                                //     )
-                                // ),
-                                // Repeated(
-                                //     name = UnnamedFunctionAttributes,
-                                //     reference = UnnamedFunctionAttribute,
-                                //     enabled = Till("0.6.0"),
-                                //     allow_empty = true
-                                // ),
-                                // Enum(
-                                //     name = UnnamedFunctionAttribute,
-                                //     enabled = Till("0.6.0"),
-                                //     variants = [
-                                //         EnumVariant(reference = ModifierInvocation),
-                                //         EnumVariant(
-                                //             reference = ConstantKeyword,
-                                //             enabled = Till("0.5.0")
-                                //         ),
-                                //         EnumVariant(reference = ExternalKeyword),
-                                //         EnumVariant(
-                                //             reference = InternalKeyword,
-                                //             enabled = Till("0.5.0")
-                                //         ),
-                                //         EnumVariant(reference = PayableKeyword),
-                                //         EnumVariant(
-                                //             reference = PrivateKeyword,
-                                //             enabled = Till("0.5.0")
-                                //         ),
-                                //         EnumVariant(
-                                //             reference = PublicKeyword,
-                                //             enabled = Till("0.5.0")
-                                //         ),
-                                //         EnumVariant(
-                                //             reference = PureKeyword,
-                                //             enabled = Range(from = "0.4.16", till = "0.6.0")
-                                //         ),
-                                //         EnumVariant(
-                                //             reference = ViewKeyword,
-                                //             enabled = Range(from = "0.4.16", till = "0.6.0")
-                                //         )
-                                //     ]
-                                // ),
+//                                 Struct(
+//                                     name = UnnamedFunctionDefinition,
+//                                     enabled = Till("0.6.0"),
+//                                     fields = (
+//                                         function_keyword = Required(FunctionKeyword),
+//                                         parameters = Required(ParametersDeclaration),
+//                                         attributes = Required(UnnamedFunctionAttributes),
+//                                         body = Required(FunctionBody)
+//                                     ),
+//                                     parser_options = ParserOptions(inline = false, pubb = false, verbatim = r#"
+// #[inline]
+// UnnamedFunctionDefinition: UnnamedFunctionDefinition = {
+//     <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: UnnamedFunctionAttributes<ModifierInvocation>>  <_body: Block>  => {
+//         new_unnamed_function_definition(_function_keyword, _parameters, _attributes, new_function_body_block(_body))
+//     },
+
+//     <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: UnnamedFunctionAttributes<NoModifier>>  <_body: Semicolon>  => {
+//         new_unnamed_function_definition(_function_keyword, _parameters, _attributes, new_function_body_semicolon(_body))
+//     },
+// };
+
+// NoModifier: ModifierInvocation = {};
+// "#)
+//                                 ),
+//                                 Repeated(
+//                                     name = UnnamedFunctionAttributes,
+//                                     reference = UnnamedFunctionAttribute,
+//                                     enabled = Till("0.6.0"),
+//                                     allow_empty = true,
+//                                     parser_options = ParserOptions(inline = false, pubb = false, verbatim = r#"
+// UnnamedFunctionAttributes<ModifierRule>: UnnamedFunctionAttributes = {
+//     <_UnnamedFunctionAttribute: Rep<<UnnamedFunctionAttribute<ModifierRule>>>>  => new_unnamed_function_attributes(<>),
+// };
+// "#)
+
+//                                 ),
+//                                 Enum(
+//                                     name = UnnamedFunctionAttribute,
+//                                     enabled = Till("0.6.0"),
+//                                     variants = [
+//                                         EnumVariant(reference = ModifierInvocation),
+//                                         EnumVariant(
+//                                             reference = ConstantKeyword,
+//                                             enabled = Till("0.5.0")
+//                                         ),
+//                                         EnumVariant(reference = ExternalKeyword),
+//                                         EnumVariant(
+//                                             reference = InternalKeyword,
+//                                             enabled = Till("0.5.0")
+//                                         ),
+//                                         EnumVariant(reference = PayableKeyword),
+//                                         EnumVariant(
+//                                             reference = PrivateKeyword,
+//                                             enabled = Till("0.5.0")
+//                                         ),
+//                                         EnumVariant(
+//                                             reference = PublicKeyword,
+//                                             enabled = Till("0.5.0")
+//                                         ),
+//                                         EnumVariant(
+//                                             reference = PureKeyword,
+//                                             enabled = Range(from = "0.4.16", till = "0.6.0")
+//                                         ),
+//                                         EnumVariant(
+//                                             reference = ViewKeyword,
+//                                             enabled = Range(from = "0.4.16", till = "0.6.0")
+//                                         )
+//                                     ],
+//                                     parser_options = ParserOptions(inline = false, pubb = false, verbatim = r#"
+// UnnamedFunctionAttribute<ModifierRule>: UnnamedFunctionAttribute = {
+//     <_ModifierInvocation: ModifierRule>  => new_unnamed_function_attribute_modifier_invocation(<>),
+//     <_ConstantKeyword: ConstantKeyword>  => new_unnamed_function_attribute_constant_keyword(<>),
+//     <_ExternalKeyword: ExternalKeyword>  => new_unnamed_function_attribute_external_keyword(<>),
+//     <_InternalKeyword: InternalKeyword>  => new_unnamed_function_attribute_internal_keyword(<>),
+//     <_PayableKeyword: PayableKeyword>  => new_unnamed_function_attribute_payable_keyword(<>),
+//     <_PrivateKeyword: PrivateKeyword>  => new_unnamed_function_attribute_private_keyword(<>),
+//     <_PublicKeyword: PublicKeyword>  => new_unnamed_function_attribute_public_keyword(<>),
+//     <_PureKeyword: PureKeyword>  => new_unnamed_function_attribute_pure_keyword(<>),
+//     <_ViewKeyword: ViewKeyword>  => new_unnamed_function_attribute_view_keyword(<>),
+    
+// };
+// "#)
+//                                 ),
                                 Struct(
                                     name = FallbackFunctionDefinition,
                                     enabled = From("0.6.0"),
@@ -2933,6 +2972,7 @@ FunctionType: FunctionType = {
     FunctionTypeInternalReturn => <>,
 };
 
+#[inline]
 FunctionTypeInternalNoReturn: FunctionType = {
     <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes>   => new_function_type(_function_keyword, _parameters, _attributes, None),
 };
@@ -2945,7 +2985,8 @@ FunctionTypeInternalReturn: FunctionType = {
                                 Repeated(
                                     name = FunctionTypeAttributes,
                                     reference = FunctionTypeAttribute,
-                                    allow_empty = true
+                                    allow_empty = true,
+                                    parser_options = ParserOptions(inline = true, pubb = false)
                                 ),
                                 Enum(
                                     name = FunctionTypeAttribute,
