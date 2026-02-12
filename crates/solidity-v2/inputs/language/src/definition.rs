@@ -8,6 +8,8 @@ pub use solidity::SolidityDefinition;
 // - HexStringLiteral and StringLiteral: before only a single literal was allows, after version 0.5.14 multiple
 //   literals are allowed. This presents a conflict, i propose only allowing the plural forms, with a later
 //   pass to check that the singular forms are not used after 0.5.14
+//   - There's an interesting point here, how to validate. In our current mental model of the V2 parser it will be able to generate 
+//     both a CST and an AST, but the AST will loose the information to distinguish between the singular and plural forms.
 // - Disabled when unreserved: These cases have no overlap between being unreserved and being enabled, so it makes no sense
 //   to treat the unreserved lexeme as a keyword; or, alternatively, the lexer could emit an identifier lexeme instead
 //   Cases:
@@ -27,6 +29,7 @@ pub use solidity::SolidityDefinition;
 //   - 'function() foo;' this can be either an unnamed function with modifier foo, or a state variable.
 //     in solc theres a validation where a non implemented function can't have a modifier.
 //     I'd like to double check this in the reference.
+
 
 language_v2_macros::compile!(Language(
     name = Solidity,
