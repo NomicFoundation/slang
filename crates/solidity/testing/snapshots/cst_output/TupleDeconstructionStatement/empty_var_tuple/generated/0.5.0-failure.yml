@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ var (,,,,) = rhs;                                                                │ 0..17
+
+Errors: # 1 total
+  - >
+    Error: Expected OpenParen.
+       ╭─[crates/solidity/testing/snapshots/cst_output/TupleDeconstructionStatement/empty_var_tuple/input.sol:1:1]
+       │
+     1 │ var (,,,,) = rhs;
+       │ ─────────┬────────  
+       │          ╰────────── Error occurred here.
+    ───╯
+
+Tree:
+  - (root꞉ TupleDeconstructionStatement) ► (unrecognized꞉ UNRECOGNIZED): "var (,,,,) = rhs;\n" # (0..18)

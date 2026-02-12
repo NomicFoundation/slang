@@ -27,3 +27,70 @@ We should consider adding validation for these at a later stage if needed:
     - They were only enabled after `0.7.0`.
 - `HexLiteral` and `YulHexLiteral` and `DecimalLiteral` and `YulDecimalLiteral`:
     - It was illegal for them to be followed by `IdentifierStart`. Now we will produce two separate tokens rather than rejecting it.
+
+## Grammar
+
+The following changes modify the language definition to support the new parser and resolve grammar ambiguities.
+In some cases we also try to simplify the model.
+
+### AddressKeyword
+
+- Made the `address` keyword reserved in all versions, handling the few cases where it can be used as an identifier separately.
+- `IdentifierPathElement` handles the cases where `address` can be used as an `Identifier`, either in an `IdentifierPath` or a `MemberAccessExpression`.
+
+### IdentifierPathElement
+
+New enum added to allow the reserved `address` keyword in identifier paths and member access expressions
+(from Solidity 0.6.0):
+
+- Variants: `Identifier` | `AddressKeyword` (enabled from 0.6.0)
+- Used in `MemberAccessExpression` and in `IdentifierPath`
+
+### IdentifierPath
+
+Changed from a `Separated` list of `Identifier`, to a list of `IdentifierPathElement`, to capture the reserved
+`AddressKeyword` as part of the path.
+
+- **Before**: `Separated(name = IdentifierPath, reference = Identifier, separator = Period)`
+- **After**: `Separated(name = IdentifierPath, reference = IdentifierPathElement, separator = Period)`
+
+### VariableDeclarationStatement (Consolidated)
+
+Major restructuring to consolidate `TupleDeconstructionStatement` and `VariableDeclarationStatement` into a single unified type with three variants.
+
+- **Before (V1)**: Two separate statement types:
+
+    - `VariableDeclarationStatement`: `variable_type`, `storage_location?`, `name`, `value?`, `semicolon`
+    - `TupleDeconstructionStatement`: `var_keyword?`, `open_paren`, `elements`, `close_paren`, `equal`, `expression`, `semicolon`
+
+- **After (V2)**: Single unified statement with three variants:
+    - `VariableDeclarationStatement`: Contains `target: VariableDeclarationTarget`, `semicolon`
+    - `VariableDeclarationTarget`: Enum with three variants:
+        1. `SingleTypedDeclaration`: For `int x = ...` syntax (with optional value)
+        2. `MultiTypedDeclaration`: For `(bool a, , int b) = ...` syntax (value required)
+        3. `UntypedDeclaration`: For `var a = ...` or `var (a, , b) = ...` syntax (till 0.5.0, value required)
+
+This makes certain cases that were allowed before disallowed in V2, in particular having untyped declarations (like `(a, bool b) = ...`)
+or having typed together with `var` (like `var (a, bool b) = ...`).
+The cases where using empty tuples are still ambiguous, `(,,,) = ...` can still be a `VariableDeclarationStatement` (`MultiTypedDeclaration`) or an `AssignmentExpression` with a `TupleExpression` on the lhs.
+
+Removed types from V1:
+
+- `TupleDeconstructionStatement`
+- `TupleDeconstructionElements`, `TupleDeconstructionElement`
+- `TupleMember`, `TypedTupleMember`, `UntypedTupleMember`
+- `VariableDeclarationType`
+
+Added types in V2:
+
+- `VariableDeclaration`
+- `VariableDeclarationTarget`
+- `SingleTypedDeclaration`, `MultiTypedDeclaration`, `UntypedDeclaration`
+- `MultiTypedDeclarationElements`, `MultiTypedDeclarationElement`
+- `UntypedDeclarationNames`, `UntypedTupleDeclaration`
+- `UntypedTupleDeclarationElements`, `UntypedTupleDeclarationElement`
+
+### NamedArgumentsDeclaration
+
+- Changed `arguments` field from `Optional(NamedArgumentGroup)` to `Required(NamedArgumentGroup)`.
+- This avoids ambiguity with empty argument lists `()` which could be either positional or named.

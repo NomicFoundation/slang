@@ -121,7 +121,7 @@ pub enum PragmaContext {
 #[logos(extras = ContextExtras)]
 pub enum SolidityContext {
     #[regex(r#"abstract"#, |_| { LexemeKind::AbstractKeyword_Reserved }, priority = 3000001)]
-    #[regex(r#"address"#, |_| { LexemeKind::AddressKeyword_Unreserved }, priority = 3000002)]
+    #[regex(r#"address"#, |_| { LexemeKind::AddressKeyword_Reserved }, priority = 3000002)]
     #[regex(r#"after"#, |_| { LexemeKind::AfterKeyword_Reserved }, priority = 3000003)]
     #[regex(r#"alias"#, |lexer| { if LanguageVersion::V0_5_0 <= lexer.extras.language_version { LexemeKind::AliasKeyword_Reserved } else { LexemeKind::AliasKeyword_Unreserved } }, priority = 3000004)]
     #[regex(r#"anonymous"#, |_| { LexemeKind::AnonymousKeyword_Reserved }, priority = 3000005)]

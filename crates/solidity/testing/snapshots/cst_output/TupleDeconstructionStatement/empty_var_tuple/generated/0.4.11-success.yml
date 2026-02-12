@@ -1,0 +1,30 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ var (,,,,) = rhs;                                                                │ 0..17
+
+Errors: []
+
+Tree:
+  - (root꞉ TupleDeconstructionStatement): # "var (,,,,) = rhs;\n" (0..18)
+      - (var_keyword꞉ VarKeyword): "var" # (0..3)
+      - (leading_trivia꞉ Whitespace): " " # (3..4)
+      - (open_paren꞉ OpenParen): "(" # (4..5)
+      - (elements꞉ TupleDeconstructionElements): # ",,,," (5..9)
+          - (item꞉ TupleDeconstructionElement): [] # (5..5)
+          - (separator꞉ Comma): "," # (5..6)
+          - (item꞉ TupleDeconstructionElement): [] # (6..6)
+          - (separator꞉ Comma): "," # (6..7)
+          - (item꞉ TupleDeconstructionElement): [] # (7..7)
+          - (separator꞉ Comma): "," # (7..8)
+          - (item꞉ TupleDeconstructionElement): [] # (8..8)
+          - (separator꞉ Comma): "," # (8..9)
+          - (item꞉ TupleDeconstructionElement): [] # (9..9)
+      - (close_paren꞉ CloseParen): ")" # (9..10)
+      - (leading_trivia꞉ Whitespace): " " # (10..11)
+      - (equal꞉ Equal): "=" # (11..12)
+      - (expression꞉ Expression): # " rhs" (12..16)
+          - (leading_trivia꞉ Whitespace): " " # (12..13)
+          - (variant꞉ Identifier): "rhs" # (13..16)
+      - (semicolon꞉ Semicolon): ";" # (16..17)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (17..18)
