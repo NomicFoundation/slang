@@ -1,6 +1,7 @@
 use language_v2_internal_macros::{derive_spanned_type, ParseInputTokens, WriteOutputTokens};
 use serde::{Deserialize, Serialize};
 
+use crate::model::utils::ParserOptions;
 use crate::model::{Identifier, VersionSpecifier};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -14,4 +15,7 @@ pub struct RepeatedItem {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub allow_empty: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub parser_options: Option<ParserOptions>,
 }

@@ -2,7 +2,7 @@ use indexmap::IndexMap;
 use language_v2_internal_macros::{derive_spanned_type, ParseInputTokens, WriteOutputTokens};
 use serde::{Deserialize, Serialize};
 
-use crate::model::{Field, FieldsErrorRecovery, Identifier, VersionSpecifier};
+use crate::model::{Field, FieldsErrorRecovery, Identifier, ParserOptions, VersionSpecifier};
 
 /// A `StructItem` is a nonterminal that can have fields.
 /// It roughly corresponds to a sequence of `Item`s.
@@ -22,4 +22,7 @@ pub struct StructItem {
     /// The fields of the struct, in the order they should appear in the source code
     #[serde(with = "indexmap::map::serde_seq")]
     pub fields: IndexMap<Identifier, Field>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub parser_options: Option<ParserOptions>,
 }

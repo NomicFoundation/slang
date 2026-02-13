@@ -18,7 +18,13 @@ license = "MIT"
 keywords = ["parser"]
 categories = ["compilers", "parsing", "parser-implementations"]
 
+[build-dependencies]
+lalrpop = { workspace = true }
+
 [dependencies]
+anyhow = { workspace = true }
+infra_utils = { workspace = true }
+lalrpop-util = { workspace = true }
 logos = { workspace = true }
 semver = { workspace = true }
 slang_solidity = { workspace = true, features = ["__private_ariadne_errors"] }

@@ -1,0 +1,54 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+ContractDefinitionStruct {
+    abstract_keyword: None,
+    contract_keyword: ContractKeyword {
+        range: 0..8,
+    },
+    name: Identifier {
+        range: 9..15,
+    },
+    specifiers: ContractSpecifiers {
+        elements: [],
+    },
+    open_brace: OpenBrace {
+        range: 16..17,
+    },
+    members: ContractMembers {
+        elements: [
+            UsingDirective(
+                UsingDirectiveStruct {
+                    using_keyword: UsingKeyword {
+                        range: 20..25,
+                    },
+                    clause: IdentifierPath(
+                        IdentifierPath {
+                            elements: [
+                                Identifier(
+                                    Identifier {
+                                        range: 26..27,
+                                    },
+                                ),
+                            ],
+                        },
+                    ),
+                    for_keyword: ForKeyword {
+                        range: 28..31,
+                    },
+                    target: Asterisk(
+                        Asterisk {
+                            range: 32..33,
+                        },
+                    ),
+                    global_keyword: None,
+                    semicolon: Semicolon {
+                        range: 33..34,
+                    },
+                },
+            ),
+        ],
+    },
+    close_brace: CloseBrace {
+        range: 35..36,
+    },
+}

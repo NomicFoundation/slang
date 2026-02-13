@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ uint[](foo)                                                                      │ 0..11
+
+Errors: []
+
+Tree:
+  - (root꞉ Expression) ► (variant꞉ FunctionCallExpression): # "uint[](foo)\n" (0..12)
+      - (operand꞉ Expression) ► (variant꞉ IndexAccessExpression): # "uint[]" (0..6)
+          - (operand꞉ Expression) ► (variant꞉ ElementaryType) ► (variant꞉ UintKeyword): "uint" # (0..4)
+          - (open_bracket꞉ OpenBracket): "[" # (4..5)
+          - (close_bracket꞉ CloseBracket): "]" # (5..6)
+      - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "(foo)\n" (6..12)
+          - (open_paren꞉ OpenParen): "(" # (6..7)
+          - (arguments꞉ PositionalArguments): # "foo" (7..10)
+              - (item꞉ Expression) ► (variant꞉ Identifier): "foo" # (7..10)
+          - (close_paren꞉ CloseParen): ")" # (10..11)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (11..12)
