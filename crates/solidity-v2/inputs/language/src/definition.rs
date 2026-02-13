@@ -3099,8 +3099,8 @@ VariableDeclarationStatementSpecialRevert: VariableDeclarationStatement = {
 };
 #[inline]
 VariableDeclarationTargetSpecialRevert: VariableDeclarationTarget = {
-    <_SingleTypedDeclaration: SingleTypedDeclarationSpecialRevert>  => new_variable_declaration_option_single_typed_declaration(<>),
-    <_MultiTypedDeclaration: MultiTypedDeclaration>  => new_variable_declaration_option_multi_typed_declaration(<>),
+    <_SingleTypedDeclaration: SingleTypedDeclarationSpecialRevert>  => new_variable_declaration_target_single_typed_declaration(<>),
+    <_MultiTypedDeclaration: MultiTypedDeclaration>  => new_variable_declaration_target_multi_typed_declaration(<>),
 };
 #[inline]
 SingleTypedDeclarationSpecialRevert: SingleTypedDeclaration = {
