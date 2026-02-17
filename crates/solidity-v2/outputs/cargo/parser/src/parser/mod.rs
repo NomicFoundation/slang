@@ -21,14 +21,36 @@ pub mod temp_testing;
 ///
 /// TODO(v2): Error recovery, for now we just fail
 /// TODO(v2): Support multiple versions, for now only 0.8.30 is supported
-pub struct Parser;
+pub trait Parser {
+    /// The type of the non-terminal that this parser produces
+    type NonTerminal;
 
-impl Parser {
-    pub fn parse(input: &str, version: LanguageVersion) -> Result<SourceUnit, String> {
-        assert!(
-            version == LanguageVersion::V0_8_30,
-            "Only 0.8.30 is currently supported by the V2 parser"
-        );
+    // TODO(v2): Errors should be something other than `String`
+    fn parse(input: &str, version: LanguageVersion) -> Result<Self::NonTerminal, String>;
+
+    fn check_version(version: LanguageVersion) -> Result<(), String> {
+        if version == LanguageVersion::V0_8_30 {
+            Ok(())
+        } else {
+            Err("Only version 0.8.30 is currently supported by the V2 parser".to_string())
+        }
+    }
+}
+
+#[derive(Default)]
+pub struct SourceUnitParser;
+
+#[derive(Default)]
+pub struct ExpressionParser;
+
+#[derive(Default)]
+pub struct ContractDefinitionParser;
+
+impl Parser for SourceUnitParser {
+    type NonTerminal = SourceUnit;
+
+    fn parse(input: &str, version: LanguageVersion) -> Result<Self::NonTerminal, String> {
+        Self::check_version(version)?;
 
         let lexer = Lexer::new(ContextKind::Solidity, input, version);
         let parser = grammar::SourceUnitParser::new();
@@ -37,12 +59,13 @@ impl Parser {
             // TODO(v2): Improve on showing the error
             .map_err(|e| format!("{e:?}"))
     }
+}
 
-    pub fn parse_expression(input: &str, version: LanguageVersion) -> Result<Expression, String> {
-        assert!(
-            version == LanguageVersion::V0_8_30,
-            "Only 0.8.30 is currently supported by the V2 parser"
-        );
+impl Parser for ExpressionParser {
+    type NonTerminal = Expression;
+
+    fn parse(input: &str, version: LanguageVersion) -> Result<Self::NonTerminal, String> {
+        Self::check_version(version)?;
 
         let lexer = Lexer::new(ContextKind::Solidity, input, version);
         let parser = grammar::ExpressionParser::new();
@@ -51,15 +74,13 @@ impl Parser {
             // TODO(v2): Improve on showing the error
             .map_err(|e| format!("{e:?}"))
     }
+}
 
-    pub fn parse_contract_definition(
-        input: &str,
-        version: LanguageVersion,
-    ) -> Result<ContractDefinition, String> {
-        assert!(
-            version == LanguageVersion::V0_8_30,
-            "Only 0.8.30 is currently supported by the V2 parser"
-        );
+impl Parser for ContractDefinitionParser {
+    type NonTerminal = ContractDefinition;
+
+    fn parse(input: &str, version: LanguageVersion) -> Result<Self::NonTerminal, String> {
+        Self::check_version(version)?;
 
         let lexer = Lexer::new(ContextKind::Solidity, input, version);
         let parser = grammar::ContractDefinitionParser::new();
