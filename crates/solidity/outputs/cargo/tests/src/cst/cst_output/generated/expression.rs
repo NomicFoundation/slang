@@ -52,6 +52,11 @@ fn elementary_type_under_call() -> Result<()> {
 }
 
 #[test]
+fn exponentiation() -> Result<()> {
+    run(T, "exponentiation")
+}
+
+#[test]
 fn function_call() -> Result<()> {
     run(T, "function_call")
 }
@@ -79,6 +84,11 @@ fn function_call_options() -> Result<()> {
 #[test]
 fn function_call_options_split() -> Result<()> {
     run(T, "function_call_options_split")
+}
+
+#[test]
+fn hex_literal_expression() -> Result<()> {
+    run(T, "hex_literal_expression")
 }
 
 #[test]
@@ -224,6 +234,11 @@ fn keyword_sealed() -> Result<()> {
 #[test]
 fn keyword_sizeof() -> Result<()> {
     run(T, "keyword_sizeof")
+}
+
+#[test]
+fn keyword_super() -> Result<()> {
+    run(T, "keyword_super")
 }
 
 #[test]
@@ -374,6 +389,11 @@ fn returna() -> Result<()> {
 #[test]
 fn returns() -> Result<()> {
     run(T, "returns")
+}
+
+#[test]
+fn string_literal_expression() -> Result<()> {
+    run(T, "string_literal_expression")
 }
 
 #[test]

@@ -95,9 +95,10 @@ impl<NT: NodeChecker + Debug + PartialEq, T: ParserV2<NonTerminal = NT>> V2Teste
         version: &Version,
         v1_output: &ParseOutput,
     ) -> Result<()> {
-        // We check version 0.8.30
+        // We check versions 0.8.x
         // TODO(v2) check all  versions
-        if *version != Version::new(0, 8, 30) {
+
+        if *version < Version::new(0, 8, 0) || *version >= Version::new(0, 9, 0) {
             return Ok(());
         }
 
@@ -192,9 +193,13 @@ impl<NT: NodeChecker + Debug + PartialEq, T: ParserV2<NonTerminal = NT>> V2Teste
                     } else {
                         let errors = write_errors(&checked, source_id, source);
 
-                        // TODO(v2): This is forced not to panic since some tests in V1 produce different outputs,
-                        // in particular `state_variable_function`
-                        (false, None, errors)
+                        (
+                            false,
+                            Some(
+                                "V2 parser produced a different output than V1 output.".to_string(),
+                            ),
+                            errors,
+                        )
                     }
                 } else {
                     // TODO(v2): This is forced not to panic, since V2 has no validation yet, but we
@@ -206,11 +211,9 @@ impl<NT: NodeChecker + Debug + PartialEq, T: ParserV2<NonTerminal = NT>> V2Teste
                     )
                 }
             }
-            // TODO(v2): We force this not to panic, since we need lexical context switching to work for some
-            // tests to pass
             Err(_) if v1_output.is_valid() => (
                 false,
-                None,
+                Some("V2 parser produced invalid output against V1 valid output.".to_string()),
                 "V1 Parser: Valid\nV2 Parser: Invalid\n".to_string(),
             ),
             Err(_) => {

@@ -1,0 +1,12 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ "Hello, World!"                                                                  │ 0..15
+
+Errors: []
+
+Tree:
+  - (root꞉ Expression) ► (variant꞉ StringExpression) ► (variant꞉ StringLiterals): # '"Hello, World!"\n' (0..16)
+      - (item꞉ StringLiteral): # '"Hello, World!"\n' (0..16)
+          - (variant꞉ DoubleQuotedStringLiteral): '"Hello, World!"' # (0..15)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (15..16)

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ super                                                                            │ 0..5
+
+Errors: []
+
+Tree:
+  - (root꞉ Expression): # "super\n" (0..6)
+      - (variant꞉ SuperKeyword): "super" # (0..5)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (5..6)

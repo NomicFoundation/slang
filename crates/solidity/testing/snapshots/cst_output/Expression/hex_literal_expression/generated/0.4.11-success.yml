@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ hex'00'                                                                          │ 0..7
+
+Errors: []
+
+Tree:
+  - (root꞉ Expression) ► (variant꞉ StringExpression) ► (variant꞉ HexStringLiteral): # "hex'00'\n" (0..8)
+      - (variant꞉ SingleQuotedHexStringLiteral): "hex'00'" # (0..7)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (7..8)

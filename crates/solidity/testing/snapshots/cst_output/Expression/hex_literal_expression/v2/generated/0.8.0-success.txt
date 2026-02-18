@@ -1,0 +1,15 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+StringExpression(
+    HexStringLiterals(
+        HexStringLiterals {
+            elements: [
+                SingleQuotedHexStringLiteral(
+                    SingleQuotedHexStringLiteral {
+                        range: 0..7,
+                    },
+                ),
+            ],
+        },
+    ),
+)

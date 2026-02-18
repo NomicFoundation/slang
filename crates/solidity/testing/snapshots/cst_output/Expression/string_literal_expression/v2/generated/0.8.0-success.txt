@@ -1,0 +1,15 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+StringExpression(
+    StringLiterals(
+        StringLiterals {
+            elements: [
+                DoubleQuotedStringLiteral(
+                    DoubleQuotedStringLiteral {
+                        range: 0..15,
+                    },
+                ),
+            ],
+        },
+    ),
+)

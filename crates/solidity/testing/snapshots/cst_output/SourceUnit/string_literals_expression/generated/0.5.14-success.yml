@@ -1,0 +1,65 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ library SafeMath {                                                               │ 0..18
+  2  │   function tryAdd() internal pure {                                              │ 19..54
+  3  │     "Hello, World!"                                                              │ 55..74
+  4  │     "Good bye, World!"                                                           │ 75..97
+  5  │     "Hello again, World!";                                                       │ 98..124
+  6  │   }                                                                              │ 125..128
+  7  │ }                                                                                │ 129..130
+
+Errors: []
+
+Tree:
+  - (root꞉ SourceUnit) ► (members꞉ SourceUnitMembers): # "library SafeMath {\n  function tryAdd() internal pu..." (0..131)
+      - (item꞉ SourceUnitMember) ► (variant꞉ LibraryDefinition): # "library SafeMath {\n  function tryAdd() internal pu..." (0..131)
+          - (library_keyword꞉ LibraryKeyword): "library" # (0..7)
+          - (leading_trivia꞉ Whitespace): " " # (7..8)
+          - (name꞉ Identifier): "SafeMath" # (8..16)
+          - (leading_trivia꞉ Whitespace): " " # (16..17)
+          - (open_brace꞉ OpenBrace): "{" # (17..18)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (18..19)
+          - (members꞉ LibraryMembers): # '  function tryAdd() internal pure {\n    "Hello, Wo...' (19..129)
+              - (item꞉ ContractMember) ► (variant꞉ FunctionDefinition): # '  function tryAdd() internal pure {\n    "Hello, Wo...' (19..129)
+                  - (leading_trivia꞉ Whitespace): "  " # (19..21)
+                  - (function_keyword꞉ FunctionKeyword): "function" # (21..29)
+                  - (name꞉ FunctionName): # " tryAdd" (29..36)
+                      - (leading_trivia꞉ Whitespace): " " # (29..30)
+                      - (variant꞉ Identifier): "tryAdd" # (30..36)
+                  - (parameters꞉ ParametersDeclaration): # "()" (36..38)
+                      - (open_paren꞉ OpenParen): "(" # (36..37)
+                      - (parameters꞉ Parameters): [] # (37..37)
+                      - (close_paren꞉ CloseParen): ")" # (37..38)
+                  - (attributes꞉ FunctionAttributes): # " internal pure" (38..52)
+                      - (item꞉ FunctionAttribute): # " internal" (38..47)
+                          - (leading_trivia꞉ Whitespace): " " # (38..39)
+                          - (variant꞉ InternalKeyword): "internal" # (39..47)
+                      - (item꞉ FunctionAttribute): # " pure" (47..52)
+                          - (leading_trivia꞉ Whitespace): " " # (47..48)
+                          - (variant꞉ PureKeyword): "pure" # (48..52)
+                  - (body꞉ FunctionBody) ► (variant꞉ Block): # ' {\n    "Hello, World!"\n    "Good bye, World!"\n    ...' (52..129)
+                      - (leading_trivia꞉ Whitespace): " " # (52..53)
+                      - (open_brace꞉ OpenBrace): "{" # (53..54)
+                      - (trailing_trivia꞉ EndOfLine): "\n" # (54..55)
+                      - (statements꞉ Statements): # '    "Hello, World!"\n    "Good bye, World!"\n    "He...' (55..125)
+                          - (item꞉ Statement) ► (variant꞉ ExpressionStatement): # '    "Hello, World!"\n    "Good bye, World!"\n    "He...' (55..125)
+                              - (expression꞉ Expression) ► (variant꞉ StringExpression) ► (variant꞉ StringLiterals): # '    "Hello, World!"\n    "Good bye, World!"\n    "He...' (55..123)
+                                  - (item꞉ StringLiteral): # '    "Hello, World!"\n' (55..75)
+                                      - (leading_trivia꞉ Whitespace): "    " # (55..59)
+                                      - (variant꞉ DoubleQuotedStringLiteral): '"Hello, World!"' # (59..74)
+                                      - (trailing_trivia꞉ EndOfLine): "\n" # (74..75)
+                                  - (item꞉ StringLiteral): # '    "Good bye, World!"\n' (75..98)
+                                      - (leading_trivia꞉ Whitespace): "    " # (75..79)
+                                      - (variant꞉ DoubleQuotedStringLiteral): '"Good bye, World!"' # (79..97)
+                                      - (trailing_trivia꞉ EndOfLine): "\n" # (97..98)
+                                  - (item꞉ StringLiteral): # '    "Hello again, World!"' (98..123)
+                                      - (leading_trivia꞉ Whitespace): "    " # (98..102)
+                                      - (variant꞉ DoubleQuotedStringLiteral): '"Hello again, World!"' # (102..123)
+                              - (semicolon꞉ Semicolon): ";" # (123..124)
+                              - (trailing_trivia꞉ EndOfLine): "\n" # (124..125)
+                      - (leading_trivia꞉ Whitespace): "  " # (125..127)
+                      - (close_brace꞉ CloseBrace): "}" # (127..128)
+                      - (trailing_trivia꞉ EndOfLine): "\n" # (128..129)
+          - (close_brace꞉ CloseBrace): "}" # (129..130)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (130..131)

@@ -1,0 +1,110 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            LibraryDefinition(
+                LibraryDefinitionStruct {
+                    library_keyword: LibraryKeyword {
+                        range: 0..7,
+                    },
+                    name: Identifier {
+                        range: 8..16,
+                    },
+                    open_brace: OpenBrace {
+                        range: 17..18,
+                    },
+                    members: LibraryMembers {
+                        elements: [
+                            FunctionDefinition(
+                                FunctionDefinitionStruct {
+                                    function_keyword: FunctionKeyword {
+                                        range: 21..29,
+                                    },
+                                    name: Identifier(
+                                        Identifier {
+                                            range: 30..36,
+                                        },
+                                    ),
+                                    parameters: ParametersDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            range: 36..37,
+                                        },
+                                        parameters: Parameters {
+                                            elements: [],
+                                        },
+                                        close_paren: CloseParen {
+                                            range: 37..38,
+                                        },
+                                    },
+                                    attributes: FunctionAttributes {
+                                        elements: [
+                                            InternalKeyword(
+                                                InternalKeyword {
+                                                    range: 39..47,
+                                                },
+                                            ),
+                                            PureKeyword(
+                                                PureKeyword {
+                                                    range: 48..52,
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                    returns: None,
+                                    body: Block(
+                                        BlockStruct {
+                                            open_brace: OpenBrace {
+                                                range: 53..54,
+                                            },
+                                            statements: Statements {
+                                                elements: [
+                                                    ExpressionStatement(
+                                                        ExpressionStatementStruct {
+                                                            expression: StringExpression(
+                                                                StringLiterals(
+                                                                    StringLiterals {
+                                                                        elements: [
+                                                                            DoubleQuotedStringLiteral(
+                                                                                DoubleQuotedStringLiteral {
+                                                                                    range: 59..74,
+                                                                                },
+                                                                            ),
+                                                                            DoubleQuotedStringLiteral(
+                                                                                DoubleQuotedStringLiteral {
+                                                                                    range: 79..97,
+                                                                                },
+                                                                            ),
+                                                                            DoubleQuotedStringLiteral(
+                                                                                DoubleQuotedStringLiteral {
+                                                                                    range: 102..123,
+                                                                                },
+                                                                            ),
+                                                                        ],
+                                                                    },
+                                                                ),
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 123..124,
+                                                            },
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                            close_brace: CloseBrace {
+                                                range: 127..128,
+                                            },
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 129..130,
+                    },
+                },
+            ),
+        ],
+    },
+}

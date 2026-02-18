@@ -1,0 +1,45 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // This should be parsed as a state variable                                     │ 0..44
+  2  │ // Non implemented functions are not allowed to have modifiers                   │ 45..107
+  3  │ contract Foo {                                                                   │ 108..122
+  4  │   function() external foo;                                                       │ 123..149
+  5  │ }                                                                                │ 150..151
+
+Errors: []
+
+Tree:
+  - (root꞉ SourceUnit) ► (members꞉ SourceUnitMembers): # "// This should be parsed as a state variable\n// No..." (0..152)
+      - (item꞉ SourceUnitMember) ► (variant꞉ ContractDefinition): # "// This should be parsed as a state variable\n// No..." (0..152)
+          - (leading_trivia꞉ SingleLineComment): "// This should be parsed as a state variable" # (0..44)
+          - (leading_trivia꞉ EndOfLine): "\n" # (44..45)
+          - (leading_trivia꞉ SingleLineComment): "// Non implemented functions are not allowed to ha..." # (45..107)
+          - (leading_trivia꞉ EndOfLine): "\n" # (107..108)
+          - (contract_keyword꞉ ContractKeyword): "contract" # (108..116)
+          - (leading_trivia꞉ Whitespace): " " # (116..117)
+          - (name꞉ Identifier): "Foo" # (117..120)
+          - (specifiers꞉ ContractSpecifiers): [] # (120..120)
+          - (leading_trivia꞉ Whitespace): " " # (120..121)
+          - (open_brace꞉ OpenBrace): "{" # (121..122)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (122..123)
+          - (members꞉ ContractMembers): # "  function() external foo;\n" (123..150)
+              - (item꞉ ContractMember) ► (variant꞉ StateVariableDefinition): # "  function() external foo;\n" (123..150)
+                  - (type_name꞉ TypeName) ► (variant꞉ FunctionType): # "  function() external" (123..144)
+                      - (leading_trivia꞉ Whitespace): "  " # (123..125)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (125..133)
+                      - (parameters꞉ ParametersDeclaration): # "()" (133..135)
+                          - (open_paren꞉ OpenParen): "(" # (133..134)
+                          - (parameters꞉ Parameters): [] # (134..134)
+                          - (close_paren꞉ CloseParen): ")" # (134..135)
+                      - (attributes꞉ FunctionTypeAttributes): # " external" (135..144)
+                          - (item꞉ FunctionTypeAttribute): # " external" (135..144)
+                              - (leading_trivia꞉ Whitespace): " " # (135..136)
+                              - (variant꞉ ExternalKeyword): "external" # (136..144)
+                  - (attributes꞉ StateVariableAttributes): [] # (144..144)
+                  - (leading_trivia꞉ Whitespace): " " # (144..145)
+                  - (name꞉ Identifier): "foo" # (145..148)
+                  - (semicolon꞉ Semicolon): ";" # (148..149)
+                  - (trailing_trivia꞉ EndOfLine): "\n" # (149..150)
+          - (close_brace꞉ CloseBrace): "}" # (150..151)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (151..152)

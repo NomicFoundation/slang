@@ -30,7 +30,7 @@ pub(super) fn run(contract: &Contract, unit: &CompilationUnit, events: &Events) 
             continue;
         }
 
-        if contract.version == Version::new(0, 8, 30) {
+        if contract.version >= Version::new(0, 8, 0) && contract.version <= Version::new(0, 8, 33) {
             let v2_errors = slang_solidity_v2_parser::temp_testing::compare_with_v1_cursor(
                 &source,
                 &file.create_tree_cursor(),

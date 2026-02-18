@@ -67,6 +67,16 @@ fn everything() -> Result<()> {
 }
 
 #[test]
+fn function_state_variable() -> Result<()> {
+    run(T, "function_state_variable")
+}
+
+#[test]
+fn hex_literals_expression() -> Result<()> {
+    run(T, "hex_literals_expression")
+}
+
+#[test]
 fn layout_at() -> Result<()> {
     run(T, "layout_at")
 }
@@ -129,6 +139,11 @@ fn safe_math() -> Result<()> {
 #[test]
 fn state_variable_function() -> Result<()> {
     run(T, "state_variable_function")
+}
+
+#[test]
+fn string_literals_expression() -> Result<()> {
+    run(T, "string_literals_expression")
 }
 
 #[test]

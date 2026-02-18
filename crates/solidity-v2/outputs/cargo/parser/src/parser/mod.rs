@@ -29,10 +29,10 @@ pub trait Parser {
     fn parse(input: &str, version: LanguageVersion) -> Result<Self::NonTerminal, String>;
 
     fn check_version(version: LanguageVersion) -> Result<(), String> {
-        if version == LanguageVersion::V0_8_30 {
+        if version >= LanguageVersion::V0_8_0 && version <= LanguageVersion::V0_8_33 {
             Ok(())
         } else {
-            Err("Only version 0.8.30 is currently supported by the V2 parser".to_string())
+            Err("Only version 0.8.x is currently supported by the V2 parser".to_string())
         }
     }
 }

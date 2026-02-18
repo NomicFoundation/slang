@@ -9,8 +9,10 @@ use serde::Serialize;
 #[derive(Serialize, Debug, Clone)]
 struct RustCode(String);
 
-// TODO(v2): Support multiple versions
-pub(crate) const VERSION: Version = Version::new(0, 8, 30);
+// Version range for filtering: [MIN_VERSION, MAX_VERSION)
+// A VersionSpecifier is enabled if it overlaps with this range
+pub(crate) const MIN_VERSION: Version = Version::new(0, 8, 0);
+pub(crate) const MAX_VERSION: Version = Version::new(0, 9, 0); // exclusive
 
 /// An `LALRPOPItemInner` represents a single LALRPOP rule, for example:
 ///
@@ -68,9 +70,35 @@ struct LALRPOPField {
     rule: RustCode,
 }
 
-/// Checks if a given version specifier enables the supported version
+/// Checks if a given version specifier enables any version in the supported range
 fn is_enabled(enabled: Option<&VersionSpecifier>) -> bool {
-    enabled.as_ref().is_none_or(|v| v.contains(&VERSION))
+    enabled
+        .as_ref()
+        .is_none_or(|spec| overlaps_with_version_range(spec))
+}
+
+/// Check if a `VersionSpecifier` overlaps with [`MIN_VERSION`, `MAX_VERSION`)
+pub(crate) fn overlaps_with_version_range(spec: &VersionSpecifier) -> bool {
+    match spec {
+        VersionSpecifier::Always => true,
+        VersionSpecifier::Never => false,
+        // "From X onwards" overlaps with [min, max) if X < max
+        VersionSpecifier::From { from } => from < &MAX_VERSION,
+        // "Until X" overlaps with [min, max) if X > min
+        VersionSpecifier::Till { till } => till > &MIN_VERSION,
+        // Range [from, till) overlaps with [min, max) if from < max && till > min
+        VersionSpecifier::Range { from, till } => from < &MAX_VERSION && till > &MIN_VERSION,
+    }
+}
+
+pub(crate) fn contains_enabled_versions(spec: &VersionSpecifier) -> bool {
+    match spec {
+        VersionSpecifier::Always => true,
+        VersionSpecifier::Never => false,
+        VersionSpecifier::From { from } => from <= &MIN_VERSION,
+        VersionSpecifier::Till { till } => &MAX_VERSION < till,
+        VersionSpecifier::Range { from, till } => from <= &MIN_VERSION && &MAX_VERSION < till,
+    }
 }
 
 /// Helper rules for LALRPOP matching rules

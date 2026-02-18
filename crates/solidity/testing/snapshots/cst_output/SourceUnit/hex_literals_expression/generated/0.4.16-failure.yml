@@ -1,0 +1,68 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ library SafeMath {                                                               │ 0..18
+  2  │   function tryAdd() internal pure {                                              │ 19..54
+  3  │     hex"00"                                                                      │ 55..66
+  4  │     hex"01"                                                                      │ 67..78
+  5  │     hex"02";                                                                     │ 79..91
+  6  │   }                                                                              │ 92..95
+  7  │ }                                                                                │ 96..97
+
+Errors: # 1 total
+  - >
+    Error: Expected Ampersand or AmpersandAmpersand or AmpersandEqual or Asterisk or AsteriskAsterisk or AsteriskEqual or BangEqual or Bar or BarBar or BarEqual or Caret or CaretEqual or Equal or EqualEqual or GreaterThan or GreaterThanEqual or GreaterThanGreaterThan or GreaterThanGreaterThanEqual or GreaterThanGreaterThanGreaterThan or GreaterThanGreaterThanGreaterThanEqual or LessThan or LessThanEqual or LessThanLessThan or LessThanLessThanEqual or Minus or MinusEqual or Percent or PercentEqual or Plus or PlusEqual or Semicolon or Slash or SlashEqual.
+       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/hex_literals_expression/input.sol:4:5]
+       │
+     4 │ ╭─▶     hex"01"
+     5 │ ├─▶     hex"02";
+       │ │                  
+       │ ╰────────────────── Error occurred here.
+    ───╯
+
+Tree:
+  - (root꞉ SourceUnit) ► (members꞉ SourceUnitMembers): # "library SafeMath {\n  function tryAdd() internal pu..." (0..98)
+      - (item꞉ SourceUnitMember) ► (variant꞉ LibraryDefinition): # "library SafeMath {\n  function tryAdd() internal pu..." (0..98)
+          - (library_keyword꞉ LibraryKeyword): "library" # (0..7)
+          - (leading_trivia꞉ Whitespace): " " # (7..8)
+          - (name꞉ Identifier): "SafeMath" # (8..16)
+          - (leading_trivia꞉ Whitespace): " " # (16..17)
+          - (open_brace꞉ OpenBrace): "{" # (17..18)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (18..19)
+          - (members꞉ LibraryMembers): # '  function tryAdd() internal pure {\n    hex"00"\n  ...' (19..96)
+              - (item꞉ ContractMember) ► (variant꞉ FunctionDefinition): # '  function tryAdd() internal pure {\n    hex"00"\n  ...' (19..96)
+                  - (leading_trivia꞉ Whitespace): "  " # (19..21)
+                  - (function_keyword꞉ FunctionKeyword): "function" # (21..29)
+                  - (name꞉ FunctionName): # " tryAdd" (29..36)
+                      - (leading_trivia꞉ Whitespace): " " # (29..30)
+                      - (variant꞉ Identifier): "tryAdd" # (30..36)
+                  - (parameters꞉ ParametersDeclaration): # "()" (36..38)
+                      - (open_paren꞉ OpenParen): "(" # (36..37)
+                      - (parameters꞉ Parameters): [] # (37..37)
+                      - (close_paren꞉ CloseParen): ")" # (37..38)
+                  - (attributes꞉ FunctionAttributes): # " internal pure" (38..52)
+                      - (item꞉ FunctionAttribute): # " internal" (38..47)
+                          - (leading_trivia꞉ Whitespace): " " # (38..39)
+                          - (variant꞉ InternalKeyword): "internal" # (39..47)
+                      - (item꞉ FunctionAttribute): # " pure" (47..52)
+                          - (leading_trivia꞉ Whitespace): " " # (47..48)
+                          - (variant꞉ PureKeyword): "pure" # (48..52)
+                  - (body꞉ FunctionBody) ► (variant꞉ Block): # ' {\n    hex"00"\n    hex"01"\n    hex"02";\n  }\n' (52..96)
+                      - (leading_trivia꞉ Whitespace): " " # (52..53)
+                      - (open_brace꞉ OpenBrace): "{" # (53..54)
+                      - (trailing_trivia꞉ EndOfLine): "\n" # (54..55)
+                      - (statements꞉ Statements): # '    hex"00"\n    hex"01"\n    hex"02";\n' (55..92)
+                          - (item꞉ Statement) ► (variant꞉ ExpressionStatement): # '    hex"00"\n    hex"01"\n    hex"02";\n' (55..92)
+                              - (expression꞉ Expression) ► (variant꞉ StringExpression) ► (variant꞉ HexStringLiteral): # '    hex"00"\n' (55..67)
+                                  - (leading_trivia꞉ Whitespace): "    " # (55..59)
+                                  - (variant꞉ DoubleQuotedHexStringLiteral): 'hex"00"' # (59..66)
+                                  - (trailing_trivia꞉ EndOfLine): "\n" # (66..67)
+                              - (leading_trivia꞉ Whitespace): "    " # (67..71)
+                              - (unrecognized꞉ UNRECOGNIZED): 'hex"01"\n    hex"02"' # (71..90)
+                              - (semicolon꞉ Semicolon): ";" # (90..91)
+                              - (trailing_trivia꞉ EndOfLine): "\n" # (91..92)
+                      - (leading_trivia꞉ Whitespace): "  " # (92..94)
+                      - (close_brace꞉ CloseBrace): "}" # (94..95)
+                      - (trailing_trivia꞉ EndOfLine): "\n" # (95..96)
+          - (close_brace꞉ CloseBrace): "}" # (96..97)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (97..98)
