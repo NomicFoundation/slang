@@ -35,7 +35,7 @@ pub trait V2Tester {
 pub struct V2TesterConstructor;
 
 impl V2TesterConstructor {
-    /// Return a new V2Tester instance for the given parser name.
+    /// Return a new `V2Tester` instance for the given parser name.
     ///
     /// Only `SourceUnit`, `Expression`, and `ContractDefinition` are supported for now.
     pub fn new_tester(parser_name: &str) -> Box<dyn V2Tester> {
