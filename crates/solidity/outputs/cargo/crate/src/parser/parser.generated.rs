@@ -2043,11 +2043,11 @@ impl Parser {
 
     #[allow(unused_assignments, unused_parens)]
     fn expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        let parse_left_assignment_expression = |input: &mut ParserContext<'_>| {
+        let parse_right_assignment_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
                 NonterminalKind::AssignmentExpression,
-                1u8,
                 1u8 + 1,
+                1u8,
                 ChoiceHelper::run(input, |mut choice, input| {
                     let result = self
                         .parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -2696,7 +2696,7 @@ impl Parser {
         };
         let binary_operator_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
-                let result = parse_left_assignment_expression(input);
+                let result = parse_right_assignment_expression(input);
                 choice.consider(input, result)?;
                 let result = parse_left_or_expression(input);
                 choice.consider(input, result)?;

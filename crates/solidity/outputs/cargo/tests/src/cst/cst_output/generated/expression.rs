@@ -37,6 +37,11 @@ fn areturn() -> Result<()> {
 }
 
 #[test]
+fn chained_assignment() -> Result<()> {
+    run(T, "chained_assignment")
+}
+
+#[test]
 fn delete() -> Result<()> {
     run(T, "delete")
 }
@@ -304,6 +309,11 @@ fn member_access_super() -> Result<()> {
 #[test]
 fn member_access_this() -> Result<()> {
     run(T, "member_access_this")
+}
+
+#[test]
+fn mixed_compound_assignment() -> Result<()> {
+    run(T, "mixed_compound_assignment")
 }
 
 #[test]
