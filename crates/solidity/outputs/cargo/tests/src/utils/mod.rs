@@ -6,7 +6,7 @@ pub(crate) mod multi_part_file;
 
 #[test]
 fn list_all_versions() {
-    assert_eq!(LanguageFacts::ALL_VERSIONS.len(), 88);
+    assert_eq!(LanguageFacts::ALL_VERSIONS.len(), 89);
     assert!(LanguageFacts::ALL_VERSIONS.is_sorted());
     assert_eq!(
         LanguageFacts::ALL_VERSIONS.iter().min(),
