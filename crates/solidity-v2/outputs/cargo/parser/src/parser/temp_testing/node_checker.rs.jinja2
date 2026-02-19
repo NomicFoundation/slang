@@ -901,8 +901,6 @@ impl NodeChecker for UntypedTupleDeclarationElement {
 
 {% elif parent_type == "ExpressionStatement" %}
 /// `NodeChecker` for `ExpressionStatement` - V2's ExpressionStatement can also map to V1's TupleDeconstructionStatement
-/// when V2 parses `(a, b) = foo;` as ExpressionStatement { AssignmentExpression { TupleExpression, =, foo } }
-/// but V1 parses it as TupleDeconstructionStatement { open_paren, elements, close_paren, equal, expression }
 impl NodeChecker for ExpressionStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
