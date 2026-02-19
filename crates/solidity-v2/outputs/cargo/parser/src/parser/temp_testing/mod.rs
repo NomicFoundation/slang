@@ -69,6 +69,7 @@ impl V2Tester for NonSupportedParserTester {
 
 struct V2TesterImpl<NT, T: ParserV2<NonTerminal = NT>> {
     last_output: Option<Result<NT, String>>,
+    last_diff: Option<(bool, Option<String>, String)>,
     phantom: std::marker::PhantomData<T>,
 }
 
@@ -76,6 +77,7 @@ impl<NT, T: ParserV2<NonTerminal = NT>> V2TesterImpl<NT, T> {
     pub fn new() -> Self {
         Self {
             last_output: None,
+            last_diff: None,
             phantom: std::marker::PhantomData,
         }
     }
@@ -108,72 +110,57 @@ impl<NT: NodeChecker + Debug + PartialEq, T: ParserV2<NonTerminal = NT>> V2Teste
         let v2_output = match self.last_output {
             // Skip this version if it produces the same output.
             // Note: comparing objects cheaply before expensive serialization.
-            Some(ref last) if last == &v2_output => return Ok(()),
-            _ => &*self.last_output.insert(v2_output),
-        };
+            Some(ref last) if last == &v2_output => last,
+            _ => {
+                let status = if v2_output.is_ok() {
+                    "success"
+                } else {
+                    "failure"
+                };
 
-        let status = if v2_output.is_ok() {
-            "success"
-        } else {
-            "failure"
-        };
+                let snapshot_path = test_dir
+                    .join("v2/generated")
+                    .join(format!("{version}-{status}.txt"));
 
-        let snapshot_path = test_dir
-            .join("v2/generated")
-            .join(format!("{version}-{status}.txt"));
+                let mut s = String::new();
 
-        let mut s = String::new();
+                match &v2_output {
+                    Ok(parsed_checker) => {
+                        // Print AST
+                        writeln!(s, "{parsed_checker:#?}")?;
+                    }
+                    Err(err) => {
+                        // We don't care about the errors for now, we just write them
+                        writeln!(s, "{err:#?}")?;
+                    }
+                }
 
-        match &v2_output {
-            Ok(parsed_checker) => {
-                // Print AST
-                writeln!(s, "{parsed_checker:#?}")?;
+                fs.write_file_raw(&snapshot_path, s)?;
+                self.last_output.insert(v2_output)
             }
-            Err(err) => {
-                // We don't care about the errors for now, we just write them
-                writeln!(s, "{err:#?}")?;
-            }
-        }
-
-        fs.write_file_raw(&snapshot_path, s)?;
+        };
 
         // Now check the diff between V1 and V2
 
-        let diff_path = test_dir
-            .join("diff/generated")
-            .join(format!("{version}.txt"));
+        let diff = Self::diff_report(v1_output, v2_output, source_id, source);
 
-        let mut s = String::new();
-        match &v2_output {
-            Ok(parsed_checker) => {
-                // check V1 validity
-                if v1_output.is_valid() {
-                    // Check for errors
-                    let checked =
-                        parsed_checker.check_node(&Node::Nonterminal(Rc::clone(v1_output.tree())));
+        match &self.last_diff {
+            // Skip if the diff is the same as last time
+            Some(ref last) if last == &diff => (),
+            _ => {
+                let (is_same, should_panic, diff_report) = &diff;
 
-                    if !checked.is_empty() {
-                        write_errors(&mut s, &checked, source_id, source)?;
+                let diff_path = test_dir.join("diff/generated").join(format!(
+                    "{version}-{diff}.txt",
+                    diff = if *is_same { "same" } else { "diff" }
+                ));
 
-                        fs.write_file_raw(&diff_path, s)?;
-                        // TODO(v2): This should fail, but some errors in V1 are causing V2 to produce different outputs
-                        // panic!("V2 parser produced a different output than V1 output.");
-                    }
-                } else {
-                    writeln!(s, "V1 Parser: Invalid")?;
-                    writeln!(s, "V2 Parser: Valid")?;
-                    fs.write_file_raw(&diff_path, s)?;
-                    // TODO(v2): This should fail, but for now we really don't care about validation in V2
+                fs.write_file_raw(&diff_path, diff_report)?;
+
+                if let Some(panic_message) = should_panic {
+                    panic!("{panic_message}");
                 }
-            }
-            Err(_) if v1_output.is_valid() => {
-                writeln!(s, "V1 Parser: Valid")?;
-                writeln!(s, "V2 Parser: Invalid")?;
-                fs.write_file_raw(&diff_path, s)?;
-                panic!("V2 parser produced invalid output against V1 valid output. ");
-            }
-            Err(_) => {
-                // TODO(v2): Both are invalid, compare the errors
+                self.last_diff = Some(diff);
             }
         }
 
@@ -181,26 +168,81 @@ impl<NT: NodeChecker + Debug + PartialEq, T: ParserV2<NonTerminal = NT>> V2Teste
     }
 }
 
-fn write_errors(
-    w: &mut String,
-    errors: &Vec<NodeCheckerError>,
-    source_id: &str,
-    source: &str,
-) -> Result<()> {
+impl<NT: NodeChecker + Debug + PartialEq, T: ParserV2<NonTerminal = NT>> V2TesterImpl<NT, T> {
+    fn diff_report(
+        v1_output: &ParseOutput,
+        v2_output: &Result<NT, String>,
+        source_id: &str,
+        source: &str,
+    ) -> (bool, Option<String>, String) {
+        match v2_output {
+            Ok(parsed_checker) => {
+                // check V1 validity
+                if v1_output.is_valid() {
+                    // Check for errors
+                    let checked =
+                        parsed_checker.check_node(&Node::Nonterminal(Rc::clone(v1_output.tree())));
+
+                    if checked.is_empty() {
+                        (
+                            true,
+                            None,
+                            "V2 parser produced the same output as V1 output.".to_string(),
+                        )
+                    } else {
+                        let errors = write_errors(&checked, source_id, source);
+
+                        (
+                            false,
+                            Some(
+                                "V2 parser produced a different output than V1 output.".to_string(),
+                            ),
+                            errors,
+                        )
+                    }
+                } else {
+                    // TODO(v2): This is forced not to panic, since V2 has no validation yet, but we
+                    // do want to be aware of these cases, so we write them in the diff report and we can review them later.
+                    (
+                        false,
+                        None,
+                        "V1 Parser: Invalid\nV2 Parser: Valid\n".to_string(),
+                    )
+                }
+            }
+            Err(_) if v1_output.is_valid() => (
+                false,
+                Some("V2 parser produced invalid output against V1 valid output.".to_string()),
+                "V1 Parser: Valid\nV2 Parser: Invalid\n".to_string(),
+            ),
+            Err(_) => {
+                // TODO(v2): Both are invalid, compare the errors
+                (
+                    true,
+                    None,
+                    "Both V1 and V2 produced invalid output.\n".to_string(),
+                )
+            }
+        }
+    }
+}
+
+fn write_errors(errors: &Vec<NodeCheckerError>, source_id: &str, source: &str) -> String {
     if errors.is_empty() {
-        return Ok(());
+        return String::new();
     }
 
-    writeln!(w, "Errors: # {count} total", count = errors.len())?;
+    let mut s = String::new();
+    writeln!(s, "Errors: # {count} total", count = errors.len()).unwrap();
 
     for error in errors {
-        writeln!(w, "  - >")?;
+        writeln!(s, "  - >").unwrap();
         for line in slang_solidity::diagnostic::render(error, source_id, source, false).lines() {
-            writeln!(w, "    {line}")?;
+            writeln!(s, "    {line}").unwrap();
         }
     }
 
-    Ok(())
+    s
 }
 
 pub fn compare_with_v1_cursor(source: &str, root_cursor: &Cursor) -> Vec<NodeCheckerError> {
