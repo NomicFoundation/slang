@@ -91,8 +91,8 @@ fn children_with_offsets(node: &Node, text_offset: TextIndex) -> Vec<(Edge, Text
     result
 }
 
-/// Check V2 TupleValues against V1 TupleDeconstructionElements.
-/// Used by ExpressionStatement checker when mapping V2's TupleExpression items to V1's deconstruction elements.
+/// Check V2 `TupleValues` against V1 `TupleDeconstructionElements`.
+/// Used by `ExpressionStatement` checker when mapping V2's `TupleExpression` items to V1's deconstruction elements.
 fn check_tuple_values_as_deconstruction_elements(
     tuple_values: &TupleValues,
     node: &Node, // V1 TupleDeconstructionElements
@@ -136,9 +136,9 @@ fn check_tuple_values_as_deconstruction_elements(
     errors
 }
 
-/// Check a single V2 TupleValue against a V1 TupleDeconstructionElement.
-/// - V2 TupleValue { expression: None } maps to V1 TupleDeconstructionElement { } (empty)
-/// - V2 TupleValue { expression: Some(Identifier) } maps to V1 TupleDeconstructionElement { member: TupleMember > UntypedTupleMember > Name }
+/// Check a single V2 `TupleValue` against a V1 `TupleDeconstructionElement`.
+/// - V2 `TupleValue` { expression: None } maps to V1 `TupleDeconstructionElement` { } (empty)
+/// - V2 `TupleValue` { expression: Some(Identifier) } maps to V1 `TupleDeconstructionElement` { member: `TupleMember` > `UntypedTupleMember` > Name }
 fn check_tuple_value_as_deconstruction_element(
     v2_value: &TupleValueStruct,
     node: &Node, // V1 TupleDeconstructionElement
@@ -180,7 +180,7 @@ fn check_tuple_value_as_deconstruction_element(
                             }
                             _ => {
                                 errors.push(NodeCheckerError::new(
-                                    format!("Expected Expression::Identifier for tuple deconstruction element, got {:?}", expr),
+                                    format!("Expected Expression::Identifier for tuple deconstruction element, got {expr:?}"),
                                     node_range.clone(),
                                 ));
                             }
@@ -3880,7 +3880,7 @@ impl NodeChecker for ExponentiationExpression {
     }
 }
 
-/// `NodeChecker` for `ExpressionStatement` - V2's ExpressionStatement can also map to V1's TupleDeconstructionStatement
+/// `NodeChecker` for `ExpressionStatement` - V2's `ExpressionStatement` can also map to V1's `TupleDeconstructionStatement`
 impl NodeChecker for ExpressionStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
