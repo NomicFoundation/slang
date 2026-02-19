@@ -126,62 +126,62 @@ pub enum NonterminalKind {
     /// Represents a node with kind `AssignmentExpression`, having the following structure:
     ///
     /// ```ebnf
-    /// (* Left-associative binary operator *)
+    /// (* Right-associative binary operator *)
     /// AssignmentExpression = (* left_operand: *) Expression
     ///                        (* operator: *) EQUAL
     ///                        (* right_operand: *) Expression;
     ///
-    /// (* Left-associative binary operator *)
+    /// (* Right-associative binary operator *)
     /// AssignmentExpression = (* left_operand: *) Expression
     ///                        (* operator: *) BAR_EQUAL
     ///                        (* right_operand: *) Expression;
     ///
-    /// (* Left-associative binary operator *)
+    /// (* Right-associative binary operator *)
     /// AssignmentExpression = (* left_operand: *) Expression
     ///                        (* operator: *) PLUS_EQUAL
     ///                        (* right_operand: *) Expression;
     ///
-    /// (* Left-associative binary operator *)
+    /// (* Right-associative binary operator *)
     /// AssignmentExpression = (* left_operand: *) Expression
     ///                        (* operator: *) MINUS_EQUAL
     ///                        (* right_operand: *) Expression;
     ///
-    /// (* Left-associative binary operator *)
+    /// (* Right-associative binary operator *)
     /// AssignmentExpression = (* left_operand: *) Expression
     ///                        (* operator: *) CARET_EQUAL
     ///                        (* right_operand: *) Expression;
     ///
-    /// (* Left-associative binary operator *)
+    /// (* Right-associative binary operator *)
     /// AssignmentExpression = (* left_operand: *) Expression
     ///                        (* operator: *) SLASH_EQUAL
     ///                        (* right_operand: *) Expression;
     ///
-    /// (* Left-associative binary operator *)
+    /// (* Right-associative binary operator *)
     /// AssignmentExpression = (* left_operand: *) Expression
     ///                        (* operator: *) PERCENT_EQUAL
     ///                        (* right_operand: *) Expression;
     ///
-    /// (* Left-associative binary operator *)
+    /// (* Right-associative binary operator *)
     /// AssignmentExpression = (* left_operand: *) Expression
     ///                        (* operator: *) ASTERISK_EQUAL
     ///                        (* right_operand: *) Expression;
     ///
-    /// (* Left-associative binary operator *)
+    /// (* Right-associative binary operator *)
     /// AssignmentExpression = (* left_operand: *) Expression
     ///                        (* operator: *) AMPERSAND_EQUAL
     ///                        (* right_operand: *) Expression;
     ///
-    /// (* Left-associative binary operator *)
+    /// (* Right-associative binary operator *)
     /// AssignmentExpression = (* left_operand: *) Expression
     ///                        (* operator: *) LESS_THAN_LESS_THAN_EQUAL
     ///                        (* right_operand: *) Expression;
     ///
-    /// (* Left-associative binary operator *)
+    /// (* Right-associative binary operator *)
     /// AssignmentExpression = (* left_operand: *) Expression
     ///                        (* operator: *) GREATER_THAN_GREATER_THAN_EQUAL
     ///                        (* right_operand: *) Expression;
     ///
-    /// (* Left-associative binary operator *)
+    /// (* Right-associative binary operator *)
     /// AssignmentExpression = (* left_operand: *) Expression
     ///                        (* operator: *) GREATER_THAN_GREATER_THAN_GREATER_THAN_EQUAL
     ///                        (* right_operand: *) Expression;

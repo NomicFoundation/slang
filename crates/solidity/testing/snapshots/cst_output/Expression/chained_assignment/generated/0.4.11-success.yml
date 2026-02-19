@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ a = b = c                                                                        │ 0..9
+
+Errors: []
+
+Tree:
+  - (root꞉ Expression) ► (variant꞉ AssignmentExpression): # "a = b = c\n" (0..10)
+      - (left_operand꞉ Expression) ► (variant꞉ Identifier): "a" # (0..1)
+      - (leading_trivia꞉ Whitespace): " " # (1..2)
+      - (operator꞉ Equal): "=" # (2..3)
+      - (right_operand꞉ Expression) ► (variant꞉ AssignmentExpression): # " b = c\n" (3..10)
+          - (left_operand꞉ Expression): # " b" (3..5)
+              - (leading_trivia꞉ Whitespace): " " # (3..4)
+              - (variant꞉ Identifier): "b" # (4..5)
+          - (leading_trivia꞉ Whitespace): " " # (5..6)
+          - (operator꞉ Equal): "=" # (6..7)
+          - (right_operand꞉ Expression): # " c\n" (7..10)
+              - (leading_trivia꞉ Whitespace): " " # (7..8)
+              - (variant꞉ Identifier): "c" # (8..9)
+              - (trailing_trivia꞉ EndOfLine): "\n" # (9..10)

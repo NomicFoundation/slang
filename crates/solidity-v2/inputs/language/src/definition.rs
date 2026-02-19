@@ -3211,53 +3211,53 @@ language_v2_macros::compile!(Language(
                                             name = AssignmentExpression,
                                             operators = [
                                                 PrecedenceOperator(
-                                                    model = BinaryLeftAssociative,
+                                                    model = BinaryRightAssociative,
                                                     fields = (operator = Required(Equal))
                                                 ),
                                                 PrecedenceOperator(
-                                                    model = BinaryLeftAssociative,
+                                                    model = BinaryRightAssociative,
                                                     fields = (operator = Required(BarEqual))
                                                 ),
                                                 PrecedenceOperator(
-                                                    model = BinaryLeftAssociative,
+                                                    model = BinaryRightAssociative,
                                                     fields = (operator = Required(PlusEqual))
                                                 ),
                                                 PrecedenceOperator(
-                                                    model = BinaryLeftAssociative,
+                                                    model = BinaryRightAssociative,
                                                     fields = (operator = Required(MinusEqual))
                                                 ),
                                                 PrecedenceOperator(
-                                                    model = BinaryLeftAssociative,
+                                                    model = BinaryRightAssociative,
                                                     fields = (operator = Required(CaretEqual))
                                                 ),
                                                 PrecedenceOperator(
-                                                    model = BinaryLeftAssociative,
+                                                    model = BinaryRightAssociative,
                                                     fields = (operator = Required(SlashEqual))
                                                 ),
                                                 PrecedenceOperator(
-                                                    model = BinaryLeftAssociative,
+                                                    model = BinaryRightAssociative,
                                                     fields = (operator = Required(PercentEqual))
                                                 ),
                                                 PrecedenceOperator(
-                                                    model = BinaryLeftAssociative,
+                                                    model = BinaryRightAssociative,
                                                     fields = (operator = Required(AsteriskEqual))
                                                 ),
                                                 PrecedenceOperator(
-                                                    model = BinaryLeftAssociative,
+                                                    model = BinaryRightAssociative,
                                                     fields = (operator = Required(AmpersandEqual))
                                                 ),
                                                 PrecedenceOperator(
-                                                    model = BinaryLeftAssociative,
+                                                    model = BinaryRightAssociative,
                                                     fields = (operator =
                                                         Required(LessThanLessThanEqual))
                                                 ),
                                                 PrecedenceOperator(
-                                                    model = BinaryLeftAssociative,
+                                                    model = BinaryRightAssociative,
                                                     fields = (operator =
                                                         Required(GreaterThanGreaterThanEqual))
                                                 ),
                                                 PrecedenceOperator(
-                                                    model = BinaryLeftAssociative,
+                                                    model = BinaryRightAssociative,
                                                     fields = (operator = Required(
                                                         GreaterThanGreaterThanGreaterThanEqual
                                                     ))

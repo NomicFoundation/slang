@@ -4567,51 +4567,51 @@
                       "name": "AssignmentExpression",
                       "operators": [
                         {
-                          "model": "BinaryLeftAssociative",
+                          "model": "BinaryRightAssociative",
                           "fields": [["operator", { "Required": { "reference": "Equal" } }]]
                         },
                         {
-                          "model": "BinaryLeftAssociative",
+                          "model": "BinaryRightAssociative",
                           "fields": [["operator", { "Required": { "reference": "BarEqual" } }]]
                         },
                         {
-                          "model": "BinaryLeftAssociative",
+                          "model": "BinaryRightAssociative",
                           "fields": [["operator", { "Required": { "reference": "PlusEqual" } }]]
                         },
                         {
-                          "model": "BinaryLeftAssociative",
+                          "model": "BinaryRightAssociative",
                           "fields": [["operator", { "Required": { "reference": "MinusEqual" } }]]
                         },
                         {
-                          "model": "BinaryLeftAssociative",
+                          "model": "BinaryRightAssociative",
                           "fields": [["operator", { "Required": { "reference": "CaretEqual" } }]]
                         },
                         {
-                          "model": "BinaryLeftAssociative",
+                          "model": "BinaryRightAssociative",
                           "fields": [["operator", { "Required": { "reference": "SlashEqual" } }]]
                         },
                         {
-                          "model": "BinaryLeftAssociative",
+                          "model": "BinaryRightAssociative",
                           "fields": [["operator", { "Required": { "reference": "PercentEqual" } }]]
                         },
                         {
-                          "model": "BinaryLeftAssociative",
+                          "model": "BinaryRightAssociative",
                           "fields": [["operator", { "Required": { "reference": "AsteriskEqual" } }]]
                         },
                         {
-                          "model": "BinaryLeftAssociative",
+                          "model": "BinaryRightAssociative",
                           "fields": [["operator", { "Required": { "reference": "AmpersandEqual" } }]]
                         },
                         {
-                          "model": "BinaryLeftAssociative",
+                          "model": "BinaryRightAssociative",
                           "fields": [["operator", { "Required": { "reference": "LessThanLessThanEqual" } }]]
                         },
                         {
-                          "model": "BinaryLeftAssociative",
+                          "model": "BinaryRightAssociative",
                           "fields": [["operator", { "Required": { "reference": "GreaterThanGreaterThanEqual" } }]]
                         },
                         {
-                          "model": "BinaryLeftAssociative",
+                          "model": "BinaryRightAssociative",
                           "fields": [
                             ["operator", { "Required": { "reference": "GreaterThanGreaterThanGreaterThanEqual" } }]
                           ]
