@@ -1,5 +1,5 @@
 [workspace.package]
-version = "1.3.2"
+version = "1.3.3"
 rust-version = "1.87.0" # __RUST_STABLE_VERSION_MARKER__ (keep in sync)
 edition = "2021"
 publish = false
@@ -60,53 +60,53 @@ members = [
 #
 # Internal
 #
-codegen_ebnf = { path = "crates/codegen/ebnf", version = "1.3.2" }
-codegen_generator = { path = "crates/codegen/generator", version = "1.3.2" }
-codegen_runner = { path = "crates/codegen/runner", version = "1.3.2" }
-codegen_spec = { path = "crates/codegen/spec", version = "1.3.2" }
-codegen_testing = { path = "crates/codegen/testing", version = "1.3.2" }
+codegen_ebnf = { path = "crates/codegen/ebnf", version = "1.3.3" }
+codegen_generator = { path = "crates/codegen/generator", version = "1.3.3" }
+codegen_runner = { path = "crates/codegen/runner", version = "1.3.3" }
+codegen_spec = { path = "crates/codegen/spec", version = "1.3.3" }
+codegen_testing = { path = "crates/codegen/testing", version = "1.3.3" }
 
-codegen_v2_cst = { path = "crates/codegen-v2/cst", version = "1.3.2" }
-codegen_v2_parser = { path = "crates/codegen-v2/parser", version = "1.3.2" }
+codegen_v2_cst = { path = "crates/codegen-v2/cst", version = "1.3.3" }
+codegen_v2_parser = { path = "crates/codegen-v2/parser", version = "1.3.3" }
 
-infra_cli = { path = "crates/infra/cli", version = "1.3.2" }
-infra_utils = { path = "crates/infra/utils", version = "1.3.2" }
+infra_cli = { path = "crates/infra/cli", version = "1.3.3" }
+infra_utils = { path = "crates/infra/utils", version = "1.3.3" }
 
-language_definition = { path = "crates/language/definition", version = "1.3.2" }
-language_internal_macros = { path = "crates/language/internal_macros", version = "1.3.2" }
-language_macros = { path = "crates/language/macros", version = "1.3.2" }
-language_tests = { path = "crates/language/tests", version = "1.3.2" }
+language_definition = { path = "crates/language/definition", version = "1.3.3" }
+language_internal_macros = { path = "crates/language/internal_macros", version = "1.3.3" }
+language_macros = { path = "crates/language/macros", version = "1.3.3" }
+language_tests = { path = "crates/language/tests", version = "1.3.3" }
 
-language_v2_definition = { path = "crates/language-v2/definition", version = "1.3.2" }
-language_v2_internal_macros = { path = "crates/language-v2/internal_macros", version = "1.3.2" }
-language_v2_macros = { path = "crates/language-v2/macros", version = "1.3.2" }
-language_v2_tests = { path = "crates/language-v2/tests", version = "1.3.2" }
+language_v2_definition = { path = "crates/language-v2/definition", version = "1.3.3" }
+language_v2_internal_macros = { path = "crates/language-v2/internal_macros", version = "1.3.3" }
+language_v2_macros = { path = "crates/language-v2/macros", version = "1.3.3" }
+language_v2_tests = { path = "crates/language-v2/tests", version = "1.3.3" }
 
-metaslang_bindings = { path = "crates/metaslang/bindings", version = "1.3.2" }
-metaslang_cst = { path = "crates/metaslang/cst", version = "1.3.2" }
-metaslang_graph_builder = { path = "crates/metaslang/graph_builder", version = "1.3.2" }
-metaslang_stack_graphs = { path = "crates/metaslang/stack_graphs", version = "1.3.2" }
+metaslang_bindings = { path = "crates/metaslang/bindings", version = "1.3.3" }
+metaslang_cst = { path = "crates/metaslang/cst", version = "1.3.3" }
+metaslang_graph_builder = { path = "crates/metaslang/graph_builder", version = "1.3.3" }
+metaslang_stack_graphs = { path = "crates/metaslang/stack_graphs", version = "1.3.3" }
 
-solidity_language = { path = "crates/solidity/inputs/language", version = "1.3.2" }
+solidity_language = { path = "crates/solidity/inputs/language", version = "1.3.3" }
 
-slang_solidity = { path = "crates/solidity/outputs/cargo/crate", version = "1.3.2" }
-slang_solidity_cli = { path = "crates/solidity/outputs/cargo/cli", version = "1.3.2" }
-solidity_cargo_tests = { path = "crates/solidity/outputs/cargo/tests", version = "1.3.2" }
-solidity_cargo_wasm = { path = "crates/solidity/outputs/cargo/wasm", version = "1.3.2" }
-solidity_npm_package = { path = "crates/solidity/outputs/npm/package", version = "1.3.2" }
-solidity_spec = { path = "crates/solidity/outputs/spec", version = "1.3.2" }
-solidity_testing_perf_cargo = { path = "crates/solidity/testing/perf/cargo", version = "1.3.2" }
-solidity_testing_perf_npm = { path = "crates/solidity/testing/perf/npm", version = "1.3.2" }
-solidity_testing_snapshots = { path = "crates/solidity/testing/snapshots", version = "1.3.2" }
-solidity_testing_solc = { path = "crates/solidity/testing/solc", version = "1.3.2" }
-solidity_testing_sourcify = { path = "crates/solidity/testing/sourcify", version = "1.3.2" }
-solidity_testing_utils = { path = "crates/solidity/testing/utils", version = "1.3.2" }
+slang_solidity = { path = "crates/solidity/outputs/cargo/crate", version = "1.3.3" }
+slang_solidity_cli = { path = "crates/solidity/outputs/cargo/cli", version = "1.3.3" }
+solidity_cargo_tests = { path = "crates/solidity/outputs/cargo/tests", version = "1.3.3" }
+solidity_cargo_wasm = { path = "crates/solidity/outputs/cargo/wasm", version = "1.3.3" }
+solidity_npm_package = { path = "crates/solidity/outputs/npm/package", version = "1.3.3" }
+solidity_spec = { path = "crates/solidity/outputs/spec", version = "1.3.3" }
+solidity_testing_perf_cargo = { path = "crates/solidity/testing/perf/cargo", version = "1.3.3" }
+solidity_testing_perf_npm = { path = "crates/solidity/testing/perf/npm", version = "1.3.3" }
+solidity_testing_snapshots = { path = "crates/solidity/testing/snapshots", version = "1.3.3" }
+solidity_testing_solc = { path = "crates/solidity/testing/solc", version = "1.3.3" }
+solidity_testing_sourcify = { path = "crates/solidity/testing/sourcify", version = "1.3.3" }
+solidity_testing_utils = { path = "crates/solidity/testing/utils", version = "1.3.3" }
 
-solidity_v2_language = { path = "crates/solidity-v2/inputs/language", version = "1.3.2" }
+solidity_v2_language = { path = "crates/solidity-v2/inputs/language", version = "1.3.3" }
 
-slang_solidity_v2_cst = { path = "crates/solidity-v2/outputs/cargo/cst", version = "1.3.2" }
-slang_solidity_v2_common = { path = "crates/solidity-v2/outputs/cargo/common", version = "1.3.2" }
-slang_solidity_v2_parser = { path = "crates/solidity-v2/outputs/cargo/parser", version = "1.3.2" }
+slang_solidity_v2_cst = { path = "crates/solidity-v2/outputs/cargo/cst", version = "1.3.3" }
+slang_solidity_v2_common = { path = "crates/solidity-v2/outputs/cargo/common", version = "1.3.3" }
+slang_solidity_v2_parser = { path = "crates/solidity-v2/outputs/cargo/parser", version = "1.3.3" }
 
 #
 # External

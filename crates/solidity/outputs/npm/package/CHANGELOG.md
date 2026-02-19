@@ -1,5 +1,17 @@
 # changelog
 
+## 1.3.3
+
+### Patch Changes
+
+- [#1523](https://github.com/NomicFoundation/slang/pull/1523) [`27f07a8`](https://github.com/NomicFoundation/slang/commit/27f07a82353dd9e9963fecdfb2ff6027fac012a5) Thanks [@teofr](https://github.com/teofr)! - Remove `constant`, `view`, and `pure` attributes from `UnnamedFunctionDefinition`, to disambiguate from `StateVariableDefinition` that have a `function` type.
+
+- [#1526](https://github.com/NomicFoundation/slang/pull/1526) [`a52001d`](https://github.com/NomicFoundation/slang/commit/a52001ddba645d68b7e5a2713787323855bd3b95) Thanks [@teofr](https://github.com/teofr)! - Fixed associativity of `AssignmentExpression` from left to right.
+
+- [#1525](https://github.com/NomicFoundation/slang/pull/1525) [`7f3ea6f`](https://github.com/NomicFoundation/slang/commit/7f3ea6f0b8b14305b8d48db70e4b20bcb5b1cd0e) Thanks [@teofr](https://github.com/teofr)! - Add support for Solidity `0.8.34`.
+
+- [#1502](https://github.com/NomicFoundation/slang/pull/1502) [`6963419`](https://github.com/NomicFoundation/slang/commit/6963419ca8c043718996415d780caf1c047fb75b) Thanks [@teofr](https://github.com/teofr)! - Fixed the old style revert calls (`revert("oops!")`) to be parsed as a `FunctionCallExpression` rather than a `RevertStatement`.
+
 ## 1.3.2
 
 ### Patch Changes
