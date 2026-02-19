@@ -4,5 +4,9 @@ library SafeMath {
     return () = foo;
     return (,) = foo;
     return (,,) = foo;
+
+    () = foo;
+    (,) = foo;
+    (,,) = foo;
   }
 }

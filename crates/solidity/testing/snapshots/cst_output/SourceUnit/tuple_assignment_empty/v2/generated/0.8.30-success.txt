@@ -197,10 +197,133 @@ SourceUnitStruct {
                                                             },
                                                         },
                                                     ),
+                                                    ExpressionStatement(
+                                                        ExpressionStatementStruct {
+                                                            expression: AssignmentExpression(
+                                                                AssignmentExpressionStruct {
+                                                                    left_operand: TupleExpression(
+                                                                        TupleExpressionStruct {
+                                                                            open_paren: OpenParen {
+                                                                                range: 213..214,
+                                                                            },
+                                                                            items: TupleValues {
+                                                                                elements: [
+                                                                                    TupleValueStruct {
+                                                                                        expression: None,
+                                                                                    },
+                                                                                ],
+                                                                            },
+                                                                            close_paren: CloseParen {
+                                                                                range: 214..215,
+                                                                            },
+                                                                        },
+                                                                    ),
+                                                                    expression_assignment_expression_operator: Equal(
+                                                                        Equal {
+                                                                            range: 216..217,
+                                                                        },
+                                                                    ),
+                                                                    right_operand: Identifier(
+                                                                        Identifier {
+                                                                            range: 218..221,
+                                                                        },
+                                                                    ),
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 221..222,
+                                                            },
+                                                        },
+                                                    ),
+                                                    ExpressionStatement(
+                                                        ExpressionStatementStruct {
+                                                            expression: AssignmentExpression(
+                                                                AssignmentExpressionStruct {
+                                                                    left_operand: TupleExpression(
+                                                                        TupleExpressionStruct {
+                                                                            open_paren: OpenParen {
+                                                                                range: 227..228,
+                                                                            },
+                                                                            items: TupleValues {
+                                                                                elements: [
+                                                                                    TupleValueStruct {
+                                                                                        expression: None,
+                                                                                    },
+                                                                                    TupleValueStruct {
+                                                                                        expression: None,
+                                                                                    },
+                                                                                ],
+                                                                            },
+                                                                            close_paren: CloseParen {
+                                                                                range: 229..230,
+                                                                            },
+                                                                        },
+                                                                    ),
+                                                                    expression_assignment_expression_operator: Equal(
+                                                                        Equal {
+                                                                            range: 231..232,
+                                                                        },
+                                                                    ),
+                                                                    right_operand: Identifier(
+                                                                        Identifier {
+                                                                            range: 233..236,
+                                                                        },
+                                                                    ),
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 236..237,
+                                                            },
+                                                        },
+                                                    ),
+                                                    ExpressionStatement(
+                                                        ExpressionStatementStruct {
+                                                            expression: AssignmentExpression(
+                                                                AssignmentExpressionStruct {
+                                                                    left_operand: TupleExpression(
+                                                                        TupleExpressionStruct {
+                                                                            open_paren: OpenParen {
+                                                                                range: 242..243,
+                                                                            },
+                                                                            items: TupleValues {
+                                                                                elements: [
+                                                                                    TupleValueStruct {
+                                                                                        expression: None,
+                                                                                    },
+                                                                                    TupleValueStruct {
+                                                                                        expression: None,
+                                                                                    },
+                                                                                    TupleValueStruct {
+                                                                                        expression: None,
+                                                                                    },
+                                                                                ],
+                                                                            },
+                                                                            close_paren: CloseParen {
+                                                                                range: 245..246,
+                                                                            },
+                                                                        },
+                                                                    ),
+                                                                    expression_assignment_expression_operator: Equal(
+                                                                        Equal {
+                                                                            range: 247..248,
+                                                                        },
+                                                                    ),
+                                                                    right_operand: Identifier(
+                                                                        Identifier {
+                                                                            range: 249..252,
+                                                                        },
+                                                                    ),
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 252..253,
+                                                            },
+                                                        },
+                                                    ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 210..211,
+                                                range: 256..257,
                                             },
                                         },
                                     ),
@@ -209,7 +332,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 212..213,
+                        range: 258..259,
                     },
                 },
             ),

@@ -2,30 +2,37 @@
 
 Source: >
   1  │ library SafeMath {                                                                    │ 0..18
-  2  │   function tryAdd() internal pure  {                                                  │ 19..55
-  3  │     // If we don't use the return, V1 will parse them as TupleDeconstructionStatement │ 56..141
-  4  │     return (,z,) = foo;                                                               │ 142..165
-  5  │     return (a, b) = foo;                                                              │ 166..190
-  6  │     return (x, , y) = foo;                                                            │ 191..217
-  7  │     return (,,,,a) = foo;                                                             │ 218..243
-  8  │   }                                                                                   │ 244..247
-  9  │ }                                                                                     │ 248..249
+  2  │   function tryAdd() internal pure {                                                   │ 19..54
+  3  │     // If we don't use the return, V1 will parse them as TupleDeconstructionStatement │ 55..140
+  4  │     return (, z, ) = foo;                                                             │ 141..166
+  5  │     return (a, b) = foo;                                                              │ 167..191
+  6  │     return (x, , y) = foo;                                                            │ 192..218
+  7  │     return (, , , , a) = foo;                                                         │ 219..248
+  8  │     return (a, ) = foo;                                                               │ 249..272
+  9  │                                                                                       │ 273..273
+  10 │     (, z, ) = foo;                                                                    │ 274..292
+  11 │     (a, b) = foo;                                                                     │ 293..310
+  12 │     (x, , y) = foo;                                                                   │ 311..330
+  13 │     (, , , , a) = foo;                                                                │ 331..353
+  14 │     (a, ) = foo;                                                                      │ 354..370
+  15 │   }                                                                                   │ 371..374
+  16 │ }                                                                                     │ 375..376
 
 Errors: # 1 total
   - >
     Error: Expected OpenBrace or ReturnsKeyword or Semicolon.
-       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/tuple_assignment/input.sol:2:30]
-       │
-     2 │ ╭─▶   function tryAdd() internal pure  {
-       ┆ ┆   
-     8 │ ├─▶   }
-       │ │         
-       │ ╰───────── Error occurred here.
-    ───╯
+        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/tuple_assignment/input.sol:2:30]
+        │
+      2 │ ╭─▶   function tryAdd() internal pure {
+        ┆ ┆   
+     15 │ ├─▶   }
+        │ │         
+        │ ╰───────── Error occurred here.
+    ────╯
 
 Tree:
-  - (root꞉ SourceUnit) ► (members꞉ SourceUnitMembers): # "library SafeMath {\n  function tryAdd() internal pu..." (0..250)
-      - (item꞉ SourceUnitMember) ► (variant꞉ LibraryDefinition): # "library SafeMath {\n  function tryAdd() internal pu..." (0..250)
+  - (root꞉ SourceUnit) ► (members꞉ SourceUnitMembers): # "library SafeMath {\n  function tryAdd() internal pu..." (0..377)
+      - (item꞉ SourceUnitMember) ► (variant꞉ LibraryDefinition): # "library SafeMath {\n  function tryAdd() internal pu..." (0..377)
           - (library_keyword꞉ LibraryKeyword): "library" # (0..7)
           - (leading_trivia꞉ Whitespace): " " # (7..8)
           - (name꞉ Identifier): "SafeMath" # (8..16)
@@ -48,6 +55,6 @@ Tree:
                           - (leading_trivia꞉ Whitespace): " " # (38..39)
                           - (variant꞉ InternalKeyword): "internal" # (39..47)
           - (leading_trivia꞉ Whitespace): " " # (47..48)
-          - (unrecognized꞉ UNRECOGNIZED): "pure  {\n    // If we don't use the return, V1 will..." # (48..248)
-          - (close_brace꞉ CloseBrace): "}" # (248..249)
-          - (trailing_trivia꞉ EndOfLine): "\n" # (249..250)
+          - (unrecognized꞉ UNRECOGNIZED): "pure {\n    // If we don't use the return, V1 will ..." # (48..375)
+          - (close_brace꞉ CloseBrace): "}" # (375..376)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (376..377)
