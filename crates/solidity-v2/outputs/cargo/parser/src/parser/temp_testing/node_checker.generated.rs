@@ -91,6 +91,129 @@ fn children_with_offsets(node: &Node, text_offset: TextIndex) -> Vec<(Edge, Text
     result
 }
 
+/// Check V2 TupleValues against V1 TupleDeconstructionElements.
+/// Used by ExpressionStatement checker when mapping V2's TupleExpression items to V1's deconstruction elements.
+fn check_tuple_values_as_deconstruction_elements(
+    tuple_values: &TupleValues,
+    node: &Node, // V1 TupleDeconstructionElements
+    text_offset: TextIndex,
+) -> Vec<NodeCheckerError> {
+    let node_range = text_offset..(text_offset + node.text_len());
+
+    if node.kind() != NodeKind::Nonterminal(NonterminalKind::TupleDeconstructionElements) {
+        return vec![NodeCheckerError::new(
+            format!(
+                "Expected node kind to be TupleDeconstructionElements, but it was {}",
+                node.kind()
+            ),
+            node_range,
+        )];
+    }
+
+    let children = children_with_offsets(node, text_offset);
+
+    if children.len() != tuple_values.elements.len() {
+        return vec![NodeCheckerError::new(
+            format!(
+                "Expected {} elements, but got {}",
+                tuple_values.elements.len(),
+                children.len()
+            ),
+            node_range,
+        )];
+    }
+
+    let mut errors = vec![];
+
+    for (v2_value, (v1_child, v1_offset)) in tuple_values.elements.iter().zip(children.iter()) {
+        errors.extend(check_tuple_value_as_deconstruction_element(
+            v2_value,
+            &v1_child.node,
+            *v1_offset,
+        ));
+    }
+
+    errors
+}
+
+/// Check a single V2 TupleValue against a V1 TupleDeconstructionElement.
+/// - V2 TupleValue { expression: None } maps to V1 TupleDeconstructionElement { } (empty)
+/// - V2 TupleValue { expression: Some(Identifier) } maps to V1 TupleDeconstructionElement { member: TupleMember > UntypedTupleMember > Name }
+fn check_tuple_value_as_deconstruction_element(
+    v2_value: &TupleValueStruct,
+    node: &Node, // V1 TupleDeconstructionElement
+    text_offset: TextIndex,
+) -> Vec<NodeCheckerError> {
+    let node_range = text_offset..(text_offset + node.text_len());
+
+    if node.kind() != NodeKind::Nonterminal(NonterminalKind::TupleDeconstructionElement) {
+        return vec![NodeCheckerError::new(
+            format!(
+                "Expected node kind to be TupleDeconstructionElement, but it was {}",
+                node.kind()
+            ),
+            node_range,
+        )];
+    }
+
+    let mut children = children_with_offsets(node, text_offset);
+    let mut errors = vec![];
+
+    if let Some(expr) = &v2_value.expression {
+        // V2 has expression → V1 should have Member > TupleMember > UntypedTupleMember > Name
+        if let Some((member_edge, member_offset)) =
+            extract_with_label(&mut children, EdgeLabel::Member)
+        {
+            // Navigate: TupleMember → child (UntypedTupleMember) → Name edge
+            let member_children = children_with_offsets(&member_edge.node, member_offset);
+            if let Some((variant_child, variant_offset)) = member_children.first() {
+                let untyped_children = children_with_offsets(&variant_child.node, *variant_offset);
+                let mut found_name = false;
+                for (uc, uc_offset) in &untyped_children {
+                    if uc.label == EdgeLabel::Name {
+                        found_name = true;
+                        // V2 expr should be Expression::Identifier(ident)
+                        // V1 name is an Identifier terminal
+                        match expr {
+                            Expression::Identifier(ident) => {
+                                errors.extend(ident.check_node_with_offset(&uc.node, *uc_offset));
+                            }
+                            _ => {
+                                errors.push(NodeCheckerError::new(
+                                    format!("Expected Expression::Identifier for tuple deconstruction element, got {:?}", expr),
+                                    node_range.clone(),
+                                ));
+                            }
+                        }
+                    }
+                }
+                if !found_name {
+                    errors.push(NodeCheckerError::new(
+                        "Expected Name edge in UntypedTupleMember".to_string(),
+                        node_range.clone(),
+                    ));
+                }
+            }
+        } else {
+            errors.push(NodeCheckerError::new(
+                "Expected member to be present in TupleDeconstructionElement, but it was not"
+                    .to_string(),
+                node_range.clone(),
+            ));
+        }
+    } else {
+        // V2 has no expression → V1 should have no member (empty element)
+        if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Member) {
+            errors.push(NodeCheckerError::new(
+                format!("Expected member to not be present, but it was: {child:#?}"),
+                node_range.clone(),
+            ));
+        }
+    }
+
+    errors
+}
+
 //
 // Sequences:
 //
@@ -3757,65 +3880,160 @@ impl NodeChecker for ExponentiationExpression {
     }
 }
 
-/// Generic `NodeChecker` for sequences
+/// `NodeChecker` for `ExpressionStatement` - V2's ExpressionStatement can also map to V1's TupleDeconstructionStatement
+/// when V2 parses `(a, b) = foo;` as ExpressionStatement { AssignmentExpression { TupleExpression, =, foo } }
+/// but V1 parses it as TupleDeconstructionStatement { open_paren, elements, close_paren, equal, expression }
 impl NodeChecker for ExpressionStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
-        if node.kind() != NodeKind::Nonterminal(NonterminalKind::ExpressionStatement) {
-            // Don't even check the rest
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected node kind to be {}, but it was {}",
-                    NonterminalKind::ExpressionStatement,
-                    node.kind()
-                ),
-                node_range,
-            )];
+        let is_v1_expr_stmt =
+            node.kind() == NodeKind::Nonterminal(NonterminalKind::ExpressionStatement);
+        let is_v1_tuple_deconstruct =
+            node.kind() == NodeKind::Nonterminal(NonterminalKind::TupleDeconstructionStatement);
+
+        if !is_v1_expr_stmt && !is_v1_tuple_deconstruct {
+            return vec![NodeCheckerError::new(format!(
+                "Expected node kind to be ExpressionStatement or TupleDeconstructionStatement, but it was {}",
+                node.kind()
+            ), node_range)];
         }
 
         let mut children = children_with_offsets(node, text_offset);
-
         let mut errors = vec![];
 
-        // expression
-
-        {
-            let expression = &self.expression;
-
-            // Prepare edge label
-
+        if is_v1_expr_stmt {
+            // Standard path: check expression and semicolon against V1's ExpressionStatement
             if let Some((child, child_offset)) =
                 extract_with_label(&mut children, EdgeLabel::Expression)
             {
-                let child_errors = expression.check_node_with_offset(&child.node, child_offset);
-                errors.extend(child_errors);
+                errors.extend(
+                    self.expression
+                        .check_node_with_offset(&child.node, child_offset),
+                );
             } else {
                 errors.push(NodeCheckerError::new(
                     "Expected expression to be present in the CST, but it was not".to_string(),
                     node_range.clone(),
                 ));
             }
-        }
+        } else {
+            // TupleDeconstructionStatement path:
+            // V2 expression must be AssignmentExpression with TupleExpression left_operand
+            if let Expression::AssignmentExpression(assignment) = &self.expression {
+                if let Expression::TupleExpression(tuple) = &assignment.left_operand {
+                    // var_keyword (optional, pre-0.5.0) — skip if present
+                    extract_with_label(&mut children, EdgeLabel::VarKeyword);
 
-        // semicolon
+                    // open_paren
+                    if let Some((child, child_offset)) =
+                        extract_with_label(&mut children, EdgeLabel::OpenParen)
+                    {
+                        errors.extend(
+                            tuple
+                                .open_paren
+                                .check_node_with_offset(&child.node, child_offset),
+                        );
+                    } else {
+                        errors.push(NodeCheckerError::new(
+                            "Expected open_paren to be present in the CST, but it was not"
+                                .to_string(),
+                            node_range.clone(),
+                        ));
+                    }
 
-        {
-            let semicolon = &self.semicolon;
+                    // elements: map TupleValues to TupleDeconstructionElements
+                    if let Some((child, child_offset)) =
+                        extract_with_label(&mut children, EdgeLabel::Elements)
+                    {
+                        errors.extend(check_tuple_values_as_deconstruction_elements(
+                            &tuple.items,
+                            &child.node,
+                            child_offset,
+                        ));
+                    } else {
+                        errors.push(NodeCheckerError::new(
+                            "Expected elements to be present in the CST, but it was not"
+                                .to_string(),
+                            node_range.clone(),
+                        ));
+                    }
 
-            // Prepare edge label
+                    // close_paren
+                    if let Some((child, child_offset)) =
+                        extract_with_label(&mut children, EdgeLabel::CloseParen)
+                    {
+                        errors.extend(
+                            tuple
+                                .close_paren
+                                .check_node_with_offset(&child.node, child_offset),
+                        );
+                    } else {
+                        errors.push(NodeCheckerError::new(
+                            "Expected close_paren to be present in the CST, but it was not"
+                                .to_string(),
+                            node_range.clone(),
+                        ));
+                    }
 
-            if let Some((child, child_offset)) =
-                extract_with_label(&mut children, EdgeLabel::Semicolon)
-            {
-                let child_errors = semicolon.check_node_with_offset(&child.node, child_offset);
-                errors.extend(child_errors);
+                    // equal (V2 operator → V1 equal)
+                    if let Some((child, child_offset)) =
+                        extract_with_label(&mut children, EdgeLabel::Equal)
+                    {
+                        errors.extend(
+                            assignment
+                                .expression_assignment_expression_operator
+                                .check_node_with_offset(&child.node, child_offset),
+                        );
+                    } else {
+                        errors.push(NodeCheckerError::new(
+                            "Expected equal to be present in the CST, but it was not".to_string(),
+                            node_range.clone(),
+                        ));
+                    }
+
+                    // expression (V2 right_operand → V1 expression)
+                    if let Some((child, child_offset)) =
+                        extract_with_label(&mut children, EdgeLabel::Expression)
+                    {
+                        errors.extend(
+                            assignment
+                                .right_operand
+                                .check_node_with_offset(&child.node, child_offset),
+                        );
+                    } else {
+                        errors.push(NodeCheckerError::new(
+                            "Expected expression to be present in the CST, but it was not"
+                                .to_string(),
+                            node_range.clone(),
+                        ));
+                    }
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        format!("Expected left_operand to be TupleExpression for TupleDeconstructionStatement mapping, but it was {:?}", assignment.left_operand),
+                        node_range.clone(),
+                    ));
+                }
             } else {
                 errors.push(NodeCheckerError::new(
-                    "Expected semicolon to be present in the CST, but it was not".to_string(),
+                    format!("Expected expression to be AssignmentExpression for TupleDeconstructionStatement mapping, but it was {:?}", self.expression),
                     node_range.clone(),
                 ));
             }
+        }
+
+        // semicolon (same edge label in both V1 types)
+        if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Semicolon)
+        {
+            errors.extend(
+                self.semicolon
+                    .check_node_with_offset(&child.node, child_offset),
+            );
+        } else {
+            errors.push(NodeCheckerError::new(
+                "Expected semicolon to be present in the CST, but it was not".to_string(),
+                node_range.clone(),
+            ));
         }
 
         if !children.is_empty() {
