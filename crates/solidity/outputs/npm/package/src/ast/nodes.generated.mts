@@ -8389,14 +8389,11 @@ export class ConstructorAttribute {
  * ```ebnf
  * (* Deprecated in 0.6.0 *)
  * UnnamedFunctionAttribute = (* variant: *) ModifierInvocation
- *                          | (* variant: *) CONSTANT_KEYWORD (* Deprecated in 0.5.0 *)
  *                          | (* variant: *) EXTERNAL_KEYWORD
  *                          | (* variant: *) INTERNAL_KEYWORD (* Deprecated in 0.5.0 *)
  *                          | (* variant: *) PAYABLE_KEYWORD
  *                          | (* variant: *) PRIVATE_KEYWORD (* Deprecated in 0.5.0 *)
- *                          | (* variant: *) PUBLIC_KEYWORD (* Deprecated in 0.5.0 *)
- *                          | (* variant: *) PURE_KEYWORD (* Introduced in 0.4.16 and deprecated in 0.6.0. *)
- *                          | (* variant: *) VIEW_KEYWORD; (* Introduced in 0.4.16 and deprecated in 0.6.0. *)
+ *                          | (* variant: *) PUBLIC_KEYWORD; (* Deprecated in 0.5.0 *)
  * ```
  */
 export class UnnamedFunctionAttribute {

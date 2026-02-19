@@ -2421,10 +2421,6 @@ language_v2_macros::compile!(Language(
                                     enabled = Till("0.6.0"),
                                     variants = [
                                         EnumVariant(reference = ModifierInvocation),
-                                        EnumVariant(
-                                            reference = ConstantKeyword,
-                                            enabled = Till("0.5.0")
-                                        ),
                                         EnumVariant(reference = ExternalKeyword),
                                         EnumVariant(
                                             reference = InternalKeyword,
@@ -2438,14 +2434,6 @@ language_v2_macros::compile!(Language(
                                         EnumVariant(
                                             reference = PublicKeyword,
                                             enabled = Till("0.5.0")
-                                        ),
-                                        EnumVariant(
-                                            reference = PureKeyword,
-                                            enabled = Range(from = "0.4.16", till = "0.6.0")
-                                        ),
-                                        EnumVariant(
-                                            reference = ViewKeyword,
-                                            enabled = Range(from = "0.4.16", till = "0.6.0")
                                         )
                                     ]
                                 ),

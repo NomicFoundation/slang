@@ -1,0 +1,1 @@
+function() constant foo;

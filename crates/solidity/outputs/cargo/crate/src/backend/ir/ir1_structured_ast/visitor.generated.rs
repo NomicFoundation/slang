@@ -2730,14 +2730,11 @@ pub fn accept_unnamed_function_attribute(
         UnnamedFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
             accept_modifier_invocation(modifier_invocation, visitor);
         }
-        UnnamedFunctionAttribute::ConstantKeyword
-        | UnnamedFunctionAttribute::ExternalKeyword
+        UnnamedFunctionAttribute::ExternalKeyword
         | UnnamedFunctionAttribute::InternalKeyword
         | UnnamedFunctionAttribute::PayableKeyword
         | UnnamedFunctionAttribute::PrivateKeyword
-        | UnnamedFunctionAttribute::PublicKeyword
-        | UnnamedFunctionAttribute::PureKeyword
-        | UnnamedFunctionAttribute::ViewKeyword => {}
+        | UnnamedFunctionAttribute::PublicKeyword => {}
     }
     visitor.leave_unnamed_function_attribute(node);
 }
