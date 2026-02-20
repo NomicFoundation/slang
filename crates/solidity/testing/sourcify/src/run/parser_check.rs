@@ -30,6 +30,7 @@ pub(super) fn run(contract: &Contract, unit: &CompilationUnit, events: &Events) 
             continue;
         }
 
+        // _SLANG_V2_PARSER_VERSION_ (keep in sync)
         if contract.version == Version::new(0, 8, 30) {
             let v2_errors = slang_solidity_v2_parser::temp_testing::compare_with_v1_cursor(
                 &source,

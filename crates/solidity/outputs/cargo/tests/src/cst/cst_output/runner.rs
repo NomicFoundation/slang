@@ -40,6 +40,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
     // TODO(v2): We forde version 0.8.30 to be tested because it's the only version
     // used by the V2 parser.
     // Once other versions are added we should only test breaking versions.
+    // _SLANG_V2_PARSER_VERSION_ (keep in sync)
     let mut versions: Vec<Version> = VERSION_BREAKS.to_vec();
     versions.push(Version::new(0, 8, 30));
     versions.sort();

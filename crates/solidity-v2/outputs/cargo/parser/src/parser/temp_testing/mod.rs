@@ -45,6 +45,7 @@ impl V2TesterConstructor {
             "ContractDefinition" => {
                 Box::new(V2TesterImpl::<ContractDefinition, ContractDefinitionParser>::new())
             }
+            // TODO(v2): We should consolidate all tests to the supported non terminals
             _ => Box::new(NonSupportedParserTester),
         }
     }
@@ -97,6 +98,7 @@ impl<NT: NodeChecker + Debug + PartialEq, T: ParserV2<NonTerminal = NT>> V2Teste
     ) -> Result<()> {
         // We check version 0.8.30
         // TODO(v2) check all  versions
+        // _SLANG_V2_PARSER_VERSION_ (keep in sync)
         if *version != Version::new(0, 8, 30) {
             return Ok(());
         }

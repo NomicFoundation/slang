@@ -10,7 +10,9 @@ use serde::Serialize;
 struct RustCode(String);
 
 // TODO(v2): Support multiple versions
-pub(crate) const VERSION: Version = Version::new(0, 8, 30);
+// This is exported as it's currently being checked in various places
+// _SLANG_V2_PARSER_VERSION_ (keep in sync)
+pub const VERSION: Version = Version::new(0, 8, 30);
 
 /// An `LALRPOPDerivedItem` represents a single LALRPOP rule, for example:
 ///
@@ -70,7 +72,9 @@ struct LALRPOPField {
 
 /// Checks if a given version specifier enables the supported version
 fn is_enabled(enabled: Option<&VersionSpecifier>) -> bool {
-    enabled.as_ref().is_none_or(|v| v.contains(&VERSION))
+    enabled
+        .unwrap_or(&VersionSpecifier::default())
+        .contains(&VERSION)
 }
 
 /// Helper rules for LALRPOP matching rules
