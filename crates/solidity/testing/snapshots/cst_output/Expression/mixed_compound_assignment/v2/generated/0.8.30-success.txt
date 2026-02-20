@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+AssignmentExpression(
+    AssignmentExpressionStruct {
+        left_operand: AssignmentExpression(
+            AssignmentExpressionStruct {
+                left_operand: Identifier(
+                    Identifier {
+                        range: 0..1,
+                    },
+                ),
+                expression_assignment_expression_operator: PlusEqual(
+                    PlusEqual {
+                        range: 2..4,
+                    },
+                ),
+                right_operand: Identifier(
+                    Identifier {
+                        range: 5..6,
+                    },
+                ),
+            },
+        ),
+        expression_assignment_expression_operator: MinusEqual(
+            MinusEqual {
+                range: 7..9,
+            },
+        ),
+        right_operand: Identifier(
+            Identifier {
+                range: 10..11,
+            },
+        ),
+    },
+)
