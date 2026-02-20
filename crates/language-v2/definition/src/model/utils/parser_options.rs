@@ -11,7 +11,7 @@ pub struct ParserOptions {
 
     /// Whether to make the parsing rule public, generating a parser
     /// that can be used from outside the module.    
-    pub pubb: bool,
+    pub public: bool,
 
     /// Verbatim code to insert into the parser rule.
     ///

@@ -7,7 +7,7 @@ use language_v2_definition::model::Language;
 use serde::Serialize;
 
 use crate::lexer::LexerModel;
-use crate::parser::item_builders::LALRPOPItemInner;
+use crate::parser::item_builders::LALRPOPDerivedItem;
 use crate::parser::parser_builder::ParserBuilder;
 
 /// A parser model used while generating the parser (and the lexer).
@@ -45,7 +45,7 @@ struct ParserTopic {
 #[serde(tag = "type", content = "content")]
 pub(crate) enum LALRPOPItem {
     Verbatim(String),
-    Items(Vec<LALRPOPItemInner>),
+    Items(Vec<LALRPOPDerivedItem>),
 }
 
 impl ParserModel {

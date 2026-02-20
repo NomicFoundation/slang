@@ -4,32 +4,32 @@ use crate::parser::nodes::*;
 
 grammar<'source>(source: &'source str);
 
-Sep<S, T>: Vec<T> = {
+SeparatedAllowEmpty<S, T>: Vec<T> = {
     => vec![],
-    SepOne<S, T> => <>,
+    Separated<S, T> => <>,
 };
 
-SepOne<S, T>: Vec<T> = {
+Separated<S, T>: Vec<T> = {
     <e:T> => {
         vec![e]
     },
-    <mut v: SepOne<S, T>> S <e: T> => {
+    <mut v: Separated<S, T>> S <e: T> => {
         v.push(e);
         v
     },
 };
 
 #[inline]
-Rep<T>: Vec<T> = {
+RepeatedAllowEmpty<T>: Vec<T> = {
     => vec![],
-    RepOne<T> => <>,
+    Repeated<T> => <>,
 };
 
-RepOne<T>: Vec<T> = {
+Repeated<T>: Vec<T> = {
     <T> => {
         vec![<>]
     },
-    <mut v: RepOne<T>> <e: T> => {
+    <mut v: Repeated<T>> <e: T> => {
         v.push(e);
         v
     },
@@ -49,7 +49,7 @@ RepOne<T>: Vec<T> = {
 
     {%- for item in item.content -%}
     {% if item.inline %}#[inline]
-    {% endif %}{% if item.pubb -%} pub {% endif -%} {{ item.name }}: {{ item.producing_type }} = {
+    {% endif %}{% if item.public -%} pub {% endif -%} {{ item.name }}: {{ item.producing_type }} = {
         {% for option in item.options -%}
             {% for field in option.fields -%}
                 <{{ field.capturing_name }}: {{ field.rule }}> {{ " " }}

@@ -6,32 +6,32 @@ use crate::parser::nodes::*;
 
 grammar<'source>(source: &'source str);
 
-Sep<S, T>: Vec<T> = {
+SeparatedAllowEmpty<S, T>: Vec<T> = {
     => vec![],
-    SepOne<S, T> => <>,
+    Separated<S, T> => <>,
 };
 
-SepOne<S, T>: Vec<T> = {
+Separated<S, T>: Vec<T> = {
     <e:T> => {
         vec![e]
     },
-    <mut v: SepOne<S, T>> S <e: T> => {
+    <mut v: Separated<S, T>> S <e: T> => {
         v.push(e);
         v
     },
 };
 
 #[inline]
-Rep<T>: Vec<T> = {
+RepeatedAllowEmpty<T>: Vec<T> = {
     => vec![],
-    RepOne<T> => <>,
+    Repeated<T> => <>,
 };
 
-RepOne<T>: Vec<T> = {
+Repeated<T>: Vec<T> = {
     <T> => {
         vec![<>]
     },
-    <mut v: RepOne<T>> <e: T> => {
+    <mut v: Repeated<T>> <e: T> => {
         v.push(e);
         v
     },
@@ -70,11 +70,11 @@ RepOne<T>: Vec<T> = {
         
     };
     VersionExpressionSets: VersionExpressionSets = {
-        <_VersionExpressionSet: SepOne<BarBar, <VersionExpressionSet>>>  => new_version_expression_sets(<>),
+        <_VersionExpressionSet: Separated<BarBar, <VersionExpressionSet>>>  => new_version_expression_sets(<>),
         
     };
     VersionExpressionSet: VersionExpressionSet = {
-        <_VersionExpression: RepOne<<VersionExpression>>>  => new_version_expression_set(<>),
+        <_VersionExpression: Repeated<<VersionExpression>>>  => new_version_expression_set(<>),
         
     };
     VersionExpression: VersionExpression = {
@@ -107,7 +107,7 @@ RepOne<T>: Vec<T> = {
         
     };
     SimpleVersionLiteral: SimpleVersionLiteral = {
-        <_VersionSpecifier: SepOne<Period, <VersionSpecifier>>>  => new_simple_version_literal(<>),
+        <_VersionSpecifier: Separated<Period, <VersionSpecifier>>>  => new_simple_version_literal(<>),
         
     };
     
@@ -126,7 +126,7 @@ RepOne<T>: Vec<T> = {
         
     };
     SourceUnitMembers: SourceUnitMembers = {
-        <_SourceUnitMember: Rep<<SourceUnitMember>>>  => new_source_unit_members(<>),
+        <_SourceUnitMember: RepeatedAllowEmpty<<SourceUnitMember>>>  => new_source_unit_members(<>),
         
     };
     SourceUnitMember: SourceUnitMember = {
@@ -184,7 +184,7 @@ PragmaDirective: PragmaDirective = {
         
     };
     ImportDeconstructionSymbols: ImportDeconstructionSymbols = {
-        <_ImportDeconstructionSymbol: SepOne<Comma, <ImportDeconstructionSymbol>>>  => new_import_deconstruction_symbols(<>),
+        <_ImportDeconstructionSymbol: Separated<Comma, <ImportDeconstructionSymbol>>>  => new_import_deconstruction_symbols(<>),
         
     };
     ImportDeconstructionSymbol: ImportDeconstructionSymbol = {
@@ -208,7 +208,7 @@ PragmaDirective: PragmaDirective = {
         
     };
     UsingDeconstructionSymbols: UsingDeconstructionSymbols = {
-        <_UsingDeconstructionSymbol: SepOne<Comma, <UsingDeconstructionSymbol>>>  => new_using_deconstruction_symbols(<>),
+        <_UsingDeconstructionSymbol: Separated<Comma, <UsingDeconstructionSymbol>>>  => new_using_deconstruction_symbols(<>),
         
     };
     UsingDeconstructionSymbol: UsingDeconstructionSymbol = {
@@ -284,7 +284,7 @@ pub ContractDefinition: ContractDefinition = {
 // In this case, we require at least one specifier, the case with zero is handled above.
 // Note that the return type now includes the trailing members
 ContractSpecifiersTrailingMembers: (ContractSpecifiers, (OpenBrace, ContractMembers, CloseBrace)) = {
-    <mut _ContractSpecifier: Rep<<ContractSpecifier>>> <_tail: ContractSpecifierTrailingMembers>  => {
+    <mut _ContractSpecifier: RepeatedAllowEmpty<<ContractSpecifier>>> <_tail: ContractSpecifierTrailingMembers>  => {
         let (specifier, tail) = _tail;
         _ContractSpecifier.push(specifier);
         (new_contract_specifiers(_ContractSpecifier), tail)
@@ -332,7 +332,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
         
     };
     InheritanceTypes: InheritanceTypes = {
-        <_InheritanceType: SepOne<Comma, <InheritanceType>>>  => new_inheritance_types(<>),
+        <_InheritanceType: Separated<Comma, <InheritanceType>>>  => new_inheritance_types(<>),
         
     };
     InheritanceType: InheritanceType = {
@@ -344,7 +344,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
         
     };
     ContractMembers: ContractMembers = {
-        <_ContractMember: Rep<<ContractMember>>>  => new_contract_members(<>),
+        <_ContractMember: RepeatedAllowEmpty<<ContractMember>>>  => new_contract_members(<>),
         
     };
     ContractMember: ContractMember = {
@@ -370,7 +370,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
         
     };
     InterfaceMembers: InterfaceMembers = {
-        <_ContractMember: Rep<<ContractMember>>>  => new_interface_members(<>),
+        <_ContractMember: RepeatedAllowEmpty<<ContractMember>>>  => new_interface_members(<>),
         
     };
     
@@ -381,7 +381,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
         
     };
     LibraryMembers: LibraryMembers = {
-        <_ContractMember: Rep<<ContractMember>>>  => new_library_members(<>),
+        <_ContractMember: RepeatedAllowEmpty<<ContractMember>>>  => new_library_members(<>),
         
     };
     
@@ -392,7 +392,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
         
     };
     StructMembers: StructMembers = {
-        <_StructMember: Rep<<StructMember>>>  => new_struct_members(<>),
+        <_StructMember: RepeatedAllowEmpty<<StructMember>>>  => new_struct_members(<>),
         
     };
     StructMember: StructMember = {
@@ -407,7 +407,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
         
     };
     EnumMembers: EnumMembers = {
-        <_Identifier: Sep<Comma, <Identifier>>>  => new_enum_members(<>),
+        <_Identifier: SeparatedAllowEmpty<Comma, <Identifier>>>  => new_enum_members(<>),
         
     };
     
@@ -491,7 +491,7 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
     };
     #[inline]
     StateVariableAttributes: StateVariableAttributes = {
-        <_StateVariableAttribute: Rep<<StateVariableAttribute>>>  => new_state_variable_attributes(<>),
+        <_StateVariableAttribute: RepeatedAllowEmpty<<StateVariableAttribute>>>  => new_state_variable_attributes(<>),
         
     };
     StateVariableAttribute: StateVariableAttribute = {
@@ -522,7 +522,7 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
         
     };
     Parameters: Parameters = {
-        <_Parameter: Sep<Comma, <Parameter>>>  => new_parameters(<>),
+        <_Parameter: SeparatedAllowEmpty<Comma, <Parameter>>>  => new_parameters(<>),
         
     };
     Parameter: Parameter = {
@@ -530,7 +530,7 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
         
     };
     FunctionAttributes: FunctionAttributes = {
-        <_FunctionAttribute: Rep<<FunctionAttribute>>>  => new_function_attributes(<>),
+        <_FunctionAttribute: RepeatedAllowEmpty<<FunctionAttribute>>>  => new_function_attributes(<>),
         
     };
     FunctionAttribute: FunctionAttribute = {
@@ -555,7 +555,7 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
         
     };
     OverridePaths: OverridePaths = {
-        <_IdentifierPath: SepOne<Comma, <IdentifierPath>>>  => new_override_paths(<>),
+        <_IdentifierPath: Separated<Comma, <IdentifierPath>>>  => new_override_paths(<>),
         
     };
     ReturnsDeclaration: ReturnsDeclaration = {
@@ -572,7 +572,7 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
         
     };
     ConstructorAttributes: ConstructorAttributes = {
-        <_ConstructorAttribute: Rep<<ConstructorAttribute>>>  => new_constructor_attributes(<>),
+        <_ConstructorAttribute: RepeatedAllowEmpty<<ConstructorAttribute>>>  => new_constructor_attributes(<>),
         
     };
     ConstructorAttribute: ConstructorAttribute = {
@@ -587,7 +587,7 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
         
     };
     FallbackFunctionAttributes: FallbackFunctionAttributes = {
-        <_FallbackFunctionAttribute: Rep<<FallbackFunctionAttribute>>>  => new_fallback_function_attributes(<>),
+        <_FallbackFunctionAttribute: RepeatedAllowEmpty<<FallbackFunctionAttribute>>>  => new_fallback_function_attributes(<>),
         
     };
     FallbackFunctionAttribute: FallbackFunctionAttribute = {
@@ -605,7 +605,7 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
         
     };
     ReceiveFunctionAttributes: ReceiveFunctionAttributes = {
-        <_ReceiveFunctionAttribute: Rep<<ReceiveFunctionAttribute>>>  => new_receive_function_attributes(<>),
+        <_ReceiveFunctionAttribute: RepeatedAllowEmpty<<ReceiveFunctionAttribute>>>  => new_receive_function_attributes(<>),
         
     };
     ReceiveFunctionAttribute: ReceiveFunctionAttribute = {
@@ -624,7 +624,7 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
         
     };
     ModifierAttributes: ModifierAttributes = {
-        <_ModifierAttribute: Rep<<ModifierAttribute>>>  => new_modifier_attributes(<>),
+        <_ModifierAttribute: RepeatedAllowEmpty<<ModifierAttribute>>>  => new_modifier_attributes(<>),
         
     };
     ModifierAttribute: ModifierAttribute = {
@@ -648,7 +648,7 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
         
     };
     EventParameters: EventParameters = {
-        <_EventParameter: Sep<Comma, <EventParameter>>>  => new_event_parameters(<>),
+        <_EventParameter: SeparatedAllowEmpty<Comma, <EventParameter>>>  => new_event_parameters(<>),
         
     };
     EventParameter: EventParameter = {
@@ -675,7 +675,7 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
         
     };
     ErrorParameters: ErrorParameters = {
-        <_ErrorParameter: Sep<Comma, <ErrorParameter>>>  => new_error_parameters(<>),
+        <_ErrorParameter: SeparatedAllowEmpty<Comma, <ErrorParameter>>>  => new_error_parameters(<>),
         
     };
     ErrorParameter: ErrorParameter = {
@@ -745,7 +745,7 @@ FunctionTypeInternalReturn: FunctionType = {
 };
 
     FunctionTypeAttributes: FunctionTypeAttributes = {
-        <_FunctionTypeAttribute: Rep<<FunctionTypeAttribute>>>  => new_function_type_attributes(<>),
+        <_FunctionTypeAttribute: RepeatedAllowEmpty<<FunctionTypeAttribute>>>  => new_function_type_attributes(<>),
         
     };
     FunctionTypeAttribute: FunctionTypeAttribute = {
@@ -806,7 +806,7 @@ FunctionTypeInternalReturn: FunctionType = {
         
     };
     Statements: Statements = {
-        <_Statement: Rep<<Statement>>>  => new_statements(<>),
+        <_Statement: RepeatedAllowEmpty<<Statement>>>  => new_statements(<>),
         
     };
     
@@ -910,7 +910,7 @@ IdentifierPathNoRevert: IdentifierPath = {
         
     };
     AssemblyFlags: AssemblyFlags = {
-        <_StringLiteral: SepOne<Comma, <StringLiteral>>>  => new_assembly_flags(<>),
+        <_StringLiteral: Separated<Comma, <StringLiteral>>>  => new_assembly_flags(<>),
         
     };
     
@@ -951,7 +951,7 @@ IdentifierPathNoRevert: IdentifierPath = {
 //
 // Since they also share a prefix (`(,,,`) we need to have a common prefix rule to avoid reduce/reduce conflicts.
 MultiTypedDeclarationElements: MultiTypedDeclarationElements = {
-    <prefix: TuplePrefix> <differentiator: VariableDeclaration> <_TypedTupleDeconstructionElement: (Comma <SepOne<Comma, <MultiTypedDeclarationElement>>>)?>  => {
+    <prefix: TuplePrefix> <differentiator: VariableDeclaration> <_TypedTupleDeconstructionElement: (Comma <Separated<Comma, <MultiTypedDeclarationElement>>>)?>  => {
         let mut elements = vec![new_multi_typed_declaration_element(None); prefix];
         elements.push(new_multi_typed_declaration_element(Some(differentiator)));
         elements.extend(_TypedTupleDeconstructionElement.unwrap_or(vec![]));
@@ -1072,7 +1072,7 @@ ExpressionTrailingBlock: (Expression, Block) = {
 };
 
     CatchClauses: CatchClauses = {
-        <_CatchClause: RepOne<<CatchClause>>>  => new_catch_clauses(<>),
+        <_CatchClause: Repeated<<CatchClause>>>  => new_catch_clauses(<>),
         
     };
     CatchClause: CatchClause = {
@@ -1405,7 +1405,7 @@ IndexAccessPath1<IdentPathRule>: IndexAccessPath = {
         
     };
     PositionalArguments: PositionalArguments = {
-        <_Expression: Sep<Comma, <Expression>>>  => new_positional_arguments(<>),
+        <_Expression: SeparatedAllowEmpty<Comma, <Expression>>>  => new_positional_arguments(<>),
         
     };
     NamedArgumentsDeclaration: NamedArgumentsDeclaration = {
@@ -1417,11 +1417,11 @@ IndexAccessPath1<IdentPathRule>: IndexAccessPath = {
         
     };
     NamedArguments: NamedArguments = {
-        <_NamedArgument: Sep<Comma, <NamedArgument>>>  => new_named_arguments(<>),
+        <_NamedArgument: SeparatedAllowEmpty<Comma, <NamedArgument>>>  => new_named_arguments(<>),
         
     };
     CallOptions: CallOptions = {
-        <_NamedArgument: SepOne<Comma, <NamedArgument>>>  => new_call_options(<>),
+        <_NamedArgument: Separated<Comma, <NamedArgument>>>  => new_call_options(<>),
         
     };
     NamedArgument: NamedArgument = {
@@ -1464,7 +1464,7 @@ TupleValues: TupleValues = {
         let elements = vec![new_tuple_value(None); prefix + 1];
         new_tuple_values(elements)
     },
-    <prefix: TuplePrefix> <differentiator: Expression> <_TupleValue: (Comma <SepOne<Comma, <TupleValue>>>)?>  => {
+    <prefix: TuplePrefix> <differentiator: Expression> <_TupleValue: (Comma <Separated<Comma, <TupleValue>>>)?>  => {
         let mut elements = vec![new_tuple_value(None); prefix];
         elements.push(new_tuple_value(Some(differentiator)));
         elements.extend(_TupleValue.unwrap_or(vec![]));
@@ -1482,7 +1482,7 @@ TupleValues: TupleValues = {
         
     };
     ArrayValues: ArrayValues = {
-        <_Expression: SepOne<Comma, <Expression>>>  => new_array_values(<>),
+        <_Expression: Separated<Comma, <Expression>>>  => new_array_values(<>),
         
     };
     
@@ -1520,7 +1520,7 @@ HexNumberExpression: HexNumberExpression = {
         
     };
     StringLiterals: StringLiterals = {
-        <_StringLiteral: RepOne<<StringLiteral>>>  => new_string_literals(<>),
+        <_StringLiteral: Repeated<<StringLiteral>>>  => new_string_literals(<>),
         
     };
     StringLiteral: StringLiteral = {
@@ -1529,7 +1529,7 @@ HexNumberExpression: HexNumberExpression = {
         
     };
     HexStringLiterals: HexStringLiterals = {
-        <_HexStringLiteral: RepOne<<HexStringLiteral>>>  => new_hex_string_literals(<>),
+        <_HexStringLiteral: Repeated<<HexStringLiteral>>>  => new_hex_string_literals(<>),
         
     };
     HexStringLiteral: HexStringLiteral = {
@@ -1538,7 +1538,7 @@ HexNumberExpression: HexNumberExpression = {
         
     };
     UnicodeStringLiterals: UnicodeStringLiterals = {
-        <_UnicodeStringLiteral: RepOne<<UnicodeStringLiteral>>>  => new_unicode_string_literals(<>),
+        <_UnicodeStringLiteral: Repeated<<UnicodeStringLiteral>>>  => new_unicode_string_literals(<>),
         
     };
     UnicodeStringLiteral: UnicodeStringLiteral = {
@@ -1570,7 +1570,7 @@ IdentifierPathTail: Vec<IdentifierPathElement> = {
     
 };
 IdentifierPathTailElements: Vec<IdentifierPathElement> = {
-    <_MemberAccessIdentifier: SepOne<Period, <IdentifierPathElement>>>  => <>,
+    <_MemberAccessIdentifier: Separated<Period, <IdentifierPathElement>>>  => <>,
     
 };
 
@@ -1596,7 +1596,7 @@ YulBlock: YulBlock = {
 };
 
     YulStatements: YulStatements = {
-        <_YulStatement: Rep<<YulStatement>>>  => new_yul_statements(<>),
+        <_YulStatement: RepeatedAllowEmpty<<YulStatement>>>  => new_yul_statements(<>),
         
     };
     YulStatement: YulStatement = {
@@ -1622,7 +1622,7 @@ YulBlock: YulBlock = {
         
     };
     YulParameters: YulParameters = {
-        <_YulIdentifier: Sep<Comma, <YulIdentifier>>>  => new_yul_parameters(<>),
+        <_YulIdentifier: SeparatedAllowEmpty<Comma, <YulIdentifier>>>  => new_yul_parameters(<>),
         
     };
     YulReturnsDeclaration: YulReturnsDeclaration = {
@@ -1630,7 +1630,7 @@ YulBlock: YulBlock = {
         
     };
     YulVariableNames: YulVariableNames = {
-        <_YulIdentifier: SepOne<Comma, <YulIdentifier>>>  => new_yul_variable_names(<>),
+        <_YulIdentifier: Separated<Comma, <YulIdentifier>>>  => new_yul_variable_names(<>),
         
     };
     YulVariableDeclarationStatement: YulVariableDeclarationStatement = {
@@ -1662,7 +1662,7 @@ YulBlock: YulBlock = {
         
     };
     YulSwitchCases: YulSwitchCases = {
-        <_YulSwitchCase: RepOne<<YulSwitchCase>>>  => new_yul_switch_cases(<>),
+        <_YulSwitchCase: Repeated<<YulSwitchCase>>>  => new_yul_switch_cases(<>),
         
     };
     YulSwitchCase: YulSwitchCase = {
@@ -1713,15 +1713,15 @@ YulBlock: YulBlock = {
         
     };
     YulArguments: YulArguments = {
-        <_YulExpression: Sep<Comma, <YulExpression>>>  => new_yul_arguments(<>),
+        <_YulExpression: SeparatedAllowEmpty<Comma, <YulExpression>>>  => new_yul_arguments(<>),
         
     };
     YulPaths: YulPaths = {
-        <_YulPath: SepOne<Comma, <YulPath>>>  => new_yul_paths(<>),
+        <_YulPath: Separated<Comma, <YulPath>>>  => new_yul_paths(<>),
         
     };
     YulPath: YulPath = {
-        <_YulIdentifier: SepOne<Period, <YulIdentifier>>>  => new_yul_path(<>),
+        <_YulIdentifier: Separated<Period, <YulIdentifier>>>  => new_yul_path(<>),
         
     };
     YulLiteral: YulLiteral = {

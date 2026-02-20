@@ -86,10 +86,10 @@ impl<'a> ParserBuilder<'a> {
         };
 
         // Apply parser options to all generated items
-        if let Some(ParserOptions { inline, pubb, .. }) = parser_options {
+        if let Some(ParserOptions { inline, public, .. }) = parser_options {
             for item in &mut items {
                 item.inline = *inline;
-                item.pubb = *pubb;
+                item.public = *public;
             }
         }
 

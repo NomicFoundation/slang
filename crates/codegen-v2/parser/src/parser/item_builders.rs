@@ -12,7 +12,7 @@ struct RustCode(String);
 // TODO(v2): Support multiple versions
 pub(crate) const VERSION: Version = Version::new(0, 8, 30);
 
-/// An `LALRPOPItemInner` represents a single LALRPOP rule, for example:
+/// An `LALRPOPDerivedItem` represents a single LALRPOP rule, for example:
 ///
 /// ```ignore
 /// ModifierAttribute: ModifierAttribute = {
@@ -21,37 +21,37 @@ pub(crate) const VERSION: Version = Version::new(0, 8, 30);
 /// };
 /// ```
 #[derive(Clone, Debug, Serialize)]
-pub(crate) struct LALRPOPItemInner {
+pub(crate) struct LALRPOPDerivedItem {
     name: Identifier,
     producing_type: Identifier,
-    options: Vec<LALRPOPOption>,
+    options: Vec<LALRPOPDefinition>,
     pub inline: bool,
-    pub pubb: bool,
+    pub public: bool,
 }
 
-impl LALRPOPItemInner {
+impl LALRPOPDerivedItem {
     fn new(
         name: impl Into<Identifier>,
         producing_type: impl Into<Identifier>,
-        options: Vec<LALRPOPOption>,
+        options: Vec<LALRPOPDefinition>,
     ) -> Self {
         Self {
             name: name.into(),
             producing_type: producing_type.into(),
             options,
             inline: false,
-            pubb: false,
+            public: false,
         }
     }
 }
 
-/// An `LALRPOPOption` represents a single option within a rule, for example:
+/// An `LALRPOPDefinition` represents a single option within a rule, for example:
 ///
 /// ```ignore
 ///     <_OverrideSpecifier: OverrideSpecifier>  => new_modifier_attribute_override_specifier(<>),
 /// ```
 #[derive(Clone, Debug, Serialize)]
-struct LALRPOPOption {
+struct LALRPOPDefinition {
     fields: Vec<LALRPOPField>,
     // If `None`, then the match is forwarded
     constructor: Option<RustCode>,
@@ -84,21 +84,21 @@ mod lalrpop_rules {
         RustCode(format!("({})?", rule.0))
     }
 
-    /// Given a rule `X`, return the, maybe empty, repeating rule `Rep<X>`
+    /// Given a rule `X`, return the, maybe empty, repeating rule `RepeatedAllowEmpty<X>`
     pub(super) fn repeated(rule: &RustCode, allow_empty: bool) -> RustCode {
         if allow_empty {
-            RustCode(format!("Rep<{}>", rule.0))
+            RustCode(format!("RepeatedAllowEmpty<{}>", rule.0))
         } else {
-            RustCode(format!("RepOne<{}>", rule.0))
+            RustCode(format!("Repeated<{}>", rule.0))
         }
     }
 
-    /// Given rules `X` and `Y`, return the, maybe empty, separated rule `Sep<X, Y>`
+    /// Given rules `X` and `Y`, return the, maybe empty, separated rule `SeparatedAllowEmpty<X, Y>`
     pub(super) fn separated(rule: &RustCode, separator: &RustCode, allow_empty: bool) -> RustCode {
         if allow_empty {
-            RustCode(format!("Sep<{}, {}>", separator.0, rule.0))
+            RustCode(format!("SeparatedAllowEmpty<{}, {}>", separator.0, rule.0))
         } else {
-            RustCode(format!("SepOne<{}, {}>", separator.0, rule.0))
+            RustCode(format!("Separated<{}, {}>", separator.0, rule.0))
         }
     }
 
@@ -138,7 +138,7 @@ mod node_constructors {
 ///     <_import_keyword: ImportKeyword>  <_clause: ImportClause>  <_semicolon: Semicolon>  => new_import_directive(<>),
 /// };
 ///```
-pub(crate) fn struct_item_to_lalrpop_items(item: &StructItem) -> Vec<LALRPOPItemInner> {
+pub(crate) fn struct_item_to_lalrpop_items(item: &StructItem) -> Vec<LALRPOPDerivedItem> {
     use node_constructors::constructor;
 
     if !is_enabled(item.enabled.as_ref()) {
@@ -149,12 +149,12 @@ pub(crate) fn struct_item_to_lalrpop_items(item: &StructItem) -> Vec<LALRPOPItem
         .iter()
         .filter_map(|(name, field)| field_to_lalrpop_field(name, field));
 
-    let option = LALRPOPOption {
+    let option = LALRPOPDefinition {
         fields: fields.collect(),
         constructor: Some(constructor(&item.name)),
     };
 
-    vec![LALRPOPItemInner::new(
+    vec![LALRPOPDerivedItem::new(
         item.name.clone(),
         item.name.clone(),
         vec![option],
@@ -171,7 +171,7 @@ pub(crate) fn struct_item_to_lalrpop_items(item: &StructItem) -> Vec<LALRPOPItem
 ///     <_ImportDeconstruction: ImportDeconstruction>  => new_import_clause_import_deconstruction(<>),
 /// };
 /// ```
-pub(crate) fn enum_item_to_lalrpop_items(item: &EnumItem) -> Vec<LALRPOPItemInner> {
+pub(crate) fn enum_item_to_lalrpop_items(item: &EnumItem) -> Vec<LALRPOPDerivedItem> {
     use lalrpop_rules::simple_match;
     use node_constructors::variant_constructor;
 
@@ -188,14 +188,14 @@ pub(crate) fn enum_item_to_lalrpop_items(item: &EnumItem) -> Vec<LALRPOPItemInne
                 capturing_name: capturing_name.clone().into(),
                 rule: simple_match(&variant.reference),
             }];
-            LALRPOPOption {
+            LALRPOPDefinition {
                 fields: fields.clone(),
                 constructor: Some(variant_constructor(&item.name, &variant.reference)),
             }
         })
         .collect();
 
-    vec![LALRPOPItemInner::new(
+    vec![LALRPOPDerivedItem::new(
         item.name.clone(),
         item.name.clone(),
         options,
@@ -203,14 +203,14 @@ pub(crate) fn enum_item_to_lalrpop_items(item: &EnumItem) -> Vec<LALRPOPItemInne
 }
 
 /// A repeated item is converted into a single LALRPOP item with a single option with a single field, that is
-/// either `Rep<...>` or `RepOne<...>` based on the `allow_empty` flag.
+/// either `RepeatedAllowEmpty<...>` or `Repeated<...>` based on the `allow_empty` flag.
 ///
 /// ```ignore
 /// ContractMembers: ContractMembers = {
-///     <_ContractMember: Rep<<ContractMember>>>  => new_contract_members(<>),
+///     <_ContractMember: RepeatedAllowEmpty<<ContractMember>>>  => new_contract_members(<>),
 /// };
 /// ```
-pub(crate) fn repeated_item_to_lalrpop_items(item: &RepeatedItem) -> Vec<LALRPOPItemInner> {
+pub(crate) fn repeated_item_to_lalrpop_items(item: &RepeatedItem) -> Vec<LALRPOPDerivedItem> {
     use lalrpop_rules::{capture, repeated};
     use node_constructors::constructor;
 
@@ -225,12 +225,12 @@ pub(crate) fn repeated_item_to_lalrpop_items(item: &RepeatedItem) -> Vec<LALRPOP
             item.allow_empty.unwrap_or(false),
         ),
     }];
-    let option = LALRPOPOption {
+    let option = LALRPOPDefinition {
         fields: fields.clone(),
         constructor: Some(constructor(&item.name)),
     };
 
-    vec![LALRPOPItemInner::new(
+    vec![LALRPOPDerivedItem::new(
         item.name.clone(),
         item.name.clone(),
         vec![option],
@@ -238,14 +238,14 @@ pub(crate) fn repeated_item_to_lalrpop_items(item: &RepeatedItem) -> Vec<LALRPOP
 }
 
 /// A separated item is converted into a single LALRPOP item with a single option with a single field, that is
-/// `Sep<...>` or `SepOne<...>` based on the `allow_empty` flag.
+/// `SeparatedAllowEmpty<...>` or `Separated<...>` based on the `allow_empty` flag.
 ///
 /// ```ignore
 /// ImportDeconstructionSymbols: ImportDeconstructionSymbols = {
-///    <_ImportDeconstructionSymbol: SepOne<Comma, <ImportDeconstructionSymbol>>>  => new_import_deconstruction_symbols(<>),
+///    <_ImportDeconstructionSymbol: Separated<Comma, <ImportDeconstructionSymbol>>>  => new_import_deconstruction_symbols(<>),
 /// };
 /// ```
-pub(crate) fn separated_item_to_lalrpop_items(item: &SeparatedItem) -> Vec<LALRPOPItemInner> {
+pub(crate) fn separated_item_to_lalrpop_items(item: &SeparatedItem) -> Vec<LALRPOPDerivedItem> {
     use lalrpop_rules::{capture, separated};
     use node_constructors::constructor;
 
@@ -262,12 +262,12 @@ pub(crate) fn separated_item_to_lalrpop_items(item: &SeparatedItem) -> Vec<LALRP
             item.allow_empty.unwrap_or(false),
         ),
     }];
-    let option = LALRPOPOption {
+    let option = LALRPOPDefinition {
         fields: fields.clone(),
         constructor: Some(constructor(&item.name)),
     };
 
-    vec![LALRPOPItemInner::new(
+    vec![LALRPOPDerivedItem::new(
         item.name.clone(),
         item.name.clone(),
         vec![option],
@@ -291,7 +291,7 @@ pub(crate) fn separated_item_to_lalrpop_items(item: &SeparatedItem) -> Vec<LALRP
 /// have a single required field called `operator` and that prefix and postfix operator with mutiple
 /// operators follow the same rule.
 /// Ideally we should simplify the model to enforce this constraint, or be more relaxed in the code here.
-pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LALRPOPItemInner> {
+pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LALRPOPDerivedItem> {
     use lalrpop_rules::simple_match;
     use node_constructors::{constructor, variant_constructor};
 
@@ -359,19 +359,19 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
 
             // At this point we create a rule with the single option and the processed fields,
             // accounting also for associativity
-            ans.push(LALRPOPItemInner {
+            ans.push(LALRPOPDerivedItem {
                 name: prec.name.clone(),
                 producing_type: prec.name.clone(),
-                options: vec![LALRPOPOption {
+                options: vec![LALRPOPDefinition {
                     fields,
                     constructor: Some(constructor(&prec.name)),
                 }],
                 inline: true,
-                pubb: false,
+                public: false,
             });
 
             // And we reference it from the single option
-            LALRPOPOption {
+            LALRPOPDefinition {
                 fields: vec![LALRPOPField {
                     capturing_name: capturing_name.clone().into(),
                     rule: simple_match(&prec.name),
@@ -383,7 +383,7 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
         // Add the recursive case to the options
         let options = vec![
             option,
-            LALRPOPOption {
+            LALRPOPDefinition {
                 fields: vec![LALRPOPField {
                     capturing_name: item.name.clone(),
                     rule: RustCode(format!("{}{}", item.name, prec_counter - 1)),
@@ -393,7 +393,7 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
         ];
 
         // And append the given item
-        ans.push(LALRPOPItemInner::new(
+        ans.push(LALRPOPDerivedItem::new(
             format!("{}{}", item.name, prec_counter),
             item.name.clone(),
             options,
@@ -401,10 +401,10 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
     }
 
     // The entry case points to the latest item
-    ans.push(LALRPOPItemInner::new(
+    ans.push(LALRPOPDerivedItem::new(
         item.name.clone(),
         item.name.clone(),
-        vec![LALRPOPOption {
+        vec![LALRPOPDefinition {
             fields: vec![LALRPOPField {
                 capturing_name: item.name.clone(),
                 rule: RustCode(format!("{}{}", item.name, prec_counter)),
@@ -469,7 +469,7 @@ fn operator_model_to_fields(
     }
 }
 
-/// Given a `PrecedenceItem` and a `PrecedenceExpression`, create an `LALRPOPItemInner` parsing
+/// Given a `PrecedenceItem` and a `PrecedenceExpression`, create an `LALRPOPDerivedItem` parsing
 /// the operators within the precedence expression.
 ///
 /// For example:
@@ -482,7 +482,7 @@ fn operator_model_to_fields(
 fn precedence_operator_to_lalrpop_item(
     item: &PrecedenceItem,
     prec: &std::rc::Rc<language_v2_definition::model::PrecedenceExpression>,
-) -> LALRPOPItemInner {
+) -> LALRPOPDerivedItem {
     use node_constructors::variant_constructor;
 
     let operator_ident = Identifier::from(format!("{}_{}_Operator", item.name, prec.name));
@@ -502,7 +502,7 @@ fn precedence_operator_to_lalrpop_item(
                 "Operator field must be labeled 'operator'"
             );
             if let Field::Required { reference } = field {
-                LALRPOPOption {
+                LALRPOPDefinition {
                     fields: vec![field_to_lalrpop_field(identifier, field).unwrap()],
                     constructor: Some(variant_constructor(&operator_ident, reference)),
                 }
@@ -512,10 +512,10 @@ fn precedence_operator_to_lalrpop_item(
         })
         .collect();
 
-    LALRPOPItemInner::new(operator_ident.clone(), operator_ident.clone(), options)
+    LALRPOPDerivedItem::new(operator_ident.clone(), operator_ident.clone(), options)
 }
 
-/// Given a `prec_counter` and a `PrecedenceItem`, create an `LALRPOPItemInner` parsing the primary expressions.
+/// Given a `prec_counter` and a `PrecedenceItem`, create an `LALRPOPDerivedItem` parsing the primary expressions.
 ///
 /// For each primary expression create an alternative matching against its reference, and constructing
 /// an instance of the resulting variant.
@@ -527,17 +527,17 @@ fn precedence_operator_to_lalrpop_item(
 ///     <_YulPath: YulPath>  => new_yul_expression_yul_path(<>),
 /// };
 /// ```
-fn collect_primaries(item: &PrecedenceItem, prec_counter: i32) -> LALRPOPItemInner {
+fn collect_primaries(item: &PrecedenceItem, prec_counter: i32) -> LALRPOPDerivedItem {
     use lalrpop_rules::simple_match;
     use node_constructors::variant_constructor;
 
-    let primaries: Vec<LALRPOPOption> = item
+    let primaries: Vec<LALRPOPDefinition> = item
         .primary_expressions
         .iter()
         .filter(|exp| is_enabled(exp.enabled.as_ref()))
         .map(|exp| {
             let capturing_name = format!("_{}", exp.reference);
-            LALRPOPOption {
+            LALRPOPDefinition {
                 fields: vec![LALRPOPField {
                     capturing_name: capturing_name.into(),
                     rule: simple_match(&exp.reference),
@@ -547,7 +547,7 @@ fn collect_primaries(item: &PrecedenceItem, prec_counter: i32) -> LALRPOPItemInn
         })
         .collect();
 
-    LALRPOPItemInner::new(
+    LALRPOPDerivedItem::new(
         format!("{}{}", item.name, prec_counter),
         item.name.clone(),
         primaries,
