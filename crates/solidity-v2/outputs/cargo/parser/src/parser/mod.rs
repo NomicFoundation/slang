@@ -2,12 +2,12 @@ use lalrpop_util::lalrpop_mod;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes::{ContractDefinition, Expression, SourceUnit};
 
-use crate::lexer::contexts::ContextKind;
-use crate::lexer::definition::Lexer;
+use crate::lexer::{ContextKind, Lexer};
 
-pub(crate) mod nodes;
+mod nodes;
 
 lalrpop_mod!(
+    // TODO(v2): Remove and allow lints individually if needed
     #[allow(clippy::all)]
     #[allow(clippy::trivially_copy_pass_by_ref)]
     #[allow(warnings)]

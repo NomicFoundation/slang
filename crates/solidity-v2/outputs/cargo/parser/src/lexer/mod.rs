@@ -1,10 +1,14 @@
 #[path = "contexts.generated.rs"]
-pub(crate) mod contexts;
-pub(crate) mod definition;
+mod contexts;
+mod definition;
 #[path = "lexemes.generated.rs"]
-pub(crate) mod lexemes;
+mod lexemes;
 
 #[cfg(test)]
 mod tests;
 
 pub mod temp_sourcify;
+
+pub(crate) use contexts::ContextKind;
+pub(crate) use definition::Lexer;
+pub(crate) use lexemes::LexemeKind;

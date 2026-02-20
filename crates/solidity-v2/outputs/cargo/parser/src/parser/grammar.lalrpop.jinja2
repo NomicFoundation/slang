@@ -1,4 +1,4 @@
-use crate::lexer::lexemes;
+use crate::lexer::LexemeKind;
 use slang_solidity_v2_cst::structured_cst::nodes::*;
 use crate::parser::nodes::*;
 
@@ -110,9 +110,9 @@ extern {
     // TODO(v2): error recovery
     type Error = ();
 
-    enum lexemes::LexemeKind {
+    enum LexemeKind {
         {% for kind in model.parser.lexer.lexeme_kinds -%}
-            L_{{ kind }} => lexemes::LexemeKind::{{ kind }},
+            L_{{ kind }} => LexemeKind::{{ kind }},
         {% endfor %}
     }
 }

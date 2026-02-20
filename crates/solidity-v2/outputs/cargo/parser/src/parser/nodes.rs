@@ -9,9 +9,9 @@ use slang_solidity_v2_cst::structured_cst::nodes::{
     new_expression_index_access_expression, new_expression_member_access_expression,
     new_function_type, new_function_type_attributes, new_index_access_expression,
     new_member_access_expression, new_type_name_array_type_name, new_type_name_elementary_type,
-    new_type_name_identifier_path, CloseBracket, ElementaryType, Expression, FunctionType,
-    FunctionTypeAttribute, FunctionTypeStruct, IdentifierPath, IdentifierPathElement,
-    IndexAccessEnd, OpenBracket, Period, StateVariableAttribute, TypeName,
+    new_type_name_identifier_path, CloseBracket, ConstantKeyword, ElementaryType, Expression,
+    FunctionType, FunctionTypeAttribute, FunctionTypeStruct, Identifier, IdentifierPath,
+    IdentifierPathElement, IndexAccessEnd, OpenBracket, Period, StateVariableAttribute, TypeName,
 };
 
 /// An `IndexAccessPath` represents a path or elementary type followed by
@@ -135,7 +135,9 @@ pub(crate) fn new_expression_identifier_path(identifier_path: IdentifierPath) ->
             match acc {
                 None => Some(match id {
                     IdentifierPathElement::AddressKeyword(_) => {
-                        panic!("An identifier path cannot start with 'address' keyword");
+                        // TODO(v2) we should validate that this is not the case and fail gracefully
+                        // instead of returning a wrong identifier
+                        new_expression_identifier(Identifier { range: 0..0 })
                     }
                     IdentifierPathElement::Identifier(id) => new_expression_identifier(id),
                 }),
@@ -199,22 +201,26 @@ pub(crate) fn extract_extra_attributes(
     });
 
     let extra_attributes: Vec<StateVariableAttribute> = extracted
-        .map(|attr| {
-        match attr {
-        FunctionTypeAttribute::ConstantKeyword(terminal) => {
-            StateVariableAttribute::ConstantKeyword(terminal)
-        }
-        FunctionTypeAttribute::InternalKeyword(terminal) => {
-            StateVariableAttribute::InternalKeyword(terminal)
-        }
-        FunctionTypeAttribute::PrivateKeyword(terminal) => {
-            StateVariableAttribute::PrivateKeyword(terminal)
-        }
-        FunctionTypeAttribute::PublicKeyword(terminal) => {
-            StateVariableAttribute::PublicKeyword(terminal)
-        }
-        _ => panic!("This is wrong, I don't really know what to do for now, but it should fail gracefully (like a parser error)")
-        }
+        .filter_map(|attr| {
+            match attr {
+                FunctionTypeAttribute::ConstantKeyword(terminal) => {
+                    Some(StateVariableAttribute::ConstantKeyword(terminal))
+                }
+                FunctionTypeAttribute::InternalKeyword(terminal) => {
+                    Some(StateVariableAttribute::InternalKeyword(terminal))
+                }
+                FunctionTypeAttribute::PrivateKeyword(terminal) => {
+                    Some(StateVariableAttribute::PrivateKeyword(terminal))
+                }
+                FunctionTypeAttribute::PublicKeyword(terminal) => {
+                    Some(StateVariableAttribute::PublicKeyword(terminal))
+                }
+                _ => {
+                    // TODO(v2): For now we skip this item
+                    // but we should fail gracefully in the future
+                    None
+                }
+            }
         })
         .collect();
 
