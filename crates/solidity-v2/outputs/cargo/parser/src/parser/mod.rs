@@ -28,6 +28,8 @@ pub trait Parser {
     // TODO(v2): Errors should be something other than `String`
     fn parse(input: &str, version: LanguageVersion) -> Result<Self::NonTerminal, String>;
 
+    // TODO(v2): This is temporary, once the language definition is restricted to only supported versions
+    // it won't be needed
     fn check_version(version: LanguageVersion) -> Result<(), String> {
         if version == LanguageVersion::V0_8_30 {
             Ok(())

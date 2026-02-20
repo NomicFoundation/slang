@@ -9,9 +9,9 @@ use slang_solidity_v2_cst::structured_cst::nodes::{
     new_expression_index_access_expression, new_expression_member_access_expression,
     new_function_type, new_function_type_attributes, new_index_access_expression,
     new_member_access_expression, new_type_name_array_type_name, new_type_name_elementary_type,
-    new_type_name_identifier_path, CloseBracket, ConstantKeyword, ElementaryType, Expression,
-    FunctionType, FunctionTypeAttribute, FunctionTypeStruct, Identifier, IdentifierPath,
-    IdentifierPathElement, IndexAccessEnd, OpenBracket, Period, StateVariableAttribute, TypeName,
+    new_type_name_identifier_path, CloseBracket, ElementaryType, Expression, FunctionType,
+    FunctionTypeAttribute, FunctionTypeStruct, Identifier, IdentifierPath, IdentifierPathElement,
+    IndexAccessEnd, OpenBracket, Period, StateVariableAttribute, TypeName,
 };
 
 /// An `IndexAccessPath` represents a path or elementary type followed by

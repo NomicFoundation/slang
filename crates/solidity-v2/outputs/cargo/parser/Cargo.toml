@@ -18,12 +18,15 @@ license = "MIT"
 keywords = ["parser"]
 categories = ["compilers", "parsing", "parser-implementations"]
 
+[features]
+__private_testing_utils = ["anyhow", "infra_utils"]
+
 [build-dependencies]
 lalrpop = { workspace = true }
 
 [dependencies]
-anyhow = { workspace = true }
-infra_utils = { workspace = true }
+anyhow = { workspace = true, optional = true }
+infra_utils = { workspace = true, optional = true }
 lalrpop-util = { workspace = true }
 logos = { workspace = true }
 semver = { workspace = true }
