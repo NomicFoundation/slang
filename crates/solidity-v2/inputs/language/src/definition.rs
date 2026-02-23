@@ -2026,21 +2026,21 @@ pub ContractDefinition: ContractDefinition = {
 // In this case, we require at least one specifier, the case with zero is handled above.
 // Note that the return type now includes the trailing members
 ContractSpecifiersTrailingMembers: (ContractSpecifiers, (OpenBrace, ContractMembers, CloseBrace)) = {
-    <mut _ContractSpecifier: RepeatedAllowEmpty<<ContractSpecifier>>> <_tail: ContractSpecifierTrailingMembers>  => {
+    <mut _contract_specifier: RepeatedAllowEmpty<<ContractSpecifier>>> <_tail: ContractSpecifierTrailingMembers>  => {
         let (specifier, tail) = _tail;
-        _ContractSpecifier.push(specifier);
-        (new_contract_specifiers(_ContractSpecifier), tail)
+        _contract_specifier.push(specifier);
+        (new_contract_specifiers(_contract_specifier), tail)
     },
 };
 ContractSpecifierTrailingMembers: (ContractSpecifier, (OpenBrace, ContractMembers, CloseBrace)) = {
     // Since there's no conflict with inheritance specifiers, we can parse them directly and
     // then parse the members
-    <_InheritanceSpecifier: InheritanceSpecifier> <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => {
-        (new_contract_specifier_inheritance_specifier(_InheritanceSpecifier), (_open_brace, _members, _close_brace))
+    <_inheritance_specifier: InheritanceSpecifier> <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => {
+        (new_contract_specifier_inheritance_specifier(_inheritance_specifier), (_open_brace, _members, _close_brace))
     },
     // For storage layout specifiers, we need to extract the trailing members from them
-    <_StorageLayoutSpecifier: StorageLayoutSpecifierTrailingMembers>  => {
-        let (storage_layout_specifier, tail) = _StorageLayoutSpecifier;
+    <_storage_layout_specifier: StorageLayoutSpecifierTrailingMembers>  => {
+        let (storage_layout_specifier, tail) = _storage_layout_specifier;
         (new_contract_specifier_storage_layout_specifier(storage_layout_specifier), tail)
     },
 };
@@ -2056,7 +2056,7 @@ StorageLayoutSpecifierTrailingMembers: (StorageLayoutSpecifier, (OpenBrace, Cont
 // An expression followed by contract members
 // See the Expression rule for details
 ExpressionTrailingMembers: (Expression, (OpenBrace, ContractMembers, CloseBrace)) = {
-        <Expression: Expression19<BracedContractMembers>>  => <>,
+        <expression: Expression19<BracedContractMembers>>  => <>,
 };
 BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
     <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => {
@@ -2341,9 +2341,9 @@ IdentifierPathNoError: IdentifierPath = {
 // These are the attributes that can appear in a state variable but not a function,
 // they can work as a limit between these definitions.
 SpecialStateVariableAttribute: StateVariableAttribute = {
-        <_OverrideSpecifier: OverrideSpecifier>  => new_state_variable_attribute_override_specifier(<>),
-        <_ImmutableKeyword: ImmutableKeyword>  => new_state_variable_attribute_immutable_keyword(<>),
-        <_TransientKeyword: TransientKeyword>  => new_state_variable_attribute_transient_keyword(<>),
+        <_override_specifier: OverrideSpecifier>  => new_state_variable_attribute_override_specifier(<>),
+        <_immutable_keyword: ImmutableKeyword>  => new_state_variable_attribute_immutable_keyword(<>),
+        <_transient_keyword: TransientKeyword>  => new_state_variable_attribute_transient_keyword(<>),
 };
 "#)
                                 ),
@@ -2825,24 +2825,24 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
 //    However, since a IAP and an array type conflict, we need to make sure that array types are only matched against
 //    base types that are not IAPs, hence the parametric IAPRule.
 TypeName0<FunctionRule, IAPRule>: TypeName = {
-    <_FunctionType: FunctionRule> => new_type_name_function_type(<>),
-    <_MappingType: MappingType>  => new_type_name_mapping_type(<>),
-    <_IndexAccessPath: IAPRule> => new_type_name_index_access_path(<>),
+    <_function_type: FunctionRule> => new_type_name_function_type(<>),
+    <_mapping_type: MappingType>  => new_type_name_mapping_type(<>),
+    <_index_access_path: IAPRule> => new_type_name_index_access_path(<>),
 };
 TypeName1<FunctionRule, IAPRule>: TypeName = {
-    <_TypeName: ArrayTypeName>  => new_type_name_array_type_name(<>),
-    <TypeName: TypeName0<FunctionRule, IAPRule>>  => <>,
+    <_type_name: ArrayTypeName>  => new_type_name_array_type_name(<>),
+    <type_name: TypeName0<FunctionRule, IAPRule>>  => <>,
 };
 TypeName: TypeName = {
     // A regular type can have any function type and an IAP
-    <TypeName: TypeName1<FunctionType, IndexAccessPath<IdentifierPath>>>  => <>,
+    <type_name: TypeName1<FunctionType, IndexAccessPath<IdentifierPath>>>  => <>,
 };
 
 #[inline]
 ArrayTypeName: ArrayTypeName = {
     // The base expression shouldn't end in a trailing IAP, if it does (like `a.b[c]`) it will be
     // handled by `new_type_name_index_access_path` above
-    <_TypeName: TypeName1<FunctionType, NoIndexAccessPath>>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => new_array_type_name(<>),
+    <_type_name: TypeName1<FunctionType, NoIndexAccessPath>>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => new_array_type_name(<>),
 };
 
 // An empty rule to disable IAPs
@@ -3057,21 +3057,21 @@ FunctionTypeInternalReturn: FunctionType = {
 // since both this and `RevertStatement` are inlined, the parser doesn't need to reduce until it has seen the
 // entire statement.
 _Statement<TrailingElse>: Statement = {
-    <_IfStatement: IfStatement<TrailingElse>>  => new_statement_if_statement(<>),
-    <_ForStatement: ForStatement<TrailingElse>>  => new_statement_for_statement(<>),
-    <_WhileStatement: WhileStatement<TrailingElse>>  => new_statement_while_statement(<>),
-    <_DoWhileStatement: DoWhileStatement>  => new_statement_do_while_statement(<>),
-    <_ContinueStatement: ContinueStatement>  => new_statement_continue_statement(<>),
-    <_BreakStatement: BreakStatement>  => new_statement_break_statement(<>),
-    <_ReturnStatement: ReturnStatement>  => new_statement_return_statement(<>),
-    <_EmitStatement: EmitStatement>  => new_statement_emit_statement(<>),
-    <_TryStatement: TryStatement>  => new_statement_try_statement(<>),
-    <_RevertStatement: RevertStatement>  => new_statement_revert_statement(<>),
-    <_AssemblyStatement: AssemblyStatement>  => new_statement_assembly_statement(<>),
-    <_Block: Block>  => new_statement_block(<>),
-    <_UncheckedBlock: UncheckedBlock>  => new_statement_unchecked_block(<>),
-    <_VariableDeclarationStatement: VariableDeclarationStatementSpecialRevert>  => new_statement_variable_declaration_statement(<>),
-    <_ExpressionStatement: ExpressionStatement>  => new_statement_expression_statement(<>),
+    <_if_statement: IfStatement<TrailingElse>>  => new_statement_if_statement(<>),
+    <_for_statement: ForStatement<TrailingElse>>  => new_statement_for_statement(<>),
+    <_while_statement: WhileStatement<TrailingElse>>  => new_statement_while_statement(<>),
+    <_do_while_statement: DoWhileStatement>  => new_statement_do_while_statement(<>),
+    <_continue_statement: ContinueStatement>  => new_statement_continue_statement(<>),
+    <_break_statement: BreakStatement>  => new_statement_break_statement(<>),
+    <_return_statement: ReturnStatement>  => new_statement_return_statement(<>),
+    <_emit_statement: EmitStatement>  => new_statement_emit_statement(<>),
+    <_try_statement: TryStatement>  => new_statement_try_statement(<>),
+    <_revert_statement: RevertStatement>  => new_statement_revert_statement(<>),
+    <_assembly_statement: AssemblyStatement>  => new_statement_assembly_statement(<>),
+    <_block: Block>  => new_statement_block(<>),
+    <_unchecked_block: UncheckedBlock>  => new_statement_unchecked_block(<>),
+    <_variable_declaration_statement: VariableDeclarationStatementSpecialRevert>  => new_statement_variable_declaration_statement(<>),
+    <_expression_statement: ExpressionStatement>  => new_statement_expression_statement(<>),
 };
 
 // By default statements allow dangling `else`s
@@ -3087,8 +3087,8 @@ VariableDeclarationStatementSpecialRevert: VariableDeclarationStatement = {
 };
 #[inline]
 VariableDeclarationTargetSpecialRevert: VariableDeclarationTarget = {
-    <_SingleTypedDeclaration: SingleTypedDeclarationSpecialRevert>  => new_variable_declaration_target_single_typed_declaration(<>),
-    <_MultiTypedDeclaration: MultiTypedDeclaration>  => new_variable_declaration_target_multi_typed_declaration(<>),
+    <_single_typed_declaration: SingleTypedDeclarationSpecialRevert>  => new_variable_declaration_target_single_typed_declaration(<>),
+    <_multi_typed_declaration: MultiTypedDeclaration>  => new_variable_declaration_target_multi_typed_declaration(<>),
 };
 #[inline]
 SingleTypedDeclarationSpecialRevert: SingleTypedDeclaration = {
@@ -3238,10 +3238,10 @@ IdentifierPathNoRevert: IdentifierPath = {
 //
 // Since they also share a prefix (`(,,,`) we need to have a common prefix rule to avoid reduce/reduce conflicts.
 MultiTypedDeclarationElements: MultiTypedDeclarationElements = {
-    <prefix: TuplePrefix> <differentiator: VariableDeclaration> <_TypedTupleDeconstructionElement: (Comma <Separated<Comma, <MultiTypedDeclarationElement>>>)?>  => {
+    <prefix: TuplePrefix> <differentiator: VariableDeclaration> <_typed_tuple_deconstruction_element: (Comma <Separated<Comma, <MultiTypedDeclarationElement>>>)?>  => {
         let mut elements = vec![new_multi_typed_declaration_element(None); prefix];
         elements.push(new_multi_typed_declaration_element(Some(differentiator)));
-        elements.extend(_TypedTupleDeconstructionElement.unwrap_or(vec![]));
+        elements.extend(_typed_tuple_deconstruction_element.unwrap_or(vec![]));
         new_multi_typed_declaration_elements(elements)
     },
     
@@ -3500,7 +3500,7 @@ TryStatement: TryStatement = {
 
 // An expression followed by a block
 ExpressionTrailingBlock: (Expression, Block) = {
-        <Expression: Expression19<Block>>  => <>,
+        <expression: Expression19<Block>>  => <>,
 };
 "#)
                                 ),
@@ -3944,20 +3944,20 @@ ExpressionTrailingBlock: (Expression, Block) = {
 // 5. Finally, expressions have multiple precedence levels and associativity, we handle this explicitely here.
 Expression0<IndexAccessPathRule, NewExpressionRule>: Expression = {
     // The Rule used here is parametric
-    <_IndexAccessPath: IndexAccessPathRule> => new_expression_index_access_path(<>),
+    <_index_access_path: IndexAccessPathRule> => new_expression_index_access_path(<>),
     // The Rule used here is parametric
-    <_NewExpression: NewExpressionRule> => new_expression_new_expression(<>),
-    <_TupleExpression: TupleExpression>  => new_expression_tuple_expression(<>),
-    <_TypeExpression: TypeExpression>  => new_expression_type_expression(<>),
-    <_ArrayExpression: ArrayExpression>  => new_expression_array_expression(<>),
-    <_HexNumberExpression: HexNumberExpression>  => new_expression_hex_number_expression(<>),
-    <_DecimalNumberExpression: DecimalNumberExpression>  => new_expression_decimal_number_expression(<>),
-    <_StringExpression: StringExpression>  => new_expression_string_expression(<>),
-    <_PayableKeyword: PayableKeyword>  => new_expression_payable_keyword(<>),
-    <_ThisKeyword: ThisKeyword>  => new_expression_this_keyword(<>),
-    <_SuperKeyword: SuperKeyword>  => new_expression_super_keyword(<>),
-    <_TrueKeyword: TrueKeyword>  => new_expression_true_keyword(<>),
-    <_FalseKeyword: FalseKeyword>  => new_expression_false_keyword(<>),
+    <_new_expression: NewExpressionRule> => new_expression_new_expression(<>),
+    <_tuple_expression: TupleExpression>  => new_expression_tuple_expression(<>),
+    <_type_expression: TypeExpression>  => new_expression_type_expression(<>),
+    <_array_expression: ArrayExpression>  => new_expression_array_expression(<>),
+    <_hex_number_expression: HexNumberExpression>  => new_expression_hex_number_expression(<>),
+    <_decimal_number_expression: DecimalNumberExpression>  => new_expression_decimal_number_expression(<>),
+    <_string_expression: StringExpression>  => new_expression_string_expression(<>),
+    <_payable_keyword: PayableKeyword>  => new_expression_payable_keyword(<>),
+    <_this_keyword: ThisKeyword>  => new_expression_this_keyword(<>),
+    <_super_keyword: SuperKeyword>  => new_expression_super_keyword(<>),
+    <_true_keyword: TrueKeyword>  => new_expression_true_keyword(<>),
+    <_false_keyword: FalseKeyword>  => new_expression_false_keyword(<>),
 };
 
 // An IAP that doesn't match anything
@@ -3968,17 +3968,17 @@ NoIndexAccessPath_Expr: IndexAccessPath = {};
 Expression1<IndexAccessPathRule, NewExpressionRule>: Expression = {
     // When parsing an index acces expression, the sub expression shouldn't trail in an index access path
     // Nor should it trail on a NewExpression
-    <_Expression: Expression1<NoIndexAccessPath_Expr, NoNewExpression>>  <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => new_expression_index_access_expression(new_index_access_expression(<>)),
+    <_expression: Expression1<NoIndexAccessPath_Expr, NoNewExpression>>  <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => new_expression_index_access_expression(new_index_access_expression(<>)),
     // When parsing a member access expression, the sub expression shouldn't trail in a path
     // Nor should it trail on a NewExpression
-    <_Expression: Expression1<IndexAccessPath<NoIdentPath>, NoNewExpression>>  <_period: Period>  <_member: IdentifierPathElement>  => new_expression_member_access_expression(new_member_access_expression(<>)),
+    <_expression: Expression1<IndexAccessPath<NoIdentPath>, NoNewExpression>>  <_period: Period>  <_member: IdentifierPathElement>  => new_expression_member_access_expression(new_member_access_expression(<>)),
 
     // Both the braces and the arguments declaration serve as markers for disambiguation, therefore
     // resetting the parametric rules.
-    <_Expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>>  <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => new_expression_call_options_expression(new_call_options_expression(<>)),
-    <_Expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>>  <_arguments: ArgumentsDeclaration>  => new_expression_function_call_expression(new_function_call_expression(<>)),
+    <_expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>>  <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => new_expression_call_options_expression(new_call_options_expression(<>)),
+    <_expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>>  <_arguments: ArgumentsDeclaration>  => new_expression_function_call_expression(new_function_call_expression(<>)),
 
-    <Expression: Expression0<IndexAccessPathRule, NewExpressionRule>>  => <>,
+    <expression: Expression0<IndexAccessPathRule, NewExpressionRule>>  => <>,
 };
 
 // A Matcher for an empty NewExpression 
@@ -3986,150 +3986,150 @@ NoNewExpression: NewExpression = {};
 
 // Tail is a rule identifying what comes after the expression, whatever is captured is added to the tuple result
 Expression5<Tail>: (Expression, Tail) = {
-    <_Expression_PrefixExpression_Operator: Expression_PrefixExpression_Operator>  <_Expression: Expression5<Tail>>  => {
-        let (expr, tail) = _Expression;
-        (new_expression_prefix_expression(new_prefix_expression(_Expression_PrefixExpression_Operator, expr)), tail)
+    <_expression_prefix_expression_operator: Expression_PrefixExpression_Operator>  <_expression: Expression5<Tail>>  => {
+        let (expr, tail) = _expression;
+        (new_expression_prefix_expression(new_prefix_expression(_expression_prefix_expression_operator, expr)), tail)
     },
     
     // A tail can appear just after a postfix or primary expression
-    <Expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>> <tail: Tail> => {
-        (Expression, tail)
+    <expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>> <tail: Tail> => {
+        (expression, tail)
     },
 };
 Expression6<Tail>: (Expression, Tail) = {
     // This is the only other postfix expression that can overwrite a trailing element
     // Note that the recursive call expects no tail at all
-    <_Expression: Expression6<EmptyTail>>  <_Expression_PostfixExpression_Operator: Expression_PostfixExpression_Operator> <tail: Tail>  => {
-        let (expr, _) = _Expression;
-        (new_expression_postfix_expression(new_postfix_expression(expr, _Expression_PostfixExpression_Operator)), tail)
+    <_expression: Expression6<EmptyTail>>  <_expression_postfix_expression_operator: Expression_PostfixExpression_Operator> <tail: Tail>  => {
+        let (expr, _) = _expression;
+        (new_expression_postfix_expression(new_postfix_expression(expr, _expression_postfix_expression_operator)), tail)
     },
     
-    <Expression: Expression5<Tail>>  => <>,
+    <expression: Expression5<Tail>>  => <>,
 };
 Expression7<Tail>: (Expression, Tail) = {
     // Note that only the right recursive rule matches a tail, the left recursive expects no tail
-    <_Expression: Expression6<EmptyTail>>  <_operator: Expression_ExponentiationExpression_Operator>  <_Expression_2: Expression7<Tail>>  => {
-        let (e, _) = _Expression;
-        let (e2, tail) = _Expression_2;
+    <_expression: Expression6<EmptyTail>>  <_operator: Expression_ExponentiationExpression_Operator>  <_expression_2: Expression7<Tail>>  => {
+        let (e, _) = _expression;
+        let (e2, tail) = _expression_2;
         (new_expression_exponentiation_expression(new_exponentiation_expression(e, _operator, e2)), tail)
     },
     
-    <Expression: Expression6<Tail>>  => <>,
+    <expression: Expression6<Tail>>  => <>,
 };
 Expression8<Tail>: (Expression, Tail) = {
-    <_Expression: Expression8<EmptyTail>>  <_Expression_MultiplicativeExpression_Operator: Expression_MultiplicativeExpression_Operator>  <_Expression_2: Expression7<Tail>>  => {
-        let (e, _) = _Expression;
-        let (e2, tail) = _Expression_2;
-        (new_expression_multiplicative_expression(new_multiplicative_expression(e, _Expression_MultiplicativeExpression_Operator, e2)), tail)
+    <_expression: Expression8<EmptyTail>>  <_expression_multiplicative_expression_operator: Expression_MultiplicativeExpression_Operator>  <_expression_2: Expression7<Tail>>  => {
+        let (e, _) = _expression;
+        let (e2, tail) = _expression_2;
+        (new_expression_multiplicative_expression(new_multiplicative_expression(e, _expression_multiplicative_expression_operator, e2)), tail)
     },
     
-    <Expression: Expression7<Tail>>  => <>,
+    <expression: Expression7<Tail>>  => <>,
 };
 Expression9<Tail>: (Expression, Tail) = {
-    <_Expression: Expression9<EmptyTail>>  <_Expression_AdditiveExpression_Operator: Expression_AdditiveExpression_Operator>  <_Expression_2: Expression8<Tail>>  => {
-        let (e, _) = _Expression;
-        let (e2, tail) = _Expression_2;
-        (new_expression_additive_expression(new_additive_expression(e, _Expression_AdditiveExpression_Operator, e2)), tail)
+    <_expression: Expression9<EmptyTail>>  <_expression_additive_expression_operator: Expression_AdditiveExpression_Operator>  <_expression_2: Expression8<Tail>>  => {
+        let (e, _) = _expression;
+        let (e2, tail) = _expression_2;
+        (new_expression_additive_expression(new_additive_expression(e, _expression_additive_expression_operator, e2)), tail)
     },
     
-    <Expression: Expression8<Tail>>  => <>,
+    <expression: Expression8<Tail>>  => <>,
 };
 Expression10<Tail>: (Expression, Tail) = {
-    <_Expression: Expression10<EmptyTail>>  <_Expression_ShiftExpression_Operator: Expression_ShiftExpression_Operator>  <_Expression_2: Expression9<Tail>>  => {
-        let (e, _) = _Expression;
-        let (e2, tail) = _Expression_2;
-        (new_expression_shift_expression(new_shift_expression(e, _Expression_ShiftExpression_Operator, e2)), tail)
+    <_expression: Expression10<EmptyTail>>  <_expression_shift_expression_operator: Expression_ShiftExpression_Operator>  <_expression_2: Expression9<Tail>>  => {
+        let (e, _) = _expression;
+        let (e2, tail) = _expression_2;
+        (new_expression_shift_expression(new_shift_expression(e, _expression_shift_expression_operator, e2)), tail)
     },
     
-    <Expression: Expression9<Tail>>  => <>,
+    <expression: Expression9<Tail>>  => <>,
 };
 Expression11<Tail>: (Expression, Tail) = {
-    <_Expression: Expression11<EmptyTail>>  <_operator: Ampersand>  <_Expression_2: Expression10<Tail>>  => {
-        let (e, _) = _Expression;
-        let (e2, tail) = _Expression_2;
+    <_expression: Expression11<EmptyTail>>  <_operator: Ampersand>  <_expression_2: Expression10<Tail>>  => {
+        let (e, _) = _expression;
+        let (e2, tail) = _expression_2;
         (new_expression_bitwise_and_expression(new_bitwise_and_expression(e, _operator, e2)), tail)
     },
     
-    <Expression: Expression10<Tail>>  => <>,
+    <expression: Expression10<Tail>>  => <>,
 };
 Expression12<Tail>: (Expression, Tail) = {
-    <_Expression: Expression12<EmptyTail>>  <_operator: Caret>  <_Expression_2: Expression11<Tail>>  => {
-        let (e, _) = _Expression;
-        let (e2, tail) = _Expression_2;
+    <_expression: Expression12<EmptyTail>>  <_operator: Caret>  <_expression_2: Expression11<Tail>>  => {
+        let (e, _) = _expression;
+        let (e2, tail) = _expression_2;
         (new_expression_bitwise_xor_expression(new_bitwise_xor_expression(e, _operator, e2)), tail)
     },
     
-    <Expression: Expression11<Tail>>  => <>,
+    <expression: Expression11<Tail>>  => <>,
 };
 Expression13<Tail>: (Expression, Tail) = {
-    <_Expression: Expression13<EmptyTail>>  <_operator: Bar>  <_Expression_2: Expression12<Tail>>  => {
-        let (e, _) = _Expression;
-        let (e2, tail) = _Expression_2;
+    <_expression: Expression13<EmptyTail>>  <_operator: Bar>  <_expression_2: Expression12<Tail>>  => {
+        let (e, _) = _expression;
+        let (e2, tail) = _expression_2;
         (new_expression_bitwise_or_expression(new_bitwise_or_expression(e, _operator, e2)), tail)
     },
     
-    <Expression: Expression12<Tail>>  => <>,
+    <expression: Expression12<Tail>>  => <>,
 };
 Expression14<Tail>: (Expression, Tail) = {
-    <_Expression: Expression14<EmptyTail>>  <_Expression_InequalityExpression_Operator: Expression_InequalityExpression_Operator>  <_Expression_2: Expression13<Tail>>  => {
-        let (e, _) = _Expression;
-        let (e2, tail) = _Expression_2;
-        (new_expression_inequality_expression(new_inequality_expression(e, _Expression_InequalityExpression_Operator, e2)), tail)
+    <_expression: Expression14<EmptyTail>>  <_expression_inequality_expression_operator: Expression_InequalityExpression_Operator>  <_expression_2: Expression13<Tail>>  => {
+        let (e, _) = _expression;
+        let (e2, tail) = _expression_2;
+        (new_expression_inequality_expression(new_inequality_expression(e, _expression_inequality_expression_operator, e2)), tail)
     },
     
-    <Expression: Expression13<Tail>>  => <>,
+    <expression: Expression13<Tail>>  => <>,
 };
 Expression15<Tail>: (Expression, Tail) = {
-    <_Expression: Expression15<EmptyTail>>  <_Expression_EqualityExpression_Operator: Expression_EqualityExpression_Operator>  <_Expression_2: Expression14<Tail>>  => {
-        let (e, _) = _Expression;
-        let (e2, tail) = _Expression_2;
-        (new_expression_equality_expression(new_equality_expression(e, _Expression_EqualityExpression_Operator, e2)), tail)
+    <_expression: Expression15<EmptyTail>>  <_expression_equality_expression_operator: Expression_EqualityExpression_Operator>  <_expression_2: Expression14<Tail>>  => {
+        let (e, _) = _expression;
+        let (e2, tail) = _expression_2;
+        (new_expression_equality_expression(new_equality_expression(e, _expression_equality_expression_operator, e2)), tail)
     },
     
-    <Expression: Expression14<Tail>>  => <>,
+    <expression: Expression14<Tail>>  => <>,
 };
 Expression16<Tail>: (Expression, Tail) = {
-    <_Expression: Expression16<EmptyTail>>  <_operator: AmpersandAmpersand>  <_Expression_2: Expression15<Tail>>  => {
-        let (e, _) = _Expression;
-        let (e2, tail) = _Expression_2;
+    <_expression: Expression16<EmptyTail>>  <_operator: AmpersandAmpersand>  <_expression_2: Expression15<Tail>>  => {
+        let (e, _) = _expression;
+        let (e2, tail) = _expression_2;
         (new_expression_and_expression(new_and_expression(e, _operator, e2)), tail)
     },
     
-    <Expression: Expression15<Tail>>  => <>,
+    <expression: Expression15<Tail>>  => <>,
 };
 Expression17<Tail>: (Expression, Tail) = {
-    <_Expression: Expression17<EmptyTail>>  <_operator: BarBar>  <_Expression_2: Expression16<Tail>>  => {
-        let (e, _) = _Expression;
-        let (e2, tail) = _Expression_2;
+    <_expression: Expression17<EmptyTail>>  <_operator: BarBar>  <_expression_2: Expression16<Tail>>  => {
+        let (e, _) = _expression;
+        let (e2, tail) = _expression_2;
         (new_expression_or_expression(new_or_expression(e, _operator, e2)), tail)
     },
     
-    <Expression: Expression16<Tail>>  => <>,
+    <expression: Expression16<Tail>>  => <>,
 };
 Expression18<Tail>: (Expression, Tail) = {
-    <_Expression: Expression17<EmptyTail>>  <_question_mark: QuestionMark>  <_true_expression: Expression18<EmptyTail>>  <_colon: Colon>  <_false_expression: Expression18<Tail>>  => {
-        let (cond_expr, _) = _Expression;
+    <_expression: Expression17<EmptyTail>>  <_question_mark: QuestionMark>  <_true_expression: Expression18<EmptyTail>>  <_colon: Colon>  <_false_expression: Expression18<Tail>>  => {
+        let (cond_expr, _) = _expression;
         let (true_expr, _) = _true_expression;
         let (false_expr, tail) = _false_expression;
         (new_expression_conditional_expression(new_conditional_expression(cond_expr, _question_mark, true_expr, _colon, false_expr)), tail)
     },
     
-    <Expression: Expression17<Tail>>  => <>,
+    <expression: Expression17<Tail>>  => <>,
 };
 Expression19<Tail>: (Expression, Tail) = {
-    <_Expression: Expression19<EmptyTail>>  <_Expression_AssignmentExpression_Operator: Expression_AssignmentExpression_Operator>  <_Expression_2: Expression18<Tail>>  => {
-        let (e, _) = _Expression;
-        let (e2, tail) = _Expression_2;
-        (new_expression_assignment_expression(new_assignment_expression(e, _Expression_AssignmentExpression_Operator, e2)), tail)
+    <_expression: Expression19<EmptyTail>>  <_expression_assignment_expression_operator: Expression_AssignmentExpression_Operator>  <_expression_2: Expression18<Tail>>  => {
+        let (e, _) = _expression;
+        let (e2, tail) = _expression_2;
+        (new_expression_assignment_expression(new_assignment_expression(e, _expression_assignment_expression_operator, e2)), tail)
     },
     
-    <Expression: Expression18<Tail>>  => <>,
+    <expression: Expression18<Tail>>  => <>,
 };
 
 // Expression is public
 pub Expression: Expression = {
     // By default, we expect no tail
-    <Expression: Expression19<EmptyTail>>  => Expression.0,
+    <expression: Expression19<EmptyTail>>  => expression.0,
 };
 
 // An empty tail is the default behaviour
@@ -4202,8 +4202,8 @@ IndexAccessPath<IdentPathRule>: IndexAccessPath = {
     <IndexAccessPath1<IdentPathRule>>  => <>,
 };
 IndexAccessPath1<IdentPathRule>: IndexAccessPath = {
-    <_Identifier: IdentPathRule> => new_index_access_path_from_identifier_path(<>),
-    <_ElementaryType: ElementaryType>  => new_index_access_path_from_elementary_type(<>),
+    <_identifier: IdentPathRule> => new_index_access_path_from_identifier_path(<>),
+    <_elementary_type: ElementaryType>  => new_index_access_path_from_elementary_type(<>),
 };
 "#
                             )
@@ -4362,10 +4362,10 @@ TupleValues: TupleValues = {
         let elements = vec![new_tuple_value(None); prefix + 1];
         new_tuple_values(elements)
     },
-    <prefix: TuplePrefix> <differentiator: Expression> <_TupleValue: (Comma <Separated<Comma, <TupleValue>>>)?>  => {
+    <prefix: TuplePrefix> <differentiator: Expression> <_tuple_value: (Comma <Separated<Comma, <TupleValue>>>)?>  => {
         let mut elements = vec![new_tuple_value(None); prefix];
         elements.push(new_tuple_value(Some(differentiator)));
-        elements.extend(_TupleValue.unwrap_or(vec![]));
+        elements.extend(_tuple_value.unwrap_or(vec![]));
         new_tuple_values(elements)
     },
     
@@ -4750,7 +4750,7 @@ IdentifierPathTail: Vec<IdentifierPathElement> = {
     
 };
 IdentifierPathTailElements: Vec<IdentifierPathElement> = {
-    <_MemberAccessIdentifier: Separated<Period, <IdentifierPathElement>>>  => <>,
+    <_member_access_identifier: Separated<Period, <IdentifierPathElement>>>  => <>,
     
 };
 "#)

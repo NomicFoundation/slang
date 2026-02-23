@@ -52,7 +52,7 @@ Repeated<T>: Vec<T> = {
     {% endif %}{% if item.public -%} pub {% endif -%} {{ item.name }}: {{ item.producing_type }} = {
         {% for option in item.options -%}
             {% for field in option.fields -%}
-                <{{ field.capturing_name }}: {{ field.rule }}> {{ " " }}
+                <{{ field.capturing_name | snake_case }}: {{ field.rule }}> {{ " " }}
             {%- endfor %}=> {% if option.constructor -%}
             {{ option.constructor | snake_case }}(<>)
             {%- else -%}

@@ -7,10 +7,6 @@ use crate::lexer::{ContextKind, LexemeKind, Lexer};
 mod parser_helpers;
 
 lalrpop_mod!(
-    // TODO(v2): Remove and allow lints individually if needed
-    #[allow(clippy::all)]
-    #[allow(clippy::trivially_copy_pass_by_ref)]
-    #[allow(warnings)]
     #[rustfmt::skip]
     pub(crate) grammar, "/parser/grammar.generated.rs"); // synthesized by LALRPOP
 
