@@ -1,6 +1,10 @@
 use crate::lexer::LexemeKind;
 use slang_solidity_v2_cst::structured_cst::nodes::*;
-use crate::parser::parser_helpers::*;
+use crate::parser::parser_helpers::{
+    IndexAccessPath, extract_extra_attributes, index_access_path_add_index,
+    new_expression_index_access_path, new_index_access_path_from_elementary_type,
+    new_index_access_path_from_identifier_path, new_type_name_index_access_path,
+};
 
 grammar<'source>(source: &'source str);
 

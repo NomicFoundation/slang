@@ -187,7 +187,7 @@ pub(crate) fn enum_item_to_lalrpop_items(item: &EnumItem) -> Vec<LALRPOPDerivedI
         .iter()
         .filter(|variant| is_enabled(variant.enabled.as_ref()))
         .map(|variant| {
-            let capturing_name = format!("_{}", variant.reference);
+            let capturing_name = format!("{}", variant.reference);
             let fields = vec![LALRPOPField {
                 capturing_name: capturing_name.clone().into(),
                 rule: simple_match(&variant.reference),
@@ -221,7 +221,7 @@ pub(crate) fn repeated_item_to_lalrpop_items(item: &RepeatedItem) -> Vec<LALRPOP
     if !is_enabled(item.enabled.as_ref()) {
         return vec![];
     }
-    let capturing_name = format!("_{}", item.reference);
+    let capturing_name = format!("{}", item.reference);
     let fields = vec![LALRPOPField {
         capturing_name: capturing_name.clone().into(),
         rule: repeated(
@@ -256,7 +256,7 @@ pub(crate) fn separated_item_to_lalrpop_items(item: &SeparatedItem) -> Vec<LALRP
     if !is_enabled(item.enabled.as_ref()) {
         return vec![];
     }
-    let capturing_name = format!("_{}", item.reference);
+    let capturing_name = format!("{}", item.reference);
     let fields = vec![LALRPOPField {
         capturing_name: capturing_name.clone().into(),
         rule: separated(
@@ -338,7 +338,7 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
             let operator_ident = &x.name;
 
             // And then the single field references this new rule
-            let capturing_name = format!("_{operator_ident}");
+            let capturing_name = format!("{operator_ident}");
             let fields = vec![LALRPOPField {
                 capturing_name: capturing_name.clone().into(),
                 rule: simple_match(operator_ident),
@@ -349,7 +349,7 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
 
         // Now, we always have a single option, since alternatives are tucked away in their own rule
         let option = {
-            let capturing_name = format!("_{}", item.name);
+            let capturing_name = format!("{}", item.name);
 
             // The fields of this option depend on the operaot model, within a given precedence expression
             // all operators should have the same model, therefore we match against the first one
@@ -540,7 +540,7 @@ fn collect_primaries(item: &PrecedenceItem, prec_counter: i32) -> LALRPOPDerived
         .iter()
         .filter(|exp| is_enabled(exp.enabled.as_ref()))
         .map(|exp| {
-            let capturing_name = format!("_{}", exp.reference);
+            let capturing_name = format!("{}", exp.reference);
             LALRPOPDefinition {
                 fields: vec![LALRPOPField {
                     capturing_name: capturing_name.into(),
