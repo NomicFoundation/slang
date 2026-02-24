@@ -1,0 +1,24 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract X # { }                                                                 │ 0..16
+
+Errors: # 1 total
+  - >
+    Error: Expected IsKeyword or LayoutKeyword or OpenBrace.
+       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/unrecognized_lexeme_after_contract/input.sol:1:11]
+       │
+     1 │ contract X # { }
+       │           ───┬───  
+       │              ╰───── Error occurred here.
+    ───╯
+
+Tree:
+  - (root꞉ SourceUnit): # "contract X # { }\n" (0..17)
+      - (members꞉ SourceUnitMembers): # "contract X" (0..10)
+          - (item꞉ SourceUnitMember) ► (variant꞉ ContractDefinition): # "contract X" (0..10)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (leading_trivia꞉ Whitespace): " " # (8..9)
+              - (name꞉ Identifier): "X" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): [] # (10..10)
+      - (unrecognized꞉ UNRECOGNIZED): " # { }\n" # (10..17)

@@ -2,9 +2,9 @@ use lalrpop_util::lalrpop_mod;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes::{ContractDefinition, Expression, SourceUnit};
 
-use crate::lexer::{ContextKind, Lexer};
+use crate::lexer::{ContextKind, LexemeKind, Lexer};
 
-mod nodes;
+mod parser_helpers;
 
 lalrpop_mod!(
     // TODO(v2): Remove and allow lints individually if needed
@@ -90,5 +90,28 @@ impl Parser for ContractDefinitionParser {
             .parse(input, lexer)
             // TODO(v2): Improve on showing the error
             .map_err(|e| format!("{e:?}"))
+    }
+}
+
+/// Iterate over the lexemes and their offsets
+///
+/// TODO(v2): This iterator skips all trivia, we'll want to include it in
+/// future versions
+impl Iterator for Lexer<'_> {
+    type Item = Result<(usize, LexemeKind, usize), ()>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        while let Some(lexeme) = self.next_lexeme() {
+            match lexeme.kind {
+                LexemeKind::Whitespace
+                | LexemeKind::EndOfLine
+                | LexemeKind::SingleLineComment
+                | LexemeKind::MultiLineComment
+                | LexemeKind::SingleLineNatSpecComment
+                | LexemeKind::MultiLineNatSpecComment => {}
+                _ => return Some(Ok((lexeme.range.start, lexeme.kind, lexeme.range.end))),
+            }
+        }
+        None
     }
 }

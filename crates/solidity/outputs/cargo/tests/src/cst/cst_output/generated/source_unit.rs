@@ -187,6 +187,11 @@ fn tuple_deconstruction_statement() -> Result<()> {
 }
 
 #[test]
+fn unrecognized_lexeme_after_contract() -> Result<()> {
+    run(T, "unrecognized_lexeme_after_contract")
+}
+
+#[test]
 fn unreserved_keywords() -> Result<()> {
     run(T, "unreserved_keywords")
 }
