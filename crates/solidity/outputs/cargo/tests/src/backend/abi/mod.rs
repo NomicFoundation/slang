@@ -1,5 +1,5 @@
 use anyhow::Result;
-use slang_solidity::backend::semantic::ast::FunctionKind;
+use slang_solidity::backend::abi::{AbiEntry, ParameterComponent};
 
 use crate::backend::fixtures;
 
@@ -12,48 +12,17 @@ fn test_get_contracts_abi() -> Result<()> {
     assert_eq!(1, contracts.len());
     assert_eq!("Counter", contracts[0].name);
     assert_eq!("main.sol", contracts[0].file_id);
-    assert_eq!(7, contracts[0].functions.len());
+    assert_eq!(7, contracts[0].entries.len());
 
-    let functions = &contracts[0].functions;
+    let entries = &contracts[0].entries;
 
-    assert!(matches!(functions[0].kind, FunctionKind::Constructor));
-    assert!(functions[0].name.is_none());
-
-    assert!(matches!(functions[1].kind, FunctionKind::Regular));
-    assert!(functions[1]
-        .name
-        .as_ref()
-        .is_some_and(|name| name == "click"));
-
-    assert!(matches!(functions[2].kind, FunctionKind::Regular));
-    assert!(functions[2]
-        .name
-        .as_ref()
-        .is_some_and(|name| name == "count"));
-
-    assert!(matches!(functions[3].kind, FunctionKind::Regular));
-    assert!(functions[3]
-        .name
-        .as_ref()
-        .is_some_and(|name| name == "disable"));
-
-    assert!(matches!(functions[4].kind, FunctionKind::Regular));
-    assert!(functions[4]
-        .name
-        .as_ref()
-        .is_some_and(|name| name == "enable"));
-
-    assert!(matches!(functions[5].kind, FunctionKind::Regular));
-    assert!(functions[5]
-        .name
-        .as_ref()
-        .is_some_and(|name| name == "increment"));
-
-    assert!(matches!(functions[6].kind, FunctionKind::Regular));
-    assert!(functions[6]
-        .name
-        .as_ref()
-        .is_some_and(|name| name == "isEnabled"));
+    assert!(matches!(entries[0], AbiEntry::Constructor { .. }));
+    assert!(matches!(entries[1], AbiEntry::Function { ref name, .. } if name == "click"));
+    assert!(matches!(entries[2], AbiEntry::Function { ref name, .. } if name == "count"));
+    assert!(matches!(entries[3], AbiEntry::Function { ref name, .. } if name == "disable"));
+    assert!(matches!(entries[4], AbiEntry::Function { ref name, .. } if name == "enable"));
+    assert!(matches!(entries[5], AbiEntry::Function { ref name, .. } if name == "increment"));
+    assert!(matches!(entries[6], AbiEntry::Function { ref name, .. } if name == "isEnabled"));
 
     Ok(())
 }
@@ -140,6 +109,155 @@ fn test_function_selector() -> Result<()> {
     assert_eq!(state_variables[1].compute_selector(), None); // _state
     assert_eq!(state_variables[2].compute_selector(), Some(0x0666_1abd_u32)); // count()
     assert_eq!(state_variables[3].compute_selector(), None); // _clickers
+
+    Ok(())
+}
+
+#[test]
+fn test_full_abi_with_events_and_errors() -> Result<()> {
+    let compilation_unit = fixtures::FullAbi::build_compilation_unit()?;
+    let semantic_analysis = compilation_unit.semantic_analysis();
+
+    let contracts_abi = semantic_analysis.get_contracts_abi();
+    assert_eq!(contracts_abi.len(), 1);
+    assert_eq!(contracts_abi[0].name, "Test");
+
+    let entries = &contracts_abi[0].entries;
+    assert_eq!(entries.len(), 9);
+
+    assert!(matches!(entries[0], AbiEntry::Constructor { .. }));
+    assert!(
+        matches!(entries[1], AbiEntry::Error { ref name, .. } if name == "InsufficientBalance")
+    );
+    assert!(matches!(entries[2], AbiEntry::Error { ref name, .. } if name == "SomethingWrong"));
+    assert!(matches!(entries[3], AbiEntry::Event { ref name, .. } if name == "BaseEvent"));
+    assert!(matches!(entries[4], AbiEntry::Event { ref name, .. } if name == "Event"));
+    assert!(matches!(entries[5], AbiEntry::Fallback { .. }));
+    assert!(matches!(entries[6], AbiEntry::Function { ref name, .. } if name == "b"));
+    assert!(matches!(entries[7], AbiEntry::Function { ref name, .. } if name == "foo"));
+    assert!(matches!(entries[8], AbiEntry::Receive { .. }));
+
+    Ok(())
+}
+
+#[test]
+fn test_abi_entries_with_tuples() -> Result<()> {
+    let compilation_unit = fixtures::AbiWithTuples::build_compilation_unit()?;
+    let semantic_analysis = compilation_unit.semantic_analysis();
+
+    let contracts_abi = semantic_analysis.get_contracts_abi();
+    assert_eq!(contracts_abi.len(), 1);
+    assert_eq!(contracts_abi[0].name, "Test");
+
+    let entries = &contracts_abi[0].entries;
+
+    let AbiEntry::Function {
+        name,
+        inputs,
+        outputs,
+        ..
+    } = &entries[0]
+    else {
+        panic!("expected ABI for function");
+    };
+    assert_eq!(name, "f");
+    assert_eq!(inputs.len(), 3);
+    assert!(inputs[0].name.is_none());
+    assert_eq!(inputs[0].r#type, "tuple");
+    assert_eq!(
+        inputs[0].components,
+        vec![
+            ParameterComponent {
+                name: "a".to_string(),
+                r#type: "uint256".to_string(),
+                components: Vec::new()
+            },
+            ParameterComponent {
+                name: "b".to_string(),
+                r#type: "uint256[]".to_string(),
+                components: Vec::new()
+            },
+            ParameterComponent {
+                name: "c".to_string(),
+                r#type: "tuple[]".to_string(),
+                components: vec![
+                    ParameterComponent {
+                        name: "x".to_string(),
+                        r#type: "uint256".to_string(),
+                        components: Vec::new()
+                    },
+                    ParameterComponent {
+                        name: "y".to_string(),
+                        r#type: "uint256".to_string(),
+                        components: Vec::new()
+                    },
+                ]
+            },
+        ]
+    );
+
+    assert!(inputs[1].name.is_none());
+    assert_eq!(inputs[1].r#type, "tuple");
+    assert_eq!(
+        inputs[1].components,
+        vec![
+            ParameterComponent {
+                name: "x".to_string(),
+                r#type: "uint256".to_string(),
+                components: Vec::new()
+            },
+            ParameterComponent {
+                name: "y".to_string(),
+                r#type: "uint256".to_string(),
+                components: Vec::new()
+            },
+        ]
+    );
+
+    assert!(inputs[2].name.is_none());
+    assert_eq!(inputs[2].r#type, "uint256");
+    assert!(inputs[2].components.is_empty());
+    assert!(outputs.is_empty());
+
+    let AbiEntry::Function {
+        name,
+        inputs,
+        outputs,
+        ..
+    } = &entries[1]
+    else {
+        panic!("expected ABI for function");
+    };
+    assert_eq!(name, "g");
+    assert!(inputs.is_empty());
+    assert_eq!(outputs.len(), 3);
+    assert!(outputs[0].name.is_none());
+    assert_eq!(outputs[0].r#type, "tuple");
+    assert_eq!(outputs[0].components.len(), 3);
+    assert!(outputs[1].name.is_none());
+    assert_eq!(outputs[1].r#type, "tuple");
+    assert_eq!(outputs[1].components.len(), 2);
+    assert!(outputs[2].name.is_none());
+    assert_eq!(outputs[2].r#type, "uint256");
+    assert!(outputs[2].components.is_empty());
+
+    Ok(())
+}
+
+#[test]
+fn test_selectors_for_functions_with_tuple_parameters() -> Result<()> {
+    let compilation_unit = fixtures::AbiWithTuples::build_compilation_unit()?;
+    let semantic_analysis = compilation_unit.semantic_analysis();
+
+    let test = semantic_analysis
+        .find_contract_by_name("Test")
+        .expect("contract is found");
+    let functions = test.functions();
+
+    // f((uint256,uint256[],(uint256,uint256)[]),(uint256,uint256),uint256)
+    assert_eq!(functions[0].compute_selector(), Some(0x6f2b_e728_u32));
+    // g()
+    assert_eq!(functions[1].compute_selector(), Some(0xe217_9b8e_u32));
 
     Ok(())
 }
