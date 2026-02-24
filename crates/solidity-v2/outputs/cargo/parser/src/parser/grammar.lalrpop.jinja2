@@ -1,0 +1,118 @@
+use crate::lexer::LexemeKind;
+use slang_solidity_v2_cst::structured_cst::nodes::*;
+use crate::parser::parser_helpers::*;
+
+grammar<'source>(source: &'source str);
+
+SeparatedAllowEmpty<S, T>: Vec<T> = {
+    => vec![],
+    Separated<S, T> => <>,
+};
+
+Separated<S, T>: Vec<T> = {
+    <e:T> => {
+        vec![e]
+    },
+    <mut v: Separated<S, T>> S <e: T> => {
+        v.push(e);
+        v
+    },
+};
+
+#[inline]
+RepeatedAllowEmpty<T>: Vec<T> = {
+    => vec![],
+    Repeated<T> => <>,
+};
+
+Repeated<T>: Vec<T> = {
+    <T> => {
+        vec![<>]
+    },
+    <mut v: Repeated<T>> <e: T> => {
+        v.push(e);
+        v
+    },
+};
+
+{% for section in model.parser.sections -%}
+
+// Rules for section {{ section.title }}
+
+{% for topic in section.topics -%}
+    // Rules for topic {{ topic.title }}
+    {% for item in topic.items -%}
+
+    {%- if item.type == "Verbatim" %}
+    {{ item.content }}
+    {% else -%}
+
+    {%- for item in item.content -%}
+    {% if item.inline %}#[inline]
+    {% endif %}{% if item.public -%} pub {% endif -%} {{ item.name }}: {{ item.producing_type }} = {
+        {% for option in item.options -%}
+            {% for field in option.fields -%}
+                <{{ field.capturing_name }}: {{ field.rule }}> {{ " " }}
+            {%- endfor %}=> {% if option.constructor -%}
+            {{ option.constructor | snake_case }}(<>)
+            {%- else -%}
+            <>
+            {%- endif %},
+        {% endfor %}
+    };
+    {% endfor %}
+    {%- endif -%}
+
+    {%- endfor %}
+
+{% endfor %}
+
+
+{% endfor %}
+
+// Lexemes formatting
+//
+// A given terminal can actually match against multiple lexemes,
+// so we generate a rule per terminal that matches against all its lexemes.
+//
+// An example is `YulIdentifier` which matches the `L_YulIdentifier` lexeme,
+// but also all the unreserved keywords that are valid Yul identifiers.
+{% for id, lexemes in model.parser.terminals -%}
+{% if id != "Identifier" -%}
+#[inline]
+{{ id }}: {{ id }} = {
+{% for lexeme in lexemes %}
+        <l:@L> L_{{ lexeme }} <r:@L> => new_{{id | snake_case}}(l..r, source),
+{% endfor %}
+};
+{%- else -%}
+#[inline]
+Identifier: Identifier = {
+    SomeIdentifier<""> => <>,
+};
+
+// Making an Identifier inline generates an explosion of states, so DON'T
+//
+// We allow to pass parameters for certain tokens that are disallowed,
+// this is an easy way to express "Any identifier except `X`" as `SomeIdentifier<"X">`
+SomeIdentifier<Except>: {{ id }} = {
+{% for lexeme in lexemes %}
+        <l:@L> L_{{ lexeme }} <r:@L> if Except !~ "{{ lexeme }}" => new_{{id | snake_case}}(l..r, source),
+{% endfor %}
+};
+
+{%- endif %}
+{% endfor %}
+
+
+extern {
+    type Location = usize;
+    // TODO(v2): error recovery
+    type Error = ();
+
+    enum LexemeKind {
+        {% for kind in model.parser.lexer.lexeme_kinds -%}
+            L_{{ kind }} => LexemeKind::{{ kind }},
+        {% endfor %}
+    }
+}

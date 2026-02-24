@@ -8,3 +8,7 @@ mod lexemes;
 mod tests;
 
 pub mod temp_sourcify;
+
+pub(crate) use contexts::ContextKind;
+pub(crate) use definition::Lexer;
+pub(crate) use lexemes::LexemeKind;
