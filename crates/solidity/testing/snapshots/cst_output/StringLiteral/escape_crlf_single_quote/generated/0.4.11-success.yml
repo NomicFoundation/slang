@@ -7,6 +7,6 @@ Source: >
 Errors: []
 
 Tree:
-  - (root꞉ StringLiteral): # "'foo\\r\nbar'\r\n" (0..13)
-      - (variant꞉ SingleQuotedStringLiteral): "'foo\\r\nbar'" # (0..11)
-      - (trailing_trivia꞉ EndOfLine): "\r\n" # (11..13)
+  - (root꞉ StringLiteral): # "'foo\\nbar'\n" (0..11)
+      - (variant꞉ SingleQuotedStringLiteral): "'foo\\nbar'" # (0..10)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (10..11)

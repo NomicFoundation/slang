@@ -1,8 +1,8 @@
 //! TODO(v2): remove this temporary API once the lexer is fully integrated into the parser, and can be tested through it:
 
 use semver::Version;
-use slang_solidity::cst::{Cursor, Node, NonterminalKind, TextRange, TextRangeExtensions};
-use slang_solidity::diagnostic::{Diagnostic, Severity};
+use slang_solidity::cst::{Cursor, Node, NonterminalKind, TextRangeExtensions};
+use slang_solidity_v2_common::diagnostic::{Diagnostic, Severity, TextRange};
 
 use crate::lexer::contexts::ContextKind;
 use crate::lexer::definition::Lexer;
@@ -127,7 +127,9 @@ impl<'source> Comparator<'source> {
     fn add_error(&mut self, message: String) {
         self.errors.push(Error {
             message,
-            text_range: self.cursor.text_range().clone(),
+            text_range: TextRange::from_bytes_range(
+                self.cursor.text_range().start.utf8..self.cursor.text_range().end.utf8,
+            ),
         });
     }
 }

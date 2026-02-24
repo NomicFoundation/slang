@@ -4,8 +4,8 @@
 
 #[allow(clippy::wildcard_imports)]
 use slang_solidity_v2_cst::structured_cst::nodes::*;
-use slang_solidity::cst::{NonterminalKind, NodeKind, Node, EdgeLabel, Edge, TextRange, TextIndex};
-use slang_solidity::diagnostic::{Diagnostic, Severity};
+use slang_solidity::cst::{NonterminalKind, NodeKind, Node, EdgeLabel, Edge, TextRange as V1TextRange, TextIndex};
+use slang_solidity_v2_common::diagnostic::{Diagnostic, Severity, TextRange};
 
 /// An error found when checking a node
 #[derive(Clone, Debug)]
@@ -30,8 +30,8 @@ impl Diagnostic for NodeCheckerError {
 }
 
 impl NodeCheckerError {
-    pub(crate) fn new(err: String, text_range: TextRange) -> NodeCheckerError {
-        NodeCheckerError { err, text_range }
+    pub(crate) fn new(err: String, text_range: V1TextRange) -> NodeCheckerError {
+        NodeCheckerError { err, text_range: TextRange::from_bytes_range(text_range.start.utf8..text_range.end.utf8) }
     }
 }
 
@@ -54,7 +54,7 @@ pub trait NodeChecker {
     }
 }
 
-// TODO(v2): Consider using a struct like `Helper` in 
+// TODO(v2): Consider using a struct like `Helper` in
 // crates/solidity/outputs/cargo/wasm/src/wrappers/ast/selectors.generated.rs
 
 /// Extract the first edge with the given label, and remove it from the vector.
