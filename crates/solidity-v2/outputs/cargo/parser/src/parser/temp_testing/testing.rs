@@ -5,12 +5,12 @@ use std::rc::Rc;
 use anyhow::Result;
 use infra_utils::codegen::CodegenFileSystem;
 use semver::Version;
-use slang_solidity::cst::{Cursor, Node, TextRange};
+use slang_solidity::cst::Node;
 use slang_solidity::parser::ParseOutput;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes::{ContractDefinition, Expression, SourceUnit};
 
-use crate::parser::{ContractDefinitionParser, ExpressionParser, SourceUnitParser};
+use crate::parser::{ContractDefinitionParser, ExpressionParser, ParserError, SourceUnitParser};
 use crate::temp_testing::node_checker::{NodeChecker, NodeCheckerError};
 use crate::Parser as ParserV2;
 
@@ -66,7 +66,7 @@ impl V2Tester for NonSupportedParserTester {
 }
 
 struct V2TesterImpl<NT, T: ParserV2<NonTerminal = NT>> {
-    last_output: Option<Result<NT, String>>,
+    last_output: Option<Result<NT, ParserError>>,
     last_diff: Option<(bool, Option<String>, String)>,
     phantom: std::marker::PhantomData<T>,
 }
@@ -130,7 +130,10 @@ impl<NT: NodeChecker + Debug + PartialEq, T: ParserV2<NonTerminal = NT>> V2Teste
                     }
                     Err(err) => {
                         // We don't care about the errors for now, we just write them
-                        writeln!(s, "{err:#?}")?;
+                        let e = slang_solidity_v2_common::diagnostic::render(
+                            err, source_id, source, false,
+                        );
+                        writeln!(s, "{e}")?;
                     }
                 }
 
@@ -170,7 +173,7 @@ impl<NT: NodeChecker + Debug + PartialEq, T: ParserV2<NonTerminal = NT>> V2Teste
 impl<NT: NodeChecker + Debug + PartialEq, T: ParserV2<NonTerminal = NT>> V2TesterImpl<NT, T> {
     fn diff_report(
         v1_output: &ParseOutput,
-        v2_output: &Result<NT, String>,
+        v2_output: &Result<NT, ParserError>,
         source_id: &str,
         source: &str,
     ) -> (bool, Option<String>, String) {
@@ -234,19 +237,12 @@ fn write_errors(errors: &Vec<NodeCheckerError>, source_id: &str, source: &str) -
 
     for error in errors {
         writeln!(s, "  - >").unwrap();
-        for line in slang_solidity::diagnostic::render(error, source_id, source, false).lines() {
+        for line in
+            slang_solidity_v2_common::diagnostic::render(error, source_id, source, false).lines()
+        {
             writeln!(s, "    {line}").unwrap();
         }
     }
 
     s
-}
-
-pub fn compare_with_v1_cursor(source: &str, root_cursor: &Cursor) -> Vec<NodeCheckerError> {
-    let v2_output = SourceUnitParser::parse(source, LanguageVersion::V0_8_30);
-
-    match v2_output {
-        Ok(v2_tree) => v2_tree.check_node(&root_cursor.node()),
-        Err(error_message) => vec![NodeCheckerError::new(error_message, TextRange::default())],
-    }
 }

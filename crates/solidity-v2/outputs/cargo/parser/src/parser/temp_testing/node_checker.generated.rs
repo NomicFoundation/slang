@@ -2,8 +2,10 @@
 
 #![allow(clippy::too_many_lines)]
 
-use slang_solidity::cst::{Edge, EdgeLabel, Node, NodeKind, NonterminalKind, TextIndex, TextRange};
-use slang_solidity::diagnostic::{Diagnostic, Severity};
+use slang_solidity::cst::{
+    Edge, EdgeLabel, Node, NodeKind, NonterminalKind, TextIndex, TextRange as V1TextRange,
+};
+use slang_solidity_v2_common::diagnostic::{Diagnostic, Severity, TextRange};
 #[allow(clippy::wildcard_imports)]
 use slang_solidity_v2_cst::structured_cst::nodes::*;
 
@@ -29,8 +31,11 @@ impl Diagnostic for NodeCheckerError {
 }
 
 impl NodeCheckerError {
-    pub(crate) fn new(err: String, text_range: TextRange) -> NodeCheckerError {
-        NodeCheckerError { err, text_range }
+    pub(crate) fn new(err: String, text_range: V1TextRange) -> NodeCheckerError {
+        NodeCheckerError {
+            err,
+            text_range: TextRange::from_bytes_range(text_range.start.utf8..text_range.end.utf8),
+        }
     }
 }
 
