@@ -15,9 +15,6 @@ lalrpop_mod!(
     #[rustfmt::skip]
     pub(crate) grammar, "/parser/grammar.generated.rs"); // synthesized by LALRPOP
 
-// TODO(v2): This is temporary and it's used to compare against V1
-pub mod temp_testing;
-
 pub mod parser_error;
 
 /// A Solidity Parser
@@ -34,7 +31,7 @@ pub trait Parser {
     // it won't be needed
     fn check_version(version: LanguageVersion) {
         assert!(
-            !(version != LanguageVersion::V0_8_30),
+            version == LanguageVersion::V0_8_30,
             "Only version 0.8.30 is currently supported by the V2 parser"
         );
     }

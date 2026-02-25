@@ -7,7 +7,7 @@ use infra_utils::paths::PathExtensions;
 use semver::Version;
 use slang_solidity::cst::NonterminalKind;
 use slang_solidity::parser::Parser;
-use slang_solidity_v2_parser::temp_testing::V2TesterConstructor;
+use solidity_v2_testing_utils::v1_comparison::parser::V2TesterConstructor;
 use strum_macros::Display;
 
 use crate::cst::cst_output::renderer::render;

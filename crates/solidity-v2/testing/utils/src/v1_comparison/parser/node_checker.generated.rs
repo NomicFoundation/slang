@@ -5,9 +5,11 @@
 use slang_solidity::cst::{
     Edge, EdgeLabel, Node, NodeKind, NonterminalKind, TextIndex, TextRange as V1TextRange,
 };
-use slang_solidity_v2_common::diagnostic::{Diagnostic, Severity, TextRange};
 #[allow(clippy::wildcard_imports)]
 use slang_solidity_v2_cst::structured_cst::nodes::*;
+use slang_solidity_v2_cst::text_index::TextRange;
+
+use crate::reporting::diagnostic::{Diagnostic, Severity};
 
 /// An error found when checking a node
 #[derive(Clone, Debug)]

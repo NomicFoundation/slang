@@ -10,9 +10,11 @@ use slang_solidity::parser::ParseOutput;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes::{ContractDefinition, Expression, SourceUnit};
 
-use crate::parser::{ContractDefinitionParser, ExpressionParser, ParserError, SourceUnitParser};
-use crate::temp_testing::node_checker::{NodeChecker, NodeCheckerError};
-use crate::Parser as ParserV2;
+use slang_solidity_v2_parser::{
+    ContractDefinitionParser, ExpressionParser, Parser as ParserV2, ParserError, SourceUnitParser,
+};
+
+use super::node_checker::{NodeChecker, NodeCheckerError};
 
 /// A Tester for V2 parser that compares against V1 outputs.
 ///
@@ -130,9 +132,7 @@ impl<NT: NodeChecker + Debug + PartialEq, T: ParserV2<NonTerminal = NT>> V2Teste
                     }
                     Err(err) => {
                         // We don't care about the errors for now, we just write them
-                        let e = slang_solidity_v2_common::diagnostic::render(
-                            err, source_id, source, false,
-                        );
+                        let e = crate::reporting::diagnostic::render(err, source_id, source, false);
                         writeln!(s, "{e}")?;
                     }
                 }
@@ -237,9 +237,7 @@ fn write_errors(errors: &Vec<NodeCheckerError>, source_id: &str, source: &str) -
 
     for error in errors {
         writeln!(s, "  - >").unwrap();
-        for line in
-            slang_solidity_v2_common::diagnostic::render(error, source_id, source, false).lines()
-        {
+        for line in crate::reporting::diagnostic::render(error, source_id, source, false).lines() {
             writeln!(s, "    {line}").unwrap();
         }
     }

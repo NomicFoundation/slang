@@ -19,21 +19,14 @@ keywords = ["parser"]
 categories = ["compilers", "parsing", "parser-implementations"]
 
 [features]
-# TODO(v2): Once we split the testing for V2, we should consider moving the testing utilities into a separate
-# crate, and have these dependencies only in there
-__private_testing_utils = ["anyhow", "infra_utils", "slang_solidity_v2_common/__private_testing_utils"]
+__private_testing_utils = []
 
 [build-dependencies]
 lalrpop = { workspace = true }
 
 [dependencies]
-anyhow = { workspace = true, optional = true }
-infra_utils = { workspace = true, optional = true }
-itertools = { workspace = true }
 lalrpop-util = { workspace = true }
 logos = { workspace = true }
-semver = { workspace = true }
-slang_solidity = { workspace = true, features = ["__private_ariadne_errors"] }
 slang_solidity_v2_cst = { workspace = true }
 slang_solidity_v2_common = { workspace = true }
 strum = { workspace = true }

@@ -17,7 +17,6 @@ pub enum Severity {
 /// A compiler diagnostic that can be rendered to a user.
 pub trait Diagnostic {
     /// The character range of the source that this diagnostic applies to.
-    /// at the moment.
     #[allow(dead_code)]
     fn text_range(&self) -> TextRange;
     /// The severity of this diagnostic.
