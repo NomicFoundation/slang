@@ -58,6 +58,8 @@ pub fn render<D: Diagnostic>(error: &D, source_id: &str, source: &str, with_colo
         return format!("{kind}: {message}\n   ─[{source_id}:0:0]");
     }
 
+    // TODO(v2): Once https://github.com/zesterer/ariadne/pull/159 is released we should be able to
+    // skip this step
     let color = if with_color { color } else { Color::Unset };
 
     // TODO(v2): Once https://github.com/zesterer/ariadne/pull/159 is released we should be able to

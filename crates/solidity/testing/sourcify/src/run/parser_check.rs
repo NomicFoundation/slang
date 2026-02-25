@@ -64,8 +64,8 @@ pub(super) fn run(contract: &Contract, unit: &CompilationUnit, events: &Events) 
     test_outcome
 }
 
-/// Given a vector of errors, and a function that can print them,
-/// render them and pass them as events
+/// Given a vector of errors, and a function that can render them,
+/// render them together and pass them as events
 fn print_errors<T, F>(
     contract: &Contract,
     events: &Events,
