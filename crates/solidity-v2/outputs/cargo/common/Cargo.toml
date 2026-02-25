@@ -18,13 +18,7 @@ license = "MIT"
 keywords = ["utilities"]
 categories = ["compilers", "utilities"]
 
-[features]
-# TODO(v2): Once we split the testing for V2, we should consider moving the testing utilities into a separate
-# crate, and have these dependencies only in there
-__private_testing_utils = ["ariadne"]
-
 [dependencies]
-ariadne = { workspace = true, optional = true }
 semver = { workspace = true }
 thiserror = { workspace = true }
 

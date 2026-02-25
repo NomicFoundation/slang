@@ -1,6 +1,8 @@
 //! Utilities for defining error diagnostics.
 
-use std::ops::Range;
+use slang_solidity_v2_cst::text_index::TextRange;
+
+pub mod implementations;
 
 /// The severity of a diagnostic.
 ///
@@ -14,29 +16,11 @@ pub enum Severity {
     Hint = 4,
 }
 
-pub type TextIndex = usize;
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct TextRange(Range<TextIndex>);
-
-impl TextRange {
-    pub fn from_bytes_range(bytes_range: Range<usize>) -> Self {
-        Self(bytes_range)
-    }
-
-    pub fn bytes_range(&self) -> Range<usize> {
-        self.0.clone()
-    }
-}
-
 /// A compiler diagnostic that can be rendered to a user.
 pub trait Diagnostic {
     /// The character range of the source that this diagnostic applies to.
-    /// at the moment.
-    #[allow(dead_code)]
     fn text_range(&self) -> TextRange;
     /// The severity of this diagnostic.
-    #[allow(dead_code)]
     fn severity(&self) -> Severity;
     /// The primary message associated with this diagnostic.
     fn message(&self) -> String;

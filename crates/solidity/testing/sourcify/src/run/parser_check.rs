@@ -23,11 +23,12 @@ pub(super) fn run(contract: &Contract, unit: &CompilationUnit, events: &Events) 
         }
 
         let source = contract.read_file(file.id()).unwrap();
-        let v2_errors = slang_solidity_v2_parser::temp_sourcify::Comparator::compare_with_v1_output(
-            contract.version.clone(),
-            &source,
-            file.create_tree_cursor(),
-        );
+        let v2_errors =
+            solidity_v2_testing_utils::v1_comparison::lexer::Comparator::compare_with_v1_output(
+                contract.version.clone(),
+                &source,
+                file.create_tree_cursor(),
+            );
 
         if !v2_errors.is_empty() {
             print_errors(
@@ -35,7 +36,7 @@ pub(super) fn run(contract: &Contract, unit: &CompilationUnit, events: &Events) 
                 events,
                 file.id(),
                 &v2_errors,
-                slang_solidity_v2_common::diagnostic::render,
+                solidity_v2_testing_utils::reporting::diagnostic::render,
             );
             test_outcome = TestOutcome::Failed;
             continue;
@@ -43,17 +44,18 @@ pub(super) fn run(contract: &Contract, unit: &CompilationUnit, events: &Events) 
 
         // _SLANG_V2_PARSER_VERSION_ (keep in sync)
         if contract.version == Version::new(0, 8, 30) {
-            let v2_errors = slang_solidity_v2_parser::temp_testing::compare_with_v1_cursor(
-                &source,
-                &file.create_tree_cursor(),
-            );
+            let v2_errors =
+                solidity_v2_testing_utils::v1_comparison::parser::compare_with_v1_cursor(
+                    &source,
+                    &file.create_tree_cursor(),
+                );
             if !v2_errors.is_empty() {
                 print_errors(
                     contract,
                     events,
                     file.id(),
                     &v2_errors,
-                    slang_solidity_v2_common::diagnostic::render,
+                    solidity_v2_testing_utils::reporting::diagnostic::render,
                 );
                 test_outcome = TestOutcome::Failed;
                 continue;

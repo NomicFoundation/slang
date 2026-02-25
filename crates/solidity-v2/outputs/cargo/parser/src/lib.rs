@@ -3,5 +3,10 @@
 mod lexer;
 mod parser;
 
-pub use lexer::temp_sourcify;
-pub use parser::{temp_testing, Parser};
+pub use parser::{parser_error::ParserError, Parser};
+
+// We use the lexer for testing purposes
+#[cfg(feature = "__private_testing_utils")]
+pub use lexer::{ContextKind, Lexer};
+#[cfg(feature = "__private_testing_utils")]
+pub use parser::{ContractDefinitionParser, ExpressionParser, SourceUnitParser};

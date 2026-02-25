@@ -26,9 +26,7 @@ slang_solidity = { workspace = true, features = [
 ] }
 solidity_language = { workspace = true }
 strum_macros = { workspace = true }
-slang_solidity_v2_parser = { workspace = true, features = [
-  "__private_testing_utils",
-] }
+solidity_v2_testing_utils = { workspace = true }
 
 [lints]
 workspace = true

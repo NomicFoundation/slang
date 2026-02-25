@@ -1,18 +1,16 @@
 #[path = "node_checker.generated.rs"]
 mod node_checker;
 
-#[cfg(feature = "__private_testing_utils")]
 pub mod testing;
+use node_checker::{NodeChecker, NodeCheckerError};
 use slang_solidity::cst::Cursor;
-use slang_solidity_v2_common::diagnostic::{Diagnostic, Severity, TextRange};
 use slang_solidity_v2_common::versions::LanguageVersion;
-#[cfg(feature = "__private_testing_utils")]
+use slang_solidity_v2_cst::text_index::TextRange;
 pub use testing::V2TesterConstructor;
 
-use crate::parser::{Parser, SourceUnitParser};
-use crate::temp_testing::node_checker::{NodeChecker, NodeCheckerError};
+use slang_solidity_v2_parser::{Parser, ParserError, SourceUnitParser};
 
-use super::parser_error::ParserError;
+use crate::reporting::diagnostic::{Diagnostic, Severity};
 
 pub enum ComparisonError {
     ParsingError(ParserError),

@@ -1,0 +1,20 @@
+[package]
+name = "solidity_v2_testing_utils"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false
+
+[dependencies]
+anyhow = { workspace = true }
+ariadne = { workspace = true }
+infra_utils = { workspace = true }
+itertools = { workspace = true }
+semver = { workspace = true }
+slang_solidity = { workspace = true }
+slang_solidity_v2_common = { workspace = true }
+slang_solidity_v2_cst = { workspace = true }
+slang_solidity_v2_parser = { workspace = true, features = ["__private_testing_utils"] }
+
+[lints]
+workspace = true
