@@ -33,9 +33,10 @@ pub trait Parser {
     // TODO(v2): This is temporary, once the language definition is restricted to only supported versions
     // it won't be needed
     fn check_version(version: LanguageVersion) {
-        if version != LanguageVersion::V0_8_30 {
-            panic!("Only version 0.8.30 is currently supported by the V2 parser")
-        }
+        assert!(
+            !(version != LanguageVersion::V0_8_30),
+            "Only version 0.8.30 is currently supported by the V2 parser"
+        );
     }
 }
 

@@ -49,7 +49,7 @@ pub fn compare_with_v1_cursor(source: &str, root_cursor: &Cursor) -> Vec<Compari
         Ok(v2_tree) => v2_tree
             .check_node(&root_cursor.node())
             .into_iter()
-            .map(|e| ComparisonError::NodeCheckerError(e))
+            .map(ComparisonError::NodeCheckerError)
             .collect(),
         Err(error) => vec![ComparisonError::ParsingError(error)],
     }
