@@ -12,6 +12,11 @@ fn destructuring() -> Result<()> {
 }
 
 #[test]
+fn incomplete_type_name() -> Result<()> {
+    run(T, "incomplete_type_name")
+}
+
+#[test]
 fn local_vars() -> Result<()> {
     run(T, "local_vars")
 }

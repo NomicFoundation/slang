@@ -1,0 +1,67 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected Identifier.
+    ╭─[input.sol:14:5]
+    │
+ 14 │     }
+    │     │ 
+    │     ╰─ Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
+Definitions (5):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["Data" @ input.sol:2:12] (struct)
+- Def: #3 ["field" @ input.sol:3:17] (struct member, type: uint120)
+- Def: #4 ["data" @ input.sol:6:17] (state var, type: Data storage)
+- Def: #5 ["foo" @ input.sol:8:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["Data" @ input.sol:6:5] -> #2
+- Ref: ["data" @ input.sol:10:9] -> #4
+- Ref: ["field" @ input.sol:10:14] -> #3
+
+------------------------------------------------------------------------
+
+Unbound identifiers (1):
+- ???: ["data" @ input.sol:13:9]
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     struct Data {
+    │            ──┬─  
+    │              ╰─── name: 2
+  3 │         uint120 field;
+    │                 ──┬──  
+    │                   ╰──── name: 3
+    │ 
+  6 │     Data public data;
+    │     ──┬─        ──┬─  
+    │       ╰─────────────── ref: 2
+    │                   │   
+    │                   ╰─── name: 4
+    │ 
+  8 │     function foo() public {
+    │              ─┬─  
+    │               ╰─── name: 5
+    │ 
+ 10 │         data.field = 0;
+    │         ──┬─ ──┬──  
+    │           ╰───────── ref: 4
+    │                │    
+    │                ╰──── ref: 3
+    │ 
+ 13 │         data.
+    │         ──┬─  
+    │           ╰─── ???
+────╯

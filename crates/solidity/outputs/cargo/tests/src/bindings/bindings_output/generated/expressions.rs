@@ -97,6 +97,11 @@ fn funcalls_overload_using_for() -> Result<()> {
 }
 
 #[test]
+fn incomplete_member_access() -> Result<()> {
+    run(T, "incomplete_member_access")
+}
+
+#[test]
 fn legacy_call_options() -> Result<()> {
     run(T, "legacy_call_options")
 }

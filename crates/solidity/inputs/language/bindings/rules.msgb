@@ -1425,6 +1425,7 @@ inherit .star_extension
 ;; the path. This allows creating additional referencing paths with guards right
 ;; before the unqualified identifier (eg. for modifiers).
 
+; For the parent:
 @id_path [IdentifierPath] {
   ; This node connects to all parts of the path, for popping. This allows to
   ; connect at any point of the path. Useful for `using` directives when the
@@ -1434,6 +1435,7 @@ inherit .star_extension
   node @id_path.push_end
 }
 
+; For each identifier:
 @id_path [IdentifierPath @name [Identifier]] {
   node @name.ref
   attr (@name.ref) node_reference = @name
@@ -1445,7 +1447,7 @@ inherit .star_extension
   edge @id_path.all_pop_begin -> @name.pop
 }
 
-; Single identifier paths
+; For single identifier paths:
 @id_path [IdentifierPath . @name [Identifier] .] {
   let @id_path.rightmost_identifier = @name
 
@@ -1458,14 +1460,40 @@ inherit .star_extension
   let @id_path.pop_end = @name.pop
 }
 
-; Multiple identifier paths
-@id_path [IdentifierPath [_] . @name [Identifier] .] {
+; For single identifier paths, allowing an optional trailing period, to resolve incomplete paths like "x.":
+@id_path [IdentifierPath . @name [Identifier] . [Period] .] {
+  let @id_path.rightmost_identifier = @name
+
+  let @id_path.push_begin = @name.ref
+  let @id_path.push_ns = (node)
+  edge @name.ref -> @id_path.push_ns
+  edge @id_path.push_ns -> @id_path.push_end
+
+  let @id_path.pop_begin = @name.pop
+  let @id_path.pop_end = @name.pop
+}
+
+; For multiple identifier paths:
+@id_path [IdentifierPath @last_period [Period] . @name [Identifier] .] {
   let @id_path.rightmost_identifier = @name
 
   let @id_path.push_begin = @name.ref
   let @id_path.pop_end = @name.pop
+
+  let @id_path.push_ns = @last_period.ref_member
 }
 
+; For multiple identifier paths, allowing an optional trailing period, to resolve incomplete paths like "x.y.":
+@id_path [IdentifierPath @last_period [Period] . @name [Identifier] . [Period] .] {
+  let @id_path.rightmost_identifier = @name
+
+  let @id_path.push_begin = @name.ref
+  let @id_path.pop_end = @name.pop
+
+  let @id_path.push_ns = @last_period.ref_member
+}
+
+; For each consecutive pair of identifiers:
 [IdentifierPath @left_name [Identifier] . @period [Period] . @right_name [Identifier]] {
   node @period.ref_member
   attr (@period.ref_member) push_symbol = "."
@@ -1480,11 +1508,8 @@ inherit .star_extension
   edge @period.pop_member -> @right_name.pop
 }
 
-@id_path [IdentifierPath @last_period [Period] . [Identifier] . ] {
-  let @id_path.push_ns = @last_period.ref_member
-}
-
-@id_path [IdentifierPath . @name [Identifier] . [_]] {
+; For the first identifier of multiple:
+@id_path [IdentifierPath . @name [Identifier] . [Period] . [_]] {
   edge @name.ref -> @id_path.push_end
   let @id_path.pop_begin = @name.pop
 }
