@@ -1,5 +1,11 @@
 # changelog
 
+## 1.3.4
+
+### Patch Changes
+
+- [#1533](https://github.com/NomicFoundation/slang/pull/1533) [`afc9f87`](https://github.com/NomicFoundation/slang/commit/afc9f87ec2205d1f1afaa8cfbf8bef7f67a638cb) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - Fixed a panic during constructing binding graphs, when the input has incomplete `IdentifierPath` expressions.
+
 ## 1.3.3
 
 ### Patch Changes
