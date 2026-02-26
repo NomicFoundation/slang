@@ -5,8 +5,7 @@
 use semver::Version;
 use slang_solidity::cst::{Cursor, Node, NonterminalKind, TextRangeExtensions};
 use slang_solidity_v2_cst::text_index::TextRange;
-use slang_solidity_v2_parser::ContextKind;
-use slang_solidity_v2_parser::Lexer;
+use slang_solidity_v2_parser::{ContextKind, Lexer};
 
 use crate::reporting::diagnostic::{Diagnostic, Severity};
 

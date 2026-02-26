@@ -9,7 +9,6 @@ use slang_solidity::cst::Node;
 use slang_solidity::parser::ParseOutput;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes::{ContractDefinition, Expression, SourceUnit};
-
 use slang_solidity_v2_parser::{
     ContractDefinitionParser, ExpressionParser, Parser as ParserV2, ParserError, SourceUnitParser,
 };
