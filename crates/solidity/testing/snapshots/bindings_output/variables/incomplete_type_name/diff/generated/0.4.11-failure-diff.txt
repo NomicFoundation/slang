@@ -1,0 +1,5 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+reference `Test` at input.sol:10:5 not found in new binder output
+
+Definitions and/or references from binding graph and new binder DIFFER

@@ -1,0 +1,67 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected Identifier.
+    ╭─[input.sol:14:5]
+    │
+ 14 │     }
+    │     │ 
+    │     ╰─ Error occurred here.
+────╯
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     struct Data {
+    │            ──┬─  
+    │              ╰─── name: 2
+  3 │         uint120 field;
+    │                 ──┬──  
+    │                   ╰──── name: 3
+    │ 
+  6 │     Data public data;
+    │     ──┬─        ──┬─  
+    │       ╰─────────────── ref: 2
+    │                   │   
+    │                   ╰─── name: 4
+    │ 
+  8 │     function foo() public {
+    │              ─┬─  
+    │               ╰─── name: 5
+    │ 
+ 10 │         data.field = 0;
+    │         ──┬─ ──┬──  
+    │           ╰───────── ref: 4
+    │                │    
+    │                ╰──── ref: 3
+    │ 
+ 13 │         data.
+    │         ──┬─  
+    │           ╰─── unresolved
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭───│ ──▶ contract Test {
+  2 │ │   ╭───▶     struct Data {
+  3 │ │   │             uint120 field;
+    │ │   │     ───────────┬───────────  
+    │ │   │                ╰───────────── definiens: 3
+  4 │ │   ├─│ ▶     }
+    │ │   │ │           
+    │ │   ╰───────────── definiens: 2
+  5 │ │     ╭─▶ 
+  6 │ │ │   ├─▶     Data public data;
+    │ │ │   │                           
+    │ │ │   ╰─────────────────────────── definiens: 4
+  7 │ │ ╭─────▶ 
+    ┆ ┆ ┆       
+ 14 │ │ ├─────▶     }
+    │ │ │               
+    │ │ ╰─────────────── definiens: 5
+ 15 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 1
+────╯
