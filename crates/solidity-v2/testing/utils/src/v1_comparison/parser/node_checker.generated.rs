@@ -14895,7 +14895,6 @@ impl NodeChecker for VariableDeclarationTarget {
             Self::MultiTypedDeclaration(element) => {
                 element.check_node_with_offset(node, text_offset)
             }
-            Self::UntypedDeclaration(element) => element.check_node_with_offset(node, text_offset),
         }
     }
 }

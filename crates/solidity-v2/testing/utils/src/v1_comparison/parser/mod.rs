@@ -6,9 +6,8 @@ use node_checker::{NodeChecker, NodeCheckerError};
 use slang_solidity::cst::Cursor;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::text_index::TextRange;
-pub use testing::V2TesterConstructor;
-
 use slang_solidity_v2_parser::{Parser, ParserError, SourceUnitParser};
+pub use testing::V2TesterConstructor;
 
 use crate::reporting::diagnostic::{Diagnostic, Severity};
 
