@@ -21,13 +21,8 @@ pub enum ParserError {
     },
 }
 
-impl TryFrom<lalrpop_util::ParseError<usize, LexemeKind, ()>> for ParserError {
-    // TODO(v2): Add better errors
-    type Error = ();
-
-    fn try_from(
-        value: lalrpop_util::ParseError<usize, LexemeKind, ()>,
-    ) -> Result<Self, Self::Error> {
+impl From<lalrpop_util::ParseError<usize, LexemeKind, ()>> for ParserError {
+    fn from(value: lalrpop_util::ParseError<usize, LexemeKind, ()>) -> Self {
         /// This function transforms the `String` representation returned by LALRPOP into an instance of `LexemeKind`
         ///
         /// TODO(v2): We should consider contributing to LALRPOP so it returns the enum instance itself, I don't think
@@ -45,27 +40,27 @@ impl TryFrom<lalrpop_util::ParseError<usize, LexemeKind, ()>> for ParserError {
 
         match value {
             lalrpop_util::ParseError::UnrecognizedEof { location, expected } => {
-                Ok(Self::UnexpectedEof {
+                Self::UnexpectedEof {
                     location,
                     expected: from_str(expected),
-                })
+                }
             }
             lalrpop_util::ParseError::UnrecognizedToken {
                 token: (left, token, right),
                 expected,
-            } => Ok(Self::UnexpectedToken {
+            } => Self::UnexpectedToken {
                 range: TextRange::from_bytes_range(left..right),
                 token,
                 expected: from_str(expected),
-            }),
+            },
             lalrpop_util::ParseError::ExtraToken {
                 token: (left, token, right),
-            } => Ok(Self::ExtraToken {
+            } => Self::ExtraToken {
                 range: TextRange::from_bytes_range(left..right),
                 token,
-            }),
-            lalrpop_util::ParseError::User { .. } => Err(()), // We don't use user errors
-            lalrpop_util::ParseError::InvalidToken { .. } => Err(()), // We don't use invalid token errors
+            },
+            lalrpop_util::ParseError::User { .. } => panic!("The parser should never return a user error, since we're not using any custom error types in our grammar"),
+            lalrpop_util::ParseError::InvalidToken { .. } => panic!("The parser should never return an invalid token error, since it's not using the default lexer"),
         }
     }
 }

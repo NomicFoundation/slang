@@ -54,10 +54,7 @@ impl Parser for SourceUnitParser {
 
         let lexer = Lexer::new(ContextKind::Solidity, input, version);
         let parser = grammar::SourceUnitParser::new();
-        parser.parse(input, lexer).map_err(|e| {
-            e.try_into()
-                .expect("The parser should produce convertible errors")
-        })
+        parser.parse(input, lexer).map_err(|e| e.into())
     }
 }
 
@@ -69,10 +66,7 @@ impl Parser for ExpressionParser {
 
         let lexer = Lexer::new(ContextKind::Solidity, input, version);
         let parser = grammar::ExpressionParser::new();
-        parser.parse(input, lexer).map_err(|e| {
-            e.try_into()
-                .expect("The parser should produce convertible errors")
-        })
+        parser.parse(input, lexer).map_err(|e| e.into())
     }
 }
 
@@ -84,10 +78,7 @@ impl Parser for ContractDefinitionParser {
 
         let lexer = Lexer::new(ContextKind::Solidity, input, version);
         let parser = grammar::ContractDefinitionParser::new();
-        parser.parse(input, lexer).map_err(|e| {
-            e.try_into()
-                .expect("The parser should produce convertible errors")
-        })
+        parser.parse(input, lexer).map_err(|e| e.into())
     }
 }
 
