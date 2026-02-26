@@ -6,7 +6,7 @@ use crate::lexer::LexemeKind;
 
 #[derive(Debug, PartialEq)]
 pub enum ParserError {
-    UnexpectedEOF {
+    UnexpectedEof {
         location: TextIndex,
         expected: Vec<LexemeKind>,
     },
@@ -36,7 +36,8 @@ impl TryFrom<lalrpop_util::ParseError<usize, LexemeKind, ()>> for ParserError {
             expected
                 .into_iter()
                 .map(|s| {
-                    let s = &s[2..]; // Remove the "L_" prefix that LALRPOP adds to the lexeme kinds
+                    // Remove the "L_" prefix that LALRPOP adds to the lexeme kinds
+                    let s = s.strip_prefix("L_").unwrap_or(&s);
                     LexemeKind::from_str(s).unwrap_or(LexemeKind::UNRECOGNIZED)
                 })
                 .collect()
@@ -44,7 +45,7 @@ impl TryFrom<lalrpop_util::ParseError<usize, LexemeKind, ()>> for ParserError {
 
         match value {
             lalrpop_util::ParseError::UnrecognizedEof { location, expected } => {
-                Ok(Self::UnexpectedEOF {
+                Ok(Self::UnexpectedEof {
                     location,
                     expected: from_str(expected),
                 })
