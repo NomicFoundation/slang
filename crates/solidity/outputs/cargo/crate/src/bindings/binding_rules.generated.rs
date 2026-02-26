@@ -1449,6 +1449,20 @@ inherit .star_extension
   edge @id_path.all_pop_begin -> @name.pop
 }
 
+; Malformed identifier paths (eg. `x.` during editing — trailing Period
+; with no following Identifier). Provide defaults so that parent stanzas
+; (like TypeName) don't panic on missing scoped variables.
+@id_path [IdentifierPath @name [Identifier] . [Period] .] {
+  let @id_path.rightmost_identifier = @name
+
+  let @id_path.push_begin = @name.ref
+  let @id_path.push_ns = (node)
+  edge @name.ref -> @id_path.push_ns
+  edge @id_path.push_ns -> @id_path.push_end
+
+  let @id_path.pop_end = @name.pop
+}
+
 ; Single identifier paths
 @id_path [IdentifierPath . @name [Identifier] .] {
   let @id_path.rightmost_identifier = @name
