@@ -64,6 +64,13 @@ fn main() {
                 "slang_solidity_v2_common",
             )
         },
+        || {
+            generate_in_place_v2(
+                &mut CodegenFileSystem::default(),
+                &SolidityDefinitionV2::create(),
+                "solidity_v2_testing_utils",
+            )
+        },
     ]
     .par_iter()
     .for_each(|op| op().unwrap());

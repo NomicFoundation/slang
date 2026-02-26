@@ -1,3 +1,9 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-"UnrecognizedEof { location: 63, expected: [\"L_ConstantKeyword_Reserved\", \"L_OpenBracket\", \"L_Period\"] }"
+Error: Unexpected end of file. One of ConstantKeyword_Reserved, OpenBracket, Period was expected
+   ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/end_of_file_trivia_unexpected_after/input.sol:5:16]
+   │
+ 5 │ unexpectedchars
+   │                │ 
+   │                ╰─ Error occurred here.
+───╯

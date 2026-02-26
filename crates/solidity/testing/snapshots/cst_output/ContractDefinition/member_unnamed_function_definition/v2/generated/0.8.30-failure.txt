@@ -1,3 +1,9 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-"UnrecognizedToken { token: (32, OpenBrace, 33), expected: [\"L_AtKeyword_Unreserved\", \"L_ErrorKeyword_Unreserved\", \"L_ExternalKeyword_Reserved\", \"L_FinneyKeyword_Unreserved\", \"L_FromKeyword_Unreserved\", \"L_GlobalKeyword_Unreserved\", \"L_Identifier\", \"L_ImmutableKeyword_Reserved\", \"L_InternalKeyword_Reserved\", \"L_LayoutKeyword_Unreserved\", \"L_OpenBracket\", \"L_OverrideKeyword_Reserved\", \"L_PayableKeyword_Reserved\", \"L_PrivateKeyword_Reserved\", \"L_PublicKeyword_Reserved\", \"L_PureKeyword_Reserved\", \"L_ReturnsKeyword_Reserved\", \"L_RevertKeyword_Unreserved\", \"L_SzaboKeyword_Unreserved\", \"L_TransientKeyword_Unreserved\", \"L_ViewKeyword_Reserved\"] }"
+Error: Unexpected OpenBrace. One of AtKeyword_Unreserved, ErrorKeyword_Unreserved, ExternalKeyword_Reserved, FinneyKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, ImmutableKeyword_Reserved, InternalKeyword_Reserved, LayoutKeyword_Unreserved, OpenBracket, OverrideKeyword_Reserved, PayableKeyword_Reserved, PrivateKeyword_Reserved, PublicKeyword_Reserved, PureKeyword_Reserved, ReturnsKeyword_Reserved, RevertKeyword_Unreserved, SzaboKeyword_Unreserved, TransientKeyword_Unreserved, ViewKeyword_Reserved was expected
+   ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_unnamed_function_definition/input.sol:2:15]
+   │
+ 2 │   function () {
+   │               ┬  
+   │               ╰── Error occurred here.
+───╯
