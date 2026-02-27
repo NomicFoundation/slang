@@ -7,4 +7,5 @@ contract A {
   error MyOtherError(address addr);
   error foo;
 }
+
 // <<<

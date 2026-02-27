@@ -4,4 +4,5 @@
 contract Sample {
   receive() {
   }
-}// <<<
+}
+// <<<

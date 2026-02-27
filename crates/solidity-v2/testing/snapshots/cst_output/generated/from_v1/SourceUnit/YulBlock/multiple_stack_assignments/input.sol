@@ -12,6 +12,7 @@ contract C {
   =: success
   =: success
 }
+
 // <<<
     }
 }

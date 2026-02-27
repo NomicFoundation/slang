@@ -21,4 +21,5 @@
  * Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In rutrum accumsan ultricies.
  * Mauris vitae nisi at sem facilisis semper ac in est.
 */
-contract Foo {}// <<<
+contract Foo {}
+// <<<

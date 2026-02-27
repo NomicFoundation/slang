@@ -3,7 +3,7 @@
 Error: Unexpected ConstantKeyword_Reserved. One of AtKeyword_Unreserved, ErrorKeyword_Unreserved, ExternalKeyword_Reserved, FinneyKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, InternalKeyword_Reserved, LayoutKeyword_Unreserved, OpenBrace, OverrideKeyword_Reserved, PayableKeyword_Reserved, PrivateKeyword_Reserved, PublicKeyword_Reserved, PureKeyword_Reserved, ReturnsKeyword_Reserved, RevertKeyword_Unreserved, Semicolon, SzaboKeyword_Unreserved, TransientKeyword_Unreserved, ViewKeyword_Reserved, VirtualKeyword_Reserved was expected
    ╭─[crates/solidity-v2/testing/snapshots/cst_output/generated/from_v1/SourceUnit/FunctionDefinition/constant_state_mutability/input.sol:4:14]
    │
- 4 │ function a() constant {}// <<<
+ 4 │ function a() constant {}
    │              ────┬───  
    │                  ╰───── Error occurred here.
 ───╯

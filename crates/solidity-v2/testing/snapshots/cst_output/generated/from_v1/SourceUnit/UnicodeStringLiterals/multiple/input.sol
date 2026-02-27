@@ -3,7 +3,8 @@
 contract C {
     function f() {
 // >>> Copied from crates/solidity/testing/snapshots/cst_output/UnicodeStringLiterals/multiple/input.sol
-        unicode"happy 😃" unicode'sad 😔';
+unicode"happy 😃" unicode'sad 😔'
 // <<<
+;
     }
 }

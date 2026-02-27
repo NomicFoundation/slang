@@ -6,6 +6,7 @@ contract C {
 assembly "evmasm" {
 
 }
+
 // <<<
     }
 }

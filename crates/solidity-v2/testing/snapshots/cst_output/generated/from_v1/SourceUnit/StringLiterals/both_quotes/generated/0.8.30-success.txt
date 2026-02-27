@@ -60,12 +60,12 @@ SourceUnitStruct {
                                                                         elements: [
                                                                             DoubleQuotedStringLiteral(
                                                                                 DoubleQuotedStringLiteral {
-                                                                                    range: 236..241,
+                                                                                    range: 228..233,
                                                                                 },
                                                                             ),
                                                                             SingleQuotedStringLiteral(
                                                                                 SingleQuotedStringLiteral {
-                                                                                    range: 242..247,
+                                                                                    range: 234..239,
                                                                                 },
                                                                             ),
                                                                         ],
@@ -80,7 +80,7 @@ SourceUnitStruct {
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 260..261,
+                                                range: 253..254,
                                             },
                                         },
                                     ),
@@ -89,7 +89,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 262..263,
+                        range: 255..256,
                     },
                 },
             ),

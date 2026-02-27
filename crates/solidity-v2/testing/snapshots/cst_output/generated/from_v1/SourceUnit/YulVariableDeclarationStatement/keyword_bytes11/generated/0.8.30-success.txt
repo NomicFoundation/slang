@@ -67,7 +67,7 @@ SourceUnitStruct {
                                                                     elements: [],
                                                                 },
                                                                 close_brace: CloseBrace {
-                                                                    range: 342..343,
+                                                                    range: 343..344,
                                                                 },
                                                             },
                                                         },
@@ -75,7 +75,7 @@ SourceUnitStruct {
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 348..349,
+                                                range: 349..350,
                                             },
                                         },
                                     ),
@@ -84,7 +84,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 350..351,
+                        range: 351..352,
                     },
                 },
             ),

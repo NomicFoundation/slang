@@ -25,7 +25,7 @@ SourceUnitStruct {
                                     type_name: ElementaryType(
                                         BytesKeyword(
                                             BytesKeyword {
-                                                range: 218..223,
+                                                range: 214..219,
                                             },
                                         ),
                                     ),
@@ -33,18 +33,18 @@ SourceUnitStruct {
                                         elements: [],
                                     },
                                     name: Identifier {
-                                        range: 224..225,
+                                        range: 227..228,
                                     },
                                     value: None,
                                     semicolon: Semicolon {
-                                        range: 225..226,
+                                        range: 228..229,
                                     },
                                 },
                             ),
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 234..235,
+                        range: 230..231,
                     },
                 },
             ),

@@ -54,61 +54,43 @@ SourceUnitStruct {
                                                 elements: [
                                                     ExpressionStatement(
                                                         ExpressionStatementStruct {
-                                                            expression: TupleExpression(
-                                                                TupleExpressionStruct {
-                                                                    open_paren: OpenParen {
-                                                                        range: 236..237,
-                                                                    },
-                                                                    items: TupleValues {
-                                                                        elements: [
-                                                                            TupleValueStruct {
-                                                                                expression: Some(
-                                                                                    FunctionCallExpression(
-                                                                                        FunctionCallExpressionStruct {
-                                                                                            operand: Identifier(
-                                                                                                Identifier {
-                                                                                                    range: 237..250,
-                                                                                                },
-                                                                                            ),
-                                                                                            arguments: PositionalArgumentsDeclaration(
-                                                                                                PositionalArgumentsDeclarationStruct {
-                                                                                                    open_paren: OpenParen {
-                                                                                                        range: 250..251,
-                                                                                                    },
-                                                                                                    arguments: PositionalArguments {
-                                                                                                        elements: [
-                                                                                                            Identifier(
-                                                                                                                Identifier {
-                                                                                                                    range: 251..256,
-                                                                                                                },
-                                                                                                            ),
-                                                                                                        ],
-                                                                                                    },
-                                                                                                    close_paren: CloseParen {
-                                                                                                        range: 256..257,
-                                                                                                    },
-                                                                                                },
-                                                                                            ),
+                                                            expression: FunctionCallExpression(
+                                                                FunctionCallExpressionStruct {
+                                                                    operand: Identifier(
+                                                                        Identifier {
+                                                                            range: 228..241,
+                                                                        },
+                                                                    ),
+                                                                    arguments: PositionalArgumentsDeclaration(
+                                                                        PositionalArgumentsDeclarationStruct {
+                                                                            open_paren: OpenParen {
+                                                                                range: 241..242,
+                                                                            },
+                                                                            arguments: PositionalArguments {
+                                                                                elements: [
+                                                                                    Identifier(
+                                                                                        Identifier {
+                                                                                            range: 242..247,
                                                                                         },
                                                                                     ),
-                                                                                ),
+                                                                                ],
                                                                             },
-                                                                        ],
-                                                                    },
-                                                                    close_paren: CloseParen {
-                                                                        range: 257..258,
-                                                                    },
+                                                                            close_paren: CloseParen {
+                                                                                range: 247..248,
+                                                                            },
+                                                                        },
+                                                                    ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 258..259,
+                                                                range: 256..257,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 271..272,
+                                                range: 262..263,
                                             },
                                         },
                                     ),
@@ -117,7 +99,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 273..274,
+                        range: 264..265,
                     },
                 },
             ),

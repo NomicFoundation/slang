@@ -54,41 +54,23 @@ SourceUnitStruct {
                                                 elements: [
                                                     ExpressionStatement(
                                                         ExpressionStatementStruct {
-                                                            expression: TupleExpression(
-                                                                TupleExpressionStruct {
-                                                                    open_paren: OpenParen {
-                                                                        range: 257..258,
+                                                            expression: DecimalNumberExpression(
+                                                                DecimalNumberExpressionStruct {
+                                                                    literal: DecimalLiteral {
+                                                                        range: 249..254,
                                                                     },
-                                                                    items: TupleValues {
-                                                                        elements: [
-                                                                            TupleValueStruct {
-                                                                                expression: Some(
-                                                                                    DecimalNumberExpression(
-                                                                                        DecimalNumberExpressionStruct {
-                                                                                            literal: DecimalLiteral {
-                                                                                                range: 258..263,
-                                                                                            },
-                                                                                            unit: None,
-                                                                                        },
-                                                                                    ),
-                                                                                ),
-                                                                            },
-                                                                        ],
-                                                                    },
-                                                                    close_paren: CloseParen {
-                                                                        range: 263..264,
-                                                                    },
+                                                                    unit: None,
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 264..265,
+                                                                range: 262..263,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 277..278,
+                                                range: 268..269,
                                             },
                                         },
                                     ),
@@ -97,7 +79,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 279..280,
+                        range: 270..271,
                     },
                 },
             ),

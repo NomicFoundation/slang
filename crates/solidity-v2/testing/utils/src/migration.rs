@@ -156,7 +156,7 @@ fn wrapping_group(group_name: &str) -> WrappingGroup {
 
 fn write_marked(out: &mut String, begin: &str, end: &str, content: &str) {
     writeln!(out, "{begin}").unwrap();
-    write!(out, "{content}").unwrap();
+    writeln!(out, "{content}").unwrap();
     writeln!(out, "{end}").unwrap();
 }
 
@@ -166,8 +166,6 @@ fn apply_template(
     end_marker: &str,
     content: &str,
 ) -> String {
-    // @Claude: Why do we need the trimming here?
-    let content_trimmed = content.trim_end();
     let mut out = String::new();
 
     match group {
@@ -195,36 +193,22 @@ fn apply_template(
         WrappingGroup::Expression => {
             writeln!(out, "contract C {{").unwrap();
             writeln!(out, "    function f() {{").unwrap();
-            write_marked(
-                &mut out,
-                begin_marker,
-                end_marker,
-                // @Claude: Why do you need parenthesis?
-                &format!("        ({content_trimmed});\n"),
-            );
+            write_marked(&mut out, begin_marker, end_marker, content);
+            writeln!(out, ";").unwrap();
             writeln!(out, "    }}").unwrap();
             writeln!(out, "}}").unwrap();
         }
         WrappingGroup::TypeName => {
             writeln!(out, "contract C {{").unwrap();
-            write_marked(
-                &mut out,
-                begin_marker,
-                end_marker,
-                // @Claude: I'd like for the code between the markers to be an exact copy of the original. Even if that breaks formatting, could you move the semicolon to after the marker? and any other additions or trimming going on.
-                &format!("    {content_trimmed} x;\n"),
-            );
+            write_marked(&mut out, begin_marker, end_marker, content);
+            writeln!(out, "x;").unwrap();
             writeln!(out, "}}").unwrap();
         }
         WrappingGroup::StringLiteral => {
             writeln!(out, "contract C {{").unwrap();
             writeln!(out, "    function f() {{").unwrap();
-            write_marked(
-                &mut out,
-                begin_marker,
-                end_marker,
-                &format!("        {content_trimmed};\n"),
-            );
+            write_marked(&mut out, begin_marker, end_marker, content);
+            writeln!(out, ";").unwrap();
             writeln!(out, "    }}").unwrap();
             writeln!(out, "}}").unwrap();
         }
@@ -246,21 +230,13 @@ fn apply_template(
             writeln!(out, "}}").unwrap();
         }
         WrappingGroup::VersionPragma => {
-            write_marked(
-                &mut out,
-                begin_marker,
-                end_marker,
-                &format!("pragma {content_trimmed};\n"),
-            );
+            writeln!(out, "pragma").unwrap();
+            write_marked(&mut out, begin_marker, end_marker, content);
+            writeln!(out, ";").unwrap();
         }
         WrappingGroup::UsingDeconstructionSymbol => {
             writeln!(out, "using {{").unwrap();
-            write_marked(
-                &mut out,
-                begin_marker,
-                end_marker,
-                &format!("    {content_trimmed}\n"),
-            );
+            write_marked(&mut out, begin_marker, end_marker, content);
             writeln!(out, "}} for uint;").unwrap();
         }
     }

@@ -100,7 +100,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 259..260,
+                        range: 260..261,
                     },
                 },
             ),

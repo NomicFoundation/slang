@@ -54,47 +54,29 @@ SourceUnitStruct {
                                                 elements: [
                                                     ExpressionStatement(
                                                         ExpressionStatementStruct {
-                                                            expression: TupleExpression(
-                                                                TupleExpressionStruct {
-                                                                    open_paren: OpenParen {
-                                                                        range: 243..244,
+                                                            expression: DecimalNumberExpression(
+                                                                DecimalNumberExpressionStruct {
+                                                                    literal: DecimalLiteral {
+                                                                        range: 235..237,
                                                                     },
-                                                                    items: TupleValues {
-                                                                        elements: [
-                                                                            TupleValueStruct {
-                                                                                expression: Some(
-                                                                                    DecimalNumberExpression(
-                                                                                        DecimalNumberExpressionStruct {
-                                                                                            literal: DecimalLiteral {
-                                                                                                range: 244..246,
-                                                                                            },
-                                                                                            unit: Some(
-                                                                                                DaysKeyword(
-                                                                                                    DaysKeyword {
-                                                                                                        range: 247..251,
-                                                                                                    },
-                                                                                                ),
-                                                                                            ),
-                                                                                        },
-                                                                                    ),
-                                                                                ),
+                                                                    unit: Some(
+                                                                        DaysKeyword(
+                                                                            DaysKeyword {
+                                                                                range: 238..242,
                                                                             },
-                                                                        ],
-                                                                    },
-                                                                    close_paren: CloseParen {
-                                                                        range: 251..252,
-                                                                    },
+                                                                        ),
+                                                                    ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 252..253,
+                                                                range: 250..251,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 265..266,
+                                                range: 256..257,
                                             },
                                         },
                                     ),
@@ -103,7 +85,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 267..268,
+                        range: 258..259,
                     },
                 },
             ),

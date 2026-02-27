@@ -27,7 +27,7 @@ SourceUnitStruct {
                                             elements: [
                                                 Identifier(
                                                     Identifier {
-                                                        range: 228..236,
+                                                        range: 224..232,
                                                     },
                                                 ),
                                             ],
@@ -37,18 +37,18 @@ SourceUnitStruct {
                                         elements: [],
                                     },
                                     name: Identifier {
-                                        range: 237..238,
+                                        range: 240..241,
                                     },
                                     value: None,
                                     semicolon: Semicolon {
-                                        range: 238..239,
+                                        range: 241..242,
                                     },
                                 },
                             ),
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 247..248,
+                        range: 243..244,
                     },
                 },
             ),

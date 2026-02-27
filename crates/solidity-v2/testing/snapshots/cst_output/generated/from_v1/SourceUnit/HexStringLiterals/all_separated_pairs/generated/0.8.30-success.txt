@@ -60,7 +60,7 @@ SourceUnitStruct {
                                                                         elements: [
                                                                             DoubleQuotedHexStringLiteral(
                                                                                 DoubleQuotedHexStringLiteral {
-                                                                                    range: 247..275,
+                                                                                    range: 239..267,
                                                                                 },
                                                                             ),
                                                                         ],
@@ -75,7 +75,7 @@ SourceUnitStruct {
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 288..289,
+                                                range: 281..282,
                                             },
                                         },
                                     ),
@@ -84,7 +84,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 290..291,
+                        range: 283..284,
                     },
                 },
             ),

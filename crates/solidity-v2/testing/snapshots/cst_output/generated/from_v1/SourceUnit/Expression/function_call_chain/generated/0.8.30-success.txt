@@ -54,72 +54,54 @@ SourceUnitStruct {
                                                 elements: [
                                                     ExpressionStatement(
                                                         ExpressionStatementStruct {
-                                                            expression: TupleExpression(
-                                                                TupleExpressionStruct {
-                                                                    open_paren: OpenParen {
-                                                                        range: 240..241,
-                                                                    },
-                                                                    items: TupleValues {
-                                                                        elements: [
-                                                                            TupleValueStruct {
-                                                                                expression: Some(
-                                                                                    FunctionCallExpression(
-                                                                                        FunctionCallExpressionStruct {
-                                                                                            operand: FunctionCallExpression(
-                                                                                                FunctionCallExpressionStruct {
-                                                                                                    operand: Identifier(
-                                                                                                        Identifier {
-                                                                                                            range: 241..242,
-                                                                                                        },
-                                                                                                    ),
-                                                                                                    arguments: PositionalArgumentsDeclaration(
-                                                                                                        PositionalArgumentsDeclarationStruct {
-                                                                                                            open_paren: OpenParen {
-                                                                                                                range: 242..243,
-                                                                                                            },
-                                                                                                            arguments: PositionalArguments {
-                                                                                                                elements: [],
-                                                                                                            },
-                                                                                                            close_paren: CloseParen {
-                                                                                                                range: 243..244,
-                                                                                                            },
-                                                                                                        },
-                                                                                                    ),
-                                                                                                },
-                                                                                            ),
-                                                                                            arguments: PositionalArgumentsDeclaration(
-                                                                                                PositionalArgumentsDeclarationStruct {
-                                                                                                    open_paren: OpenParen {
-                                                                                                        range: 244..245,
-                                                                                                    },
-                                                                                                    arguments: PositionalArguments {
-                                                                                                        elements: [],
-                                                                                                    },
-                                                                                                    close_paren: CloseParen {
-                                                                                                        range: 245..246,
-                                                                                                    },
-                                                                                                },
-                                                                                            ),
-                                                                                        },
-                                                                                    ),
-                                                                                ),
+                                                            expression: FunctionCallExpression(
+                                                                FunctionCallExpressionStruct {
+                                                                    operand: FunctionCallExpression(
+                                                                        FunctionCallExpressionStruct {
+                                                                            operand: Identifier(
+                                                                                Identifier {
+                                                                                    range: 232..233,
+                                                                                },
+                                                                            ),
+                                                                            arguments: PositionalArgumentsDeclaration(
+                                                                                PositionalArgumentsDeclarationStruct {
+                                                                                    open_paren: OpenParen {
+                                                                                        range: 233..234,
+                                                                                    },
+                                                                                    arguments: PositionalArguments {
+                                                                                        elements: [],
+                                                                                    },
+                                                                                    close_paren: CloseParen {
+                                                                                        range: 234..235,
+                                                                                    },
+                                                                                },
+                                                                            ),
+                                                                        },
+                                                                    ),
+                                                                    arguments: PositionalArgumentsDeclaration(
+                                                                        PositionalArgumentsDeclarationStruct {
+                                                                            open_paren: OpenParen {
+                                                                                range: 235..236,
                                                                             },
-                                                                        ],
-                                                                    },
-                                                                    close_paren: CloseParen {
-                                                                        range: 246..247,
-                                                                    },
+                                                                            arguments: PositionalArguments {
+                                                                                elements: [],
+                                                                            },
+                                                                            close_paren: CloseParen {
+                                                                                range: 236..237,
+                                                                            },
+                                                                        },
+                                                                    ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 247..248,
+                                                                range: 245..246,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 260..261,
+                                                range: 251..252,
                                             },
                                         },
                                     ),
@@ -128,7 +110,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 262..263,
+                        range: 253..254,
                     },
                 },
             ),

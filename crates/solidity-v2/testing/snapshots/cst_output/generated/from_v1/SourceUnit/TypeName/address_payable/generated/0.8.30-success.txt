@@ -26,11 +26,11 @@ SourceUnitStruct {
                                         AddressType(
                                             AddressTypeStruct {
                                                 address_keyword: AddressKeyword {
-                                                    range: 211..218,
+                                                    range: 207..214,
                                                 },
                                                 payable_keyword: Some(
                                                     PayableKeyword {
-                                                        range: 219..226,
+                                                        range: 215..222,
                                                     },
                                                 ),
                                             },
@@ -40,18 +40,18 @@ SourceUnitStruct {
                                         elements: [],
                                     },
                                     name: Identifier {
-                                        range: 227..228,
+                                        range: 231..232,
                                     },
                                     value: None,
                                     semicolon: Semicolon {
-                                        range: 228..229,
+                                        range: 232..233,
                                     },
                                 },
                             ),
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 237..238,
+                        range: 234..235,
                     },
                 },
             ),

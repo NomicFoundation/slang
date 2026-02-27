@@ -5,6 +5,7 @@ contract C {
 // >>> Copied from crates/solidity/testing/snapshots/cst_output/TupleDeconstructionStatement/with_var/input.sol
 // "var" should be disabled in "0.5.0":
 var (foo, bar) = rhs;
+
 // <<<
     }
 }

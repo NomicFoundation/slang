@@ -10,4 +10,5 @@ contract ClientReceipt {
         emit Deposit();
     }
 }
+
 // <<<

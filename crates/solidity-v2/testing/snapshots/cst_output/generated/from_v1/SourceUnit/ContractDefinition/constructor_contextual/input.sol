@@ -9,4 +9,5 @@ contract Contract {
 		uint256 constructor;
     }
 }
+
 // <<<

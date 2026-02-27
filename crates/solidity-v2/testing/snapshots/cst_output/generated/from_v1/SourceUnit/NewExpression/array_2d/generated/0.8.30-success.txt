@@ -54,73 +54,55 @@ SourceUnitStruct {
                                                 elements: [
                                                     ExpressionStatement(
                                                         ExpressionStatementStruct {
-                                                            expression: TupleExpression(
-                                                                TupleExpressionStruct {
-                                                                    open_paren: OpenParen {
-                                                                        range: 232..233,
+                                                            expression: NewExpression(
+                                                                NewExpressionStruct {
+                                                                    new_keyword: NewKeyword {
+                                                                        range: 224..227,
                                                                     },
-                                                                    items: TupleValues {
-                                                                        elements: [
-                                                                            TupleValueStruct {
-                                                                                expression: Some(
-                                                                                    NewExpression(
-                                                                                        NewExpressionStruct {
-                                                                                            new_keyword: NewKeyword {
-                                                                                                range: 233..236,
-                                                                                            },
-                                                                                            type_name: ArrayTypeName(
-                                                                                                ArrayTypeNameStruct {
-                                                                                                    operand: ArrayTypeName(
-                                                                                                        ArrayTypeNameStruct {
-                                                                                                            operand: IdentifierPath(
-                                                                                                                IdentifierPath {
-                                                                                                                    elements: [
-                                                                                                                        Identifier(
-                                                                                                                            Identifier {
-                                                                                                                                range: 237..240,
-                                                                                                                            },
-                                                                                                                        ),
-                                                                                                                    ],
-                                                                                                                },
-                                                                                                            ),
-                                                                                                            open_bracket: OpenBracket {
-                                                                                                                range: 240..241,
-                                                                                                            },
-                                                                                                            index: None,
-                                                                                                            close_bracket: CloseBracket {
-                                                                                                                range: 241..242,
-                                                                                                            },
-                                                                                                        },
-                                                                                                    ),
-                                                                                                    open_bracket: OpenBracket {
-                                                                                                        range: 242..243,
+                                                                    type_name: ArrayTypeName(
+                                                                        ArrayTypeNameStruct {
+                                                                            operand: ArrayTypeName(
+                                                                                ArrayTypeNameStruct {
+                                                                                    operand: IdentifierPath(
+                                                                                        IdentifierPath {
+                                                                                            elements: [
+                                                                                                Identifier(
+                                                                                                    Identifier {
+                                                                                                        range: 228..231,
                                                                                                     },
-                                                                                                    index: None,
-                                                                                                    close_bracket: CloseBracket {
-                                                                                                        range: 243..244,
-                                                                                                    },
-                                                                                                },
-                                                                                            ),
+                                                                                                ),
+                                                                                            ],
                                                                                         },
                                                                                     ),
-                                                                                ),
+                                                                                    open_bracket: OpenBracket {
+                                                                                        range: 231..232,
+                                                                                    },
+                                                                                    index: None,
+                                                                                    close_bracket: CloseBracket {
+                                                                                        range: 232..233,
+                                                                                    },
+                                                                                },
+                                                                            ),
+                                                                            open_bracket: OpenBracket {
+                                                                                range: 233..234,
                                                                             },
-                                                                        ],
-                                                                    },
-                                                                    close_paren: CloseParen {
-                                                                        range: 244..245,
-                                                                    },
+                                                                            index: None,
+                                                                            close_bracket: CloseBracket {
+                                                                                range: 234..235,
+                                                                            },
+                                                                        },
+                                                                    ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 245..246,
+                                                                range: 243..244,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 258..259,
+                                                range: 249..250,
                                             },
                                         },
                                     ),
@@ -129,7 +111,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 260..261,
+                        range: 251..252,
                     },
                 },
             ),

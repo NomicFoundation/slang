@@ -54,72 +54,54 @@ SourceUnitStruct {
                                                 elements: [
                                                     ExpressionStatement(
                                                         ExpressionStatementStruct {
-                                                            expression: TupleExpression(
-                                                                TupleExpressionStruct {
-                                                                    open_paren: OpenParen {
-                                                                        range: 234..235,
-                                                                    },
-                                                                    items: TupleValues {
-                                                                        elements: [
-                                                                            TupleValueStruct {
-                                                                                expression: Some(
-                                                                                    FunctionCallExpression(
-                                                                                        FunctionCallExpressionStruct {
-                                                                                            operand: Identifier(
-                                                                                                Identifier {
-                                                                                                    range: 235..236,
-                                                                                                },
-                                                                                            ),
-                                                                                            arguments: PositionalArgumentsDeclaration(
-                                                                                                PositionalArgumentsDeclarationStruct {
-                                                                                                    open_paren: OpenParen {
-                                                                                                        range: 236..237,
-                                                                                                    },
-                                                                                                    arguments: PositionalArguments {
-                                                                                                        elements: [
-                                                                                                            DecimalNumberExpression(
-                                                                                                                DecimalNumberExpressionStruct {
-                                                                                                                    literal: DecimalLiteral {
-                                                                                                                        range: 237..238,
-                                                                                                                    },
-                                                                                                                    unit: None,
-                                                                                                                },
-                                                                                                            ),
-                                                                                                            DecimalNumberExpression(
-                                                                                                                DecimalNumberExpressionStruct {
-                                                                                                                    literal: DecimalLiteral {
-                                                                                                                        range: 240..241,
-                                                                                                                    },
-                                                                                                                    unit: None,
-                                                                                                                },
-                                                                                                            ),
-                                                                                                        ],
-                                                                                                    },
-                                                                                                    close_paren: CloseParen {
-                                                                                                        range: 241..242,
-                                                                                                    },
-                                                                                                },
-                                                                                            ),
+                                                            expression: FunctionCallExpression(
+                                                                FunctionCallExpressionStruct {
+                                                                    operand: Identifier(
+                                                                        Identifier {
+                                                                            range: 226..227,
+                                                                        },
+                                                                    ),
+                                                                    arguments: PositionalArgumentsDeclaration(
+                                                                        PositionalArgumentsDeclarationStruct {
+                                                                            open_paren: OpenParen {
+                                                                                range: 227..228,
+                                                                            },
+                                                                            arguments: PositionalArguments {
+                                                                                elements: [
+                                                                                    DecimalNumberExpression(
+                                                                                        DecimalNumberExpressionStruct {
+                                                                                            literal: DecimalLiteral {
+                                                                                                range: 228..229,
+                                                                                            },
+                                                                                            unit: None,
                                                                                         },
                                                                                     ),
-                                                                                ),
+                                                                                    DecimalNumberExpression(
+                                                                                        DecimalNumberExpressionStruct {
+                                                                                            literal: DecimalLiteral {
+                                                                                                range: 231..232,
+                                                                                            },
+                                                                                            unit: None,
+                                                                                        },
+                                                                                    ),
+                                                                                ],
                                                                             },
-                                                                        ],
-                                                                    },
-                                                                    close_paren: CloseParen {
-                                                                        range: 242..243,
-                                                                    },
+                                                                            close_paren: CloseParen {
+                                                                                range: 232..233,
+                                                                            },
+                                                                        },
+                                                                    ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 243..244,
+                                                                range: 241..242,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 256..257,
+                                                range: 247..248,
                                             },
                                         },
                                     ),
@@ -128,7 +110,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 258..259,
+                        range: 249..250,
                     },
                 },
             ),

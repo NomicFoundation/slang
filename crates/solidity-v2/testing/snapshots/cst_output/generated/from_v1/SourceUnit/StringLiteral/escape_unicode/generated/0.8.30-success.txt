@@ -60,7 +60,7 @@ SourceUnitStruct {
                                                                         elements: [
                                                                             DoubleQuotedStringLiteral(
                                                                                 DoubleQuotedStringLiteral {
-                                                                                    range: 238..246,
+                                                                                    range: 230..238,
                                                                                 },
                                                                             ),
                                                                         ],
@@ -68,14 +68,14 @@ SourceUnitStruct {
                                                                 ),
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 246..247,
+                                                                range: 247..248,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 259..260,
+                                                range: 253..254,
                                             },
                                         },
                                     ),
@@ -84,7 +84,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 261..262,
+                        range: 255..256,
                     },
                 },
             ),

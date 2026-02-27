@@ -20,12 +20,12 @@ SourceUnitStruct {
                                             elements: [
                                                 Identifier(
                                                     Identifier {
-                                                        range: 235..238,
+                                                        range: 231..234,
                                                     },
                                                 ),
                                                 Identifier(
                                                     Identifier {
-                                                        range: 239..242,
+                                                        range: 235..238,
                                                     },
                                                 ),
                                             ],
@@ -33,11 +33,11 @@ SourceUnitStruct {
                                         alias: Some(
                                             UsingAliasStruct {
                                                 as_keyword: AsKeyword {
-                                                    range: 243..245,
+                                                    range: 239..241,
                                                 },
                                                 operator: Slash(
                                                     Slash {
-                                                        range: 246..247,
+                                                        range: 242..243,
                                                     },
                                                 ),
                                             },
@@ -46,25 +46,25 @@ SourceUnitStruct {
                                 ],
                             },
                             close_brace: CloseBrace {
-                                range: 255..256,
+                                range: 251..252,
                             },
                         },
                     ),
                     for_keyword: ForKeyword {
-                        range: 257..260,
+                        range: 253..256,
                     },
                     target: TypeName(
                         ElementaryType(
                             UintKeyword(
                                 UintKeyword {
-                                    range: 261..265,
+                                    range: 257..261,
                                 },
                             ),
                         ),
                     ),
                     global_keyword: None,
                     semicolon: Semicolon {
-                        range: 265..266,
+                        range: 261..262,
                     },
                 },
             ),

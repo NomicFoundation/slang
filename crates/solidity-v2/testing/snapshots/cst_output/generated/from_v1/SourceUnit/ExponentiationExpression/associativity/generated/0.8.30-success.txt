@@ -54,66 +54,48 @@ SourceUnitStruct {
                                                 elements: [
                                                     ExpressionStatement(
                                                         ExpressionStatementStruct {
-                                                            expression: TupleExpression(
-                                                                TupleExpressionStruct {
-                                                                    open_paren: OpenParen {
-                                                                        range: 248..249,
-                                                                    },
-                                                                    items: TupleValues {
-                                                                        elements: [
-                                                                            TupleValueStruct {
-                                                                                expression: Some(
-                                                                                    ExponentiationExpression(
-                                                                                        ExponentiationExpressionStruct {
-                                                                                            left_operand: Identifier(
-                                                                                                Identifier {
-                                                                                                    range: 249..250,
-                                                                                                },
-                                                                                            ),
-                                                                                            expression_exponentiation_expression_operator: AsteriskAsterisk(
-                                                                                                AsteriskAsterisk {
-                                                                                                    range: 251..253,
-                                                                                                },
-                                                                                            ),
-                                                                                            right_operand: ExponentiationExpression(
-                                                                                                ExponentiationExpressionStruct {
-                                                                                                    left_operand: Identifier(
-                                                                                                        Identifier {
-                                                                                                            range: 254..255,
-                                                                                                        },
-                                                                                                    ),
-                                                                                                    expression_exponentiation_expression_operator: AsteriskAsterisk(
-                                                                                                        AsteriskAsterisk {
-                                                                                                            range: 256..258,
-                                                                                                        },
-                                                                                                    ),
-                                                                                                    right_operand: Identifier(
-                                                                                                        Identifier {
-                                                                                                            range: 259..260,
-                                                                                                        },
-                                                                                                    ),
-                                                                                                },
-                                                                                            ),
-                                                                                        },
-                                                                                    ),
-                                                                                ),
-                                                                            },
-                                                                        ],
-                                                                    },
-                                                                    close_paren: CloseParen {
-                                                                        range: 260..261,
-                                                                    },
+                                                            expression: ExponentiationExpression(
+                                                                ExponentiationExpressionStruct {
+                                                                    left_operand: Identifier(
+                                                                        Identifier {
+                                                                            range: 240..241,
+                                                                        },
+                                                                    ),
+                                                                    expression_exponentiation_expression_operator: AsteriskAsterisk(
+                                                                        AsteriskAsterisk {
+                                                                            range: 242..244,
+                                                                        },
+                                                                    ),
+                                                                    right_operand: ExponentiationExpression(
+                                                                        ExponentiationExpressionStruct {
+                                                                            left_operand: Identifier(
+                                                                                Identifier {
+                                                                                    range: 245..246,
+                                                                                },
+                                                                            ),
+                                                                            expression_exponentiation_expression_operator: AsteriskAsterisk(
+                                                                                AsteriskAsterisk {
+                                                                                    range: 247..249,
+                                                                                },
+                                                                            ),
+                                                                            right_operand: Identifier(
+                                                                                Identifier {
+                                                                                    range: 250..251,
+                                                                                },
+                                                                            ),
+                                                                        },
+                                                                    ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 261..262,
+                                                                range: 260..261,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 274..275,
+                                                range: 266..267,
                                             },
                                         },
                                     ),
@@ -122,7 +104,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 276..277,
+                        range: 268..269,
                     },
                 },
             ),

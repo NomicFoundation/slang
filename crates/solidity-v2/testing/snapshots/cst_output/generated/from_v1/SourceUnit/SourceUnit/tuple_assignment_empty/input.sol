@@ -13,4 +13,5 @@ library SafeMath {
     (,,) = foo;
   }
 }
+
 // <<<

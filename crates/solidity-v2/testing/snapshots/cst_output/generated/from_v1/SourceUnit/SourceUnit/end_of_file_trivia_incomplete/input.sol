@@ -4,4 +4,5 @@
 contract X {}
 
 /* unterminated comment
+
 // <<<

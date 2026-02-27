@@ -389,7 +389,7 @@ SourceUnitStruct {
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 345..346,
+                                                range: 346..347,
                                             },
                                         },
                                     ),
@@ -398,7 +398,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 347..348,
+                        range: 348..349,
                     },
                 },
             ),

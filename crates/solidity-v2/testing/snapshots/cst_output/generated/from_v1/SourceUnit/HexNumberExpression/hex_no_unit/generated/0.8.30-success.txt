@@ -54,41 +54,23 @@ SourceUnitStruct {
                                                 elements: [
                                                     ExpressionStatement(
                                                         ExpressionStatementStruct {
-                                                            expression: TupleExpression(
-                                                                TupleExpressionStruct {
-                                                                    open_paren: OpenParen {
-                                                                        range: 241..242,
+                                                            expression: HexNumberExpression(
+                                                                HexNumberExpressionStruct {
+                                                                    literal: HexLiteral {
+                                                                        range: 233..244,
                                                                     },
-                                                                    items: TupleValues {
-                                                                        elements: [
-                                                                            TupleValueStruct {
-                                                                                expression: Some(
-                                                                                    HexNumberExpression(
-                                                                                        HexNumberExpressionStruct {
-                                                                                            literal: HexLiteral {
-                                                                                                range: 242..253,
-                                                                                            },
-                                                                                            unit: None,
-                                                                                        },
-                                                                                    ),
-                                                                                ),
-                                                                            },
-                                                                        ],
-                                                                    },
-                                                                    close_paren: CloseParen {
-                                                                        range: 253..254,
-                                                                    },
+                                                                    unit: None,
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 254..255,
+                                                                range: 252..253,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 267..268,
+                                                range: 258..259,
                                             },
                                         },
                                     ),
@@ -97,7 +79,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 269..270,
+                        range: 260..261,
                     },
                 },
             ),

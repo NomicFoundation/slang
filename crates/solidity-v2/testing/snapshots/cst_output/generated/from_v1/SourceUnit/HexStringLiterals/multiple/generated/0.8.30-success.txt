@@ -60,12 +60,12 @@ SourceUnitStruct {
                                                                         elements: [
                                                                             DoubleQuotedHexStringLiteral(
                                                                                 DoubleQuotedHexStringLiteral {
-                                                                                    range: 236..243,
+                                                                                    range: 228..235,
                                                                                 },
                                                                             ),
                                                                             SingleQuotedHexStringLiteral(
                                                                                 SingleQuotedHexStringLiteral {
-                                                                                    range: 244..251,
+                                                                                    range: 236..243,
                                                                                 },
                                                                             ),
                                                                         ],
@@ -80,7 +80,7 @@ SourceUnitStruct {
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 264..265,
+                                                range: 257..258,
                                             },
                                         },
                                     ),
@@ -89,7 +89,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 266..267,
+                        range: 259..260,
                     },
                 },
             ),

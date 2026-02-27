@@ -6,4 +6,5 @@ contract Sample {
     uint a;
     uint b;
   }
-}// <<<
+}
+// <<<

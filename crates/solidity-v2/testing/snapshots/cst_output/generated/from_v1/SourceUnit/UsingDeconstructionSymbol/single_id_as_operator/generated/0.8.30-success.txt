@@ -20,7 +20,7 @@ SourceUnitStruct {
                                             elements: [
                                                 Identifier(
                                                     Identifier {
-                                                        range: 229..232,
+                                                        range: 225..228,
                                                     },
                                                 ),
                                             ],
@@ -28,11 +28,11 @@ SourceUnitStruct {
                                         alias: Some(
                                             UsingAliasStruct {
                                                 as_keyword: AsKeyword {
-                                                    range: 233..235,
+                                                    range: 229..231,
                                                 },
                                                 operator: Slash(
                                                     Slash {
-                                                        range: 236..237,
+                                                        range: 232..233,
                                                     },
                                                 ),
                                             },
@@ -41,25 +41,25 @@ SourceUnitStruct {
                                 ],
                             },
                             close_brace: CloseBrace {
-                                range: 245..246,
+                                range: 241..242,
                             },
                         },
                     ),
                     for_keyword: ForKeyword {
-                        range: 247..250,
+                        range: 243..246,
                     },
                     target: TypeName(
                         ElementaryType(
                             UintKeyword(
                                 UintKeyword {
-                                    range: 251..255,
+                                    range: 247..251,
                                 },
                             ),
                         ),
                     ),
                     global_keyword: None,
                     semicolon: Semicolon {
-                        range: 255..256,
+                        range: 251..252,
                     },
                 },
             ),

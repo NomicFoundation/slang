@@ -57,60 +57,42 @@ SourceUnitStruct {
                                                             expression: TupleExpression(
                                                                 TupleExpressionStruct {
                                                                     open_paren: OpenParen {
-                                                                        range: 230..231,
+                                                                        range: 222..223,
                                                                     },
                                                                     items: TupleValues {
                                                                         elements: [
                                                                             TupleValueStruct {
                                                                                 expression: Some(
-                                                                                    TupleExpression(
-                                                                                        TupleExpressionStruct {
-                                                                                            open_paren: OpenParen {
-                                                                                                range: 231..232,
-                                                                                            },
-                                                                                            items: TupleValues {
-                                                                                                elements: [
-                                                                                                    TupleValueStruct {
-                                                                                                        expression: Some(
-                                                                                                            Identifier(
-                                                                                                                Identifier {
-                                                                                                                    range: 232..237,
-                                                                                                                },
-                                                                                                            ),
-                                                                                                        ),
-                                                                                                    },
-                                                                                                    TupleValueStruct {
-                                                                                                        expression: Some(
-                                                                                                            Identifier(
-                                                                                                                Identifier {
-                                                                                                                    range: 239..245,
-                                                                                                                },
-                                                                                                            ),
-                                                                                                        ),
-                                                                                                    },
-                                                                                                    TupleValueStruct {
-                                                                                                        expression: Some(
-                                                                                                            Identifier(
-                                                                                                                Identifier {
-                                                                                                                    range: 247..252,
-                                                                                                                },
-                                                                                                            ),
-                                                                                                        ),
-                                                                                                    },
-                                                                                                    TupleValueStruct {
-                                                                                                        expression: Some(
-                                                                                                            Identifier(
-                                                                                                                Identifier {
-                                                                                                                    range: 254..260,
-                                                                                                                },
-                                                                                                            ),
-                                                                                                        ),
-                                                                                                    },
-                                                                                                ],
-                                                                                            },
-                                                                                            close_paren: CloseParen {
-                                                                                                range: 260..261,
-                                                                                            },
+                                                                                    Identifier(
+                                                                                        Identifier {
+                                                                                            range: 223..228,
+                                                                                        },
+                                                                                    ),
+                                                                                ),
+                                                                            },
+                                                                            TupleValueStruct {
+                                                                                expression: Some(
+                                                                                    Identifier(
+                                                                                        Identifier {
+                                                                                            range: 230..236,
+                                                                                        },
+                                                                                    ),
+                                                                                ),
+                                                                            },
+                                                                            TupleValueStruct {
+                                                                                expression: Some(
+                                                                                    Identifier(
+                                                                                        Identifier {
+                                                                                            range: 238..243,
+                                                                                        },
+                                                                                    ),
+                                                                                ),
+                                                                            },
+                                                                            TupleValueStruct {
+                                                                                expression: Some(
+                                                                                    Identifier(
+                                                                                        Identifier {
+                                                                                            range: 245..251,
                                                                                         },
                                                                                     ),
                                                                                 ),
@@ -118,19 +100,19 @@ SourceUnitStruct {
                                                                         ],
                                                                     },
                                                                     close_paren: CloseParen {
-                                                                        range: 261..262,
+                                                                        range: 251..252,
                                                                     },
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 262..263,
+                                                                range: 260..261,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 275..276,
+                                                range: 266..267,
                                             },
                                         },
                                     ),
@@ -139,7 +121,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 277..278,
+                        range: 268..269,
                     },
                 },
             ),

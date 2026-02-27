@@ -10,6 +10,7 @@ contract C {
 		result := [mul(a, b)
 	}
 }
+
 // <<<
     }
 }

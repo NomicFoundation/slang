@@ -54,66 +54,48 @@ SourceUnitStruct {
                                                 elements: [
                                                     ExpressionStatement(
                                                         ExpressionStatementStruct {
-                                                            expression: TupleExpression(
-                                                                TupleExpressionStruct {
-                                                                    open_paren: OpenParen {
-                                                                        range: 239..240,
-                                                                    },
-                                                                    items: TupleValues {
-                                                                        elements: [
-                                                                            TupleValueStruct {
-                                                                                expression: Some(
-                                                                                    AssignmentExpression(
-                                                                                        AssignmentExpressionStruct {
-                                                                                            left_operand: AssignmentExpression(
-                                                                                                AssignmentExpressionStruct {
-                                                                                                    left_operand: Identifier(
-                                                                                                        Identifier {
-                                                                                                            range: 240..241,
-                                                                                                        },
-                                                                                                    ),
-                                                                                                    expression_assignment_expression_operator: Equal(
-                                                                                                        Equal {
-                                                                                                            range: 242..243,
-                                                                                                        },
-                                                                                                    ),
-                                                                                                    right_operand: Identifier(
-                                                                                                        Identifier {
-                                                                                                            range: 244..245,
-                                                                                                        },
-                                                                                                    ),
-                                                                                                },
-                                                                                            ),
-                                                                                            expression_assignment_expression_operator: Equal(
-                                                                                                Equal {
-                                                                                                    range: 246..247,
-                                                                                                },
-                                                                                            ),
-                                                                                            right_operand: Identifier(
-                                                                                                Identifier {
-                                                                                                    range: 248..249,
-                                                                                                },
-                                                                                            ),
-                                                                                        },
-                                                                                    ),
-                                                                                ),
-                                                                            },
-                                                                        ],
-                                                                    },
-                                                                    close_paren: CloseParen {
-                                                                        range: 249..250,
-                                                                    },
+                                                            expression: AssignmentExpression(
+                                                                AssignmentExpressionStruct {
+                                                                    left_operand: AssignmentExpression(
+                                                                        AssignmentExpressionStruct {
+                                                                            left_operand: Identifier(
+                                                                                Identifier {
+                                                                                    range: 231..232,
+                                                                                },
+                                                                            ),
+                                                                            expression_assignment_expression_operator: Equal(
+                                                                                Equal {
+                                                                                    range: 233..234,
+                                                                                },
+                                                                            ),
+                                                                            right_operand: Identifier(
+                                                                                Identifier {
+                                                                                    range: 235..236,
+                                                                                },
+                                                                            ),
+                                                                        },
+                                                                    ),
+                                                                    expression_assignment_expression_operator: Equal(
+                                                                        Equal {
+                                                                            range: 237..238,
+                                                                        },
+                                                                    ),
+                                                                    right_operand: Identifier(
+                                                                        Identifier {
+                                                                            range: 239..240,
+                                                                        },
+                                                                    ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 250..251,
+                                                                range: 249..250,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 263..264,
+                                                range: 255..256,
                                             },
                                         },
                                     ),
@@ -122,7 +104,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 265..266,
+                        range: 257..258,
                     },
                 },
             ),

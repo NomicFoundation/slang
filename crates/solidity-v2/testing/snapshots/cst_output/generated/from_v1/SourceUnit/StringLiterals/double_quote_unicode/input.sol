@@ -3,7 +3,9 @@
 contract C {
     function f() {
 // >>> Copied from crates/solidity/testing/snapshots/cst_output/StringLiterals/double_quote_unicode/input.sol
-        "Fireworks 🎆";
+"Fireworks 🎆"
+
 // <<<
+;
     }
 }

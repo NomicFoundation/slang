@@ -8,4 +8,5 @@ contract A {
     function (uint a)[2] internal internal foo;
     function (uint a) internal[2] internal foo;
 }
+
 // <<<
