@@ -1,0 +1,9 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Error: Unexpected ByteKeyword_Reserved. One of AddressKeyword_Reserved, AtKeyword_Unreserved, BoolKeyword_Reserved, BytesKeyword_Reserved, CloseBrace, ConstructorKeyword_Reserved, EnumKeyword_Reserved, ErrorKeyword_Unreserved, EventKeyword_Reserved, FallbackKeyword_Reserved, FinneyKeyword_Unreserved, FixedKeyword_Reserved, FromKeyword_Unreserved, FunctionKeyword_Reserved, GlobalKeyword_Unreserved, Identifier, IntKeyword_Reserved, LayoutKeyword_Unreserved, MappingKeyword_Reserved, ModifierKeyword_Reserved, ReceiveKeyword_Reserved, RevertKeyword_Unreserved, StringKeyword_Reserved, StructKeyword_Reserved, SzaboKeyword_Unreserved, TransientKeyword_Unreserved, TypeKeyword_Reserved, UfixedKeyword_Reserved, UintKeyword_Reserved, UsingKeyword_Reserved was expected
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/generated/from_v1/SourceUnit/TypeName/byte/input.sol:5:5]
+   │
+ 5 │     byte x;
+   │     ──┬─  
+   │       ╰─── Error occurred here.
+───╯

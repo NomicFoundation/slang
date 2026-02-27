@@ -1,0 +1,31 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 203..211,
+                    },
+                    name: Identifier {
+                        range: 212..218,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 219..220,
+                    },
+                    members: ContractMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        range: 220..221,
+                    },
+                },
+            ),
+        ],
+    },
+}

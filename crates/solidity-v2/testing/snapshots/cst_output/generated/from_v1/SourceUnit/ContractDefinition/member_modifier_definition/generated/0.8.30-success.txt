@@ -1,0 +1,84 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 215..223,
+                    },
+                    name: Identifier {
+                        range: 224..230,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 231..232,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            ModifierDefinition(
+                                ModifierDefinitionStruct {
+                                    modifier_keyword: ModifierKeyword {
+                                        range: 235..243,
+                                    },
+                                    name: Identifier {
+                                        range: 244..247,
+                                    },
+                                    parameters: Some(
+                                        ParametersDeclarationStruct {
+                                            open_paren: OpenParen {
+                                                range: 247..248,
+                                            },
+                                            parameters: Parameters {
+                                                elements: [],
+                                            },
+                                            close_paren: CloseParen {
+                                                range: 248..249,
+                                            },
+                                        },
+                                    ),
+                                    attributes: ModifierAttributes {
+                                        elements: [],
+                                    },
+                                    body: Block(
+                                        BlockStruct {
+                                            open_brace: OpenBrace {
+                                                range: 250..251,
+                                            },
+                                            statements: Statements {
+                                                elements: [
+                                                    ExpressionStatement(
+                                                        ExpressionStatementStruct {
+                                                            expression: Identifier(
+                                                                Identifier {
+                                                                    range: 256..257,
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 257..258,
+                                                            },
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                            close_brace: CloseBrace {
+                                                range: 261..262,
+                                            },
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 263..264,
+                    },
+                },
+            ),
+        ],
+    },
+}

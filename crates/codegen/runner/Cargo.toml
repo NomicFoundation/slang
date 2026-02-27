@@ -17,6 +17,7 @@ language_v2_definition = { workspace = true }
 rayon = { workspace = true }
 solidity_language = { workspace = true }
 solidity_v2_language = { workspace = true }
+solidity_v2_testing_utils = { workspace = true }
 
 [lints]
 workspace = true

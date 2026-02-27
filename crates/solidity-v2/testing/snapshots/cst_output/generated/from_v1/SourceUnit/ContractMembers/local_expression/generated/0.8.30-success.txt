@@ -1,0 +1,146 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 95..103,
+                    },
+                    name: Identifier {
+                        range: 104..105,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 106..107,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            FunctionDefinition(
+                                FunctionDefinitionStruct {
+                                    function_keyword: FunctionKeyword {
+                                        range: 215..223,
+                                    },
+                                    name: Identifier(
+                                        Identifier {
+                                            range: 224..228,
+                                        },
+                                    ),
+                                    parameters: ParametersDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            range: 228..229,
+                                        },
+                                        parameters: Parameters {
+                                            elements: [],
+                                        },
+                                        close_paren: CloseParen {
+                                            range: 229..230,
+                                        },
+                                    },
+                                    attributes: FunctionAttributes {
+                                        elements: [],
+                                    },
+                                    returns: None,
+                                    body: Block(
+                                        BlockStruct {
+                                            open_brace: OpenBrace {
+                                                range: 231..232,
+                                            },
+                                            statements: Statements {
+                                                elements: [
+                                                    VariableDeclarationStatement(
+                                                        VariableDeclarationStatementStruct {
+                                                            target: SingleTypedDeclaration(
+                                                                SingleTypedDeclarationStruct {
+                                                                    declaration: VariableDeclarationStruct {
+                                                                        type_name: ElementaryType(
+                                                                            UintKeyword(
+                                                                                UintKeyword {
+                                                                                    range: 235..239,
+                                                                                },
+                                                                            ),
+                                                                        ),
+                                                                        storage_location: None,
+                                                                        name: Identifier {
+                                                                            range: 240..241,
+                                                                        },
+                                                                    },
+                                                                    value: Some(
+                                                                        VariableDeclarationValueStruct {
+                                                                            equal: Equal {
+                                                                                range: 242..243,
+                                                                            },
+                                                                            expression: AdditiveExpression(
+                                                                                AdditiveExpressionStruct {
+                                                                                    left_operand: DecimalNumberExpression(
+                                                                                        DecimalNumberExpressionStruct {
+                                                                                            literal: DecimalLiteral {
+                                                                                                range: 244..245,
+                                                                                            },
+                                                                                            unit: None,
+                                                                                        },
+                                                                                    ),
+                                                                                    expression_additive_expression_operator: Plus(
+                                                                                        Plus {
+                                                                                            range: 246..247,
+                                                                                        },
+                                                                                    ),
+                                                                                    right_operand: MultiplicativeExpression(
+                                                                                        MultiplicativeExpressionStruct {
+                                                                                            left_operand: DecimalNumberExpression(
+                                                                                                DecimalNumberExpressionStruct {
+                                                                                                    literal: DecimalLiteral {
+                                                                                                        range: 248..249,
+                                                                                                    },
+                                                                                                    unit: None,
+                                                                                                },
+                                                                                            ),
+                                                                                            expression_multiplicative_expression_operator: Asterisk(
+                                                                                                Asterisk {
+                                                                                                    range: 250..251,
+                                                                                                },
+                                                                                            ),
+                                                                                            right_operand: DecimalNumberExpression(
+                                                                                                DecimalNumberExpressionStruct {
+                                                                                                    literal: DecimalLiteral {
+                                                                                                        range: 252..253,
+                                                                                                    },
+                                                                                                    unit: None,
+                                                                                                },
+                                                                                            ),
+                                                                                        },
+                                                                                    ),
+                                                                                },
+                                                                            ),
+                                                                        },
+                                                                    ),
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 253..254,
+                                                            },
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                            close_brace: CloseBrace {
+                                                range: 255..256,
+                                            },
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 264..265,
+                    },
+                },
+            ),
+        ],
+    },
+}

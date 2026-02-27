@@ -1,0 +1,48 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            FunctionDefinition(
+                FunctionDefinitionStruct {
+                    function_keyword: FunctionKeyword {
+                        range: 199..207,
+                    },
+                    name: Identifier(
+                        Identifier {
+                            range: 208..211,
+                        },
+                    ),
+                    parameters: ParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            range: 211..212,
+                        },
+                        parameters: Parameters {
+                            elements: [],
+                        },
+                        close_paren: CloseParen {
+                            range: 212..213,
+                        },
+                    },
+                    attributes: FunctionAttributes {
+                        elements: [],
+                    },
+                    returns: None,
+                    body: Block(
+                        BlockStruct {
+                            open_brace: OpenBrace {
+                                range: 214..215,
+                            },
+                            statements: Statements {
+                                elements: [],
+                            },
+                            close_brace: CloseBrace {
+                                range: 216..217,
+                            },
+                        },
+                    ),
+                },
+            ),
+        ],
+    },
+}

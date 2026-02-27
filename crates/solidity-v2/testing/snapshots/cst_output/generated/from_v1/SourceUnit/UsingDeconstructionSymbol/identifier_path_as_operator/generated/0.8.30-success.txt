@@ -1,0 +1,73 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            UsingDirective(
+                UsingDirectiveStruct {
+                    using_keyword: UsingKeyword {
+                        range: 95..100,
+                    },
+                    clause: UsingDeconstruction(
+                        UsingDeconstructionStruct {
+                            open_brace: OpenBrace {
+                                range: 101..102,
+                            },
+                            symbols: UsingDeconstructionSymbols {
+                                elements: [
+                                    UsingDeconstructionSymbolStruct {
+                                        name: IdentifierPath {
+                                            elements: [
+                                                Identifier(
+                                                    Identifier {
+                                                        range: 235..238,
+                                                    },
+                                                ),
+                                                Identifier(
+                                                    Identifier {
+                                                        range: 239..242,
+                                                    },
+                                                ),
+                                            ],
+                                        },
+                                        alias: Some(
+                                            UsingAliasStruct {
+                                                as_keyword: AsKeyword {
+                                                    range: 243..245,
+                                                },
+                                                operator: Slash(
+                                                    Slash {
+                                                        range: 246..247,
+                                                    },
+                                                ),
+                                            },
+                                        ),
+                                    },
+                                ],
+                            },
+                            close_brace: CloseBrace {
+                                range: 255..256,
+                            },
+                        },
+                    ),
+                    for_keyword: ForKeyword {
+                        range: 257..260,
+                    },
+                    target: TypeName(
+                        ElementaryType(
+                            UintKeyword(
+                                UintKeyword {
+                                    range: 261..265,
+                                },
+                            ),
+                        ),
+                    ),
+                    global_keyword: None,
+                    semicolon: Semicolon {
+                        range: 265..266,
+                    },
+                },
+            ),
+        ],
+    },
+}
