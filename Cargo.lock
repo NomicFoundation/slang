@@ -3960,7 +3960,6 @@ dependencies = [
  "semver 1.0.26",
  "slang_solidity",
  "solidity_language",
- "solidity_v2_testing_utils",
  "strum_macros 0.26.4",
 ]
 

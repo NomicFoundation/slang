@@ -9,13 +9,12 @@ use semver::Version;
 use slang_solidity::cst::{Node, NonterminalKind};
 use slang_solidity::parser::Parser;
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_parser::{Parser as ParserV2, SourceUnitParser};
+use slang_solidity_v2_parser::SourceUnitParser;
 use solidity_v2_testing_utils::reporting::diagnostic;
 use solidity_v2_testing_utils::v1_comparison::parser::{NodeChecker, NodeCheckerError};
 
 pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
-    let snapshots_crate =
-        CargoWorkspace::locate_source_crate("solidity_v2_testing_snapshots")?;
+    let snapshots_crate = CargoWorkspace::locate_source_crate("solidity_v2_testing_snapshots")?;
 
     let test_dir = snapshots_crate
         .join("cst_output/from_v1/SourceUnit")
@@ -36,10 +35,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
         Ok(tree) => ("success", format!("{tree:#?}\n")),
         Err(err) => (
             "failure",
-            format!(
-                "{}\n",
-                diagnostic::render(err, &source_id, &source, false)
-            ),
+            format!("{}\n", diagnostic::render(err, &source_id, &source, false)),
         ),
     };
 
@@ -58,8 +54,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
     let (diff_status, diff_report) = match &v2_output {
         Ok(tree) => {
             if v1_output.is_valid() {
-                let errors =
-                    tree.check_node(&Node::Nonterminal(Rc::clone(v1_output.tree())));
+                let errors = tree.check_node(&Node::Nonterminal(Rc::clone(v1_output.tree())));
 
                 if errors.is_empty() {
                     (
@@ -70,16 +65,12 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
                     ("diff", write_errors(&errors, &source_id, &source))
                 }
             } else {
-                (
-                    "diff",
-                    "V1 Parser: Invalid\nV2 Parser: Valid\n".to_owned(),
-                )
+                ("diff", "V1 Parser: Invalid\nV2 Parser: Valid\n".to_owned())
             }
         }
-        Err(_) if v1_output.is_valid() => (
-            "diff",
-            "V1 Parser: Valid\nV2 Parser: Invalid\n".to_owned(),
-        ),
+        Err(_) if v1_output.is_valid() => {
+            ("diff", "V1 Parser: Valid\nV2 Parser: Invalid\n".to_owned())
+        }
         Err(_) => (
             "same",
             "Both V1 and V2 produced invalid output.\n".to_owned(),
