@@ -267,7 +267,7 @@ PragmaDirective: PragmaDirective = {
 //
 // In order to solve this we use a trailing expression that captures both the expression and the members,
 // and then extract the members from it.
-pub ContractDefinition: ContractDefinition = {
+ContractDefinition: ContractDefinition = {
     // If no specifiers are present, we simply capture the members directly
     <_abstract_keyword: (AbstractKeyword)?>  <_contract_keyword: ContractKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => {
         new_contract_definition(_abstract_keyword, _contract_keyword, _name, new_contract_specifiers(vec![]), _open_brace, _members, _close_brace)
@@ -1309,7 +1309,7 @@ Expression19<Tail>: (Expression, Tail) = {
 };
 
 // Expression is public
-pub Expression: Expression = {
+Expression: Expression = {
     // By default, we expect no tail
     <Expression: Expression19<EmptyTail>>  => Expression.0,
 };
