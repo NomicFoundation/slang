@@ -1,9 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-Error: Unexpected Identifier. One of Semicolon was expected
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/generated/from_v1/SourceUnit/BreakStatement/error_recovery/input.sol:6:7]
-   │
- 6 │ break invalid ;
-   │       ───┬───  
-   │          ╰───── Error occurred here.
-───╯

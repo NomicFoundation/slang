@@ -1,0 +1,9 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Error: Unexpected Identifier. One of Ampersand, AmpersandAmpersand, AmpersandEqual, Asterisk, AsteriskAsterisk, AsteriskEqual, BangEqual, Bar, BarBar, BarEqual, Caret, CaretEqual, DaysKeyword_Reserved, Equal, EqualEqual, EtherKeyword_Reserved, GreaterThan, GreaterThanEqual, GreaterThanGreaterThan, GreaterThanGreaterThanEqual, GreaterThanGreaterThanGreaterThan, GreaterThanGreaterThanGreaterThanEqual, GweiKeyword_Reserved, HoursKeyword_Reserved, LessThan, LessThanEqual, LessThanLessThan, LessThanLessThanEqual, Minus, MinusEqual, MinusMinus, MinutesKeyword_Reserved, OpenBrace, OpenBracket, OpenParen, Percent, PercentEqual, Period, Plus, PlusEqual, PlusPlus, QuestionMark, SecondsKeyword_Reserved, Semicolon, Slash, SlashEqual, WeeksKeyword_Reserved, WeiKeyword_Reserved was expected
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/from_v1/SourceUnit/HexNumberExpression/hex_leading_underscore/input.generated.sol:6:2]
+   │
+ 6 │ 0x_1
+   │  ─┬─  
+   │   ╰─── Error occurred here.
+───╯

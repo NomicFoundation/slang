@@ -1,9 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-Error: Unexpected end of file. One of ConstantKeyword_Reserved, OpenBracket, Period was expected
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/generated/from_v1/SourceUnit/SourceUnit/end_of_file_trivia_unexpected_after/input.sol:8:16]
-   │
- 8 │ unexpectedchars
-   │                │ 
-   │                ╰─ Error occurred here.
-───╯

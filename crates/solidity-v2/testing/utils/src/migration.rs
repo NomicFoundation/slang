@@ -36,7 +36,7 @@ pub fn migrate_v1_tests_to_v2(
             [group_name, test_name, "input.sol"] => {
                 let content = file.read_to_string()?;
                 let wrapped = wrap_test_input(group_name, test_name, &content)?;
-                let output_path = v2_output_dir.join(format!("{group_name}/{test_name}/input.sol"));
+                let output_path = v2_output_dir.join(format!("{group_name}/{test_name}/input.generated.sol"));
                 fs.write_file_raw(&output_path, wrapped)?;
 
                 tests

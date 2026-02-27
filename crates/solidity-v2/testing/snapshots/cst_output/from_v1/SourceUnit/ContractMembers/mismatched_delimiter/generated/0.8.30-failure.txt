@@ -1,0 +1,9 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Error: Unexpected Semicolon. One of CloseParen, Comma was expected
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/from_v1/SourceUnit/ContractMembers/mismatched_delimiter/input.generated.sol:7:29]
+   │
+ 7 │         uint256 arg = (1 + 2;
+   │                             ┬  
+   │                             ╰── Error occurred here.
+───╯

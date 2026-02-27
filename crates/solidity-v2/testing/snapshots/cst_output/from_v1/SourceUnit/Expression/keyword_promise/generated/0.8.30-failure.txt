@@ -1,0 +1,9 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Error: Unexpected PromiseKeyword_Reserved. One of AddressKeyword_Reserved, AssemblyKeyword_Reserved, AtKeyword_Unreserved, Bang, BoolKeyword_Reserved, BreakKeyword_Reserved, BytesKeyword_Reserved, CloseBrace, ContinueKeyword_Reserved, DecimalLiteral, DeleteKeyword_Reserved, DoKeyword_Reserved, DoubleQuotedHexStringLiteral, DoubleQuotedStringLiteral, DoubleQuotedUnicodeStringLiteral, EmitKeyword_Reserved, ErrorKeyword_Unreserved, FalseKeyword_Reserved, FinneyKeyword_Unreserved, FixedKeyword_Reserved, ForKeyword_Reserved, FromKeyword_Unreserved, FunctionKeyword_Reserved, GlobalKeyword_Unreserved, HexLiteral, Identifier, IfKeyword_Reserved, IntKeyword_Reserved, LayoutKeyword_Unreserved, MappingKeyword_Reserved, Minus, MinusMinus, NewKeyword_Reserved, OpenBrace, OpenBracket, OpenParen, PayableKeyword_Reserved, PlusPlus, ReturnKeyword_Reserved, RevertKeyword_Unreserved, SingleQuotedHexStringLiteral, SingleQuotedStringLiteral, SingleQuotedUnicodeStringLiteral, StringKeyword_Reserved, SuperKeyword_Reserved, SzaboKeyword_Unreserved, ThisKeyword_Reserved, Tilde, TransientKeyword_Unreserved, TrueKeyword_Reserved, TryKeyword_Reserved, TypeKeyword_Reserved, UfixedKeyword_Reserved, UintKeyword_Reserved, UncheckedKeyword_Reserved, WhileKeyword_Reserved was expected
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/from_v1/SourceUnit/Expression/keyword_promise/input.generated.sol:6:1]
+   │
+ 6 │ promise
+   │ ───┬───  
+   │    ╰───── Error occurred here.
+───╯

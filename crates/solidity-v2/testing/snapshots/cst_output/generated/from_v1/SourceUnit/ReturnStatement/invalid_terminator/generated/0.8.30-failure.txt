@@ -1,9 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-Error: Unexpected Identifier. One of Ampersand, AmpersandAmpersand, AmpersandEqual, Asterisk, AsteriskAsterisk, AsteriskEqual, BangEqual, Bar, BarBar, BarEqual, Caret, CaretEqual, Equal, EqualEqual, GreaterThan, GreaterThanEqual, GreaterThanGreaterThan, GreaterThanGreaterThanEqual, GreaterThanGreaterThanGreaterThan, GreaterThanGreaterThanGreaterThanEqual, LessThan, LessThanEqual, LessThanLessThan, LessThanLessThanEqual, Minus, MinusEqual, MinusMinus, OpenBrace, OpenBracket, OpenParen, Percent, PercentEqual, Plus, PlusEqual, PlusPlus, QuestionMark, Semicolon, Slash, SlashEqual was expected
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/generated/from_v1/SourceUnit/ReturnStatement/invalid_terminator/input.sol:6:21]
-   │
- 6 │ return a + 2 * some invalid tokens
-   │                     ───┬───  
-   │                        ╰───── Error occurred here.
-───╯

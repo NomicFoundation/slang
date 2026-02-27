@@ -1,9 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-Error: Unexpected CloseBrace. One of AbstractKeyword_Reserved, AddressKeyword_Reserved, AtKeyword_Unreserved, BoolKeyword_Reserved, BytesKeyword_Reserved, ContractKeyword_Reserved, EnumKeyword_Reserved, ErrorKeyword_Unreserved, EventKeyword_Reserved, FinneyKeyword_Unreserved, FixedKeyword_Reserved, FromKeyword_Unreserved, FunctionKeyword_Reserved, GlobalKeyword_Unreserved, Identifier, ImportKeyword_Reserved, IntKeyword_Reserved, InterfaceKeyword_Reserved, LayoutKeyword_Unreserved, LibraryKeyword_Reserved, MappingKeyword_Reserved, PragmaKeyword_Reserved, RevertKeyword_Unreserved, StringKeyword_Reserved, StructKeyword_Reserved, SzaboKeyword_Unreserved, TransientKeyword_Unreserved, TypeKeyword_Reserved, UfixedKeyword_Reserved, UintKeyword_Reserved, UsingKeyword_Reserved was expected
-    ╭─[crates/solidity-v2/testing/snapshots/cst_output/generated/from_v1/SourceUnit/YulStatements/function_pointer/input.sol:16:1]
-    │
- 16 │ }
-    │ ┬  
-    │ ╰── Error occurred here.
-────╯
