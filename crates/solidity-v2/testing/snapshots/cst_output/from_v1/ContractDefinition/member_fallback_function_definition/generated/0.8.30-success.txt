@@ -1,0 +1,67 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 224..232,
+                    },
+                    name: Identifier {
+                        range: 233..239,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 240..241,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            FallbackFunctionDefinition(
+                                FallbackFunctionDefinitionStruct {
+                                    fallback_keyword: FallbackKeyword {
+                                        range: 244..252,
+                                    },
+                                    parameters: ParametersDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            range: 252..253,
+                                        },
+                                        parameters: Parameters {
+                                            elements: [],
+                                        },
+                                        close_paren: CloseParen {
+                                            range: 253..254,
+                                        },
+                                    },
+                                    attributes: FallbackFunctionAttributes {
+                                        elements: [],
+                                    },
+                                    returns: None,
+                                    body: Block(
+                                        BlockStruct {
+                                            open_brace: OpenBrace {
+                                                range: 255..256,
+                                            },
+                                            statements: Statements {
+                                                elements: [],
+                                            },
+                                            close_brace: CloseBrace {
+                                                range: 259..260,
+                                            },
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 261..262,
+                    },
+                },
+            ),
+        ],
+    },
+}

@@ -1,0 +1,135 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 95..103,
+                    },
+                    name: Identifier {
+                        range: 104..105,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 106..107,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            FunctionDefinition(
+                                FunctionDefinitionStruct {
+                                    function_keyword: FunctionKeyword {
+                                        range: 112..120,
+                                    },
+                                    name: Identifier(
+                                        Identifier {
+                                            range: 121..122,
+                                        },
+                                    ),
+                                    parameters: ParametersDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            range: 122..123,
+                                        },
+                                        parameters: Parameters {
+                                            elements: [],
+                                        },
+                                        close_paren: CloseParen {
+                                            range: 123..124,
+                                        },
+                                    },
+                                    attributes: FunctionAttributes {
+                                        elements: [],
+                                    },
+                                    returns: None,
+                                    body: Block(
+                                        BlockStruct {
+                                            open_brace: OpenBrace {
+                                                range: 125..126,
+                                            },
+                                            statements: Statements {
+                                                elements: [
+                                                    TryStatement(
+                                                        TryStatementStruct {
+                                                            try_keyword: TryKeyword {
+                                                                range: 226..229,
+                                                            },
+                                                            expression: FunctionCallExpression(
+                                                                FunctionCallExpressionStruct {
+                                                                    operand: Identifier(
+                                                                        Identifier {
+                                                                            range: 230..233,
+                                                                        },
+                                                                    ),
+                                                                    arguments: PositionalArgumentsDeclaration(
+                                                                        PositionalArgumentsDeclarationStruct {
+                                                                            open_paren: OpenParen {
+                                                                                range: 233..234,
+                                                                            },
+                                                                            arguments: PositionalArguments {
+                                                                                elements: [],
+                                                                            },
+                                                                            close_paren: CloseParen {
+                                                                                range: 234..235,
+                                                                            },
+                                                                        },
+                                                                    ),
+                                                                },
+                                                            ),
+                                                            returns: None,
+                                                            body: BlockStruct {
+                                                                open_brace: OpenBrace {
+                                                                    range: 236..237,
+                                                                },
+                                                                statements: Statements {
+                                                                    elements: [],
+                                                                },
+                                                                close_brace: CloseBrace {
+                                                                    range: 238..239,
+                                                                },
+                                                            },
+                                                            catch_clauses: CatchClauses {
+                                                                elements: [
+                                                                    CatchClauseStruct {
+                                                                        catch_keyword: CatchKeyword {
+                                                                            range: 240..245,
+                                                                        },
+                                                                        error: None,
+                                                                        body: BlockStruct {
+                                                                            open_brace: OpenBrace {
+                                                                                range: 246..247,
+                                                                            },
+                                                                            statements: Statements {
+                                                                                elements: [],
+                                                                            },
+                                                                            close_brace: CloseBrace {
+                                                                                range: 248..249,
+                                                                            },
+                                                                        },
+                                                                    },
+                                                                ],
+                                                            },
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                            close_brace: CloseBrace {
+                                                range: 262..263,
+                                            },
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 264..265,
+                    },
+                },
+            ),
+        ],
+    },
+}

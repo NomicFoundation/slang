@@ -1,0 +1,54 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            FunctionDefinition(
+                FunctionDefinitionStruct {
+                    function_keyword: FunctionKeyword {
+                        range: 210..218,
+                    },
+                    name: Identifier(
+                        Identifier {
+                            range: 219..220,
+                        },
+                    ),
+                    parameters: ParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            range: 220..221,
+                        },
+                        parameters: Parameters {
+                            elements: [],
+                        },
+                        close_paren: CloseParen {
+                            range: 221..222,
+                        },
+                    },
+                    attributes: FunctionAttributes {
+                        elements: [
+                            PureKeyword(
+                                PureKeyword {
+                                    range: 223..227,
+                                },
+                            ),
+                        ],
+                    },
+                    returns: None,
+                    body: Block(
+                        BlockStruct {
+                            open_brace: OpenBrace {
+                                range: 228..229,
+                            },
+                            statements: Statements {
+                                elements: [],
+                            },
+                            close_brace: CloseBrace {
+                                range: 229..230,
+                            },
+                        },
+                    ),
+                },
+            ),
+        ],
+    },
+}

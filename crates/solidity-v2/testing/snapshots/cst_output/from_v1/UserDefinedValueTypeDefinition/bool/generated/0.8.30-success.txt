@@ -1,0 +1,29 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            UserDefinedValueTypeDefinition(
+                UserDefinedValueTypeDefinitionStruct {
+                    type_keyword: TypeKeyword {
+                        range: 205..209,
+                    },
+                    name: Identifier {
+                        range: 210..213,
+                    },
+                    is_keyword: IsKeyword {
+                        range: 214..216,
+                    },
+                    value_type: BoolKeyword(
+                        BoolKeyword {
+                            range: 217..221,
+                        },
+                    ),
+                    semicolon: Semicolon {
+                        range: 221..222,
+                    },
+                },
+            ),
+        ],
+    },
+}

@@ -1,0 +1,62 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            UsingDirective(
+                UsingDirectiveStruct {
+                    using_keyword: UsingKeyword {
+                        range: 95..100,
+                    },
+                    clause: UsingDeconstruction(
+                        UsingDeconstructionStruct {
+                            open_brace: OpenBrace {
+                                range: 101..102,
+                            },
+                            symbols: UsingDeconstructionSymbols {
+                                elements: [
+                                    UsingDeconstructionSymbolStruct {
+                                        name: IdentifierPath {
+                                            elements: [
+                                                Identifier(
+                                                    Identifier {
+                                                        range: 219..222,
+                                                    },
+                                                ),
+                                                Identifier(
+                                                    Identifier {
+                                                        range: 223..226,
+                                                    },
+                                                ),
+                                            ],
+                                        },
+                                        alias: None,
+                                    },
+                                ],
+                            },
+                            close_brace: CloseBrace {
+                                range: 234..235,
+                            },
+                        },
+                    ),
+                    for_keyword: ForKeyword {
+                        range: 236..239,
+                    },
+                    target: TypeName(
+                        ElementaryType(
+                            UintKeyword(
+                                UintKeyword {
+                                    range: 240..244,
+                                },
+                            ),
+                        ),
+                    ),
+                    global_keyword: None,
+                    semicolon: Semicolon {
+                        range: 244..245,
+                    },
+                },
+            ),
+        ],
+    },
+}

@@ -1,0 +1,108 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 95..103,
+                    },
+                    name: Identifier {
+                        range: 104..105,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 106..107,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            StateVariableDefinition(
+                                StateVariableDefinitionStruct {
+                                    type_name: FunctionType(
+                                        FunctionTypeStruct {
+                                            function_keyword: FunctionKeyword {
+                                                range: 217..225,
+                                            },
+                                            parameters: ParametersDeclarationStruct {
+                                                open_paren: OpenParen {
+                                                    range: 226..227,
+                                                },
+                                                parameters: Parameters {
+                                                    elements: [],
+                                                },
+                                                close_paren: CloseParen {
+                                                    range: 227..228,
+                                                },
+                                            },
+                                            attributes: FunctionTypeAttributes {
+                                                elements: [
+                                                    InternalKeyword(
+                                                        InternalKeyword {
+                                                            range: 229..237,
+                                                        },
+                                                    ),
+                                                    PureKeyword(
+                                                        PureKeyword {
+                                                            range: 238..242,
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                            returns: Some(
+                                                ReturnsDeclarationStruct {
+                                                    returns_keyword: ReturnsKeyword {
+                                                        range: 243..250,
+                                                    },
+                                                    variables: ParametersDeclarationStruct {
+                                                        open_paren: OpenParen {
+                                                            range: 251..252,
+                                                        },
+                                                        parameters: Parameters {
+                                                            elements: [
+                                                                ParameterStruct {
+                                                                    type_name: ElementaryType(
+                                                                        UintKeyword(
+                                                                            UintKeyword {
+                                                                                range: 252..256,
+                                                                            },
+                                                                        ),
+                                                                    ),
+                                                                    storage_location: None,
+                                                                    name: None,
+                                                                },
+                                                            ],
+                                                        },
+                                                        close_paren: CloseParen {
+                                                            range: 256..257,
+                                                        },
+                                                    },
+                                                },
+                                            ),
+                                        },
+                                    ),
+                                    attributes: StateVariableAttributes {
+                                        elements: [],
+                                    },
+                                    name: Identifier {
+                                        range: 266..267,
+                                    },
+                                    value: None,
+                                    semicolon: Semicolon {
+                                        range: 267..268,
+                                    },
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 269..270,
+                    },
+                },
+            ),
+        ],
+    },
+}

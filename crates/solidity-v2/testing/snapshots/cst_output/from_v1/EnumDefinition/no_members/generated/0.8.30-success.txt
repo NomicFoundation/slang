@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            EnumDefinition(
+                EnumDefinitionStruct {
+                    enum_keyword: EnumKeyword {
+                        range: 195..199,
+                    },
+                    name: Identifier {
+                        range: 200..203,
+                    },
+                    open_brace: OpenBrace {
+                        range: 204..205,
+                    },
+                    members: EnumMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        range: 206..207,
+                    },
+                },
+            ),
+        ],
+    },
+}

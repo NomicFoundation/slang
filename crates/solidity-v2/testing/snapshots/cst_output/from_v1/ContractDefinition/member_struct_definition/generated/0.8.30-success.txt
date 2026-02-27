@@ -1,0 +1,82 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 213..221,
+                    },
+                    name: Identifier {
+                        range: 222..228,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 229..230,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            StructDefinition(
+                                StructDefinitionStruct {
+                                    struct_keyword: StructKeyword {
+                                        range: 233..239,
+                                    },
+                                    name: Identifier {
+                                        range: 240..241,
+                                    },
+                                    open_brace: OpenBrace {
+                                        range: 242..243,
+                                    },
+                                    members: StructMembers {
+                                        elements: [
+                                            StructMemberStruct {
+                                                type_name: ElementaryType(
+                                                    UintKeyword(
+                                                        UintKeyword {
+                                                            range: 248..252,
+                                                        },
+                                                    ),
+                                                ),
+                                                name: Identifier {
+                                                    range: 253..254,
+                                                },
+                                                semicolon: Semicolon {
+                                                    range: 254..255,
+                                                },
+                                            },
+                                            StructMemberStruct {
+                                                type_name: ElementaryType(
+                                                    UintKeyword(
+                                                        UintKeyword {
+                                                            range: 260..264,
+                                                        },
+                                                    ),
+                                                ),
+                                                name: Identifier {
+                                                    range: 265..266,
+                                                },
+                                                semicolon: Semicolon {
+                                                    range: 266..267,
+                                                },
+                                            },
+                                        ],
+                                    },
+                                    close_brace: CloseBrace {
+                                        range: 270..271,
+                                    },
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 272..273,
+                    },
+                },
+            ),
+        ],
+    },
+}
