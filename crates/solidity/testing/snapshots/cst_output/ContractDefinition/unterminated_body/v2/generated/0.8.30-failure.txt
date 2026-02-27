@@ -1,9 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-Error: Unexpected end of file. One of AddressKeyword_Reserved, AtKeyword_Unreserved, BoolKeyword_Reserved, BytesKeyword_Reserved, CloseBrace, ConstructorKeyword_Reserved, EnumKeyword_Reserved, ErrorKeyword_Unreserved, EventKeyword_Reserved, FallbackKeyword_Reserved, FinneyKeyword_Unreserved, FixedKeyword_Reserved, FromKeyword_Unreserved, FunctionKeyword_Reserved, GlobalKeyword_Unreserved, Identifier, IntKeyword_Reserved, LayoutKeyword_Unreserved, MappingKeyword_Reserved, ModifierKeyword_Reserved, ReceiveKeyword_Reserved, RevertKeyword_Unreserved, StringKeyword_Reserved, StructKeyword_Reserved, SzaboKeyword_Unreserved, TransientKeyword_Unreserved, TypeKeyword_Reserved, UfixedKeyword_Reserved, UintKeyword_Reserved, UsingKeyword_Reserved was expected
-   ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/unterminated_body/input.sol:1:18]
-   │
- 1 │ contract Sample {
-   │                  │ 
-   │                  ╰─ Error occurred here.
-───╯

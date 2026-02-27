@@ -1,9 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-ElementaryType(
-    UfixedKeyword(
-        UfixedKeyword {
-            range: 0..6,
-        },
-    ),
-)

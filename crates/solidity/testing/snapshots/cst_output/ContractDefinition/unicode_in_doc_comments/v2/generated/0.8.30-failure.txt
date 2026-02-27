@@ -1,9 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-Error: Unexpected Identifier. One of AbstractKeyword_Reserved, ContractKeyword_Reserved was expected
-   ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/unicode_in_doc_comments/input.sol:4:1]
-   │
- 4 │ unexpected
-   │ ─────┬────  
-   │      ╰────── Error occurred here.
-───╯

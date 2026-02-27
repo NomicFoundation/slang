@@ -1,3 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-Both V1 and V2 produced invalid output.
