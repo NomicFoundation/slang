@@ -34,7 +34,11 @@ impl CodegenFileSystem {
 
         let contents = if let Some(header) = generate_header(file_path) {
             let contents = contents.as_ref();
-            let eol = if contents.contains("\r\n") { "\r\n" } else { "\n" };
+            let eol = if contents.contains("\r\n") {
+                "\r\n"
+            } else {
+                "\n"
+            };
             format!("{header}{eol}{eol}{contents}")
         } else {
             contents.as_ref().to_owned()
