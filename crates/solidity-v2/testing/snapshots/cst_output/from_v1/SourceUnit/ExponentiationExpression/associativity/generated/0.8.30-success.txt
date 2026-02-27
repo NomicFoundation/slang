@@ -61,11 +61,9 @@ SourceUnitStruct {
                                                                             range: 240..241,
                                                                         },
                                                                     ),
-                                                                    expression_exponentiation_expression_operator: AsteriskAsterisk(
-                                                                        AsteriskAsterisk {
-                                                                            range: 242..244,
-                                                                        },
-                                                                    ),
+                                                                    operator: AsteriskAsterisk {
+                                                                        range: 242..244,
+                                                                    },
                                                                     right_operand: ExponentiationExpression(
                                                                         ExponentiationExpressionStruct {
                                                                             left_operand: Identifier(
@@ -73,11 +71,9 @@ SourceUnitStruct {
                                                                                     range: 245..246,
                                                                                 },
                                                                             ),
-                                                                            expression_exponentiation_expression_operator: AsteriskAsterisk(
-                                                                                AsteriskAsterisk {
-                                                                                    range: 247..249,
-                                                                                },
-                                                                            ),
+                                                                            operator: AsteriskAsterisk {
+                                                                                range: 247..249,
+                                                                            },
                                                                             right_operand: Identifier(
                                                                                 Identifier {
                                                                                     range: 250..251,

@@ -59,7 +59,6 @@ SourceUnitStruct {
                                                                     literal: HexLiteral {
                                                                         range: 242..253,
                                                                     },
-                                                                    unit: None,
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
