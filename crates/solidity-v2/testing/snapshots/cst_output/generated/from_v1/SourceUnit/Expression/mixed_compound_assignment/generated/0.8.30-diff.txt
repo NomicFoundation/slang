@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Errors: # 3 total
+  - >
+    Error: Expected node kind to be AssignmentExpression, but it was Identifier
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/generated/from_v1/SourceUnit/Expression/mixed_compound_assignment/input.sol:6:10]
+       │
+     6 │         (a += b -= c);
+       │          ┬  
+       │          ╰── Error occurred here.
+    ───╯
+  - >
+    Error: Expected node kind to be MinusEqual, but it was PlusEqual
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/generated/from_v1/SourceUnit/Expression/mixed_compound_assignment/input.sol:6:12]
+       │
+     6 │         (a += b -= c);
+       │            ─┬  
+       │             ╰── Error occurred here.
+    ───╯
+  - >
+    Error: Expected node kind to be a terminal, but it was AssignmentExpression
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/generated/from_v1/SourceUnit/Expression/mixed_compound_assignment/input.sol:6:14]
+       │
+     6 │         (a += b -= c);
+       │              ───┬───  
+       │                 ╰───── Error occurred here.
+    ───╯

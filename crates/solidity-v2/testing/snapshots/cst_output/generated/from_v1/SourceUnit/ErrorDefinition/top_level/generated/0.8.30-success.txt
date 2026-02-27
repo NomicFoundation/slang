@@ -1,0 +1,32 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ErrorDefinition(
+                ErrorDefinitionStruct {
+                    error_keyword: ErrorKeyword {
+                        range: 195..200,
+                    },
+                    name: Identifier {
+                        range: 201..208,
+                    },
+                    members: ErrorParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            range: 208..209,
+                        },
+                        parameters: ErrorParameters {
+                            elements: [],
+                        },
+                        close_paren: CloseParen {
+                            range: 209..210,
+                        },
+                    },
+                    semicolon: Semicolon {
+                        range: 210..211,
+                    },
+                },
+            ),
+        ],
+    },
+}

@@ -1,0 +1,139 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            InterfaceDefinition(
+                InterfaceDefinitionStruct {
+                    interface_keyword: InterfaceKeyword {
+                        range: 204..213,
+                    },
+                    name: Identifier {
+                        range: 214..222,
+                    },
+                    inheritance: None,
+                    open_brace: OpenBrace {
+                        range: 223..224,
+                    },
+                    members: InterfaceMembers {
+                        elements: [
+                            FunctionDefinition(
+                                FunctionDefinitionStruct {
+                                    function_keyword: FunctionKeyword {
+                                        range: 262..270,
+                                    },
+                                    name: Identifier(
+                                        Identifier {
+                                            range: 271..276,
+                                        },
+                                    ),
+                                    parameters: ParametersDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            range: 276..277,
+                                        },
+                                        parameters: Parameters {
+                                            elements: [],
+                                        },
+                                        close_paren: CloseParen {
+                                            range: 277..278,
+                                        },
+                                    },
+                                    attributes: FunctionAttributes {
+                                        elements: [
+                                            ExternalKeyword(
+                                                ExternalKeyword {
+                                                    range: 279..287,
+                                                },
+                                            ),
+                                            ViewKeyword(
+                                                ViewKeyword {
+                                                    range: 288..292,
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                    returns: Some(
+                                        ReturnsDeclarationStruct {
+                                            returns_keyword: ReturnsKeyword {
+                                                range: 293..300,
+                                            },
+                                            variables: ParametersDeclarationStruct {
+                                                open_paren: OpenParen {
+                                                    range: 301..302,
+                                                },
+                                                parameters: Parameters {
+                                                    elements: [
+                                                        ParameterStruct {
+                                                            type_name: ElementaryType(
+                                                                UintKeyword(
+                                                                    UintKeyword {
+                                                                        range: 302..306,
+                                                                    },
+                                                                ),
+                                                            ),
+                                                            storage_location: None,
+                                                            name: None,
+                                                        },
+                                                    ],
+                                                },
+                                                close_paren: CloseParen {
+                                                    range: 306..307,
+                                                },
+                                            },
+                                        },
+                                    ),
+                                    body: Semicolon(
+                                        Semicolon {
+                                            range: 307..308,
+                                        },
+                                    ),
+                                },
+                            ),
+                            FunctionDefinition(
+                                FunctionDefinitionStruct {
+                                    function_keyword: FunctionKeyword {
+                                        range: 344..352,
+                                    },
+                                    name: Identifier(
+                                        Identifier {
+                                            range: 353..362,
+                                        },
+                                    ),
+                                    parameters: ParametersDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            range: 362..363,
+                                        },
+                                        parameters: Parameters {
+                                            elements: [],
+                                        },
+                                        close_paren: CloseParen {
+                                            range: 363..364,
+                                        },
+                                    },
+                                    attributes: FunctionAttributes {
+                                        elements: [
+                                            ExternalKeyword(
+                                                ExternalKeyword {
+                                                    range: 365..373,
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                    returns: None,
+                                    body: Semicolon(
+                                        Semicolon {
+                                            range: 373..374,
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 375..376,
+                    },
+                },
+            ),
+        ],
+    },
+}

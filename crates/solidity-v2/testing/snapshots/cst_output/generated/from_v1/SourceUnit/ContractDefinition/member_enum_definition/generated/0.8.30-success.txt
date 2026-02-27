@@ -1,0 +1,61 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 211..219,
+                    },
+                    name: Identifier {
+                        range: 220..226,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 227..228,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            EnumDefinition(
+                                EnumDefinitionStruct {
+                                    enum_keyword: EnumKeyword {
+                                        range: 231..235,
+                                    },
+                                    name: Identifier {
+                                        range: 236..241,
+                                    },
+                                    open_brace: OpenBrace {
+                                        range: 242..243,
+                                    },
+                                    members: EnumMembers {
+                                        elements: [
+                                            Identifier {
+                                                range: 248..249,
+                                            },
+                                            Identifier {
+                                                range: 255..256,
+                                            },
+                                            Identifier {
+                                                range: 262..263,
+                                            },
+                                        ],
+                                    },
+                                    close_brace: CloseBrace {
+                                        range: 266..267,
+                                    },
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 268..269,
+                    },
+                },
+            ),
+        ],
+    },
+}

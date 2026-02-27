@@ -1,0 +1,96 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 212..220,
+                    },
+                    name: Identifier {
+                        range: 221..227,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 228..229,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            EventDefinition(
+                                EventDefinitionStruct {
+                                    event_keyword: EventKeyword {
+                                        range: 232..237,
+                                    },
+                                    name: Identifier {
+                                        range: 238..241,
+                                    },
+                                    parameters: EventParametersDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            range: 241..242,
+                                        },
+                                        parameters: EventParameters {
+                                            elements: [
+                                                EventParameterStruct {
+                                                    type_name: ElementaryType(
+                                                        UintKeyword(
+                                                            UintKeyword {
+                                                                range: 242..249,
+                                                            },
+                                                        ),
+                                                    ),
+                                                    indexed_keyword: Some(
+                                                        IndexedKeyword {
+                                                            range: 250..257,
+                                                        },
+                                                    ),
+                                                    name: Some(
+                                                        Identifier {
+                                                            range: 258..259,
+                                                        },
+                                                    ),
+                                                },
+                                                EventParameterStruct {
+                                                    type_name: ElementaryType(
+                                                        UintKeyword(
+                                                            UintKeyword {
+                                                                range: 261..268,
+                                                            },
+                                                        ),
+                                                    ),
+                                                    indexed_keyword: Some(
+                                                        IndexedKeyword {
+                                                            range: 269..276,
+                                                        },
+                                                    ),
+                                                    name: Some(
+                                                        Identifier {
+                                                            range: 277..278,
+                                                        },
+                                                    ),
+                                                },
+                                            ],
+                                        },
+                                        close_paren: CloseParen {
+                                            range: 278..279,
+                                        },
+                                    },
+                                    anonymous_keyword: None,
+                                    semicolon: Semicolon {
+                                        range: 279..280,
+                                    },
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 281..282,
+                    },
+                },
+            ),
+        ],
+    },
+}

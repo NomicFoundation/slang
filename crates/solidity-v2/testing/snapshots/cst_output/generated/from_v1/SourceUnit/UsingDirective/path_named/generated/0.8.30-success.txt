@@ -1,0 +1,50 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            UsingDirective(
+                UsingDirectiveStruct {
+                    using_keyword: UsingKeyword {
+                        range: 195..200,
+                    },
+                    clause: IdentifierPath(
+                        IdentifierPath {
+                            elements: [
+                                Identifier(
+                                    Identifier {
+                                        range: 201..204,
+                                    },
+                                ),
+                            ],
+                        },
+                    ),
+                    for_keyword: ForKeyword {
+                        range: 205..208,
+                    },
+                    target: TypeName(
+                        IdentifierPath(
+                            IdentifierPath {
+                                elements: [
+                                    Identifier(
+                                        Identifier {
+                                            range: 209..212,
+                                        },
+                                    ),
+                                ],
+                            },
+                        ),
+                    ),
+                    global_keyword: Some(
+                        GlobalKeyword {
+                            range: 213..219,
+                        },
+                    ),
+                    semicolon: Semicolon {
+                        range: 219..220,
+                    },
+                },
+            ),
+        ],
+    },
+}

@@ -1,0 +1,73 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 224..232,
+                    },
+                    name: Identifier {
+                        range: 233..236,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [
+                            InheritanceSpecifier(
+                                InheritanceSpecifierStruct {
+                                    is_keyword: IsKeyword {
+                                        range: 237..239,
+                                    },
+                                    types: InheritanceTypes {
+                                        elements: [
+                                            InheritanceTypeStruct {
+                                                type_name: IdentifierPath {
+                                                    elements: [
+                                                        Identifier(
+                                                            Identifier {
+                                                                range: 240..243,
+                                                            },
+                                                        ),
+                                                    ],
+                                                },
+                                                arguments: None,
+                                            },
+                                        ],
+                                    },
+                                },
+                            ),
+                            StorageLayoutSpecifier(
+                                StorageLayoutSpecifierStruct {
+                                    layout_keyword: LayoutKeyword {
+                                        range: 244..250,
+                                    },
+                                    at_keyword: AtKeyword {
+                                        range: 251..253,
+                                    },
+                                    expression: DecimalNumberExpression(
+                                        DecimalNumberExpressionStruct {
+                                            literal: DecimalLiteral {
+                                                range: 254..255,
+                                            },
+                                            unit: None,
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    open_brace: OpenBrace {
+                        range: 256..257,
+                    },
+                    members: ContractMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        range: 258..259,
+                    },
+                },
+            ),
+        ],
+    },
+}

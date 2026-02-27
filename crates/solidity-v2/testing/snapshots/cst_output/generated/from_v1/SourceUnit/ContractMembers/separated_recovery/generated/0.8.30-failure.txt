@@ -1,0 +1,9 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Error: Unexpected Identifier. One of CloseParen, Comma was expected
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/generated/from_v1/SourceUnit/ContractMembers/separated_recovery/input.sol:5:36]
+   │
+ 5 │ function all() override(some.ident unexpected tokens, ISomeInterface, Other) public {
+   │                                    ─────┬────  
+   │                                         ╰────── Error occurred here.
+───╯

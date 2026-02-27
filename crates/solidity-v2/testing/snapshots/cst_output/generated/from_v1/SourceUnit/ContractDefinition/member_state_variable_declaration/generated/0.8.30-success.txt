@@ -1,0 +1,59 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 222..230,
+                    },
+                    name: Identifier {
+                        range: 231..237,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 238..239,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            StateVariableDefinition(
+                                StateVariableDefinitionStruct {
+                                    type_name: ElementaryType(
+                                        UintKeyword(
+                                            UintKeyword {
+                                                range: 242..246,
+                                            },
+                                        ),
+                                    ),
+                                    attributes: StateVariableAttributes {
+                                        elements: [
+                                            PublicKeyword(
+                                                PublicKeyword {
+                                                    range: 247..253,
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                    name: Identifier {
+                                        range: 254..255,
+                                    },
+                                    value: None,
+                                    semicolon: Semicolon {
+                                        range: 255..256,
+                                    },
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 257..258,
+                    },
+                },
+            ),
+        ],
+    },
+}

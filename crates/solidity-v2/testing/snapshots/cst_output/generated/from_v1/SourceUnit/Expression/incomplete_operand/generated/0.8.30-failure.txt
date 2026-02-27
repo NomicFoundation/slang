@@ -1,0 +1,9 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Error: Unexpected CloseParen. One of AddressKeyword_Reserved, AtKeyword_Unreserved, BoolKeyword_Reserved, BytesKeyword_Reserved, ErrorKeyword_Unreserved, FinneyKeyword_Unreserved, FixedKeyword_Reserved, FromKeyword_Unreserved, FunctionKeyword_Reserved, GlobalKeyword_Unreserved, Identifier, IntKeyword_Reserved, LayoutKeyword_Unreserved, MappingKeyword_Reserved, RevertKeyword_Unreserved, StringKeyword_Reserved, SzaboKeyword_Unreserved, TransientKeyword_Unreserved, UfixedKeyword_Reserved, UintKeyword_Reserved was expected
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/generated/from_v1/SourceUnit/Expression/incomplete_operand/input.sol:6:17]
+   │
+ 6 │         (2 * new);
+   │                 ┬  
+   │                 ╰── Error occurred here.
+───╯

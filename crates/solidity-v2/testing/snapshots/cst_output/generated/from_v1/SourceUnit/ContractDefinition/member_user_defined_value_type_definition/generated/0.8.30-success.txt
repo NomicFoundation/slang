@@ -1,0 +1,53 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 230..238,
+                    },
+                    name: Identifier {
+                        range: 239..245,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 246..247,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            UserDefinedValueTypeDefinition(
+                                UserDefinedValueTypeDefinitionStruct {
+                                    type_keyword: TypeKeyword {
+                                        range: 250..254,
+                                    },
+                                    name: Identifier {
+                                        range: 255..258,
+                                    },
+                                    is_keyword: IsKeyword {
+                                        range: 259..261,
+                                    },
+                                    value_type: BoolKeyword(
+                                        BoolKeyword {
+                                            range: 262..266,
+                                        },
+                                    ),
+                                    semicolon: Semicolon {
+                                        range: 266..267,
+                                    },
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 268..269,
+                    },
+                },
+            ),
+        ],
+    },
+}

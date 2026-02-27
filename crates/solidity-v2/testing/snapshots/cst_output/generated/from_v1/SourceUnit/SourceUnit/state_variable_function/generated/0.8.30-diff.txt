@@ -1,0 +1,104 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Errors: # 2 total
+  - >
+    Error: Expected 1 elements, but got: [
+        (
+            Edge {
+                label: Item,
+                node: Nonterminal(
+                    NonterminalNode {
+                        kind: FunctionTypeAttribute,
+                        text_len: TextIndex {
+                            utf8: 9,
+                            utf16: 9,
+                            line: 0,
+                            column: 9,
+                        },
+                        children: [
+                            Edge {
+                                label: LeadingTrivia,
+                                node: Terminal(
+                                    TerminalNode {
+                                        kind: Whitespace,
+                                        text: " ",
+                                    },
+                                ),
+                            },
+                            Edge {
+                                label: Variant,
+                                node: Terminal(
+                                    TerminalNode {
+                                        kind: InternalKeyword,
+                                        text: "internal",
+                                    },
+                                ),
+                            },
+                        ],
+                    },
+                ),
+            },
+            TextIndex {
+                utf8: 239,
+                utf16: 239,
+                line: 5,
+                column: 21,
+            },
+        ),
+        (
+            Edge {
+                label: Item,
+                node: Nonterminal(
+                    NonterminalNode {
+                        kind: FunctionTypeAttribute,
+                        text_len: TextIndex {
+                            utf8: 9,
+                            utf16: 9,
+                            line: 0,
+                            column: 9,
+                        },
+                        children: [
+                            Edge {
+                                label: LeadingTrivia,
+                                node: Terminal(
+                                    TerminalNode {
+                                        kind: Whitespace,
+                                        text: " ",
+                                    },
+                                ),
+                            },
+                            Edge {
+                                label: Variant,
+                                node: Terminal(
+                                    TerminalNode {
+                                        kind: InternalKeyword,
+                                        text: "internal",
+                                    },
+                                ),
+                            },
+                        ],
+                    },
+                ),
+            },
+            TextIndex {
+                utf8: 248,
+                utf16: 248,
+                line: 5,
+                column: 30,
+            },
+        ),
+    ]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/generated/from_v1/SourceUnit/SourceUnit/state_variable_function/input.sol:6:22]
+       │
+     6 │     function (uint a) internal internal foo;
+       │                      ─────────┬────────  
+       │                               ╰────────── Error occurred here.
+    ───╯
+  - >
+    Error: Expected 1 elements, but got: []
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/generated/from_v1/SourceUnit/SourceUnit/state_variable_function/input.sol:6:40]
+       │
+     6 │     function (uint a) internal internal foo;
+       │                                        │ 
+       │                                        ╰─ Error occurred here.
+    ───╯

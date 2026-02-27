@@ -1,0 +1,123 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 95..103,
+                    },
+                    name: Identifier {
+                        range: 104..105,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 106..107,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            FunctionDefinition(
+                                FunctionDefinitionStruct {
+                                    function_keyword: FunctionKeyword {
+                                        range: 112..120,
+                                    },
+                                    name: Identifier(
+                                        Identifier {
+                                            range: 121..122,
+                                        },
+                                    ),
+                                    parameters: ParametersDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            range: 122..123,
+                                        },
+                                        parameters: Parameters {
+                                            elements: [],
+                                        },
+                                        close_paren: CloseParen {
+                                            range: 123..124,
+                                        },
+                                    },
+                                    attributes: FunctionAttributes {
+                                        elements: [],
+                                    },
+                                    returns: None,
+                                    body: Block(
+                                        BlockStruct {
+                                            open_brace: OpenBrace {
+                                                range: 125..126,
+                                            },
+                                            statements: Statements {
+                                                elements: [
+                                                    ExpressionStatement(
+                                                        ExpressionStatementStruct {
+                                                            expression: AssignmentExpression(
+                                                                AssignmentExpressionStruct {
+                                                                    left_operand: TupleExpression(
+                                                                        TupleExpressionStruct {
+                                                                            open_paren: OpenParen {
+                                                                                range: 242..243,
+                                                                            },
+                                                                            items: TupleValues {
+                                                                                elements: [
+                                                                                    TupleValueStruct {
+                                                                                        expression: None,
+                                                                                    },
+                                                                                    TupleValueStruct {
+                                                                                        expression: None,
+                                                                                    },
+                                                                                    TupleValueStruct {
+                                                                                        expression: None,
+                                                                                    },
+                                                                                    TupleValueStruct {
+                                                                                        expression: None,
+                                                                                    },
+                                                                                    TupleValueStruct {
+                                                                                        expression: None,
+                                                                                    },
+                                                                                ],
+                                                                            },
+                                                                            close_paren: CloseParen {
+                                                                                range: 247..248,
+                                                                            },
+                                                                        },
+                                                                    ),
+                                                                    expression_assignment_expression_operator: Equal(
+                                                                        Equal {
+                                                                            range: 249..250,
+                                                                        },
+                                                                    ),
+                                                                    right_operand: Identifier(
+                                                                        Identifier {
+                                                                            range: 251..254,
+                                                                        },
+                                                                    ),
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 254..255,
+                                                            },
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                            close_brace: CloseBrace {
+                                                range: 267..268,
+                                            },
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 269..270,
+                    },
+                },
+            ),
+        ],
+    },
+}
