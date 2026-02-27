@@ -68,8 +68,16 @@ fn wrap_test_input(group_name: &str, test_name: &str, content: &str) -> String {
     );
     let end_marker = "// <<<";
 
+    // Match the line ending style of the original content so that files
+    // governed by `.gitattributes eol=crlf` stay stable across checkouts.
+    let line_ending = if content.contains("\r\n") {
+        "\r\n"
+    } else {
+        "\n"
+    };
+
     let group = wrapping_group(group_name);
-    apply_template(group, &begin_marker, end_marker, content)
+    apply_template(group, &begin_marker, end_marker, content, line_ending)
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -160,10 +168,10 @@ fn wrapping_group(group_name: &str) -> WrappingGroup {
     }
 }
 
-fn write_marked(out: &mut String, begin: &str, end: &str, content: &str) {
-    writeln!(out, "{begin}").unwrap();
-    writeln!(out, "{content}").unwrap();
-    writeln!(out, "{end}").unwrap();
+fn write_marked(out: &mut String, begin: &str, end: &str, content: &str, eol: &str) {
+    write!(out, "{begin}{eol}").unwrap();
+    write!(out, "{content}{eol}").unwrap();
+    write!(out, "{end}{eol}").unwrap();
 }
 
 fn apply_template(
@@ -171,79 +179,80 @@ fn apply_template(
     begin_marker: &str,
     end_marker: &str,
     content: &str,
+    eol: &str,
 ) -> String {
     let mut out = String::new();
 
     match group {
         WrappingGroup::None | WrappingGroup::SourceUnitMember => {
-            write_marked(&mut out, begin_marker, end_marker, content);
+            write_marked(&mut out, begin_marker, end_marker, content, eol);
         }
         WrappingGroup::ContractMember => {
-            writeln!(out, "contract C {{").unwrap();
-            write_marked(&mut out, begin_marker, end_marker, content);
-            writeln!(out, "}}").unwrap();
+            write!(out, "contract C {{{eol}").unwrap();
+            write_marked(&mut out, begin_marker, end_marker, content, eol);
+            write!(out, "}}{eol}").unwrap();
         }
         WrappingGroup::Block => {
-            writeln!(out, "contract C {{").unwrap();
-            writeln!(out, "    function f()").unwrap();
-            write_marked(&mut out, begin_marker, end_marker, content);
-            writeln!(out, "}}").unwrap();
+            write!(out, "contract C {{{eol}").unwrap();
+            write!(out, "    function f(){eol}").unwrap();
+            write_marked(&mut out, begin_marker, end_marker, content, eol);
+            write!(out, "}}{eol}").unwrap();
         }
         WrappingGroup::Statement => {
-            writeln!(out, "contract C {{").unwrap();
-            writeln!(out, "    function f() {{").unwrap();
-            write_marked(&mut out, begin_marker, end_marker, content);
-            writeln!(out, "    }}").unwrap();
-            writeln!(out, "}}").unwrap();
+            write!(out, "contract C {{{eol}").unwrap();
+            write!(out, "    function f() {{{eol}").unwrap();
+            write_marked(&mut out, begin_marker, end_marker, content, eol);
+            write!(out, "    }}{eol}").unwrap();
+            write!(out, "}}{eol}").unwrap();
         }
         WrappingGroup::Expression => {
-            writeln!(out, "contract C {{").unwrap();
-            writeln!(out, "    function f() {{").unwrap();
-            write_marked(&mut out, begin_marker, end_marker, content);
-            writeln!(out, ";").unwrap();
-            writeln!(out, "    }}").unwrap();
-            writeln!(out, "}}").unwrap();
+            write!(out, "contract C {{{eol}").unwrap();
+            write!(out, "    function f() {{{eol}").unwrap();
+            write_marked(&mut out, begin_marker, end_marker, content, eol);
+            write!(out, ";{eol}").unwrap();
+            write!(out, "    }}{eol}").unwrap();
+            write!(out, "}}{eol}").unwrap();
         }
         WrappingGroup::TypeName => {
-            writeln!(out, "contract C {{").unwrap();
-            write_marked(&mut out, begin_marker, end_marker, content);
-            writeln!(out, "x;").unwrap();
-            writeln!(out, "}}").unwrap();
+            write!(out, "contract C {{{eol}").unwrap();
+            write_marked(&mut out, begin_marker, end_marker, content, eol);
+            write!(out, "x;{eol}").unwrap();
+            write!(out, "}}{eol}").unwrap();
         }
         WrappingGroup::StringLiteral => {
-            writeln!(out, "contract C {{").unwrap();
-            writeln!(out, "    function f() {{").unwrap();
-            write_marked(&mut out, begin_marker, end_marker, content);
-            writeln!(out, ";").unwrap();
-            writeln!(out, "    }}").unwrap();
-            writeln!(out, "}}").unwrap();
+            write!(out, "contract C {{{eol}").unwrap();
+            write!(out, "    function f() {{{eol}").unwrap();
+            write_marked(&mut out, begin_marker, end_marker, content, eol);
+            write!(out, ";{eol}").unwrap();
+            write!(out, "    }}{eol}").unwrap();
+            write!(out, "}}{eol}").unwrap();
         }
         WrappingGroup::YulBlock => {
-            writeln!(out, "contract C {{").unwrap();
-            writeln!(out, "    function f() {{").unwrap();
-            writeln!(out, "        assembly").unwrap();
-            write_marked(&mut out, begin_marker, end_marker, content);
-            writeln!(out, "    }}").unwrap();
-            writeln!(out, "}}").unwrap();
+            write!(out, "contract C {{{eol}").unwrap();
+            write!(out, "    function f() {{{eol}").unwrap();
+            write!(out, "        assembly{eol}").unwrap();
+            write_marked(&mut out, begin_marker, end_marker, content, eol);
+            write!(out, "    }}{eol}").unwrap();
+            write!(out, "}}{eol}").unwrap();
         }
         WrappingGroup::YulStatement => {
-            writeln!(out, "contract C {{").unwrap();
-            writeln!(out, "    function f() {{").unwrap();
-            writeln!(out, "        assembly {{").unwrap();
-            write_marked(&mut out, begin_marker, end_marker, content);
-            writeln!(out, "        }}").unwrap();
-            writeln!(out, "    }}").unwrap();
-            writeln!(out, "}}").unwrap();
+            write!(out, "contract C {{{eol}").unwrap();
+            write!(out, "    function f() {{{eol}").unwrap();
+            write!(out, "        assembly {{{eol}").unwrap();
+            write_marked(&mut out, begin_marker, end_marker, content, eol);
+            write!(out, "        }}{eol}").unwrap();
+            write!(out, "    }}{eol}").unwrap();
+            write!(out, "}}{eol}").unwrap();
         }
         WrappingGroup::VersionPragma => {
-            writeln!(out, "pragma").unwrap();
-            write_marked(&mut out, begin_marker, end_marker, content);
-            writeln!(out, ";").unwrap();
+            write!(out, "pragma{eol}").unwrap();
+            write_marked(&mut out, begin_marker, end_marker, content, eol);
+            write!(out, ";{eol}").unwrap();
         }
         WrappingGroup::UsingDeconstructionSymbol => {
-            writeln!(out, "using {{").unwrap();
-            write_marked(&mut out, begin_marker, end_marker, content);
-            writeln!(out, "}} for uint;").unwrap();
+            write!(out, "using {{{eol}").unwrap();
+            write_marked(&mut out, begin_marker, end_marker, content, eol);
+            write!(out, "}} for uint;{eol}").unwrap();
         }
     }
 
