@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Error: Unexpected UNRECOGNIZED. One of AddressKeyword_Reserved, AtKeyword_Unreserved, Bang, BoolKeyword_Reserved, BytesKeyword_Reserved, CloseParen, DecimalLiteral, DeleteKeyword_Reserved, DoubleQuotedHexStringLiteral, DoubleQuotedStringLiteral, DoubleQuotedUnicodeStringLiteral, ErrorKeyword_Unreserved, FalseKeyword_Reserved, FinneyKeyword_Unreserved, FixedKeyword_Reserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, HexLiteral, Identifier, IntKeyword_Reserved, LayoutKeyword_Unreserved, Minus, MinusMinus, NewKeyword_Reserved, OpenBrace, OpenBracket, OpenParen, PayableKeyword_Reserved, PlusPlus, RevertKeyword_Unreserved, SingleQuotedHexStringLiteral, SingleQuotedStringLiteral, SingleQuotedUnicodeStringLiteral, StringKeyword_Reserved, SuperKeyword_Reserved, SzaboKeyword_Unreserved, ThisKeyword_Reserved, Tilde, TransientKeyword_Unreserved, TrueKeyword_Reserved, TypeKeyword_Reserved, UfixedKeyword_Reserved, UintKeyword_Reserved was expected
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/from_v1/SourceUnit/Block/postfix_recovery_regression/input.generated.sol:9:9]
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/from_v1/SourceUnit/Block/postfix_recovery_regression/input/generated/input.sol:9:9]
    │
  9 │     a.b('
    │         ┬  

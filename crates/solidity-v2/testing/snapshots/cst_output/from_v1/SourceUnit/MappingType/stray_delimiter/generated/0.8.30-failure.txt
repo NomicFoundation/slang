@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Error: Unexpected CloseBracket. One of AtKeyword_Unreserved, CloseParen, ErrorKeyword_Unreserved, FinneyKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, LayoutKeyword_Unreserved, OpenBracket, RevertKeyword_Unreserved, SzaboKeyword_Unreserved, TransientKeyword_Unreserved was expected
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/from_v1/SourceUnit/MappingType/stray_delimiter/input.generated.sol:5:26]
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/from_v1/SourceUnit/MappingType/stray_delimiter/input/generated/input.sol:5:26]
    │
  5 │ mapping(string => bytes32] arg)
    │                          ┬  

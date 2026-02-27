@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Error: Unexpected ConstantKeyword_Reserved. One of AtKeyword_Unreserved, ErrorKeyword_Unreserved, FinneyKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, ImmutableKeyword_Reserved, LayoutKeyword_Unreserved, OpenBracket, OverrideKeyword_Reserved, RevertKeyword_Unreserved, SzaboKeyword_Unreserved, TransientKeyword_Unreserved was expected
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/from_v1/SourceUnit/UnnamedFunctionDefinition/constant_attribute/input.generated.sol:6:13]
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/from_v1/SourceUnit/UnnamedFunctionDefinition/constant_attribute/input/generated/input.sol:6:13]
    │
  6 │ function () constant {}
    │             ────┬───  

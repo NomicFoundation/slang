@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Error: Unexpected WhileKeyword_Reserved. One of AtKeyword_Unreserved, CallDataKeyword_Reserved, CloseParen, Comma, ErrorKeyword_Unreserved, FinneyKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, LayoutKeyword_Unreserved, MemoryKeyword_Reserved, OpenBracket, PayableKeyword_Reserved, RevertKeyword_Unreserved, StorageKeyword_Reserved, SzaboKeyword_Unreserved, TransientKeyword_Unreserved was expected
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/from_v1/SourceUnit/ContractDefinition/recovery_testbed/input.generated.sol:5:29]
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/from_v1/SourceUnit/ContractDefinition/recovery_testbed/input/generated/input.sol:5:29]
    │
  5 │     function _transfer(address while) private {
    │                                ──┬──  

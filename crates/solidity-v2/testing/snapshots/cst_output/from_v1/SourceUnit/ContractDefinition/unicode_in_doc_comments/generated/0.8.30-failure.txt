@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Error: Unexpected end of file. One of ConstantKeyword_Reserved, OpenBracket, Period was expected
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/from_v1/SourceUnit/ContractDefinition/unicode_in_doc_comments/input.generated.sol:7:11]
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/from_v1/SourceUnit/ContractDefinition/unicode_in_doc_comments/input/generated/input.sol:7:11]
    │
  7 │ unexpected
    │           │ 
