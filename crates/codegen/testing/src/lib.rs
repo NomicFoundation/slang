@@ -1,7 +1,7 @@
 mod binder;
 mod bindings_output;
 mod common;
-mod cst_output;
+pub mod cst_output;
 
 use std::path::Path;
 
