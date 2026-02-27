@@ -13,4 +13,5 @@ contract Contract {
 		unchecked { invalid sequence }
 	}
 }
+
 // <<<

@@ -25,36 +25,36 @@ SourceUnitStruct {
                                     type_name: MappingType(
                                         MappingTypeStruct {
                                             mapping_keyword: MappingKeyword {
-                                                range: 206..213,
+                                                range: 202..209,
                                             },
                                             open_paren: OpenParen {
-                                                range: 213..214,
+                                                range: 209..210,
                                             },
                                             key_type: MappingKeyStruct {
                                                 key_type: ElementaryType(
                                                     StringKeyword(
                                                         StringKeyword {
-                                                            range: 214..220,
+                                                            range: 210..216,
                                                         },
                                                     ),
                                                 ),
                                                 name: None,
                                             },
                                             equal_greater_than: EqualGreaterThan {
-                                                range: 221..223,
+                                                range: 217..219,
                                             },
                                             value_type: MappingValueStruct {
                                                 type_name: ElementaryType(
                                                     BytesKeyword(
                                                         BytesKeyword {
-                                                            range: 224..231,
+                                                            range: 220..227,
                                                         },
                                                     ),
                                                 ),
                                                 name: None,
                                             },
                                             close_paren: CloseParen {
-                                                range: 231..232,
+                                                range: 227..228,
                                             },
                                         },
                                     ),
@@ -62,18 +62,18 @@ SourceUnitStruct {
                                         elements: [],
                                     },
                                     name: Identifier {
-                                        range: 233..234,
+                                        range: 236..237,
                                     },
                                     value: None,
                                     semicolon: Semicolon {
-                                        range: 234..235,
+                                        range: 237..238,
                                     },
                                 },
                             ),
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 243..244,
+                        range: 239..240,
                     },
                 },
             ),

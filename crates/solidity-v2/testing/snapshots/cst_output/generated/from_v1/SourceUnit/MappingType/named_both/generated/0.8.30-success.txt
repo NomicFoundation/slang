@@ -25,44 +25,44 @@ SourceUnitStruct {
                                     type_name: MappingType(
                                         MappingTypeStruct {
                                             mapping_keyword: MappingKeyword {
-                                                range: 209..216,
+                                                range: 205..212,
                                             },
                                             open_paren: OpenParen {
-                                                range: 216..217,
+                                                range: 212..213,
                                             },
                                             key_type: MappingKeyStruct {
                                                 key_type: ElementaryType(
                                                     StringKeyword(
                                                         StringKeyword {
-                                                            range: 217..223,
+                                                            range: 213..219,
                                                         },
                                                     ),
                                                 ),
                                                 name: Some(
                                                     Identifier {
-                                                        range: 224..227,
+                                                        range: 220..223,
                                                     },
                                                 ),
                                             },
                                             equal_greater_than: EqualGreaterThan {
-                                                range: 228..230,
+                                                range: 224..226,
                                             },
                                             value_type: MappingValueStruct {
                                                 type_name: ElementaryType(
                                                     BytesKeyword(
                                                         BytesKeyword {
-                                                            range: 231..238,
+                                                            range: 227..234,
                                                         },
                                                     ),
                                                 ),
                                                 name: Some(
                                                     Identifier {
-                                                        range: 239..242,
+                                                        range: 235..238,
                                                     },
                                                 ),
                                             },
                                             close_paren: CloseParen {
-                                                range: 242..243,
+                                                range: 238..239,
                                             },
                                         },
                                     ),
@@ -70,18 +70,18 @@ SourceUnitStruct {
                                         elements: [],
                                     },
                                     name: Identifier {
-                                        range: 244..245,
+                                        range: 247..248,
                                     },
                                     value: None,
                                     semicolon: Semicolon {
-                                        range: 245..246,
+                                        range: 248..249,
                                     },
                                 },
                             ),
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 254..255,
+                        range: 250..251,
                     },
                 },
             ),

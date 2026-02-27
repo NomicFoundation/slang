@@ -60,7 +60,7 @@ SourceUnitStruct {
                                                                         elements: [
                                                                             DoubleQuotedStringLiteral(
                                                                                 DoubleQuotedStringLiteral {
-                                                                                    range: 237..242,
+                                                                                    range: 229..234,
                                                                                 },
                                                                             ),
                                                                         ],
@@ -75,7 +75,7 @@ SourceUnitStruct {
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 255..256,
+                                                range: 248..249,
                                             },
                                         },
                                     ),
@@ -84,7 +84,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 257..258,
+                        range: 250..251,
                     },
                 },
             ),

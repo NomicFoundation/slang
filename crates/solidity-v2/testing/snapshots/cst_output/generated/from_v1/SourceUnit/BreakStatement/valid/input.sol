@@ -4,6 +4,7 @@ contract C {
     function f() {
 // >>> Copied from crates/solidity/testing/snapshots/cst_output/BreakStatement/valid/input.sol
 break ;
+
 // <<<
     }
 }

@@ -54,46 +54,28 @@ SourceUnitStruct {
                                                 elements: [
                                                     ExpressionStatement(
                                                         ExpressionStatementStruct {
-                                                            expression: TupleExpression(
-                                                                TupleExpressionStruct {
-                                                                    open_paren: OpenParen {
-                                                                        range: 243..244,
-                                                                    },
-                                                                    items: TupleValues {
+                                                            expression: StringExpression(
+                                                                UnicodeStringLiterals(
+                                                                    UnicodeStringLiterals {
                                                                         elements: [
-                                                                            TupleValueStruct {
-                                                                                expression: Some(
-                                                                                    StringExpression(
-                                                                                        UnicodeStringLiterals(
-                                                                                            UnicodeStringLiterals {
-                                                                                                elements: [
-                                                                                                    DoubleQuotedUnicodeStringLiteral(
-                                                                                                        DoubleQuotedUnicodeStringLiteral {
-                                                                                                            range: 244..269,
-                                                                                                        },
-                                                                                                    ),
-                                                                                                ],
-                                                                                            },
-                                                                                        ),
-                                                                                    ),
-                                                                                ),
-                                                                            },
+                                                                            DoubleQuotedUnicodeStringLiteral(
+                                                                                DoubleQuotedUnicodeStringLiteral {
+                                                                                    range: 235..260,
+                                                                                },
+                                                                            ),
                                                                         ],
                                                                     },
-                                                                    close_paren: CloseParen {
-                                                                        range: 269..270,
-                                                                    },
-                                                                },
+                                                                ),
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 270..271,
+                                                                range: 268..269,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 283..284,
+                                                range: 274..275,
                                             },
                                         },
                                     ),
@@ -102,7 +84,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 285..286,
+                        range: 276..277,
                     },
                 },
             ),

@@ -5,6 +5,7 @@ contract C {
         assembly {
 // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulExpression/true_keyword/input.sol
 true
+
 // <<<
         }
     }

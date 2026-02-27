@@ -54,80 +54,62 @@ SourceUnitStruct {
                                                 elements: [
                                                     ExpressionStatement(
                                                         ExpressionStatementStruct {
-                                                            expression: TupleExpression(
-                                                                TupleExpressionStruct {
-                                                                    open_paren: OpenParen {
-                                                                        range: 228..229,
-                                                                    },
-                                                                    items: TupleValues {
-                                                                        elements: [
-                                                                            TupleValueStruct {
-                                                                                expression: Some(
-                                                                                    AdditiveExpression(
-                                                                                        AdditiveExpressionStruct {
-                                                                                            left_operand: MultiplicativeExpression(
-                                                                                                MultiplicativeExpressionStruct {
-                                                                                                    left_operand: Identifier(
-                                                                                                        Identifier {
-                                                                                                            range: 229..230,
-                                                                                                        },
-                                                                                                    ),
-                                                                                                    expression_multiplicative_expression_operator: Asterisk(
-                                                                                                        Asterisk {
-                                                                                                            range: 231..232,
-                                                                                                        },
-                                                                                                    ),
-                                                                                                    right_operand: Identifier(
-                                                                                                        Identifier {
-                                                                                                            range: 233..234,
-                                                                                                        },
-                                                                                                    ),
-                                                                                                },
-                                                                                            ),
-                                                                                            expression_additive_expression_operator: Plus(
-                                                                                                Plus {
-                                                                                                    range: 235..236,
-                                                                                                },
-                                                                                            ),
-                                                                                            right_operand: MultiplicativeExpression(
-                                                                                                MultiplicativeExpressionStruct {
-                                                                                                    left_operand: Identifier(
-                                                                                                        Identifier {
-                                                                                                            range: 237..238,
-                                                                                                        },
-                                                                                                    ),
-                                                                                                    expression_multiplicative_expression_operator: Asterisk(
-                                                                                                        Asterisk {
-                                                                                                            range: 239..240,
-                                                                                                        },
-                                                                                                    ),
-                                                                                                    right_operand: Identifier(
-                                                                                                        Identifier {
-                                                                                                            range: 241..242,
-                                                                                                        },
-                                                                                                    ),
-                                                                                                },
-                                                                                            ),
-                                                                                        },
-                                                                                    ),
-                                                                                ),
-                                                                            },
-                                                                        ],
-                                                                    },
-                                                                    close_paren: CloseParen {
-                                                                        range: 242..243,
-                                                                    },
+                                                            expression: AdditiveExpression(
+                                                                AdditiveExpressionStruct {
+                                                                    left_operand: MultiplicativeExpression(
+                                                                        MultiplicativeExpressionStruct {
+                                                                            left_operand: Identifier(
+                                                                                Identifier {
+                                                                                    range: 220..221,
+                                                                                },
+                                                                            ),
+                                                                            expression_multiplicative_expression_operator: Asterisk(
+                                                                                Asterisk {
+                                                                                    range: 222..223,
+                                                                                },
+                                                                            ),
+                                                                            right_operand: Identifier(
+                                                                                Identifier {
+                                                                                    range: 224..225,
+                                                                                },
+                                                                            ),
+                                                                        },
+                                                                    ),
+                                                                    expression_additive_expression_operator: Plus(
+                                                                        Plus {
+                                                                            range: 226..227,
+                                                                        },
+                                                                    ),
+                                                                    right_operand: MultiplicativeExpression(
+                                                                        MultiplicativeExpressionStruct {
+                                                                            left_operand: Identifier(
+                                                                                Identifier {
+                                                                                    range: 228..229,
+                                                                                },
+                                                                            ),
+                                                                            expression_multiplicative_expression_operator: Asterisk(
+                                                                                Asterisk {
+                                                                                    range: 230..231,
+                                                                                },
+                                                                            ),
+                                                                            right_operand: Identifier(
+                                                                                Identifier {
+                                                                                    range: 232..233,
+                                                                                },
+                                                                            ),
+                                                                        },
+                                                                    ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 243..244,
+                                                                range: 241..242,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 256..257,
+                                                range: 247..248,
                                             },
                                         },
                                     ),
@@ -136,7 +118,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 258..259,
+                        range: 249..250,
                     },
                 },
             ),

@@ -2,6 +2,6 @@
 
 using {
 // >>> Copied from crates/solidity/testing/snapshots/cst_output/UsingDeconstructionSymbol/identifier_path/input.sol
-    foo.bar
+foo.bar
 // <<<
 } for uint;

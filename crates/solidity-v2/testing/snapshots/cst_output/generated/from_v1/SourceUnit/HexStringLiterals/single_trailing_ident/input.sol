@@ -3,7 +3,9 @@
 contract C {
     function f() {
 // >>> Copied from crates/solidity/testing/snapshots/cst_output/HexStringLiterals/single_trailing_ident/input.sol
-        hex"12"b;
+hex"12"b
+
 // <<<
+;
     }
 }

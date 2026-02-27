@@ -54,111 +54,93 @@ SourceUnitStruct {
                                                 elements: [
                                                     ExpressionStatement(
                                                         ExpressionStatementStruct {
-                                                            expression: TupleExpression(
-                                                                TupleExpressionStruct {
-                                                                    open_paren: OpenParen {
-                                                                        range: 243..244,
-                                                                    },
-                                                                    items: TupleValues {
-                                                                        elements: [
-                                                                            TupleValueStruct {
-                                                                                expression: Some(
-                                                                                    CallOptionsExpression(
-                                                                                        CallOptionsExpressionStruct {
-                                                                                            operand: CallOptionsExpression(
-                                                                                                CallOptionsExpressionStruct {
-                                                                                                    operand: NewExpression(
-                                                                                                        NewExpressionStruct {
-                                                                                                            new_keyword: NewKeyword {
-                                                                                                                range: 244..247,
-                                                                                                            },
-                                                                                                            type_name: IdentifierPath(
-                                                                                                                IdentifierPath {
-                                                                                                                    elements: [
-                                                                                                                        Identifier(
-                                                                                                                            Identifier {
-                                                                                                                                range: 248..251,
-                                                                                                                            },
-                                                                                                                        ),
-                                                                                                                    ],
-                                                                                                                },
-                                                                                                            ),
-                                                                                                        },
-                                                                                                    ),
-                                                                                                    open_brace: OpenBrace {
-                                                                                                        range: 251..252,
+                                                            expression: CallOptionsExpression(
+                                                                CallOptionsExpressionStruct {
+                                                                    operand: CallOptionsExpression(
+                                                                        CallOptionsExpressionStruct {
+                                                                            operand: NewExpression(
+                                                                                NewExpressionStruct {
+                                                                                    new_keyword: NewKeyword {
+                                                                                        range: 235..238,
+                                                                                    },
+                                                                                    type_name: IdentifierPath(
+                                                                                        IdentifierPath {
+                                                                                            elements: [
+                                                                                                Identifier(
+                                                                                                    Identifier {
+                                                                                                        range: 239..242,
                                                                                                     },
-                                                                                                    options: CallOptions {
-                                                                                                        elements: [
-                                                                                                            NamedArgumentStruct {
-                                                                                                                name: Identifier {
-                                                                                                                    range: 252..257,
-                                                                                                                },
-                                                                                                                colon: Colon {
-                                                                                                                    range: 257..258,
-                                                                                                                },
-                                                                                                                value: DecimalNumberExpression(
-                                                                                                                    DecimalNumberExpressionStruct {
-                                                                                                                        literal: DecimalLiteral {
-                                                                                                                            range: 259..261,
-                                                                                                                        },
-                                                                                                                        unit: None,
-                                                                                                                    },
-                                                                                                                ),
-                                                                                                            },
-                                                                                                        ],
-                                                                                                    },
-                                                                                                    close_brace: CloseBrace {
-                                                                                                        range: 261..262,
-                                                                                                    },
-                                                                                                },
-                                                                                            ),
-                                                                                            open_brace: OpenBrace {
-                                                                                                range: 262..263,
-                                                                                            },
-                                                                                            options: CallOptions {
-                                                                                                elements: [
-                                                                                                    NamedArgumentStruct {
-                                                                                                        name: Identifier {
-                                                                                                            range: 263..266,
-                                                                                                        },
-                                                                                                        colon: Colon {
-                                                                                                            range: 266..267,
-                                                                                                        },
-                                                                                                        value: DecimalNumberExpression(
-                                                                                                            DecimalNumberExpressionStruct {
-                                                                                                                literal: DecimalLiteral {
-                                                                                                                    range: 268..271,
-                                                                                                                },
-                                                                                                                unit: None,
-                                                                                                            },
-                                                                                                        ),
-                                                                                                    },
-                                                                                                ],
-                                                                                            },
-                                                                                            close_brace: CloseBrace {
-                                                                                                range: 271..272,
-                                                                                            },
+                                                                                                ),
+                                                                                            ],
                                                                                         },
                                                                                     ),
+                                                                                },
+                                                                            ),
+                                                                            open_brace: OpenBrace {
+                                                                                range: 242..243,
+                                                                            },
+                                                                            options: CallOptions {
+                                                                                elements: [
+                                                                                    NamedArgumentStruct {
+                                                                                        name: Identifier {
+                                                                                            range: 243..248,
+                                                                                        },
+                                                                                        colon: Colon {
+                                                                                            range: 248..249,
+                                                                                        },
+                                                                                        value: DecimalNumberExpression(
+                                                                                            DecimalNumberExpressionStruct {
+                                                                                                literal: DecimalLiteral {
+                                                                                                    range: 250..252,
+                                                                                                },
+                                                                                                unit: None,
+                                                                                            },
+                                                                                        ),
+                                                                                    },
+                                                                                ],
+                                                                            },
+                                                                            close_brace: CloseBrace {
+                                                                                range: 252..253,
+                                                                            },
+                                                                        },
+                                                                    ),
+                                                                    open_brace: OpenBrace {
+                                                                        range: 253..254,
+                                                                    },
+                                                                    options: CallOptions {
+                                                                        elements: [
+                                                                            NamedArgumentStruct {
+                                                                                name: Identifier {
+                                                                                    range: 254..257,
+                                                                                },
+                                                                                colon: Colon {
+                                                                                    range: 257..258,
+                                                                                },
+                                                                                value: DecimalNumberExpression(
+                                                                                    DecimalNumberExpressionStruct {
+                                                                                        literal: DecimalLiteral {
+                                                                                            range: 259..262,
+                                                                                        },
+                                                                                        unit: None,
+                                                                                    },
                                                                                 ),
                                                                             },
                                                                         ],
                                                                     },
-                                                                    close_paren: CloseParen {
-                                                                        range: 272..273,
+                                                                    close_brace: CloseBrace {
+                                                                        range: 262..263,
                                                                     },
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 273..274,
+                                                                range: 272..273,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 286..287,
+                                                range: 278..279,
                                             },
                                         },
                                     ),
@@ -167,7 +149,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 288..289,
+                        range: 280..281,
                     },
                 },
             ),

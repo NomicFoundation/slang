@@ -54,47 +54,29 @@ SourceUnitStruct {
                                                 elements: [
                                                     ExpressionStatement(
                                                         ExpressionStatementStruct {
-                                                            expression: TupleExpression(
-                                                                TupleExpressionStruct {
-                                                                    open_paren: OpenParen {
-                                                                        range: 233..234,
-                                                                    },
-                                                                    items: TupleValues {
-                                                                        elements: [
-                                                                            TupleValueStruct {
-                                                                                expression: Some(
-                                                                                    PrefixExpression(
-                                                                                        PrefixExpressionStruct {
-                                                                                            expression_prefix_expression_operator: Minus(
-                                                                                                Minus {
-                                                                                                    range: 234..235,
-                                                                                                },
-                                                                                            ),
-                                                                                            operand: Identifier(
-                                                                                                Identifier {
-                                                                                                    range: 235..238,
-                                                                                                },
-                                                                                            ),
-                                                                                        },
-                                                                                    ),
-                                                                                ),
-                                                                            },
-                                                                        ],
-                                                                    },
-                                                                    close_paren: CloseParen {
-                                                                        range: 238..239,
-                                                                    },
+                                                            expression: PrefixExpression(
+                                                                PrefixExpressionStruct {
+                                                                    expression_prefix_expression_operator: Minus(
+                                                                        Minus {
+                                                                            range: 225..226,
+                                                                        },
+                                                                    ),
+                                                                    operand: Identifier(
+                                                                        Identifier {
+                                                                            range: 226..229,
+                                                                        },
+                                                                    ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 239..240,
+                                                                range: 237..238,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 252..253,
+                                                range: 243..244,
                                             },
                                         },
                                     ),
@@ -103,7 +85,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 254..255,
+                        range: 245..246,
                     },
                 },
             ),

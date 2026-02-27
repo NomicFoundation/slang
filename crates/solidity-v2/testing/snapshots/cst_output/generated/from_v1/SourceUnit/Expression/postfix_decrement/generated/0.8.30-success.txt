@@ -54,47 +54,29 @@ SourceUnitStruct {
                                                 elements: [
                                                     ExpressionStatement(
                                                         ExpressionStatementStruct {
-                                                            expression: TupleExpression(
-                                                                TupleExpressionStruct {
-                                                                    open_paren: OpenParen {
-                                                                        range: 238..239,
-                                                                    },
-                                                                    items: TupleValues {
-                                                                        elements: [
-                                                                            TupleValueStruct {
-                                                                                expression: Some(
-                                                                                    PostfixExpression(
-                                                                                        PostfixExpressionStruct {
-                                                                                            operand: Identifier(
-                                                                                                Identifier {
-                                                                                                    range: 239..242,
-                                                                                                },
-                                                                                            ),
-                                                                                            expression_postfix_expression_operator: MinusMinus(
-                                                                                                MinusMinus {
-                                                                                                    range: 242..244,
-                                                                                                },
-                                                                                            ),
-                                                                                        },
-                                                                                    ),
-                                                                                ),
-                                                                            },
-                                                                        ],
-                                                                    },
-                                                                    close_paren: CloseParen {
-                                                                        range: 244..245,
-                                                                    },
+                                                            expression: PostfixExpression(
+                                                                PostfixExpressionStruct {
+                                                                    operand: Identifier(
+                                                                        Identifier {
+                                                                            range: 230..233,
+                                                                        },
+                                                                    ),
+                                                                    expression_postfix_expression_operator: MinusMinus(
+                                                                        MinusMinus {
+                                                                            range: 233..235,
+                                                                        },
+                                                                    ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 245..246,
+                                                                range: 243..244,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 258..259,
+                                                range: 249..250,
                                             },
                                         },
                                     ),
@@ -103,7 +85,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 260..261,
+                        range: 251..252,
                     },
                 },
             ),

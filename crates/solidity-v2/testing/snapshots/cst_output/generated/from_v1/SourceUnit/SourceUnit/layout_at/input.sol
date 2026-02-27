@@ -12,4 +12,5 @@ contract SafeMath layout at foo()  {
 
 contract SafeMath layout at 123 + foo  {
 }
+
 // <<<

@@ -54,50 +54,32 @@ SourceUnitStruct {
                                                 elements: [
                                                     ExpressionStatement(
                                                         ExpressionStatementStruct {
-                                                            expression: TupleExpression(
-                                                                TupleExpressionStruct {
-                                                                    open_paren: OpenParen {
-                                                                        range: 240..241,
+                                                            expression: MemberAccessExpression(
+                                                                MemberAccessExpressionStruct {
+                                                                    operand: SuperKeyword(
+                                                                        SuperKeyword {
+                                                                            range: 232..237,
+                                                                        },
+                                                                    ),
+                                                                    period: Period {
+                                                                        range: 237..238,
                                                                     },
-                                                                    items: TupleValues {
-                                                                        elements: [
-                                                                            TupleValueStruct {
-                                                                                expression: Some(
-                                                                                    MemberAccessExpression(
-                                                                                        MemberAccessExpressionStruct {
-                                                                                            operand: SuperKeyword(
-                                                                                                SuperKeyword {
-                                                                                                    range: 241..246,
-                                                                                                },
-                                                                                            ),
-                                                                                            period: Period {
-                                                                                                range: 246..247,
-                                                                                            },
-                                                                                            member: Identifier(
-                                                                                                Identifier {
-                                                                                                    range: 247..248,
-                                                                                                },
-                                                                                            ),
-                                                                                        },
-                                                                                    ),
-                                                                                ),
-                                                                            },
-                                                                        ],
-                                                                    },
-                                                                    close_paren: CloseParen {
-                                                                        range: 248..249,
-                                                                    },
+                                                                    member: Identifier(
+                                                                        Identifier {
+                                                                            range: 238..239,
+                                                                        },
+                                                                    ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 249..250,
+                                                                range: 248..249,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 262..263,
+                                                range: 254..255,
                                             },
                                         },
                                     ),
@@ -106,7 +88,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 264..265,
+                        range: 256..257,
                     },
                 },
             ),

@@ -54,122 +54,104 @@ SourceUnitStruct {
                                                 elements: [
                                                     ExpressionStatement(
                                                         ExpressionStatementStruct {
-                                                            expression: TupleExpression(
-                                                                TupleExpressionStruct {
-                                                                    open_paren: OpenParen {
-                                                                        range: 249..250,
+                                                            expression: ConditionalExpression(
+                                                                ConditionalExpressionStruct {
+                                                                    operand: Identifier(
+                                                                        Identifier {
+                                                                            range: 241..244,
+                                                                        },
+                                                                    ),
+                                                                    question_mark: QuestionMark {
+                                                                        range: 245..246,
                                                                     },
-                                                                    items: TupleValues {
-                                                                        elements: [
-                                                                            TupleValueStruct {
-                                                                                expression: Some(
-                                                                                    ConditionalExpression(
-                                                                                        ConditionalExpressionStruct {
-                                                                                            operand: Identifier(
-                                                                                                Identifier {
-                                                                                                    range: 250..253,
-                                                                                                },
-                                                                                            ),
-                                                                                            question_mark: QuestionMark {
-                                                                                                range: 254..255,
-                                                                                            },
-                                                                                            true_expression: TupleExpression(
-                                                                                                TupleExpressionStruct {
-                                                                                                    open_paren: OpenParen {
-                                                                                                        range: 256..257,
-                                                                                                    },
-                                                                                                    items: TupleValues {
-                                                                                                        elements: [
-                                                                                                            TupleValueStruct {
-                                                                                                                expression: Some(
-                                                                                                                    AdditiveExpression(
-                                                                                                                        AdditiveExpressionStruct {
-                                                                                                                            left_operand: Identifier(
-                                                                                                                                Identifier {
-                                                                                                                                    range: 257..258,
-                                                                                                                                },
-                                                                                                                            ),
-                                                                                                                            expression_additive_expression_operator: Plus(
-                                                                                                                                Plus {
-                                                                                                                                    range: 259..260,
-                                                                                                                                },
-                                                                                                                            ),
-                                                                                                                            right_operand: Identifier(
-                                                                                                                                Identifier {
-                                                                                                                                    range: 261..262,
-                                                                                                                                },
-                                                                                                                            ),
-                                                                                                                        },
-                                                                                                                    ),
-                                                                                                                ),
-                                                                                                            },
-                                                                                                        ],
-                                                                                                    },
-                                                                                                    close_paren: CloseParen {
-                                                                                                        range: 262..263,
-                                                                                                    },
-                                                                                                },
-                                                                                            ),
-                                                                                            colon: Colon {
-                                                                                                range: 264..265,
-                                                                                            },
-                                                                                            false_expression: TupleExpression(
-                                                                                                TupleExpressionStruct {
-                                                                                                    open_paren: OpenParen {
-                                                                                                        range: 266..267,
-                                                                                                    },
-                                                                                                    items: TupleValues {
-                                                                                                        elements: [
-                                                                                                            TupleValueStruct {
-                                                                                                                expression: Some(
-                                                                                                                    AdditiveExpression(
-                                                                                                                        AdditiveExpressionStruct {
-                                                                                                                            left_operand: Identifier(
-                                                                                                                                Identifier {
-                                                                                                                                    range: 267..268,
-                                                                                                                                },
-                                                                                                                            ),
-                                                                                                                            expression_additive_expression_operator: Plus(
-                                                                                                                                Plus {
-                                                                                                                                    range: 269..270,
-                                                                                                                                },
-                                                                                                                            ),
-                                                                                                                            right_operand: Identifier(
-                                                                                                                                Identifier {
-                                                                                                                                    range: 271..272,
-                                                                                                                                },
-                                                                                                                            ),
-                                                                                                                        },
-                                                                                                                    ),
-                                                                                                                ),
-                                                                                                            },
-                                                                                                        ],
-                                                                                                    },
-                                                                                                    close_paren: CloseParen {
-                                                                                                        range: 272..273,
-                                                                                                    },
-                                                                                                },
-                                                                                            ),
-                                                                                        },
-                                                                                    ),
-                                                                                ),
+                                                                    true_expression: TupleExpression(
+                                                                        TupleExpressionStruct {
+                                                                            open_paren: OpenParen {
+                                                                                range: 247..248,
                                                                             },
-                                                                        ],
+                                                                            items: TupleValues {
+                                                                                elements: [
+                                                                                    TupleValueStruct {
+                                                                                        expression: Some(
+                                                                                            AdditiveExpression(
+                                                                                                AdditiveExpressionStruct {
+                                                                                                    left_operand: Identifier(
+                                                                                                        Identifier {
+                                                                                                            range: 248..249,
+                                                                                                        },
+                                                                                                    ),
+                                                                                                    expression_additive_expression_operator: Plus(
+                                                                                                        Plus {
+                                                                                                            range: 250..251,
+                                                                                                        },
+                                                                                                    ),
+                                                                                                    right_operand: Identifier(
+                                                                                                        Identifier {
+                                                                                                            range: 252..253,
+                                                                                                        },
+                                                                                                    ),
+                                                                                                },
+                                                                                            ),
+                                                                                        ),
+                                                                                    },
+                                                                                ],
+                                                                            },
+                                                                            close_paren: CloseParen {
+                                                                                range: 253..254,
+                                                                            },
+                                                                        },
+                                                                    ),
+                                                                    colon: Colon {
+                                                                        range: 255..256,
                                                                     },
-                                                                    close_paren: CloseParen {
-                                                                        range: 273..274,
-                                                                    },
+                                                                    false_expression: TupleExpression(
+                                                                        TupleExpressionStruct {
+                                                                            open_paren: OpenParen {
+                                                                                range: 257..258,
+                                                                            },
+                                                                            items: TupleValues {
+                                                                                elements: [
+                                                                                    TupleValueStruct {
+                                                                                        expression: Some(
+                                                                                            AdditiveExpression(
+                                                                                                AdditiveExpressionStruct {
+                                                                                                    left_operand: Identifier(
+                                                                                                        Identifier {
+                                                                                                            range: 258..259,
+                                                                                                        },
+                                                                                                    ),
+                                                                                                    expression_additive_expression_operator: Plus(
+                                                                                                        Plus {
+                                                                                                            range: 260..261,
+                                                                                                        },
+                                                                                                    ),
+                                                                                                    right_operand: Identifier(
+                                                                                                        Identifier {
+                                                                                                            range: 262..263,
+                                                                                                        },
+                                                                                                    ),
+                                                                                                },
+                                                                                            ),
+                                                                                        ),
+                                                                                    },
+                                                                                ],
+                                                                            },
+                                                                            close_paren: CloseParen {
+                                                                                range: 263..264,
+                                                                            },
+                                                                        },
+                                                                    ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 274..275,
+                                                                range: 272..273,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 287..288,
+                                                range: 278..279,
                                             },
                                         },
                                     ),
@@ -178,7 +160,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 289..290,
+                        range: 280..281,
                     },
                 },
             ),

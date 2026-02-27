@@ -54,62 +54,44 @@ SourceUnitStruct {
                                                 elements: [
                                                     ExpressionStatement(
                                                         ExpressionStatementStruct {
-                                                            expression: TupleExpression(
-                                                                TupleExpressionStruct {
-                                                                    open_paren: OpenParen {
-                                                                        range: 242..243,
-                                                                    },
-                                                                    items: TupleValues {
-                                                                        elements: [
-                                                                            TupleValueStruct {
-                                                                                expression: Some(
-                                                                                    AndExpression(
-                                                                                        AndExpressionStruct {
-                                                                                            left_operand: BitwiseAndExpression(
-                                                                                                BitwiseAndExpressionStruct {
-                                                                                                    left_operand: Identifier(
-                                                                                                        Identifier {
-                                                                                                            range: 243..244,
-                                                                                                        },
-                                                                                                    ),
-                                                                                                    operator: Ampersand {
-                                                                                                        range: 245..246,
-                                                                                                    },
-                                                                                                    right_operand: Identifier(
-                                                                                                        Identifier {
-                                                                                                            range: 247..248,
-                                                                                                        },
-                                                                                                    ),
-                                                                                                },
-                                                                                            ),
-                                                                                            operator: AmpersandAmpersand {
-                                                                                                range: 249..251,
-                                                                                            },
-                                                                                            right_operand: Identifier(
-                                                                                                Identifier {
-                                                                                                    range: 252..253,
-                                                                                                },
-                                                                                            ),
-                                                                                        },
-                                                                                    ),
-                                                                                ),
+                                                            expression: AndExpression(
+                                                                AndExpressionStruct {
+                                                                    left_operand: BitwiseAndExpression(
+                                                                        BitwiseAndExpressionStruct {
+                                                                            left_operand: Identifier(
+                                                                                Identifier {
+                                                                                    range: 234..235,
+                                                                                },
+                                                                            ),
+                                                                            operator: Ampersand {
+                                                                                range: 236..237,
                                                                             },
-                                                                        ],
+                                                                            right_operand: Identifier(
+                                                                                Identifier {
+                                                                                    range: 238..239,
+                                                                                },
+                                                                            ),
+                                                                        },
+                                                                    ),
+                                                                    operator: AmpersandAmpersand {
+                                                                        range: 240..242,
                                                                     },
-                                                                    close_paren: CloseParen {
-                                                                        range: 253..254,
-                                                                    },
+                                                                    right_operand: Identifier(
+                                                                        Identifier {
+                                                                            range: 243..244,
+                                                                        },
+                                                                    ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 254..255,
+                                                                range: 252..253,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 267..268,
+                                                range: 258..259,
                                             },
                                         },
                                     ),
@@ -118,7 +100,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 269..270,
+                        range: 260..261,
                     },
                 },
             ),

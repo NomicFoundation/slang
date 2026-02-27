@@ -54,61 +54,43 @@ SourceUnitStruct {
                                                 elements: [
                                                     ExpressionStatement(
                                                         ExpressionStatementStruct {
-                                                            expression: TupleExpression(
-                                                                TupleExpressionStruct {
-                                                                    open_paren: OpenParen {
-                                                                        range: 239..240,
+                                                            expression: NewExpression(
+                                                                NewExpressionStruct {
+                                                                    new_keyword: NewKeyword {
+                                                                        range: 231..234,
                                                                     },
-                                                                    items: TupleValues {
-                                                                        elements: [
-                                                                            TupleValueStruct {
-                                                                                expression: Some(
-                                                                                    NewExpression(
-                                                                                        NewExpressionStruct {
-                                                                                            new_keyword: NewKeyword {
-                                                                                                range: 240..243,
-                                                                                            },
-                                                                                            type_name: IdentifierPath(
-                                                                                                IdentifierPath {
-                                                                                                    elements: [
-                                                                                                        Identifier(
-                                                                                                            Identifier {
-                                                                                                                range: 244..247,
-                                                                                                            },
-                                                                                                        ),
-                                                                                                        Identifier(
-                                                                                                            Identifier {
-                                                                                                                range: 248..251,
-                                                                                                            },
-                                                                                                        ),
-                                                                                                        Identifier(
-                                                                                                            Identifier {
-                                                                                                                range: 252..255,
-                                                                                                            },
-                                                                                                        ),
-                                                                                                    ],
-                                                                                                },
-                                                                                            ),
-                                                                                        },
-                                                                                    ),
+                                                                    type_name: IdentifierPath(
+                                                                        IdentifierPath {
+                                                                            elements: [
+                                                                                Identifier(
+                                                                                    Identifier {
+                                                                                        range: 235..238,
+                                                                                    },
                                                                                 ),
-                                                                            },
-                                                                        ],
-                                                                    },
-                                                                    close_paren: CloseParen {
-                                                                        range: 255..256,
-                                                                    },
+                                                                                Identifier(
+                                                                                    Identifier {
+                                                                                        range: 239..242,
+                                                                                    },
+                                                                                ),
+                                                                                Identifier(
+                                                                                    Identifier {
+                                                                                        range: 243..246,
+                                                                                    },
+                                                                                ),
+                                                                            ],
+                                                                        },
+                                                                    ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 256..257,
+                                                                range: 254..255,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 269..270,
+                                                range: 260..261,
                                             },
                                         },
                                     ),
@@ -117,7 +99,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 271..272,
+                        range: 262..263,
                     },
                 },
             ),

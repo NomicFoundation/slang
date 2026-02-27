@@ -25,7 +25,7 @@ SourceUnitStruct {
                                     type_name: ElementaryType(
                                         UintKeyword(
                                             UintKeyword {
-                                                range: 208..212,
+                                                range: 204..208,
                                             },
                                         ),
                                     ),
@@ -33,18 +33,18 @@ SourceUnitStruct {
                                         elements: [],
                                     },
                                     name: Identifier {
-                                        range: 213..214,
+                                        range: 216..217,
                                     },
                                     value: None,
                                     semicolon: Semicolon {
-                                        range: 214..215,
+                                        range: 217..218,
                                     },
                                 },
                             ),
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 223..224,
+                        range: 219..220,
                     },
                 },
             ),

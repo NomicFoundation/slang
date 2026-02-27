@@ -9,4 +9,5 @@ library SafeMath {
     (,,,,bool a) = foo;
   }
 }
+
 // <<<

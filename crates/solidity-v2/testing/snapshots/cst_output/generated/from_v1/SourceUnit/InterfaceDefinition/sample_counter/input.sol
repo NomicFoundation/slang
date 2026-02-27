@@ -7,4 +7,5 @@ interface ICounter {
 
     // increments the counter
     function increment() external;
-}// <<<
+}
+// <<<

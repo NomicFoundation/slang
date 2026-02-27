@@ -7,6 +7,7 @@ try foo() {
   bar();
 } catch {
 }
+
 // <<<
     }
 }

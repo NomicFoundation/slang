@@ -4,4 +4,5 @@
 contract Test {
   field;
 }
+
 // <<<

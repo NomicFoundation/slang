@@ -54,70 +54,52 @@ SourceUnitStruct {
                                                 elements: [
                                                     ExpressionStatement(
                                                         ExpressionStatementStruct {
-                                                            expression: TupleExpression(
-                                                                TupleExpressionStruct {
-                                                                    open_paren: OpenParen {
-                                                                        range: 241..242,
-                                                                    },
-                                                                    items: TupleValues {
-                                                                        elements: [
-                                                                            TupleValueStruct {
-                                                                                expression: Some(
-                                                                                    FunctionCallExpression(
-                                                                                        FunctionCallExpressionStruct {
-                                                                                            operand: ElementaryType(
-                                                                                                AddressType(
-                                                                                                    AddressTypeStruct {
-                                                                                                        address_keyword: AddressKeyword {
-                                                                                                            range: 242..249,
-                                                                                                        },
-                                                                                                        payable_keyword: Some(
-                                                                                                            PayableKeyword {
-                                                                                                                range: 250..257,
-                                                                                                            },
-                                                                                                        ),
-                                                                                                    },
-                                                                                                ),
-                                                                                            ),
-                                                                                            arguments: PositionalArgumentsDeclaration(
-                                                                                                PositionalArgumentsDeclarationStruct {
-                                                                                                    open_paren: OpenParen {
-                                                                                                        range: 257..258,
-                                                                                                    },
-                                                                                                    arguments: PositionalArguments {
-                                                                                                        elements: [
-                                                                                                            Identifier(
-                                                                                                                Identifier {
-                                                                                                                    range: 258..263,
-                                                                                                                },
-                                                                                                            ),
-                                                                                                        ],
-                                                                                                    },
-                                                                                                    close_paren: CloseParen {
-                                                                                                        range: 263..264,
-                                                                                                    },
-                                                                                                },
-                                                                                            ),
-                                                                                        },
-                                                                                    ),
+                                                            expression: FunctionCallExpression(
+                                                                FunctionCallExpressionStruct {
+                                                                    operand: ElementaryType(
+                                                                        AddressType(
+                                                                            AddressTypeStruct {
+                                                                                address_keyword: AddressKeyword {
+                                                                                    range: 233..240,
+                                                                                },
+                                                                                payable_keyword: Some(
+                                                                                    PayableKeyword {
+                                                                                        range: 241..248,
+                                                                                    },
                                                                                 ),
                                                                             },
-                                                                        ],
-                                                                    },
-                                                                    close_paren: CloseParen {
-                                                                        range: 264..265,
-                                                                    },
+                                                                        ),
+                                                                    ),
+                                                                    arguments: PositionalArgumentsDeclaration(
+                                                                        PositionalArgumentsDeclarationStruct {
+                                                                            open_paren: OpenParen {
+                                                                                range: 248..249,
+                                                                            },
+                                                                            arguments: PositionalArguments {
+                                                                                elements: [
+                                                                                    Identifier(
+                                                                                        Identifier {
+                                                                                            range: 249..254,
+                                                                                        },
+                                                                                    ),
+                                                                                ],
+                                                                            },
+                                                                            close_paren: CloseParen {
+                                                                                range: 254..255,
+                                                                            },
+                                                                        },
+                                                                    ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 265..266,
+                                                                range: 263..264,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 278..279,
+                                                range: 269..270,
                                             },
                                         },
                                     ),
@@ -126,7 +108,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 280..281,
+                        range: 271..272,
                     },
                 },
             ),

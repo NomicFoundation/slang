@@ -9,6 +9,7 @@ contract C {
 	f.address := newAddress
 	f.selector := newSelector
 }
+
 // <<<
         }
     }

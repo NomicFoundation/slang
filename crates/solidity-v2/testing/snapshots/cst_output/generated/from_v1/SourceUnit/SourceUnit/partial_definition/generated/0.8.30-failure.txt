@@ -3,7 +3,7 @@
 Error: Unexpected end of file. One of AtKeyword_Unreserved, ErrorKeyword_Unreserved, FallbackKeyword_Reserved, FinneyKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, LayoutKeyword_Unreserved, OpenParen, ReceiveKeyword_Reserved, RevertKeyword_Unreserved, SzaboKeyword_Unreserved, TransientKeyword_Unreserved was expected
    ╭─[crates/solidity-v2/testing/snapshots/cst_output/generated/from_v1/SourceUnit/SourceUnit/partial_definition/input.sol:5:11]
    │
- 5 │   function// <<<
+ 5 │   function
    │           │ 
    │           ╰─ Error occurred here.
 ───╯

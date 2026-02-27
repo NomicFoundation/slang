@@ -24,4 +24,5 @@ struct Envelope {
   uint256 destinationChainId;
   bytes message;
 }
+
 // <<<

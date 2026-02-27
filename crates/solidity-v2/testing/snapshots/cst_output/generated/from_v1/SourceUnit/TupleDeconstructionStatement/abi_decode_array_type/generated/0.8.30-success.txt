@@ -220,7 +220,7 @@ SourceUnitStruct {
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 332..333,
+                                                range: 333..334,
                                             },
                                         },
                                     ),
@@ -229,7 +229,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 334..335,
+                        range: 335..336,
                     },
                 },
             ),

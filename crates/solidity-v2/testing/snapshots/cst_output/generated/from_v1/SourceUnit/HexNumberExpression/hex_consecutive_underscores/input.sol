@@ -3,7 +3,8 @@
 contract C {
     function f() {
 // >>> Copied from crates/solidity/testing/snapshots/cst_output/HexNumberExpression/hex_consecutive_underscores/input.sol
-        (0x1__2);
+0x1__2
 // <<<
+;
     }
 }

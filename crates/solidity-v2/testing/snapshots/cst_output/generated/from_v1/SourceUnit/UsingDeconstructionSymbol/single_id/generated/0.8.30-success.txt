@@ -20,7 +20,7 @@ SourceUnitStruct {
                                             elements: [
                                                 Identifier(
                                                     Identifier {
-                                                        range: 217..220,
+                                                        range: 213..216,
                                                     },
                                                 ),
                                             ],
@@ -30,25 +30,25 @@ SourceUnitStruct {
                                 ],
                             },
                             close_brace: CloseBrace {
-                                range: 228..229,
+                                range: 224..225,
                             },
                         },
                     ),
                     for_keyword: ForKeyword {
-                        range: 230..233,
+                        range: 226..229,
                     },
                     target: TypeName(
                         ElementaryType(
                             UintKeyword(
                                 UintKeyword {
-                                    range: 234..238,
+                                    range: 230..234,
                                 },
                             ),
                         ),
                     ),
                     global_keyword: None,
                     semicolon: Semicolon {
-                        range: 238..239,
+                        range: 234..235,
                     },
                 },
             ),

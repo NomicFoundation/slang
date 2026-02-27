@@ -54,63 +54,45 @@ SourceUnitStruct {
                                                 elements: [
                                                     ExpressionStatement(
                                                         ExpressionStatementStruct {
-                                                            expression: TupleExpression(
-                                                                TupleExpressionStruct {
-                                                                    open_paren: OpenParen {
-                                                                        range: 254..255,
-                                                                    },
-                                                                    items: TupleValues {
-                                                                        elements: [
-                                                                            TupleValueStruct {
-                                                                                expression: Some(
-                                                                                    FunctionCallExpression(
-                                                                                        FunctionCallExpressionStruct {
-                                                                                            operand: Identifier(
-                                                                                                Identifier {
-                                                                                                    range: 287..295,
-                                                                                                },
-                                                                                            ),
-                                                                                            arguments: NamedArgumentsDeclaration(
-                                                                                                NamedArgumentsDeclarationStruct {
-                                                                                                    open_paren: OpenParen {
-                                                                                                        range: 295..296,
-                                                                                                    },
-                                                                                                    arguments: NamedArgumentGroupStruct {
-                                                                                                        open_brace: OpenBrace {
-                                                                                                            range: 296..297,
-                                                                                                        },
-                                                                                                        arguments: NamedArguments {
-                                                                                                            elements: [],
-                                                                                                        },
-                                                                                                        close_brace: CloseBrace {
-                                                                                                            range: 297..298,
-                                                                                                        },
-                                                                                                    },
-                                                                                                    close_paren: CloseParen {
-                                                                                                        range: 298..299,
-                                                                                                    },
-                                                                                                },
-                                                                                            ),
-                                                                                        },
-                                                                                    ),
-                                                                                ),
+                                                            expression: FunctionCallExpression(
+                                                                FunctionCallExpressionStruct {
+                                                                    operand: Identifier(
+                                                                        Identifier {
+                                                                            range: 278..286,
+                                                                        },
+                                                                    ),
+                                                                    arguments: NamedArgumentsDeclaration(
+                                                                        NamedArgumentsDeclarationStruct {
+                                                                            open_paren: OpenParen {
+                                                                                range: 286..287,
                                                                             },
-                                                                        ],
-                                                                    },
-                                                                    close_paren: CloseParen {
-                                                                        range: 299..300,
-                                                                    },
+                                                                            arguments: NamedArgumentGroupStruct {
+                                                                                open_brace: OpenBrace {
+                                                                                    range: 287..288,
+                                                                                },
+                                                                                arguments: NamedArguments {
+                                                                                    elements: [],
+                                                                                },
+                                                                                close_brace: CloseBrace {
+                                                                                    range: 288..289,
+                                                                                },
+                                                                            },
+                                                                            close_paren: CloseParen {
+                                                                                range: 289..290,
+                                                                            },
+                                                                        },
+                                                                    ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 300..301,
+                                                                range: 299..300,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 313..314,
+                                                range: 305..306,
                                             },
                                         },
                                     ),
@@ -119,7 +101,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 315..316,
+                        range: 307..308,
                     },
                 },
             ),

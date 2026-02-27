@@ -6,6 +6,7 @@ contract C {
 // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulVariableDeclarationStatement/keyword_bytes/input.sol
 // Unreserved in Yul specifically since 0.7.1:
 let bytes
+
 // <<<
         }
     }
