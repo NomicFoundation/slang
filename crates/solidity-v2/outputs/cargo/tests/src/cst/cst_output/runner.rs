@@ -18,11 +18,11 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
         CargoWorkspace::locate_source_crate("solidity_v2_testing_snapshots")?;
 
     let test_dir = snapshots_crate
-        .join("cst_output/generated/from_v1/SourceUnit")
+        .join("cst_output/from_v1/SourceUnit")
         .join(parser_name)
         .join(test_name);
 
-    let input_path = test_dir.join("input.sol");
+    let input_path = test_dir.join("input.generated.sol");
     let source_id = input_path.strip_repo_root()?.unwrap_str().to_owned();
     let source = input_path.read_to_string()?;
 

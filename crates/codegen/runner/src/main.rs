@@ -118,7 +118,7 @@ fn generate_solidity_v2_tests() -> Result<()> {
     // Step 1: Migrate v1 tests to v2 format
     let tests = solidity_v2_testing_utils::migration::migrate_v1_tests_to_v2(
         &v1_snapshots.join("cst_output"),
-        &v2_snapshots.join("cst_output/generated/from_v1/SourceUnit"),
+        &v2_snapshots.join("cst_output/from_v1/SourceUnit"),
     )?;
 
     // Step 2: Generate test harness from migrated tests

@@ -1,9 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-Error: Unexpected Semicolon. One of OpenParen was expected
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/generated/from_v1/SourceUnit/EventDefinition/no_parens/input.sol:4:14]
-   │
- 4 │ event MyEvent;
-   │              ┬  
-   │              ╰── Error occurred here.
-───╯
