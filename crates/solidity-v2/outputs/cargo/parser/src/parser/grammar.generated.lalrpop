@@ -2,7 +2,11 @@
 
 use crate::lexer::LexemeKind;
 use slang_solidity_v2_cst::structured_cst::nodes::*;
-use crate::parser::parser_helpers::*;
+use crate::parser::parser_helpers::{
+    IndexAccessPath, extract_extra_attributes, index_access_path_add_index,
+    new_expression_index_access_path, new_index_access_path_from_elementary_type,
+    new_index_access_path_from_identifier_path, new_type_name_index_access_path,
+};
 
 grammar<'source>(source: &'source str);
 
@@ -41,73 +45,73 @@ Repeated<T>: Vec<T> = {
 
 // Rules for topic Pragma Directives
     Pragma: Pragma = {
-        <_VersionPragma: VersionPragma>  => new_pragma_version_pragma(<>),
-        <_AbicoderPragma: AbicoderPragma>  => new_pragma_abicoder_pragma(<>),
-        <_ExperimentalPragma: ExperimentalPragma>  => new_pragma_experimental_pragma(<>),
+        <version_pragma: VersionPragma>  => new_pragma_version_pragma(<>),
+        <abicoder_pragma: AbicoderPragma>  => new_pragma_abicoder_pragma(<>),
+        <experimental_pragma: ExperimentalPragma>  => new_pragma_experimental_pragma(<>),
         
     };
     AbicoderPragma: AbicoderPragma = {
-        <_abicoder_keyword: AbicoderKeyword>  <_version: AbicoderVersion>  => new_abicoder_pragma(<>),
+        <abicoder_keyword: AbicoderKeyword>  <version: AbicoderVersion>  => new_abicoder_pragma(<>),
         
     };
     ExperimentalPragma: ExperimentalPragma = {
-        <_experimental_keyword: ExperimentalKeyword>  <_feature: ExperimentalFeature>  => new_experimental_pragma(<>),
+        <experimental_keyword: ExperimentalKeyword>  <feature: ExperimentalFeature>  => new_experimental_pragma(<>),
         
     };
     AbicoderVersion: AbicoderVersion = {
-        <_AbicoderV1Keyword: AbicoderV1Keyword>  => new_abicoder_version_abicoder_v1_keyword(<>),
-        <_AbicoderV2Keyword: AbicoderV2Keyword>  => new_abicoder_version_abicoder_v2_keyword(<>),
+        <abicoder_v1_keyword: AbicoderV1Keyword>  => new_abicoder_version_abicoder_v1_keyword(<>),
+        <abicoder_v2_keyword: AbicoderV2Keyword>  => new_abicoder_version_abicoder_v2_keyword(<>),
         
     };
     ExperimentalFeature: ExperimentalFeature = {
-        <_ABIEncoderV2Keyword: ABIEncoderV2Keyword>  => new_experimental_feature_abi_encoder_v2_keyword(<>),
-        <_SMTCheckerKeyword: SMTCheckerKeyword>  => new_experimental_feature_smt_checker_keyword(<>),
-        <_StringLiteral: StringLiteral>  => new_experimental_feature_string_literal(<>),
+        <abi_encoder_v2_keyword: ABIEncoderV2Keyword>  => new_experimental_feature_abi_encoder_v2_keyword(<>),
+        <smt_checker_keyword: SMTCheckerKeyword>  => new_experimental_feature_smt_checker_keyword(<>),
+        <string_literal: StringLiteral>  => new_experimental_feature_string_literal(<>),
         
     };
     VersionPragma: VersionPragma = {
-        <_solidity_keyword: SolidityKeyword>  <_sets: VersionExpressionSets>  => new_version_pragma(<>),
+        <solidity_keyword: SolidityKeyword>  <sets: VersionExpressionSets>  => new_version_pragma(<>),
         
     };
     VersionExpressionSets: VersionExpressionSets = {
-        <_VersionExpressionSet: Separated<BarBar, <VersionExpressionSet>>>  => new_version_expression_sets(<>),
+        <version_expression_set: Separated<BarBar, <VersionExpressionSet>>>  => new_version_expression_sets(<>),
         
     };
     VersionExpressionSet: VersionExpressionSet = {
-        <_VersionExpression: Repeated<<VersionExpression>>>  => new_version_expression_set(<>),
+        <version_expression: Repeated<<VersionExpression>>>  => new_version_expression_set(<>),
         
     };
     VersionExpression: VersionExpression = {
-        <_VersionRange: VersionRange>  => new_version_expression_version_range(<>),
-        <_VersionTerm: VersionTerm>  => new_version_expression_version_term(<>),
+        <version_range: VersionRange>  => new_version_expression_version_range(<>),
+        <version_term: VersionTerm>  => new_version_expression_version_term(<>),
         
     };
     VersionRange: VersionRange = {
-        <_start: VersionLiteral>  <_minus: Minus>  <_end: VersionLiteral>  => new_version_range(<>),
+        <start: VersionLiteral>  <minus: Minus>  <end: VersionLiteral>  => new_version_range(<>),
         
     };
     VersionTerm: VersionTerm = {
-        <_operator: (VersionOperator)?>  <_literal: VersionLiteral>  => new_version_term(<>),
+        <operator: (VersionOperator)?>  <literal: VersionLiteral>  => new_version_term(<>),
         
     };
     VersionOperator: VersionOperator = {
-        <_Caret: Caret>  => new_version_operator_caret(<>),
-        <_Tilde: Tilde>  => new_version_operator_tilde(<>),
-        <_Equal: Equal>  => new_version_operator_equal(<>),
-        <_LessThan: LessThan>  => new_version_operator_less_than(<>),
-        <_GreaterThan: GreaterThan>  => new_version_operator_greater_than(<>),
-        <_LessThanEqual: LessThanEqual>  => new_version_operator_less_than_equal(<>),
-        <_GreaterThanEqual: GreaterThanEqual>  => new_version_operator_greater_than_equal(<>),
+        <caret: Caret>  => new_version_operator_caret(<>),
+        <tilde: Tilde>  => new_version_operator_tilde(<>),
+        <equal: Equal>  => new_version_operator_equal(<>),
+        <less_than: LessThan>  => new_version_operator_less_than(<>),
+        <greater_than: GreaterThan>  => new_version_operator_greater_than(<>),
+        <less_than_equal: LessThanEqual>  => new_version_operator_less_than_equal(<>),
+        <greater_than_equal: GreaterThanEqual>  => new_version_operator_greater_than_equal(<>),
         
     };
     VersionLiteral: VersionLiteral = {
-        <_SimpleVersionLiteral: SimpleVersionLiteral>  => new_version_literal_simple_version_literal(<>),
-        <_SingleQuotedVersionLiteral: SingleQuotedVersionLiteral>  => new_version_literal_single_quoted_version_literal(<>),
-        <_DoubleQuotedVersionLiteral: DoubleQuotedVersionLiteral>  => new_version_literal_double_quoted_version_literal(<>),
+        <simple_version_literal: SimpleVersionLiteral>  => new_version_literal_simple_version_literal(<>),
+        <single_quoted_version_literal: SingleQuotedVersionLiteral>  => new_version_literal_single_quoted_version_literal(<>),
+        <double_quoted_version_literal: DoubleQuotedVersionLiteral>  => new_version_literal_double_quoted_version_literal(<>),
         
     };
     SimpleVersionLiteral: SimpleVersionLiteral = {
-        <_VersionSpecifier: Separated<Period, <VersionSpecifier>>>  => new_simple_version_literal(<>),
+        <version_specifier: Separated<Period, <VersionSpecifier>>>  => new_simple_version_literal(<>),
         
     };
     
@@ -122,124 +126,124 @@ Repeated<T>: Vec<T> = {
 
 // Rules for topic Source Unit
     pub SourceUnit: SourceUnit = {
-        <_members: SourceUnitMembers>  => new_source_unit(<>),
+        <members: SourceUnitMembers>  => new_source_unit(<>),
         
     };
     SourceUnitMembers: SourceUnitMembers = {
-        <_SourceUnitMember: RepeatedAllowEmpty<<SourceUnitMember>>>  => new_source_unit_members(<>),
+        <source_unit_member: RepeatedAllowEmpty<<SourceUnitMember>>>  => new_source_unit_members(<>),
         
     };
     SourceUnitMember: SourceUnitMember = {
-        <_PragmaDirective: PragmaDirective>  => new_source_unit_member_pragma_directive(<>),
-        <_ImportDirective: ImportDirective>  => new_source_unit_member_import_directive(<>),
-        <_ContractDefinition: ContractDefinition>  => new_source_unit_member_contract_definition(<>),
-        <_InterfaceDefinition: InterfaceDefinition>  => new_source_unit_member_interface_definition(<>),
-        <_LibraryDefinition: LibraryDefinition>  => new_source_unit_member_library_definition(<>),
-        <_StructDefinition: StructDefinition>  => new_source_unit_member_struct_definition(<>),
-        <_EnumDefinition: EnumDefinition>  => new_source_unit_member_enum_definition(<>),
-        <_FunctionDefinition: FunctionDefinition>  => new_source_unit_member_function_definition(<>),
-        <_ErrorDefinition: ErrorDefinition>  => new_source_unit_member_error_definition(<>),
-        <_UserDefinedValueTypeDefinition: UserDefinedValueTypeDefinition>  => new_source_unit_member_user_defined_value_type_definition(<>),
-        <_UsingDirective: UsingDirective>  => new_source_unit_member_using_directive(<>),
-        <_EventDefinition: EventDefinition>  => new_source_unit_member_event_definition(<>),
-        <_ConstantDefinition: ConstantDefinition>  => new_source_unit_member_constant_definition(<>),
+        <pragma_directive: PragmaDirective>  => new_source_unit_member_pragma_directive(<>),
+        <import_directive: ImportDirective>  => new_source_unit_member_import_directive(<>),
+        <contract_definition: ContractDefinition>  => new_source_unit_member_contract_definition(<>),
+        <interface_definition: InterfaceDefinition>  => new_source_unit_member_interface_definition(<>),
+        <library_definition: LibraryDefinition>  => new_source_unit_member_library_definition(<>),
+        <struct_definition: StructDefinition>  => new_source_unit_member_struct_definition(<>),
+        <enum_definition: EnumDefinition>  => new_source_unit_member_enum_definition(<>),
+        <function_definition: FunctionDefinition>  => new_source_unit_member_function_definition(<>),
+        <error_definition: ErrorDefinition>  => new_source_unit_member_error_definition(<>),
+        <user_defined_value_type_definition: UserDefinedValueTypeDefinition>  => new_source_unit_member_user_defined_value_type_definition(<>),
+        <using_directive: UsingDirective>  => new_source_unit_member_using_directive(<>),
+        <event_definition: EventDefinition>  => new_source_unit_member_event_definition(<>),
+        <constant_definition: ConstantDefinition>  => new_source_unit_member_constant_definition(<>),
         
     };
     
     
 PragmaDirective: PragmaDirective = {
-    <_pragma_keyword: PragmaKeyword>  ! <_semicolon: Semicolon>  => {
+    <pragma_keyword: PragmaKeyword>  ! <semicolon: Semicolon>  => {
     let abicoder = new_pragma_abicoder_pragma(new_abicoder_pragma(new_abicoder_keyword(0..0, source), new_abicoder_version_abicoder_v1_keyword(new_abicoder_v1_keyword(0..0, source))));
-    new_pragma_directive(_pragma_keyword, abicoder , _semicolon)
+    new_pragma_directive(pragma_keyword, abicoder , semicolon)
     }
 };
 
     ImportDirective: ImportDirective = {
-        <_import_keyword: ImportKeyword>  <_clause: ImportClause>  <_semicolon: Semicolon>  => new_import_directive(<>),
+        <import_keyword: ImportKeyword>  <clause: ImportClause>  <semicolon: Semicolon>  => new_import_directive(<>),
         
     };
     UsingDirective: UsingDirective = {
-        <_using_keyword: UsingKeyword>  <_clause: UsingClause>  <_for_keyword: ForKeyword>  <_target: UsingTarget>  <_global_keyword: (GlobalKeyword)?>  <_semicolon: Semicolon>  => new_using_directive(<>),
+        <using_keyword: UsingKeyword>  <clause: UsingClause>  <for_keyword: ForKeyword>  <target: UsingTarget>  <global_keyword: (GlobalKeyword)?>  <semicolon: Semicolon>  => new_using_directive(<>),
         
     };
     
 
 // Rules for topic Import Directives
     ImportClause: ImportClause = {
-        <_PathImport: PathImport>  => new_import_clause_path_import(<>),
-        <_NamedImport: NamedImport>  => new_import_clause_named_import(<>),
-        <_ImportDeconstruction: ImportDeconstruction>  => new_import_clause_import_deconstruction(<>),
+        <path_import: PathImport>  => new_import_clause_path_import(<>),
+        <named_import: NamedImport>  => new_import_clause_named_import(<>),
+        <import_deconstruction: ImportDeconstruction>  => new_import_clause_import_deconstruction(<>),
         
     };
     PathImport: PathImport = {
-        <_path: StringLiteral>  <_alias: (ImportAlias)?>  => new_path_import(<>),
+        <path: StringLiteral>  <alias: (ImportAlias)?>  => new_path_import(<>),
         
     };
     NamedImport: NamedImport = {
-        <_asterisk: Asterisk>  <_alias: ImportAlias>  <_from_keyword: FromKeyword>  <_path: StringLiteral>  => new_named_import(<>),
+        <asterisk: Asterisk>  <alias: ImportAlias>  <from_keyword: FromKeyword>  <path: StringLiteral>  => new_named_import(<>),
         
     };
     ImportDeconstruction: ImportDeconstruction = {
-        <_open_brace: OpenBrace>  <_symbols: ImportDeconstructionSymbols>  <_close_brace: CloseBrace>  <_from_keyword: FromKeyword>  <_path: StringLiteral>  => new_import_deconstruction(<>),
+        <open_brace: OpenBrace>  <symbols: ImportDeconstructionSymbols>  <close_brace: CloseBrace>  <from_keyword: FromKeyword>  <path: StringLiteral>  => new_import_deconstruction(<>),
         
     };
     ImportDeconstructionSymbols: ImportDeconstructionSymbols = {
-        <_ImportDeconstructionSymbol: Separated<Comma, <ImportDeconstructionSymbol>>>  => new_import_deconstruction_symbols(<>),
+        <import_deconstruction_symbol: Separated<Comma, <ImportDeconstructionSymbol>>>  => new_import_deconstruction_symbols(<>),
         
     };
     ImportDeconstructionSymbol: ImportDeconstructionSymbol = {
-        <_name: Identifier>  <_alias: (ImportAlias)?>  => new_import_deconstruction_symbol(<>),
+        <name: Identifier>  <alias: (ImportAlias)?>  => new_import_deconstruction_symbol(<>),
         
     };
     ImportAlias: ImportAlias = {
-        <_as_keyword: AsKeyword>  <_identifier: Identifier>  => new_import_alias(<>),
+        <as_keyword: AsKeyword>  <identifier: Identifier>  => new_import_alias(<>),
         
     };
     
 
 // Rules for topic Using Directives
     UsingClause: UsingClause = {
-        <_IdentifierPath: IdentifierPath>  => new_using_clause_identifier_path(<>),
-        <_UsingDeconstruction: UsingDeconstruction>  => new_using_clause_using_deconstruction(<>),
+        <identifier_path: IdentifierPath>  => new_using_clause_identifier_path(<>),
+        <using_deconstruction: UsingDeconstruction>  => new_using_clause_using_deconstruction(<>),
         
     };
     UsingDeconstruction: UsingDeconstruction = {
-        <_open_brace: OpenBrace>  <_symbols: UsingDeconstructionSymbols>  <_close_brace: CloseBrace>  => new_using_deconstruction(<>),
+        <open_brace: OpenBrace>  <symbols: UsingDeconstructionSymbols>  <close_brace: CloseBrace>  => new_using_deconstruction(<>),
         
     };
     UsingDeconstructionSymbols: UsingDeconstructionSymbols = {
-        <_UsingDeconstructionSymbol: Separated<Comma, <UsingDeconstructionSymbol>>>  => new_using_deconstruction_symbols(<>),
+        <using_deconstruction_symbol: Separated<Comma, <UsingDeconstructionSymbol>>>  => new_using_deconstruction_symbols(<>),
         
     };
     UsingDeconstructionSymbol: UsingDeconstructionSymbol = {
-        <_name: IdentifierPath>  <_alias: (UsingAlias)?>  => new_using_deconstruction_symbol(<>),
+        <name: IdentifierPath>  <alias: (UsingAlias)?>  => new_using_deconstruction_symbol(<>),
         
     };
     UsingAlias: UsingAlias = {
-        <_as_keyword: AsKeyword>  <_operator: UsingOperator>  => new_using_alias(<>),
+        <as_keyword: AsKeyword>  <operator: UsingOperator>  => new_using_alias(<>),
         
     };
     UsingOperator: UsingOperator = {
-        <_Ampersand: Ampersand>  => new_using_operator_ampersand(<>),
-        <_Asterisk: Asterisk>  => new_using_operator_asterisk(<>),
-        <_BangEqual: BangEqual>  => new_using_operator_bang_equal(<>),
-        <_Bar: Bar>  => new_using_operator_bar(<>),
-        <_Caret: Caret>  => new_using_operator_caret(<>),
-        <_EqualEqual: EqualEqual>  => new_using_operator_equal_equal(<>),
-        <_GreaterThan: GreaterThan>  => new_using_operator_greater_than(<>),
-        <_GreaterThanEqual: GreaterThanEqual>  => new_using_operator_greater_than_equal(<>),
-        <_LessThan: LessThan>  => new_using_operator_less_than(<>),
-        <_LessThanEqual: LessThanEqual>  => new_using_operator_less_than_equal(<>),
-        <_Minus: Minus>  => new_using_operator_minus(<>),
-        <_Percent: Percent>  => new_using_operator_percent(<>),
-        <_Plus: Plus>  => new_using_operator_plus(<>),
-        <_Slash: Slash>  => new_using_operator_slash(<>),
-        <_Tilde: Tilde>  => new_using_operator_tilde(<>),
+        <ampersand: Ampersand>  => new_using_operator_ampersand(<>),
+        <asterisk: Asterisk>  => new_using_operator_asterisk(<>),
+        <bang_equal: BangEqual>  => new_using_operator_bang_equal(<>),
+        <bar: Bar>  => new_using_operator_bar(<>),
+        <caret: Caret>  => new_using_operator_caret(<>),
+        <equal_equal: EqualEqual>  => new_using_operator_equal_equal(<>),
+        <greater_than: GreaterThan>  => new_using_operator_greater_than(<>),
+        <greater_than_equal: GreaterThanEqual>  => new_using_operator_greater_than_equal(<>),
+        <less_than: LessThan>  => new_using_operator_less_than(<>),
+        <less_than_equal: LessThanEqual>  => new_using_operator_less_than_equal(<>),
+        <minus: Minus>  => new_using_operator_minus(<>),
+        <percent: Percent>  => new_using_operator_percent(<>),
+        <plus: Plus>  => new_using_operator_plus(<>),
+        <slash: Slash>  => new_using_operator_slash(<>),
+        <tilde: Tilde>  => new_using_operator_tilde(<>),
         
     };
     UsingTarget: UsingTarget = {
-        <_TypeName: TypeName>  => new_using_target_type_name(<>),
-        <_Asterisk: Asterisk>  => new_using_target_asterisk(<>),
+        <type_name: TypeName>  => new_using_target_type_name(<>),
+        <asterisk: Asterisk>  => new_using_target_asterisk(<>),
         
     };
     
@@ -269,13 +273,13 @@ PragmaDirective: PragmaDirective = {
 // and then extract the members from it.
 pub ContractDefinition: ContractDefinition = {
     // If no specifiers are present, we simply capture the members directly
-    <_abstract_keyword: (AbstractKeyword)?>  <_contract_keyword: ContractKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => {
-        new_contract_definition(_abstract_keyword, _contract_keyword, _name, new_contract_specifiers(vec![]), _open_brace, _members, _close_brace)
+    <abstract_keyword: (AbstractKeyword)?>  <contract_keyword: ContractKeyword>  <name: Identifier>  <open_brace: OpenBrace>  <members: ContractMembers>  <close_brace: CloseBrace>  => {
+        new_contract_definition(abstract_keyword, contract_keyword, name, new_contract_specifiers(vec![]), open_brace, members, close_brace)
     },
     // If specifiers are present, we extract the trailing members from them
-    <_abstract_keyword: (AbstractKeyword)?>  <_contract_keyword: ContractKeyword>  <_name: Identifier>  <_specifiers: ContractSpecifiersTrailingMembers>  => {
-        let (specifiers, (_open_brace, _members, _close_brace)) = _specifiers;
-        new_contract_definition(_abstract_keyword, _contract_keyword, _name, specifiers, _open_brace, _members, _close_brace)
+    <abstract_keyword: (AbstractKeyword)?>  <contract_keyword: ContractKeyword>  <name: Identifier>  <specifiers: ContractSpecifiersTrailingMembers>  => {
+        let (specifiers, (open_brace, members, close_brace)) = specifiers;
+        new_contract_definition(abstract_keyword, contract_keyword, name, specifiers, open_brace, members, close_brace)
     },
 };
 
@@ -284,137 +288,137 @@ pub ContractDefinition: ContractDefinition = {
 // In this case, we require at least one specifier, the case with zero is handled above.
 // Note that the return type now includes the trailing members
 ContractSpecifiersTrailingMembers: (ContractSpecifiers, (OpenBrace, ContractMembers, CloseBrace)) = {
-    <mut _ContractSpecifier: RepeatedAllowEmpty<<ContractSpecifier>>> <_tail: ContractSpecifierTrailingMembers>  => {
-        let (specifier, tail) = _tail;
-        _ContractSpecifier.push(specifier);
-        (new_contract_specifiers(_ContractSpecifier), tail)
+    <mut contract_specifier: RepeatedAllowEmpty<<ContractSpecifier>>> <tail: ContractSpecifierTrailingMembers>  => {
+        let (specifier, tail) = tail;
+        contract_specifier.push(specifier);
+        (new_contract_specifiers(contract_specifier), tail)
     },
 };
 ContractSpecifierTrailingMembers: (ContractSpecifier, (OpenBrace, ContractMembers, CloseBrace)) = {
     // Since there's no conflict with inheritance specifiers, we can parse them directly and
     // then parse the members
-    <_InheritanceSpecifier: InheritanceSpecifier> <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => {
-        (new_contract_specifier_inheritance_specifier(_InheritanceSpecifier), (_open_brace, _members, _close_brace))
+    <inheritance_specifier: InheritanceSpecifier> <open_brace: OpenBrace>  <members: ContractMembers>  <close_brace: CloseBrace>  => {
+        (new_contract_specifier_inheritance_specifier(inheritance_specifier), (open_brace, members, close_brace))
     },
     // For storage layout specifiers, we need to extract the trailing members from them
-    <_StorageLayoutSpecifier: StorageLayoutSpecifierTrailingMembers>  => {
-        let (storage_layout_specifier, tail) = _StorageLayoutSpecifier;
+    <storage_layout_specifier: StorageLayoutSpecifierTrailingMembers>  => {
+        let (storage_layout_specifier, tail) = storage_layout_specifier;
         (new_contract_specifier_storage_layout_specifier(storage_layout_specifier), tail)
     },
 };
 
 StorageLayoutSpecifierTrailingMembers: (StorageLayoutSpecifier, (OpenBrace, ContractMembers, CloseBrace)) = {
     // Instead of parsing a regular Expression, we parse one that captures the trailing members
-    <_layout_keyword: LayoutKeyword>  <_at_keyword: AtKeyword>  <_expression: ExpressionTrailingMembers>  => {
-        let (expr, tail) = _expression;
-        (new_storage_layout_specifier(_layout_keyword, _at_keyword, expr), tail)
+    <layout_keyword: LayoutKeyword>  <at_keyword: AtKeyword>  <expression: ExpressionTrailingMembers>  => {
+        let (expr, tail) = expression;
+        (new_storage_layout_specifier(layout_keyword, at_keyword, expr), tail)
     },
 };
 
 // An expression followed by contract members
 // See the Expression rule for details
 ExpressionTrailingMembers: (Expression, (OpenBrace, ContractMembers, CloseBrace)) = {
-        <Expression: Expression19<BracedContractMembers>>  => <>,
+        <expression: Expression19<BracedContractMembers>>  => <>,
 };
 BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
-    <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => {
-        (_open_brace, _members, _close_brace)
+    <open_brace: OpenBrace>  <members: ContractMembers>  <close_brace: CloseBrace>  => {
+        (open_brace, members, close_brace)
     },
 };
 
     ContractSpecifier: ContractSpecifier = {
-        <_InheritanceSpecifier: InheritanceSpecifier>  => new_contract_specifier_inheritance_specifier(<>),
-        <_StorageLayoutSpecifier: StorageLayoutSpecifier>  => new_contract_specifier_storage_layout_specifier(<>),
+        <inheritance_specifier: InheritanceSpecifier>  => new_contract_specifier_inheritance_specifier(<>),
+        <storage_layout_specifier: StorageLayoutSpecifier>  => new_contract_specifier_storage_layout_specifier(<>),
         
     };
     InheritanceSpecifier: InheritanceSpecifier = {
-        <_is_keyword: IsKeyword>  <_types: InheritanceTypes>  => new_inheritance_specifier(<>),
+        <is_keyword: IsKeyword>  <types: InheritanceTypes>  => new_inheritance_specifier(<>),
         
     };
     InheritanceTypes: InheritanceTypes = {
-        <_InheritanceType: Separated<Comma, <InheritanceType>>>  => new_inheritance_types(<>),
+        <inheritance_type: Separated<Comma, <InheritanceType>>>  => new_inheritance_types(<>),
         
     };
     InheritanceType: InheritanceType = {
-        <_type_name: IdentifierPath>  <_arguments: (ArgumentsDeclaration)?>  => new_inheritance_type(<>),
+        <type_name: IdentifierPath>  <arguments: (ArgumentsDeclaration)?>  => new_inheritance_type(<>),
         
     };
     StorageLayoutSpecifier: StorageLayoutSpecifier = {
-        <_layout_keyword: LayoutKeyword>  <_at_keyword: AtKeyword>  <_expression: Expression>  => new_storage_layout_specifier(<>),
+        <layout_keyword: LayoutKeyword>  <at_keyword: AtKeyword>  <expression: Expression>  => new_storage_layout_specifier(<>),
         
     };
     ContractMembers: ContractMembers = {
-        <_ContractMember: RepeatedAllowEmpty<<ContractMember>>>  => new_contract_members(<>),
+        <contract_member: RepeatedAllowEmpty<<ContractMember>>>  => new_contract_members(<>),
         
     };
     ContractMember: ContractMember = {
-        <_UsingDirective: UsingDirective>  => new_contract_member_using_directive(<>),
-        <_FunctionDefinition: FunctionDefinition>  => new_contract_member_function_definition(<>),
-        <_ConstructorDefinition: ConstructorDefinition>  => new_contract_member_constructor_definition(<>),
-        <_ReceiveFunctionDefinition: ReceiveFunctionDefinition>  => new_contract_member_receive_function_definition(<>),
-        <_FallbackFunctionDefinition: FallbackFunctionDefinition>  => new_contract_member_fallback_function_definition(<>),
-        <_ModifierDefinition: ModifierDefinition>  => new_contract_member_modifier_definition(<>),
-        <_StructDefinition: StructDefinition>  => new_contract_member_struct_definition(<>),
-        <_EnumDefinition: EnumDefinition>  => new_contract_member_enum_definition(<>),
-        <_EventDefinition: EventDefinition>  => new_contract_member_event_definition(<>),
-        <_ErrorDefinition: ErrorDefinition>  => new_contract_member_error_definition(<>),
-        <_UserDefinedValueTypeDefinition: UserDefinedValueTypeDefinition>  => new_contract_member_user_defined_value_type_definition(<>),
-        <_StateVariableDefinition: StateVariableDefinition>  => new_contract_member_state_variable_definition(<>),
+        <using_directive: UsingDirective>  => new_contract_member_using_directive(<>),
+        <function_definition: FunctionDefinition>  => new_contract_member_function_definition(<>),
+        <constructor_definition: ConstructorDefinition>  => new_contract_member_constructor_definition(<>),
+        <receive_function_definition: ReceiveFunctionDefinition>  => new_contract_member_receive_function_definition(<>),
+        <fallback_function_definition: FallbackFunctionDefinition>  => new_contract_member_fallback_function_definition(<>),
+        <modifier_definition: ModifierDefinition>  => new_contract_member_modifier_definition(<>),
+        <struct_definition: StructDefinition>  => new_contract_member_struct_definition(<>),
+        <enum_definition: EnumDefinition>  => new_contract_member_enum_definition(<>),
+        <event_definition: EventDefinition>  => new_contract_member_event_definition(<>),
+        <error_definition: ErrorDefinition>  => new_contract_member_error_definition(<>),
+        <user_defined_value_type_definition: UserDefinedValueTypeDefinition>  => new_contract_member_user_defined_value_type_definition(<>),
+        <state_variable_definition: StateVariableDefinition>  => new_contract_member_state_variable_definition(<>),
         
     };
     
 
 // Rules for topic Interfaces
     InterfaceDefinition: InterfaceDefinition = {
-        <_interface_keyword: InterfaceKeyword>  <_name: Identifier>  <_inheritance: (InheritanceSpecifier)?>  <_open_brace: OpenBrace>  <_members: InterfaceMembers>  <_close_brace: CloseBrace>  => new_interface_definition(<>),
+        <interface_keyword: InterfaceKeyword>  <name: Identifier>  <inheritance: (InheritanceSpecifier)?>  <open_brace: OpenBrace>  <members: InterfaceMembers>  <close_brace: CloseBrace>  => new_interface_definition(<>),
         
     };
     InterfaceMembers: InterfaceMembers = {
-        <_ContractMember: RepeatedAllowEmpty<<ContractMember>>>  => new_interface_members(<>),
+        <contract_member: RepeatedAllowEmpty<<ContractMember>>>  => new_interface_members(<>),
         
     };
     
 
 // Rules for topic Libraries
     LibraryDefinition: LibraryDefinition = {
-        <_library_keyword: LibraryKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: LibraryMembers>  <_close_brace: CloseBrace>  => new_library_definition(<>),
+        <library_keyword: LibraryKeyword>  <name: Identifier>  <open_brace: OpenBrace>  <members: LibraryMembers>  <close_brace: CloseBrace>  => new_library_definition(<>),
         
     };
     LibraryMembers: LibraryMembers = {
-        <_ContractMember: RepeatedAllowEmpty<<ContractMember>>>  => new_library_members(<>),
+        <contract_member: RepeatedAllowEmpty<<ContractMember>>>  => new_library_members(<>),
         
     };
     
 
 // Rules for topic Structs
     StructDefinition: StructDefinition = {
-        <_struct_keyword: StructKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: StructMembers>  <_close_brace: CloseBrace>  => new_struct_definition(<>),
+        <struct_keyword: StructKeyword>  <name: Identifier>  <open_brace: OpenBrace>  <members: StructMembers>  <close_brace: CloseBrace>  => new_struct_definition(<>),
         
     };
     StructMembers: StructMembers = {
-        <_StructMember: RepeatedAllowEmpty<<StructMember>>>  => new_struct_members(<>),
+        <struct_member: RepeatedAllowEmpty<<StructMember>>>  => new_struct_members(<>),
         
     };
     StructMember: StructMember = {
-        <_type_name: TypeName>  <_name: Identifier>  <_semicolon: Semicolon>  => new_struct_member(<>),
+        <type_name: TypeName>  <name: Identifier>  <semicolon: Semicolon>  => new_struct_member(<>),
         
     };
     
 
 // Rules for topic Enums
     EnumDefinition: EnumDefinition = {
-        <_enum_keyword: EnumKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: EnumMembers>  <_close_brace: CloseBrace>  => new_enum_definition(<>),
+        <enum_keyword: EnumKeyword>  <name: Identifier>  <open_brace: OpenBrace>  <members: EnumMembers>  <close_brace: CloseBrace>  => new_enum_definition(<>),
         
     };
     EnumMembers: EnumMembers = {
-        <_Identifier: SeparatedAllowEmpty<Comma, <Identifier>>>  => new_enum_members(<>),
+        <identifier: SeparatedAllowEmpty<Comma, <Identifier>>>  => new_enum_members(<>),
         
     };
     
 
 // Rules for topic Constants
     ConstantDefinition: ConstantDefinition = {
-        <_type_name: TypeName>  <_constant_keyword: ConstantKeyword>  <_name: Identifier>  <_equal: Equal>  <_value: Expression>  <_semicolon: Semicolon>  => new_constant_definition(<>),
+        <type_name: TypeName>  <constant_keyword: ConstantKeyword>  <name: Identifier>  <equal: Equal>  <value: Expression>  <semicolon: Semicolon>  => new_constant_definition(<>),
         
     };
     
@@ -442,224 +446,224 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
 StateVariableDefinition: StateVariableDefinition = {
     // When allowing any type except function types without return, we can parse normally.
     // Note the `IdentifierPathNoError`, it avoids matching against `error` as an identifier.
-    <_type_name: TypeName1<FunctionTypeInternalReturn, IndexAccessPath<IdentifierPathNoError>>>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => new_state_variable_definition(<>),
+    <type_name: TypeName1<FunctionTypeInternalReturn, IndexAccessPath<IdentifierPathNoError>>>  <attributes: StateVariableAttributes>  <name: Identifier>  <value: (StateVariableDefinitionValue)?>  <semicolon: Semicolon>  => new_state_variable_definition(<>),
 
     // Special case for `error` type
-    <l:@L> L_ErrorKeyword_Unreserved <r:@R>  <_attributes: StateVariableAttributes>  <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon> => {
+    <l:@L> L_ErrorKeyword_Unreserved <r:@R>  <attributes: StateVariableAttributes>  <name: Identifier>  <value: (StateVariableDefinitionValue)?>  <semicolon: Semicolon> => {
         let identifier = new_identifier(l..r, source);
         let iap = new_index_access_path_from_identifier_path(new_identifier_path(vec![new_identifier_path_element_identifier(identifier)]));
         let type_name = new_type_name_index_access_path(iap);
 
-        new_state_variable_definition(type_name, _attributes, _name, _value, _semicolon)
+        new_state_variable_definition(type_name, attributes, name, value, semicolon)
     },
 
 
     // If the function type has no return, then we don't directly parse state variable attributes, we only do it if
     // we see a special one (one that can be a state variable attribute but not a function type attribute).
-    <_type_name: FunctionTypeInternalNoReturn> <special_attributes: (<SpecialStateVariableAttribute> <StateVariableAttributes>)?> <_name: Identifier>  <_value: (StateVariableDefinitionValue)?>  <_semicolon: Semicolon>  => {
-        let (function_type, mut extra_attributes) = extract_extra_attributes(_type_name);
+    <type_name: FunctionTypeInternalNoReturn> <special_attributes: (<SpecialStateVariableAttribute> <StateVariableAttributes>)?> <name: Identifier>  <value: (StateVariableDefinitionValue)?>  <semicolon: Semicolon>  => {
+        let (function_type, mut extra_attributes) = extract_extra_attributes(type_name);
         if let Some(special_attributes) = special_attributes {
             extra_attributes.push(special_attributes.0);
             extra_attributes.extend(special_attributes.1.elements);
         }
-        new_state_variable_definition(new_type_name_function_type(function_type), new_state_variable_attributes(extra_attributes), _name, _value, _semicolon)
+        new_state_variable_definition(new_type_name_function_type(function_type), new_state_variable_attributes(extra_attributes), name, value, semicolon)
     },
 };
 
 // Match an identifier path that, if it's a single element, is not `error`
 IdentifierPathNoError: IdentifierPath = {
     // We either have any identifier with a tail (ie a period)
-    <_head: Identifier>  <mut _tail: IdentifierPathTail>  => {
-        _tail.insert(0, new_identifier_path_element_identifier(_head));
-        new_identifier_path(_tail)
+    <head: Identifier>  <mut tail: IdentifierPathTail>  => {
+        tail.insert(0, new_identifier_path_element_identifier(head));
+        new_identifier_path(tail)
     },
     // or a single identifier that is not `error`
-    <_head: SomeIdentifier<"ErrorKeyword_Unreserved">>  => new_identifier_path(vec![new_identifier_path_element_identifier(<>)]),
+    <head: SomeIdentifier<"ErrorKeyword_Unreserved">>  => new_identifier_path(vec![new_identifier_path_element_identifier(<>)]),
 };
 
 // These are the attributes that can appear in a state variable but not a function,
 // they can work as a limit between these definitions.
 SpecialStateVariableAttribute: StateVariableAttribute = {
-        <_OverrideSpecifier: OverrideSpecifier>  => new_state_variable_attribute_override_specifier(<>),
-        <_ImmutableKeyword: ImmutableKeyword>  => new_state_variable_attribute_immutable_keyword(<>),
-        <_TransientKeyword: TransientKeyword>  => new_state_variable_attribute_transient_keyword(<>),
+        <override_specifier: OverrideSpecifier>  => new_state_variable_attribute_override_specifier(<>),
+        <immutable_keyword: ImmutableKeyword>  => new_state_variable_attribute_immutable_keyword(<>),
+        <transient_keyword: TransientKeyword>  => new_state_variable_attribute_transient_keyword(<>),
 };
 
     StateVariableDefinitionValue: StateVariableDefinitionValue = {
-        <_equal: Equal>  <_value: Expression>  => new_state_variable_definition_value(<>),
+        <equal: Equal>  <value: Expression>  => new_state_variable_definition_value(<>),
         
     };
     #[inline]
     StateVariableAttributes: StateVariableAttributes = {
-        <_StateVariableAttribute: RepeatedAllowEmpty<<StateVariableAttribute>>>  => new_state_variable_attributes(<>),
+        <state_variable_attribute: RepeatedAllowEmpty<<StateVariableAttribute>>>  => new_state_variable_attributes(<>),
         
     };
     StateVariableAttribute: StateVariableAttribute = {
-        <_OverrideSpecifier: OverrideSpecifier>  => new_state_variable_attribute_override_specifier(<>),
-        <_ConstantKeyword: ConstantKeyword>  => new_state_variable_attribute_constant_keyword(<>),
-        <_InternalKeyword: InternalKeyword>  => new_state_variable_attribute_internal_keyword(<>),
-        <_PrivateKeyword: PrivateKeyword>  => new_state_variable_attribute_private_keyword(<>),
-        <_PublicKeyword: PublicKeyword>  => new_state_variable_attribute_public_keyword(<>),
-        <_ImmutableKeyword: ImmutableKeyword>  => new_state_variable_attribute_immutable_keyword(<>),
-        <_TransientKeyword: TransientKeyword>  => new_state_variable_attribute_transient_keyword(<>),
+        <override_specifier: OverrideSpecifier>  => new_state_variable_attribute_override_specifier(<>),
+        <constant_keyword: ConstantKeyword>  => new_state_variable_attribute_constant_keyword(<>),
+        <internal_keyword: InternalKeyword>  => new_state_variable_attribute_internal_keyword(<>),
+        <private_keyword: PrivateKeyword>  => new_state_variable_attribute_private_keyword(<>),
+        <public_keyword: PublicKeyword>  => new_state_variable_attribute_public_keyword(<>),
+        <immutable_keyword: ImmutableKeyword>  => new_state_variable_attribute_immutable_keyword(<>),
+        <transient_keyword: TransientKeyword>  => new_state_variable_attribute_transient_keyword(<>),
         
     };
     
 
 // Rules for topic Functions
     FunctionDefinition: FunctionDefinition = {
-        <_function_keyword: FunctionKeyword>  <_name: FunctionName>  <_parameters: ParametersDeclaration>  <_attributes: FunctionAttributes>  <_returns: (ReturnsDeclaration)?>  <_body: FunctionBody>  => new_function_definition(<>),
+        <function_keyword: FunctionKeyword>  <name: FunctionName>  <parameters: ParametersDeclaration>  <attributes: FunctionAttributes>  <returns: (ReturnsDeclaration)?>  <body: FunctionBody>  => new_function_definition(<>),
         
     };
     FunctionName: FunctionName = {
-        <_Identifier: Identifier>  => new_function_name_identifier(<>),
-        <_FallbackKeyword: FallbackKeyword>  => new_function_name_fallback_keyword(<>),
-        <_ReceiveKeyword: ReceiveKeyword>  => new_function_name_receive_keyword(<>),
+        <identifier: Identifier>  => new_function_name_identifier(<>),
+        <fallback_keyword: FallbackKeyword>  => new_function_name_fallback_keyword(<>),
+        <receive_keyword: ReceiveKeyword>  => new_function_name_receive_keyword(<>),
         
     };
     ParametersDeclaration: ParametersDeclaration = {
-        <_open_paren: OpenParen>  <_parameters: Parameters>  <_close_paren: CloseParen>  => new_parameters_declaration(<>),
+        <open_paren: OpenParen>  <parameters: Parameters>  <close_paren: CloseParen>  => new_parameters_declaration(<>),
         
     };
     Parameters: Parameters = {
-        <_Parameter: SeparatedAllowEmpty<Comma, <Parameter>>>  => new_parameters(<>),
+        <parameter: SeparatedAllowEmpty<Comma, <Parameter>>>  => new_parameters(<>),
         
     };
     Parameter: Parameter = {
-        <_type_name: TypeName>  <_storage_location: (StorageLocation)?>  <_name: (Identifier)?>  => new_parameter(<>),
+        <type_name: TypeName>  <storage_location: (StorageLocation)?>  <name: (Identifier)?>  => new_parameter(<>),
         
     };
     FunctionAttributes: FunctionAttributes = {
-        <_FunctionAttribute: RepeatedAllowEmpty<<FunctionAttribute>>>  => new_function_attributes(<>),
+        <function_attribute: RepeatedAllowEmpty<<FunctionAttribute>>>  => new_function_attributes(<>),
         
     };
     FunctionAttribute: FunctionAttribute = {
-        <_ModifierInvocation: ModifierInvocation>  => new_function_attribute_modifier_invocation(<>),
-        <_OverrideSpecifier: OverrideSpecifier>  => new_function_attribute_override_specifier(<>),
-        <_ExternalKeyword: ExternalKeyword>  => new_function_attribute_external_keyword(<>),
-        <_InternalKeyword: InternalKeyword>  => new_function_attribute_internal_keyword(<>),
-        <_PayableKeyword: PayableKeyword>  => new_function_attribute_payable_keyword(<>),
-        <_PrivateKeyword: PrivateKeyword>  => new_function_attribute_private_keyword(<>),
-        <_PublicKeyword: PublicKeyword>  => new_function_attribute_public_keyword(<>),
-        <_PureKeyword: PureKeyword>  => new_function_attribute_pure_keyword(<>),
-        <_ViewKeyword: ViewKeyword>  => new_function_attribute_view_keyword(<>),
-        <_VirtualKeyword: VirtualKeyword>  => new_function_attribute_virtual_keyword(<>),
+        <modifier_invocation: ModifierInvocation>  => new_function_attribute_modifier_invocation(<>),
+        <override_specifier: OverrideSpecifier>  => new_function_attribute_override_specifier(<>),
+        <external_keyword: ExternalKeyword>  => new_function_attribute_external_keyword(<>),
+        <internal_keyword: InternalKeyword>  => new_function_attribute_internal_keyword(<>),
+        <payable_keyword: PayableKeyword>  => new_function_attribute_payable_keyword(<>),
+        <private_keyword: PrivateKeyword>  => new_function_attribute_private_keyword(<>),
+        <public_keyword: PublicKeyword>  => new_function_attribute_public_keyword(<>),
+        <pure_keyword: PureKeyword>  => new_function_attribute_pure_keyword(<>),
+        <view_keyword: ViewKeyword>  => new_function_attribute_view_keyword(<>),
+        <virtual_keyword: VirtualKeyword>  => new_function_attribute_virtual_keyword(<>),
         
     };
     OverrideSpecifier: OverrideSpecifier = {
-        <_override_keyword: OverrideKeyword>  <_overridden: (OverridePathsDeclaration)?>  => new_override_specifier(<>),
+        <override_keyword: OverrideKeyword>  <overridden: (OverridePathsDeclaration)?>  => new_override_specifier(<>),
         
     };
     OverridePathsDeclaration: OverridePathsDeclaration = {
-        <_open_paren: OpenParen>  <_paths: OverridePaths>  <_close_paren: CloseParen>  => new_override_paths_declaration(<>),
+        <open_paren: OpenParen>  <paths: OverridePaths>  <close_paren: CloseParen>  => new_override_paths_declaration(<>),
         
     };
     OverridePaths: OverridePaths = {
-        <_IdentifierPath: Separated<Comma, <IdentifierPath>>>  => new_override_paths(<>),
+        <identifier_path: Separated<Comma, <IdentifierPath>>>  => new_override_paths(<>),
         
     };
     ReturnsDeclaration: ReturnsDeclaration = {
-        <_returns_keyword: ReturnsKeyword>  <_variables: ParametersDeclaration>  => new_returns_declaration(<>),
+        <returns_keyword: ReturnsKeyword>  <variables: ParametersDeclaration>  => new_returns_declaration(<>),
         
     };
     FunctionBody: FunctionBody = {
-        <_Block: Block>  => new_function_body_block(<>),
-        <_Semicolon: Semicolon>  => new_function_body_semicolon(<>),
+        <block: Block>  => new_function_body_block(<>),
+        <semicolon: Semicolon>  => new_function_body_semicolon(<>),
         
     };
     ConstructorDefinition: ConstructorDefinition = {
-        <_constructor_keyword: ConstructorKeyword>  <_parameters: ParametersDeclaration>  <_attributes: ConstructorAttributes>  <_body: Block>  => new_constructor_definition(<>),
+        <constructor_keyword: ConstructorKeyword>  <parameters: ParametersDeclaration>  <attributes: ConstructorAttributes>  <body: Block>  => new_constructor_definition(<>),
         
     };
     ConstructorAttributes: ConstructorAttributes = {
-        <_ConstructorAttribute: RepeatedAllowEmpty<<ConstructorAttribute>>>  => new_constructor_attributes(<>),
+        <constructor_attribute: RepeatedAllowEmpty<<ConstructorAttribute>>>  => new_constructor_attributes(<>),
         
     };
     ConstructorAttribute: ConstructorAttribute = {
-        <_ModifierInvocation: ModifierInvocation>  => new_constructor_attribute_modifier_invocation(<>),
-        <_InternalKeyword: InternalKeyword>  => new_constructor_attribute_internal_keyword(<>),
-        <_PayableKeyword: PayableKeyword>  => new_constructor_attribute_payable_keyword(<>),
-        <_PublicKeyword: PublicKeyword>  => new_constructor_attribute_public_keyword(<>),
+        <modifier_invocation: ModifierInvocation>  => new_constructor_attribute_modifier_invocation(<>),
+        <internal_keyword: InternalKeyword>  => new_constructor_attribute_internal_keyword(<>),
+        <payable_keyword: PayableKeyword>  => new_constructor_attribute_payable_keyword(<>),
+        <public_keyword: PublicKeyword>  => new_constructor_attribute_public_keyword(<>),
         
     };
     FallbackFunctionDefinition: FallbackFunctionDefinition = {
-        <_fallback_keyword: FallbackKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FallbackFunctionAttributes>  <_returns: (ReturnsDeclaration)?>  <_body: FunctionBody>  => new_fallback_function_definition(<>),
+        <fallback_keyword: FallbackKeyword>  <parameters: ParametersDeclaration>  <attributes: FallbackFunctionAttributes>  <returns: (ReturnsDeclaration)?>  <body: FunctionBody>  => new_fallback_function_definition(<>),
         
     };
     FallbackFunctionAttributes: FallbackFunctionAttributes = {
-        <_FallbackFunctionAttribute: RepeatedAllowEmpty<<FallbackFunctionAttribute>>>  => new_fallback_function_attributes(<>),
+        <fallback_function_attribute: RepeatedAllowEmpty<<FallbackFunctionAttribute>>>  => new_fallback_function_attributes(<>),
         
     };
     FallbackFunctionAttribute: FallbackFunctionAttribute = {
-        <_ModifierInvocation: ModifierInvocation>  => new_fallback_function_attribute_modifier_invocation(<>),
-        <_OverrideSpecifier: OverrideSpecifier>  => new_fallback_function_attribute_override_specifier(<>),
-        <_ExternalKeyword: ExternalKeyword>  => new_fallback_function_attribute_external_keyword(<>),
-        <_PayableKeyword: PayableKeyword>  => new_fallback_function_attribute_payable_keyword(<>),
-        <_PureKeyword: PureKeyword>  => new_fallback_function_attribute_pure_keyword(<>),
-        <_ViewKeyword: ViewKeyword>  => new_fallback_function_attribute_view_keyword(<>),
-        <_VirtualKeyword: VirtualKeyword>  => new_fallback_function_attribute_virtual_keyword(<>),
+        <modifier_invocation: ModifierInvocation>  => new_fallback_function_attribute_modifier_invocation(<>),
+        <override_specifier: OverrideSpecifier>  => new_fallback_function_attribute_override_specifier(<>),
+        <external_keyword: ExternalKeyword>  => new_fallback_function_attribute_external_keyword(<>),
+        <payable_keyword: PayableKeyword>  => new_fallback_function_attribute_payable_keyword(<>),
+        <pure_keyword: PureKeyword>  => new_fallback_function_attribute_pure_keyword(<>),
+        <view_keyword: ViewKeyword>  => new_fallback_function_attribute_view_keyword(<>),
+        <virtual_keyword: VirtualKeyword>  => new_fallback_function_attribute_virtual_keyword(<>),
         
     };
     ReceiveFunctionDefinition: ReceiveFunctionDefinition = {
-        <_receive_keyword: ReceiveKeyword>  <_parameters: ParametersDeclaration>  <_attributes: ReceiveFunctionAttributes>  <_body: FunctionBody>  => new_receive_function_definition(<>),
+        <receive_keyword: ReceiveKeyword>  <parameters: ParametersDeclaration>  <attributes: ReceiveFunctionAttributes>  <body: FunctionBody>  => new_receive_function_definition(<>),
         
     };
     ReceiveFunctionAttributes: ReceiveFunctionAttributes = {
-        <_ReceiveFunctionAttribute: RepeatedAllowEmpty<<ReceiveFunctionAttribute>>>  => new_receive_function_attributes(<>),
+        <receive_function_attribute: RepeatedAllowEmpty<<ReceiveFunctionAttribute>>>  => new_receive_function_attributes(<>),
         
     };
     ReceiveFunctionAttribute: ReceiveFunctionAttribute = {
-        <_ModifierInvocation: ModifierInvocation>  => new_receive_function_attribute_modifier_invocation(<>),
-        <_OverrideSpecifier: OverrideSpecifier>  => new_receive_function_attribute_override_specifier(<>),
-        <_ExternalKeyword: ExternalKeyword>  => new_receive_function_attribute_external_keyword(<>),
-        <_PayableKeyword: PayableKeyword>  => new_receive_function_attribute_payable_keyword(<>),
-        <_VirtualKeyword: VirtualKeyword>  => new_receive_function_attribute_virtual_keyword(<>),
+        <modifier_invocation: ModifierInvocation>  => new_receive_function_attribute_modifier_invocation(<>),
+        <override_specifier: OverrideSpecifier>  => new_receive_function_attribute_override_specifier(<>),
+        <external_keyword: ExternalKeyword>  => new_receive_function_attribute_external_keyword(<>),
+        <payable_keyword: PayableKeyword>  => new_receive_function_attribute_payable_keyword(<>),
+        <virtual_keyword: VirtualKeyword>  => new_receive_function_attribute_virtual_keyword(<>),
         
     };
     
 
 // Rules for topic Modifiers
     ModifierDefinition: ModifierDefinition = {
-        <_modifier_keyword: ModifierKeyword>  <_name: Identifier>  <_parameters: (ParametersDeclaration)?>  <_attributes: ModifierAttributes>  <_body: FunctionBody>  => new_modifier_definition(<>),
+        <modifier_keyword: ModifierKeyword>  <name: Identifier>  <parameters: (ParametersDeclaration)?>  <attributes: ModifierAttributes>  <body: FunctionBody>  => new_modifier_definition(<>),
         
     };
     ModifierAttributes: ModifierAttributes = {
-        <_ModifierAttribute: RepeatedAllowEmpty<<ModifierAttribute>>>  => new_modifier_attributes(<>),
+        <modifier_attribute: RepeatedAllowEmpty<<ModifierAttribute>>>  => new_modifier_attributes(<>),
         
     };
     ModifierAttribute: ModifierAttribute = {
-        <_OverrideSpecifier: OverrideSpecifier>  => new_modifier_attribute_override_specifier(<>),
-        <_VirtualKeyword: VirtualKeyword>  => new_modifier_attribute_virtual_keyword(<>),
+        <override_specifier: OverrideSpecifier>  => new_modifier_attribute_override_specifier(<>),
+        <virtual_keyword: VirtualKeyword>  => new_modifier_attribute_virtual_keyword(<>),
         
     };
     ModifierInvocation: ModifierInvocation = {
-        <_name: IdentifierPath>  <_arguments: (ArgumentsDeclaration)?>  => new_modifier_invocation(<>),
+        <name: IdentifierPath>  <arguments: (ArgumentsDeclaration)?>  => new_modifier_invocation(<>),
         
     };
     
 
 // Rules for topic Events
     EventDefinition: EventDefinition = {
-        <_event_keyword: EventKeyword>  <_name: Identifier>  <_parameters: EventParametersDeclaration>  <_anonymous_keyword: (AnonymousKeyword)?>  <_semicolon: Semicolon>  => new_event_definition(<>),
+        <event_keyword: EventKeyword>  <name: Identifier>  <parameters: EventParametersDeclaration>  <anonymous_keyword: (AnonymousKeyword)?>  <semicolon: Semicolon>  => new_event_definition(<>),
         
     };
     EventParametersDeclaration: EventParametersDeclaration = {
-        <_open_paren: OpenParen>  <_parameters: EventParameters>  <_close_paren: CloseParen>  => new_event_parameters_declaration(<>),
+        <open_paren: OpenParen>  <parameters: EventParameters>  <close_paren: CloseParen>  => new_event_parameters_declaration(<>),
         
     };
     EventParameters: EventParameters = {
-        <_EventParameter: SeparatedAllowEmpty<Comma, <EventParameter>>>  => new_event_parameters(<>),
+        <event_parameter: SeparatedAllowEmpty<Comma, <EventParameter>>>  => new_event_parameters(<>),
         
     };
     EventParameter: EventParameter = {
-        <_type_name: TypeName>  <_indexed_keyword: (IndexedKeyword)?>  <_name: (Identifier)?>  => new_event_parameter(<>),
+        <type_name: TypeName>  <indexed_keyword: (IndexedKeyword)?>  <name: (Identifier)?>  => new_event_parameter(<>),
         
     };
     
 
 // Rules for topic User Defined Value Types
     UserDefinedValueTypeDefinition: UserDefinedValueTypeDefinition = {
-        <_type_keyword: TypeKeyword>  <_name: Identifier>  <_is_keyword: IsKeyword>  <_value_type: ElementaryType>  <_semicolon: Semicolon>  => new_user_defined_value_type_definition(<>),
+        <type_keyword: TypeKeyword>  <name: Identifier>  <is_keyword: IsKeyword>  <value_type: ElementaryType>  <semicolon: Semicolon>  => new_user_defined_value_type_definition(<>),
         
     };
     
@@ -667,19 +671,19 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
 // Rules for topic Errors
     #[inline]
     ErrorDefinition: ErrorDefinition = {
-        <_error_keyword: ErrorKeyword>  <_name: Identifier>  <_members: ErrorParametersDeclaration>  <_semicolon: Semicolon>  => new_error_definition(<>),
+        <error_keyword: ErrorKeyword>  <name: Identifier>  <members: ErrorParametersDeclaration>  <semicolon: Semicolon>  => new_error_definition(<>),
         
     };
     ErrorParametersDeclaration: ErrorParametersDeclaration = {
-        <_open_paren: OpenParen>  <_parameters: ErrorParameters>  <_close_paren: CloseParen>  => new_error_parameters_declaration(<>),
+        <open_paren: OpenParen>  <parameters: ErrorParameters>  <close_paren: CloseParen>  => new_error_parameters_declaration(<>),
         
     };
     ErrorParameters: ErrorParameters = {
-        <_ErrorParameter: SeparatedAllowEmpty<Comma, <ErrorParameter>>>  => new_error_parameters(<>),
+        <error_parameter: SeparatedAllowEmpty<Comma, <ErrorParameter>>>  => new_error_parameters(<>),
         
     };
     ErrorParameter: ErrorParameter = {
-        <_type_name: TypeName>  <_name: (Identifier)?>  => new_error_parameter(<>),
+        <type_name: TypeName>  <name: (Identifier)?>  => new_error_parameter(<>),
         
     };
     
@@ -703,24 +707,24 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
 //    However, since a IAP and an array type conflict, we need to make sure that array types are only matched against
 //    base types that are not IAPs, hence the parametric IAPRule.
 TypeName0<FunctionRule, IAPRule>: TypeName = {
-    <_FunctionType: FunctionRule> => new_type_name_function_type(<>),
-    <_MappingType: MappingType>  => new_type_name_mapping_type(<>),
-    <_IndexAccessPath: IAPRule> => new_type_name_index_access_path(<>),
+    <function_type: FunctionRule> => new_type_name_function_type(<>),
+    <mapping_type: MappingType>  => new_type_name_mapping_type(<>),
+    <index_access_path: IAPRule> => new_type_name_index_access_path(<>),
 };
 TypeName1<FunctionRule, IAPRule>: TypeName = {
-    <_TypeName: ArrayTypeName>  => new_type_name_array_type_name(<>),
-    <TypeName: TypeName0<FunctionRule, IAPRule>>  => <>,
+    <type_name: ArrayTypeName>  => new_type_name_array_type_name(<>),
+    <type_name: TypeName0<FunctionRule, IAPRule>>  => <>,
 };
 TypeName: TypeName = {
     // A regular type can have any function type and an IAP
-    <TypeName: TypeName1<FunctionType, IndexAccessPath<IdentifierPath>>>  => <>,
+    <type_name: TypeName1<FunctionType, IndexAccessPath<IdentifierPath>>>  => <>,
 };
 
 #[inline]
 ArrayTypeName: ArrayTypeName = {
     // The base expression shouldn't end in a trailing IAP, if it does (like `a.b[c]`) it will be
     // handled by `new_type_name_index_access_path` above
-    <_TypeName: TypeName1<FunctionType, NoIndexAccessPath>>  <_open_bracket: OpenBracket>  <_index: (Expression)?>  <_close_bracket: CloseBracket>  => new_array_type_name(<>),
+    <type_name: TypeName1<FunctionType, NoIndexAccessPath>>  <open_bracket: OpenBracket>  <index: (Expression)?>  <close_bracket: CloseBracket>  => new_array_type_name(<>),
 };
 
 // An empty rule to disable IAPs
@@ -737,60 +741,60 @@ FunctionType: FunctionType = {
 };
 
 FunctionTypeInternalNoReturn: FunctionType = {
-    <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes>   => new_function_type(_function_keyword, _parameters, _attributes, None),
+    <function_keyword: FunctionKeyword>  <parameters: ParametersDeclaration>  <attributes: FunctionTypeAttributes>   => new_function_type(function_keyword, parameters, attributes, None),
 };
 FunctionTypeInternalReturn: FunctionType = {
-    <_function_keyword: FunctionKeyword>  <_parameters: ParametersDeclaration>  <_attributes: FunctionTypeAttributes>  <_returns: ReturnsDeclaration>  => new_function_type(_function_keyword, _parameters, _attributes, Some(_returns)),
+    <function_keyword: FunctionKeyword>  <parameters: ParametersDeclaration>  <attributes: FunctionTypeAttributes>  <returns: ReturnsDeclaration>  => new_function_type(function_keyword, parameters, attributes, Some(returns)),
     
 };
 
     FunctionTypeAttributes: FunctionTypeAttributes = {
-        <_FunctionTypeAttribute: RepeatedAllowEmpty<<FunctionTypeAttribute>>>  => new_function_type_attributes(<>),
+        <function_type_attribute: RepeatedAllowEmpty<<FunctionTypeAttribute>>>  => new_function_type_attributes(<>),
         
     };
     FunctionTypeAttribute: FunctionTypeAttribute = {
-        <_InternalKeyword: InternalKeyword>  => new_function_type_attribute_internal_keyword(<>),
-        <_ExternalKeyword: ExternalKeyword>  => new_function_type_attribute_external_keyword(<>),
-        <_PrivateKeyword: PrivateKeyword>  => new_function_type_attribute_private_keyword(<>),
-        <_PublicKeyword: PublicKeyword>  => new_function_type_attribute_public_keyword(<>),
-        <_PureKeyword: PureKeyword>  => new_function_type_attribute_pure_keyword(<>),
-        <_ViewKeyword: ViewKeyword>  => new_function_type_attribute_view_keyword(<>),
-        <_PayableKeyword: PayableKeyword>  => new_function_type_attribute_payable_keyword(<>),
+        <internal_keyword: InternalKeyword>  => new_function_type_attribute_internal_keyword(<>),
+        <external_keyword: ExternalKeyword>  => new_function_type_attribute_external_keyword(<>),
+        <private_keyword: PrivateKeyword>  => new_function_type_attribute_private_keyword(<>),
+        <public_keyword: PublicKeyword>  => new_function_type_attribute_public_keyword(<>),
+        <pure_keyword: PureKeyword>  => new_function_type_attribute_pure_keyword(<>),
+        <view_keyword: ViewKeyword>  => new_function_type_attribute_view_keyword(<>),
+        <payable_keyword: PayableKeyword>  => new_function_type_attribute_payable_keyword(<>),
         
     };
     MappingType: MappingType = {
-        <_mapping_keyword: MappingKeyword>  <_open_paren: OpenParen>  <_key_type: MappingKey>  <_equal_greater_than: EqualGreaterThan>  <_value_type: MappingValue>  <_close_paren: CloseParen>  => new_mapping_type(<>),
+        <mapping_keyword: MappingKeyword>  <open_paren: OpenParen>  <key_type: MappingKey>  <equal_greater_than: EqualGreaterThan>  <value_type: MappingValue>  <close_paren: CloseParen>  => new_mapping_type(<>),
         
     };
     MappingKey: MappingKey = {
-        <_key_type: MappingKeyType>  <_name: (Identifier)?>  => new_mapping_key(<>),
+        <key_type: MappingKeyType>  <name: (Identifier)?>  => new_mapping_key(<>),
         
     };
     MappingKeyType: MappingKeyType = {
-        <_ElementaryType: ElementaryType>  => new_mapping_key_type_elementary_type(<>),
-        <_IdentifierPath: IdentifierPath>  => new_mapping_key_type_identifier_path(<>),
+        <elementary_type: ElementaryType>  => new_mapping_key_type_elementary_type(<>),
+        <identifier_path: IdentifierPath>  => new_mapping_key_type_identifier_path(<>),
         
     };
     MappingValue: MappingValue = {
-        <_type_name: TypeName>  <_name: (Identifier)?>  => new_mapping_value(<>),
+        <type_name: TypeName>  <name: (Identifier)?>  => new_mapping_value(<>),
         
     };
     
 
 // Rules for topic Elementary Types
     ElementaryType: ElementaryType = {
-        <_BoolKeyword: BoolKeyword>  => new_elementary_type_bool_keyword(<>),
-        <_StringKeyword: StringKeyword>  => new_elementary_type_string_keyword(<>),
-        <_AddressType: AddressType>  => new_elementary_type_address_type(<>),
-        <_BytesKeyword: BytesKeyword>  => new_elementary_type_bytes_keyword(<>),
-        <_IntKeyword: IntKeyword>  => new_elementary_type_int_keyword(<>),
-        <_UintKeyword: UintKeyword>  => new_elementary_type_uint_keyword(<>),
-        <_FixedKeyword: FixedKeyword>  => new_elementary_type_fixed_keyword(<>),
-        <_UfixedKeyword: UfixedKeyword>  => new_elementary_type_ufixed_keyword(<>),
+        <bool_keyword: BoolKeyword>  => new_elementary_type_bool_keyword(<>),
+        <string_keyword: StringKeyword>  => new_elementary_type_string_keyword(<>),
+        <address_type: AddressType>  => new_elementary_type_address_type(<>),
+        <bytes_keyword: BytesKeyword>  => new_elementary_type_bytes_keyword(<>),
+        <int_keyword: IntKeyword>  => new_elementary_type_int_keyword(<>),
+        <uint_keyword: UintKeyword>  => new_elementary_type_uint_keyword(<>),
+        <fixed_keyword: FixedKeyword>  => new_elementary_type_fixed_keyword(<>),
+        <ufixed_keyword: UfixedKeyword>  => new_elementary_type_ufixed_keyword(<>),
         
     };
     AddressType: AddressType = {
-        <_address_keyword: AddressKeyword>  <_payable_keyword: (PayableKeyword)?>  => new_address_type(<>),
+        <address_keyword: AddressKeyword>  <payable_keyword: (PayableKeyword)?>  => new_address_type(<>),
         
     };
     
@@ -802,11 +806,11 @@ FunctionTypeInternalReturn: FunctionType = {
 
 // Rules for topic Blocks
     Block: Block = {
-        <_open_brace: OpenBrace>  <_statements: Statements>  <_close_brace: CloseBrace>  => new_block(<>),
+        <open_brace: OpenBrace>  <statements: Statements>  <close_brace: CloseBrace>  => new_block(<>),
         
     };
     Statements: Statements = {
-        <_Statement: RepeatedAllowEmpty<<Statement>>>  => new_statements(<>),
+        <statement: RepeatedAllowEmpty<<Statement>>>  => new_statements(<>),
         
     };
     
@@ -829,21 +833,21 @@ FunctionTypeInternalReturn: FunctionType = {
 // since both this and `RevertStatement` are inlined, the parser doesn't need to reduce until it has seen the
 // entire statement.
 _Statement<TrailingElse>: Statement = {
-    <_IfStatement: IfStatement<TrailingElse>>  => new_statement_if_statement(<>),
-    <_ForStatement: ForStatement<TrailingElse>>  => new_statement_for_statement(<>),
-    <_WhileStatement: WhileStatement<TrailingElse>>  => new_statement_while_statement(<>),
-    <_DoWhileStatement: DoWhileStatement>  => new_statement_do_while_statement(<>),
-    <_ContinueStatement: ContinueStatement>  => new_statement_continue_statement(<>),
-    <_BreakStatement: BreakStatement>  => new_statement_break_statement(<>),
-    <_ReturnStatement: ReturnStatement>  => new_statement_return_statement(<>),
-    <_EmitStatement: EmitStatement>  => new_statement_emit_statement(<>),
-    <_TryStatement: TryStatement>  => new_statement_try_statement(<>),
-    <_RevertStatement: RevertStatement>  => new_statement_revert_statement(<>),
-    <_AssemblyStatement: AssemblyStatement>  => new_statement_assembly_statement(<>),
-    <_Block: Block>  => new_statement_block(<>),
-    <_UncheckedBlock: UncheckedBlock>  => new_statement_unchecked_block(<>),
-    <_VariableDeclarationStatement: VariableDeclarationStatementSpecialRevert>  => new_statement_variable_declaration_statement(<>),
-    <_ExpressionStatement: ExpressionStatement>  => new_statement_expression_statement(<>),
+    <if_statement: IfStatement<TrailingElse>>  => new_statement_if_statement(<>),
+    <for_statement: ForStatement<TrailingElse>>  => new_statement_for_statement(<>),
+    <while_statement: WhileStatement<TrailingElse>>  => new_statement_while_statement(<>),
+    <do_while_statement: DoWhileStatement>  => new_statement_do_while_statement(<>),
+    <continue_statement: ContinueStatement>  => new_statement_continue_statement(<>),
+    <break_statement: BreakStatement>  => new_statement_break_statement(<>),
+    <return_statement: ReturnStatement>  => new_statement_return_statement(<>),
+    <emit_statement: EmitStatement>  => new_statement_emit_statement(<>),
+    <try_statement: TryStatement>  => new_statement_try_statement(<>),
+    <revert_statement: RevertStatement>  => new_statement_revert_statement(<>),
+    <assembly_statement: AssemblyStatement>  => new_statement_assembly_statement(<>),
+    <block: Block>  => new_statement_block(<>),
+    <unchecked_block: UncheckedBlock>  => new_statement_unchecked_block(<>),
+    <variable_declaration_statement: VariableDeclarationStatementSpecialRevert>  => new_statement_variable_declaration_statement(<>),
+    <expression_statement: ExpressionStatement>  => new_statement_expression_statement(<>),
 };
 
 // By default statements allow dangling `else`s
@@ -855,29 +859,29 @@ Statement = _Statement<"True">;
 // Note: They need to be inline together with `RevertStatement` to actually avoid shift/reduce conflicts
 #[inline]
 VariableDeclarationStatementSpecialRevert: VariableDeclarationStatement = {
-    <_target: VariableDeclarationTargetSpecialRevert>  <_semicolon: Semicolon>  => new_variable_declaration_statement(<>),
+    <target: VariableDeclarationTargetSpecialRevert>  <semicolon: Semicolon>  => new_variable_declaration_statement(<>),
 };
 #[inline]
 VariableDeclarationTargetSpecialRevert: VariableDeclarationTarget = {
-    <_SingleTypedDeclaration: SingleTypedDeclarationSpecialRevert>  => new_variable_declaration_target_single_typed_declaration(<>),
-    <_MultiTypedDeclaration: MultiTypedDeclaration>  => new_variable_declaration_target_multi_typed_declaration(<>),
+    <single_typed_declaration: SingleTypedDeclarationSpecialRevert>  => new_variable_declaration_target_single_typed_declaration(<>),
+    <multi_typed_declaration: MultiTypedDeclaration>  => new_variable_declaration_target_multi_typed_declaration(<>),
 };
 #[inline]
 SingleTypedDeclarationSpecialRevert: SingleTypedDeclaration = {
-    <_declaration: VariableDeclarationSpecialRevert>  <_value: (VariableDeclarationValue)?>  => new_single_typed_declaration(<>),
+    <declaration: VariableDeclarationSpecialRevert>  <value: (VariableDeclarationValue)?>  => new_single_typed_declaration(<>),
 };
 #[inline]
 VariableDeclarationSpecialRevert: VariableDeclaration = {
     // A regular type that is not `revert`
     //
     // Note: we're tempted to inline TypeNames, but they are recursive, that's why we extract the special case
-    <_type_name: TypeName1<FunctionType, IndexAccessPath<IdentifierPathNoRevert>>>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => new_variable_declaration(<>),
+    <type_name: TypeName1<FunctionType, IndexAccessPath<IdentifierPathNoRevert>>>  <storage_location: (StorageLocation)?>  <name: Identifier>  => new_variable_declaration(<>),
     // The special `revert` type
-    <l:@L> L_RevertKeyword_Unreserved <r:@R>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => {
+    <l:@L> L_RevertKeyword_Unreserved <r:@R>  <storage_location: (StorageLocation)?>  <name: Identifier>  => {
         let identifier = new_identifier(l..r, source);
         let iap = new_index_access_path_from_identifier_path(new_identifier_path(vec![new_identifier_path_element_identifier(identifier)]));
         let type_name = new_type_name_index_access_path(iap);
-        new_variable_declaration(type_name, _storage_location, _name)
+        new_variable_declaration(type_name, storage_location, name)
     }
 };
 
@@ -885,56 +889,56 @@ VariableDeclarationSpecialRevert: VariableDeclaration = {
 #[inline]
 IdentifierPathNoRevert: IdentifierPath = {
     // We either have any identifier with a tail (ie a period)
-    <_head: Identifier> <mut _tail: IdentifierPathTail>  => {
-        _tail.insert(0, new_identifier_path_element_identifier(_head));
-        new_identifier_path(_tail)
+    <head: Identifier> <mut tail: IdentifierPathTail>  => {
+        tail.insert(0, new_identifier_path_element_identifier(head));
+        new_identifier_path(tail)
     },
     // or a single identifier that is not `revert`
-    <_head: SomeIdentifier<"RevertKeyword_Unreserved">>  => new_identifier_path(vec![new_identifier_path_element_identifier(<>)]),
+    <head: SomeIdentifier<"RevertKeyword_Unreserved">>  => new_identifier_path(vec![new_identifier_path_element_identifier(<>)]),
 };
 
     UncheckedBlock: UncheckedBlock = {
-        <_unchecked_keyword: UncheckedKeyword>  <_block: Block>  => new_unchecked_block(<>),
+        <unchecked_keyword: UncheckedKeyword>  <block: Block>  => new_unchecked_block(<>),
         
     };
     ExpressionStatement: ExpressionStatement = {
-        <_expression: Expression>  <_semicolon: Semicolon>  => new_expression_statement(<>),
+        <expression: Expression>  <semicolon: Semicolon>  => new_expression_statement(<>),
         
     };
     AssemblyStatement: AssemblyStatement = {
-        <_assembly_keyword: AssemblyKeyword>  <_label: (StringLiteral)?>  <_flags: (AssemblyFlagsDeclaration)?>  <_body: YulBlock>  => new_assembly_statement(<>),
+        <assembly_keyword: AssemblyKeyword>  <label: (StringLiteral)?>  <flags: (AssemblyFlagsDeclaration)?>  <body: YulBlock>  => new_assembly_statement(<>),
         
     };
     AssemblyFlagsDeclaration: AssemblyFlagsDeclaration = {
-        <_open_paren: OpenParen>  <_flags: AssemblyFlags>  <_close_paren: CloseParen>  => new_assembly_flags_declaration(<>),
+        <open_paren: OpenParen>  <flags: AssemblyFlags>  <close_paren: CloseParen>  => new_assembly_flags_declaration(<>),
         
     };
     AssemblyFlags: AssemblyFlags = {
-        <_StringLiteral: Separated<Comma, <StringLiteral>>>  => new_assembly_flags(<>),
+        <string_literal: Separated<Comma, <StringLiteral>>>  => new_assembly_flags(<>),
         
     };
     
 
 // Rules for topic Declaration Statements
     VariableDeclaration: VariableDeclaration = {
-        <_type_name: TypeName>  <_storage_location: (StorageLocation)?>  <_name: Identifier>  => new_variable_declaration(<>),
+        <type_name: TypeName>  <storage_location: (StorageLocation)?>  <name: Identifier>  => new_variable_declaration(<>),
         
     };
     VariableDeclarationStatement: VariableDeclarationStatement = {
-        <_target: VariableDeclarationTarget>  <_semicolon: Semicolon>  => new_variable_declaration_statement(<>),
+        <target: VariableDeclarationTarget>  <semicolon: Semicolon>  => new_variable_declaration_statement(<>),
         
     };
     VariableDeclarationTarget: VariableDeclarationTarget = {
-        <_SingleTypedDeclaration: SingleTypedDeclaration>  => new_variable_declaration_target_single_typed_declaration(<>),
-        <_MultiTypedDeclaration: MultiTypedDeclaration>  => new_variable_declaration_target_multi_typed_declaration(<>),
+        <single_typed_declaration: SingleTypedDeclaration>  => new_variable_declaration_target_single_typed_declaration(<>),
+        <multi_typed_declaration: MultiTypedDeclaration>  => new_variable_declaration_target_multi_typed_declaration(<>),
         
     };
     SingleTypedDeclaration: SingleTypedDeclaration = {
-        <_declaration: VariableDeclaration>  <_value: (VariableDeclarationValue)?>  => new_single_typed_declaration(<>),
+        <declaration: VariableDeclaration>  <value: (VariableDeclarationValue)?>  => new_single_typed_declaration(<>),
         
     };
     MultiTypedDeclaration: MultiTypedDeclaration = {
-        <_open_paren: OpenParen>  <_elements: MultiTypedDeclarationElements>  <_close_paren: CloseParen>  <_value: VariableDeclarationValue>  => new_multi_typed_declaration(<>),
+        <open_paren: OpenParen>  <elements: MultiTypedDeclarationElements>  <close_paren: CloseParen>  <value: VariableDeclarationValue>  => new_multi_typed_declaration(<>),
         
     };
     
@@ -951,10 +955,10 @@ IdentifierPathNoRevert: IdentifierPath = {
 //
 // Since they also share a prefix (`(,,,`) we need to have a common prefix rule to avoid reduce/reduce conflicts.
 MultiTypedDeclarationElements: MultiTypedDeclarationElements = {
-    <prefix: TuplePrefix> <differentiator: VariableDeclaration> <_TypedTupleDeconstructionElement: (Comma <Separated<Comma, <MultiTypedDeclarationElement>>>)?>  => {
+    <prefix: TuplePrefix> <differentiator: VariableDeclaration> <typed_tuple_deconstruction_element: (Comma <Separated<Comma, <MultiTypedDeclarationElement>>>)?>  => {
         let mut elements = vec![new_multi_typed_declaration_element(None); prefix];
         elements.push(new_multi_typed_declaration_element(Some(differentiator)));
-        elements.extend(_TypedTupleDeconstructionElement.unwrap_or(vec![]));
+        elements.extend(typed_tuple_deconstruction_element.unwrap_or(vec![]));
         new_multi_typed_declaration_elements(elements)
     },
     
@@ -964,22 +968,22 @@ MultiTypedDeclarationElements: MultiTypedDeclarationElements = {
 // in a tuple expression, this helps avoid reduce/reduce conflicts
 TuplePrefix: usize = {
     // Count how many commas we have at the start, each comma represents an unnamed element
-    Comma  <_rest: TuplePrefix>  => 1 + _rest,
+    Comma  <rest: TuplePrefix>  => 1 + rest,
     => 0,
 };
 
     MultiTypedDeclarationElement: MultiTypedDeclarationElement = {
-        <_member: (VariableDeclaration)?>  => new_multi_typed_declaration_element(<>),
+        <member: (VariableDeclaration)?>  => new_multi_typed_declaration_element(<>),
         
     };
     VariableDeclarationValue: VariableDeclarationValue = {
-        <_equal: Equal>  <_expression: Expression>  => new_variable_declaration_value(<>),
+        <equal: Equal>  <expression: Expression>  => new_variable_declaration_value(<>),
         
     };
     StorageLocation: StorageLocation = {
-        <_MemoryKeyword: MemoryKeyword>  => new_storage_location_memory_keyword(<>),
-        <_StorageKeyword: StorageKeyword>  => new_storage_location_storage_keyword(<>),
-        <_CallDataKeyword: CallDataKeyword>  => new_storage_location_call_data_keyword(<>),
+        <memory_keyword: MemoryKeyword>  => new_storage_location_memory_keyword(<>),
+        <storage_keyword: StorageKeyword>  => new_storage_location_storage_keyword(<>),
+        <call_data_keyword: CallDataKeyword>  => new_storage_location_call_data_keyword(<>),
         
     };
     
@@ -990,12 +994,12 @@ TuplePrefix: usize = {
 // As explained in the `Statement` rule, this solves the dangling else problem
 IfStatement<TrailingElse>: IfStatement = {
     // IfStatement only allows `if`s without an else if TrailingElse == "True"
-    <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"True">> if TrailingElse == "True"  => new_if_statement(<>, None),
-    <_if_keyword: IfKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<"False">>  <_else_keyword: ElseKeyword>  <_else_branch: _Statement<TrailingElse>>  => new_if_statement(_if_keyword, _open_paren, _condition, _close_paren, _body, Some(new_else_branch(_else_keyword, _else_branch))),
+    <if_keyword: IfKeyword>  <open_paren: OpenParen>  <condition: Expression>  <close_paren: CloseParen>  <body: _Statement<"True">> if TrailingElse == "True"  => new_if_statement(<>, None),
+    <if_keyword: IfKeyword>  <open_paren: OpenParen>  <condition: Expression>  <close_paren: CloseParen>  <body: _Statement<"False">>  <else_keyword: ElseKeyword>  <else_branch: _Statement<TrailingElse>>  => new_if_statement(if_keyword, open_paren, condition, close_paren, body, Some(new_else_branch(else_keyword, else_branch))),
 };
 
     ElseBranch: ElseBranch = {
-        <_else_keyword: ElseKeyword>  <_body: Statement>  => new_else_branch(<>),
+        <else_keyword: ElseKeyword>  <body: Statement>  => new_else_branch(<>),
         
     };
     
@@ -1004,17 +1008,17 @@ IfStatement<TrailingElse>: IfStatement = {
 //
 // Since a `ForStatement` can have a trailing `Statement` we need to parametrize it as well
 ForStatement<TrailingElse>: ForStatement = {
-        <_for_keyword: ForKeyword>  <_open_paren: OpenParen>  <_initialization: ForStatementInitialization>  <_condition: ForStatementCondition>  <_iterator: (Expression)?>  <_close_paren: CloseParen>  <_body: _Statement<TrailingElse>>  => new_for_statement(<>),
+        <for_keyword: ForKeyword>  <open_paren: OpenParen>  <initialization: ForStatementInitialization>  <condition: ForStatementCondition>  <iterator: (Expression)?>  <close_paren: CloseParen>  <body: _Statement<TrailingElse>>  => new_for_statement(<>),
 };
     ForStatementInitialization: ForStatementInitialization = {
-        <_VariableDeclarationStatement: VariableDeclarationStatement>  => new_for_statement_initialization_variable_declaration_statement(<>),
-        <_ExpressionStatement: ExpressionStatement>  => new_for_statement_initialization_expression_statement(<>),
-        <_Semicolon: Semicolon>  => new_for_statement_initialization_semicolon(<>),
+        <variable_declaration_statement: VariableDeclarationStatement>  => new_for_statement_initialization_variable_declaration_statement(<>),
+        <expression_statement: ExpressionStatement>  => new_for_statement_initialization_expression_statement(<>),
+        <semicolon: Semicolon>  => new_for_statement_initialization_semicolon(<>),
         
     };
     ForStatementCondition: ForStatementCondition = {
-        <_ExpressionStatement: ExpressionStatement>  => new_for_statement_condition_expression_statement(<>),
-        <_Semicolon: Semicolon>  => new_for_statement_condition_semicolon(<>),
+        <expression_statement: ExpressionStatement>  => new_for_statement_condition_expression_statement(<>),
+        <semicolon: Semicolon>  => new_for_statement_condition_semicolon(<>),
         
     };
     
@@ -1023,26 +1027,26 @@ ForStatement<TrailingElse>: ForStatement = {
 //
 // Since a `WhileStatement` can have a trailing `Statement` we need to parametrize it as well
 WhileStatement<TrailingElse>: WhileStatement = {
-        <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_body: _Statement<TrailingElse>>  => new_while_statement(<>),
+        <while_keyword: WhileKeyword>  <open_paren: OpenParen>  <condition: Expression>  <close_paren: CloseParen>  <body: _Statement<TrailingElse>>  => new_while_statement(<>),
 };
     DoWhileStatement: DoWhileStatement = {
-        <_do_keyword: DoKeyword>  <_body: Statement>  <_while_keyword: WhileKeyword>  <_open_paren: OpenParen>  <_condition: Expression>  <_close_paren: CloseParen>  <_semicolon: Semicolon>  => new_do_while_statement(<>),
+        <do_keyword: DoKeyword>  <body: Statement>  <while_keyword: WhileKeyword>  <open_paren: OpenParen>  <condition: Expression>  <close_paren: CloseParen>  <semicolon: Semicolon>  => new_do_while_statement(<>),
         
     };
     ContinueStatement: ContinueStatement = {
-        <_continue_keyword: ContinueKeyword>  <_semicolon: Semicolon>  => new_continue_statement(<>),
+        <continue_keyword: ContinueKeyword>  <semicolon: Semicolon>  => new_continue_statement(<>),
         
     };
     BreakStatement: BreakStatement = {
-        <_break_keyword: BreakKeyword>  <_semicolon: Semicolon>  => new_break_statement(<>),
+        <break_keyword: BreakKeyword>  <semicolon: Semicolon>  => new_break_statement(<>),
         
     };
     ReturnStatement: ReturnStatement = {
-        <_return_keyword: ReturnKeyword>  <_expression: (Expression)?>  <_semicolon: Semicolon>  => new_return_statement(<>),
+        <return_keyword: ReturnKeyword>  <expression: (Expression)?>  <semicolon: Semicolon>  => new_return_statement(<>),
         
     };
     EmitStatement: EmitStatement = {
-        <_emit_keyword: EmitKeyword>  <_event: IdentifierPath>  <_arguments: ArgumentsDeclaration>  <_semicolon: Semicolon>  => new_emit_statement(<>),
+        <emit_keyword: EmitKeyword>  <event: IdentifierPath>  <arguments: ArgumentsDeclaration>  <semicolon: Semicolon>  => new_emit_statement(<>),
         
     };
     
@@ -1057,35 +1061,35 @@ WhileStatement<TrailingElse>: WhileStatement = {
 // We use expressions with a trailing block to solve this, and steal the block from there.
 TryStatement: TryStatement = {
     // a `ReturnsDeclaration` acts as a disambiguator
-    <_try_keyword: TryKeyword>  <_expression: Expression>  <_returns: ReturnsDeclaration>  <_body: Block>  <_catch_clauses: CatchClauses>  => {
-        new_try_statement(_try_keyword, _expression, Some(_returns), _body, _catch_clauses)
+    <try_keyword: TryKeyword>  <expression: Expression>  <returns: ReturnsDeclaration>  <body: Block>  <catch_clauses: CatchClauses>  => {
+        new_try_statement(try_keyword, expression, Some(returns), body, catch_clauses)
     },
-    <_try_keyword: TryKeyword>  <_expression: ExpressionTrailingBlock>   <_catch_clauses: CatchClauses>  => {
-        let (expr, body) = _expression;
-        new_try_statement(_try_keyword, expr, None, body, _catch_clauses)
+    <try_keyword: TryKeyword>  <expression: ExpressionTrailingBlock>   <catch_clauses: CatchClauses>  => {
+        let (expr, body) = expression;
+        new_try_statement(try_keyword, expr, None, body, catch_clauses)
     },
 };
 
 // An expression followed by a block
 ExpressionTrailingBlock: (Expression, Block) = {
-        <Expression: Expression19<Block>>  => <>,
+        <expression: Expression19<Block>>  => <>,
 };
 
     CatchClauses: CatchClauses = {
-        <_CatchClause: Repeated<<CatchClause>>>  => new_catch_clauses(<>),
+        <catch_clause: Repeated<<CatchClause>>>  => new_catch_clauses(<>),
         
     };
     CatchClause: CatchClause = {
-        <_catch_keyword: CatchKeyword>  <_error: (CatchClauseError)?>  <_body: Block>  => new_catch_clause(<>),
+        <catch_keyword: CatchKeyword>  <error: (CatchClauseError)?>  <body: Block>  => new_catch_clause(<>),
         
     };
     CatchClauseError: CatchClauseError = {
-        <_name: (Identifier)?>  <_parameters: ParametersDeclaration>  => new_catch_clause_error(<>),
+        <name: (Identifier)?>  <parameters: ParametersDeclaration>  => new_catch_clause_error(<>),
         
     };
     #[inline]
     RevertStatement: RevertStatement = {
-        <_revert_keyword: RevertKeyword>  <_error: IdentifierPath>  <_arguments: ArgumentsDeclaration>  <_semicolon: Semicolon>  => new_revert_statement(<>),
+        <revert_keyword: RevertKeyword>  <error: IdentifierPath>  <arguments: ArgumentsDeclaration>  <semicolon: Semicolon>  => new_revert_statement(<>),
         
     };
     
@@ -1126,20 +1130,20 @@ ExpressionTrailingBlock: (Expression, Block) = {
 // 5. Finally, expressions have multiple precedence levels and associativity, we handle this explicitely here.
 Expression0<IndexAccessPathRule, NewExpressionRule>: Expression = {
     // The Rule used here is parametric
-    <_IndexAccessPath: IndexAccessPathRule> => new_expression_index_access_path(<>),
+    <index_access_path: IndexAccessPathRule> => new_expression_index_access_path(<>),
     // The Rule used here is parametric
-    <_NewExpression: NewExpressionRule> => new_expression_new_expression(<>),
-    <_TupleExpression: TupleExpression>  => new_expression_tuple_expression(<>),
-    <_TypeExpression: TypeExpression>  => new_expression_type_expression(<>),
-    <_ArrayExpression: ArrayExpression>  => new_expression_array_expression(<>),
-    <_HexNumberExpression: HexNumberExpression>  => new_expression_hex_number_expression(<>),
-    <_DecimalNumberExpression: DecimalNumberExpression>  => new_expression_decimal_number_expression(<>),
-    <_StringExpression: StringExpression>  => new_expression_string_expression(<>),
-    <_PayableKeyword: PayableKeyword>  => new_expression_payable_keyword(<>),
-    <_ThisKeyword: ThisKeyword>  => new_expression_this_keyword(<>),
-    <_SuperKeyword: SuperKeyword>  => new_expression_super_keyword(<>),
-    <_TrueKeyword: TrueKeyword>  => new_expression_true_keyword(<>),
-    <_FalseKeyword: FalseKeyword>  => new_expression_false_keyword(<>),
+    <new_expression: NewExpressionRule> => new_expression_new_expression(<>),
+    <tuple_expression: TupleExpression>  => new_expression_tuple_expression(<>),
+    <type_expression: TypeExpression>  => new_expression_type_expression(<>),
+    <array_expression: ArrayExpression>  => new_expression_array_expression(<>),
+    <hex_number_expression: HexNumberExpression>  => new_expression_hex_number_expression(<>),
+    <decimal_number_expression: DecimalNumberExpression>  => new_expression_decimal_number_expression(<>),
+    <string_expression: StringExpression>  => new_expression_string_expression(<>),
+    <payable_keyword: PayableKeyword>  => new_expression_payable_keyword(<>),
+    <this_keyword: ThisKeyword>  => new_expression_this_keyword(<>),
+    <super_keyword: SuperKeyword>  => new_expression_super_keyword(<>),
+    <true_keyword: TrueKeyword>  => new_expression_true_keyword(<>),
+    <false_keyword: FalseKeyword>  => new_expression_false_keyword(<>),
 };
 
 // An IAP that doesn't match anything
@@ -1150,17 +1154,17 @@ NoIndexAccessPath_Expr: IndexAccessPath = {};
 Expression1<IndexAccessPathRule, NewExpressionRule>: Expression = {
     // When parsing an index acces expression, the sub expression shouldn't trail in an index access path
     // Nor should it trail on a NewExpression
-    <_Expression: Expression1<NoIndexAccessPath_Expr, NoNewExpression>>  <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => new_expression_index_access_expression(new_index_access_expression(<>)),
+    <expression: Expression1<NoIndexAccessPath_Expr, NoNewExpression>>  <open_bracket: OpenBracket>  <start: (Expression)?>  <end: (IndexAccessEnd)?>  <close_bracket: CloseBracket>  => new_expression_index_access_expression(new_index_access_expression(<>)),
     // When parsing a member access expression, the sub expression shouldn't trail in a path
     // Nor should it trail on a NewExpression
-    <_Expression: Expression1<IndexAccessPath<NoIdentPath>, NoNewExpression>>  <_period: Period>  <_member: IdentifierPathElement>  => new_expression_member_access_expression(new_member_access_expression(<>)),
+    <expression: Expression1<IndexAccessPath<NoIdentPath>, NoNewExpression>>  <period: Period>  <member: IdentifierPathElement>  => new_expression_member_access_expression(new_member_access_expression(<>)),
 
     // Both the braces and the arguments declaration serve as markers for disambiguation, therefore
     // resetting the parametric rules.
-    <_Expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>>  <_open_brace: OpenBrace>  <_options: CallOptions>  <_close_brace: CloseBrace>  => new_expression_call_options_expression(new_call_options_expression(<>)),
-    <_Expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>>  <_arguments: ArgumentsDeclaration>  => new_expression_function_call_expression(new_function_call_expression(<>)),
+    <expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>>  <open_brace: OpenBrace>  <options: CallOptions>  <close_brace: CloseBrace>  => new_expression_call_options_expression(new_call_options_expression(<>)),
+    <expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>>  <arguments: ArgumentsDeclaration>  => new_expression_function_call_expression(new_function_call_expression(<>)),
 
-    <Expression: Expression0<IndexAccessPathRule, NewExpressionRule>>  => <>,
+    <expression: Expression0<IndexAccessPathRule, NewExpressionRule>>  => <>,
 };
 
 // A Matcher for an empty NewExpression 
@@ -1168,150 +1172,166 @@ NoNewExpression: NewExpression = {};
 
 // Tail is a rule identifying what comes after the expression, whatever is captured is added to the tuple result
 Expression5<Tail>: (Expression, Tail) = {
-    <_Expression_PrefixExpression_Operator: Expression_PrefixExpression_Operator>  <_Expression: Expression5<Tail>>  => {
-        let (expr, tail) = _Expression;
-        (new_expression_prefix_expression(new_prefix_expression(_Expression_PrefixExpression_Operator, expr)), tail)
+    <expression_prefix_expression_operator: Expression_PrefixExpression_Operator>  <expression: Expression5<Tail>>  => {
+        let (expr, tail) = expression;
+        (new_expression_prefix_expression(new_prefix_expression(expression_prefix_expression_operator, expr)), tail)
     },
     
     // A tail can appear just after a postfix or primary expression
-    <Expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>> <tail: Tail> => {
-        (Expression, tail)
+    <expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>> <tail: Tail> => {
+        (expression, tail)
     },
 };
 Expression6<Tail>: (Expression, Tail) = {
     // This is the only other postfix expression that can overwrite a trailing element
     // Note that the recursive call expects no tail at all
-    <_Expression: Expression6<EmptyTail>>  <_Expression_PostfixExpression_Operator: Expression_PostfixExpression_Operator> <tail: Tail>  => {
-        let (expr, _) = _Expression;
-        (new_expression_postfix_expression(new_postfix_expression(expr, _Expression_PostfixExpression_Operator)), tail)
+    <expression: Expression6<EmptyTail>>  <expression_postfix_expression_operator: Expression_PostfixExpression_Operator> <tail: Tail>  => {
+        // This is monomorphized by LALRPOP, so we can't really fix this
+        #[allow(clippy::ignored_unit_patterns)]
+        let (expr, _) = expression;
+        (new_expression_postfix_expression(new_postfix_expression(expr, expression_postfix_expression_operator)), tail)
     },
     
-    <Expression: Expression5<Tail>>  => <>,
+    <expression: Expression5<Tail>>  => <>,
 };
 Expression7<Tail>: (Expression, Tail) = {
     // Note that only the right recursive rule matches a tail, the left recursive expects no tail
-    <_Expression: Expression6<EmptyTail>>  <_operator: Expression_ExponentiationExpression_Operator>  <_Expression_2: Expression7<Tail>>  => {
-        let (e, _) = _Expression;
-        let (e2, tail) = _Expression_2;
-        (new_expression_exponentiation_expression(new_exponentiation_expression(e, _operator, e2)), tail)
+    <expression: Expression6<EmptyTail>>  <operator: Expression_ExponentiationExpression_Operator>  <expression_2: Expression7<Tail>>  => {
+        #[allow(clippy::ignored_unit_patterns)]
+        let (e, _) = expression;
+        let (e2, tail) = expression_2;
+        (new_expression_exponentiation_expression(new_exponentiation_expression(e, operator, e2)), tail)
     },
     
-    <Expression: Expression6<Tail>>  => <>,
+    <expression: Expression6<Tail>>  => <>,
 };
 Expression8<Tail>: (Expression, Tail) = {
-    <_Expression: Expression8<EmptyTail>>  <_Expression_MultiplicativeExpression_Operator: Expression_MultiplicativeExpression_Operator>  <_Expression_2: Expression7<Tail>>  => {
-        let (e, _) = _Expression;
-        let (e2, tail) = _Expression_2;
-        (new_expression_multiplicative_expression(new_multiplicative_expression(e, _Expression_MultiplicativeExpression_Operator, e2)), tail)
+    <expression: Expression8<EmptyTail>>  <expression_multiplicative_expression_operator: Expression_MultiplicativeExpression_Operator>  <expression_2: Expression7<Tail>>  => {
+        #[allow(clippy::ignored_unit_patterns)]
+        let (e, _) = expression;
+        let (e2, tail) = expression_2;
+        (new_expression_multiplicative_expression(new_multiplicative_expression(e, expression_multiplicative_expression_operator, e2)), tail)
     },
     
-    <Expression: Expression7<Tail>>  => <>,
+    <expression: Expression7<Tail>>  => <>,
 };
 Expression9<Tail>: (Expression, Tail) = {
-    <_Expression: Expression9<EmptyTail>>  <_Expression_AdditiveExpression_Operator: Expression_AdditiveExpression_Operator>  <_Expression_2: Expression8<Tail>>  => {
-        let (e, _) = _Expression;
-        let (e2, tail) = _Expression_2;
-        (new_expression_additive_expression(new_additive_expression(e, _Expression_AdditiveExpression_Operator, e2)), tail)
+    <expression: Expression9<EmptyTail>>  <expression_additive_expression_operator: Expression_AdditiveExpression_Operator>  <expression_2: Expression8<Tail>>  => {
+        #[allow(clippy::ignored_unit_patterns)]
+        let (e, _) = expression;
+        let (e2, tail) = expression_2;
+        (new_expression_additive_expression(new_additive_expression(e, expression_additive_expression_operator, e2)), tail)
     },
     
-    <Expression: Expression8<Tail>>  => <>,
+    <expression: Expression8<Tail>>  => <>,
 };
 Expression10<Tail>: (Expression, Tail) = {
-    <_Expression: Expression10<EmptyTail>>  <_Expression_ShiftExpression_Operator: Expression_ShiftExpression_Operator>  <_Expression_2: Expression9<Tail>>  => {
-        let (e, _) = _Expression;
-        let (e2, tail) = _Expression_2;
-        (new_expression_shift_expression(new_shift_expression(e, _Expression_ShiftExpression_Operator, e2)), tail)
+    <expression: Expression10<EmptyTail>>  <expression_shift_expression_operator: Expression_ShiftExpression_Operator>  <expression_2: Expression9<Tail>>  => {
+        #[allow(clippy::ignored_unit_patterns)]
+        let (e, _) = expression;
+        let (e2, tail) = expression_2;
+        (new_expression_shift_expression(new_shift_expression(e, expression_shift_expression_operator, e2)), tail)
     },
     
-    <Expression: Expression9<Tail>>  => <>,
+    <expression: Expression9<Tail>>  => <>,
 };
 Expression11<Tail>: (Expression, Tail) = {
-    <_Expression: Expression11<EmptyTail>>  <_operator: Ampersand>  <_Expression_2: Expression10<Tail>>  => {
-        let (e, _) = _Expression;
-        let (e2, tail) = _Expression_2;
-        (new_expression_bitwise_and_expression(new_bitwise_and_expression(e, _operator, e2)), tail)
+    <expression: Expression11<EmptyTail>>  <operator: Ampersand>  <expression_2: Expression10<Tail>>  => {
+        #[allow(clippy::ignored_unit_patterns)]
+        let (e, _) = expression;
+        let (e2, tail) = expression_2;
+        (new_expression_bitwise_and_expression(new_bitwise_and_expression(e, operator, e2)), tail)
     },
     
-    <Expression: Expression10<Tail>>  => <>,
+    <expression: Expression10<Tail>>  => <>,
 };
 Expression12<Tail>: (Expression, Tail) = {
-    <_Expression: Expression12<EmptyTail>>  <_operator: Caret>  <_Expression_2: Expression11<Tail>>  => {
-        let (e, _) = _Expression;
-        let (e2, tail) = _Expression_2;
-        (new_expression_bitwise_xor_expression(new_bitwise_xor_expression(e, _operator, e2)), tail)
+    <expression: Expression12<EmptyTail>>  <operator: Caret>  <expression_2: Expression11<Tail>>  => {
+        #[allow(clippy::ignored_unit_patterns)]
+        let (e, _) = expression;
+        let (e2, tail) = expression_2;
+        (new_expression_bitwise_xor_expression(new_bitwise_xor_expression(e, operator, e2)), tail)
     },
     
-    <Expression: Expression11<Tail>>  => <>,
+    <expression: Expression11<Tail>>  => <>,
 };
 Expression13<Tail>: (Expression, Tail) = {
-    <_Expression: Expression13<EmptyTail>>  <_operator: Bar>  <_Expression_2: Expression12<Tail>>  => {
-        let (e, _) = _Expression;
-        let (e2, tail) = _Expression_2;
-        (new_expression_bitwise_or_expression(new_bitwise_or_expression(e, _operator, e2)), tail)
+    <expression: Expression13<EmptyTail>>  <operator: Bar>  <expression_2: Expression12<Tail>>  => {
+        #[allow(clippy::ignored_unit_patterns)]
+        let (e, _) = expression;
+        let (e2, tail) = expression_2;
+        (new_expression_bitwise_or_expression(new_bitwise_or_expression(e, operator, e2)), tail)
     },
     
-    <Expression: Expression12<Tail>>  => <>,
+    <expression: Expression12<Tail>>  => <>,
 };
 Expression14<Tail>: (Expression, Tail) = {
-    <_Expression: Expression14<EmptyTail>>  <_Expression_InequalityExpression_Operator: Expression_InequalityExpression_Operator>  <_Expression_2: Expression13<Tail>>  => {
-        let (e, _) = _Expression;
-        let (e2, tail) = _Expression_2;
-        (new_expression_inequality_expression(new_inequality_expression(e, _Expression_InequalityExpression_Operator, e2)), tail)
+    <expression: Expression14<EmptyTail>>  <expression_inequality_expression_operator: Expression_InequalityExpression_Operator>  <expression_2: Expression13<Tail>>  => {
+        #[allow(clippy::ignored_unit_patterns)]
+        let (e, _) = expression;
+        let (e2, tail) = expression_2;
+        (new_expression_inequality_expression(new_inequality_expression(e, expression_inequality_expression_operator, e2)), tail)
     },
     
-    <Expression: Expression13<Tail>>  => <>,
+    <expression: Expression13<Tail>>  => <>,
 };
 Expression15<Tail>: (Expression, Tail) = {
-    <_Expression: Expression15<EmptyTail>>  <_Expression_EqualityExpression_Operator: Expression_EqualityExpression_Operator>  <_Expression_2: Expression14<Tail>>  => {
-        let (e, _) = _Expression;
-        let (e2, tail) = _Expression_2;
-        (new_expression_equality_expression(new_equality_expression(e, _Expression_EqualityExpression_Operator, e2)), tail)
+    <expression: Expression15<EmptyTail>>  <expression_equality_expression_operator: Expression_EqualityExpression_Operator>  <expression_2: Expression14<Tail>>  => {
+        #[allow(clippy::ignored_unit_patterns)]
+        let (e, _) = expression;
+        let (e2, tail) = expression_2;
+        (new_expression_equality_expression(new_equality_expression(e, expression_equality_expression_operator, e2)), tail)
     },
     
-    <Expression: Expression14<Tail>>  => <>,
+    <expression: Expression14<Tail>>  => <>,
 };
 Expression16<Tail>: (Expression, Tail) = {
-    <_Expression: Expression16<EmptyTail>>  <_operator: AmpersandAmpersand>  <_Expression_2: Expression15<Tail>>  => {
-        let (e, _) = _Expression;
-        let (e2, tail) = _Expression_2;
-        (new_expression_and_expression(new_and_expression(e, _operator, e2)), tail)
+    <expression: Expression16<EmptyTail>>  <operator: AmpersandAmpersand>  <expression_2: Expression15<Tail>>  => {
+        #[allow(clippy::ignored_unit_patterns)]
+        let (e, _) = expression;
+        let (e2, tail) = expression_2;
+        (new_expression_and_expression(new_and_expression(e, operator, e2)), tail)
     },
     
-    <Expression: Expression15<Tail>>  => <>,
+    <expression: Expression15<Tail>>  => <>,
 };
 Expression17<Tail>: (Expression, Tail) = {
-    <_Expression: Expression17<EmptyTail>>  <_operator: BarBar>  <_Expression_2: Expression16<Tail>>  => {
-        let (e, _) = _Expression;
-        let (e2, tail) = _Expression_2;
-        (new_expression_or_expression(new_or_expression(e, _operator, e2)), tail)
+    <expression: Expression17<EmptyTail>>  <operator: BarBar>  <expression_2: Expression16<Tail>>  => {
+        #[allow(clippy::ignored_unit_patterns)]
+        let (e, _) = expression;
+        let (e2, tail) = expression_2;
+        (new_expression_or_expression(new_or_expression(e, operator, e2)), tail)
     },
     
-    <Expression: Expression16<Tail>>  => <>,
+    <expression: Expression16<Tail>>  => <>,
 };
 Expression18<Tail>: (Expression, Tail) = {
-    <_Expression: Expression17<EmptyTail>>  <_question_mark: QuestionMark>  <_true_expression: Expression18<EmptyTail>>  <_colon: Colon>  <_false_expression: Expression18<Tail>>  => {
-        let (cond_expr, _) = _Expression;
-        let (true_expr, _) = _true_expression;
-        let (false_expr, tail) = _false_expression;
-        (new_expression_conditional_expression(new_conditional_expression(cond_expr, _question_mark, true_expr, _colon, false_expr)), tail)
+    <expression: Expression17<EmptyTail>>  <question_mark: QuestionMark>  <true_expression: Expression18<EmptyTail>>  <colon: Colon>  <false_expression: Expression18<Tail>>  => {
+        #[allow(clippy::ignored_unit_patterns)]
+        let (cond_expr, _) = expression;
+        #[allow(clippy::ignored_unit_patterns)]
+        let (true_expr, _) = true_expression;
+        let (false_expr, tail) = false_expression;
+        (new_expression_conditional_expression(new_conditional_expression(cond_expr, question_mark, true_expr, colon, false_expr)), tail)
     },
     
-    <Expression: Expression17<Tail>>  => <>,
+    <expression: Expression17<Tail>>  => <>,
 };
 Expression19<Tail>: (Expression, Tail) = {
-    <_Expression: Expression19<EmptyTail>>  <_Expression_AssignmentExpression_Operator: Expression_AssignmentExpression_Operator>  <_Expression_2: Expression18<Tail>>  => {
-        let (e, _) = _Expression;
-        let (e2, tail) = _Expression_2;
-        (new_expression_assignment_expression(new_assignment_expression(e, _Expression_AssignmentExpression_Operator, e2)), tail)
+    <expression: Expression19<EmptyTail>>  <expression_assignment_expression_operator: Expression_AssignmentExpression_Operator>  <expression_2: Expression18<Tail>>  => {
+        #[allow(clippy::ignored_unit_patterns)]
+        let (e, _) = expression;
+        let (e2, tail) = expression_2;
+        (new_expression_assignment_expression(new_assignment_expression(e, expression_assignment_expression_operator, e2)), tail)
     },
     
-    <Expression: Expression18<Tail>>  => <>,
+    <expression: Expression18<Tail>>  => <>,
 };
 
 // Expression is public
 pub Expression: Expression = {
     // By default, we expect no tail
-    <Expression: Expression19<EmptyTail>>  => Expression.0,
+    <expression: Expression19<EmptyTail>>  => expression.0,
 };
 
 // An empty tail is the default behaviour
@@ -1321,57 +1341,57 @@ EmptyTail: () = {
 
 // The different operators are used like choices, and wrapped accordingly
 Expression_PrefixExpression_Operator: Expression_PrefixExpression_Operator = {
-    <_operator: PlusPlus>  => new_expression_prefix_expression_operator_plus_plus(<>),
-    <_operator: MinusMinus>  => new_expression_prefix_expression_operator_minus_minus(<>),
-    <_operator: Tilde>  => new_expression_prefix_expression_operator_tilde(<>),
-    <_operator: Bang>  => new_expression_prefix_expression_operator_bang(<>),
-    <_operator: Minus>  => new_expression_prefix_expression_operator_minus(<>),
-    <_operator: DeleteKeyword>  => new_expression_prefix_expression_operator_delete_keyword(<>),
+    <operator: PlusPlus>  => new_expression_prefix_expression_operator_plus_plus(<>),
+    <operator: MinusMinus>  => new_expression_prefix_expression_operator_minus_minus(<>),
+    <operator: Tilde>  => new_expression_prefix_expression_operator_tilde(<>),
+    <operator: Bang>  => new_expression_prefix_expression_operator_bang(<>),
+    <operator: Minus>  => new_expression_prefix_expression_operator_minus(<>),
+    <operator: DeleteKeyword>  => new_expression_prefix_expression_operator_delete_keyword(<>),
 };
 Expression_PostfixExpression_Operator: Expression_PostfixExpression_Operator = {
-    <_operator: PlusPlus>  => new_expression_postfix_expression_operator_plus_plus(<>),
-    <_operator: MinusMinus>  => new_expression_postfix_expression_operator_minus_minus(<>),
+    <operator: PlusPlus>  => new_expression_postfix_expression_operator_plus_plus(<>),
+    <operator: MinusMinus>  => new_expression_postfix_expression_operator_minus_minus(<>),
 };
 Expression_ExponentiationExpression_Operator: Expression_ExponentiationExpression_Operator = {
-    <_operator: AsteriskAsterisk>  => new_expression_exponentiation_expression_operator_asterisk_asterisk(<>),
+    <operator: AsteriskAsterisk>  => new_expression_exponentiation_expression_operator_asterisk_asterisk(<>),
 };
 Expression_MultiplicativeExpression_Operator: Expression_MultiplicativeExpression_Operator = {
-    <_operator: Asterisk>  => new_expression_multiplicative_expression_operator_asterisk(<>),
-    <_operator: Slash>  => new_expression_multiplicative_expression_operator_slash(<>),
-    <_operator: Percent>  => new_expression_multiplicative_expression_operator_percent(<>),
+    <operator: Asterisk>  => new_expression_multiplicative_expression_operator_asterisk(<>),
+    <operator: Slash>  => new_expression_multiplicative_expression_operator_slash(<>),
+    <operator: Percent>  => new_expression_multiplicative_expression_operator_percent(<>),
 };
 Expression_AdditiveExpression_Operator: Expression_AdditiveExpression_Operator = {
-    <_operator: Plus>  => new_expression_additive_expression_operator_plus(<>),
-    <_operator: Minus>  => new_expression_additive_expression_operator_minus(<>),
+    <operator: Plus>  => new_expression_additive_expression_operator_plus(<>),
+    <operator: Minus>  => new_expression_additive_expression_operator_minus(<>),
 };
 Expression_ShiftExpression_Operator: Expression_ShiftExpression_Operator = {
-    <_operator: LessThanLessThan>  => new_expression_shift_expression_operator_less_than_less_than(<>),
-    <_operator: GreaterThanGreaterThan>  => new_expression_shift_expression_operator_greater_than_greater_than(<>),
-    <_operator: GreaterThanGreaterThanGreaterThan>  => new_expression_shift_expression_operator_greater_than_greater_than_greater_than(<>),
+    <operator: LessThanLessThan>  => new_expression_shift_expression_operator_less_than_less_than(<>),
+    <operator: GreaterThanGreaterThan>  => new_expression_shift_expression_operator_greater_than_greater_than(<>),
+    <operator: GreaterThanGreaterThanGreaterThan>  => new_expression_shift_expression_operator_greater_than_greater_than_greater_than(<>),
 };
 Expression_InequalityExpression_Operator: Expression_InequalityExpression_Operator = {
-    <_operator: LessThan>  => new_expression_inequality_expression_operator_less_than(<>),
-    <_operator: GreaterThan>  => new_expression_inequality_expression_operator_greater_than(<>),
-    <_operator: LessThanEqual>  => new_expression_inequality_expression_operator_less_than_equal(<>),
-    <_operator: GreaterThanEqual>  => new_expression_inequality_expression_operator_greater_than_equal(<>),
+    <operator: LessThan>  => new_expression_inequality_expression_operator_less_than(<>),
+    <operator: GreaterThan>  => new_expression_inequality_expression_operator_greater_than(<>),
+    <operator: LessThanEqual>  => new_expression_inequality_expression_operator_less_than_equal(<>),
+    <operator: GreaterThanEqual>  => new_expression_inequality_expression_operator_greater_than_equal(<>),
 };
 Expression_EqualityExpression_Operator: Expression_EqualityExpression_Operator = {
-    <_operator: EqualEqual>  => new_expression_equality_expression_operator_equal_equal(<>),
-    <_operator: BangEqual>  => new_expression_equality_expression_operator_bang_equal(<>),
+    <operator: EqualEqual>  => new_expression_equality_expression_operator_equal_equal(<>),
+    <operator: BangEqual>  => new_expression_equality_expression_operator_bang_equal(<>),
 };
 Expression_AssignmentExpression_Operator: Expression_AssignmentExpression_Operator = {
-    <_operator: Equal>  => new_expression_assignment_expression_operator_equal(<>),
-    <_operator: BarEqual>  => new_expression_assignment_expression_operator_bar_equal(<>),
-    <_operator: PlusEqual>  => new_expression_assignment_expression_operator_plus_equal(<>),
-    <_operator: MinusEqual>  => new_expression_assignment_expression_operator_minus_equal(<>),
-    <_operator: CaretEqual>  => new_expression_assignment_expression_operator_caret_equal(<>),
-    <_operator: SlashEqual>  => new_expression_assignment_expression_operator_slash_equal(<>),
-    <_operator: PercentEqual>  => new_expression_assignment_expression_operator_percent_equal(<>),
-    <_operator: AsteriskEqual>  => new_expression_assignment_expression_operator_asterisk_equal(<>),
-    <_operator: AmpersandEqual>  => new_expression_assignment_expression_operator_ampersand_equal(<>),
-    <_operator: LessThanLessThanEqual>  => new_expression_assignment_expression_operator_less_than_less_than_equal(<>),
-    <_operator: GreaterThanGreaterThanEqual>  => new_expression_assignment_expression_operator_greater_than_greater_than_equal(<>),
-    <_operator: GreaterThanGreaterThanGreaterThanEqual>  => new_expression_assignment_expression_operator_greater_than_greater_than_greater_than_equal(<>),
+    <operator: Equal>  => new_expression_assignment_expression_operator_equal(<>),
+    <operator: BarEqual>  => new_expression_assignment_expression_operator_bar_equal(<>),
+    <operator: PlusEqual>  => new_expression_assignment_expression_operator_plus_equal(<>),
+    <operator: MinusEqual>  => new_expression_assignment_expression_operator_minus_equal(<>),
+    <operator: CaretEqual>  => new_expression_assignment_expression_operator_caret_equal(<>),
+    <operator: SlashEqual>  => new_expression_assignment_expression_operator_slash_equal(<>),
+    <operator: PercentEqual>  => new_expression_assignment_expression_operator_percent_equal(<>),
+    <operator: AsteriskEqual>  => new_expression_assignment_expression_operator_asterisk_equal(<>),
+    <operator: AmpersandEqual>  => new_expression_assignment_expression_operator_ampersand_equal(<>),
+    <operator: LessThanLessThanEqual>  => new_expression_assignment_expression_operator_less_than_less_than_equal(<>),
+    <operator: GreaterThanGreaterThanEqual>  => new_expression_assignment_expression_operator_greater_than_greater_than_equal(<>),
+    <operator: GreaterThanGreaterThanGreaterThanEqual>  => new_expression_assignment_expression_operator_greater_than_greater_than_greater_than_equal(<>),
 };
 
 // A rule matching en empty `IdentifierPath`
@@ -1380,59 +1400,59 @@ NoIdentPath: IdentifierPath = {};
 // An Index Access Path that is parametric over the IdentifierPath rule used for member access and index access
 IndexAccessPath<IdentPathRule>: IndexAccessPath = {
     // As before, we usually care about trailing constructs, so the brackets serve as markers to reset the parametric rule
-    <iap: IndexAccessPath<IdentifierPath>> <_open_bracket: OpenBracket>  <_start: (Expression)?>  <_end: (IndexAccessEnd)?>  <_close_bracket: CloseBracket>  => index_access_path_add_index(<>),
+    <iap: IndexAccessPath<IdentifierPath>> <open_bracket: OpenBracket>  <start: (Expression)?>  <end: (IndexAccessEnd)?>  <close_bracket: CloseBracket>  => index_access_path_add_index(<>),
     <IndexAccessPath1<IdentPathRule>>  => <>,
 };
 IndexAccessPath1<IdentPathRule>: IndexAccessPath = {
-    <_Identifier: IdentPathRule> => new_index_access_path_from_identifier_path(<>),
-    <_ElementaryType: ElementaryType>  => new_index_access_path_from_elementary_type(<>),
+    <identifier: IdentPathRule> => new_index_access_path_from_identifier_path(<>),
+    <elementary_type: ElementaryType>  => new_index_access_path_from_elementary_type(<>),
 };
 
     IndexAccessEnd: IndexAccessEnd = {
-        <_colon: Colon>  <_end: (Expression)?>  => new_index_access_end(<>),
+        <colon: Colon>  <end: (Expression)?>  => new_index_access_end(<>),
         
     };
     
 
 // Rules for topic Function Calls
     ArgumentsDeclaration: ArgumentsDeclaration = {
-        <_PositionalArgumentsDeclaration: PositionalArgumentsDeclaration>  => new_arguments_declaration_positional_arguments_declaration(<>),
-        <_NamedArgumentsDeclaration: NamedArgumentsDeclaration>  => new_arguments_declaration_named_arguments_declaration(<>),
+        <positional_arguments_declaration: PositionalArgumentsDeclaration>  => new_arguments_declaration_positional_arguments_declaration(<>),
+        <named_arguments_declaration: NamedArgumentsDeclaration>  => new_arguments_declaration_named_arguments_declaration(<>),
         
     };
     PositionalArgumentsDeclaration: PositionalArgumentsDeclaration = {
-        <_open_paren: OpenParen>  <_arguments: PositionalArguments>  <_close_paren: CloseParen>  => new_positional_arguments_declaration(<>),
+        <open_paren: OpenParen>  <arguments: PositionalArguments>  <close_paren: CloseParen>  => new_positional_arguments_declaration(<>),
         
     };
     PositionalArguments: PositionalArguments = {
-        <_Expression: SeparatedAllowEmpty<Comma, <Expression>>>  => new_positional_arguments(<>),
+        <expression: SeparatedAllowEmpty<Comma, <Expression>>>  => new_positional_arguments(<>),
         
     };
     NamedArgumentsDeclaration: NamedArgumentsDeclaration = {
-        <_open_paren: OpenParen>  <_arguments: NamedArgumentGroup>  <_close_paren: CloseParen>  => new_named_arguments_declaration(<>),
+        <open_paren: OpenParen>  <arguments: NamedArgumentGroup>  <close_paren: CloseParen>  => new_named_arguments_declaration(<>),
         
     };
     NamedArgumentGroup: NamedArgumentGroup = {
-        <_open_brace: OpenBrace>  <_arguments: NamedArguments>  <_close_brace: CloseBrace>  => new_named_argument_group(<>),
+        <open_brace: OpenBrace>  <arguments: NamedArguments>  <close_brace: CloseBrace>  => new_named_argument_group(<>),
         
     };
     NamedArguments: NamedArguments = {
-        <_NamedArgument: SeparatedAllowEmpty<Comma, <NamedArgument>>>  => new_named_arguments(<>),
+        <named_argument: SeparatedAllowEmpty<Comma, <NamedArgument>>>  => new_named_arguments(<>),
         
     };
     CallOptions: CallOptions = {
-        <_NamedArgument: Separated<Comma, <NamedArgument>>>  => new_call_options(<>),
+        <named_argument: Separated<Comma, <NamedArgument>>>  => new_call_options(<>),
         
     };
     NamedArgument: NamedArgument = {
-        <_name: Identifier>  <_colon: Colon>  <_value: Expression>  => new_named_argument(<>),
+        <name: Identifier>  <colon: Colon>  <value: Expression>  => new_named_argument(<>),
         
     };
     
 
 // Rules for topic Primary Expressions
     TypeExpression: TypeExpression = {
-        <_type_keyword: TypeKeyword>  <_open_paren: OpenParen>  <_type_name: TypeName>  <_close_paren: CloseParen>  => new_type_expression(<>),
+        <type_keyword: TypeKeyword>  <open_paren: OpenParen>  <type_name: TypeName>  <close_paren: CloseParen>  => new_type_expression(<>),
         
     };
     
@@ -1443,14 +1463,14 @@ IndexAccessPath1<IdentPathRule>: IndexAccessPath = {
 // We do this to avoid the amibiguity of `try new function () returns (uint) ...`, where the returns clause may be
 // parsed either as part of the function type or as part of a try statement.
 NewExpression: NewExpression = {
-    <_new_keyword: NewKeyword>  <_type_name: TypeName1<NoFunctionType, IndexAccessPath<IdentifierPath>>>  => new_new_expression(<>),
+    <new_keyword: NewKeyword>  <type_name: TypeName1<NoFunctionType, IndexAccessPath<IdentifierPath>>>  => new_new_expression(<>),
     
 };
 
 NoFunctionType: FunctionType = {};
 
     TupleExpression: TupleExpression = {
-        <_open_paren: OpenParen>  <_items: TupleValues>  <_close_paren: CloseParen>  => new_tuple_expression(<>),
+        <open_paren: OpenParen>  <items: TupleValues>  <close_paren: CloseParen>  => new_tuple_expression(<>),
         
     };
     
@@ -1464,25 +1484,25 @@ TupleValues: TupleValues = {
         let elements = vec![new_tuple_value(None); prefix + 1];
         new_tuple_values(elements)
     },
-    <prefix: TuplePrefix> <differentiator: Expression> <_TupleValue: (Comma <Separated<Comma, <TupleValue>>>)?>  => {
+    <prefix: TuplePrefix> <differentiator: Expression> <tuple_value: (Comma <Separated<Comma, <TupleValue>>>)?>  => {
         let mut elements = vec![new_tuple_value(None); prefix];
         elements.push(new_tuple_value(Some(differentiator)));
-        elements.extend(_TupleValue.unwrap_or(vec![]));
+        elements.extend(tuple_value.unwrap_or(vec![]));
         new_tuple_values(elements)
     },
     
 };
 
     TupleValue: TupleValue = {
-        <_expression: (Expression)?>  => new_tuple_value(<>),
+        <expression: (Expression)?>  => new_tuple_value(<>),
         
     };
     ArrayExpression: ArrayExpression = {
-        <_open_bracket: OpenBracket>  <_items: ArrayValues>  <_close_bracket: CloseBracket>  => new_array_expression(<>),
+        <open_bracket: OpenBracket>  <items: ArrayValues>  <close_bracket: CloseBracket>  => new_array_expression(<>),
         
     };
     ArrayValues: ArrayValues = {
-        <_Expression: Separated<Comma, <Expression>>>  => new_array_values(<>),
+        <expression: Separated<Comma, <Expression>>>  => new_array_values(<>),
         
     };
     
@@ -1493,57 +1513,57 @@ TupleValues: TupleValues = {
 // This rule shouldn't be manual, but the node constructor takes an optional argument that is not
 // enabled in 0.8.30, therefore we don't have it automatically generated
 HexNumberExpression: HexNumberExpression = {
-        <_literal: HexLiteral>  => new_hex_number_expression(<>, None),
+        <literal: HexLiteral>  => new_hex_number_expression(<>, None),
 };
     DecimalNumberExpression: DecimalNumberExpression = {
-        <_literal: DecimalLiteral>  <_unit: (NumberUnit)?>  => new_decimal_number_expression(<>),
+        <literal: DecimalLiteral>  <unit: (NumberUnit)?>  => new_decimal_number_expression(<>),
         
     };
     NumberUnit: NumberUnit = {
-        <_WeiKeyword: WeiKeyword>  => new_number_unit_wei_keyword(<>),
-        <_GweiKeyword: GweiKeyword>  => new_number_unit_gwei_keyword(<>),
-        <_EtherKeyword: EtherKeyword>  => new_number_unit_ether_keyword(<>),
-        <_SecondsKeyword: SecondsKeyword>  => new_number_unit_seconds_keyword(<>),
-        <_MinutesKeyword: MinutesKeyword>  => new_number_unit_minutes_keyword(<>),
-        <_HoursKeyword: HoursKeyword>  => new_number_unit_hours_keyword(<>),
-        <_DaysKeyword: DaysKeyword>  => new_number_unit_days_keyword(<>),
-        <_WeeksKeyword: WeeksKeyword>  => new_number_unit_weeks_keyword(<>),
+        <wei_keyword: WeiKeyword>  => new_number_unit_wei_keyword(<>),
+        <gwei_keyword: GweiKeyword>  => new_number_unit_gwei_keyword(<>),
+        <ether_keyword: EtherKeyword>  => new_number_unit_ether_keyword(<>),
+        <seconds_keyword: SecondsKeyword>  => new_number_unit_seconds_keyword(<>),
+        <minutes_keyword: MinutesKeyword>  => new_number_unit_minutes_keyword(<>),
+        <hours_keyword: HoursKeyword>  => new_number_unit_hours_keyword(<>),
+        <days_keyword: DaysKeyword>  => new_number_unit_days_keyword(<>),
+        <weeks_keyword: WeeksKeyword>  => new_number_unit_weeks_keyword(<>),
         
     };
     
 
 // Rules for topic Strings
     StringExpression: StringExpression = {
-        <_StringLiterals: StringLiterals>  => new_string_expression_string_literals(<>),
-        <_HexStringLiterals: HexStringLiterals>  => new_string_expression_hex_string_literals(<>),
-        <_UnicodeStringLiterals: UnicodeStringLiterals>  => new_string_expression_unicode_string_literals(<>),
+        <string_literals: StringLiterals>  => new_string_expression_string_literals(<>),
+        <hex_string_literals: HexStringLiterals>  => new_string_expression_hex_string_literals(<>),
+        <unicode_string_literals: UnicodeStringLiterals>  => new_string_expression_unicode_string_literals(<>),
         
     };
     StringLiterals: StringLiterals = {
-        <_StringLiteral: Repeated<<StringLiteral>>>  => new_string_literals(<>),
+        <string_literal: Repeated<<StringLiteral>>>  => new_string_literals(<>),
         
     };
     StringLiteral: StringLiteral = {
-        <_SingleQuotedStringLiteral: SingleQuotedStringLiteral>  => new_string_literal_single_quoted_string_literal(<>),
-        <_DoubleQuotedStringLiteral: DoubleQuotedStringLiteral>  => new_string_literal_double_quoted_string_literal(<>),
+        <single_quoted_string_literal: SingleQuotedStringLiteral>  => new_string_literal_single_quoted_string_literal(<>),
+        <double_quoted_string_literal: DoubleQuotedStringLiteral>  => new_string_literal_double_quoted_string_literal(<>),
         
     };
     HexStringLiterals: HexStringLiterals = {
-        <_HexStringLiteral: Repeated<<HexStringLiteral>>>  => new_hex_string_literals(<>),
+        <hex_string_literal: Repeated<<HexStringLiteral>>>  => new_hex_string_literals(<>),
         
     };
     HexStringLiteral: HexStringLiteral = {
-        <_SingleQuotedHexStringLiteral: SingleQuotedHexStringLiteral>  => new_hex_string_literal_single_quoted_hex_string_literal(<>),
-        <_DoubleQuotedHexStringLiteral: DoubleQuotedHexStringLiteral>  => new_hex_string_literal_double_quoted_hex_string_literal(<>),
+        <single_quoted_hex_string_literal: SingleQuotedHexStringLiteral>  => new_hex_string_literal_single_quoted_hex_string_literal(<>),
+        <double_quoted_hex_string_literal: DoubleQuotedHexStringLiteral>  => new_hex_string_literal_double_quoted_hex_string_literal(<>),
         
     };
     UnicodeStringLiterals: UnicodeStringLiterals = {
-        <_UnicodeStringLiteral: Repeated<<UnicodeStringLiteral>>>  => new_unicode_string_literals(<>),
+        <unicode_string_literal: Repeated<<UnicodeStringLiteral>>>  => new_unicode_string_literals(<>),
         
     };
     UnicodeStringLiteral: UnicodeStringLiteral = {
-        <_SingleQuotedUnicodeStringLiteral: SingleQuotedUnicodeStringLiteral>  => new_unicode_string_literal_single_quoted_unicode_string_literal(<>),
-        <_DoubleQuotedUnicodeStringLiteral: DoubleQuotedUnicodeStringLiteral>  => new_unicode_string_literal_double_quoted_unicode_string_literal(<>),
+        <single_quoted_unicode_string_literal: SingleQuotedUnicodeStringLiteral>  => new_unicode_string_literal_single_quoted_unicode_string_literal(<>),
+        <double_quoted_unicode_string_literal: DoubleQuotedUnicodeStringLiteral>  => new_unicode_string_literal_double_quoted_unicode_string_literal(<>),
         
     };
     
@@ -1554,29 +1574,29 @@ HexNumberExpression: HexNumberExpression = {
 // We need to force this to differentiate the first element from not being
 // an `AddressKeyword`
 IdentifierPath: IdentifierPath = {
-    <_head: Identifier>  <mut _tail: (IdentifierPathTail)?>  => {
-        match _tail {
+    <head: Identifier>  <tail: (IdentifierPathTail)?>  => {
+        match tail {
             Some(mut tail) => {
-                tail.insert(0, new_identifier_path_element_identifier(_head));
+                tail.insert(0, new_identifier_path_element_identifier(head));
                 new_identifier_path(tail)
             },
-            None => new_identifier_path(vec![new_identifier_path_element_identifier(_head)]),
+            None => new_identifier_path(vec![new_identifier_path_element_identifier(head)]),
         }
     },
     
 };
 IdentifierPathTail: Vec<IdentifierPathElement> = {
-    Period  <_elements: IdentifierPathTailElements>  => <>,
+    Period  <elements: IdentifierPathTailElements>  => <>,
     
 };
 IdentifierPathTailElements: Vec<IdentifierPathElement> = {
-    <_MemberAccessIdentifier: Separated<Period, <IdentifierPathElement>>>  => <>,
+    <member_access_identifier: Separated<Period, <IdentifierPathElement>>>  => <>,
     
 };
 
     IdentifierPathElement: IdentifierPathElement = {
-        <_Identifier: Identifier>  => new_identifier_path_element_identifier(<>),
-        <_AddressKeyword: AddressKeyword>  => new_identifier_path_element_address_keyword(<>),
+        <identifier: Identifier>  => new_identifier_path_element_identifier(<>),
+        <address_keyword: AddressKeyword>  => new_identifier_path_element_address_keyword(<>),
         
     };
     
@@ -1590,147 +1610,147 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
     
     
 YulBlock: YulBlock = {
-    <_open_brace: OpenBrace>  !  <_close_brace: CloseBrace>  => {
-        new_yul_block(_open_brace, new_yul_statements(vec![]), _close_brace)
+    <open_brace: OpenBrace>  !  <close_brace: CloseBrace>  => {
+        new_yul_block(open_brace, new_yul_statements(vec![]), close_brace)
     }
 };
 
     YulStatements: YulStatements = {
-        <_YulStatement: RepeatedAllowEmpty<<YulStatement>>>  => new_yul_statements(<>),
+        <yul_statement: RepeatedAllowEmpty<<YulStatement>>>  => new_yul_statements(<>),
         
     };
     YulStatement: YulStatement = {
-        <_YulBlock: YulBlock>  => new_yul_statement_yul_block(<>),
-        <_YulFunctionDefinition: YulFunctionDefinition>  => new_yul_statement_yul_function_definition(<>),
-        <_YulIfStatement: YulIfStatement>  => new_yul_statement_yul_if_statement(<>),
-        <_YulForStatement: YulForStatement>  => new_yul_statement_yul_for_statement(<>),
-        <_YulSwitchStatement: YulSwitchStatement>  => new_yul_statement_yul_switch_statement(<>),
-        <_YulLeaveStatement: YulLeaveStatement>  => new_yul_statement_yul_leave_statement(<>),
-        <_YulBreakStatement: YulBreakStatement>  => new_yul_statement_yul_break_statement(<>),
-        <_YulContinueStatement: YulContinueStatement>  => new_yul_statement_yul_continue_statement(<>),
-        <_YulVariableAssignmentStatement: YulVariableAssignmentStatement>  => new_yul_statement_yul_variable_assignment_statement(<>),
-        <_YulVariableDeclarationStatement: YulVariableDeclarationStatement>  => new_yul_statement_yul_variable_declaration_statement(<>),
-        <_YulExpression: YulExpression>  => new_yul_statement_yul_expression(<>),
+        <yul_block: YulBlock>  => new_yul_statement_yul_block(<>),
+        <yul_function_definition: YulFunctionDefinition>  => new_yul_statement_yul_function_definition(<>),
+        <yul_if_statement: YulIfStatement>  => new_yul_statement_yul_if_statement(<>),
+        <yul_for_statement: YulForStatement>  => new_yul_statement_yul_for_statement(<>),
+        <yul_switch_statement: YulSwitchStatement>  => new_yul_statement_yul_switch_statement(<>),
+        <yul_leave_statement: YulLeaveStatement>  => new_yul_statement_yul_leave_statement(<>),
+        <yul_break_statement: YulBreakStatement>  => new_yul_statement_yul_break_statement(<>),
+        <yul_continue_statement: YulContinueStatement>  => new_yul_statement_yul_continue_statement(<>),
+        <yul_variable_assignment_statement: YulVariableAssignmentStatement>  => new_yul_statement_yul_variable_assignment_statement(<>),
+        <yul_variable_declaration_statement: YulVariableDeclarationStatement>  => new_yul_statement_yul_variable_declaration_statement(<>),
+        <yul_expression: YulExpression>  => new_yul_statement_yul_expression(<>),
         
     };
     YulFunctionDefinition: YulFunctionDefinition = {
-        <_function_keyword: YulFunctionKeyword>  <_name: YulIdentifier>  <_parameters: YulParametersDeclaration>  <_returns: (YulReturnsDeclaration)?>  <_body: YulBlock>  => new_yul_function_definition(<>),
+        <function_keyword: YulFunctionKeyword>  <name: YulIdentifier>  <parameters: YulParametersDeclaration>  <returns: (YulReturnsDeclaration)?>  <body: YulBlock>  => new_yul_function_definition(<>),
         
     };
     YulParametersDeclaration: YulParametersDeclaration = {
-        <_open_paren: OpenParen>  <_parameters: YulParameters>  <_close_paren: CloseParen>  => new_yul_parameters_declaration(<>),
+        <open_paren: OpenParen>  <parameters: YulParameters>  <close_paren: CloseParen>  => new_yul_parameters_declaration(<>),
         
     };
     YulParameters: YulParameters = {
-        <_YulIdentifier: SeparatedAllowEmpty<Comma, <YulIdentifier>>>  => new_yul_parameters(<>),
+        <yul_identifier: SeparatedAllowEmpty<Comma, <YulIdentifier>>>  => new_yul_parameters(<>),
         
     };
     YulReturnsDeclaration: YulReturnsDeclaration = {
-        <_minus_greater_than: MinusGreaterThan>  <_variables: YulVariableNames>  => new_yul_returns_declaration(<>),
+        <minus_greater_than: MinusGreaterThan>  <variables: YulVariableNames>  => new_yul_returns_declaration(<>),
         
     };
     YulVariableNames: YulVariableNames = {
-        <_YulIdentifier: Separated<Comma, <YulIdentifier>>>  => new_yul_variable_names(<>),
+        <yul_identifier: Separated<Comma, <YulIdentifier>>>  => new_yul_variable_names(<>),
         
     };
     YulVariableDeclarationStatement: YulVariableDeclarationStatement = {
-        <_let_keyword: YulLetKeyword>  <_variables: YulVariableNames>  <_value: (YulVariableDeclarationValue)?>  => new_yul_variable_declaration_statement(<>),
+        <let_keyword: YulLetKeyword>  <variables: YulVariableNames>  <value: (YulVariableDeclarationValue)?>  => new_yul_variable_declaration_statement(<>),
         
     };
     YulVariableDeclarationValue: YulVariableDeclarationValue = {
-        <_assignment: YulAssignmentOperator>  <_expression: YulExpression>  => new_yul_variable_declaration_value(<>),
+        <assignment: YulAssignmentOperator>  <expression: YulExpression>  => new_yul_variable_declaration_value(<>),
         
     };
     YulVariableAssignmentStatement: YulVariableAssignmentStatement = {
-        <_variables: YulPaths>  <_assignment: YulAssignmentOperator>  <_expression: YulExpression>  => new_yul_variable_assignment_statement(<>),
+        <variables: YulPaths>  <assignment: YulAssignmentOperator>  <expression: YulExpression>  => new_yul_variable_assignment_statement(<>),
         
     };
     YulAssignmentOperator: YulAssignmentOperator = {
-        <_ColonEqual: ColonEqual>  => new_yul_assignment_operator_colon_equal(<>),
+        <colon_equal: ColonEqual>  => new_yul_assignment_operator_colon_equal(<>),
         
     };
     YulIfStatement: YulIfStatement = {
-        <_if_keyword: YulIfKeyword>  <_condition: YulExpression>  <_body: YulBlock>  => new_yul_if_statement(<>),
+        <if_keyword: YulIfKeyword>  <condition: YulExpression>  <body: YulBlock>  => new_yul_if_statement(<>),
         
     };
     YulForStatement: YulForStatement = {
-        <_for_keyword: YulForKeyword>  <_initialization: YulBlock>  <_condition: YulExpression>  <_iterator: YulBlock>  <_body: YulBlock>  => new_yul_for_statement(<>),
+        <for_keyword: YulForKeyword>  <initialization: YulBlock>  <condition: YulExpression>  <iterator: YulBlock>  <body: YulBlock>  => new_yul_for_statement(<>),
         
     };
     YulSwitchStatement: YulSwitchStatement = {
-        <_switch_keyword: YulSwitchKeyword>  <_expression: YulExpression>  <_cases: YulSwitchCases>  => new_yul_switch_statement(<>),
+        <switch_keyword: YulSwitchKeyword>  <expression: YulExpression>  <cases: YulSwitchCases>  => new_yul_switch_statement(<>),
         
     };
     YulSwitchCases: YulSwitchCases = {
-        <_YulSwitchCase: Repeated<<YulSwitchCase>>>  => new_yul_switch_cases(<>),
+        <yul_switch_case: Repeated<<YulSwitchCase>>>  => new_yul_switch_cases(<>),
         
     };
     YulSwitchCase: YulSwitchCase = {
-        <_YulDefaultCase: YulDefaultCase>  => new_yul_switch_case_yul_default_case(<>),
-        <_YulValueCase: YulValueCase>  => new_yul_switch_case_yul_value_case(<>),
+        <yul_default_case: YulDefaultCase>  => new_yul_switch_case_yul_default_case(<>),
+        <yul_value_case: YulValueCase>  => new_yul_switch_case_yul_value_case(<>),
         
     };
     YulDefaultCase: YulDefaultCase = {
-        <_default_keyword: YulDefaultKeyword>  <_body: YulBlock>  => new_yul_default_case(<>),
+        <default_keyword: YulDefaultKeyword>  <body: YulBlock>  => new_yul_default_case(<>),
         
     };
     YulValueCase: YulValueCase = {
-        <_case_keyword: YulCaseKeyword>  <_value: YulLiteral>  <_body: YulBlock>  => new_yul_value_case(<>),
+        <case_keyword: YulCaseKeyword>  <value: YulLiteral>  <body: YulBlock>  => new_yul_value_case(<>),
         
     };
     YulLeaveStatement: YulLeaveStatement = {
-        <_leave_keyword: YulLeaveKeyword>  => new_yul_leave_statement(<>),
+        <leave_keyword: YulLeaveKeyword>  => new_yul_leave_statement(<>),
         
     };
     YulBreakStatement: YulBreakStatement = {
-        <_break_keyword: YulBreakKeyword>  => new_yul_break_statement(<>),
+        <break_keyword: YulBreakKeyword>  => new_yul_break_statement(<>),
         
     };
     YulContinueStatement: YulContinueStatement = {
-        <_continue_keyword: YulContinueKeyword>  => new_yul_continue_statement(<>),
+        <continue_keyword: YulContinueKeyword>  => new_yul_continue_statement(<>),
         
     };
     
 
 // Rules for topic Yul Expressions
     YulExpression0: YulExpression = {
-        <_YulLiteral: YulLiteral>  => new_yul_expression_yul_literal(<>),
-        <_YulPath: YulPath>  => new_yul_expression_yul_path(<>),
+        <yul_literal: YulLiteral>  => new_yul_expression_yul_literal(<>),
+        <yul_path: YulPath>  => new_yul_expression_yul_path(<>),
         
     };
     #[inline]
     YulFunctionCallExpression: YulFunctionCallExpression = {
-        <_YulExpression: YulExpression1>  <_open_paren: OpenParen>  <_arguments: YulArguments>  <_close_paren: CloseParen>  => new_yul_function_call_expression(<>),
+        <yul_expression: YulExpression1>  <open_paren: OpenParen>  <arguments: YulArguments>  <close_paren: CloseParen>  => new_yul_function_call_expression(<>),
         
     };
     YulExpression1: YulExpression = {
-        <_YulExpression: YulFunctionCallExpression>  => new_yul_expression_yul_function_call_expression(<>),
-        <YulExpression: YulExpression0>  => <>,
+        <yul_expression: YulFunctionCallExpression>  => new_yul_expression_yul_function_call_expression(<>),
+        <yul_expression: YulExpression0>  => <>,
         
     };
     YulExpression: YulExpression = {
-        <YulExpression: YulExpression1>  => <>,
+        <yul_expression: YulExpression1>  => <>,
         
     };
     YulArguments: YulArguments = {
-        <_YulExpression: SeparatedAllowEmpty<Comma, <YulExpression>>>  => new_yul_arguments(<>),
+        <yul_expression: SeparatedAllowEmpty<Comma, <YulExpression>>>  => new_yul_arguments(<>),
         
     };
     YulPaths: YulPaths = {
-        <_YulPath: Separated<Comma, <YulPath>>>  => new_yul_paths(<>),
+        <yul_path: Separated<Comma, <YulPath>>>  => new_yul_paths(<>),
         
     };
     YulPath: YulPath = {
-        <_YulIdentifier: Separated<Period, <YulIdentifier>>>  => new_yul_path(<>),
+        <yul_identifier: Separated<Period, <YulIdentifier>>>  => new_yul_path(<>),
         
     };
     YulLiteral: YulLiteral = {
-        <_YulTrueKeyword: YulTrueKeyword>  => new_yul_literal_yul_true_keyword(<>),
-        <_YulFalseKeyword: YulFalseKeyword>  => new_yul_literal_yul_false_keyword(<>),
-        <_YulDecimalLiteral: YulDecimalLiteral>  => new_yul_literal_yul_decimal_literal(<>),
-        <_YulHexLiteral: YulHexLiteral>  => new_yul_literal_yul_hex_literal(<>),
-        <_HexStringLiteral: HexStringLiteral>  => new_yul_literal_hex_string_literal(<>),
-        <_StringLiteral: StringLiteral>  => new_yul_literal_string_literal(<>),
+        <yul_true_keyword: YulTrueKeyword>  => new_yul_literal_yul_true_keyword(<>),
+        <yul_false_keyword: YulFalseKeyword>  => new_yul_literal_yul_false_keyword(<>),
+        <yul_decimal_literal: YulDecimalLiteral>  => new_yul_literal_yul_decimal_literal(<>),
+        <yul_hex_literal: YulHexLiteral>  => new_yul_literal_yul_hex_literal(<>),
+        <hex_string_literal: HexStringLiteral>  => new_yul_literal_hex_string_literal(<>),
+        <string_literal: StringLiteral>  => new_yul_literal_string_literal(<>),
         
     };
     
