@@ -88,7 +88,7 @@ Errors: # 2 total
             },
         ),
     ]
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/from_v1/SourceUnit/SourceUnit/state_variable_function/input.generated.sol:6:22]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/from_v1/SourceUnit/SourceUnit/state_variable_function/input/generated/input.sol:6:22]
        │
      6 │     function (uint a) internal internal foo;
        │                      ─────────┬────────  
@@ -96,7 +96,7 @@ Errors: # 2 total
     ───╯
   - >
     Error: Expected 1 elements, but got: []
-       ╭─[crates/solidity-v2/testing/snapshots/cst_output/from_v1/SourceUnit/SourceUnit/state_variable_function/input.generated.sol:6:40]
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/from_v1/SourceUnit/SourceUnit/state_variable_function/input/generated/input.sol:6:40]
        │
      6 │     function (uint a) internal internal foo;
        │                                        │ 
