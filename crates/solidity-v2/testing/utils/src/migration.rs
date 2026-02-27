@@ -36,8 +36,9 @@ pub fn migrate_v1_tests_to_v2(
             [group_name, test_name, "input.sol"] => {
                 let content = file.read_to_string()?;
                 let wrapped = wrap_test_input(group_name, test_name, &content);
-                let output_path =
-                    v2_output_dir.join(format!("{group_name}/{test_name}/input/generated/input.sol"));
+                let output_path = v2_output_dir.join(format!(
+                    "{group_name}/{test_name}/input/generated/input.sol"
+                ));
                 fs.write_file_raw(&output_path, wrapped)?;
 
                 tests
@@ -47,8 +48,9 @@ pub fn migrate_v1_tests_to_v2(
             }
             [group_name, test_name, ".gitattributes"] => {
                 let content = file.read_to_string()?;
-                let output_path =
-                    v2_output_dir.join(format!("{group_name}/{test_name}/input/generated/.gitattributes"));
+                let output_path = v2_output_dir.join(format!(
+                    "{group_name}/{test_name}/input/generated/.gitattributes"
+                ));
                 fs.write_file_raw(&output_path, content)?;
             }
             _ => {
@@ -67,9 +69,7 @@ fn wrap_test_input(group_name: &str, test_name: &str, content: &str) -> String {
     let end_marker = "// <<<";
 
     let group = wrapping_group(group_name);
-    let wrapped = apply_template(group, &begin_marker, end_marker, content);
-
-    wrapped
+    apply_template(group, &begin_marker, end_marker, content)
 }
 
 #[derive(Debug, Clone, Copy)]
