@@ -2,7 +2,7 @@
 mod node_checker;
 
 pub mod testing;
-use node_checker::{NodeChecker, NodeCheckerError};
+pub use node_checker::{NodeChecker, NodeCheckerError};
 use slang_solidity::cst::Cursor;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::text_index::TextRange;

@@ -1,3 +1,4 @@
+use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Write;
 use std::path::Path;
 
@@ -10,8 +11,15 @@ use infra_utils::paths::{FileWalker, PathExtensions};
 /// Each v1 test input is a snippet for a specific nonterminal (e.g., `Expression`, `Block`).
 /// The v2 parser only supports parsing `SourceUnit`, so we wrap each snippet in appropriate
 /// Solidity context.
-pub fn migrate_v1_tests_to_v2(v1_snapshots_dir: &Path, v2_output_dir: &Path) -> Result<()> {
+///
+/// Returns a map of group names to test names, suitable for passing to
+/// `generate_cst_output_test_harness`.
+pub fn migrate_v1_tests_to_v2(
+    v1_snapshots_dir: &Path,
+    v2_output_dir: &Path,
+) -> Result<BTreeMap<String, BTreeSet<String>>> {
     let mut fs = CodegenFileSystem::default();
+    let mut tests = BTreeMap::<String, BTreeSet<String>>::new();
 
     for file in FileWalker::from_directory(v1_snapshots_dir).find_all()? {
         if file.is_generated() {
@@ -30,6 +38,11 @@ pub fn migrate_v1_tests_to_v2(v1_snapshots_dir: &Path, v2_output_dir: &Path) -> 
                 let wrapped = wrap_test_input(group_name, test_name, &content)?;
                 let output_path = v2_output_dir.join(format!("{group_name}/{test_name}/input.sol"));
                 fs.write_file_raw(&output_path, wrapped)?;
+
+                tests
+                    .entry(group_name.to_owned())
+                    .or_default()
+                    .insert(test_name.to_owned());
             }
             [.., ".gitattributes"] => {}
             _ => {
@@ -38,7 +51,7 @@ pub fn migrate_v1_tests_to_v2(v1_snapshots_dir: &Path, v2_output_dir: &Path) -> 
         }
     }
 
-    Ok(())
+    Ok(tests)
 }
 
 fn wrap_test_input(group_name: &str, test_name: &str, content: &str) -> Result<String> {
@@ -141,79 +154,77 @@ fn wrapping_group(group_name: &str) -> WrappingGroup {
     }
 }
 
-// @Claude: This function repeats this too many times:
-// ```
-// writeln!(out, "{begin_marker}").unwrap();
-// write!(out, "{content}").unwrap();
-// writeln!(out, "{end_marker}").unwrap();
-// ```
-// Can you make it better?
+fn write_marked(out: &mut String, begin: &str, end: &str, content: &str) {
+    writeln!(out, "{begin}").unwrap();
+    write!(out, "{content}").unwrap();
+    writeln!(out, "{end}").unwrap();
+}
+
 fn apply_template(
     group: WrappingGroup,
     begin_marker: &str,
     end_marker: &str,
     content: &str,
 ) -> String {
+    // @Claude: Why do we need the trimming here?
     let content_trimmed = content.trim_end();
     let mut out = String::new();
 
     match group {
-        WrappingGroup::None => {
-            writeln!(out, "{begin_marker}").unwrap();
-            write!(out, "{content}").unwrap();
-            writeln!(out, "{end_marker}").unwrap();
-        }
-        WrappingGroup::SourceUnitMember => {
-            writeln!(out, "{begin_marker}").unwrap();
-            write!(out, "{content}").unwrap();
-            writeln!(out, "{end_marker}").unwrap();
+        WrappingGroup::None | WrappingGroup::SourceUnitMember => {
+            write_marked(&mut out, begin_marker, end_marker, content);
         }
         WrappingGroup::ContractMember => {
             writeln!(out, "contract C {{").unwrap();
-            writeln!(out, "{begin_marker}").unwrap();
-            write!(out, "{content}").unwrap();
-            writeln!(out, "{end_marker}").unwrap();
+            write_marked(&mut out, begin_marker, end_marker, content);
             writeln!(out, "}}").unwrap();
         }
         WrappingGroup::Block => {
             writeln!(out, "contract C {{").unwrap();
             writeln!(out, "    function f()").unwrap();
-            writeln!(out, "{begin_marker}").unwrap();
-            write!(out, "{content}").unwrap();
-            writeln!(out, "{end_marker}").unwrap();
+            write_marked(&mut out, begin_marker, end_marker, content);
             writeln!(out, "}}").unwrap();
         }
         WrappingGroup::Statement => {
             writeln!(out, "contract C {{").unwrap();
             writeln!(out, "    function f() {{").unwrap();
-            writeln!(out, "{begin_marker}").unwrap();
-            write!(out, "{content}").unwrap();
-            writeln!(out, "{end_marker}").unwrap();
+            write_marked(&mut out, begin_marker, end_marker, content);
             writeln!(out, "    }}").unwrap();
             writeln!(out, "}}").unwrap();
         }
         WrappingGroup::Expression => {
             writeln!(out, "contract C {{").unwrap();
             writeln!(out, "    function f() {{").unwrap();
-            writeln!(out, "{begin_marker}").unwrap();
-            writeln!(out, "        ({content_trimmed});").unwrap();
-            writeln!(out, "{end_marker}").unwrap();
+            write_marked(
+                &mut out,
+                begin_marker,
+                end_marker,
+                // @Claude: Why do you need parenthesis?
+                &format!("        ({content_trimmed});\n"),
+            );
             writeln!(out, "    }}").unwrap();
             writeln!(out, "}}").unwrap();
         }
         WrappingGroup::TypeName => {
             writeln!(out, "contract C {{").unwrap();
-            writeln!(out, "{begin_marker}").unwrap();
-            writeln!(out, "    {content_trimmed} x;").unwrap();
-            writeln!(out, "{end_marker}").unwrap();
+            write_marked(
+                &mut out,
+                begin_marker,
+                end_marker,
+                // @Claude: I'd like for the code between the markers to be an exact copy of the original. Even if that breaks formatting, could you move the semicolon to after the marker? and any other additions or trimming going on.
+                &format!("    {content_trimmed} x;\n"),
+            );
             writeln!(out, "}}").unwrap();
         }
         WrappingGroup::StringLiteral => {
             writeln!(out, "contract C {{").unwrap();
             writeln!(out, "    function f() {{").unwrap();
-            writeln!(out, "{begin_marker}").unwrap();
-            writeln!(out, "        {content_trimmed};").unwrap();
-            writeln!(out, "{end_marker}").unwrap();
+            write_marked(
+                &mut out,
+                begin_marker,
+                end_marker,
+                &format!("        {content_trimmed};\n"),
+            );
             writeln!(out, "    }}").unwrap();
             writeln!(out, "}}").unwrap();
         }
@@ -221,9 +232,7 @@ fn apply_template(
             writeln!(out, "contract C {{").unwrap();
             writeln!(out, "    function f() {{").unwrap();
             writeln!(out, "        assembly").unwrap();
-            writeln!(out, "{begin_marker}").unwrap();
-            write!(out, "{content}").unwrap();
-            writeln!(out, "{end_marker}").unwrap();
+            write_marked(&mut out, begin_marker, end_marker, content);
             writeln!(out, "    }}").unwrap();
             writeln!(out, "}}").unwrap();
         }
@@ -231,23 +240,27 @@ fn apply_template(
             writeln!(out, "contract C {{").unwrap();
             writeln!(out, "    function f() {{").unwrap();
             writeln!(out, "        assembly {{").unwrap();
-            writeln!(out, "{begin_marker}").unwrap();
-            write!(out, "{content}").unwrap();
-            writeln!(out, "{end_marker}").unwrap();
+            write_marked(&mut out, begin_marker, end_marker, content);
             writeln!(out, "        }}").unwrap();
             writeln!(out, "    }}").unwrap();
             writeln!(out, "}}").unwrap();
         }
         WrappingGroup::VersionPragma => {
-            writeln!(out, "{begin_marker}").unwrap();
-            writeln!(out, "pragma {content_trimmed};").unwrap();
-            writeln!(out, "{end_marker}").unwrap();
+            write_marked(
+                &mut out,
+                begin_marker,
+                end_marker,
+                &format!("pragma {content_trimmed};\n"),
+            );
         }
         WrappingGroup::UsingDeconstructionSymbol => {
             writeln!(out, "using {{").unwrap();
-            writeln!(out, "{begin_marker}").unwrap();
-            writeln!(out, "    {content_trimmed}").unwrap();
-            writeln!(out, "{end_marker}").unwrap();
+            write_marked(
+                &mut out,
+                begin_marker,
+                end_marker,
+                &format!("    {content_trimmed}\n"),
+            );
             writeln!(out, "}} for uint;").unwrap();
         }
     }

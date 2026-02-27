@@ -116,14 +116,15 @@ fn generate_solidity_v2_tests() -> Result<()> {
     let tests_crate = CargoWorkspace::locate_source_crate("solidity_v2_cargo_tests")?;
 
     // Step 1: Migrate v1 tests to v2 format
-    solidity_v2_testing_utils::migration::migrate_v1_tests_to_v2(
+    let tests = solidity_v2_testing_utils::migration::migrate_v1_tests_to_v2(
         &v1_snapshots.join("cst_output"),
         &v2_snapshots.join("cst_output/generated/from_v1/SourceUnit"),
     )?;
 
-    // Step 2: Generate test harness from migrated snapshots
-    codegen_testing::cst_output::generate_cst_output_tests_for_generated_inputs(
-        &v2_snapshots.join("cst_output/generated/from_v1/SourceUnit"),
+    // Step 2: Generate test harness from migrated tests
+    codegen_testing::cst_output::generate_cst_output_test_harness(
+        "crate::cst::cst_output::runner",
+        &tests,
         &tests_crate.join("src/cst/cst_output/generated"),
     )?;
 
