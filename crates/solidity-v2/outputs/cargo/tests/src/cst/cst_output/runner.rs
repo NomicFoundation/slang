@@ -21,7 +21,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
         .join(parser_name)
         .join(test_name);
 
-    let input_path = test_dir.join("input.generated.sol");
+    let input_path = test_dir.join("input/generated/input.sol");
     let source_id = input_path.strip_repo_root()?.unwrap_str().to_owned();
     let source = input_path.read_to_string()?;
 

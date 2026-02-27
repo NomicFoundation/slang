@@ -6,7 +6,7 @@ use anyhow::{bail, Result};
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::{FileWalker, PathExtensions};
 
-/// Migrates v1 test inputs to v2 format by wrapping them in valid SourceUnit boilerplate.
+/// Migrates v1 test inputs to v2 format by wrapping them in valid `SourceUnit` boilerplate.
 ///
 /// Each v1 test input is a snippet for a specific nonterminal (e.g., `Expression`, `Block`).
 /// The v2 parser only supports parsing `SourceUnit`, so we wrap each snippet in appropriate
@@ -35,8 +35,9 @@ pub fn migrate_v1_tests_to_v2(
         match parts[..] {
             [group_name, test_name, "input.sol"] => {
                 let content = file.read_to_string()?;
-                let wrapped = wrap_test_input(group_name, test_name, &content)?;
-                let output_path = v2_output_dir.join(format!("{group_name}/{test_name}/input.generated.sol"));
+                let wrapped = wrap_test_input(group_name, test_name, &content);
+                let output_path =
+                    v2_output_dir.join(format!("{group_name}/{test_name}/input/generated/input.sol"));
                 fs.write_file_raw(&output_path, wrapped)?;
 
                 tests
@@ -44,7 +45,12 @@ pub fn migrate_v1_tests_to_v2(
                     .or_default()
                     .insert(test_name.to_owned());
             }
-            [.., ".gitattributes"] => {}
+            [group_name, test_name, ".gitattributes"] => {
+                let content = file.read_to_string()?;
+                let output_path =
+                    v2_output_dir.join(format!("{group_name}/{test_name}/input/generated/.gitattributes"));
+                fs.write_file_raw(&output_path, content)?;
+            }
             _ => {
                 bail!("Unexpected file in v1 snapshots: {file:?}");
             }
@@ -54,7 +60,7 @@ pub fn migrate_v1_tests_to_v2(
     Ok(tests)
 }
 
-fn wrap_test_input(group_name: &str, test_name: &str, content: &str) -> Result<String> {
+fn wrap_test_input(group_name: &str, test_name: &str, content: &str) -> String {
     let begin_marker = format!(
         "// >>> Copied from crates/solidity/testing/snapshots/cst_output/{group_name}/{test_name}/input.sol"
     );
@@ -63,7 +69,7 @@ fn wrap_test_input(group_name: &str, test_name: &str, content: &str) -> Result<S
     let group = wrapping_group(group_name);
     let wrapped = apply_template(group, &begin_marker, end_marker, content);
 
-    Ok(wrapped)
+    wrapped
 }
 
 #[derive(Debug, Clone, Copy)]
