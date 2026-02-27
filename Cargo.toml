@@ -55,6 +55,8 @@ members = [
     "crates/solidity-v2/outputs/cargo/common",
     "crates/solidity-v2/outputs/cargo/parser",
     "crates/solidity-v2/testing/utils",
+    "crates/solidity-v2/testing/snapshots",
+    "crates/solidity-v2/outputs/cargo/tests",
 ]
 
 [workspace.dependencies]
@@ -109,6 +111,8 @@ slang_solidity_v2_cst = { path = "crates/solidity-v2/outputs/cargo/cst", version
 slang_solidity_v2_common = { path = "crates/solidity-v2/outputs/cargo/common", version = "1.3.3" }
 slang_solidity_v2_parser = { path = "crates/solidity-v2/outputs/cargo/parser", version = "1.3.3" }
 solidity_v2_testing_utils = { path = "crates/solidity-v2/testing/utils", version = "1.3.3" }
+solidity_v2_testing_snapshots = { path = "crates/solidity-v2/testing/snapshots", version = "1.3.3" }
+solidity_v2_cargo_tests = { path = "crates/solidity-v2/outputs/cargo/tests", version = "1.3.3" }
 
 #
 # External

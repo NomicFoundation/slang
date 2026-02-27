@@ -1,0 +1,76 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ImportDirective(
+                ImportDirectiveStruct {
+                    import_keyword: ImportKeyword {
+                        range: 213..219,
+                    },
+                    clause: ImportDeconstruction(
+                        ImportDeconstructionStruct {
+                            open_brace: OpenBrace {
+                                range: 220..221,
+                            },
+                            symbols: ImportDeconstructionSymbols {
+                                elements: [
+                                    ImportDeconstructionSymbolStruct {
+                                        name: Identifier {
+                                            range: 222..224,
+                                        },
+                                        alias: Some(
+                                            ImportAliasStruct {
+                                                as_keyword: AsKeyword {
+                                                    range: 225..227,
+                                                },
+                                                identifier: Identifier {
+                                                    range: 228..230,
+                                                },
+                                            },
+                                        ),
+                                    },
+                                    ImportDeconstructionSymbolStruct {
+                                        name: Identifier {
+                                            range: 232..234,
+                                        },
+                                        alias: None,
+                                    },
+                                    ImportDeconstructionSymbolStruct {
+                                        name: Identifier {
+                                            range: 236..238,
+                                        },
+                                        alias: Some(
+                                            ImportAliasStruct {
+                                                as_keyword: AsKeyword {
+                                                    range: 239..241,
+                                                },
+                                                identifier: Identifier {
+                                                    range: 242..244,
+                                                },
+                                            },
+                                        ),
+                                    },
+                                ],
+                            },
+                            close_brace: CloseBrace {
+                                range: 245..246,
+                            },
+                            from_keyword: FromKeyword {
+                                range: 247..251,
+                            },
+                            path: DoubleQuotedStringLiteral(
+                                DoubleQuotedStringLiteral {
+                                    range: 252..257,
+                                },
+                            ),
+                        },
+                    ),
+                    semicolon: Semicolon {
+                        range: 257..258,
+                    },
+                },
+            ),
+        ],
+    },
+}

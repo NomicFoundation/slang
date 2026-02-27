@@ -1,0 +1,28 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ImportDirective(
+                ImportDirectiveStruct {
+                    import_keyword: ImportKeyword {
+                        range: 197..203,
+                    },
+                    clause: PathImport(
+                        PathImportStruct {
+                            path: DoubleQuotedStringLiteral(
+                                DoubleQuotedStringLiteral {
+                                    range: 204..209,
+                                },
+                            ),
+                            alias: None,
+                        },
+                    ),
+                    semicolon: Semicolon {
+                        range: 209..210,
+                    },
+                },
+            ),
+        ],
+    },
+}

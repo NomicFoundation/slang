@@ -1,0 +1,281 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            LibraryDefinition(
+                LibraryDefinitionStruct {
+                    library_keyword: LibraryKeyword {
+                        range: 197..204,
+                    },
+                    name: Identifier {
+                        range: 205..213,
+                    },
+                    open_brace: OpenBrace {
+                        range: 214..215,
+                    },
+                    members: LibraryMembers {
+                        elements: [
+                            FunctionDefinition(
+                                FunctionDefinitionStruct {
+                                    function_keyword: FunctionKeyword {
+                                        range: 218..226,
+                                    },
+                                    name: Identifier(
+                                        Identifier {
+                                            range: 227..233,
+                                        },
+                                    ),
+                                    parameters: ParametersDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            range: 233..234,
+                                        },
+                                        parameters: Parameters {
+                                            elements: [],
+                                        },
+                                        close_paren: CloseParen {
+                                            range: 234..235,
+                                        },
+                                    },
+                                    attributes: FunctionAttributes {
+                                        elements: [
+                                            InternalKeyword(
+                                                InternalKeyword {
+                                                    range: 236..244,
+                                                },
+                                            ),
+                                            PureKeyword(
+                                                PureKeyword {
+                                                    range: 245..249,
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                    returns: None,
+                                    body: Block(
+                                        BlockStruct {
+                                            open_brace: OpenBrace {
+                                                range: 251..252,
+                                            },
+                                            statements: Statements {
+                                                elements: [
+                                                    ExpressionStatement(
+                                                        ExpressionStatementStruct {
+                                                            expression: FunctionCallExpression(
+                                                                FunctionCallExpressionStruct {
+                                                                    operand: Identifier(
+                                                                        Identifier {
+                                                                            range: 258..264,
+                                                                        },
+                                                                    ),
+                                                                    arguments: PositionalArgumentsDeclaration(
+                                                                        PositionalArgumentsDeclarationStruct {
+                                                                            open_paren: OpenParen {
+                                                                                range: 265..266,
+                                                                            },
+                                                                            arguments: PositionalArguments {
+                                                                                elements: [
+                                                                                    DecimalNumberExpression(
+                                                                                        DecimalNumberExpressionStruct {
+                                                                                            literal: DecimalLiteral {
+                                                                                                range: 266..267,
+                                                                                            },
+                                                                                            unit: None,
+                                                                                        },
+                                                                                    ),
+                                                                                    DecimalNumberExpression(
+                                                                                        DecimalNumberExpressionStruct {
+                                                                                            literal: DecimalLiteral {
+                                                                                                range: 269..270,
+                                                                                            },
+                                                                                            unit: None,
+                                                                                        },
+                                                                                    ),
+                                                                                ],
+                                                                            },
+                                                                            close_paren: CloseParen {
+                                                                                range: 270..271,
+                                                                            },
+                                                                        },
+                                                                    ),
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 271..272,
+                                                            },
+                                                        },
+                                                    ),
+                                                    RevertStatement(
+                                                        RevertStatementStruct {
+                                                            revert_keyword: RevertKeyword {
+                                                                range: 278..284,
+                                                            },
+                                                            error: IdentifierPath {
+                                                                elements: [
+                                                                    Identifier(
+                                                                        Identifier {
+                                                                            range: 285..292,
+                                                                        },
+                                                                    ),
+                                                                ],
+                                                            },
+                                                            arguments: PositionalArgumentsDeclaration(
+                                                                PositionalArgumentsDeclarationStruct {
+                                                                    open_paren: OpenParen {
+                                                                        range: 292..293,
+                                                                    },
+                                                                    arguments: PositionalArguments {
+                                                                        elements: [
+                                                                            DecimalNumberExpression(
+                                                                                DecimalNumberExpressionStruct {
+                                                                                    literal: DecimalLiteral {
+                                                                                        range: 293..294,
+                                                                                    },
+                                                                                    unit: None,
+                                                                                },
+                                                                            ),
+                                                                            DecimalNumberExpression(
+                                                                                DecimalNumberExpressionStruct {
+                                                                                    literal: DecimalLiteral {
+                                                                                        range: 296..297,
+                                                                                    },
+                                                                                    unit: None,
+                                                                                },
+                                                                            ),
+                                                                        ],
+                                                                    },
+                                                                    close_paren: CloseParen {
+                                                                        range: 297..298,
+                                                                    },
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 298..299,
+                                                            },
+                                                        },
+                                                    ),
+                                                    VariableDeclarationStatement(
+                                                        VariableDeclarationStatementStruct {
+                                                            target: SingleTypedDeclaration(
+                                                                SingleTypedDeclarationStruct {
+                                                                    declaration: VariableDeclarationStruct {
+                                                                        type_name: IdentifierPath(
+                                                                            IdentifierPath {
+                                                                                elements: [
+                                                                                    Identifier(
+                                                                                        Identifier {
+                                                                                            range: 358..364,
+                                                                                        },
+                                                                                    ),
+                                                                                ],
+                                                                            },
+                                                                        ),
+                                                                        storage_location: None,
+                                                                        name: Identifier {
+                                                                            range: 365..368,
+                                                                        },
+                                                                    },
+                                                                    value: None,
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 368..369,
+                                                            },
+                                                        },
+                                                    ),
+                                                    VariableDeclarationStatement(
+                                                        VariableDeclarationStatementStruct {
+                                                            target: SingleTypedDeclaration(
+                                                                SingleTypedDeclarationStruct {
+                                                                    declaration: VariableDeclarationStruct {
+                                                                        type_name: IdentifierPath(
+                                                                            IdentifierPath {
+                                                                                elements: [
+                                                                                    Identifier(
+                                                                                        Identifier {
+                                                                                            range: 374..380,
+                                                                                        },
+                                                                                    ),
+                                                                                ],
+                                                                            },
+                                                                        ),
+                                                                        storage_location: None,
+                                                                        name: Identifier {
+                                                                            range: 381..384,
+                                                                        },
+                                                                    },
+                                                                    value: Some(
+                                                                        VariableDeclarationValueStruct {
+                                                                            equal: Equal {
+                                                                                range: 385..386,
+                                                                            },
+                                                                            expression: DecimalNumberExpression(
+                                                                                DecimalNumberExpressionStruct {
+                                                                                    literal: DecimalLiteral {
+                                                                                        range: 387..389,
+                                                                                    },
+                                                                                    unit: None,
+                                                                                },
+                                                                            ),
+                                                                        },
+                                                                    ),
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 389..390,
+                                                            },
+                                                        },
+                                                    ),
+                                                    VariableDeclarationStatement(
+                                                        VariableDeclarationStatementStruct {
+                                                            target: SingleTypedDeclaration(
+                                                                SingleTypedDeclarationStruct {
+                                                                    declaration: VariableDeclarationStruct {
+                                                                        type_name: IdentifierPath(
+                                                                            IdentifierPath {
+                                                                                elements: [
+                                                                                    Identifier(
+                                                                                        Identifier {
+                                                                                            range: 395..401,
+                                                                                        },
+                                                                                    ),
+                                                                                    Identifier(
+                                                                                        Identifier {
+                                                                                            range: 402..407,
+                                                                                        },
+                                                                                    ),
+                                                                                ],
+                                                                            },
+                                                                        ),
+                                                                        storage_location: None,
+                                                                        name: Identifier {
+                                                                            range: 408..411,
+                                                                        },
+                                                                    },
+                                                                    value: None,
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 411..412,
+                                                            },
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                            close_brace: CloseBrace {
+                                                range: 415..416,
+                                            },
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 417..418,
+                    },
+                },
+            ),
+        ],
+    },
+}

@@ -1,0 +1,127 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            FunctionDefinition(
+                FunctionDefinitionStruct {
+                    function_keyword: FunctionKeyword {
+                        range: 212..220,
+                    },
+                    name: Identifier(
+                        Identifier {
+                            range: 221..233,
+                        },
+                    ),
+                    parameters: ParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            range: 233..234,
+                        },
+                        parameters: Parameters {
+                            elements: [
+                                ParameterStruct {
+                                    type_name: ElementaryType(
+                                        AddressType(
+                                            AddressTypeStruct {
+                                                address_keyword: AddressKeyword {
+                                                    range: 234..241,
+                                                },
+                                                payable_keyword: None,
+                                            },
+                                        ),
+                                    ),
+                                    storage_location: None,
+                                    name: Some(
+                                        Identifier {
+                                            range: 242..246,
+                                        },
+                                    ),
+                                },
+                                ParameterStruct {
+                                    type_name: ElementaryType(
+                                        AddressType(
+                                            AddressTypeStruct {
+                                                address_keyword: AddressKeyword {
+                                                    range: 248..255,
+                                                },
+                                                payable_keyword: None,
+                                            },
+                                        ),
+                                    ),
+                                    storage_location: None,
+                                    name: Some(
+                                        Identifier {
+                                            range: 256..258,
+                                        },
+                                    ),
+                                },
+                                ParameterStruct {
+                                    type_name: ElementaryType(
+                                        UintKeyword(
+                                            UintKeyword {
+                                                range: 260..267,
+                                            },
+                                        ),
+                                    ),
+                                    storage_location: None,
+                                    name: Some(
+                                        Identifier {
+                                            range: 268..274,
+                                        },
+                                    ),
+                                },
+                            ],
+                        },
+                        close_paren: CloseParen {
+                            range: 274..275,
+                        },
+                    },
+                    attributes: FunctionAttributes {
+                        elements: [
+                            ExternalKeyword(
+                                ExternalKeyword {
+                                    range: 276..284,
+                                },
+                            ),
+                        ],
+                    },
+                    returns: Some(
+                        ReturnsDeclarationStruct {
+                            returns_keyword: ReturnsKeyword {
+                                range: 285..292,
+                            },
+                            variables: ParametersDeclarationStruct {
+                                open_paren: OpenParen {
+                                    range: 293..294,
+                                },
+                                parameters: Parameters {
+                                    elements: [
+                                        ParameterStruct {
+                                            type_name: ElementaryType(
+                                                BoolKeyword(
+                                                    BoolKeyword {
+                                                        range: 294..298,
+                                                    },
+                                                ),
+                                            ),
+                                            storage_location: None,
+                                            name: None,
+                                        },
+                                    ],
+                                },
+                                close_paren: CloseParen {
+                                    range: 298..299,
+                                },
+                            },
+                        },
+                    ),
+                    body: Semicolon(
+                        Semicolon {
+                            range: 299..300,
+                        },
+                    ),
+                },
+            ),
+        ],
+    },
+}

@@ -1,0 +1,9 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Error: Unexpected UNRECOGNIZED. One of IsKeyword_Reserved, LayoutKeyword_Unreserved, OpenBrace was expected
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/from_v1/SourceUnit/SourceUnit/unrecognized_lexeme_after_contract/input/generated/input.sol:4:12]
+   │
+ 4 │ contract X # { }
+   │            ┬  
+   │            ╰── Error occurred here.
+───╯

@@ -1,0 +1,93 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            EventDefinition(
+                EventDefinitionStruct {
+                    event_keyword: EventKeyword {
+                        range: 194..199,
+                    },
+                    name: Identifier {
+                        range: 200..208,
+                    },
+                    parameters: EventParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            range: 208..209,
+                        },
+                        parameters: EventParameters {
+                            elements: [
+                                EventParameterStruct {
+                                    type_name: ElementaryType(
+                                        AddressType(
+                                            AddressTypeStruct {
+                                                address_keyword: AddressKeyword {
+                                                    range: 209..216,
+                                                },
+                                                payable_keyword: None,
+                                            },
+                                        ),
+                                    ),
+                                    indexed_keyword: Some(
+                                        IndexedKeyword {
+                                            range: 217..224,
+                                        },
+                                    ),
+                                    name: Some(
+                                        Identifier {
+                                            range: 225..229,
+                                        },
+                                    ),
+                                },
+                                EventParameterStruct {
+                                    type_name: ElementaryType(
+                                        AddressType(
+                                            AddressTypeStruct {
+                                                address_keyword: AddressKeyword {
+                                                    range: 231..238,
+                                                },
+                                                payable_keyword: None,
+                                            },
+                                        ),
+                                    ),
+                                    indexed_keyword: Some(
+                                        IndexedKeyword {
+                                            range: 239..246,
+                                        },
+                                    ),
+                                    name: Some(
+                                        Identifier {
+                                            range: 247..249,
+                                        },
+                                    ),
+                                },
+                                EventParameterStruct {
+                                    type_name: ElementaryType(
+                                        UintKeyword(
+                                            UintKeyword {
+                                                range: 251..258,
+                                            },
+                                        ),
+                                    ),
+                                    indexed_keyword: None,
+                                    name: Some(
+                                        Identifier {
+                                            range: 259..264,
+                                        },
+                                    ),
+                                },
+                            ],
+                        },
+                        close_paren: CloseParen {
+                            range: 264..265,
+                        },
+                    },
+                    anonymous_keyword: None,
+                    semicolon: Semicolon {
+                        range: 265..266,
+                    },
+                },
+            ),
+        ],
+    },
+}

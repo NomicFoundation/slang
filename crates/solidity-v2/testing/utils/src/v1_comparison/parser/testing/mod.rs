@@ -1,4 +1,4 @@
-use std::fmt::{Debug, Write};
+use std::fmt::Write;
 use std::path::Path;
 use std::rc::Rc;
 
@@ -8,84 +8,22 @@ use semver::Version;
 use slang_solidity::cst::Node;
 use slang_solidity::parser::ParseOutput;
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_cst::structured_cst::nodes::{ContractDefinition, Expression, SourceUnit};
-use slang_solidity_v2_parser::{
-    ContractDefinitionParser, ExpressionParser, Parser as ParserV2, ParserError, SourceUnitParser,
-};
+use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit;
+use slang_solidity_v2_parser::{ParserError, SourceUnitParser};
 
 use super::node_checker::{NodeChecker, NodeCheckerError};
 
 /// A Tester for V2 parser that compares against V1 outputs.
 ///
 /// It generates snapshots for V2 outputs and diffs against V1 outputs.
-pub trait V2Tester {
-    fn test_next(
-        &mut self,
-        test_dir: &Path,
-        fs: &mut CodegenFileSystem,
-        source_id: &str,
-        source: &str,
-        version: &Version,
-        v1_output: &ParseOutput,
-    ) -> Result<()>;
-}
-
-pub struct V2TesterConstructor;
-
-impl V2TesterConstructor {
-    /// Return a new `V2Tester` instance for the given parser name.
-    ///
-    /// Only `SourceUnit`, `Expression`, and `ContractDefinition` are supported for now.
-    pub fn new_tester(parser_name: &str) -> Box<dyn V2Tester> {
-        match parser_name {
-            "SourceUnit" => Box::new(V2TesterImpl::<SourceUnit, SourceUnitParser>::new()),
-            "Expression" => Box::new(V2TesterImpl::<Expression, ExpressionParser>::new()),
-            "ContractDefinition" => {
-                Box::new(V2TesterImpl::<ContractDefinition, ContractDefinitionParser>::new())
-            }
-            // TODO(v2): We should consolidate all tests to the supported non terminals
-            _ => Box::new(NonSupportedParserTester),
-        }
-    }
-}
-
-/// A dummy tester that does nothing, used for unsupported parsers.
-struct NonSupportedParserTester;
-
-impl V2Tester for NonSupportedParserTester {
-    fn test_next(
-        &mut self,
-        _test_dir: &Path,
-        _fs: &mut CodegenFileSystem,
-        _source_id: &str,
-        _source: &str,
-        _version: &Version,
-        _v1_output: &ParseOutput,
-    ) -> Result<()> {
-        Ok(())
-    }
-}
-
-struct V2TesterImpl<NT, T: ParserV2<NonTerminal = NT>> {
-    last_output: Option<Result<NT, ParserError>>,
+#[derive(Default)]
+pub struct V2Tester {
+    last_output: Option<Result<SourceUnit, ParserError>>,
     last_diff: Option<(bool, Option<String>, String)>,
-    phantom: std::marker::PhantomData<T>,
 }
 
-impl<NT, T: ParserV2<NonTerminal = NT>> V2TesterImpl<NT, T> {
-    pub fn new() -> Self {
-        Self {
-            last_output: None,
-            last_diff: None,
-            phantom: std::marker::PhantomData,
-        }
-    }
-}
-
-impl<NT: NodeChecker + Debug + PartialEq, T: ParserV2<NonTerminal = NT>> V2Tester
-    for V2TesterImpl<NT, T>
-{
-    fn test_next(
+impl V2Tester {
+    pub fn test_next(
         &mut self,
         test_dir: &Path,
         fs: &mut CodegenFileSystem,
@@ -105,7 +43,7 @@ impl<NT: NodeChecker + Debug + PartialEq, T: ParserV2<NonTerminal = NT>> V2Teste
         let lang_version = LanguageVersion::try_from(version.clone())
             .unwrap_or_else(|_| panic!("Unsupported version: {version}"));
 
-        let v2_output: Result<NT, _> = T::parse(source, lang_version);
+        let v2_output = SourceUnitParser::parse(source, lang_version);
 
         let v2_output = match self.last_output {
             // Skip this version if it produces the same output.
@@ -167,12 +105,10 @@ impl<NT: NodeChecker + Debug + PartialEq, T: ParserV2<NonTerminal = NT>> V2Teste
 
         Ok(())
     }
-}
 
-impl<NT: NodeChecker + Debug + PartialEq, T: ParserV2<NonTerminal = NT>> V2TesterImpl<NT, T> {
     fn diff_report(
         v1_output: &ParseOutput,
-        v2_output: &Result<NT, ParserError>,
+        v2_output: &Result<SourceUnit, ParserError>,
         source_id: &str,
         source: &str,
     ) -> (bool, Option<String>, String) {
@@ -191,7 +127,7 @@ impl<NT: NodeChecker + Debug + PartialEq, T: ParserV2<NonTerminal = NT>> V2Teste
                             "V2 parser produced the same output as V1 output.".to_string(),
                         )
                     } else {
-                        let errors = write_errors(&checked, source_id, source);
+                        let errors = Self::write_errors(&checked, source_id, source);
 
                         // TODO(v2): This is forced not to panic since some tests in V1 produce different outputs,
                         // in particular `state_variable_function`
@@ -224,22 +160,24 @@ impl<NT: NodeChecker + Debug + PartialEq, T: ParserV2<NonTerminal = NT>> V2Teste
             }
         }
     }
-}
 
-fn write_errors(errors: &Vec<NodeCheckerError>, source_id: &str, source: &str) -> String {
-    if errors.is_empty() {
-        return String::new();
-    }
-
-    let mut s = String::new();
-    writeln!(s, "Errors: # {count} total", count = errors.len()).unwrap();
-
-    for error in errors {
-        writeln!(s, "  - >").unwrap();
-        for line in crate::reporting::diagnostic::render(error, source_id, source, false).lines() {
-            writeln!(s, "    {line}").unwrap();
+    fn write_errors(errors: &Vec<NodeCheckerError>, source_id: &str, source: &str) -> String {
+        if errors.is_empty() {
+            return String::new();
         }
-    }
 
-    s
+        let mut s = String::new();
+        writeln!(s, "Errors: # {count} total", count = errors.len()).unwrap();
+
+        for error in errors {
+            writeln!(s, "  - >").unwrap();
+            for line in
+                crate::reporting::diagnostic::render(error, source_id, source, false).lines()
+            {
+                writeln!(s, "    {line}").unwrap();
+            }
+        }
+
+        s
+    }
 }

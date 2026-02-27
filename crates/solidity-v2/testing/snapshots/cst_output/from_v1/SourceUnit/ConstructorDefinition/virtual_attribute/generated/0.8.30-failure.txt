@@ -1,0 +1,9 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Error: Unexpected VirtualKeyword_Reserved. One of AtKeyword_Unreserved, ErrorKeyword_Unreserved, FinneyKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, InternalKeyword_Reserved, LayoutKeyword_Unreserved, OpenBrace, PayableKeyword_Reserved, PublicKeyword_Reserved, RevertKeyword_Unreserved, SzaboKeyword_Unreserved, TransientKeyword_Unreserved was expected
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/from_v1/SourceUnit/ConstructorDefinition/virtual_attribute/input/generated/input.sol:5:16]
+   │
+ 5 │ constructor () virtual {}
+   │                ───┬───  
+   │                   ╰───── Error occurred here.
+───╯

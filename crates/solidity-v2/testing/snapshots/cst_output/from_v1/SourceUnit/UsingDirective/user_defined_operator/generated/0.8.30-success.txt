@@ -1,0 +1,76 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            UsingDirective(
+                UsingDirectiveStruct {
+                    using_keyword: UsingKeyword {
+                        range: 206..211,
+                    },
+                    clause: UsingDeconstruction(
+                        UsingDeconstructionStruct {
+                            open_brace: OpenBrace {
+                                range: 212..213,
+                            },
+                            symbols: UsingDeconstructionSymbols {
+                                elements: [
+                                    UsingDeconstructionSymbolStruct {
+                                        name: IdentifierPath {
+                                            elements: [
+                                                Identifier(
+                                                    Identifier {
+                                                        range: 213..216,
+                                                    },
+                                                ),
+                                            ],
+                                        },
+                                        alias: Some(
+                                            UsingAliasStruct {
+                                                as_keyword: AsKeyword {
+                                                    range: 217..219,
+                                                },
+                                                operator: Slash(
+                                                    Slash {
+                                                        range: 220..221,
+                                                    },
+                                                ),
+                                            },
+                                        ),
+                                    },
+                                ],
+                            },
+                            close_brace: CloseBrace {
+                                range: 221..222,
+                            },
+                        },
+                    ),
+                    for_keyword: ForKeyword {
+                        range: 223..226,
+                    },
+                    target: TypeName(
+                        IdentifierPath(
+                            IdentifierPath {
+                                elements: [
+                                    Identifier(
+                                        Identifier {
+                                            range: 227..230,
+                                        },
+                                    ),
+                                ],
+                            },
+                        ),
+                    ),
+                    global_keyword: Some(
+                        GlobalKeyword {
+                            range: 231..237,
+                        },
+                    ),
+                    semicolon: Semicolon {
+                        range: 237..238,
+                    },
+                },
+            ),
+        ],
+    },
+}

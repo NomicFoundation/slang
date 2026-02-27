@@ -1,0 +1,9 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Error: Unexpected CloseParen. One of Semicolon was expected
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/from_v1/SourceUnit/Statements/recovery_ignore_multiple_empty_matches/input/generated/input.sol:6:8]
+   │
+ 6 │ for(int)
+   │        ┬  
+   │        ╰── Error occurred here.
+───╯

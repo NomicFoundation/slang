@@ -1,0 +1,9 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Error: Unexpected ThrowKeyword_Reserved. One of AtKeyword_Unreserved, ErrorKeyword_Unreserved, FinneyKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, LayoutKeyword_Unreserved, RevertKeyword_Unreserved, SzaboKeyword_Unreserved, TransientKeyword_Unreserved was expected
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/from_v1/SourceUnit/TupleDeconstructionStatement/invalid_termination/input/generated/input.sol:8:3]
+   │
+ 8 │ { throw;
+   │   ──┬──  
+   │     ╰──── Error occurred here.
+───╯

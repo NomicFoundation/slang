@@ -1998,14 +1998,14 @@ PragmaDirective: PragmaDirective = {
                                         members = Required(ContractMembers),
                                         close_brace = Required(CloseBrace)
                                     ),
-                                    parser_options = ParserOptions(inline = false, public = true, verbatim = "
+                                    parser_options = ParserOptions(inline = false, public = false, verbatim = "
 // Contracts are syntactically complex (for an LR parser) since the storage layout specifier
 // has a trailing expression, which can have a trailing option call (`{ ... }`), which conflicts
 // with the contract members block.
 //
 // In order to solve this we use a trailing expression that captures both the expression and the members,
 // and then extract the members from it.
-pub ContractDefinition: ContractDefinition = {
+ContractDefinition: ContractDefinition = {
     // If no specifiers are present, we simply capture the members directly
     <_abstract_keyword: (AbstractKeyword)?>  <_contract_keyword: ContractKeyword>  <_name: Identifier>  <_open_brace: OpenBrace>  <_members: ContractMembers>  <_close_brace: CloseBrace>  => {
         new_contract_definition(_abstract_keyword, _contract_keyword, _name, new_contract_specifiers(vec![]), _open_brace, _members, _close_brace)
@@ -3914,7 +3914,7 @@ ExpressionTrailingBlock: (Expression, Block) = {
                                     ],
                                     parser_options = ParserOptions(
                                         inline = false,
-                                        public = true,
+                                        public = false,
                                         verbatim = r#"
 // Expression has a lot of tricky cases:
 // 1. There's conflicts with `TypeName`, for example `a.b[c]` can be either a member access over an identifier path, or
@@ -4127,7 +4127,7 @@ Expression19<Tail>: (Expression, Tail) = {
 };
 
 // Expression is public
-pub Expression: Expression = {
+Expression: Expression = {
     // By default, we expect no tail
     <Expression: Expression19<EmptyTail>>  => Expression.0,
 };
@@ -4318,7 +4318,7 @@ IndexAccessPath1<IdentPathRule>: IndexAccessPath = {
                                     ),
                                     parser_options = ParserOptions(
                                         inline = false,
-                                        public = true,
+                                        public = false,
                                         verbatim = r#"
 // We avoid function types entirely in new expressions, this is ok since they're not allowed
 // in Solidity, but the error will be syntactic rather than semantic, which may be confusing.

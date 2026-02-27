@@ -1,0 +1,123 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            UsingDirective(
+                UsingDirectiveStruct {
+                    using_keyword: UsingKeyword {
+                        range: 205..210,
+                    },
+                    clause: UsingDeconstruction(
+                        UsingDeconstructionStruct {
+                            open_brace: OpenBrace {
+                                range: 211..212,
+                            },
+                            symbols: UsingDeconstructionSymbols {
+                                elements: [
+                                    UsingDeconstructionSymbolStruct {
+                                        name: IdentifierPath {
+                                            elements: [
+                                                Identifier(
+                                                    Identifier {
+                                                        range: 212..215,
+                                                    },
+                                                ),
+                                            ],
+                                        },
+                                        alias: Some(
+                                            UsingAliasStruct {
+                                                as_keyword: AsKeyword {
+                                                    range: 216..218,
+                                                },
+                                                operator: Plus(
+                                                    Plus {
+                                                        range: 219..220,
+                                                    },
+                                                ),
+                                            },
+                                        ),
+                                    },
+                                    UsingDeconstructionSymbolStruct {
+                                        name: IdentifierPath {
+                                            elements: [
+                                                Identifier(
+                                                    Identifier {
+                                                        range: 222..225,
+                                                    },
+                                                ),
+                                            ],
+                                        },
+                                        alias: None,
+                                    },
+                                    UsingDeconstructionSymbolStruct {
+                                        name: IdentifierPath {
+                                            elements: [
+                                                Identifier(
+                                                    Identifier {
+                                                        range: 227..230,
+                                                    },
+                                                ),
+                                            ],
+                                        },
+                                        alias: None,
+                                    },
+                                    UsingDeconstructionSymbolStruct {
+                                        name: IdentifierPath {
+                                            elements: [
+                                                Identifier(
+                                                    Identifier {
+                                                        range: 232..235,
+                                                    },
+                                                ),
+                                            ],
+                                        },
+                                        alias: Some(
+                                            UsingAliasStruct {
+                                                as_keyword: AsKeyword {
+                                                    range: 236..238,
+                                                },
+                                                operator: Slash(
+                                                    Slash {
+                                                        range: 239..240,
+                                                    },
+                                                ),
+                                            },
+                                        ),
+                                    },
+                                ],
+                            },
+                            close_brace: CloseBrace {
+                                range: 240..241,
+                            },
+                        },
+                    ),
+                    for_keyword: ForKeyword {
+                        range: 242..245,
+                    },
+                    target: TypeName(
+                        IdentifierPath(
+                            IdentifierPath {
+                                elements: [
+                                    Identifier(
+                                        Identifier {
+                                            range: 246..249,
+                                        },
+                                    ),
+                                ],
+                            },
+                        ),
+                    ),
+                    global_keyword: Some(
+                        GlobalKeyword {
+                            range: 250..256,
+                        },
+                    ),
+                    semicolon: Semicolon {
+                        range: 256..257,
+                    },
+                },
+            ),
+        ],
+    },
+}

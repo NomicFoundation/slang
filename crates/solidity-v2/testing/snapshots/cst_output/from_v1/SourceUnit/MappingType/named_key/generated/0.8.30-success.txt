@@ -1,0 +1,86 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 95..103,
+                    },
+                    name: Identifier {
+                        range: 104..105,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 106..107,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            StateVariableDefinition(
+                                StateVariableDefinitionStruct {
+                                    type_name: MappingType(
+                                        MappingTypeStruct {
+                                            mapping_keyword: MappingKeyword {
+                                                range: 204..211,
+                                            },
+                                            open_paren: OpenParen {
+                                                range: 211..212,
+                                            },
+                                            key_type: MappingKeyStruct {
+                                                key_type: ElementaryType(
+                                                    StringKeyword(
+                                                        StringKeyword {
+                                                            range: 212..218,
+                                                        },
+                                                    ),
+                                                ),
+                                                name: Some(
+                                                    Identifier {
+                                                        range: 219..222,
+                                                    },
+                                                ),
+                                            },
+                                            equal_greater_than: EqualGreaterThan {
+                                                range: 223..225,
+                                            },
+                                            value_type: MappingValueStruct {
+                                                type_name: ElementaryType(
+                                                    BytesKeyword(
+                                                        BytesKeyword {
+                                                            range: 226..233,
+                                                        },
+                                                    ),
+                                                ),
+                                                name: None,
+                                            },
+                                            close_paren: CloseParen {
+                                                range: 233..234,
+                                            },
+                                        },
+                                    ),
+                                    attributes: StateVariableAttributes {
+                                        elements: [],
+                                    },
+                                    name: Identifier {
+                                        range: 242..243,
+                                    },
+                                    value: None,
+                                    semicolon: Semicolon {
+                                        range: 243..244,
+                                    },
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 245..246,
+                    },
+                },
+            ),
+        ],
+    },
+}

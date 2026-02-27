@@ -7,6 +7,4 @@ mod parser;
 #[cfg(feature = "__private_testing_utils")]
 pub use lexer::{ContextKind, Lexer};
 pub use parser::parser_error::ParserError;
-#[cfg(feature = "__private_testing_utils")]
-pub use parser::{ContractDefinitionParser, ExpressionParser};
-pub use parser::{Parser, SourceUnitParser};
+pub use parser::SourceUnitParser;

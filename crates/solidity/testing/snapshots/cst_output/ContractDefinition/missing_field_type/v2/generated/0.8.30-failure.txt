@@ -1,9 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-Error: Unexpected Semicolon. One of AtKeyword_Unreserved, ConstantKeyword_Reserved, ErrorKeyword_Unreserved, FinneyKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, ImmutableKeyword_Reserved, InternalKeyword_Reserved, LayoutKeyword_Unreserved, OpenBracket, OverrideKeyword_Reserved, Period, PrivateKeyword_Reserved, PublicKeyword_Reserved, RevertKeyword_Unreserved, SzaboKeyword_Unreserved, TransientKeyword_Unreserved was expected
-   ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/missing_field_type/input.sol:2:8]
-   │
- 2 │   field;
-   │        ┬  
-   │        ╰── Error occurred here.
-───╯

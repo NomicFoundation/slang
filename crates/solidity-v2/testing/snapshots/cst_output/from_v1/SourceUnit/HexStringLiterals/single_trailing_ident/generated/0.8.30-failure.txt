@@ -1,0 +1,9 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Error: Unexpected Identifier. One of Ampersand, AmpersandAmpersand, AmpersandEqual, Asterisk, AsteriskAsterisk, AsteriskEqual, BangEqual, Bar, BarBar, BarEqual, Caret, CaretEqual, DoubleQuotedHexStringLiteral, Equal, EqualEqual, GreaterThan, GreaterThanEqual, GreaterThanGreaterThan, GreaterThanGreaterThanEqual, GreaterThanGreaterThanGreaterThan, GreaterThanGreaterThanGreaterThanEqual, LessThan, LessThanEqual, LessThanLessThan, LessThanLessThanEqual, Minus, MinusEqual, MinusMinus, OpenBrace, OpenBracket, OpenParen, Percent, PercentEqual, Period, Plus, PlusEqual, PlusPlus, QuestionMark, Semicolon, SingleQuotedHexStringLiteral, Slash, SlashEqual was expected
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/from_v1/SourceUnit/HexStringLiterals/single_trailing_ident/input/generated/input.sol:6:8]
+   │
+ 6 │ hex"12"b
+   │        ┬  
+   │        ╰── Error occurred here.
+───╯

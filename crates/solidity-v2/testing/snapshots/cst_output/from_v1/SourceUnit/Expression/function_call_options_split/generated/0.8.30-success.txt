@@ -1,0 +1,188 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 95..103,
+                    },
+                    name: Identifier {
+                        range: 104..105,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 106..107,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            FunctionDefinition(
+                                FunctionDefinitionStruct {
+                                    function_keyword: FunctionKeyword {
+                                        range: 112..120,
+                                    },
+                                    name: Identifier(
+                                        Identifier {
+                                            range: 121..122,
+                                        },
+                                    ),
+                                    parameters: ParametersDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            range: 122..123,
+                                        },
+                                        parameters: Parameters {
+                                            elements: [],
+                                        },
+                                        close_paren: CloseParen {
+                                            range: 123..124,
+                                        },
+                                    },
+                                    attributes: FunctionAttributes {
+                                        elements: [],
+                                    },
+                                    returns: None,
+                                    body: Block(
+                                        BlockStruct {
+                                            open_brace: OpenBrace {
+                                                range: 125..126,
+                                            },
+                                            statements: Statements {
+                                                elements: [
+                                                    ExpressionStatement(
+                                                        ExpressionStatementStruct {
+                                                            expression: FunctionCallExpression(
+                                                                FunctionCallExpressionStruct {
+                                                                    operand: CallOptionsExpression(
+                                                                        CallOptionsExpressionStruct {
+                                                                            operand: CallOptionsExpression(
+                                                                                CallOptionsExpressionStruct {
+                                                                                    operand: MemberAccessExpression(
+                                                                                        MemberAccessExpressionStruct {
+                                                                                            operand: Identifier(
+                                                                                                Identifier {
+                                                                                                    range: 240..241,
+                                                                                                },
+                                                                                            ),
+                                                                                            period: Period {
+                                                                                                range: 0..0,
+                                                                                            },
+                                                                                            member: Identifier(
+                                                                                                Identifier {
+                                                                                                    range: 242..243,
+                                                                                                },
+                                                                                            ),
+                                                                                        },
+                                                                                    ),
+                                                                                    open_brace: OpenBrace {
+                                                                                        range: 243..244,
+                                                                                    },
+                                                                                    options: CallOptions {
+                                                                                        elements: [
+                                                                                            NamedArgumentStruct {
+                                                                                                name: Identifier {
+                                                                                                    range: 244..249,
+                                                                                                },
+                                                                                                colon: Colon {
+                                                                                                    range: 249..250,
+                                                                                                },
+                                                                                                value: DecimalNumberExpression(
+                                                                                                    DecimalNumberExpressionStruct {
+                                                                                                        literal: DecimalLiteral {
+                                                                                                            range: 251..252,
+                                                                                                        },
+                                                                                                        unit: None,
+                                                                                                    },
+                                                                                                ),
+                                                                                            },
+                                                                                        ],
+                                                                                    },
+                                                                                    close_brace: CloseBrace {
+                                                                                        range: 252..253,
+                                                                                    },
+                                                                                },
+                                                                            ),
+                                                                            open_brace: OpenBrace {
+                                                                                range: 253..254,
+                                                                            },
+                                                                            options: CallOptions {
+                                                                                elements: [
+                                                                                    NamedArgumentStruct {
+                                                                                        name: Identifier {
+                                                                                            range: 254..257,
+                                                                                        },
+                                                                                        colon: Colon {
+                                                                                            range: 257..258,
+                                                                                        },
+                                                                                        value: DecimalNumberExpression(
+                                                                                            DecimalNumberExpressionStruct {
+                                                                                                literal: DecimalLiteral {
+                                                                                                    range: 259..260,
+                                                                                                },
+                                                                                                unit: None,
+                                                                                            },
+                                                                                        ),
+                                                                                    },
+                                                                                ],
+                                                                            },
+                                                                            close_brace: CloseBrace {
+                                                                                range: 260..261,
+                                                                            },
+                                                                        },
+                                                                    ),
+                                                                    arguments: PositionalArgumentsDeclaration(
+                                                                        PositionalArgumentsDeclarationStruct {
+                                                                            open_paren: OpenParen {
+                                                                                range: 261..262,
+                                                                            },
+                                                                            arguments: PositionalArguments {
+                                                                                elements: [
+                                                                                    StringExpression(
+                                                                                        StringLiterals(
+                                                                                            StringLiterals {
+                                                                                                elements: [
+                                                                                                    DoubleQuotedStringLiteral(
+                                                                                                        DoubleQuotedStringLiteral {
+                                                                                                            range: 262..264,
+                                                                                                        },
+                                                                                                    ),
+                                                                                                ],
+                                                                                            },
+                                                                                        ),
+                                                                                    ),
+                                                                                ],
+                                                                            },
+                                                                            close_paren: CloseParen {
+                                                                                range: 264..265,
+                                                                            },
+                                                                        },
+                                                                    ),
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 273..274,
+                                                            },
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                            close_brace: CloseBrace {
+                                                range: 279..280,
+                                            },
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 281..282,
+                    },
+                },
+            ),
+        ],
+    },
+}

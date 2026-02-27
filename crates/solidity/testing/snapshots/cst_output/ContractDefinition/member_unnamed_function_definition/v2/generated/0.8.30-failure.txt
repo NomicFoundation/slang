@@ -1,9 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-Error: Unexpected OpenBrace. One of AtKeyword_Unreserved, ErrorKeyword_Unreserved, ExternalKeyword_Reserved, FinneyKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, ImmutableKeyword_Reserved, InternalKeyword_Reserved, LayoutKeyword_Unreserved, OpenBracket, OverrideKeyword_Reserved, PayableKeyword_Reserved, PrivateKeyword_Reserved, PublicKeyword_Reserved, PureKeyword_Reserved, ReturnsKeyword_Reserved, RevertKeyword_Unreserved, SzaboKeyword_Unreserved, TransientKeyword_Unreserved, ViewKeyword_Reserved was expected
-   ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_unnamed_function_definition/input.sol:2:15]
-   │
- 2 │   function () {
-   │               ┬  
-   │               ╰── Error occurred here.
-───╯

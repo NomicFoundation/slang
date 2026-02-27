@@ -1,0 +1,327 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            LibraryDefinition(
+                LibraryDefinitionStruct {
+                    library_keyword: LibraryKeyword {
+                        range: 211..218,
+                    },
+                    name: Identifier {
+                        range: 219..227,
+                    },
+                    open_brace: OpenBrace {
+                        range: 228..229,
+                    },
+                    members: LibraryMembers {
+                        elements: [
+                            FunctionDefinition(
+                                FunctionDefinitionStruct {
+                                    function_keyword: FunctionKeyword {
+                                        range: 232..240,
+                                    },
+                                    name: Identifier(
+                                        Identifier {
+                                            range: 241..247,
+                                        },
+                                    ),
+                                    parameters: ParametersDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            range: 247..248,
+                                        },
+                                        parameters: Parameters {
+                                            elements: [],
+                                        },
+                                        close_paren: CloseParen {
+                                            range: 248..249,
+                                        },
+                                    },
+                                    attributes: FunctionAttributes {
+                                        elements: [
+                                            InternalKeyword(
+                                                InternalKeyword {
+                                                    range: 250..258,
+                                                },
+                                            ),
+                                            PureKeyword(
+                                                PureKeyword {
+                                                    range: 259..263,
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                    returns: None,
+                                    body: Block(
+                                        BlockStruct {
+                                            open_brace: OpenBrace {
+                                                range: 265..266,
+                                            },
+                                            statements: Statements {
+                                                elements: [
+                                                    VariableDeclarationStatement(
+                                                        VariableDeclarationStatementStruct {
+                                                            target: MultiTypedDeclaration(
+                                                                MultiTypedDeclarationStruct {
+                                                                    open_paren: OpenParen {
+                                                                        range: 271..272,
+                                                                    },
+                                                                    elements: MultiTypedDeclarationElements {
+                                                                        elements: [
+                                                                            MultiTypedDeclarationElementStruct {
+                                                                                member: None,
+                                                                            },
+                                                                            MultiTypedDeclarationElementStruct {
+                                                                                member: Some(
+                                                                                    VariableDeclarationStruct {
+                                                                                        type_name: ElementaryType(
+                                                                                            BoolKeyword(
+                                                                                                BoolKeyword {
+                                                                                                    range: 274..278,
+                                                                                                },
+                                                                                            ),
+                                                                                        ),
+                                                                                        storage_location: None,
+                                                                                        name: Identifier {
+                                                                                            range: 279..280,
+                                                                                        },
+                                                                                    },
+                                                                                ),
+                                                                            },
+                                                                            MultiTypedDeclarationElementStruct {
+                                                                                member: None,
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                    close_paren: CloseParen {
+                                                                        range: 282..283,
+                                                                    },
+                                                                    value: VariableDeclarationValueStruct {
+                                                                        equal: Equal {
+                                                                            range: 284..285,
+                                                                        },
+                                                                        expression: Identifier(
+                                                                            Identifier {
+                                                                                range: 286..289,
+                                                                            },
+                                                                        ),
+                                                                    },
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 289..290,
+                                                            },
+                                                        },
+                                                    ),
+                                                    VariableDeclarationStatement(
+                                                        VariableDeclarationStatementStruct {
+                                                            target: MultiTypedDeclaration(
+                                                                MultiTypedDeclarationStruct {
+                                                                    open_paren: OpenParen {
+                                                                        range: 295..296,
+                                                                    },
+                                                                    elements: MultiTypedDeclarationElements {
+                                                                        elements: [
+                                                                            MultiTypedDeclarationElementStruct {
+                                                                                member: Some(
+                                                                                    VariableDeclarationStruct {
+                                                                                        type_name: ElementaryType(
+                                                                                            BoolKeyword(
+                                                                                                BoolKeyword {
+                                                                                                    range: 296..300,
+                                                                                                },
+                                                                                            ),
+                                                                                        ),
+                                                                                        storage_location: None,
+                                                                                        name: Identifier {
+                                                                                            range: 301..302,
+                                                                                        },
+                                                                                    },
+                                                                                ),
+                                                                            },
+                                                                            MultiTypedDeclarationElementStruct {
+                                                                                member: Some(
+                                                                                    VariableDeclarationStruct {
+                                                                                        type_name: ElementaryType(
+                                                                                            UintKeyword(
+                                                                                                UintKeyword {
+                                                                                                    range: 304..308,
+                                                                                                },
+                                                                                            ),
+                                                                                        ),
+                                                                                        storage_location: None,
+                                                                                        name: Identifier {
+                                                                                            range: 309..310,
+                                                                                        },
+                                                                                    },
+                                                                                ),
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                    close_paren: CloseParen {
+                                                                        range: 310..311,
+                                                                    },
+                                                                    value: VariableDeclarationValueStruct {
+                                                                        equal: Equal {
+                                                                            range: 312..313,
+                                                                        },
+                                                                        expression: Identifier(
+                                                                            Identifier {
+                                                                                range: 314..317,
+                                                                            },
+                                                                        ),
+                                                                    },
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 317..318,
+                                                            },
+                                                        },
+                                                    ),
+                                                    VariableDeclarationStatement(
+                                                        VariableDeclarationStatementStruct {
+                                                            target: MultiTypedDeclaration(
+                                                                MultiTypedDeclarationStruct {
+                                                                    open_paren: OpenParen {
+                                                                        range: 323..324,
+                                                                    },
+                                                                    elements: MultiTypedDeclarationElements {
+                                                                        elements: [
+                                                                            MultiTypedDeclarationElementStruct {
+                                                                                member: Some(
+                                                                                    VariableDeclarationStruct {
+                                                                                        type_name: ElementaryType(
+                                                                                            UintKeyword(
+                                                                                                UintKeyword {
+                                                                                                    range: 324..328,
+                                                                                                },
+                                                                                            ),
+                                                                                        ),
+                                                                                        storage_location: None,
+                                                                                        name: Identifier {
+                                                                                            range: 329..330,
+                                                                                        },
+                                                                                    },
+                                                                                ),
+                                                                            },
+                                                                            MultiTypedDeclarationElementStruct {
+                                                                                member: None,
+                                                                            },
+                                                                            MultiTypedDeclarationElementStruct {
+                                                                                member: Some(
+                                                                                    VariableDeclarationStruct {
+                                                                                        type_name: ElementaryType(
+                                                                                            UintKeyword(
+                                                                                                UintKeyword {
+                                                                                                    range: 334..338,
+                                                                                                },
+                                                                                            ),
+                                                                                        ),
+                                                                                        storage_location: None,
+                                                                                        name: Identifier {
+                                                                                            range: 339..340,
+                                                                                        },
+                                                                                    },
+                                                                                ),
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                    close_paren: CloseParen {
+                                                                        range: 340..341,
+                                                                    },
+                                                                    value: VariableDeclarationValueStruct {
+                                                                        equal: Equal {
+                                                                            range: 342..343,
+                                                                        },
+                                                                        expression: Identifier(
+                                                                            Identifier {
+                                                                                range: 344..347,
+                                                                            },
+                                                                        ),
+                                                                    },
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 347..348,
+                                                            },
+                                                        },
+                                                    ),
+                                                    VariableDeclarationStatement(
+                                                        VariableDeclarationStatementStruct {
+                                                            target: MultiTypedDeclaration(
+                                                                MultiTypedDeclarationStruct {
+                                                                    open_paren: OpenParen {
+                                                                        range: 353..354,
+                                                                    },
+                                                                    elements: MultiTypedDeclarationElements {
+                                                                        elements: [
+                                                                            MultiTypedDeclarationElementStruct {
+                                                                                member: None,
+                                                                            },
+                                                                            MultiTypedDeclarationElementStruct {
+                                                                                member: None,
+                                                                            },
+                                                                            MultiTypedDeclarationElementStruct {
+                                                                                member: None,
+                                                                            },
+                                                                            MultiTypedDeclarationElementStruct {
+                                                                                member: None,
+                                                                            },
+                                                                            MultiTypedDeclarationElementStruct {
+                                                                                member: Some(
+                                                                                    VariableDeclarationStruct {
+                                                                                        type_name: ElementaryType(
+                                                                                            BoolKeyword(
+                                                                                                BoolKeyword {
+                                                                                                    range: 358..362,
+                                                                                                },
+                                                                                            ),
+                                                                                        ),
+                                                                                        storage_location: None,
+                                                                                        name: Identifier {
+                                                                                            range: 363..364,
+                                                                                        },
+                                                                                    },
+                                                                                ),
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                    close_paren: CloseParen {
+                                                                        range: 364..365,
+                                                                    },
+                                                                    value: VariableDeclarationValueStruct {
+                                                                        equal: Equal {
+                                                                            range: 366..367,
+                                                                        },
+                                                                        expression: Identifier(
+                                                                            Identifier {
+                                                                                range: 368..371,
+                                                                            },
+                                                                        ),
+                                                                    },
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 371..372,
+                                                            },
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                            close_brace: CloseBrace {
+                                                range: 375..376,
+                                            },
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 377..378,
+                    },
+                },
+            ),
+        ],
+    },
+}

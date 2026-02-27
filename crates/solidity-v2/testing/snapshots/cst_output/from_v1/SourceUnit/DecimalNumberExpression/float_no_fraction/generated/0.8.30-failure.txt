@@ -1,0 +1,9 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Error: Unexpected Semicolon. One of AddressKeyword_Reserved, AtKeyword_Unreserved, ErrorKeyword_Unreserved, FinneyKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, LayoutKeyword_Unreserved, RevertKeyword_Unreserved, SzaboKeyword_Unreserved, TransientKeyword_Unreserved was expected
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/from_v1/SourceUnit/DecimalNumberExpression/float_no_fraction/input/generated/input.sol:8:1]
+   │
+ 8 │ ;
+   │ ┬  
+   │ ╰── Error occurred here.
+───╯

@@ -1,6 +1,6 @@
 use lalrpop_util::lalrpop_mod;
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_cst::structured_cst::nodes::{ContractDefinition, Expression, SourceUnit};
+use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit;
 
 use crate::lexer::{ContextKind, LexemeKind, Lexer};
 use crate::parser::parser_error::ParserError;
@@ -17,15 +17,21 @@ lalrpop_mod!(
 
 pub mod parser_error;
 
-/// A Solidity Parser
+/// A Parser for Solidity Source Units
 ///
 /// TODO(v2): Error recovery, for now we just fail
 /// TODO(v2): Support multiple versions, for now only 0.8.30 is supported
-pub trait Parser {
-    /// The type of the non-terminal that this parser produces
-    type NonTerminal;
+#[derive(Default)]
+pub struct SourceUnitParser;
 
-    fn parse(input: &str, version: LanguageVersion) -> Result<Self::NonTerminal, ParserError>;
+impl SourceUnitParser {
+    pub fn parse(input: &str, version: LanguageVersion) -> Result<SourceUnit, ParserError> {
+        Self::check_version(version);
+
+        let lexer = Lexer::new(ContextKind::Solidity, input, version);
+        let parser = grammar::SourceUnitParser::new();
+        parser.parse(input, lexer).map_err(|e| e.into())
+    }
 
     // TODO(v2): This is temporary, once the language definition is restricted to only supported versions
     // it won't be needed
@@ -34,51 +40,6 @@ pub trait Parser {
             version == LanguageVersion::V0_8_30,
             "Only version 0.8.30 is currently supported by the V2 parser"
         );
-    }
-}
-
-#[derive(Default)]
-pub struct SourceUnitParser;
-
-#[derive(Default)]
-pub struct ExpressionParser;
-
-#[derive(Default)]
-pub struct ContractDefinitionParser;
-
-impl Parser for SourceUnitParser {
-    type NonTerminal = SourceUnit;
-
-    fn parse(input: &str, version: LanguageVersion) -> Result<Self::NonTerminal, ParserError> {
-        Self::check_version(version);
-
-        let lexer = Lexer::new(ContextKind::Solidity, input, version);
-        let parser = grammar::SourceUnitParser::new();
-        parser.parse(input, lexer).map_err(|e| e.into())
-    }
-}
-
-impl Parser for ExpressionParser {
-    type NonTerminal = Expression;
-
-    fn parse(input: &str, version: LanguageVersion) -> Result<Self::NonTerminal, ParserError> {
-        Self::check_version(version);
-
-        let lexer = Lexer::new(ContextKind::Solidity, input, version);
-        let parser = grammar::ExpressionParser::new();
-        parser.parse(input, lexer).map_err(|e| e.into())
-    }
-}
-
-impl Parser for ContractDefinitionParser {
-    type NonTerminal = ContractDefinition;
-
-    fn parse(input: &str, version: LanguageVersion) -> Result<Self::NonTerminal, ParserError> {
-        Self::check_version(version);
-
-        let lexer = Lexer::new(ContextKind::Solidity, input, version);
-        let parser = grammar::ContractDefinitionParser::new();
-        parser.parse(input, lexer).map_err(|e| e.into())
     }
 }
 

@@ -1,0 +1,38 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            UsingDirective(
+                UsingDirectiveStruct {
+                    using_keyword: UsingKeyword {
+                        range: 197..202,
+                    },
+                    clause: IdentifierPath(
+                        IdentifierPath {
+                            elements: [
+                                Identifier(
+                                    Identifier {
+                                        range: 203..206,
+                                    },
+                                ),
+                            ],
+                        },
+                    ),
+                    for_keyword: ForKeyword {
+                        range: 207..210,
+                    },
+                    target: Asterisk(
+                        Asterisk {
+                            range: 211..212,
+                        },
+                    ),
+                    global_keyword: None,
+                    semicolon: Semicolon {
+                        range: 212..213,
+                    },
+                },
+            ),
+        ],
+    },
+}

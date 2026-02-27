@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Errors: # 2 total
+  - >
+    Error: Expected node kind to be AssignmentExpression, but it was Identifier
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/from_v1/SourceUnit/Expression/chained_assignment/input/generated/input.sol:6:1]
+       │
+     6 │ a = b = c
+       │ ┬  
+       │ ╰── Error occurred here.
+    ───╯
+  - >
+    Error: Expected node kind to be a terminal, but it was AssignmentExpression
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/from_v1/SourceUnit/Expression/chained_assignment/input/generated/input.sol:6:4]
+       │
+     6 │ a = b = c
+       │    ───┬───  
+       │       ╰───── Error occurred here.
+    ───╯
