@@ -1324,7 +1324,7 @@ Expression18<Tail>: (Expression, Tail) = {
     <expression: Expression17<Tail>>  => <>,
 };
 Expression19<Tail>: (Expression, Tail) = {
-    <expression: Expression19<EmptyTail>>  <expression_assignment_expression_operator: Expression_AssignmentExpression_Operator>  <expression_2: Expression18<Tail>>  => {
+    <expression: Expression18<EmptyTail>>  <expression_assignment_expression_operator: Expression_AssignmentExpression_Operator>  <expression_2: Expression19<Tail>>  => {
         #[allow(clippy::ignored_unit_patterns)]
         let (e, _) = expression;
         let (e2, tail) = expression_2;
