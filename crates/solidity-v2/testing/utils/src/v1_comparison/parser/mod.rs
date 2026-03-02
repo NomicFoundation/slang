@@ -1,14 +1,12 @@
 #[path = "node_checker.generated.rs"]
 mod node_checker;
 
-pub mod testing;
 use std::ops::Range;
 
 pub use node_checker::{NodeChecker, NodeCheckerError};
 use slang_solidity::cst::Cursor;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_parser::{ParserError, SourceUnitParser};
-pub use testing::V2Tester;
 
 use crate::reporting::diagnostic::{Diagnostic, Severity};
 

@@ -4088,9 +4088,9 @@ version = "1.3.4"
 dependencies = [
  "anyhow",
  "infra_utils",
- "semver 1.0.26",
  "slang_solidity",
  "slang_solidity_v2_common",
+ "slang_solidity_v2_cst",
  "slang_solidity_v2_parser",
  "solidity_v2_testing_utils",
 ]
