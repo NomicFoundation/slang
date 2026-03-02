@@ -56,33 +56,33 @@ SourceUnitStruct {
                                                         ExpressionStatementStruct {
                                                             expression: AssignmentExpression(
                                                                 AssignmentExpressionStruct {
-                                                                    left_operand: AssignmentExpression(
-                                                                        AssignmentExpressionStruct {
-                                                                            left_operand: Identifier(
-                                                                                Identifier {
-                                                                                    range: 231..232,
-                                                                                },
-                                                                            ),
-                                                                            expression_assignment_expression_operator: Equal(
-                                                                                Equal {
-                                                                                    range: 233..234,
-                                                                                },
-                                                                            ),
-                                                                            right_operand: Identifier(
-                                                                                Identifier {
-                                                                                    range: 235..236,
-                                                                                },
-                                                                            ),
+                                                                    left_operand: Identifier(
+                                                                        Identifier {
+                                                                            range: 231..232,
                                                                         },
                                                                     ),
                                                                     expression_assignment_expression_operator: Equal(
                                                                         Equal {
-                                                                            range: 237..238,
+                                                                            range: 233..234,
                                                                         },
                                                                     ),
-                                                                    right_operand: Identifier(
-                                                                        Identifier {
-                                                                            range: 239..240,
+                                                                    right_operand: AssignmentExpression(
+                                                                        AssignmentExpressionStruct {
+                                                                            left_operand: Identifier(
+                                                                                Identifier {
+                                                                                    range: 235..236,
+                                                                                },
+                                                                            ),
+                                                                            expression_assignment_expression_operator: Equal(
+                                                                                Equal {
+                                                                                    range: 237..238,
+                                                                                },
+                                                                            ),
+                                                                            right_operand: Identifier(
+                                                                                Identifier {
+                                                                                    range: 239..240,
+                                                                                },
+                                                                            ),
                                                                         },
                                                                     ),
                                                                 },
