@@ -1,2 +1,4 @@
 "foo\
 bar"
+"foo\
+bar"

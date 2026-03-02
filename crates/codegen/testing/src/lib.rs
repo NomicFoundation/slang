@@ -3,8 +3,7 @@ mod bindings_output;
 mod common;
 mod cst_output;
 
-use std::collections::BTreeMap;
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
 use anyhow::Result;
@@ -13,8 +12,7 @@ use language_definition::model::Language;
 
 use crate::binder::generate_binder_tests;
 use crate::bindings_output::generate_bindings_output_tests;
-use crate::cst_output::generate_cst_output_test_harness;
-use crate::cst_output::generate_cst_output_tests;
+use crate::cst_output::{generate_cst_output_test_harness, generate_cst_output_tests};
 
 pub trait TestingGeneratorExtensions {
     fn generate_version_breaks(&self, output_dir: &Path) -> Result<()>;

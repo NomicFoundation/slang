@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ "foo\                                                                            │ 0..5
+  2  │                                                                                  │ 6..6
+  3  │ bar"                                                                             │ 7..11
+  4  │                                                                                  │ 12..12
+
+Errors: # 1 total
+  - >
+    Error: Expected DoubleQuotedStringLiteral or SingleQuotedStringLiteral.
+       ╭─[crates/solidity/testing/snapshots/cst_output/StringLiteral/escape_crlf_double_quote/input.sol:1:1]
+       │
+     1 │ ╭─▶ "foo\
+       ┆ ┆   
+     4 │ ├─▶ 
+       │ │       
+       │ ╰─────── Error occurred here.
+    ───╯
+
+Tree:
+  - (root꞉ StringLiteral) ► (unrecognized꞉ UNRECOGNIZED): '"foo\\r\r\nbar"\r\r\n' # (0..15)
