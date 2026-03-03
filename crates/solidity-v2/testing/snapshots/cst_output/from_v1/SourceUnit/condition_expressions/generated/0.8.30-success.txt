@@ -1,0 +1,363 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 202..210,
+                    },
+                    name: Identifier {
+                        range: 211..215,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 216..217,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            FunctionDefinition(
+                                FunctionDefinitionStruct {
+                                    function_keyword: FunctionKeyword {
+                                        range: 220..228,
+                                    },
+                                    name: Identifier(
+                                        Identifier {
+                                            range: 229..232,
+                                        },
+                                    ),
+                                    parameters: ParametersDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            range: 232..233,
+                                        },
+                                        parameters: Parameters {
+                                            elements: [],
+                                        },
+                                        close_paren: CloseParen {
+                                            range: 233..234,
+                                        },
+                                    },
+                                    attributes: FunctionAttributes {
+                                        elements: [
+                                            PublicKeyword(
+                                                PublicKeyword {
+                                                    range: 235..241,
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                    returns: None,
+                                    body: Block(
+                                        BlockStruct {
+                                            open_brace: OpenBrace {
+                                                range: 242..243,
+                                            },
+                                            statements: Statements {
+                                                elements: [
+                                                    VariableDeclarationStatement(
+                                                        VariableDeclarationStatementStruct {
+                                                            target: SingleTypedDeclaration(
+                                                                SingleTypedDeclarationStruct {
+                                                                    declaration: VariableDeclarationStruct {
+                                                                        type_name: ElementaryType(
+                                                                            BoolKeyword(
+                                                                                BoolKeyword {
+                                                                                    range: 248..252,
+                                                                                },
+                                                                            ),
+                                                                        ),
+                                                                        storage_location: None,
+                                                                        name: Identifier {
+                                                                            range: 253..254,
+                                                                        },
+                                                                    },
+                                                                    value: Some(
+                                                                        VariableDeclarationValueStruct {
+                                                                            equal: Equal {
+                                                                                range: 255..256,
+                                                                            },
+                                                                            expression: FalseKeyword(
+                                                                                FalseKeyword {
+                                                                                    range: 257..262,
+                                                                                },
+                                                                            ),
+                                                                        },
+                                                                    ),
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 262..263,
+                                                            },
+                                                        },
+                                                    ),
+                                                    VariableDeclarationStatement(
+                                                        VariableDeclarationStatementStruct {
+                                                            target: SingleTypedDeclaration(
+                                                                SingleTypedDeclarationStruct {
+                                                                    declaration: VariableDeclarationStruct {
+                                                                        type_name: ElementaryType(
+                                                                            BoolKeyword(
+                                                                                BoolKeyword {
+                                                                                    range: 268..272,
+                                                                                },
+                                                                            ),
+                                                                        ),
+                                                                        storage_location: None,
+                                                                        name: Identifier {
+                                                                            range: 273..274,
+                                                                        },
+                                                                    },
+                                                                    value: Some(
+                                                                        VariableDeclarationValueStruct {
+                                                                            equal: Equal {
+                                                                                range: 275..276,
+                                                                            },
+                                                                            expression: TrueKeyword(
+                                                                                TrueKeyword {
+                                                                                    range: 277..281,
+                                                                                },
+                                                                            ),
+                                                                        },
+                                                                    ),
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 281..282,
+                                                            },
+                                                        },
+                                                    ),
+                                                    VariableDeclarationStatement(
+                                                        VariableDeclarationStatementStruct {
+                                                            target: SingleTypedDeclaration(
+                                                                SingleTypedDeclarationStruct {
+                                                                    declaration: VariableDeclarationStruct {
+                                                                        type_name: ElementaryType(
+                                                                            BoolKeyword(
+                                                                                BoolKeyword {
+                                                                                    range: 287..291,
+                                                                                },
+                                                                            ),
+                                                                        ),
+                                                                        storage_location: None,
+                                                                        name: Identifier {
+                                                                            range: 292..293,
+                                                                        },
+                                                                    },
+                                                                    value: Some(
+                                                                        VariableDeclarationValueStruct {
+                                                                            equal: Equal {
+                                                                                range: 294..295,
+                                                                            },
+                                                                            expression: TrueKeyword(
+                                                                                TrueKeyword {
+                                                                                    range: 296..300,
+                                                                                },
+                                                                            ),
+                                                                        },
+                                                                    ),
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 300..301,
+                                                            },
+                                                        },
+                                                    ),
+                                                    VariableDeclarationStatement(
+                                                        VariableDeclarationStatementStruct {
+                                                            target: SingleTypedDeclaration(
+                                                                SingleTypedDeclarationStruct {
+                                                                    declaration: VariableDeclarationStruct {
+                                                                        type_name: ElementaryType(
+                                                                            BoolKeyword(
+                                                                                BoolKeyword {
+                                                                                    range: 306..310,
+                                                                                },
+                                                                            ),
+                                                                        ),
+                                                                        storage_location: None,
+                                                                        name: Identifier {
+                                                                            range: 311..312,
+                                                                        },
+                                                                    },
+                                                                    value: Some(
+                                                                        VariableDeclarationValueStruct {
+                                                                            equal: Equal {
+                                                                                range: 313..314,
+                                                                            },
+                                                                            expression: FalseKeyword(
+                                                                                FalseKeyword {
+                                                                                    range: 315..320,
+                                                                                },
+                                                                            ),
+                                                                        },
+                                                                    ),
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 320..321,
+                                                            },
+                                                        },
+                                                    ),
+                                                    VariableDeclarationStatement(
+                                                        VariableDeclarationStatementStruct {
+                                                            target: SingleTypedDeclaration(
+                                                                SingleTypedDeclarationStruct {
+                                                                    declaration: VariableDeclarationStruct {
+                                                                        type_name: ElementaryType(
+                                                                            BoolKeyword(
+                                                                                BoolKeyword {
+                                                                                    range: 326..330,
+                                                                                },
+                                                                            ),
+                                                                        ),
+                                                                        storage_location: None,
+                                                                        name: Identifier {
+                                                                            range: 331..332,
+                                                                        },
+                                                                    },
+                                                                    value: Some(
+                                                                        VariableDeclarationValueStruct {
+                                                                            equal: Equal {
+                                                                                range: 333..334,
+                                                                            },
+                                                                            expression: TrueKeyword(
+                                                                                TrueKeyword {
+                                                                                    range: 335..339,
+                                                                                },
+                                                                            ),
+                                                                        },
+                                                                    ),
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 339..340,
+                                                            },
+                                                        },
+                                                    ),
+                                                    ExpressionStatement(
+                                                        ExpressionStatementStruct {
+                                                            expression: ConditionalExpression(
+                                                                ConditionalExpressionStruct {
+                                                                    operand: Identifier(
+                                                                        Identifier {
+                                                                            range: 381..382,
+                                                                        },
+                                                                    ),
+                                                                    question_mark: QuestionMark {
+                                                                        range: 383..384,
+                                                                    },
+                                                                    true_expression: Identifier(
+                                                                        Identifier {
+                                                                            range: 385..386,
+                                                                        },
+                                                                    ),
+                                                                    colon: Colon {
+                                                                        range: 387..388,
+                                                                    },
+                                                                    false_expression: ConditionalExpression(
+                                                                        ConditionalExpressionStruct {
+                                                                            operand: Identifier(
+                                                                                Identifier {
+                                                                                    range: 389..390,
+                                                                                },
+                                                                            ),
+                                                                            question_mark: QuestionMark {
+                                                                                range: 391..392,
+                                                                            },
+                                                                            true_expression: Identifier(
+                                                                                Identifier {
+                                                                                    range: 393..394,
+                                                                                },
+                                                                            ),
+                                                                            colon: Colon {
+                                                                                range: 395..396,
+                                                                            },
+                                                                            false_expression: Identifier(
+                                                                                Identifier {
+                                                                                    range: 397..398,
+                                                                                },
+                                                                            ),
+                                                                        },
+                                                                    ),
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 398..399,
+                                                            },
+                                                        },
+                                                    ),
+                                                    ExpressionStatement(
+                                                        ExpressionStatementStruct {
+                                                            expression: ConditionalExpression(
+                                                                ConditionalExpressionStruct {
+                                                                    operand: Identifier(
+                                                                        Identifier {
+                                                                            range: 429..430,
+                                                                        },
+                                                                    ),
+                                                                    question_mark: QuestionMark {
+                                                                        range: 431..432,
+                                                                    },
+                                                                    true_expression: ConditionalExpression(
+                                                                        ConditionalExpressionStruct {
+                                                                            operand: Identifier(
+                                                                                Identifier {
+                                                                                    range: 433..434,
+                                                                                },
+                                                                            ),
+                                                                            question_mark: QuestionMark {
+                                                                                range: 435..436,
+                                                                            },
+                                                                            true_expression: Identifier(
+                                                                                Identifier {
+                                                                                    range: 437..438,
+                                                                                },
+                                                                            ),
+                                                                            colon: Colon {
+                                                                                range: 439..440,
+                                                                            },
+                                                                            false_expression: Identifier(
+                                                                                Identifier {
+                                                                                    range: 441..442,
+                                                                                },
+                                                                            ),
+                                                                        },
+                                                                    ),
+                                                                    colon: Colon {
+                                                                        range: 443..444,
+                                                                    },
+                                                                    false_expression: Identifier(
+                                                                        Identifier {
+                                                                            range: 445..446,
+                                                                        },
+                                                                    ),
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 446..447,
+                                                            },
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                            close_brace: CloseBrace {
+                                                range: 475..476,
+                                            },
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 477..478,
+                    },
+                },
+            ),
+        ],
+    },
+}
