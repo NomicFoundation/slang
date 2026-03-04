@@ -783,18 +783,18 @@ pub type ExponentiationExpression = Rc<ExponentiationExpressionStruct>;
 #[derive(Clone, Debug, PartialEq)]
 pub struct ExponentiationExpressionStruct {
     pub left_operand: Expression,
-    pub expression_exponentiation_expression_operator: Expression_ExponentiationExpression_Operator,
+    pub operator: AsteriskAsterisk,
     pub right_operand: Expression,
 }
 
 pub fn new_exponentiation_expression(
     left_operand: Expression,
-    expression_exponentiation_expression_operator: Expression_ExponentiationExpression_Operator,
+    operator: AsteriskAsterisk,
     right_operand: Expression,
 ) -> ExponentiationExpression {
     Rc::new(ExponentiationExpressionStruct {
         left_operand,
-        expression_exponentiation_expression_operator,
+        operator,
         right_operand,
     })
 }
@@ -951,14 +951,10 @@ pub type HexNumberExpression = Rc<HexNumberExpressionStruct>;
 #[derive(Clone, Debug, PartialEq)]
 pub struct HexNumberExpressionStruct {
     pub literal: HexLiteral,
-    pub unit: Option<NumberUnit>,
 }
 
-pub fn new_hex_number_expression(
-    literal: HexLiteral,
-    unit: Option<NumberUnit>,
-) -> HexNumberExpression {
-    Rc::new(HexNumberExpressionStruct { literal, unit })
+pub fn new_hex_number_expression(literal: HexLiteral) -> HexNumberExpression {
+    Rc::new(HexNumberExpressionStruct { literal })
 }
 
 pub type IfStatement = Rc<IfStatementStruct>;
@@ -1925,21 +1921,6 @@ pub fn new_struct_member(
     })
 }
 
-pub type ThrowStatement = Rc<ThrowStatementStruct>;
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct ThrowStatementStruct {
-    pub throw_keyword: ThrowKeyword,
-    pub semicolon: Semicolon,
-}
-
-pub fn new_throw_statement(throw_keyword: ThrowKeyword, semicolon: Semicolon) -> ThrowStatement {
-    Rc::new(ThrowStatementStruct {
-        throw_keyword,
-        semicolon,
-    })
-}
-
 pub type TryStatement = Rc<TryStatementStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -2036,85 +2017,6 @@ pub fn new_unchecked_block(unchecked_keyword: UncheckedKeyword, block: Block) ->
         unchecked_keyword,
         block,
     })
-}
-
-pub type UnnamedFunctionDefinition = Rc<UnnamedFunctionDefinitionStruct>;
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct UnnamedFunctionDefinitionStruct {
-    pub function_keyword: FunctionKeyword,
-    pub parameters: ParametersDeclaration,
-    pub attributes: UnnamedFunctionAttributes,
-    pub body: FunctionBody,
-}
-
-pub fn new_unnamed_function_definition(
-    function_keyword: FunctionKeyword,
-    parameters: ParametersDeclaration,
-    attributes: UnnamedFunctionAttributes,
-    body: FunctionBody,
-) -> UnnamedFunctionDefinition {
-    Rc::new(UnnamedFunctionDefinitionStruct {
-        function_keyword,
-        parameters,
-        attributes,
-        body,
-    })
-}
-
-pub type UntypedDeclaration = Rc<UntypedDeclarationStruct>;
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct UntypedDeclarationStruct {
-    pub var_keyword: VarKeyword,
-    pub names: UntypedDeclarationNames,
-    pub value: VariableDeclarationValue,
-}
-
-pub fn new_untyped_declaration(
-    var_keyword: VarKeyword,
-    names: UntypedDeclarationNames,
-    value: VariableDeclarationValue,
-) -> UntypedDeclaration {
-    Rc::new(UntypedDeclarationStruct {
-        var_keyword,
-        names,
-        value,
-    })
-}
-
-pub type UntypedTupleDeclaration = Rc<UntypedTupleDeclarationStruct>;
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct UntypedTupleDeclarationStruct {
-    pub open_paren: OpenParen,
-    pub elements: UntypedTupleDeclarationElements,
-    pub close_paren: CloseParen,
-}
-
-pub fn new_untyped_tuple_declaration(
-    open_paren: OpenParen,
-    elements: UntypedTupleDeclarationElements,
-    close_paren: CloseParen,
-) -> UntypedTupleDeclaration {
-    Rc::new(UntypedTupleDeclarationStruct {
-        open_paren,
-        elements,
-        close_paren,
-    })
-}
-
-pub type UntypedTupleDeclarationElement = Rc<UntypedTupleDeclarationElementStruct>;
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct UntypedTupleDeclarationElementStruct {
-    pub name: Option<Identifier>,
-}
-
-pub fn new_untyped_tuple_declaration_element(
-    name: Option<Identifier>,
-) -> UntypedTupleDeclarationElement {
-    Rc::new(UntypedTupleDeclarationElementStruct { name })
 }
 
 pub type UserDefinedValueTypeDefinition = Rc<UserDefinedValueTypeDefinitionStruct>;
@@ -2378,18 +2280,6 @@ pub fn new_yul_break_statement(break_keyword: YulBreakKeyword) -> YulBreakStatem
     Rc::new(YulBreakStatementStruct { break_keyword })
 }
 
-pub type YulColonAndEqual = Rc<YulColonAndEqualStruct>;
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulColonAndEqualStruct {
-    pub colon: Colon,
-    pub equal: Equal,
-}
-
-pub fn new_yul_colon_and_equal(colon: Colon, equal: Equal) -> YulColonAndEqual {
-    Rc::new(YulColonAndEqualStruct { colon, equal })
-}
-
 pub type YulContinueStatement = Rc<YulContinueStatementStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -2414,18 +2304,6 @@ pub fn new_yul_default_case(default_keyword: YulDefaultKeyword, body: YulBlock) 
         default_keyword,
         body,
     })
-}
-
-pub type YulEqualAndColon = Rc<YulEqualAndColonStruct>;
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulEqualAndColonStruct {
-    pub equal: Equal,
-    pub colon: Colon,
-}
-
-pub fn new_yul_equal_and_colon(equal: Equal, colon: Colon) -> YulEqualAndColon {
-    Rc::new(YulEqualAndColonStruct { equal, colon })
 }
 
 pub type YulForStatement = Rc<YulForStatementStruct>;
@@ -2527,18 +2405,6 @@ pub fn new_yul_if_statement(
     })
 }
 
-pub type YulLabel = Rc<YulLabelStruct>;
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulLabelStruct {
-    pub label: YulIdentifier,
-    pub colon: Colon,
-}
-
-pub fn new_yul_label(label: YulIdentifier, colon: Colon) -> YulLabel {
-    Rc::new(YulLabelStruct { label, colon })
-}
-
 pub type YulLeaveStatement = Rc<YulLeaveStatementStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -2589,24 +2455,6 @@ pub fn new_yul_returns_declaration(
     })
 }
 
-pub type YulStackAssignmentStatement = Rc<YulStackAssignmentStatementStruct>;
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulStackAssignmentStatementStruct {
-    pub assignment: YulStackAssignmentOperator,
-    pub variable: YulIdentifier,
-}
-
-pub fn new_yul_stack_assignment_statement(
-    assignment: YulStackAssignmentOperator,
-    variable: YulIdentifier,
-) -> YulStackAssignmentStatement {
-    Rc::new(YulStackAssignmentStatementStruct {
-        assignment,
-        variable,
-    })
-}
-
 pub type YulSwitchStatement = Rc<YulSwitchStatementStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -2654,13 +2502,13 @@ pub type YulVariableAssignmentStatement = Rc<YulVariableAssignmentStatementStruc
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulVariableAssignmentStatementStruct {
     pub variables: YulPaths,
-    pub assignment: YulAssignmentOperator,
+    pub assignment: ColonEqual,
     pub expression: YulExpression,
 }
 
 pub fn new_yul_variable_assignment_statement(
     variables: YulPaths,
-    assignment: YulAssignmentOperator,
+    assignment: ColonEqual,
     expression: YulExpression,
 ) -> YulVariableAssignmentStatement {
     Rc::new(YulVariableAssignmentStatementStruct {
@@ -2695,12 +2543,12 @@ pub type YulVariableDeclarationValue = Rc<YulVariableDeclarationValueStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulVariableDeclarationValueStruct {
-    pub assignment: YulAssignmentOperator,
+    pub assignment: ColonEqual,
     pub expression: YulExpression,
 }
 
 pub fn new_yul_variable_declaration_value(
-    assignment: YulAssignmentOperator,
+    assignment: ColonEqual,
     expression: YulExpression,
 ) -> YulVariableDeclarationValue {
     Rc::new(YulVariableDeclarationValueStruct {
@@ -2750,10 +2598,8 @@ pub fn new_arguments_declaration_named_arguments_declaration(
 pub enum ConstructorAttribute {
     ModifierInvocation(ModifierInvocation),
     InternalKeyword(InternalKeyword),
-    OverrideKeyword(OverrideKeyword),
     PayableKeyword(PayableKeyword),
     PublicKeyword(PublicKeyword),
-    VirtualKeyword(VirtualKeyword),
 }
 
 pub fn new_constructor_attribute_modifier_invocation(
@@ -2768,22 +2614,12 @@ pub fn new_constructor_attribute_internal_keyword(
     ConstructorAttribute::InternalKeyword(element)
 }
 
-pub fn new_constructor_attribute_override_keyword(
-    element: OverrideKeyword,
-) -> ConstructorAttribute {
-    ConstructorAttribute::OverrideKeyword(element)
-}
-
 pub fn new_constructor_attribute_payable_keyword(element: PayableKeyword) -> ConstructorAttribute {
     ConstructorAttribute::PayableKeyword(element)
 }
 
 pub fn new_constructor_attribute_public_keyword(element: PublicKeyword) -> ConstructorAttribute {
     ConstructorAttribute::PublicKeyword(element)
-}
-
-pub fn new_constructor_attribute_virtual_keyword(element: VirtualKeyword) -> ConstructorAttribute {
-    ConstructorAttribute::VirtualKeyword(element)
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -2793,7 +2629,6 @@ pub enum ContractMember {
     ConstructorDefinition(ConstructorDefinition),
     ReceiveFunctionDefinition(ReceiveFunctionDefinition),
     FallbackFunctionDefinition(FallbackFunctionDefinition),
-    UnnamedFunctionDefinition(UnnamedFunctionDefinition),
     ModifierDefinition(ModifierDefinition),
     StructDefinition(StructDefinition),
     EnumDefinition(EnumDefinition),
@@ -2827,12 +2662,6 @@ pub fn new_contract_member_fallback_function_definition(
     element: FallbackFunctionDefinition,
 ) -> ContractMember {
     ContractMember::FallbackFunctionDefinition(element)
-}
-
-pub fn new_contract_member_unnamed_function_definition(
-    element: UnnamedFunctionDefinition,
-) -> ContractMember {
-    ContractMember::UnnamedFunctionDefinition(element)
 }
 
 pub fn new_contract_member_modifier_definition(element: ModifierDefinition) -> ContractMember {
@@ -2888,7 +2717,6 @@ pub fn new_contract_specifier_storage_layout_specifier(
 #[derive(Clone, Debug, PartialEq)]
 pub enum ElementaryType {
     BoolKeyword(BoolKeyword),
-    ByteKeyword(ByteKeyword),
     StringKeyword(StringKeyword),
     AddressType(AddressType),
     BytesKeyword(BytesKeyword),
@@ -2900,10 +2728,6 @@ pub enum ElementaryType {
 
 pub fn new_elementary_type_bool_keyword(element: BoolKeyword) -> ElementaryType {
     ElementaryType::BoolKeyword(element)
-}
-
-pub fn new_elementary_type_byte_keyword(element: ByteKeyword) -> ElementaryType {
-    ElementaryType::ByteKeyword(element)
 }
 
 pub fn new_elementary_type_string_keyword(element: StringKeyword) -> ElementaryType {
@@ -3251,17 +3075,6 @@ pub fn new_expression_equality_expression_operator_equal_equal(
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub enum Expression_ExponentiationExpression_Operator {
-    AsteriskAsterisk(AsteriskAsterisk),
-}
-
-pub fn new_expression_exponentiation_expression_operator_asterisk_asterisk(
-    element: AsteriskAsterisk,
-) -> Expression_ExponentiationExpression_Operator {
-    Expression_ExponentiationExpression_Operator::AsteriskAsterisk(element)
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub enum Expression_InequalityExpression_Operator {
     GreaterThan(GreaterThan),
     GreaterThanEqual(GreaterThanEqual),
@@ -3342,7 +3155,6 @@ pub enum Expression_PrefixExpression_Operator {
     DeleteKeyword(DeleteKeyword),
     Minus(Minus),
     MinusMinus(MinusMinus),
-    Plus(Plus),
     PlusPlus(PlusPlus),
     Tilde(Tilde),
 }
@@ -3369,12 +3181,6 @@ pub fn new_expression_prefix_expression_operator_minus_minus(
     element: MinusMinus,
 ) -> Expression_PrefixExpression_Operator {
     Expression_PrefixExpression_Operator::MinusMinus(element)
-}
-
-pub fn new_expression_prefix_expression_operator_plus(
-    element: Plus,
-) -> Expression_PrefixExpression_Operator {
-    Expression_PrefixExpression_Operator::Plus(element)
 }
 
 pub fn new_expression_prefix_expression_operator_plus_plus(
@@ -3512,7 +3318,6 @@ pub fn new_for_statement_initialization_semicolon(
 pub enum FunctionAttribute {
     ModifierInvocation(ModifierInvocation),
     OverrideSpecifier(OverrideSpecifier),
-    ConstantKeyword(ConstantKeyword),
     ExternalKeyword(ExternalKeyword),
     InternalKeyword(InternalKeyword),
     PayableKeyword(PayableKeyword),
@@ -3531,10 +3336,6 @@ pub fn new_function_attribute_modifier_invocation(
 
 pub fn new_function_attribute_override_specifier(element: OverrideSpecifier) -> FunctionAttribute {
     FunctionAttribute::OverrideSpecifier(element)
-}
-
-pub fn new_function_attribute_constant_keyword(element: ConstantKeyword) -> FunctionAttribute {
-    FunctionAttribute::ConstantKeyword(element)
 }
 
 pub fn new_function_attribute_external_keyword(element: ExternalKeyword) -> FunctionAttribute {
@@ -3608,7 +3409,6 @@ pub enum FunctionTypeAttribute {
     ExternalKeyword(ExternalKeyword),
     PrivateKeyword(PrivateKeyword),
     PublicKeyword(PublicKeyword),
-    ConstantKeyword(ConstantKeyword),
     PureKeyword(PureKeyword),
     ViewKeyword(ViewKeyword),
     PayableKeyword(PayableKeyword),
@@ -3634,12 +3434,6 @@ pub fn new_function_type_attribute_private_keyword(
 
 pub fn new_function_type_attribute_public_keyword(element: PublicKeyword) -> FunctionTypeAttribute {
     FunctionTypeAttribute::PublicKeyword(element)
-}
-
-pub fn new_function_type_attribute_constant_keyword(
-    element: ConstantKeyword,
-) -> FunctionTypeAttribute {
-    FunctionTypeAttribute::ConstantKeyword(element)
 }
 
 pub fn new_function_type_attribute_pure_keyword(element: PureKeyword) -> FunctionTypeAttribute {
@@ -3741,15 +3535,12 @@ pub fn new_modifier_attribute_virtual_keyword(element: VirtualKeyword) -> Modifi
 pub enum NumberUnit {
     WeiKeyword(WeiKeyword),
     GweiKeyword(GweiKeyword),
-    SzaboKeyword(SzaboKeyword),
-    FinneyKeyword(FinneyKeyword),
     EtherKeyword(EtherKeyword),
     SecondsKeyword(SecondsKeyword),
     MinutesKeyword(MinutesKeyword),
     HoursKeyword(HoursKeyword),
     DaysKeyword(DaysKeyword),
     WeeksKeyword(WeeksKeyword),
-    YearsKeyword(YearsKeyword),
 }
 
 pub fn new_number_unit_wei_keyword(element: WeiKeyword) -> NumberUnit {
@@ -3758,14 +3549,6 @@ pub fn new_number_unit_wei_keyword(element: WeiKeyword) -> NumberUnit {
 
 pub fn new_number_unit_gwei_keyword(element: GweiKeyword) -> NumberUnit {
     NumberUnit::GweiKeyword(element)
-}
-
-pub fn new_number_unit_szabo_keyword(element: SzaboKeyword) -> NumberUnit {
-    NumberUnit::SzaboKeyword(element)
-}
-
-pub fn new_number_unit_finney_keyword(element: FinneyKeyword) -> NumberUnit {
-    NumberUnit::FinneyKeyword(element)
 }
 
 pub fn new_number_unit_ether_keyword(element: EtherKeyword) -> NumberUnit {
@@ -3790,10 +3573,6 @@ pub fn new_number_unit_days_keyword(element: DaysKeyword) -> NumberUnit {
 
 pub fn new_number_unit_weeks_keyword(element: WeeksKeyword) -> NumberUnit {
     NumberUnit::WeeksKeyword(element)
-}
-
-pub fn new_number_unit_years_keyword(element: YearsKeyword) -> NumberUnit {
-    NumberUnit::YearsKeyword(element)
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -3989,7 +3768,6 @@ pub enum Statement {
     ContinueStatement(ContinueStatement),
     BreakStatement(BreakStatement),
     ReturnStatement(ReturnStatement),
-    ThrowStatement(ThrowStatement),
     EmitStatement(EmitStatement),
     TryStatement(TryStatement),
     RevertStatement(RevertStatement),
@@ -4026,10 +3804,6 @@ pub fn new_statement_break_statement(element: BreakStatement) -> Statement {
 
 pub fn new_statement_return_statement(element: ReturnStatement) -> Statement {
     Statement::ReturnStatement(element)
-}
-
-pub fn new_statement_throw_statement(element: ThrowStatement) -> Statement {
-    Statement::ThrowStatement(element)
 }
 
 pub fn new_statement_emit_statement(element: EmitStatement) -> Statement {
@@ -4087,23 +3861,13 @@ pub fn new_storage_location_call_data_keyword(element: CallDataKeyword) -> Stora
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum StringExpression {
-    StringLiteral(StringLiteral),
     StringLiterals(StringLiterals),
-    HexStringLiteral(HexStringLiteral),
     HexStringLiterals(HexStringLiterals),
     UnicodeStringLiterals(UnicodeStringLiterals),
 }
 
-pub fn new_string_expression_string_literal(element: StringLiteral) -> StringExpression {
-    StringExpression::StringLiteral(element)
-}
-
 pub fn new_string_expression_string_literals(element: StringLiterals) -> StringExpression {
     StringExpression::StringLiterals(element)
-}
-
-pub fn new_string_expression_hex_string_literal(element: HexStringLiteral) -> StringExpression {
-    StringExpression::HexStringLiteral(element)
 }
 
 pub fn new_string_expression_hex_string_literals(element: HexStringLiterals) -> StringExpression {
@@ -4179,68 +3943,6 @@ pub fn new_unicode_string_literal_double_quoted_unicode_string_literal(
     element: DoubleQuotedUnicodeStringLiteral,
 ) -> UnicodeStringLiteral {
     UnicodeStringLiteral::DoubleQuotedUnicodeStringLiteral(element)
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub enum UnnamedFunctionAttribute {
-    ModifierInvocation(ModifierInvocation),
-    ExternalKeyword(ExternalKeyword),
-    InternalKeyword(InternalKeyword),
-    PayableKeyword(PayableKeyword),
-    PrivateKeyword(PrivateKeyword),
-    PublicKeyword(PublicKeyword),
-}
-
-pub fn new_unnamed_function_attribute_modifier_invocation(
-    element: ModifierInvocation,
-) -> UnnamedFunctionAttribute {
-    UnnamedFunctionAttribute::ModifierInvocation(element)
-}
-
-pub fn new_unnamed_function_attribute_external_keyword(
-    element: ExternalKeyword,
-) -> UnnamedFunctionAttribute {
-    UnnamedFunctionAttribute::ExternalKeyword(element)
-}
-
-pub fn new_unnamed_function_attribute_internal_keyword(
-    element: InternalKeyword,
-) -> UnnamedFunctionAttribute {
-    UnnamedFunctionAttribute::InternalKeyword(element)
-}
-
-pub fn new_unnamed_function_attribute_payable_keyword(
-    element: PayableKeyword,
-) -> UnnamedFunctionAttribute {
-    UnnamedFunctionAttribute::PayableKeyword(element)
-}
-
-pub fn new_unnamed_function_attribute_private_keyword(
-    element: PrivateKeyword,
-) -> UnnamedFunctionAttribute {
-    UnnamedFunctionAttribute::PrivateKeyword(element)
-}
-
-pub fn new_unnamed_function_attribute_public_keyword(
-    element: PublicKeyword,
-) -> UnnamedFunctionAttribute {
-    UnnamedFunctionAttribute::PublicKeyword(element)
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub enum UntypedDeclarationNames {
-    Identifier(Identifier),
-    UntypedTupleDeclaration(UntypedTupleDeclaration),
-}
-
-pub fn new_untyped_declaration_names_identifier(element: Identifier) -> UntypedDeclarationNames {
-    UntypedDeclarationNames::Identifier(element)
-}
-
-pub fn new_untyped_declaration_names_untyped_tuple_declaration(
-    element: UntypedTupleDeclaration,
-) -> UntypedDeclarationNames {
-    UntypedDeclarationNames::UntypedTupleDeclaration(element)
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -4354,7 +4056,6 @@ pub fn new_using_target_asterisk(element: Asterisk) -> UsingTarget {
 pub enum VariableDeclarationTarget {
     SingleTypedDeclaration(SingleTypedDeclaration),
     MultiTypedDeclaration(MultiTypedDeclaration),
-    UntypedDeclaration(UntypedDeclaration),
 }
 
 pub fn new_variable_declaration_target_single_typed_declaration(
@@ -4367,12 +4068,6 @@ pub fn new_variable_declaration_target_multi_typed_declaration(
     element: MultiTypedDeclaration,
 ) -> VariableDeclarationTarget {
     VariableDeclarationTarget::MultiTypedDeclaration(element)
-}
-
-pub fn new_variable_declaration_target_untyped_declaration(
-    element: UntypedDeclaration,
-) -> VariableDeclarationTarget {
-    VariableDeclarationTarget::UntypedDeclaration(element)
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -4452,22 +4147,6 @@ pub fn new_version_operator_greater_than_equal(element: GreaterThanEqual) -> Ver
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub enum YulAssignmentOperator {
-    ColonEqual(ColonEqual),
-    YulColonAndEqual(YulColonAndEqual),
-}
-
-pub fn new_yul_assignment_operator_colon_equal(element: ColonEqual) -> YulAssignmentOperator {
-    YulAssignmentOperator::ColonEqual(element)
-}
-
-pub fn new_yul_assignment_operator_yul_colon_and_equal(
-    element: YulColonAndEqual,
-) -> YulAssignmentOperator {
-    YulAssignmentOperator::YulColonAndEqual(element)
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub enum YulExpression {
     YulFunctionCallExpression(YulFunctionCallExpression),
     YulLiteral(YulLiteral),
@@ -4523,28 +4202,9 @@ pub fn new_yul_literal_string_literal(element: StringLiteral) -> YulLiteral {
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub enum YulStackAssignmentOperator {
-    EqualColon(EqualColon),
-    YulEqualAndColon(YulEqualAndColon),
-}
-
-pub fn new_yul_stack_assignment_operator_equal_colon(
-    element: EqualColon,
-) -> YulStackAssignmentOperator {
-    YulStackAssignmentOperator::EqualColon(element)
-}
-
-pub fn new_yul_stack_assignment_operator_yul_equal_and_colon(
-    element: YulEqualAndColon,
-) -> YulStackAssignmentOperator {
-    YulStackAssignmentOperator::YulEqualAndColon(element)
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub enum YulStatement {
     YulBlock(YulBlock),
     YulFunctionDefinition(YulFunctionDefinition),
-    YulStackAssignmentStatement(YulStackAssignmentStatement),
     YulIfStatement(YulIfStatement),
     YulForStatement(YulForStatement),
     YulSwitchStatement(YulSwitchStatement),
@@ -4552,7 +4212,6 @@ pub enum YulStatement {
     YulBreakStatement(YulBreakStatement),
     YulContinueStatement(YulContinueStatement),
     YulVariableAssignmentStatement(YulVariableAssignmentStatement),
-    YulLabel(YulLabel),
     YulVariableDeclarationStatement(YulVariableDeclarationStatement),
     YulExpression(YulExpression),
 }
@@ -4563,12 +4222,6 @@ pub fn new_yul_statement_yul_block(element: YulBlock) -> YulStatement {
 
 pub fn new_yul_statement_yul_function_definition(element: YulFunctionDefinition) -> YulStatement {
     YulStatement::YulFunctionDefinition(element)
-}
-
-pub fn new_yul_statement_yul_stack_assignment_statement(
-    element: YulStackAssignmentStatement,
-) -> YulStatement {
-    YulStatement::YulStackAssignmentStatement(element)
 }
 
 pub fn new_yul_statement_yul_if_statement(element: YulIfStatement) -> YulStatement {
@@ -4599,10 +4252,6 @@ pub fn new_yul_statement_yul_variable_assignment_statement(
     element: YulVariableAssignmentStatement,
 ) -> YulStatement {
     YulStatement::YulVariableAssignmentStatement(element)
-}
-
-pub fn new_yul_statement_yul_label(element: YulLabel) -> YulStatement {
-    YulStatement::YulLabel(element)
 }
 
 pub fn new_yul_statement_yul_variable_declaration_statement(
@@ -4950,28 +4599,6 @@ pub struct UnicodeStringLiterals {
 
 pub fn new_unicode_string_literals(elements: Vec<UnicodeStringLiteral>) -> UnicodeStringLiterals {
     UnicodeStringLiterals { elements }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct UnnamedFunctionAttributes {
-    pub elements: Vec<UnnamedFunctionAttribute>,
-}
-
-pub fn new_unnamed_function_attributes(
-    elements: Vec<UnnamedFunctionAttribute>,
-) -> UnnamedFunctionAttributes {
-    UnnamedFunctionAttributes { elements }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct UntypedTupleDeclarationElements {
-    pub elements: Vec<UntypedTupleDeclarationElement>,
-}
-
-pub fn new_untyped_tuple_declaration_elements(
-    elements: Vec<UntypedTupleDeclarationElement>,
-) -> UntypedTupleDeclarationElements {
-    UntypedTupleDeclarationElements { elements }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -5625,15 +5252,6 @@ pub fn new_equal(range: Range<usize>, _source: &str) -> Equal {
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct EqualColon {
-    pub range: Range<usize>,
-}
-
-pub fn new_equal_colon(range: Range<usize>, _source: &str) -> EqualColon {
-    EqualColon { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub struct EqualEqual {
     pub range: Range<usize>,
 }
@@ -5721,15 +5339,6 @@ pub struct FinalKeyword {
 
 pub fn new_final_keyword(range: Range<usize>, _source: &str) -> FinalKeyword {
     FinalKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct FinneyKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_finney_keyword(range: Range<usize>, _source: &str) -> FinneyKeyword {
-    FinneyKeyword { range }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -6615,15 +6224,6 @@ pub fn new_switch_keyword(range: Range<usize>, _source: &str) -> SwitchKeyword {
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct SzaboKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_szabo_keyword(range: Range<usize>, _source: &str) -> SzaboKeyword {
-    SzaboKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub struct ThisKeyword {
     pub range: Range<usize>,
 }
@@ -6822,111 +6422,12 @@ pub fn new_years_keyword(range: Range<usize>, _source: &str) -> YearsKeyword {
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct YulAbstractKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_abstract_keyword(range: Range<usize>, _source: &str) -> YulAbstractKeyword {
-    YulAbstractKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulAfterKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_after_keyword(range: Range<usize>, _source: &str) -> YulAfterKeyword {
-    YulAfterKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulAliasKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_alias_keyword(range: Range<usize>, _source: &str) -> YulAliasKeyword {
-    YulAliasKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulAnonymousKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_anonymous_keyword(range: Range<usize>, _source: &str) -> YulAnonymousKeyword {
-    YulAnonymousKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulApplyKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_apply_keyword(range: Range<usize>, _source: &str) -> YulApplyKeyword {
-    YulApplyKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulAsKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_as_keyword(range: Range<usize>, _source: &str) -> YulAsKeyword {
-    YulAsKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulAssemblyKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_assembly_keyword(range: Range<usize>, _source: &str) -> YulAssemblyKeyword {
-    YulAssemblyKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulAutoKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_auto_keyword(range: Range<usize>, _source: &str) -> YulAutoKeyword {
-    YulAutoKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulBoolKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_bool_keyword(range: Range<usize>, _source: &str) -> YulBoolKeyword {
-    YulBoolKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub struct YulBreakKeyword {
     pub range: Range<usize>,
 }
 
 pub fn new_yul_break_keyword(range: Range<usize>, _source: &str) -> YulBreakKeyword {
     YulBreakKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulBytesKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_bytes_keyword(range: Range<usize>, _source: &str) -> YulBytesKeyword {
-    YulBytesKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulCallDataKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_call_data_keyword(range: Range<usize>, _source: &str) -> YulCallDataKeyword {
-    YulCallDataKeyword { range }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -6939,66 +6440,12 @@ pub fn new_yul_case_keyword(range: Range<usize>, _source: &str) -> YulCaseKeywor
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct YulCatchKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_catch_keyword(range: Range<usize>, _source: &str) -> YulCatchKeyword {
-    YulCatchKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulConstantKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_constant_keyword(range: Range<usize>, _source: &str) -> YulConstantKeyword {
-    YulConstantKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulConstructorKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_constructor_keyword(range: Range<usize>, _source: &str) -> YulConstructorKeyword {
-    YulConstructorKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub struct YulContinueKeyword {
     pub range: Range<usize>,
 }
 
 pub fn new_yul_continue_keyword(range: Range<usize>, _source: &str) -> YulContinueKeyword {
     YulContinueKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulContractKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_contract_keyword(range: Range<usize>, _source: &str) -> YulContractKeyword {
-    YulContractKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulCopyOfKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_copy_of_keyword(range: Range<usize>, _source: &str) -> YulCopyOfKeyword {
-    YulCopyOfKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulDaysKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_days_keyword(range: Range<usize>, _source: &str) -> YulDaysKeyword {
-    YulDaysKeyword { range }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -7020,129 +6467,12 @@ pub fn new_yul_default_keyword(range: Range<usize>, _source: &str) -> YulDefault
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct YulDefineKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_define_keyword(range: Range<usize>, _source: &str) -> YulDefineKeyword {
-    YulDefineKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulDeleteKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_delete_keyword(range: Range<usize>, _source: &str) -> YulDeleteKeyword {
-    YulDeleteKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulDoKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_do_keyword(range: Range<usize>, _source: &str) -> YulDoKeyword {
-    YulDoKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulElseKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_else_keyword(range: Range<usize>, _source: &str) -> YulElseKeyword {
-    YulElseKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulEmitKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_emit_keyword(range: Range<usize>, _source: &str) -> YulEmitKeyword {
-    YulEmitKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulEnumKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_enum_keyword(range: Range<usize>, _source: &str) -> YulEnumKeyword {
-    YulEnumKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulEtherKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_ether_keyword(range: Range<usize>, _source: &str) -> YulEtherKeyword {
-    YulEtherKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulEventKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_event_keyword(range: Range<usize>, _source: &str) -> YulEventKeyword {
-    YulEventKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulExternalKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_external_keyword(range: Range<usize>, _source: &str) -> YulExternalKeyword {
-    YulExternalKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulFallbackKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_fallback_keyword(range: Range<usize>, _source: &str) -> YulFallbackKeyword {
-    YulFallbackKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub struct YulFalseKeyword {
     pub range: Range<usize>,
 }
 
 pub fn new_yul_false_keyword(range: Range<usize>, _source: &str) -> YulFalseKeyword {
     YulFalseKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulFinalKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_final_keyword(range: Range<usize>, _source: &str) -> YulFinalKeyword {
-    YulFinalKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulFinneyKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_finney_keyword(range: Range<usize>, _source: &str) -> YulFinneyKeyword {
-    YulFinneyKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulFixedKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_fixed_keyword(range: Range<usize>, _source: &str) -> YulFixedKeyword {
-    YulFixedKeyword { range }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -7164,15 +6494,6 @@ pub fn new_yul_function_keyword(range: Range<usize>, _source: &str) -> YulFuncti
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct YulGweiKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_gwei_keyword(range: Range<usize>, _source: &str) -> YulGweiKeyword {
-    YulGweiKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub struct YulHexKeyword {
     pub range: Range<usize>,
 }
@@ -7188,15 +6509,6 @@ pub struct YulHexLiteral {
 
 pub fn new_yul_hex_literal(range: Range<usize>, _source: &str) -> YulHexLiteral {
     YulHexLiteral { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulHoursKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_hours_keyword(range: Range<usize>, _source: &str) -> YulHoursKeyword {
-    YulHoursKeyword { range }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -7218,96 +6530,6 @@ pub fn new_yul_if_keyword(range: Range<usize>, _source: &str) -> YulIfKeyword {
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct YulImmutableKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_immutable_keyword(range: Range<usize>, _source: &str) -> YulImmutableKeyword {
-    YulImmutableKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulImplementsKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_implements_keyword(range: Range<usize>, _source: &str) -> YulImplementsKeyword {
-    YulImplementsKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulImportKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_import_keyword(range: Range<usize>, _source: &str) -> YulImportKeyword {
-    YulImportKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulInKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_in_keyword(range: Range<usize>, _source: &str) -> YulInKeyword {
-    YulInKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulIndexedKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_indexed_keyword(range: Range<usize>, _source: &str) -> YulIndexedKeyword {
-    YulIndexedKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulInlineKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_inline_keyword(range: Range<usize>, _source: &str) -> YulInlineKeyword {
-    YulInlineKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulIntKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_int_keyword(range: Range<usize>, _source: &str) -> YulIntKeyword {
-    YulIntKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulInterfaceKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_interface_keyword(range: Range<usize>, _source: &str) -> YulInterfaceKeyword {
-    YulInterfaceKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulInternalKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_internal_keyword(range: Range<usize>, _source: &str) -> YulInternalKeyword {
-    YulInternalKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulIsKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_is_keyword(range: Range<usize>, _source: &str) -> YulIsKeyword {
-    YulIsKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub struct YulLeaveKeyword {
     pub range: Range<usize>,
 }
@@ -7326,291 +6548,12 @@ pub fn new_yul_let_keyword(range: Range<usize>, _source: &str) -> YulLetKeyword 
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct YulLibraryKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_library_keyword(range: Range<usize>, _source: &str) -> YulLibraryKeyword {
-    YulLibraryKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulMacroKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_macro_keyword(range: Range<usize>, _source: &str) -> YulMacroKeyword {
-    YulMacroKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulMappingKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_mapping_keyword(range: Range<usize>, _source: &str) -> YulMappingKeyword {
-    YulMappingKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulMatchKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_match_keyword(range: Range<usize>, _source: &str) -> YulMatchKeyword {
-    YulMatchKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulMemoryKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_memory_keyword(range: Range<usize>, _source: &str) -> YulMemoryKeyword {
-    YulMemoryKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulMinutesKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_minutes_keyword(range: Range<usize>, _source: &str) -> YulMinutesKeyword {
-    YulMinutesKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulModifierKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_modifier_keyword(range: Range<usize>, _source: &str) -> YulModifierKeyword {
-    YulModifierKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulMutableKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_mutable_keyword(range: Range<usize>, _source: &str) -> YulMutableKeyword {
-    YulMutableKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulNewKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_new_keyword(range: Range<usize>, _source: &str) -> YulNewKeyword {
-    YulNewKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulNullKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_null_keyword(range: Range<usize>, _source: &str) -> YulNullKeyword {
-    YulNullKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulOfKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_of_keyword(range: Range<usize>, _source: &str) -> YulOfKeyword {
-    YulOfKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulOverrideKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_override_keyword(range: Range<usize>, _source: &str) -> YulOverrideKeyword {
-    YulOverrideKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulPartialKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_partial_keyword(range: Range<usize>, _source: &str) -> YulPartialKeyword {
-    YulPartialKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulPayableKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_payable_keyword(range: Range<usize>, _source: &str) -> YulPayableKeyword {
-    YulPayableKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulPragmaKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_pragma_keyword(range: Range<usize>, _source: &str) -> YulPragmaKeyword {
-    YulPragmaKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulPrivateKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_private_keyword(range: Range<usize>, _source: &str) -> YulPrivateKeyword {
-    YulPrivateKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulPromiseKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_promise_keyword(range: Range<usize>, _source: &str) -> YulPromiseKeyword {
-    YulPromiseKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulPublicKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_public_keyword(range: Range<usize>, _source: &str) -> YulPublicKeyword {
-    YulPublicKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulPureKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_pure_keyword(range: Range<usize>, _source: &str) -> YulPureKeyword {
-    YulPureKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulReceiveKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_receive_keyword(range: Range<usize>, _source: &str) -> YulReceiveKeyword {
-    YulReceiveKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulReferenceKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_reference_keyword(range: Range<usize>, _source: &str) -> YulReferenceKeyword {
-    YulReferenceKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulRelocatableKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_relocatable_keyword(range: Range<usize>, _source: &str) -> YulRelocatableKeyword {
-    YulRelocatableKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulReturnsKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_returns_keyword(range: Range<usize>, _source: &str) -> YulReturnsKeyword {
-    YulReturnsKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulSealedKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_sealed_keyword(range: Range<usize>, _source: &str) -> YulSealedKeyword {
-    YulSealedKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulSecondsKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_seconds_keyword(range: Range<usize>, _source: &str) -> YulSecondsKeyword {
-    YulSecondsKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulSizeOfKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_size_of_keyword(range: Range<usize>, _source: &str) -> YulSizeOfKeyword {
-    YulSizeOfKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulStaticKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_static_keyword(range: Range<usize>, _source: &str) -> YulStaticKeyword {
-    YulStaticKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulStorageKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_storage_keyword(range: Range<usize>, _source: &str) -> YulStorageKeyword {
-    YulStorageKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulStringKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_string_keyword(range: Range<usize>, _source: &str) -> YulStringKeyword {
-    YulStringKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulStructKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_struct_keyword(range: Range<usize>, _source: &str) -> YulStructKeyword {
-    YulStructKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub struct YulSuperKeyword {
     pub range: Range<usize>,
 }
 
 pub fn new_yul_super_keyword(range: Range<usize>, _source: &str) -> YulSuperKeyword {
     YulSuperKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulSupportsKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_supports_keyword(range: Range<usize>, _source: &str) -> YulSupportsKeyword {
-    YulSupportsKeyword { range }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -7623,15 +6566,6 @@ pub fn new_yul_switch_keyword(range: Range<usize>, _source: &str) -> YulSwitchKe
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct YulSzaboKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_szabo_keyword(range: Range<usize>, _source: &str) -> YulSzaboKeyword {
-    YulSzaboKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub struct YulThisKeyword {
     pub range: Range<usize>,
 }
@@ -7641,154 +6575,10 @@ pub fn new_yul_this_keyword(range: Range<usize>, _source: &str) -> YulThisKeywor
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct YulThrowKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_throw_keyword(range: Range<usize>, _source: &str) -> YulThrowKeyword {
-    YulThrowKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub struct YulTrueKeyword {
     pub range: Range<usize>,
 }
 
 pub fn new_yul_true_keyword(range: Range<usize>, _source: &str) -> YulTrueKeyword {
     YulTrueKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulTryKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_try_keyword(range: Range<usize>, _source: &str) -> YulTryKeyword {
-    YulTryKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulTypeDefKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_type_def_keyword(range: Range<usize>, _source: &str) -> YulTypeDefKeyword {
-    YulTypeDefKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulTypeKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_type_keyword(range: Range<usize>, _source: &str) -> YulTypeKeyword {
-    YulTypeKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulTypeOfKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_type_of_keyword(range: Range<usize>, _source: &str) -> YulTypeOfKeyword {
-    YulTypeOfKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulUfixedKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_ufixed_keyword(range: Range<usize>, _source: &str) -> YulUfixedKeyword {
-    YulUfixedKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulUintKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_uint_keyword(range: Range<usize>, _source: &str) -> YulUintKeyword {
-    YulUintKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulUncheckedKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_unchecked_keyword(range: Range<usize>, _source: &str) -> YulUncheckedKeyword {
-    YulUncheckedKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulUsingKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_using_keyword(range: Range<usize>, _source: &str) -> YulUsingKeyword {
-    YulUsingKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulVarKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_var_keyword(range: Range<usize>, _source: &str) -> YulVarKeyword {
-    YulVarKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulViewKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_view_keyword(range: Range<usize>, _source: &str) -> YulViewKeyword {
-    YulViewKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulVirtualKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_virtual_keyword(range: Range<usize>, _source: &str) -> YulVirtualKeyword {
-    YulVirtualKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulWeeksKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_weeks_keyword(range: Range<usize>, _source: &str) -> YulWeeksKeyword {
-    YulWeeksKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulWeiKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_wei_keyword(range: Range<usize>, _source: &str) -> YulWeiKeyword {
-    YulWeiKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulWhileKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_while_keyword(range: Range<usize>, _source: &str) -> YulWhileKeyword {
-    YulWhileKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulYearsKeyword {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_years_keyword(range: Range<usize>, _source: &str) -> YulYearsKeyword {
-    YulYearsKeyword { range }
 }

@@ -7,7 +7,6 @@ use crate::lexer::contexts::{ContextExtras, ContextKind, ContextWrapper};
 use crate::lexer::lexemes::{Lexeme, LexemeKind};
 
 pub struct Lexer<'source> {
-    language_version: LanguageVersion,
     context: ContextWrapper<'source>,
     queue: VecDeque<Lexeme>,
 }
@@ -19,7 +18,6 @@ impl<'source> Lexer<'source> {
         let context = ContextWrapper::new(kind, source, extras);
 
         Self {
-            language_version,
             context,
             queue: VecDeque::new(),
         }
@@ -42,7 +40,7 @@ impl<'source> Lexer<'source> {
 
         // TODO(v2):
         // Some lexemes are split/post-processed after lexing to handle historical bugs in older Solidity versions.
-        // These callbacks should be defined in the grammar (language definition) instead of hardcoding them here:
+        // Remove this post-processing since we no longer support the older versions.
         match lexeme.kind {
             LexemeKind::DecimalLiteral => self.handle_decimal_literal(lexeme),
             LexemeKind::YulIdentifier => self.handle_yul_identifier(lexeme),
@@ -67,9 +65,9 @@ impl Lexer<'_> {
             Lexeme(LexemeKind),
         }
 
-        if self.language_version < LanguageVersion::V0_5_0 {
-            return Some(original);
-        }
+        // if self.language_version < LanguageVersion::V0_5_0 {
+        //     return Some(original);
+        // }
 
         let original_start = original.range.start;
         let original_source = self.context.source()[original.range].as_ref();
@@ -103,11 +101,11 @@ impl Lexer<'_> {
             Lexeme(LexemeKind),
         }
 
-        if LanguageVersion::V0_5_8 <= self.language_version
-            && self.language_version < LanguageVersion::V0_7_0
-        {
-            return Some(original);
-        }
+        // if LanguageVersion::V0_5_8 <= self.language_version
+        //     && self.language_version < LanguageVersion::V0_7_0
+        // {
+        //     return Some(original);
+        // }
 
         let original_start = original.range.start;
         let original_source = self.context.source()[original.range].as_ref();
