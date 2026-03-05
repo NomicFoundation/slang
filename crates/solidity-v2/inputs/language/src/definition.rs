@@ -17,15 +17,9 @@ language_v2_macros::compile!(Language(
         Trivia(EndOfLine)
     ]),
     versions = [
-        "0.4.11", "0.4.12", "0.4.13", "0.4.14", "0.4.15", "0.4.16", "0.4.17", "0.4.18", "0.4.19",
-        "0.4.20", "0.4.21", "0.4.22", "0.4.23", "0.4.24", "0.4.25", "0.4.26", "0.5.0", "0.5.1",
-        "0.5.2", "0.5.3", "0.5.4", "0.5.5", "0.5.6", "0.5.7", "0.5.8", "0.5.9", "0.5.10", "0.5.11",
-        "0.5.12", "0.5.13", "0.5.14", "0.5.15", "0.5.16", "0.5.17", "0.6.0", "0.6.1", "0.6.2",
-        "0.6.3", "0.6.4", "0.6.5", "0.6.6", "0.6.7", "0.6.8", "0.6.9", "0.6.10", "0.6.11",
-        "0.6.12", "0.7.0", "0.7.1", "0.7.2", "0.7.3", "0.7.4", "0.7.5", "0.7.6", "0.8.0", "0.8.1",
-        "0.8.2", "0.8.3", "0.8.4", "0.8.5", "0.8.6", "0.8.7", "0.8.8", "0.8.9", "0.8.10", "0.8.11",
-        "0.8.12", "0.8.13", "0.8.14", "0.8.15", "0.8.16", "0.8.17", "0.8.18", "0.8.19", "0.8.20",
-        "0.8.21", "0.8.22", "0.8.23", "0.8.24", "0.8.25", "0.8.26", "0.8.27", "0.8.28", "0.8.29",
+        "0.8.0",  "0.8.1",  "0.8.2",  "0.8.3",  "0.8.4",  "0.8.5",  "0.8.6",  "0.8.7",  "0.8.8",  "0.8.9", 
+        "0.8.10", "0.8.11", "0.8.12", "0.8.13", "0.8.14", "0.8.15", "0.8.16", "0.8.17", "0.8.18", "0.8.19",
+        "0.8.20", "0.8.21", "0.8.22", "0.8.23", "0.8.24", "0.8.25", "0.8.26", "0.8.27", "0.8.28", "0.8.29",
         "0.8.30", "0.8.31", "0.8.32", "0.8.33", "0.8.34"
     ],
     contexts = [
@@ -41,19 +35,12 @@ language_v2_macros::compile!(Language(
                                 name = Pragma,
                                 variants = [
                                     EnumVariant(reference = VersionPragma),
-                                    EnumVariant(
-                                        reference = AbicoderPragma,
-                                        enabled = From("0.7.5")
-                                    ),
-                                    EnumVariant(
-                                        reference = ExperimentalPragma,
-                                        enabled = From("0.4.16")
-                                    )
+                                    EnumVariant(reference = AbicoderPragma),
+                                    EnumVariant(reference = ExperimentalPragma)
                                 ]
                             ),
                             Struct(
                                 name = AbicoderPragma,
-                                enabled = From("0.7.5"),
                                 fields = (
                                     abicoder_keyword = Required(AbicoderKeyword),
                                     version = Required(AbicoderVersion)
@@ -61,7 +48,6 @@ language_v2_macros::compile!(Language(
                             ),
                             Struct(
                                 name = ExperimentalPragma,
-                                enabled = From("0.4.16"),
                                 fields = (
                                     experimental_keyword = Required(ExperimentalKeyword),
                                     feature = Required(ExperimentalFeature)
@@ -69,7 +55,6 @@ language_v2_macros::compile!(Language(
                             ),
                             Enum(
                                 name = AbicoderVersion,
-                                enabled = From("0.7.5"),
                                 variants = [
                                     EnumVariant(reference = AbicoderV1Keyword),
                                     EnumVariant(reference = AbicoderV2Keyword)
@@ -77,7 +62,6 @@ language_v2_macros::compile!(Language(
                             ),
                             Enum(
                                 name = ExperimentalFeature,
-                                enabled = From("0.4.16"),
                                 variants = [
                                     EnumVariant(reference = ABIEncoderV2Keyword),
                                     EnumVariant(reference = SMTCheckerKeyword),
@@ -192,32 +176,26 @@ language_v2_macros::compile!(Language(
                         items = [
                             Keyword(
                                 name = AbicoderKeyword,
-                                enabled = From("0.7.5"),
                                 definitions = [KeywordDefinition(value = Atom("abicoder"))]
                             ),
                             Keyword(
                                 name = ExperimentalKeyword,
-                                enabled = From("0.4.16"),
                                 definitions = [KeywordDefinition(value = Atom("experimental"))]
                             ),
                             Keyword(
                                 name = AbicoderV1Keyword,
-                                enabled = From("0.7.5"),
                                 definitions = [KeywordDefinition(value = Atom("v1"))]
                             ),
                             Keyword(
                                 name = AbicoderV2Keyword,
-                                enabled = From("0.7.5"),
                                 definitions = [KeywordDefinition(value = Atom("v2"))]
                             ),
                             Keyword(
                                 name = ABIEncoderV2Keyword,
-                                enabled = From("0.4.16"),
                                 definitions = [KeywordDefinition(value = Atom("ABIEncoderV2"))]
                             ),
                             Keyword(
                                 name = SMTCheckerKeyword,
-                                enabled = From("0.4.16"),
                                 definitions = [KeywordDefinition(value = Atom("SMTChecker"))]
                             ),
                             Keyword(
@@ -257,18 +235,9 @@ language_v2_macros::compile!(Language(
                                         EnumVariant(reference = ContractDefinition),
                                         EnumVariant(reference = InterfaceDefinition),
                                         EnumVariant(reference = LibraryDefinition),
-                                        EnumVariant(
-                                            reference = StructDefinition,
-                                            enabled = From("0.6.0")
-                                        ),
-                                        EnumVariant(
-                                            reference = EnumDefinition,
-                                            enabled = From("0.6.0")
-                                        ),
-                                        EnumVariant(
-                                            reference = FunctionDefinition,
-                                            enabled = From("0.7.1")
-                                        ),
+                                        EnumVariant(reference = StructDefinition),
+                                        EnumVariant(reference = EnumDefinition),
+                                        EnumVariant(reference = FunctionDefinition),
                                         EnumVariant(
                                             reference = ErrorDefinition,
                                             enabled = From("0.8.4")
@@ -285,10 +254,7 @@ language_v2_macros::compile!(Language(
                                             reference = EventDefinition,
                                             enabled = From("0.8.22")
                                         ),
-                                        EnumVariant(
-                                            reference = ConstantDefinition,
-                                            enabled = From("0.7.4")
-                                        )
+                                        EnumVariant(reference = ConstantDefinition)
                                     ]
                                 ),
                                 Struct(
@@ -545,7 +511,6 @@ PragmaDirective: PragmaDirective = {
                             items = [
                                 Keyword(
                                     name = AbstractKeyword,
-                                    enabled = From("0.6.0"),
                                     definitions = [KeywordDefinition(value = Atom("abstract"))]
                                 ),
                                 Keyword(
@@ -565,7 +530,6 @@ PragmaDirective: PragmaDirective = {
                                     name = AliasKeyword,
                                     enabled = Never,
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.5.0"),
                                         value = Atom("alias")
                                     )]
                                 ),
@@ -577,7 +541,6 @@ PragmaDirective: PragmaDirective = {
                                     name = ApplyKeyword,
                                     enabled = Never,
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.5.0"),
                                         value = Atom("apply")
                                     )]
                                 ),
@@ -599,7 +562,6 @@ PragmaDirective: PragmaDirective = {
                                     name = AutoKeyword,
                                     enabled = Never,
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.5.0"),
                                         value = Atom("auto")
                                     )]
                                 ),
@@ -613,7 +575,7 @@ PragmaDirective: PragmaDirective = {
                                 ),
                                 Keyword(
                                     name = ByteKeyword,
-                                    enabled = Till("0.8.0"),
+                                    enabled = Never,
                                     definitions = [KeywordDefinition(value = Atom("byte"))]
                                 ),
                                 Keyword(
@@ -660,9 +622,7 @@ PragmaDirective: PragmaDirective = {
                                 ),
                                 Keyword(
                                     name = CallDataKeyword,
-                                    enabled = From("0.5.0"),
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.5.0"),
                                         value = Atom("calldata")
                                     )]
                                 ),
@@ -673,7 +633,6 @@ PragmaDirective: PragmaDirective = {
                                 ),
                                 Keyword(
                                     name = CatchKeyword,
-                                    enabled = From("0.6.0"),
                                     definitions = [KeywordDefinition(value = Atom("catch"))]
                                 ),
                                 Keyword(
@@ -682,9 +641,7 @@ PragmaDirective: PragmaDirective = {
                                 ),
                                 Keyword(
                                     name = ConstructorKeyword,
-                                    enabled = From("0.4.22"),
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.5.0"),
                                         value = Atom("constructor")
                                     )]
                                 ),
@@ -700,7 +657,6 @@ PragmaDirective: PragmaDirective = {
                                     name = CopyOfKeyword,
                                     enabled = Never,
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.5.0"),
                                         value = Atom("copyof")
                                     )]
                                 ),
@@ -717,7 +673,6 @@ PragmaDirective: PragmaDirective = {
                                     name = DefineKeyword,
                                     enabled = Never,
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.5.0"),
                                         value = Atom("define")
                                     )]
                                 ),
@@ -735,9 +690,7 @@ PragmaDirective: PragmaDirective = {
                                 ),
                                 Keyword(
                                     name = EmitKeyword,
-                                    enabled = From("0.4.21"),
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.5.0"),
                                         value = Atom("emit")
                                     )]
                                 ),
@@ -768,7 +721,6 @@ PragmaDirective: PragmaDirective = {
                                 Keyword(
                                     name = FallbackKeyword,
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.6.0"),
                                         value = Atom("fallback")
                                     )]
                                 ),
@@ -780,14 +732,6 @@ PragmaDirective: PragmaDirective = {
                                     name = FinalKeyword,
                                     enabled = Never,
                                     definitions = [KeywordDefinition(value = Atom("final"))]
-                                ),
-                                Keyword(
-                                    name = FinneyKeyword,
-                                    enabled = Till("0.7.0"),
-                                    definitions = [KeywordDefinition(
-                                        reserved = Till("0.7.0"),
-                                        value = Atom("finney")
-                                    )]
                                 ),
                                 Keyword(
                                     name = FixedKeyword,
@@ -888,7 +832,6 @@ PragmaDirective: PragmaDirective = {
                                             ])
                                         ),
                                         KeywordDefinition(
-                                            reserved = From("0.4.14"),
                                             value = Sequence([
                                                 Atom("fixed"),
                                                 Choice([
@@ -951,7 +894,6 @@ PragmaDirective: PragmaDirective = {
                                             ])
                                         ),
                                         KeywordDefinition(
-                                            reserved = From("0.4.14"),
                                             value = Sequence([
                                                 Atom("fixed"),
                                                 Choice([
@@ -1089,9 +1031,7 @@ PragmaDirective: PragmaDirective = {
                                 ),
                                 Keyword(
                                     name = GweiKeyword,
-                                    enabled = From("0.6.11"),
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.7.0"),
                                         value = Atom("gwei")
                                     )]
                                 ),
@@ -1110,9 +1050,7 @@ PragmaDirective: PragmaDirective = {
                                 ),
                                 Keyword(
                                     name = ImmutableKeyword,
-                                    enabled = From("0.6.5"),
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.5.0"),
                                         value = Atom("immutable")
                                     )]
                                 ),
@@ -1120,7 +1058,6 @@ PragmaDirective: PragmaDirective = {
                                     name = ImplementsKeyword,
                                     enabled = Never,
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.5.0"),
                                         value = Atom("implements")
                                     )]
                                 ),
@@ -1217,7 +1154,6 @@ PragmaDirective: PragmaDirective = {
                                     name = MacroKeyword,
                                     enabled = Never,
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.5.0"),
                                         value = Atom("macro")
                                     )]
                                 ),
@@ -1246,7 +1182,6 @@ PragmaDirective: PragmaDirective = {
                                     name = MutableKeyword,
                                     enabled = Never,
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.5.0"),
                                         value = Atom("mutable")
                                     )]
                                 ),
@@ -1266,9 +1201,7 @@ PragmaDirective: PragmaDirective = {
                                 ),
                                 Keyword(
                                     name = OverrideKeyword,
-                                    enabled = From("0.6.0"),
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.5.0"),
                                         value = Atom("override")
                                     )]
                                 ),
@@ -1276,7 +1209,6 @@ PragmaDirective: PragmaDirective = {
                                     name = PartialKeyword,
                                     enabled = Never,
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.5.0"),
                                         value = Atom("partial")
                                     )]
                                 ),
@@ -1296,7 +1228,6 @@ PragmaDirective: PragmaDirective = {
                                     name = PromiseKeyword,
                                     enabled = Never,
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.5.0"),
                                         value = Atom("promise")
                                     )]
                                 ),
@@ -1306,13 +1237,11 @@ PragmaDirective: PragmaDirective = {
                                 ),
                                 Keyword(
                                     name = PureKeyword,
-                                    enabled = From("0.4.16"),
                                     definitions = [KeywordDefinition(value = Atom("pure"))]
                                 ),
                                 Keyword(
                                     name = ReceiveKeyword,
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.6.0"),
                                         value = Atom("receive")
                                     )]
                                 ),
@@ -1320,7 +1249,6 @@ PragmaDirective: PragmaDirective = {
                                     name = ReferenceKeyword,
                                     enabled = Never,
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.5.0"),
                                         value = Atom("reference")
                                     )]
                                 ),
@@ -1349,7 +1277,6 @@ PragmaDirective: PragmaDirective = {
                                     name = SealedKeyword,
                                     enabled = Never,
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.5.0"),
                                         value = Atom("sealed")
                                     )]
                                 ),
@@ -1361,7 +1288,6 @@ PragmaDirective: PragmaDirective = {
                                     name = SizeOfKeyword,
                                     enabled = Never,
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.5.0"),
                                         value = Atom("sizeof")
                                     )]
                                 ),
@@ -1385,7 +1311,6 @@ PragmaDirective: PragmaDirective = {
                                 Keyword(
                                     name = SuperKeyword,
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.8.0"),
                                         value = Atom("super")
                                     )]
                                 ),
@@ -1393,7 +1318,6 @@ PragmaDirective: PragmaDirective = {
                                     name = SupportsKeyword,
                                     enabled = Never,
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.5.0"),
                                         value = Atom("supports")
                                     )]
                                 ),
@@ -1403,23 +1327,14 @@ PragmaDirective: PragmaDirective = {
                                     definitions = [KeywordDefinition(value = Atom("switch"))]
                                 ),
                                 Keyword(
-                                    name = SzaboKeyword,
-                                    enabled = Till("0.7.0"),
-                                    definitions = [KeywordDefinition(
-                                        reserved = Till("0.7.0"),
-                                        value = Atom("szabo")
-                                    )]
-                                ),
-                                Keyword(
                                     name = ThisKeyword,
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.8.0"),
                                         value = Atom("this")
                                     )]
                                 ),
                                 Keyword(
                                     name = ThrowKeyword,
-                                    enabled = Till("0.5.0"),
+                                    enabled = Never,
                                     definitions = [KeywordDefinition(value = Atom("throw"))]
                                 ),
                                 Keyword(
@@ -1436,20 +1351,17 @@ PragmaDirective: PragmaDirective = {
                                 ),
                                 Keyword(
                                     name = TryKeyword,
-                                    enabled = From("0.6.0"),
                                     definitions = [KeywordDefinition(value = Atom("try"))]
                                 ),
                                 Keyword(
                                     name = TypeDefKeyword,
                                     enabled = Never,
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.5.0"),
                                         value = Atom("typedef")
                                     )]
                                 ),
                                 Keyword(
                                     name = TypeKeyword,
-                                    enabled = From("0.5.3"),
                                     definitions = [KeywordDefinition(value = Atom("type"))]
                                 ),
                                 Keyword(
@@ -1556,7 +1468,6 @@ PragmaDirective: PragmaDirective = {
                                             ])
                                         ),
                                         KeywordDefinition(
-                                            reserved = From("0.4.14"),
                                             value = Sequence([
                                                 Atom("ufixed"),
                                                 Choice([
@@ -1619,7 +1530,6 @@ PragmaDirective: PragmaDirective = {
                                             ])
                                         ),
                                         KeywordDefinition(
-                                            reserved = From("0.4.14"),
                                             value = Sequence([
                                                 Atom("ufixed"),
                                                 Choice([
@@ -1778,9 +1688,7 @@ PragmaDirective: PragmaDirective = {
                                 ),
                                 Keyword(
                                     name = UncheckedKeyword,
-                                    enabled = From("0.8.0"),
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.5.0"),
                                         value = Atom("unchecked")
                                     )]
                                 ),
@@ -1790,19 +1698,16 @@ PragmaDirective: PragmaDirective = {
                                 ),
                                 Keyword(
                                     name = VarKeyword,
-                                    enabled = Till("0.5.0"),
+                                    enabled = Never,
                                     definitions = [KeywordDefinition(value = Atom("var"))]
                                 ),
                                 Keyword(
                                     name = ViewKeyword,
-                                    enabled = From("0.4.16"),
                                     definitions = [KeywordDefinition(value = Atom("view"))]
                                 ),
                                 Keyword(
                                     name = VirtualKeyword,
-                                    enabled = From("0.6.0"),
                                     definitions = [KeywordDefinition(
-                                        reserved = From("0.6.0"),
                                         value = Atom("virtual")
                                     )]
                                 ),
@@ -1820,7 +1725,7 @@ PragmaDirective: PragmaDirective = {
                                 ),
                                 Keyword(
                                     name = YearsKeyword,
-                                    enabled = Till("0.5.0"),
+                                    enabled = Never,
                                     definitions = [KeywordDefinition(value = Atom("years"))]
                                 )
                             ]
@@ -1859,11 +1764,6 @@ PragmaDirective: PragmaDirective = {
                                     definitions = [TokenDefinition(Atom(":="))]
                                 ),
                                 Token(name = Equal, definitions = [TokenDefinition(Atom("="))]),
-                                Token(
-                                    name = EqualColon,
-                                    enabled = Till("0.5.0"),
-                                    definitions = [TokenDefinition(Atom("=:"))]
-                                ),
                                 Token(
                                     name = EqualEqual,
                                     definitions = [TokenDefinition(Atom("=="))]
@@ -1988,8 +1888,7 @@ PragmaDirective: PragmaDirective = {
                                     ),
                                     fields = (
                                         abstract_keyword = Optional(
-                                            reference = AbstractKeyword,
-                                            enabled = From("0.6.0")
+                                            reference = AbstractKeyword
                                         ),
                                         contract_keyword = Required(ContractKeyword),
                                         name = Required(Identifier),
@@ -2113,22 +2012,9 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
                                     variants = [
                                         EnumVariant(reference = UsingDirective),
                                         EnumVariant(reference = FunctionDefinition),
-                                        EnumVariant(
-                                            reference = ConstructorDefinition,
-                                            enabled = From("0.4.22")
-                                        ),
-                                        EnumVariant(
-                                            reference = ReceiveFunctionDefinition,
-                                            enabled = From("0.6.0")
-                                        ),
-                                        EnumVariant(
-                                            reference = FallbackFunctionDefinition,
-                                            enabled = From("0.6.0")
-                                        ),
-                                        EnumVariant(
-                                            reference = UnnamedFunctionDefinition,
-                                            enabled = Till("0.6.0")
-                                        ),
+                                        EnumVariant(reference = ConstructorDefinition),
+                                        EnumVariant(reference = ReceiveFunctionDefinition),
+                                        EnumVariant(reference = FallbackFunctionDefinition),
                                         EnumVariant(reference = ModifierDefinition),
                                         EnumVariant(reference = StructDefinition),
                                         EnumVariant(reference = EnumDefinition),
@@ -2257,7 +2143,6 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
                             title = "Constants",
                             items = [Struct(
                                 name = ConstantDefinition,
-                                enabled = From("0.7.4"),
                                 error_recovery = FieldsErrorRecovery(terminator = semicolon),
                                 fields = (
                                     type_name = Required(TypeName),
@@ -2363,18 +2248,12 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                                 Enum(
                                     name = StateVariableAttribute,
                                     variants = [
-                                        EnumVariant(
-                                            reference = OverrideSpecifier,
-                                            enabled = From("0.6.0")
-                                        ),
+                                        EnumVariant(reference = OverrideSpecifier),
                                         EnumVariant(reference = ConstantKeyword),
                                         EnumVariant(reference = InternalKeyword),
                                         EnumVariant(reference = PrivateKeyword),
                                         EnumVariant(reference = PublicKeyword),
-                                        EnumVariant(
-                                            reference = ImmutableKeyword,
-                                            enabled = From("0.6.5")
-                                        ),
+                                        EnumVariant(reference = ImmutableKeyword),
                                         EnumVariant(
                                             reference = TransientKeyword,
                                             enabled = From("0.8.27")
@@ -2440,36 +2319,19 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                                     name = FunctionAttribute,
                                     variants = [
                                         EnumVariant(reference = ModifierInvocation),
-                                        EnumVariant(
-                                            reference = OverrideSpecifier,
-                                            enabled = From("0.6.0")
-                                        ),
-                                        EnumVariant(
-                                            reference = ConstantKeyword,
-                                            enabled = Till("0.5.0")
-                                        ),
+                                        EnumVariant(reference = OverrideSpecifier),
                                         EnumVariant(reference = ExternalKeyword),
                                         EnumVariant(reference = InternalKeyword),
                                         EnumVariant(reference = PayableKeyword),
                                         EnumVariant(reference = PrivateKeyword),
                                         EnumVariant(reference = PublicKeyword),
-                                        EnumVariant(
-                                            reference = PureKeyword,
-                                            enabled = From("0.4.16")
-                                        ),
-                                        EnumVariant(
-                                            reference = ViewKeyword,
-                                            enabled = From("0.4.16")
-                                        ),
-                                        EnumVariant(
-                                            reference = VirtualKeyword,
-                                            enabled = From("0.6.0")
-                                        )
+                                        EnumVariant(reference = PureKeyword),
+                                        EnumVariant(reference = ViewKeyword),
+                                        EnumVariant(reference = VirtualKeyword)
                                     ]
                                 ),
                                 Struct(
                                     name = OverrideSpecifier,
-                                    enabled = From("0.6.0"),
                                     fields = (
                                         override_keyword = Required(OverrideKeyword),
                                         overridden = Optional(reference = OverridePathsDeclaration)
@@ -2477,7 +2339,6 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                                 ),
                                 Struct(
                                     name = OverridePathsDeclaration,
-                                    enabled = From("0.6.0"),
                                     error_recovery = FieldsErrorRecovery(
                                         delimiters =
                                             FieldDelimiters(open = open_paren, close = close_paren)
@@ -2491,8 +2352,7 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                                 Separated(
                                     name = OverridePaths,
                                     reference = IdentifierPath,
-                                    separator = Comma,
-                                    enabled = From("0.6.0")
+                                    separator = Comma
                                 ),
                                 Struct(
                                     name = ReturnsDeclaration,
@@ -2510,7 +2370,6 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                                 ),
                                 Struct(
                                     name = ConstructorDefinition,
-                                    enabled = From("0.4.22"),
                                     fields = (
                                         constructor_keyword = Required(ConstructorKeyword),
                                         parameters = Required(ParametersDeclaration),
@@ -2521,67 +2380,19 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                                 Repeated(
                                     name = ConstructorAttributes,
                                     reference = ConstructorAttribute,
-                                    enabled = From("0.4.22"),
                                     allow_empty = true
                                 ),
                                 Enum(
                                     name = ConstructorAttribute,
-                                    enabled = From("0.4.22"),
                                     variants = [
                                         EnumVariant(reference = ModifierInvocation),
                                         EnumVariant(reference = InternalKeyword),
-                                        EnumVariant(
-                                            reference = OverrideKeyword,
-                                            enabled = Range(from = "0.6.0", till = "0.6.7")
-                                        ),
                                         EnumVariant(reference = PayableKeyword),
-                                        EnumVariant(reference = PublicKeyword),
-                                        EnumVariant(
-                                            reference = VirtualKeyword,
-                                            enabled = Range(from = "0.6.0", till = "0.6.7")
-                                        )
-                                    ]
-                                ),
-                                Struct(
-                                    name = UnnamedFunctionDefinition,
-                                    enabled = Till("0.6.0"),
-                                    fields = (
-                                        function_keyword = Required(FunctionKeyword),
-                                        parameters = Required(ParametersDeclaration),
-                                        attributes = Required(UnnamedFunctionAttributes),
-                                        body = Required(FunctionBody)
-                                    )
-                                ),
-                                Repeated(
-                                    name = UnnamedFunctionAttributes,
-                                    reference = UnnamedFunctionAttribute,
-                                    enabled = Till("0.6.0"),
-                                    allow_empty = true
-                                ),
-                                Enum(
-                                    name = UnnamedFunctionAttribute,
-                                    enabled = Till("0.6.0"),
-                                    variants = [
-                                        EnumVariant(reference = ModifierInvocation),
-                                        EnumVariant(reference = ExternalKeyword),
-                                        EnumVariant(
-                                            reference = InternalKeyword,
-                                            enabled = Till("0.5.0")
-                                        ),
-                                        EnumVariant(reference = PayableKeyword),
-                                        EnumVariant(
-                                            reference = PrivateKeyword,
-                                            enabled = Till("0.5.0")
-                                        ),
-                                        EnumVariant(
-                                            reference = PublicKeyword,
-                                            enabled = Till("0.5.0")
-                                        )
+                                        EnumVariant(reference = PublicKeyword)
                                     ]
                                 ),
                                 Struct(
                                     name = FallbackFunctionDefinition,
-                                    enabled = From("0.6.0"),
                                     fields = (
                                         fallback_keyword = Required(FallbackKeyword),
                                         parameters = Required(ParametersDeclaration),
@@ -2593,12 +2404,10 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                                 Repeated(
                                     name = FallbackFunctionAttributes,
                                     reference = FallbackFunctionAttribute,
-                                    enabled = From("0.6.0"),
                                     allow_empty = true
                                 ),
                                 Enum(
                                     name = FallbackFunctionAttribute,
-                                    enabled = From("0.6.0"),
                                     variants = [
                                         EnumVariant(reference = ModifierInvocation),
                                         EnumVariant(reference = OverrideSpecifier),
@@ -2611,7 +2420,6 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                                 ),
                                 Struct(
                                     name = ReceiveFunctionDefinition,
-                                    enabled = From("0.6.0"),
                                     fields = (
                                         receive_keyword = Required(ReceiveKeyword),
                                         parameters = Required(ParametersDeclaration),
@@ -2622,12 +2430,10 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                                 Repeated(
                                     name = ReceiveFunctionAttributes,
                                     reference = ReceiveFunctionAttribute,
-                                    enabled = From("0.6.0"),
                                     allow_empty = true
                                 ),
                                 Enum(
                                     name = ReceiveFunctionAttribute,
-                                    enabled = From("0.6.0"),
                                     variants = [
                                         EnumVariant(reference = ModifierInvocation),
                                         EnumVariant(reference = OverrideSpecifier),
@@ -2659,14 +2465,8 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                                 Enum(
                                     name = ModifierAttribute,
                                     variants = [
-                                        EnumVariant(
-                                            reference = OverrideSpecifier,
-                                            enabled = From("0.6.0")
-                                        ),
-                                        EnumVariant(
-                                            reference = VirtualKeyword,
-                                            enabled = From("0.6.0")
-                                        )
+                                        EnumVariant(reference = OverrideSpecifier),
+                                        EnumVariant(reference = VirtualKeyword)
                                     ]
                                 ),
                                 Struct(
@@ -2887,18 +2687,8 @@ FunctionTypeInternalReturn: FunctionType = {
                                         EnumVariant(reference = ExternalKeyword),
                                         EnumVariant(reference = PrivateKeyword),
                                         EnumVariant(reference = PublicKeyword),
-                                        EnumVariant(
-                                            reference = ConstantKeyword,
-                                            enabled = Till("0.5.0")
-                                        ),
-                                        EnumVariant(
-                                            reference = PureKeyword,
-                                            enabled = From("0.4.16")
-                                        ),
-                                        EnumVariant(
-                                            reference = ViewKeyword,
-                                            enabled = From("0.4.16")
-                                        ),
+                                        EnumVariant(reference = PureKeyword),
+                                        EnumVariant(reference = ViewKeyword),
                                         EnumVariant(reference = PayableKeyword)
                                     ]
                                 ),
@@ -2953,10 +2743,6 @@ FunctionTypeInternalReturn: FunctionType = {
                                     name = ElementaryType,
                                     variants = [
                                         EnumVariant(reference = BoolKeyword),
-                                        EnumVariant(
-                                            reference = ByteKeyword,
-                                            enabled = Till("0.8.0")
-                                        ),
                                         EnumVariant(reference = StringKeyword),
                                         EnumVariant(reference = AddressType),
                                         EnumVariant(reference = BytesKeyword),
@@ -2971,8 +2757,7 @@ FunctionTypeInternalReturn: FunctionType = {
                                     fields = (
                                         address_keyword = Required(AddressKeyword),
                                         payable_keyword = Optional(
-                                            reference = PayableKeyword,
-                                            enabled = From("0.5.0")
+                                            reference = PayableKeyword
                                         )
                                     )
                                 )
@@ -3013,28 +2798,15 @@ FunctionTypeInternalReturn: FunctionType = {
                                         EnumVariant(reference = ContinueStatement),
                                         EnumVariant(reference = BreakStatement),
                                         EnumVariant(reference = ReturnStatement),
-                                        EnumVariant(
-                                            reference = ThrowStatement,
-                                            enabled = Till("0.5.0")
-                                        ),
-                                        EnumVariant(
-                                            reference = EmitStatement,
-                                            enabled = From("0.4.21")
-                                        ),
-                                        EnumVariant(
-                                            reference = TryStatement,
-                                            enabled = From("0.6.0")
-                                        ),
+                                        EnumVariant(reference = EmitStatement),
+                                        EnumVariant(reference = TryStatement),
                                         EnumVariant(
                                             reference = RevertStatement,
                                             enabled = From("0.8.4")
                                         ),
                                         EnumVariant(reference = AssemblyStatement),
                                         EnumVariant(reference = Block),
-                                        EnumVariant(
-                                            reference = UncheckedBlock,
-                                            enabled = From("0.8.0")
-                                        ),
+                                        EnumVariant(reference = UncheckedBlock),
                                         EnumVariant(reference = VariableDeclarationStatement),
                                         EnumVariant(reference = ExpressionStatement)
                                     ],
@@ -3124,7 +2896,6 @@ IdentifierPathNoRevert: IdentifierPath = {
                                 ),
                                 Struct(
                                     name = UncheckedBlock,
-                                    enabled = From("0.8.0"),
                                     fields = (
                                         unchecked_keyword = Required(UncheckedKeyword),
                                         block = Required(Block)
@@ -3194,11 +2965,7 @@ IdentifierPathNoRevert: IdentifierPath = {
                                     name = VariableDeclarationTarget,
                                     variants = [
                                         EnumVariant(reference = SingleTypedDeclaration),
-                                        EnumVariant(reference = MultiTypedDeclaration),
-                                        EnumVariant(
-                                            reference = UntypedDeclaration,
-                                            enabled = Till("0.5.0")
-                                        )
+                                        EnumVariant(reference = MultiTypedDeclaration)
                                     ]
                                 ),
                                 Struct(
@@ -3261,47 +3028,6 @@ TuplePrefix: usize = {
                                     fields = (member = Optional(reference = VariableDeclaration))
                                 ),
                                 Struct(
-                                    name = UntypedDeclaration,
-                                    enabled = Till("0.5.0"),
-                                    fields = (
-                                        var_keyword = Required(VarKeyword),
-                                        names = Required(UntypedDeclarationNames),
-                                        value = Required(VariableDeclarationValue)
-                                    )
-                                ),
-                                Enum(
-                                    name = UntypedDeclarationNames,
-                                    enabled = Till("0.5.0"),
-                                    variants = [
-                                        EnumVariant(reference = Identifier),
-                                        EnumVariant(reference = UntypedTupleDeclaration)
-                                    ]
-                                ),
-                                Struct(
-                                    name = UntypedTupleDeclaration,
-                                    enabled = Till("0.5.0"),
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_paren, close = close_paren)
-                                    ),
-                                    fields = (
-                                        open_paren = Required(OpenParen),
-                                        elements = Required(UntypedTupleDeclarationElements),
-                                        close_paren = Required(CloseParen)
-                                    )
-                                ),
-                                Separated(
-                                    name = UntypedTupleDeclarationElements,
-                                    reference = UntypedTupleDeclarationElement,
-                                    separator = Comma,
-                                    enabled = Till("0.5.0")
-                                ),
-                                Struct(
-                                    name = UntypedTupleDeclarationElement,
-                                    enabled = Till("0.5.0"),
-                                    fields = (name = Optional(reference = Identifier))
-                                ),
-                                Struct(
                                     name = VariableDeclarationValue,
                                     fields = (
                                         equal = Required(Equal),
@@ -3313,10 +3039,7 @@ TuplePrefix: usize = {
                                     variants = [
                                         EnumVariant(reference = MemoryKeyword),
                                         EnumVariant(reference = StorageKeyword),
-                                        EnumVariant(
-                                            reference = CallDataKeyword,
-                                            enabled = From("0.5.0")
-                                        )
+                                        EnumVariant(reference = CallDataKeyword)
                                     ]
                                 )
                             ]
@@ -3457,7 +3180,6 @@ WhileStatement<TrailingElse>: WhileStatement = {
                                 ),
                                 Struct(
                                     name = EmitStatement,
-                                    enabled = From("0.4.21"),
                                     error_recovery = FieldsErrorRecovery(terminator = semicolon),
                                     fields = (
                                         emit_keyword = Required(EmitKeyword),
@@ -3473,7 +3195,6 @@ WhileStatement<TrailingElse>: WhileStatement = {
                             items = [
                                 Struct(
                                     name = TryStatement,
-                                    enabled = From("0.6.0"),
                                     fields = (
                                         try_keyword = Required(TryKeyword),
                                         expression = Required(Expression),
@@ -3506,12 +3227,10 @@ ExpressionTrailingBlock: (Expression, Block) = {
                                 ),
                                 Repeated(
                                     name = CatchClauses,
-                                    reference = CatchClause,
-                                    enabled = From("0.6.0")
+                                    reference = CatchClause
                                 ),
                                 Struct(
                                     name = CatchClause,
-                                    enabled = From("0.6.0"),
                                     fields = (
                                         catch_keyword = Required(CatchKeyword),
                                         error = Optional(reference = CatchClauseError),
@@ -3520,7 +3239,6 @@ ExpressionTrailingBlock: (Expression, Block) = {
                                 ),
                                 Struct(
                                     name = CatchClauseError,
-                                    enabled = From("0.6.0"),
                                     fields = (
                                         name = Optional(reference = Identifier),
                                         parameters = Required(ParametersDeclaration)
@@ -3538,16 +3256,6 @@ ExpressionTrailingBlock: (Expression, Block) = {
                                     ),
                                     // RevertStatement needs to be inline to disambiguate from VariableDeclarationStatement
                                     parser_options = ParserOptions(inline = true, public = false)
-
-                                ),
-                                Struct(
-                                    name = ThrowStatement,
-                                    enabled = Till("0.5.0"),
-                                    error_recovery = FieldsErrorRecovery(terminator = semicolon),
-                                    fields = (
-                                        throw_keyword = Required(ThrowKeyword),
-                                        semicolon = Required(Semicolon)
-                                    )
                                 )
                             ]
                         )
@@ -3755,17 +3463,8 @@ ExpressionTrailingBlock: (Expression, Block) = {
                                         PrecedenceExpression(
                                             name = ExponentiationExpression,
                                             operators = [
-                                                // Before '0.8.0', it was left-associative:
-                                                PrecedenceOperator(
-                                                    model = BinaryLeftAssociative,
-                                                    enabled = Till("0.8.0"),
-                                                    fields =
-                                                        (operator = Required(AsteriskAsterisk))
-                                                ),
-                                                // In '0.8.0', it became right-associative:
                                                 PrecedenceOperator(
                                                     model = BinaryRightAssociative,
-                                                    enabled = From("0.8.0"),
                                                     fields =
                                                         (operator = Required(AsteriskAsterisk))
                                                 )
@@ -3809,11 +3508,6 @@ ExpressionTrailingBlock: (Expression, Block) = {
                                                 ),
                                                 PrecedenceOperator(
                                                     model = Prefix,
-                                                    enabled = Till("0.5.0"),
-                                                    fields = (operator = Required(Plus))
-                                                ),
-                                                PrecedenceOperator(
-                                                    model = Prefix,
                                                     fields = (operator = Required(DeleteKeyword))
                                                 )
                                             ]
@@ -3830,7 +3524,6 @@ ExpressionTrailingBlock: (Expression, Block) = {
                                             name = CallOptionsExpression,
                                             operators = [PrecedenceOperator(
                                                 model = Postfix,
-                                                enabled = From("0.6.2"),
                                                 error_recovery = FieldsErrorRecovery(
                                                     delimiters = FieldDelimiters(
                                                         open = open_brace,
@@ -3894,8 +3587,7 @@ ExpressionTrailingBlock: (Expression, Block) = {
                                         PrimaryExpression(reference = NewExpression),
                                         PrimaryExpression(reference = TupleExpression),
                                         PrimaryExpression(
-                                            reference = TypeExpression,
-                                            enabled = From("0.5.3")
+                                            reference = TypeExpression
                                         ),
                                         PrimaryExpression(reference = ArrayExpression),
                                         PrimaryExpression(reference = HexNumberExpression),
@@ -3903,8 +3595,7 @@ ExpressionTrailingBlock: (Expression, Block) = {
                                         PrimaryExpression(reference = StringExpression),
                                         PrimaryExpression(reference = ElementaryType),
                                         PrimaryExpression(
-                                            reference = PayableKeyword,
-                                            enabled = From("0.6.0")
+                                            reference = PayableKeyword
                                         ),
                                         PrimaryExpression(reference = ThisKeyword),
                                         PrimaryExpression(reference = SuperKeyword),
@@ -4008,7 +3699,7 @@ Expression6<Tail>: (Expression, Tail) = {
 };
 Expression7<Tail>: (Expression, Tail) = {
     // Note that only the right recursive rule matches a tail, the left recursive expects no tail
-    <_Expression: Expression6<EmptyTail>>  <_operator: Expression_ExponentiationExpression_Operator>  <_Expression_2: Expression7<Tail>>  => {
+    <_Expression: Expression6<EmptyTail>>  <_operator: AsteriskAsterisk>  <_Expression_2: Expression7<Tail>>  => {
         let (e, _) = _Expression;
         let (e2, tail) = _Expression_2;
         (new_expression_exponentiation_expression(new_exponentiation_expression(e, _operator, e2)), tail)
@@ -4150,9 +3841,6 @@ Expression_PostfixExpression_Operator: Expression_PostfixExpression_Operator = {
     <_operator: PlusPlus>  => new_expression_postfix_expression_operator_plus_plus(<>),
     <_operator: MinusMinus>  => new_expression_postfix_expression_operator_minus_minus(<>),
 };
-Expression_ExponentiationExpression_Operator: Expression_ExponentiationExpression_Operator = {
-    <_operator: AsteriskAsterisk>  => new_expression_exponentiation_expression_operator_asterisk_asterisk(<>),
-};
 Expression_MultiplicativeExpression_Operator: Expression_MultiplicativeExpression_Operator = {
     <_operator: Asterisk>  => new_expression_multiplicative_expression_operator_asterisk(<>),
     <_operator: Slash>  => new_expression_multiplicative_expression_operator_slash(<>),
@@ -4279,7 +3967,6 @@ IndexAccessPath1<IdentPathRule>: IndexAccessPath = {
                                     name = CallOptions,
                                     reference = NamedArgument,
                                     separator = Comma,
-                                    enabled = From("0.6.2"),
                                     // These cannot be empty as they're ambiguous with `try <EXPR> {} catch {}`
                                     allow_empty = false
                                 ),
@@ -4298,7 +3985,6 @@ IndexAccessPath1<IdentPathRule>: IndexAccessPath = {
                             items = [
                                 Struct(
                                     name = TypeExpression,
-                                    enabled = From("0.5.3"),
                                     error_recovery = FieldsErrorRecovery(
                                         delimiters =
                                             FieldDelimiters(open = open_paren, close = close_paren)
@@ -4403,22 +4089,8 @@ TupleValues: TupleValues = {
                                 Struct(
                                     name = HexNumberExpression,
                                     fields = (
-                                        literal = Required(HexLiteral),
-                                        unit = Optional(
-                                            reference = NumberUnit,
-                                            enabled = Till("0.5.0")
-                                        )
-                                    ),
-                                    parser_options = ParserOptions(
-                                        inline = false,
-                                        public = false,
-                                        verbatim = "
-// This rule shouldn't be manual, but the node constructor takes an optional argument that is not
-// enabled in 0.8.30, therefore we don't have it automatically generated
-HexNumberExpression: HexNumberExpression = {
-        <_literal: HexLiteral>  => new_hex_number_expression(<>, None),
-};"
-)
+                                        literal = Required(HexLiteral)
+                                    )
                                 ),
                                 Struct(
                                     name = DecimalNumberExpression,
@@ -4487,31 +4159,14 @@ HexNumberExpression: HexNumberExpression = {
                                         // 1e-18 ETH
                                         EnumVariant(reference = WeiKeyword),
                                         // 1e-9 ETH
-                                        EnumVariant(
-                                            reference = GweiKeyword,
-                                            enabled = From("0.6.11")
-                                        ),
-                                        // 1e-6 ETH
-                                        EnumVariant(
-                                            reference = SzaboKeyword,
-                                            enabled = Till("0.7.0")
-                                        ),
-                                        // 1e-3 ETH
-                                        EnumVariant(
-                                            reference = FinneyKeyword,
-                                            enabled = Till("0.7.0")
-                                        ),
+                                        EnumVariant(reference = GweiKeyword),
                                         // 1 ETH
                                         EnumVariant(reference = EtherKeyword),
                                         EnumVariant(reference = SecondsKeyword),
                                         EnumVariant(reference = MinutesKeyword),
                                         EnumVariant(reference = HoursKeyword),
                                         EnumVariant(reference = DaysKeyword),
-                                        EnumVariant(reference = WeeksKeyword),
-                                        EnumVariant(
-                                            reference = YearsKeyword,
-                                            enabled = Till("0.5.0")
-                                        )
+                                        EnumVariant(reference = WeeksKeyword)
                                     ]
                                 )
                             ]
@@ -4522,32 +4177,14 @@ HexNumberExpression: HexNumberExpression = {
                                 Enum(
                                     name = StringExpression,
                                     variants = [
-                                        EnumVariant(
-                                            reference = StringLiteral,
-                                            enabled = Till("0.5.14")
-                                        ),
-                                        EnumVariant(
-                                            reference = StringLiterals,
-                                            enabled = From("0.5.14")
-                                        ),
-                                        EnumVariant(
-                                            reference = HexStringLiteral,
-                                            enabled = Till("0.5.14")
-                                        ),
-                                        EnumVariant(
-                                            reference = HexStringLiterals,
-                                            enabled = From("0.5.14")
-                                        ),
-                                        EnumVariant(
-                                            reference = UnicodeStringLiterals,
-                                            enabled = From("0.7.0")
-                                        )
+                                        EnumVariant(reference = StringLiterals),
+                                        EnumVariant(reference = HexStringLiterals),
+                                        EnumVariant(reference = UnicodeStringLiterals)
                                     ]
                                 ),
                                 Repeated(
                                     name = StringLiterals,
-                                    reference = StringLiteral,
-                                    enabled = From("0.5.14")
+                                    reference = StringLiteral
                                 ),
                                 Enum(
                                     name = StringLiteral,
@@ -4591,8 +4228,7 @@ HexNumberExpression: HexNumberExpression = {
                                 ),
                                 Repeated(
                                     name = HexStringLiterals,
-                                    reference = HexStringLiteral,
-                                    enabled = From("0.5.14")
+                                    reference = HexStringLiteral
                                 ),
                                 Enum(
                                     name = HexStringLiteral,
@@ -4639,12 +4275,10 @@ HexNumberExpression: HexNumberExpression = {
                                 ),
                                 Repeated(
                                     name = UnicodeStringLiterals,
-                                    reference = UnicodeStringLiteral,
-                                    enabled = From("0.7.0")
+                                    reference = UnicodeStringLiteral
                                 ),
                                 Enum(
                                     name = UnicodeStringLiteral,
-                                    enabled = From("0.7.0"),
                                     variants = [
                                         EnumVariant(reference = SingleQuotedUnicodeStringLiteral),
                                         EnumVariant(reference = DoubleQuotedUnicodeStringLiteral)
@@ -4652,7 +4286,6 @@ HexNumberExpression: HexNumberExpression = {
                                 ),
                                 Token(
                                     name = SingleQuotedUnicodeStringLiteral,
-                                    enabled = From("0.7.0"),
                                     definitions = [TokenDefinition(Sequence([
                                         Atom("unicode'"),
                                         ZeroOrMore(Choice([
@@ -4664,7 +4297,6 @@ HexNumberExpression: HexNumberExpression = {
                                 ),
                                 Token(
                                     name = DoubleQuotedUnicodeStringLiteral,
-                                    enabled = From("0.7.0"),
                                     definitions = [TokenDefinition(Sequence([
                                         Atom("unicode\""),
                                         ZeroOrMore(Choice([
@@ -4676,7 +4308,6 @@ HexNumberExpression: HexNumberExpression = {
                                 ),
                                 Fragment(
                                     name = UnicodeEscapeSequence,
-                                    enabled = From("0.7.0"),
                                     scanner = Sequence([
                                         Atom("\\"),
                                         Choice([
@@ -4688,7 +4319,6 @@ HexNumberExpression: HexNumberExpression = {
                                 ),
                                 Fragment(
                                     name = AsciiEscape,
-                                    enabled = From("0.7.0"),
                                     scanner = Choice([
                                         Atom("n"),
                                         Atom("r"),
@@ -4762,10 +4392,7 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                                     name = IdentifierPathElement,
                                     variants = [
                                         EnumVariant(reference = Identifier),
-                                        EnumVariant(
-                                            reference = AddressKeyword,
-                                            enabled = From("0.6.0")
-                                        )
+                                        EnumVariant(reference = AddressKeyword)
                                     ]
                                 ),
                                 Token(
@@ -4836,21 +4463,13 @@ YulBlock: YulBlock = {
                                 variants = [
                                     EnumVariant(reference = YulBlock),
                                     EnumVariant(reference = YulFunctionDefinition),
-                                    EnumVariant(
-                                        reference = YulStackAssignmentStatement,
-                                        enabled = Till("0.5.0")
-                                    ),
                                     EnumVariant(reference = YulIfStatement),
                                     EnumVariant(reference = YulForStatement),
                                     EnumVariant(reference = YulSwitchStatement),
-                                    EnumVariant(
-                                        reference = YulLeaveStatement,
-                                        enabled = From("0.6.0")
-                                    ),
+                                    EnumVariant(reference = YulLeaveStatement),
                                     EnumVariant(reference = YulBreakStatement),
                                     EnumVariant(reference = YulContinueStatement),
                                     EnumVariant(reference = YulVariableAssignmentStatement),
-                                    EnumVariant(reference = YulLabel, enabled = Till("0.5.0")),
                                     EnumVariant(reference = YulVariableDeclarationStatement),
                                     EnumVariant(reference = YulExpression)
                                 ]
@@ -4906,7 +4525,7 @@ YulBlock: YulBlock = {
                             Struct(
                                 name = YulVariableDeclarationValue,
                                 fields = (
-                                    assignment = Required(YulAssignmentOperator),
+                                    assignment = Required(ColonEqual),
                                     expression = Required(YulExpression)
                                 )
                             ),
@@ -4914,45 +4533,9 @@ YulBlock: YulBlock = {
                                 name = YulVariableAssignmentStatement,
                                 fields = (
                                     variables = Required(YulPaths),
-                                    assignment = Required(YulAssignmentOperator),
+                                    assignment = Required(ColonEqual),
                                     expression = Required(YulExpression)
                                 )
-                            ),
-                            Enum(
-                                name = YulAssignmentOperator,
-                                variants = [
-                                    EnumVariant(reference = ColonEqual),
-                                    EnumVariant(
-                                        reference = YulColonAndEqual,
-                                        enabled = Till("0.5.5")
-                                    )
-                                ]
-                            ),
-                            Struct(
-                                name = YulColonAndEqual,
-                                enabled = Till("0.5.5"),
-                                fields = (colon = Required(Colon), equal = Required(Equal))
-                            ),
-                            Struct(
-                                name = YulStackAssignmentStatement,
-                                enabled = Till("0.5.0"),
-                                fields = (
-                                    assignment = Required(YulStackAssignmentOperator),
-                                    variable = Required(YulIdentifier)
-                                )
-                            ),
-                            Enum(
-                                name = YulStackAssignmentOperator,
-                                enabled = Till("0.5.0"),
-                                variants = [
-                                    EnumVariant(reference = EqualColon),
-                                    EnumVariant(reference = YulEqualAndColon)
-                                ]
-                            ),
-                            Struct(
-                                name = YulEqualAndColon,
-                                enabled = Till("0.5.0"),
-                                fields = (equal = Required(Equal), colon = Required(Colon))
                             ),
                             Struct(
                                 name = YulIfStatement,
@@ -5005,7 +4588,6 @@ YulBlock: YulBlock = {
                             ),
                             Struct(
                                 name = YulLeaveStatement,
-                                enabled = From("0.6.0"),
                                 fields = (leave_keyword = Required(YulLeaveKeyword))
                             ),
                             Struct(
@@ -5015,11 +4597,6 @@ YulBlock: YulBlock = {
                             Struct(
                                 name = YulContinueStatement,
                                 fields = (continue_keyword = Required(YulContinueKeyword))
-                            ),
-                            Struct(
-                                name = YulLabel,
-                                enabled = Till("0.5.0"),
-                                fields = (label = Required(YulIdentifier), colon = Required(Colon))
                             )
                         ]
                     ),
@@ -5072,14 +4649,8 @@ YulBlock: YulBlock = {
                             Enum(
                                 name = YulLiteral,
                                 variants = [
-                                    EnumVariant(
-                                        reference = YulTrueKeyword,
-                                        enabled = From("0.6.2")
-                                    ),
-                                    EnumVariant(
-                                        reference = YulFalseKeyword,
-                                        enabled = From("0.6.2")
-                                    ),
+                                    EnumVariant(reference = YulTrueKeyword),
+                                    EnumVariant(reference = YulFalseKeyword),
                                     EnumVariant(reference = YulDecimalLiteral),
                                     EnumVariant(reference = YulHexLiteral),
                                     EnumVariant(reference = HexStringLiteral),
@@ -5112,576 +4683,24 @@ YulBlock: YulBlock = {
                         title = "Yul Keywords",
                         items = [
                             Keyword(
-                                name = YulAbstractKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("abstract")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulAfterKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("after")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulAliasKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Range(from = "0.5.0", till = "0.7.1"),
-                                    value = Atom("alias")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulAnonymousKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("anonymous")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulApplyKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Range(from = "0.5.0", till = "0.7.1"),
-                                    value = Atom("apply")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulAsKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("as")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulAssemblyKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("assembly")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulAutoKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Range(from = "0.5.0", till = "0.7.1"),
-                                    value = Atom("auto")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulBoolKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.5.10"),
-                                    value = Atom("bool")
-                                )]
-                            ),
-                            Keyword(
                                 name = YulBreakKeyword,
                                 definitions = [KeywordDefinition(value = Atom("break"))]
-                            ),
-                            Keyword(
-                                name = YulBytesKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Sequence([
-                                        Atom("bytes"),
-                                        Optional(Choice([
-                                            Atom("1"),
-                                            Atom("2"),
-                                            Atom("3"),
-                                            Atom("4"),
-                                            Atom("5"),
-                                            Atom("6"),
-                                            Atom("7"),
-                                            Atom("8"),
-                                            Atom("9"),
-                                            Atom("10"),
-                                            Atom("11"),
-                                            Atom("12"),
-                                            Atom("13"),
-                                            Atom("14"),
-                                            Atom("15"),
-                                            Atom("16"),
-                                            Atom("17"),
-                                            Atom("18"),
-                                            Atom("19"),
-                                            Atom("20"),
-                                            Atom("21"),
-                                            Atom("22"),
-                                            Atom("23"),
-                                            Atom("24"),
-                                            Atom("25"),
-                                            Atom("26"),
-                                            Atom("27"),
-                                            Atom("28"),
-                                            Atom("29"),
-                                            Atom("30"),
-                                            Atom("31"),
-                                            Atom("32")
-                                        ]))
-                                    ])
-                                )]
-                            ),
-                            Keyword(
-                                name = YulCallDataKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Range(from = "0.5.0", till = "0.7.1"),
-                                    value = Atom("calldata")
-                                )]
                             ),
                             Keyword(
                                 name = YulCaseKeyword,
                                 definitions = [KeywordDefinition(value = Atom("case"))]
                             ),
                             Keyword(
-                                name = YulCatchKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("catch")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulConstantKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("constant")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulConstructorKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Range(from = "0.5.0", till = "0.7.1"),
-                                    value = Atom("constructor")
-                                )]
-                            ),
-                            Keyword(
                                 name = YulContinueKeyword,
                                 definitions = [KeywordDefinition(value = Atom("continue"))]
-                            ),
-                            Keyword(
-                                name = YulContractKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("contract")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulCopyOfKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Range(from = "0.5.0", till = "0.7.1"),
-                                    value = Atom("copyof")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulDaysKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("days")
-                                )]
                             ),
                             Keyword(
                                 name = YulDefaultKeyword,
                                 definitions = [KeywordDefinition(value = Atom("default"))]
                             ),
                             Keyword(
-                                name = YulDefineKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Range(from = "0.5.0", till = "0.7.1"),
-                                    value = Atom("define")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulDeleteKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("delete")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulDoKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("do")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulElseKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("else")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulEmitKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Range(from = "0.5.0", till = "0.7.1"),
-                                    value = Atom("emit")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulEnumKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("enum")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulEtherKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("ether")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulEventKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("event")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulExternalKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("external")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulFallbackKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Range(from = "0.6.0", till = "0.7.1"),
-                                    value = Atom("fallback")
-                                )]
-                            ),
-                            Keyword(
                                 name = YulFalseKeyword,
-                                enabled = From("0.6.2"),
                                 definitions = [KeywordDefinition(value = Atom("false"))]
-                            ),
-                            Keyword(
-                                name = YulFinalKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("final")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulFinneyKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.0"),
-                                    value = Atom("finney")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulFixedKeyword,
-                                enabled = Never,
-                                definitions = [
-                                    KeywordDefinition(
-                                        reserved = Till("0.7.1"),
-                                        value = Atom("fixed")
-                                    ),
-                                    KeywordDefinition(
-                                        reserved = Till("0.7.1"),
-                                        value = Sequence([
-                                            Atom("fixed"),
-                                            Choice([
-                                                Atom("8"),
-                                                Atom("16"),
-                                                Atom("24"),
-                                                Atom("32"),
-                                                Atom("40"),
-                                                Atom("48"),
-                                                Atom("56"),
-                                                Atom("64"),
-                                                Atom("72"),
-                                                Atom("80"),
-                                                Atom("88"),
-                                                Atom("96"),
-                                                Atom("104"),
-                                                Atom("112"),
-                                                Atom("120"),
-                                                Atom("128"),
-                                                Atom("136"),
-                                                Atom("144"),
-                                                Atom("152"),
-                                                Atom("160"),
-                                                Atom("168"),
-                                                Atom("176")
-                                            ]),
-                                            Atom("x"),
-                                            Choice([
-                                                Atom("8"),
-                                                Atom("16"),
-                                                Atom("24"),
-                                                Atom("32"),
-                                                Atom("40"),
-                                                Atom("48"),
-                                                Atom("56"),
-                                                Atom("64"),
-                                                Atom("72"),
-                                                Atom("80")
-                                            ])
-                                        ])
-                                    ),
-                                    KeywordDefinition(
-                                        reserved = Till("0.7.1"),
-                                        value = Sequence([
-                                            Atom("fixed"),
-                                            Choice([
-                                                Atom("184x8"),
-                                                Atom("184x16"),
-                                                Atom("184x24"),
-                                                Atom("184x32"),
-                                                Atom("184x40"),
-                                                Atom("184x48"),
-                                                Atom("184x56"),
-                                                Atom("184x64"),
-                                                Atom("184x72"),
-                                                Atom("192x8"),
-                                                Atom("192x16"),
-                                                Atom("192x24"),
-                                                Atom("192x32"),
-                                                Atom("192x40"),
-                                                Atom("192x48"),
-                                                Atom("192x56"),
-                                                Atom("192x64"),
-                                                Atom("200x8"),
-                                                Atom("200x16"),
-                                                Atom("200x24"),
-                                                Atom("200x32"),
-                                                Atom("200x40"),
-                                                Atom("200x48"),
-                                                Atom("200x56"),
-                                                Atom("208x8"),
-                                                Atom("208x16"),
-                                                Atom("208x24"),
-                                                Atom("208x32"),
-                                                Atom("208x40"),
-                                                Atom("208x48"),
-                                                Atom("216x8"),
-                                                Atom("216x16"),
-                                                Atom("216x24"),
-                                                Atom("216x32"),
-                                                Atom("216x40"),
-                                                Atom("224x8"),
-                                                Atom("224x16"),
-                                                Atom("224x24"),
-                                                Atom("224x32"),
-                                                Atom("232x8"),
-                                                Atom("232x16"),
-                                                Atom("232x24"),
-                                                Atom("240x8"),
-                                                Atom("240x16"),
-                                                Atom("248x8")
-                                            ])
-                                        ])
-                                    ),
-                                    KeywordDefinition(
-                                        reserved = Range(from = "0.4.14", till = "0.7.1"),
-                                        value = Sequence([
-                                            Atom("fixed"),
-                                            Choice([
-                                                Atom("184x80"),
-                                                Atom("192x72"),
-                                                Atom("192x80"),
-                                                Atom("200x64"),
-                                                Atom("200x72"),
-                                                Atom("200x80"),
-                                                Atom("208x56"),
-                                                Atom("208x64"),
-                                                Atom("208x72"),
-                                                Atom("208x80"),
-                                                Atom("216x48"),
-                                                Atom("216x56"),
-                                                Atom("216x64"),
-                                                Atom("216x72"),
-                                                Atom("216x80"),
-                                                Atom("224x40"),
-                                                Atom("224x48"),
-                                                Atom("224x56"),
-                                                Atom("224x64"),
-                                                Atom("224x72"),
-                                                Atom("224x80"),
-                                                Atom("232x32"),
-                                                Atom("232x40"),
-                                                Atom("232x48"),
-                                                Atom("232x56"),
-                                                Atom("232x64"),
-                                                Atom("232x72"),
-                                                Atom("232x80"),
-                                                Atom("240x24"),
-                                                Atom("240x32"),
-                                                Atom("240x40"),
-                                                Atom("240x48"),
-                                                Atom("240x56"),
-                                                Atom("240x64"),
-                                                Atom("240x72"),
-                                                Atom("240x80"),
-                                                Atom("248x16"),
-                                                Atom("248x24"),
-                                                Atom("248x32"),
-                                                Atom("248x40"),
-                                                Atom("248x48"),
-                                                Atom("248x56"),
-                                                Atom("248x64"),
-                                                Atom("248x72"),
-                                                Atom("248x80"),
-                                                Atom("256x8"),
-                                                Atom("256x16"),
-                                                Atom("256x24"),
-                                                Atom("256x32"),
-                                                Atom("256x40"),
-                                                Atom("256x48"),
-                                                Atom("256x56"),
-                                                Atom("256x64"),
-                                                Atom("256x72"),
-                                                Atom("256x80")
-                                            ])
-                                        ])
-                                    ),
-                                    KeywordDefinition(
-                                        reserved = Range(from = "0.4.14", till = "0.7.1"),
-                                        value = Sequence([
-                                            Atom("fixed"),
-                                            Choice([
-                                                Atom("8"),
-                                                Atom("16"),
-                                                Atom("24"),
-                                                Atom("32"),
-                                                Atom("40"),
-                                                Atom("48"),
-                                                Atom("56"),
-                                                Atom("64"),
-                                                Atom("72"),
-                                                Atom("80"),
-                                                Atom("88"),
-                                                Atom("96"),
-                                                Atom("104"),
-                                                Atom("112"),
-                                                Atom("120"),
-                                                Atom("128"),
-                                                Atom("136"),
-                                                Atom("144"),
-                                                Atom("152"),
-                                                Atom("160"),
-                                                Atom("168"),
-                                                Atom("176"),
-                                                Atom("184"),
-                                                Atom("192"),
-                                                Atom("200"),
-                                                Atom("208"),
-                                                Atom("216"),
-                                                Atom("224"),
-                                                Atom("232"),
-                                                Atom("240"),
-                                                Atom("248"),
-                                                Atom("256")
-                                            ]),
-                                            Atom("x"),
-                                            Choice([
-                                                Atom("0"),
-                                                Atom("1"),
-                                                Atom("2"),
-                                                Atom("3"),
-                                                Atom("4"),
-                                                Atom("5"),
-                                                Atom("6"),
-                                                Atom("7"),
-                                                Atom("9"),
-                                                Atom("10"),
-                                                Atom("11"),
-                                                Atom("12"),
-                                                Atom("13"),
-                                                Atom("14"),
-                                                Atom("15"),
-                                                Atom("17"),
-                                                Atom("18"),
-                                                Atom("19"),
-                                                Atom("20"),
-                                                Atom("21"),
-                                                Atom("22"),
-                                                Atom("23"),
-                                                Atom("25"),
-                                                Atom("26"),
-                                                Atom("27"),
-                                                Atom("28"),
-                                                Atom("29"),
-                                                Atom("30"),
-                                                Atom("31"),
-                                                Atom("33"),
-                                                Atom("34"),
-                                                Atom("35"),
-                                                Atom("36"),
-                                                Atom("37"),
-                                                Atom("38"),
-                                                Atom("39"),
-                                                Atom("41"),
-                                                Atom("42"),
-                                                Atom("43"),
-                                                Atom("44"),
-                                                Atom("45"),
-                                                Atom("46"),
-                                                Atom("47"),
-                                                Atom("49"),
-                                                Atom("50"),
-                                                Atom("51"),
-                                                Atom("52"),
-                                                Atom("53"),
-                                                Atom("54"),
-                                                Atom("55"),
-                                                Atom("57"),
-                                                Atom("58"),
-                                                Atom("59"),
-                                                Atom("60"),
-                                                Atom("61"),
-                                                Atom("62"),
-                                                Atom("63"),
-                                                Atom("65"),
-                                                Atom("66"),
-                                                Atom("67"),
-                                                Atom("68"),
-                                                Atom("69"),
-                                                Atom("70"),
-                                                Atom("71"),
-                                                Atom("73"),
-                                                Atom("74"),
-                                                Atom("75"),
-                                                Atom("76"),
-                                                Atom("77"),
-                                                Atom("78"),
-                                                Atom("79")
-                                            ])
-                                        ])
-                                    )
-                                ]
                             ),
                             Keyword(
                                 name = YulForKeyword,
@@ -5692,151 +4711,17 @@ YulBlock: YulBlock = {
                                 definitions = [KeywordDefinition(value = Atom("function"))]
                             ),
                             Keyword(
-                                name = YulGweiKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Range(from = "0.7.0", till = "0.7.1"),
-                                    value = Atom("gwei")
-                                )]
-                            ),
-                            Keyword(
                                 name = YulHexKeyword,
                                 enabled = Never,
                                 definitions = [KeywordDefinition(value = Atom("hex"))]
-                            ),
-                            Keyword(
-                                name = YulHoursKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("hours")
-                                )]
                             ),
                             Keyword(
                                 name = YulIfKeyword,
                                 definitions = [KeywordDefinition(value = Atom("if"))]
                             ),
                             Keyword(
-                                name = YulImmutableKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Range(from = "0.5.0", till = "0.7.1"),
-                                    value = Atom("immutable")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulImplementsKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Range(from = "0.5.0", till = "0.7.1"),
-                                    value = Atom("implements")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulImportKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("import")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulIndexedKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("indexed")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulInKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.6.8"),
-                                    value = Atom("in")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulInlineKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("inline")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulInterfaceKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("interface")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulInternalKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("internal")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulIntKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Sequence([
-                                        Atom("int"),
-                                        Optional(Choice([
-                                            Atom("8"),
-                                            Atom("16"),
-                                            Atom("24"),
-                                            Atom("32"),
-                                            Atom("40"),
-                                            Atom("48"),
-                                            Atom("56"),
-                                            Atom("64"),
-                                            Atom("72"),
-                                            Atom("80"),
-                                            Atom("88"),
-                                            Atom("96"),
-                                            Atom("104"),
-                                            Atom("112"),
-                                            Atom("120"),
-                                            Atom("128"),
-                                            Atom("136"),
-                                            Atom("144"),
-                                            Atom("152"),
-                                            Atom("160"),
-                                            Atom("168"),
-                                            Atom("176"),
-                                            Atom("184"),
-                                            Atom("192"),
-                                            Atom("200"),
-                                            Atom("208"),
-                                            Atom("216"),
-                                            Atom("224"),
-                                            Atom("232"),
-                                            Atom("240"),
-                                            Atom("248"),
-                                            Atom("256")
-                                        ]))
-                                    ])
-                                )]
-                            ),
-                            Keyword(
-                                name = YulIsKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("is")
-                                )]
-                            ),
-                            Keyword(
                                 name = YulLeaveKeyword,
-                                enabled = From("0.6.0"),
                                 definitions = [KeywordDefinition(
-                                    reserved = From("0.7.1"),
                                     value = Atom("leave")
                                 )]
                             ),
@@ -5845,259 +4730,10 @@ YulBlock: YulBlock = {
                                 definitions = [KeywordDefinition(value = Atom("let"))]
                             ),
                             Keyword(
-                                name = YulLibraryKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("library")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulMacroKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Range(from = "0.5.0", till = "0.7.1"),
-                                    value = Atom("macro")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulMappingKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("mapping")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulMatchKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("match")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulMemoryKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("memory")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulMinutesKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("minutes")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulModifierKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("modifier")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulMutableKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Range(from = "0.5.0", till = "0.7.1"),
-                                    value = Atom("mutable")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulNewKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("new")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulNullKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("null")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulOfKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("of")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulOverrideKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Range(from = "0.5.0", till = "0.7.1"),
-                                    value = Atom("override")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulPartialKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Range(from = "0.5.0", till = "0.7.1"),
-                                    value = Atom("partial")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulPayableKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("payable")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulPragmaKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("pragma")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulPrivateKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("private")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulPromiseKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Range(from = "0.5.0", till = "0.7.1"),
-                                    value = Atom("promise")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulPublicKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("public")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulPureKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("pure")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulReceiveKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Range(from = "0.6.0", till = "0.7.1"),
-                                    value = Atom("receive")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulReferenceKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Range(from = "0.5.0", till = "0.7.1"),
-                                    value = Atom("reference")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulRelocatableKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("relocatable")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulReturnsKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("returns")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulSealedKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Range(from = "0.5.0", till = "0.7.1"),
-                                    value = Atom("sealed")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulSecondsKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("seconds")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulSizeOfKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Range(from = "0.5.0", till = "0.7.1"),
-                                    value = Atom("sizeof")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulStaticKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("static")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulStorageKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("storage")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulStringKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("string")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulStructKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("struct")
-                                )]
-                            ),
-                            Keyword(
                                 name = YulSuperKeyword,
                                 enabled = Never,
                                 definitions = [KeywordDefinition(
-                                    reserved = From("0.8.0"),
                                     value = Atom("super")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulSupportsKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Range(from = "0.5.0", till = "0.7.1"),
-                                    value = Atom("supports")
                                 )]
                             ),
                             Keyword(
@@ -6105,464 +4741,15 @@ YulBlock: YulBlock = {
                                 definitions = [KeywordDefinition(value = Atom("switch"))]
                             ),
                             Keyword(
-                                name = YulSzaboKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.0"),
-                                    value = Atom("szabo")
-                                )]
-                            ),
-                            Keyword(
                                 name = YulThisKeyword,
                                 enabled = Never,
                                 definitions = [KeywordDefinition(
-                                    reserved = From("0.8.0"),
                                     value = Atom("this")
                                 )]
                             ),
                             Keyword(
-                                name = YulThrowKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("throw")
-                                )]
-                            ),
-                            Keyword(
                                 name = YulTrueKeyword,
-                                enabled = From("0.6.2"),
                                 definitions = [KeywordDefinition(value = Atom("true"))]
-                            ),
-                            Keyword(
-                                name = YulTryKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("try")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulTypeDefKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Range(from = "0.5.0", till = "0.7.1"),
-                                    value = Atom("typedef")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulTypeKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("type")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulTypeOfKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("typeof")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulUfixedKeyword,
-                                enabled = Never,
-                                definitions = [
-                                    KeywordDefinition(
-                                        reserved = Till("0.7.1"),
-                                        value = Atom("ufixed")
-                                    ),
-                                    KeywordDefinition(
-                                        reserved = Till("0.7.1"),
-                                        value = Sequence([
-                                            Atom("ufixed"),
-                                            Choice([
-                                                Atom("8"),
-                                                Atom("16"),
-                                                Atom("24"),
-                                                Atom("32"),
-                                                Atom("40"),
-                                                Atom("48"),
-                                                Atom("56"),
-                                                Atom("64"),
-                                                Atom("72"),
-                                                Atom("80"),
-                                                Atom("88"),
-                                                Atom("96"),
-                                                Atom("104"),
-                                                Atom("112"),
-                                                Atom("120"),
-                                                Atom("128"),
-                                                Atom("136"),
-                                                Atom("144"),
-                                                Atom("152"),
-                                                Atom("160"),
-                                                Atom("168"),
-                                                Atom("176")
-                                            ]),
-                                            Atom("x"),
-                                            Choice([
-                                                Atom("8"),
-                                                Atom("16"),
-                                                Atom("24"),
-                                                Atom("32"),
-                                                Atom("40"),
-                                                Atom("48"),
-                                                Atom("56"),
-                                                Atom("64"),
-                                                Atom("72"),
-                                                Atom("80")
-                                            ])
-                                        ])
-                                    ),
-                                    KeywordDefinition(
-                                        reserved = Till("0.7.1"),
-                                        value = Sequence([
-                                            Atom("ufixed"),
-                                            Choice([
-                                                Atom("184x8"),
-                                                Atom("184x16"),
-                                                Atom("184x24"),
-                                                Atom("184x32"),
-                                                Atom("184x40"),
-                                                Atom("184x48"),
-                                                Atom("184x56"),
-                                                Atom("184x64"),
-                                                Atom("184x72"),
-                                                Atom("192x8"),
-                                                Atom("192x16"),
-                                                Atom("192x24"),
-                                                Atom("192x32"),
-                                                Atom("192x40"),
-                                                Atom("192x48"),
-                                                Atom("192x56"),
-                                                Atom("192x64"),
-                                                Atom("200x8"),
-                                                Atom("200x16"),
-                                                Atom("200x24"),
-                                                Atom("200x32"),
-                                                Atom("200x40"),
-                                                Atom("200x48"),
-                                                Atom("200x56"),
-                                                Atom("208x8"),
-                                                Atom("208x16"),
-                                                Atom("208x24"),
-                                                Atom("208x32"),
-                                                Atom("208x40"),
-                                                Atom("208x48"),
-                                                Atom("216x8"),
-                                                Atom("216x16"),
-                                                Atom("216x24"),
-                                                Atom("216x32"),
-                                                Atom("216x40"),
-                                                Atom("224x8"),
-                                                Atom("224x16"),
-                                                Atom("224x24"),
-                                                Atom("224x32"),
-                                                Atom("232x8"),
-                                                Atom("232x16"),
-                                                Atom("232x24"),
-                                                Atom("240x8"),
-                                                Atom("240x16"),
-                                                Atom("248x8")
-                                            ])
-                                        ])
-                                    ),
-                                    KeywordDefinition(
-                                        reserved = Range(from = "0.4.14", till = "0.7.1"),
-                                        value = Sequence([
-                                            Atom("ufixed"),
-                                            Choice([
-                                                Atom("184x80"),
-                                                Atom("192x72"),
-                                                Atom("192x80"),
-                                                Atom("200x64"),
-                                                Atom("200x72"),
-                                                Atom("200x80"),
-                                                Atom("208x56"),
-                                                Atom("208x64"),
-                                                Atom("208x72"),
-                                                Atom("208x80"),
-                                                Atom("216x48"),
-                                                Atom("216x56"),
-                                                Atom("216x64"),
-                                                Atom("216x72"),
-                                                Atom("216x80"),
-                                                Atom("224x40"),
-                                                Atom("224x48"),
-                                                Atom("224x56"),
-                                                Atom("224x64"),
-                                                Atom("224x72"),
-                                                Atom("224x80"),
-                                                Atom("232x32"),
-                                                Atom("232x40"),
-                                                Atom("232x48"),
-                                                Atom("232x56"),
-                                                Atom("232x64"),
-                                                Atom("232x72"),
-                                                Atom("232x80"),
-                                                Atom("240x24"),
-                                                Atom("240x32"),
-                                                Atom("240x40"),
-                                                Atom("240x48"),
-                                                Atom("240x56"),
-                                                Atom("240x64"),
-                                                Atom("240x72"),
-                                                Atom("240x80"),
-                                                Atom("248x16"),
-                                                Atom("248x24"),
-                                                Atom("248x32"),
-                                                Atom("248x40"),
-                                                Atom("248x48"),
-                                                Atom("248x56"),
-                                                Atom("248x64"),
-                                                Atom("248x72"),
-                                                Atom("248x80"),
-                                                Atom("256x8"),
-                                                Atom("256x16"),
-                                                Atom("256x24"),
-                                                Atom("256x32"),
-                                                Atom("256x40"),
-                                                Atom("256x48"),
-                                                Atom("256x56"),
-                                                Atom("256x64"),
-                                                Atom("256x72"),
-                                                Atom("256x80")
-                                            ])
-                                        ])
-                                    ),
-                                    KeywordDefinition(
-                                        reserved = Range(from = "0.4.14", till = "0.7.1"),
-                                        value = Sequence([
-                                            Atom("ufixed"),
-                                            Choice([
-                                                Atom("8"),
-                                                Atom("16"),
-                                                Atom("24"),
-                                                Atom("32"),
-                                                Atom("40"),
-                                                Atom("48"),
-                                                Atom("56"),
-                                                Atom("64"),
-                                                Atom("72"),
-                                                Atom("80"),
-                                                Atom("88"),
-                                                Atom("96"),
-                                                Atom("104"),
-                                                Atom("112"),
-                                                Atom("120"),
-                                                Atom("128"),
-                                                Atom("136"),
-                                                Atom("144"),
-                                                Atom("152"),
-                                                Atom("160"),
-                                                Atom("168"),
-                                                Atom("176"),
-                                                Atom("184"),
-                                                Atom("192"),
-                                                Atom("200"),
-                                                Atom("208"),
-                                                Atom("216"),
-                                                Atom("224"),
-                                                Atom("232"),
-                                                Atom("240"),
-                                                Atom("248"),
-                                                Atom("256")
-                                            ]),
-                                            Atom("x"),
-                                            Choice([
-                                                Atom("0"),
-                                                Atom("1"),
-                                                Atom("2"),
-                                                Atom("3"),
-                                                Atom("4"),
-                                                Atom("5"),
-                                                Atom("6"),
-                                                Atom("7"),
-                                                Atom("9"),
-                                                Atom("10"),
-                                                Atom("11"),
-                                                Atom("12"),
-                                                Atom("13"),
-                                                Atom("14"),
-                                                Atom("15"),
-                                                Atom("17"),
-                                                Atom("18"),
-                                                Atom("19"),
-                                                Atom("20"),
-                                                Atom("21"),
-                                                Atom("22"),
-                                                Atom("23"),
-                                                Atom("25"),
-                                                Atom("26"),
-                                                Atom("27"),
-                                                Atom("28"),
-                                                Atom("29"),
-                                                Atom("30"),
-                                                Atom("31"),
-                                                Atom("33"),
-                                                Atom("34"),
-                                                Atom("35"),
-                                                Atom("36"),
-                                                Atom("37"),
-                                                Atom("38"),
-                                                Atom("39"),
-                                                Atom("41"),
-                                                Atom("42"),
-                                                Atom("43"),
-                                                Atom("44"),
-                                                Atom("45"),
-                                                Atom("46"),
-                                                Atom("47"),
-                                                Atom("49"),
-                                                Atom("50"),
-                                                Atom("51"),
-                                                Atom("52"),
-                                                Atom("53"),
-                                                Atom("54"),
-                                                Atom("55"),
-                                                Atom("57"),
-                                                Atom("58"),
-                                                Atom("59"),
-                                                Atom("60"),
-                                                Atom("61"),
-                                                Atom("62"),
-                                                Atom("63"),
-                                                Atom("65"),
-                                                Atom("66"),
-                                                Atom("67"),
-                                                Atom("68"),
-                                                Atom("69"),
-                                                Atom("70"),
-                                                Atom("71"),
-                                                Atom("73"),
-                                                Atom("74"),
-                                                Atom("75"),
-                                                Atom("76"),
-                                                Atom("77"),
-                                                Atom("78"),
-                                                Atom("79")
-                                            ])
-                                        ])
-                                    )
-                                ]
-                            ),
-                            Keyword(
-                                name = YulUintKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Sequence([
-                                        Atom("uint"),
-                                        Optional(Choice([
-                                            Atom("8"),
-                                            Atom("16"),
-                                            Atom("24"),
-                                            Atom("32"),
-                                            Atom("40"),
-                                            Atom("48"),
-                                            Atom("56"),
-                                            Atom("64"),
-                                            Atom("72"),
-                                            Atom("80"),
-                                            Atom("88"),
-                                            Atom("96"),
-                                            Atom("104"),
-                                            Atom("112"),
-                                            Atom("120"),
-                                            Atom("128"),
-                                            Atom("136"),
-                                            Atom("144"),
-                                            Atom("152"),
-                                            Atom("160"),
-                                            Atom("168"),
-                                            Atom("176"),
-                                            Atom("184"),
-                                            Atom("192"),
-                                            Atom("200"),
-                                            Atom("208"),
-                                            Atom("216"),
-                                            Atom("224"),
-                                            Atom("232"),
-                                            Atom("240"),
-                                            Atom("248"),
-                                            Atom("256")
-                                        ]))
-                                    ])
-                                )]
-                            ),
-                            Keyword(
-                                name = YulUncheckedKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Range(from = "0.5.0", till = "0.7.1"),
-                                    value = Atom("unchecked")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulUsingKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("using")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulVarKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.6.5"),
-                                    value = Atom("var")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulViewKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("view")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulVirtualKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Range(from = "0.6.0", till = "0.7.1"),
-                                    value = Atom("virtual")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulWeeksKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("weeks")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulWeiKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("wei")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulWhileKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("while")
-                                )]
-                            ),
-                            Keyword(
-                                name = YulYearsKeyword,
-                                enabled = Never,
-                                definitions = [KeywordDefinition(
-                                    reserved = Till("0.7.1"),
-                                    value = Atom("years")
-                                )]
                             )
                         ]
                     )
@@ -6583,8 +4770,7 @@ YulBlock: YulBlock = {
                 BuiltInFunction(
                     name = "blockhash",
                     parameters = ["uint blockNumber"],
-                    return_type = "bytes32",
-                    enabled = From("0.4.22")
+                    return_type = "bytes32"
                 ),
                 BuiltInFunction(
                     name = "blobhash",
@@ -6600,38 +4786,12 @@ YulBlock: YulBlock = {
                 BuiltInFunction(
                     name = "gasleft",
                     parameters = [],
-                    return_type = "uint256",
-                    enabled = From("0.4.21")
+                    return_type = "uint256"
                 ),
                 BuiltInFunction(
                     name = "keccak256",
                     parameters = ["bytes memory"],
                     return_type = "bytes32"
-                ),
-                BuiltInFunction(
-                    name = "log0",
-                    parameters = ["bytes32"],
-                    enabled = Till("0.8.0")
-                ),
-                BuiltInFunction(
-                    name = "log1",
-                    parameters = ["bytes32", "bytes32"],
-                    enabled = Till("0.8.0")
-                ),
-                BuiltInFunction(
-                    name = "log2",
-                    parameters = ["bytes32", "bytes32", "bytes32"],
-                    enabled = Till("0.8.0")
-                ),
-                BuiltInFunction(
-                    name = "log3",
-                    parameters = ["bytes32", "bytes32", "bytes32", "bytes32"],
-                    enabled = Till("0.8.0")
-                ),
-                BuiltInFunction(
-                    name = "log4",
-                    parameters = ["bytes32", "bytes32", "bytes32", "bytes32", "bytes32"],
-                    enabled = Till("0.8.0")
                 ),
                 BuiltInFunction(
                     name = "mulmod",
@@ -6641,8 +4801,7 @@ YulBlock: YulBlock = {
                 BuiltInFunction(name = "require", parameters = ["bool condition"]),
                 BuiltInFunction(
                     name = "require",
-                    parameters = ["bool condition", "string memory message"],
-                    enabled = From("0.4.22")
+                    parameters = ["bool condition", "string memory message"]
                 ),
                 BuiltInFunction(
                     name = "require",
@@ -6652,8 +4811,7 @@ YulBlock: YulBlock = {
                 BuiltInFunction(name = "revert", parameters = []),
                 BuiltInFunction(
                     name = "revert",
-                    parameters = ["string memory reason"],
-                    enabled = From("0.4.22")
+                    parameters = ["string memory reason"]
                 ),
                 BuiltInFunction(
                     name = "ripemd160",
@@ -6669,17 +4827,6 @@ YulBlock: YulBlock = {
                     parameters = ["bytes memory"],
                     return_type = "bytes32"
                 ),
-                BuiltInFunction(
-                    name = "sha3",
-                    parameters = ["bytes memory"],
-                    return_type = "bytes32",
-                    enabled = Till("0.5.0")
-                ),
-                BuiltInFunction(
-                    name = "suicide",
-                    parameters = ["address payable recipient"],
-                    enabled = Till("0.5.0")
-                ),
                 BuiltInType(
                     name = "%AbiType",
                     fields = [],
@@ -6687,14 +4834,12 @@ YulBlock: YulBlock = {
                         BuiltInFunction(
                             name = "decode",
                             parameters = ["bytes memory encodedData", "%Type[] encodedTypesTuple"],
-                            return_type = "%Any[]",
-                            enabled = From("0.5.0")
+                            return_type = "%Any[]"
                         ),
                         BuiltInFunction(
                             name = "encode",
                             parameters = ["%Any[] valuesToEncode"],
-                            return_type = "bytes memory",
-                            enabled = From("0.4.22")
+                            return_type = "bytes memory"
                         ),
                         BuiltInFunction(
                             name = "encodeCall",
@@ -6708,20 +4853,17 @@ YulBlock: YulBlock = {
                         BuiltInFunction(
                             name = "encodePacked",
                             parameters = ["%Any[] valuesToEncode"],
-                            return_type = "bytes memory",
-                            enabled = From("0.4.22")
+                            return_type = "bytes memory"
                         ),
                         BuiltInFunction(
                             name = "encodeWithSelector",
                             parameters = ["bytes4 selector", "%Any[] functionArgumentsTuple"],
-                            return_type = "bytes memory",
-                            enabled = From("0.4.22")
+                            return_type = "bytes memory"
                         ),
                         BuiltInFunction(
                             name = "encodeWithSignature",
                             parameters = ["string memory signature", "%Any[] valuesToEncode"],
-                            return_type = "bytes memory",
-                            enabled = From("0.4.22")
+                            return_type = "bytes memory"
                         )
                     ]
                 ),
@@ -6729,60 +4871,24 @@ YulBlock: YulBlock = {
                     name = "address",
                     fields = [
                         BuiltInField(definition = "uint256 balance"),
-                        BuiltInField(definition = "bytes code", enabled = From("0.8.0")),
-                        BuiltInField(definition = "bytes32 codehash", enabled = From("0.8.0"))
+                        BuiltInField(definition = "bytes code"),
+                        BuiltInField(definition = "bytes32 codehash")
                     ],
                     functions = [
                         BuiltInFunction(
                             name = "call",
                             parameters = ["bytes memory"],
-                            return_type = "bool",
-                            enabled = Till("0.5.0")
-                        ),
-                        BuiltInFunction(
-                            name = "call",
-                            parameters = ["bytes memory"],
-                            return_type = "bool, bytes memory",
-                            enabled = From("0.5.0")
-                        ),
-                        BuiltInFunction(
-                            name = "callcode",
-                            parameters = ["bytes memory"],
-                            return_type = "bool, bytes memory",
-                            enabled = Till("0.5.0")
+                            return_type = "bool, bytes memory"
                         ),
                         BuiltInFunction(
                             name = "delegatecall",
                             parameters = ["bytes memory"],
-                            return_type = "bool",
-                            enabled = Till("0.5.0")
-                        ),
-                        BuiltInFunction(
-                            name = "delegatecall",
-                            parameters = ["bytes memory"],
-                            return_type = "bool, bytes memory",
-                            enabled = From("0.5.0")
-                        ),
-                        BuiltInFunction(
-                            name = "send",
-                            parameters = ["uint256 amount"],
-                            return_type = "bool",
-                            enabled = Till("0.5.0")
+                            return_type = "bool, bytes memory"
                         ),
                         BuiltInFunction(
                             name = "staticcall",
                             parameters = ["bytes memory"],
-                            return_type = "bool, bytes memory",
-                            enabled = From("0.5.0")
-                        ),
-                        BuiltInFunction(
-                            name = "transfer",
-                            parameters = ["uint256 amount"],
-                            // `transfer` is disallowed on non-payable address
-                            // types since 0.5.0, but there's code in the wild
-                            // which uses type casting to do eg.
-                            // `address(uint160(to)).transfer(..)`.
-                            enabled = Till("0.8.0")
+                            return_type = "bool, bytes memory"
                         )
                     ]
                 ),
@@ -6790,8 +4896,8 @@ YulBlock: YulBlock = {
                     name = "address payable",
                     fields = [
                         BuiltInField(definition = "uint256 balance"),
-                        BuiltInField(definition = "bytes code", enabled = From("0.8.0")),
-                        BuiltInField(definition = "bytes32 codehash", enabled = From("0.8.0"))
+                        BuiltInField(definition = "bytes code"),
+                        BuiltInField(definition = "bytes32 codehash")
                     ],
                     functions = [
                         BuiltInFunction(
@@ -6815,8 +4921,7 @@ YulBlock: YulBlock = {
                             return_type = "bool, bytes memory"
                         ),
                         BuiltInFunction(name = "transfer", parameters = ["uint256 amount"])
-                    ],
-                    enabled = From("0.5.0")
+                    ]
                 ),
                 BuiltInType(
                     name = "%Array",
@@ -6825,19 +4930,11 @@ YulBlock: YulBlock = {
                         BuiltInFunction(
                             name = "push",
                             parameters = [],
-                            return_type = "%ValueType",
-                            enabled = From("0.6.0")
+                            return_type = "%ValueType"
                         ),
                         BuiltInFunction(
                             name = "push",
-                            parameters = ["%ValueType element"],
-                            return_type = "uint",
-                            enabled = Till("0.6.0")
-                        ),
-                        BuiltInFunction(
-                            name = "push",
-                            parameters = ["%ValueType element"],
-                            enabled = From("0.6.0")
+                            parameters = ["%ValueType element"]
                         ),
                         BuiltInFunction(name = "pop", parameters = [])
                     ]
@@ -6852,7 +4949,7 @@ YulBlock: YulBlock = {
                     fields = [
                         BuiltInField(definition = "uint basefee", enabled = From("0.8.7")),
                         BuiltInField(definition = "uint blobbasefee", enabled = From("0.8.24")),
-                        BuiltInField(definition = "uint chainid", enabled = From("0.8.0")),
+                        BuiltInField(definition = "uint chainid"),
                         BuiltInField(definition = "address payable coinbase"),
                         BuiltInField(definition = "uint difficulty"),
                         BuiltInField(definition = "uint gaslimit"),
@@ -6860,12 +4957,7 @@ YulBlock: YulBlock = {
                         BuiltInField(definition = "uint prevrandao", enabled = From("0.8.18")),
                         BuiltInField(definition = "uint timestamp")
                     ],
-                    functions = [BuiltInFunction(
-                        name = "blockhash",
-                        parameters = ["uint"],
-                        return_type = "bytes32",
-                        enabled = Till("0.5.0")
-                    )]
+                    functions = []
                 ),
                 BuiltInType(
                     name = "bytes",
@@ -6873,16 +4965,9 @@ YulBlock: YulBlock = {
                     functions = [
                         BuiltInFunction(
                             name = "push",
-                            parameters = ["bytes1 element"],
-                            return_type = "uint",
-                            enabled = Till("0.6.0")
+                            parameters = ["bytes1 element"]
                         ),
-                        BuiltInFunction(
-                            name = "push",
-                            parameters = ["bytes1 element"],
-                            enabled = From("0.6.0")
-                        ),
-                        BuiltInFunction(name = "pop", parameters = [], enabled = From("0.5.0"))
+                        BuiltInFunction(name = "pop", parameters = [])
                     ]
                 ),
                 BuiltInType(
@@ -7046,12 +5131,6 @@ YulBlock: YulBlock = {
                     functions = []
                 ),
                 BuiltInType(
-                    name = "byte",
-                    fields = [BuiltInField(definition = "uint length")],
-                    functions = [],
-                    enabled = Till("0.8.0")
-                ),
-                BuiltInType(
                     name = "%BytesType",
                     fields = [],
                     functions = [BuiltInFunction(
@@ -7067,14 +5146,12 @@ YulBlock: YulBlock = {
                         BuiltInField(definition = "uint salt"),
                         BuiltInField(definition = "uint value")
                     ],
-                    functions = [],
-                    enabled = From("0.6.2")
+                    functions = []
                 ),
                 BuiltInType(
                     name = "Error",
                     fields = [BuiltInField(definition = "string reason")],
-                    functions = [],
-                    enabled = From("0.6.0")
+                    functions = []
                 ),
                 BuiltInType(
                     name = "%ErrorType",
@@ -7091,53 +5168,21 @@ YulBlock: YulBlock = {
                 BuiltInType(
                     name = "%Function",
                     fields = [],
-                    functions = [
-                        BuiltInFunction(
-                            name = "gas",
-                            parameters = ["uint amount"],
-                            return_type = "%ExternalFunction",
-                            enabled = Till("0.7.0")
-                        ),
-                        BuiltInFunction(
-                            name = "value",
-                            parameters = ["uint amount"],
-                            return_type = "%ExternalFunction",
-                            enabled = Till("0.7.0")
-                        )
-                    ]
+                    functions = []
                 ),
                 BuiltInType(
                     name = "%ExternalFunction",
                     fields = [
                         BuiltInField(definition = "address address", enabled = From("0.8.2")),
-                        BuiltInField(definition = "bytes4 selector", enabled = From("0.4.17"))
+                        BuiltInField(definition = "bytes4 selector")
                     ],
-                    functions = [
-                        BuiltInFunction(
-                            name = "gas",
-                            parameters = ["uint amount"],
-                            return_type = "%ExternalFunction",
-                            enabled = Till("0.7.0")
-                        ),
-                        BuiltInFunction(
-                            name = "value",
-                            parameters = ["uint amount"],
-                            return_type = "%ExternalFunction",
-                            enabled = Till("0.7.0")
-                        )
-                    ]
+                    functions = []
                 ),
                 BuiltInType(
                     name = "%MessageType",
                     fields = [
                         BuiltInField(definition = "bytes data"),
-                        BuiltInField(definition = "uint256 gas", enabled = Till("0.5.0")),
-                        BuiltInField(
-                            definition = "address payable sender",
-                            enabled = Range(from = "0.5.0", till = "0.8.0")
-                        ),
-                        BuiltInField(definition = "address sender", enabled = Till("0.5.0")),
-                        BuiltInField(definition = "address sender", enabled = From("0.8.0")),
+                        BuiltInField(definition = "address sender"),
                         BuiltInField(definition = "bytes4 sig"),
                         BuiltInField(definition = "uint value")
                     ],
@@ -7146,8 +5191,7 @@ YulBlock: YulBlock = {
                 BuiltInType(
                     name = "Panic",
                     fields = [BuiltInField(definition = "uint errorCode")],
-                    functions = [],
-                    enabled = From("0.6.0")
+                    functions = []
                 ),
                 BuiltInType(
                     name = "%StringType",
@@ -7162,11 +5206,7 @@ YulBlock: YulBlock = {
                     name = "%TransactionType",
                     fields = [
                         BuiltInField(definition = "uint gasprice"),
-                        BuiltInField(
-                            definition = "address payable origin",
-                            enabled = Till("0.8.0")
-                        ),
-                        BuiltInField(definition = "address origin", enabled = From("0.8.0"))
+                        BuiltInField(definition = "address origin")
                     ],
                     functions = []
                 ),
@@ -7174,9 +5214,9 @@ YulBlock: YulBlock = {
                     name = "%ContractTypeType",
                     fields = [
                         BuiltInField(definition = "string name"),
-                        BuiltInField(definition = "bytes creationCode", enabled = From("0.5.3")),
-                        BuiltInField(definition = "bytes runtimeCode", enabled = From("0.5.3")),
-                        BuiltInField(definition = "bytes4 interfaceId", enabled = From("0.6.7"))
+                        BuiltInField(definition = "bytes creationCode"),
+                        BuiltInField(definition = "bytes runtimeCode"),
+                        BuiltInField(definition = "bytes4 interfaceId")
                     ],
                     functions = []
                 ),
@@ -7184,15 +5224,15 @@ YulBlock: YulBlock = {
                     name = "%InterfaceTypeType",
                     fields = [
                         BuiltInField(definition = "string name"),
-                        BuiltInField(definition = "bytes4 interfaceId", enabled = From("0.6.7"))
+                        BuiltInField(definition = "bytes4 interfaceId")
                     ],
                     functions = []
                 ),
                 BuiltInType(
                     name = "%IntTypeType",
                     fields = [
-                        BuiltInField(definition = "int min", enabled = From("0.6.8")),
-                        BuiltInField(definition = "int max", enabled = From("0.6.8"))
+                        BuiltInField(definition = "int min"),
+                        BuiltInField(definition = "int max")
                     ],
                     functions = []
                 ),
@@ -7219,7 +5259,6 @@ YulBlock: YulBlock = {
                 BuiltInVariable(definition = "%BlockType block"),
                 BuiltInVariable(definition = "%BytesType bytes"),
                 BuiltInVariable(definition = "%MessageType msg"),
-                BuiltInVariable(definition = "uint now", enabled = Till("0.7.0")),
                 BuiltInVariable(definition = "%StringType string"),
                 BuiltInVariable(definition = "%TransactionType tx")
             ]
@@ -7373,8 +5412,6 @@ YulBlock: YulBlock = {
                     parameters = ["uint256 x"],
                     return_type = "uint256"
                 ),
-                BuiltInFunction(name = "jump", parameters = [], enabled = Till("0.5.0")),
-                BuiltInFunction(name = "jumpi", parameters = [], enabled = Till("0.5.0")),
                 BuiltInFunction(name = "log0", parameters = ["uint256 p", "uint256 s"]),
                 BuiltInFunction(
                     name = "log1",
@@ -7502,20 +5539,7 @@ YulBlock: YulBlock = {
                 BuiltInFunction(
                     name = "keccak256",
                     parameters = ["uint256 p", "uint256 n"],
-                    return_type = "uint256",
-                    enabled = From("0.4.12")
-                ),
-                BuiltInFunction(
-                    name = "sha3",
-                    parameters = [],
-                    return_type = "uint256",
-                    enabled = Till("0.5.0")
-                ),
-                BuiltInFunction(
-                    name = "suicide",
-                    parameters = [],
-                    return_type = "uint256",
-                    enabled = Till("0.5.0")
+                    return_type = "uint256"
                 ),
                 // 'Byzantium' hard-fork updates:
                 BuiltInFunction(
@@ -7537,21 +5561,18 @@ YulBlock: YulBlock = {
                         "uint256 out",
                         "uint256 outsize"
                     ],
-                    return_type = "uint256",
-                    enabled = From("0.4.12")
+                    return_type = "uint256"
                 ),
                 // 'Constantinople' hard-fork updates:
                 BuiltInFunction(
                     name = "create2",
                     parameters = ["uint256 v", "uint256 p", "uint256 n", "uint256 s"],
-                    return_type = "uint256",
-                    enabled = From("0.4.12")
+                    return_type = "uint256"
                 ),
                 BuiltInFunction(
                     name = "extcodehash",
                     parameters = ["uint256 a"],
-                    return_type = "uint256",
-                    enabled = From("0.5.0")
+                    return_type = "uint256"
                 ),
                 BuiltInFunction(
                     name = "sar",

@@ -2,6 +2,10 @@
 
 > The following changes have been done to the language grammar/manifest, to adopt the new v2 lexer/parser system:
 
+## Versioning
+
+- Removed all versions before `0.8.0`, along with any language items that are no longer relevant afterwards.
+
 ## Lexical Contexts
 
 - Group `Section` entries under a new top-level `Language::contexts` field, where each `LexicalContext` defines the `identifier_token` for its keywords (replacing `Keyword::identifier`).
