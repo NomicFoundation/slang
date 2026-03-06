@@ -25,7 +25,7 @@ impl From<lalrpop_util::ParseError<usize, LexemeKind, ()>> for ParserError {
         /// This function transforms the `String` representation returned by LALRPOP into an instance of `LexemeKind`
         ///
         /// TODO(v2): We may be able to improve on this if there's room for returning a discriminant instead of a string representation.
-        /// See: https://github.com/lalrpop/lalrpop/issues/1089#issuecomment-4011323139
+        /// [Ongoing discussion](https://github.com/lalrpop/lalrpop/issues/1089#issuecomment-4011323139)
         fn from_str(expected: Vec<String>) -> Vec<LexemeKind> {
             expected
                 .into_iter()
