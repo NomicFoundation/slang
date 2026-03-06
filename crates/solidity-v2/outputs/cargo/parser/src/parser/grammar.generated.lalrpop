@@ -2,11 +2,7 @@
 
 use crate::lexer::LexemeKind;
 use slang_solidity_v2_cst::structured_cst::nodes::*;
-use crate::parser::parser_helpers::{
-    IndexAccessPath, extract_extra_attributes, index_access_path_add_index,
-    new_expression_index_access_path, new_index_access_path_from_elementary_type,
-    new_index_access_path_from_identifier_path, new_type_name_index_access_path,
-};
+use crate::parser::parser_helpers;
 
 grammar<'source>(source: &'source str);
 
@@ -451,8 +447,8 @@ StateVariableDefinition: StateVariableDefinition = {
     // Special case for `error` type
     <l:@L> L_ErrorKeyword_Unreserved <r:@R>  <attributes: StateVariableAttributes>  <name: Identifier>  <value: (StateVariableDefinitionValue)?>  <semicolon: Semicolon> => {
         let identifier = new_identifier(l..r, source);
-        let iap = new_index_access_path_from_identifier_path(new_identifier_path(vec![new_identifier_path_element_identifier(identifier)]));
-        let type_name = new_type_name_index_access_path(iap);
+        let iap = parser_helpers::new_index_access_path_from_identifier_path(new_identifier_path(vec![new_identifier_path_element_identifier(identifier)]));
+        let type_name = parser_helpers::new_type_name_index_access_path(iap);
 
         new_state_variable_definition(type_name, attributes, name, value, semicolon)
     },
@@ -461,7 +457,7 @@ StateVariableDefinition: StateVariableDefinition = {
     // If the function type has no return, then we don't directly parse state variable attributes, we only do it if
     // we see a special one (one that can be a state variable attribute but not a function type attribute).
     <type_name: FunctionTypeInternalNoReturn> <special_attributes: (<SpecialStateVariableAttribute> <StateVariableAttributes>)?> <name: Identifier>  <value: (StateVariableDefinitionValue)?>  <semicolon: Semicolon>  => {
-        let (function_type, mut extra_attributes) = extract_extra_attributes(type_name);
+        let (function_type, mut extra_attributes) = parser_helpers::extract_extra_attributes(type_name);
         if let Some(special_attributes) = special_attributes {
             extra_attributes.push(special_attributes.0);
             extra_attributes.extend(special_attributes.1.elements);
@@ -709,7 +705,7 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
 TypeName0<FunctionRule, IAPRule>: TypeName = {
     <function_type: FunctionRule> => new_type_name_function_type(<>),
     <mapping_type: MappingType>  => new_type_name_mapping_type(<>),
-    <index_access_path: IAPRule> => new_type_name_index_access_path(<>),
+    <index_access_path: IAPRule> => parser_helpers::new_type_name_index_access_path(<>),
 };
 TypeName1<FunctionRule, IAPRule>: TypeName = {
     <type_name: ArrayTypeName>  => new_type_name_array_type_name(<>),
@@ -728,7 +724,7 @@ ArrayTypeName: ArrayTypeName = {
 };
 
 // An empty rule to disable IAPs
-NoIndexAccessPath: IndexAccessPath = {};
+NoIndexAccessPath: parser_helpers::IndexAccessPath = {};
 
     
     
@@ -879,8 +875,8 @@ VariableDeclarationSpecialRevert: VariableDeclaration = {
     // The special `revert` type
     <l:@L> L_RevertKeyword_Unreserved <r:@R>  <storage_location: (StorageLocation)?>  <name: Identifier>  => {
         let identifier = new_identifier(l..r, source);
-        let iap = new_index_access_path_from_identifier_path(new_identifier_path(vec![new_identifier_path_element_identifier(identifier)]));
-        let type_name = new_type_name_index_access_path(iap);
+        let iap = parser_helpers::new_index_access_path_from_identifier_path(new_identifier_path(vec![new_identifier_path_element_identifier(identifier)]));
+        let type_name = parser_helpers::new_type_name_index_access_path(iap);
         new_variable_declaration(type_name, storage_location, name)
     }
 };
@@ -1130,7 +1126,7 @@ ExpressionTrailingBlock: (Expression, Block) = {
 // 5. Finally, expressions have multiple precedence levels and associativity, we handle this explicitely here.
 Expression0<IndexAccessPathRule, NewExpressionRule>: Expression = {
     // The Rule used here is parametric
-    <index_access_path: IndexAccessPathRule> => new_expression_index_access_path(<>),
+    <index_access_path: IndexAccessPathRule> => parser_helpers::new_expression_index_access_path(<>),
     // The Rule used here is parametric
     <new_expression: NewExpressionRule> => new_expression_new_expression(<>),
     <tuple_expression: TupleExpression>  => new_expression_tuple_expression(<>),
@@ -1147,7 +1143,7 @@ Expression0<IndexAccessPathRule, NewExpressionRule>: Expression = {
 };
 
 // An IAP that doesn't match anything
-NoIndexAccessPath_Expr: IndexAccessPath = {};
+NoIndexAccessPath_Expr: parser_helpers::IndexAccessPath = {};
 
 // We simplifiy all these levels of expressions into a single one, there's no need
 // for precedence here
@@ -1395,14 +1391,14 @@ Expression_AssignmentExpression_Operator: Expression_AssignmentExpression_Operat
 NoIdentPath: IdentifierPath = {};
 
 // An Index Access Path that is parametric over the IdentifierPath rule used for member access and index access
-IndexAccessPath<IdentPathRule>: IndexAccessPath = {
+IndexAccessPath<IdentPathRule>: parser_helpers::IndexAccessPath = {
     // As before, we usually care about trailing constructs, so the brackets serve as markers to reset the parametric rule
-    <iap: IndexAccessPath<IdentifierPath>> <open_bracket: OpenBracket>  <start: (Expression)?>  <end: (IndexAccessEnd)?>  <close_bracket: CloseBracket>  => index_access_path_add_index(<>),
+    <iap: IndexAccessPath<IdentifierPath>> <open_bracket: OpenBracket>  <start: (Expression)?>  <end: (IndexAccessEnd)?>  <close_bracket: CloseBracket>  => parser_helpers::index_access_path_add_index(<>),
     <IndexAccessPath1<IdentPathRule>>  => <>,
 };
-IndexAccessPath1<IdentPathRule>: IndexAccessPath = {
-    <identifier: IdentPathRule> => new_index_access_path_from_identifier_path(<>),
-    <elementary_type: ElementaryType>  => new_index_access_path_from_elementary_type(<>),
+IndexAccessPath1<IdentPathRule>: parser_helpers::IndexAccessPath = {
+    <identifier: IdentPathRule> => parser_helpers::new_index_access_path_from_identifier_path(<>),
+    <elementary_type: ElementaryType>  => parser_helpers::new_index_access_path_from_elementary_type(<>),
 };
 
     IndexAccessEnd: IndexAccessEnd = {
