@@ -2,10 +2,11 @@
 mod node_checker;
 
 pub mod testing;
+use std::ops::Range;
+
 use node_checker::{NodeChecker, NodeCheckerError};
 use slang_solidity::cst::Cursor;
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_cst::text_index::TextRange;
 use slang_solidity_v2_parser::{Parser, ParserError, SourceUnitParser};
 pub use testing::V2TesterConstructor;
 
@@ -24,7 +25,7 @@ impl Diagnostic for ComparisonError {
         }
     }
 
-    fn text_range(&self) -> TextRange {
+    fn text_range(&self) -> Range<usize> {
         match self {
             ComparisonError::ParsingError(error) => error.text_range(),
             ComparisonError::NodeCheckerError(error) => error.text_range(),

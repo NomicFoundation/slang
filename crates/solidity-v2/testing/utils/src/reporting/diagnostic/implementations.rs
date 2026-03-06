@@ -1,17 +1,17 @@
+use std::ops::Range;
+
 use itertools::Itertools;
-use slang_solidity_v2_cst::text_index::TextRange;
+
 use slang_solidity_v2_parser::ParserError;
 
 use super::{Diagnostic, Severity};
 
 impl Diagnostic for ParserError {
-    fn text_range(&self) -> TextRange {
+    fn text_range(&self) -> Range<usize> {
         match self {
-            ParserError::UnexpectedEof { location, .. } => {
-                TextRange::from_bytes_range(*location..*location)
-            }
-            ParserError::UnexpectedToken { range, .. } => range.clone(),
-            ParserError::ExtraToken { range, .. } => range.clone(),
+            ParserError::UnexpectedEof { offset, .. } => *offset..*offset,
+            ParserError::UnexpectedTerminal { range, .. } => range.clone(),
+            ParserError::ExtraTerminal { range, .. } => range.clone(),
         }
     }
 
@@ -27,16 +27,16 @@ impl Diagnostic for ParserError {
                     expected_list = expected.iter().map(|e| format!("{e}")).join(", ")
                 )
             }
-            ParserError::UnexpectedToken {
-                token, expected, ..
+            ParserError::UnexpectedTerminal {
+                terminal, expected, ..
             } => {
                 format!(
-                    "Unexpected {token}. One of {expected_list} was expected",
+                    "Unexpected {terminal}. One of {expected_list} was expected",
                     expected_list = expected.iter().map(|e| format!("{e}")).join(", ")
                 )
             }
-            ParserError::ExtraToken { token, .. } => {
-                format!("Unexpected {token}. End of file was expected")
+            ParserError::ExtraTerminal { terminal, .. } => {
+                format!("Unexpected {terminal}. End of file was expected")
             }
         }
     }

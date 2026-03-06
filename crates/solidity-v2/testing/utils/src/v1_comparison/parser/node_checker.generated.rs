@@ -2,12 +2,13 @@
 
 #![allow(clippy::too_many_lines)]
 
+use std::ops::Range;
+
 use slang_solidity::cst::{
     Edge, EdgeLabel, Node, NodeKind, NonterminalKind, TextIndex, TextRange as V1TextRange,
 };
 #[allow(clippy::wildcard_imports)]
 use slang_solidity_v2_cst::structured_cst::nodes::*;
-use slang_solidity_v2_cst::text_index::TextRange;
 
 use crate::reporting::diagnostic::{Diagnostic, Severity};
 
@@ -15,11 +16,11 @@ use crate::reporting::diagnostic::{Diagnostic, Severity};
 #[derive(Clone, Debug)]
 pub struct NodeCheckerError {
     pub err: String,
-    pub text_range: TextRange,
+    pub text_range: Range<usize>,
 }
 
 impl Diagnostic for NodeCheckerError {
-    fn text_range(&self) -> TextRange {
+    fn text_range(&self) -> Range<usize> {
         self.text_range.clone()
     }
 
@@ -36,7 +37,7 @@ impl NodeCheckerError {
     pub(crate) fn new(err: String, text_range: V1TextRange) -> NodeCheckerError {
         NodeCheckerError {
             err,
-            text_range: TextRange::from_bytes_range(text_range.start.utf8..text_range.end.utf8),
+            text_range: text_range.start.utf8..text_range.end.utf8,
         }
     }
 }
