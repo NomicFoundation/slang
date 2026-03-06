@@ -1,0 +1,57 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            UsingDirective(
+                UsingDirectiveStruct {
+                    using_keyword: UsingKeyword {
+                        range: 95..100,
+                    },
+                    clause: UsingDeconstruction(
+                        UsingDeconstructionStruct {
+                            open_brace: OpenBrace {
+                                range: 101..102,
+                            },
+                            symbols: UsingDeconstructionSymbols {
+                                elements: [
+                                    UsingDeconstructionSymbolStruct {
+                                        name: IdentifierPath {
+                                            elements: [
+                                                Identifier(
+                                                    Identifier {
+                                                        range: 213..216,
+                                                    },
+                                                ),
+                                            ],
+                                        },
+                                        alias: None,
+                                    },
+                                ],
+                            },
+                            close_brace: CloseBrace {
+                                range: 224..225,
+                            },
+                        },
+                    ),
+                    for_keyword: ForKeyword {
+                        range: 226..229,
+                    },
+                    target: TypeName(
+                        ElementaryType(
+                            UintKeyword(
+                                UintKeyword {
+                                    range: 230..234,
+                                },
+                            ),
+                        ),
+                    ),
+                    global_keyword: None,
+                    semicolon: Semicolon {
+                        range: 234..235,
+                    },
+                },
+            ),
+        ],
+    },
+}

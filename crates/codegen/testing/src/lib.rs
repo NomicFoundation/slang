@@ -3,6 +3,7 @@ mod bindings_output;
 mod common;
 mod cst_output;
 
+use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
 use anyhow::Result;
@@ -11,12 +12,18 @@ use language_definition::model::Language;
 
 use crate::binder::generate_binder_tests;
 use crate::bindings_output::generate_bindings_output_tests;
-use crate::cst_output::generate_cst_output_tests;
+use crate::cst_output::{generate_cst_output_test_harness, generate_cst_output_tests};
 
 pub trait TestingGeneratorExtensions {
     fn generate_version_breaks(&self, output_dir: &Path) -> Result<()>;
     fn generate_bindings_output_tests(&self, snapshots_dir: &Path, output_dir: &Path)
         -> Result<()>;
+    fn generate_cst_output_test_harness(
+        &self,
+        snapshots_dir: &str,
+        parser_tests: &BTreeMap<String, BTreeSet<String>>,
+        output_dir: &Path,
+    ) -> Result<()>;
     fn generate_cst_output_tests(&self, snapshots_dir: &Path, output_dir: &Path) -> Result<()>;
     fn generate_binder_tests(&self, snapshots_dir: &Path, output_dir: &Path) -> Result<()>;
 }
@@ -33,5 +40,14 @@ impl TestingGeneratorExtensions for Language {
     }
     fn generate_binder_tests(&self, data_dir: &Path, output_dir: &Path) -> Result<()> {
         generate_binder_tests(data_dir, output_dir)
+    }
+
+    fn generate_cst_output_test_harness(
+        &self,
+        runner_module: &str,
+        parser_tests: &BTreeMap<String, BTreeSet<String>>,
+        output_dir: &Path,
+    ) -> Result<()> {
+        generate_cst_output_test_harness(runner_module, parser_tests, output_dir)
     }
 }

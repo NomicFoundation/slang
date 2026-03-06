@@ -1,0 +1,56 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 212..220,
+                    },
+                    name: Identifier {
+                        range: 221..227,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 228..229,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            ErrorDefinition(
+                                ErrorDefinitionStruct {
+                                    error_keyword: ErrorKeyword {
+                                        range: 232..237,
+                                    },
+                                    name: Identifier {
+                                        range: 238..244,
+                                    },
+                                    members: ErrorParametersDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            range: 244..245,
+                                        },
+                                        parameters: ErrorParameters {
+                                            elements: [],
+                                        },
+                                        close_paren: CloseParen {
+                                            range: 245..246,
+                                        },
+                                    },
+                                    semicolon: Semicolon {
+                                        range: 246..247,
+                                    },
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 248..249,
+                    },
+                },
+            ),
+        ],
+    },
+}

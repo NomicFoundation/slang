@@ -4,10 +4,8 @@ use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
-use semver::Version;
 use slang_solidity::cst::NonterminalKind;
 use slang_solidity::parser::Parser;
-use solidity_v2_testing_utils::v1_comparison::parser::V2TesterConstructor;
 use strum_macros::Display;
 
 use crate::cst::cst_output::renderer::render;
@@ -35,25 +33,11 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
 
     let mut last_output = None;
 
-    let mut v2_tester = V2TesterConstructor::new_tester(parser_name);
-
-    // TODO(v2): We forde version 0.8.30 to be tested because it's the only version
-    // used by the V2 parser.
-    // Once other versions are added we should only test breaking versions.
-    // _SLANG_V2_PARSER_VERSION_ (keep in sync)
-    let mut versions: Vec<Version> = VERSION_BREAKS.to_vec();
-    versions.push(Version::new(0, 8, 30));
-    versions.sort();
-    versions.dedup();
-
-    for version in &versions {
+    for version in VERSION_BREAKS {
         let tested_kind = NonterminalKind::from_str(parser_name)
             .unwrap_or_else(|_| panic!("No such parser: {parser_name}"));
 
         let output = Parser::create(version.clone())?.parse_nonterminal(tested_kind, &source);
-
-        // Test against V2
-        v2_tester.test_next(&test_dir, &mut fs, source_id, &source, version, &output)?;
 
         let output = match last_output {
             // Skip this version if it produces the same output.

@@ -1,0 +1,80 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 200..208,
+                    },
+                    name: Identifier {
+                        range: 209..210,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 211..212,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            StateVariableDefinition(
+                                StateVariableDefinitionStruct {
+                                    type_name: ElementaryType(
+                                        UintKeyword(
+                                            UintKeyword {
+                                                range: 214..218,
+                                            },
+                                        ),
+                                    ),
+                                    attributes: StateVariableAttributes {
+                                        elements: [
+                                            TransientKeyword(
+                                                TransientKeyword {
+                                                    range: 219..228,
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                    name: Identifier {
+                                        range: 229..232,
+                                    },
+                                    value: None,
+                                    semicolon: Semicolon {
+                                        range: 232..233,
+                                    },
+                                },
+                            ),
+                            StateVariableDefinition(
+                                StateVariableDefinitionStruct {
+                                    type_name: ElementaryType(
+                                        UintKeyword(
+                                            UintKeyword {
+                                                range: 235..239,
+                                            },
+                                        ),
+                                    ),
+                                    attributes: StateVariableAttributes {
+                                        elements: [],
+                                    },
+                                    name: Identifier {
+                                        range: 240..249,
+                                    },
+                                    value: None,
+                                    semicolon: Semicolon {
+                                        range: 249..250,
+                                    },
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 251..252,
+                    },
+                },
+            ),
+        ],
+    },
+}

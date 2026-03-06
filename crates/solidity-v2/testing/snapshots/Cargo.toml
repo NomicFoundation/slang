@@ -1,0 +1,9 @@
+[package]
+name = "solidity_v2_testing_snapshots"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false
+
+[lints]
+workspace = true

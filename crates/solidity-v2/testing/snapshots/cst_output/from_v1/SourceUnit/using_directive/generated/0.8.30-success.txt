@@ -1,0 +1,230 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            PragmaDirective(
+                PragmaDirectiveStruct {
+                    pragma_keyword: PragmaKeyword {
+                        range: 228..234,
+                    },
+                    pragma: AbicoderPragma(
+                        AbicoderPragmaStruct {
+                            abicoder_keyword: AbicoderKeyword {
+                                range: 0..0,
+                            },
+                            version: AbicoderV1Keyword(
+                                AbicoderV1Keyword {
+                                    range: 0..0,
+                                },
+                            ),
+                        },
+                    ),
+                    semicolon: Semicolon {
+                        range: 250..251,
+                    },
+                },
+            ),
+            UsingDirective(
+                UsingDirectiveStruct {
+                    using_keyword: UsingKeyword {
+                        range: 253..258,
+                    },
+                    clause: IdentifierPath(
+                        IdentifierPath {
+                            elements: [
+                                Identifier(
+                                    Identifier {
+                                        range: 259..272,
+                                    },
+                                ),
+                            ],
+                        },
+                    ),
+                    for_keyword: ForKeyword {
+                        range: 273..276,
+                    },
+                    target: TypeName(
+                        IdentifierPath(
+                            IdentifierPath {
+                                elements: [
+                                    Identifier(
+                                        Identifier {
+                                            range: 277..285,
+                                        },
+                                    ),
+                                ],
+                            },
+                        ),
+                    ),
+                    global_keyword: Some(
+                        GlobalKeyword {
+                            range: 286..292,
+                        },
+                    ),
+                    semicolon: Semicolon {
+                        range: 292..293,
+                    },
+                },
+            ),
+            UsingDirective(
+                UsingDirectiveStruct {
+                    using_keyword: UsingKeyword {
+                        range: 294..299,
+                    },
+                    clause: IdentifierPath(
+                        IdentifierPath {
+                            elements: [
+                                Identifier(
+                                    Identifier {
+                                        range: 300..316,
+                                    },
+                                ),
+                            ],
+                        },
+                    ),
+                    for_keyword: ForKeyword {
+                        range: 317..320,
+                    },
+                    target: TypeName(
+                        IdentifierPath(
+                            IdentifierPath {
+                                elements: [
+                                    Identifier(
+                                        Identifier {
+                                            range: 321..332,
+                                        },
+                                    ),
+                                ],
+                            },
+                        ),
+                    ),
+                    global_keyword: Some(
+                        GlobalKeyword {
+                            range: 333..339,
+                        },
+                    ),
+                    semicolon: Semicolon {
+                        range: 339..340,
+                    },
+                },
+            ),
+            StructDefinition(
+                StructDefinitionStruct {
+                    struct_keyword: StructKeyword {
+                        range: 839..845,
+                    },
+                    name: Identifier {
+                        range: 846..854,
+                    },
+                    open_brace: OpenBrace {
+                        range: 855..856,
+                    },
+                    members: StructMembers {
+                        elements: [
+                            StructMemberStruct {
+                                type_name: ElementaryType(
+                                    UintKeyword(
+                                        UintKeyword {
+                                            range: 859..866,
+                                        },
+                                    ),
+                                ),
+                                name: Identifier {
+                                    range: 867..872,
+                                },
+                                semicolon: Semicolon {
+                                    range: 872..873,
+                                },
+                            },
+                            StructMemberStruct {
+                                type_name: ElementaryType(
+                                    AddressType(
+                                        AddressTypeStruct {
+                                            address_keyword: AddressKeyword {
+                                                range: 876..883,
+                                            },
+                                            payable_keyword: None,
+                                        },
+                                    ),
+                                ),
+                                name: Identifier {
+                                    range: 884..890,
+                                },
+                                semicolon: Semicolon {
+                                    range: 890..891,
+                                },
+                            },
+                            StructMemberStruct {
+                                type_name: ElementaryType(
+                                    AddressType(
+                                        AddressTypeStruct {
+                                            address_keyword: AddressKeyword {
+                                                range: 894..901,
+                                            },
+                                            payable_keyword: None,
+                                        },
+                                    ),
+                                ),
+                                name: Identifier {
+                                    range: 902..913,
+                                },
+                                semicolon: Semicolon {
+                                    range: 913..914,
+                                },
+                            },
+                            StructMemberStruct {
+                                type_name: ElementaryType(
+                                    UintKeyword(
+                                        UintKeyword {
+                                            range: 917..924,
+                                        },
+                                    ),
+                                ),
+                                name: Identifier {
+                                    range: 925..938,
+                                },
+                                semicolon: Semicolon {
+                                    range: 938..939,
+                                },
+                            },
+                            StructMemberStruct {
+                                type_name: ElementaryType(
+                                    UintKeyword(
+                                        UintKeyword {
+                                            range: 942..949,
+                                        },
+                                    ),
+                                ),
+                                name: Identifier {
+                                    range: 950..968,
+                                },
+                                semicolon: Semicolon {
+                                    range: 968..969,
+                                },
+                            },
+                            StructMemberStruct {
+                                type_name: ElementaryType(
+                                    BytesKeyword(
+                                        BytesKeyword {
+                                            range: 972..977,
+                                        },
+                                    ),
+                                ),
+                                name: Identifier {
+                                    range: 978..985,
+                                },
+                                semicolon: Semicolon {
+                                    range: 985..986,
+                                },
+                            },
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 987..988,
+                    },
+                },
+            ),
+        ],
+    },
+}

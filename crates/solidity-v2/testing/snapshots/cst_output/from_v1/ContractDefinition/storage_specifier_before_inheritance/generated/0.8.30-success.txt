@@ -1,0 +1,73 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 225..233,
+                    },
+                    name: Identifier {
+                        range: 234..237,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [
+                            StorageLayoutSpecifier(
+                                StorageLayoutSpecifierStruct {
+                                    layout_keyword: LayoutKeyword {
+                                        range: 238..244,
+                                    },
+                                    at_keyword: AtKeyword {
+                                        range: 245..247,
+                                    },
+                                    expression: DecimalNumberExpression(
+                                        DecimalNumberExpressionStruct {
+                                            literal: DecimalLiteral {
+                                                range: 248..249,
+                                            },
+                                            unit: None,
+                                        },
+                                    ),
+                                },
+                            ),
+                            InheritanceSpecifier(
+                                InheritanceSpecifierStruct {
+                                    is_keyword: IsKeyword {
+                                        range: 250..252,
+                                    },
+                                    types: InheritanceTypes {
+                                        elements: [
+                                            InheritanceTypeStruct {
+                                                type_name: IdentifierPath {
+                                                    elements: [
+                                                        Identifier(
+                                                            Identifier {
+                                                                range: 253..256,
+                                                            },
+                                                        ),
+                                                    ],
+                                                },
+                                                arguments: None,
+                                            },
+                                        ],
+                                    },
+                                },
+                            ),
+                        ],
+                    },
+                    open_brace: OpenBrace {
+                        range: 257..258,
+                    },
+                    members: ContractMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        range: 259..260,
+                    },
+                },
+            ),
+        ],
+    },
+}

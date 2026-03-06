@@ -1,0 +1,117 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            FunctionDefinition(
+                FunctionDefinitionStruct {
+                    function_keyword: FunctionKeyword {
+                        range: 199..207,
+                    },
+                    name: Identifier(
+                        Identifier {
+                            range: 208..212,
+                        },
+                    ),
+                    parameters: ParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            range: 212..213,
+                        },
+                        parameters: Parameters {
+                            elements: [],
+                        },
+                        close_paren: CloseParen {
+                            range: 213..214,
+                        },
+                    },
+                    attributes: FunctionAttributes {
+                        elements: [
+                            PublicKeyword(
+                                PublicKeyword {
+                                    range: 215..221,
+                                },
+                            ),
+                            VirtualKeyword(
+                                VirtualKeyword {
+                                    range: 222..229,
+                                },
+                            ),
+                            OverrideSpecifier(
+                                OverrideSpecifierStruct {
+                                    override_keyword: OverrideKeyword {
+                                        range: 230..238,
+                                    },
+                                    overridden: None,
+                                },
+                            ),
+                        ],
+                    },
+                    returns: Some(
+                        ReturnsDeclarationStruct {
+                            returns_keyword: ReturnsKeyword {
+                                range: 239..246,
+                            },
+                            variables: ParametersDeclarationStruct {
+                                open_paren: OpenParen {
+                                    range: 247..248,
+                                },
+                                parameters: Parameters {
+                                    elements: [
+                                        ParameterStruct {
+                                            type_name: ElementaryType(
+                                                UintKeyword(
+                                                    UintKeyword {
+                                                        range: 248..255,
+                                                    },
+                                                ),
+                                            ),
+                                            storage_location: None,
+                                            name: None,
+                                        },
+                                    ],
+                                },
+                                close_paren: CloseParen {
+                                    range: 255..256,
+                                },
+                            },
+                        },
+                    ),
+                    body: Block(
+                        BlockStruct {
+                            open_brace: OpenBrace {
+                                range: 257..258,
+                            },
+                            statements: Statements {
+                                elements: [
+                                    ReturnStatement(
+                                        ReturnStatementStruct {
+                                            return_keyword: ReturnKeyword {
+                                                range: 260..266,
+                                            },
+                                            expression: Some(
+                                                DecimalNumberExpression(
+                                                    DecimalNumberExpressionStruct {
+                                                        literal: DecimalLiteral {
+                                                            range: 267..268,
+                                                        },
+                                                        unit: None,
+                                                    },
+                                                ),
+                                            ),
+                                            semicolon: Semicolon {
+                                                range: 268..269,
+                                            },
+                                        },
+                                    ),
+                                ],
+                            },
+                            close_brace: CloseBrace {
+                                range: 270..271,
+                            },
+                        },
+                    ),
+                },
+            ),
+        ],
+    },
+}
