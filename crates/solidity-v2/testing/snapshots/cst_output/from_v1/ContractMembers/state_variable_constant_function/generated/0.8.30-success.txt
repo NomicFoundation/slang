@@ -1,0 +1,74 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 95..103,
+                    },
+                    name: Identifier {
+                        range: 104..105,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 106..107,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            StateVariableDefinition(
+                                StateVariableDefinitionStruct {
+                                    type_name: FunctionType(
+                                        FunctionTypeStruct {
+                                            function_keyword: FunctionKeyword {
+                                                range: 231..239,
+                                            },
+                                            parameters: ParametersDeclarationStruct {
+                                                open_paren: OpenParen {
+                                                    range: 239..240,
+                                                },
+                                                parameters: Parameters {
+                                                    elements: [],
+                                                },
+                                                close_paren: CloseParen {
+                                                    range: 240..241,
+                                                },
+                                            },
+                                            attributes: FunctionTypeAttributes {
+                                                elements: [],
+                                            },
+                                            returns: None,
+                                        },
+                                    ),
+                                    attributes: StateVariableAttributes {
+                                        elements: [
+                                            ConstantKeyword(
+                                                ConstantKeyword {
+                                                    range: 242..250,
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                    name: Identifier {
+                                        range: 251..254,
+                                    },
+                                    value: None,
+                                    semicolon: Semicolon {
+                                        range: 254..255,
+                                    },
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 264..265,
+                    },
+                },
+            ),
+        ],
+    },
+}
