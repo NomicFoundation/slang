@@ -1,13 +1,13 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use language_v2_definition::model::{
-    Item as LanguageItem, Language, LexicalContext, ParserOptions, Section, Topic,
+    Item as LanguageItem, Language, LexicalContext, ParserOptions, Section, Topic, VersionSpecifier,
 };
 
 use crate::lexer::{Lexeme, LexerModel};
 use crate::parser::item_builders::{
     enum_item_to_lalrpop_items, precedence_item_to_lalrpop_items, repeated_item_to_lalrpop_items,
-    separated_item_to_lalrpop_items, struct_item_to_lalrpop_items, VERSION,
+    separated_item_to_lalrpop_items, struct_item_to_lalrpop_items,
 };
 use crate::parser::{LALRPOPItem, ParserSection, ParserTopic};
 
@@ -119,14 +119,14 @@ impl<'a> ParserBuilder<'a> {
                         ..
                     } => {
                         // For Keywords, we need to consider reserved and unreserved forms.
-                        if reserved.contains(&VERSION) {
+                        if *reserved != VersionSpecifier::Never {
                             terminals
                                 .entry(kind.clone())
                                 .or_default()
                                 .insert(format!("{kind}_Reserved"));
                         }
 
-                        if !reserved.contains(&VERSION) {
+                        if *reserved != VersionSpecifier::Always {
                             // In particular, for unreserved keywords we add it also to the
                             // corresponding identifier
                             if let Some(identifier) = identifier {

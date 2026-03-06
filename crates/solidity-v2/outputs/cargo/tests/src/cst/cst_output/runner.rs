@@ -28,10 +28,9 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
     let mut last_output = None;
     let mut last_diff = None;
 
-    // TODO(v2): Test all breaking versions
-    let tested_versions = [LanguageVersion::V0_8_30];
+    let tested_versions = LanguageVersion::BREAKING;
 
-    for lang_version in tested_versions {
+    for &lang_version in tested_versions {
         let v2_output = SourceUnitParser::parse(&source, lang_version);
 
         let v2_output = match last_output {

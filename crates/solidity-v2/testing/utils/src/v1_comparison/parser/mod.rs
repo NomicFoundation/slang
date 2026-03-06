@@ -4,6 +4,7 @@ mod node_checker;
 use std::ops::Range;
 
 pub use node_checker::{NodeChecker, NodeCheckerError};
+use semver::Version;
 use slang_solidity::cst::Cursor;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_parser::{ParserError, SourceUnitParser};
@@ -38,8 +39,14 @@ impl Diagnostic for ComparisonError {
     }
 }
 
-pub fn compare_with_v1_cursor(source: &str, root_cursor: &Cursor) -> Vec<ComparisonError> {
-    let v2_output = SourceUnitParser::parse(source, LanguageVersion::V0_8_30);
+pub fn compare_with_v1_cursor(
+    source: &str,
+    root_cursor: &Cursor,
+    version: &Version,
+) -> Vec<ComparisonError> {
+    let lang_version = LanguageVersion::try_from(version.clone())
+        .unwrap_or_else(|_| panic!("Unsupported language version: {}.", version));
+    let v2_output = SourceUnitParser::parse(source, lang_version);
 
     match v2_output {
         Ok(v2_tree) => v2_tree

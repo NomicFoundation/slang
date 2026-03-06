@@ -42,12 +42,12 @@ pub(super) fn run(contract: &Contract, unit: &CompilationUnit, events: &Events) 
             continue;
         }
 
-        // _SLANG_V2_PARSER_VERSION_ (keep in sync)
-        if contract.version == Version::new(0, 8, 30) {
+        if contract.version >= Version::new(0, 8, 0) && contract.version < Version::new(0, 9, 0) {
             let v2_errors =
                 solidity_v2_testing_utils::v1_comparison::parser::compare_with_v1_cursor(
                     &source,
                     &file.create_tree_cursor(),
+                    &contract.version,
                 );
             if !v2_errors.is_empty() {
                 print_errors(
