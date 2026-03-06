@@ -1,4 +1,5 @@
-use std::{ops::Range, str::FromStr};
+use std::ops::Range;
+use std::str::FromStr;
 
 use crate::lexer::LexemeKind;
 

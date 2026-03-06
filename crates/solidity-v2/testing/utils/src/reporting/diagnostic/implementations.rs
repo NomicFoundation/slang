@@ -1,7 +1,6 @@
 use std::ops::Range;
 
 use itertools::Itertools;
-
 use slang_solidity_v2_parser::ParserError;
 
 use super::{Diagnostic, Severity};
