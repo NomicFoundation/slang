@@ -1,6 +1,8 @@
 //! Utilities for defining error diagnostics.
 
-use crate::cst::TextRange;
+use std::ops::Range;
+
+pub mod implementations;
 
 /// The severity of a diagnostic.
 ///
@@ -15,12 +17,13 @@ pub enum Severity {
 }
 
 /// A compiler diagnostic that can be rendered to a user.
+///
+/// TODO(v2): Replace `trait Diagnostic` with a compilation-level parent enum for all errors
+/// exposed in the public API, when `CompilationUnit` is introduced.
 pub trait Diagnostic {
     /// The character range of the source that this diagnostic applies to.
-    #[allow(dead_code)]
-    fn text_range(&self) -> TextRange;
+    fn text_range(&self) -> Range<usize>;
     /// The severity of this diagnostic.
-    #[allow(dead_code)]
     fn severity(&self) -> Severity;
     /// The primary message associated with this diagnostic.
     fn message(&self) -> String;
@@ -42,11 +45,15 @@ pub fn render<D: Diagnostic>(error: &D, source_id: &str, source: &str, with_colo
         return format!("{kind}: {message}\n   ─[{source_id}:0:0]");
     }
 
+    // TODO(v2): Once https://github.com/zesterer/ariadne/pull/159 is released we should be able to
+    // skip this step
     let color = if with_color { color } else { Color::Unset };
 
+    // TODO(v2): Once https://github.com/zesterer/ariadne/pull/159 is released we should be able to
+    // move to a newer version of ariadne and use IndexType::Byte, to avoid this conversion.
     let range = {
-        let start = source[..error.text_range().start.utf8].chars().count();
-        let end = source[..error.text_range().end.utf8].chars().count();
+        let start = source[..error.text_range().start].chars().count();
+        let end = source[..error.text_range().end].chars().count();
         start..end
     };
 

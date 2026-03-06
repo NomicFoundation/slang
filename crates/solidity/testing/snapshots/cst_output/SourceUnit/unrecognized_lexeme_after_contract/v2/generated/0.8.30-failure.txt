@@ -1,3 +1,9 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-"UnrecognizedToken { token: (11, UNRECOGNIZED, 12), expected: [\"L_IsKeyword_Reserved\", \"L_LayoutKeyword_Unreserved\", \"L_OpenBrace\"] }"
+Error: Unexpected UNRECOGNIZED. One of IsKeyword_Reserved, LayoutKeyword_Unreserved, OpenBrace was expected
+   ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/unrecognized_lexeme_after_contract/input.sol:1:12]
+   │
+ 1 │ contract X # { }
+   │            ┬  
+   │            ╰── Error occurred here.
+───╯
