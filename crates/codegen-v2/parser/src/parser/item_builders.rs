@@ -135,7 +135,7 @@ pub(crate) fn struct_item_to_lalrpop_items(item: &StructItem) -> Vec<LALRPOPDeri
     let fields = item
         .fields
         .iter()
-        .filter_map(|(name, field)| field_to_lalrpop_field(name, field));
+        .map(|(name, field)| field_to_lalrpop_field(name, field));
 
     let option = LALRPOPDefinition {
         fields: fields.collect(),
@@ -293,7 +293,7 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
             let op = &prec.operators[0];
             op.fields
                 .iter()
-                .filter_map(|(name, field)| field_to_lalrpop_field(name, field))
+                .map(|(name, field)| field_to_lalrpop_field(name, field))
                 .collect()
         } else {
             // If there are multiple operators, we create a choice between them as a new rule.
@@ -473,7 +473,7 @@ fn precedence_operator_to_lalrpop_item(
             );
             if let Field::Required { reference } = field {
                 LALRPOPDefinition {
-                    fields: vec![field_to_lalrpop_field(identifier, field).unwrap()],
+                    fields: vec![field_to_lalrpop_field(identifier, field)],
                     constructor: Some(variant_constructor(&operator_ident, reference)),
                 }
             } else {
@@ -524,18 +524,18 @@ fn collect_primaries(item: &PrecedenceItem, prec_counter: i32) -> LALRPOPDerived
 }
 
 /// Given a field, produce an `LALRPOPField` if the field is enabled
-fn field_to_lalrpop_field(name: &Identifier, field: &Field) -> Option<LALRPOPField> {
+fn field_to_lalrpop_field(name: &Identifier, field: &Field) -> LALRPOPField {
     use lalrpop_rules::{optional, simple_match};
 
     let capturing_name = format!("_{name}");
     match field {
-        Field::Required { reference } => Some(LALRPOPField {
+        Field::Required { reference } => LALRPOPField {
             capturing_name: capturing_name.clone().into(),
             rule: simple_match(reference),
-        }),
-        Field::Optional { reference, .. } => Some(LALRPOPField {
+        },
+        Field::Optional { reference, .. } => LALRPOPField {
             capturing_name: capturing_name.clone().into(),
             rule: optional(&simple_match(reference)),
-        }),
+        },
     }
 }

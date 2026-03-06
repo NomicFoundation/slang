@@ -45,7 +45,7 @@ pub fn compare_with_v1_cursor(
     version: &Version,
 ) -> Vec<ComparisonError> {
     let lang_version = LanguageVersion::try_from(version.clone())
-        .unwrap_or_else(|_| panic!("Unsupported language version: {}.", version));
+        .unwrap_or_else(|_| panic!("Unsupported language version: {version}."));
     let v2_output = V2Parser::parse(source, lang_version);
 
     match v2_output {
