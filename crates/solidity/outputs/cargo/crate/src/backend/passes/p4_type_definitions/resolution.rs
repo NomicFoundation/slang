@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use super::evaluator::{evaluate_fixed_array_size, ConstantIdentifierResolver};
+use super::evaluator::{evaluate_compile_time_uint_constant, ConstantIdentifierResolver};
 use super::Pass;
 use crate::backend::binder::{Definition, ImportDefinition, Reference, Resolution, ScopeId};
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
@@ -98,7 +98,7 @@ impl Pass<'_> {
                                 // TODO(validation): if the size of the array
                                 // cannot be evaluated, it's not a compile-time
                                 // constant
-                                let size = evaluate_fixed_array_size(
+                                let size = evaluate_compile_time_uint_constant(
                                     size_expression,
                                     self.current_contract_or_file_scope_id(),
                                     self,

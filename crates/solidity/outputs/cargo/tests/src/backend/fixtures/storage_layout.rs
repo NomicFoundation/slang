@@ -40,6 +40,19 @@ contract C is A, B {
     T[2] t;
     bytes5 o;
 }
+
+contract D is A layout at 42 {
+    uint p;
+}
+
+uint constant BASE = 5;
+
+contract E layout at BASE * 2 + 10 {
+    int8 q;
+    int8 transient qt;
+    bytes5 r;
+    bytes5 transient rt;
+}
 "#;
 
 pub(crate) struct StorageLayout {}
