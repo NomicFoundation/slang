@@ -4,6 +4,7 @@
   use std::vec::Vec;
   use crate::cst::TerminalNode;
   use metaslang_cst::nodes::NodeId;
+  use serde::Serialize;
 
   //
   // Sequences:
@@ -12,8 +13,9 @@
   {% for parent_type, sequence in target.sequences %}
     pub type {{ parent_type }} = Rc<{{ parent_type }}Struct>;
 
-    #[derive(Debug)]
+    #[derive(Debug, Serialize)]
     pub struct {{ parent_type }}Struct {
+      #[serde(skip)]
       pub node_id: NodeId,
       {%- for field in sequence.fields %}
         pub {{ field.label | snake_case }}:
@@ -46,7 +48,7 @@
   //
 
   {% for parent_type, choice in target.choices %}
-    #[derive(Clone, Debug)]
+    #[derive(Clone, Debug, Serialize)]
     pub enum {{ parent_type }} {
       {% for nonterminal in choice.variants | filter(attribute="kind", value="Nonterminal") -%}
         {{ nonterminal.name }}({{ nonterminal.name }}),

@@ -4,6 +4,7 @@ use std::rc::Rc;
 use std::vec::Vec;
 
 use metaslang_cst::nodes::NodeId;
+use serde::Serialize;
 
 use crate::cst::TerminalNode;
 
@@ -13,48 +14,54 @@ use crate::cst::TerminalNode;
 
 pub type SourceUnit = Rc<SourceUnitStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct SourceUnitStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub members: SourceUnitMembers,
 }
 
 pub type PragmaDirective = Rc<PragmaDirectiveStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct PragmaDirectiveStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub pragma: Pragma,
 }
 
 pub type AbicoderPragma = Rc<AbicoderPragmaStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct AbicoderPragmaStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub version: AbicoderVersion,
 }
 
 pub type ExperimentalPragma = Rc<ExperimentalPragmaStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct ExperimentalPragmaStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub feature: ExperimentalFeature,
 }
 
 pub type VersionPragma = Rc<VersionPragmaStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct VersionPragmaStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub sets: VersionExpressionSets,
 }
 
 pub type VersionRange = Rc<VersionRangeStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct VersionRangeStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub start: VersionLiteral,
     pub end: VersionLiteral,
@@ -62,8 +69,9 @@ pub struct VersionRangeStruct {
 
 pub type VersionTerm = Rc<VersionTermStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct VersionTermStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub operator: Option<VersionOperator>,
     pub literal: VersionLiteral,
@@ -71,8 +79,9 @@ pub struct VersionTermStruct {
 
 pub type PathImport = Rc<PathImportStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct PathImportStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub alias: Option<Rc<TerminalNode>>,
     pub path: Rc<TerminalNode>,
@@ -80,8 +89,9 @@ pub struct PathImportStruct {
 
 pub type ImportDeconstruction = Rc<ImportDeconstructionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct ImportDeconstructionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub symbols: ImportDeconstructionSymbols,
     pub path: Rc<TerminalNode>,
@@ -89,8 +99,9 @@ pub struct ImportDeconstructionStruct {
 
 pub type ImportDeconstructionSymbol = Rc<ImportDeconstructionSymbolStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct ImportDeconstructionSymbolStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
     pub alias: Option<Rc<TerminalNode>>,
@@ -98,8 +109,9 @@ pub struct ImportDeconstructionSymbolStruct {
 
 pub type UsingDirective = Rc<UsingDirectiveStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct UsingDirectiveStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub clause: UsingClause,
     pub target: UsingTarget,
@@ -108,16 +120,18 @@ pub struct UsingDirectiveStruct {
 
 pub type UsingDeconstruction = Rc<UsingDeconstructionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct UsingDeconstructionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub symbols: UsingDeconstructionSymbols,
 }
 
 pub type UsingDeconstructionSymbol = Rc<UsingDeconstructionSymbolStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct UsingDeconstructionSymbolStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub name: IdentifierPath,
     pub alias: Option<UsingOperator>,
@@ -125,8 +139,9 @@ pub struct UsingDeconstructionSymbolStruct {
 
 pub type ContractDefinition = Rc<ContractDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct ContractDefinitionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub abstract_keyword: bool,
     pub name: Rc<TerminalNode>,
@@ -137,8 +152,9 @@ pub struct ContractDefinitionStruct {
 
 pub type InheritanceType = Rc<InheritanceTypeStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct InheritanceTypeStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub type_name: IdentifierPath,
     pub arguments: Option<ArgumentsDeclaration>,
@@ -146,8 +162,9 @@ pub struct InheritanceTypeStruct {
 
 pub type InterfaceDefinition = Rc<InterfaceDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct InterfaceDefinitionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
     pub inheritance: Option<InheritanceTypes>,
@@ -156,8 +173,9 @@ pub struct InterfaceDefinitionStruct {
 
 pub type LibraryDefinition = Rc<LibraryDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct LibraryDefinitionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
     pub members: LibraryMembers,
@@ -165,8 +183,9 @@ pub struct LibraryDefinitionStruct {
 
 pub type StructDefinition = Rc<StructDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct StructDefinitionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
     pub members: StructMembers,
@@ -174,8 +193,9 @@ pub struct StructDefinitionStruct {
 
 pub type StructMember = Rc<StructMemberStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct StructMemberStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub type_name: TypeName,
     pub name: Rc<TerminalNode>,
@@ -183,8 +203,9 @@ pub struct StructMemberStruct {
 
 pub type EnumDefinition = Rc<EnumDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct EnumDefinitionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
     pub members: EnumMembers,
@@ -192,8 +213,9 @@ pub struct EnumDefinitionStruct {
 
 pub type ConstantDefinition = Rc<ConstantDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct ConstantDefinitionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub type_name: TypeName,
     pub name: Rc<TerminalNode>,
@@ -203,8 +225,9 @@ pub struct ConstantDefinitionStruct {
 
 pub type StateVariableDefinition = Rc<StateVariableDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct StateVariableDefinitionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub type_name: TypeName,
     pub name: Rc<TerminalNode>,
@@ -216,8 +239,9 @@ pub struct StateVariableDefinitionStruct {
 
 pub type FunctionDefinition = Rc<FunctionDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct FunctionDefinitionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub parameters: Parameters,
     pub returns: Option<Parameters>,
@@ -233,8 +257,9 @@ pub struct FunctionDefinitionStruct {
 
 pub type Parameter = Rc<ParameterStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct ParameterStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub type_name: TypeName,
     pub storage_location: Option<StorageLocation>,
@@ -244,16 +269,18 @@ pub struct ParameterStruct {
 
 pub type OverrideSpecifier = Rc<OverrideSpecifierStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct OverrideSpecifierStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub overridden: Option<OverridePaths>,
 }
 
 pub type ModifierInvocation = Rc<ModifierInvocationStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct ModifierInvocationStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub name: IdentifierPath,
     pub arguments: Option<ArgumentsDeclaration>,
@@ -261,8 +288,9 @@ pub struct ModifierInvocationStruct {
 
 pub type EventDefinition = Rc<EventDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct EventDefinitionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
     pub anonymous_keyword: bool,
@@ -271,8 +299,9 @@ pub struct EventDefinitionStruct {
 
 pub type UserDefinedValueTypeDefinition = Rc<UserDefinedValueTypeDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct UserDefinedValueTypeDefinitionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
     pub value_type: ElementaryType,
@@ -280,8 +309,9 @@ pub struct UserDefinedValueTypeDefinitionStruct {
 
 pub type ErrorDefinition = Rc<ErrorDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct ErrorDefinitionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
     pub parameters: Parameters,
@@ -289,8 +319,9 @@ pub struct ErrorDefinitionStruct {
 
 pub type ArrayTypeName = Rc<ArrayTypeNameStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct ArrayTypeNameStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub operand: TypeName,
     pub index: Option<Expression>,
@@ -298,8 +329,9 @@ pub struct ArrayTypeNameStruct {
 
 pub type FunctionType = Rc<FunctionTypeStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct FunctionTypeStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub parameters: Parameters,
     pub returns: Option<Parameters>,
@@ -309,8 +341,9 @@ pub struct FunctionTypeStruct {
 
 pub type MappingType = Rc<MappingTypeStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct MappingTypeStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub key_type: Parameter,
     pub value_type: Parameter,
@@ -318,40 +351,45 @@ pub struct MappingTypeStruct {
 
 pub type AddressType = Rc<AddressTypeStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct AddressTypeStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub payable_keyword: bool,
 }
 
 pub type Block = Rc<BlockStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct BlockStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub statements: Statements,
 }
 
 pub type UncheckedBlock = Rc<UncheckedBlockStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct UncheckedBlockStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub block: Block,
 }
 
 pub type ExpressionStatement = Rc<ExpressionStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct ExpressionStatementStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub expression: Expression,
 }
 
 pub type AssemblyStatement = Rc<AssemblyStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct AssemblyStatementStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub body: YulBlock,
     pub flags: AssemblyFlags,
@@ -360,8 +398,9 @@ pub struct AssemblyStatementStruct {
 
 pub type TupleDeconstructionStatement = Rc<TupleDeconstructionStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct TupleDeconstructionStatementStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub expression: Expression,
     pub members: TupleDeconstructionMembers,
@@ -369,8 +408,9 @@ pub struct TupleDeconstructionStatementStruct {
 
 pub type VariableDeclarationStatement = Rc<VariableDeclarationStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct VariableDeclarationStatementStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub storage_location: Option<StorageLocation>,
     pub name: Rc<TerminalNode>,
@@ -380,8 +420,9 @@ pub struct VariableDeclarationStatementStruct {
 
 pub type IfStatement = Rc<IfStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct IfStatementStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub condition: Expression,
     pub body: Statement,
@@ -390,8 +431,9 @@ pub struct IfStatementStruct {
 
 pub type ForStatement = Rc<ForStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct ForStatementStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub initialization: ForStatementInitialization,
     pub condition: ForStatementCondition,
@@ -401,8 +443,9 @@ pub struct ForStatementStruct {
 
 pub type WhileStatement = Rc<WhileStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct WhileStatementStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub condition: Expression,
     pub body: Statement,
@@ -410,8 +453,9 @@ pub struct WhileStatementStruct {
 
 pub type DoWhileStatement = Rc<DoWhileStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct DoWhileStatementStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub body: Statement,
     pub condition: Expression,
@@ -419,30 +463,34 @@ pub struct DoWhileStatementStruct {
 
 pub type ContinueStatement = Rc<ContinueStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct ContinueStatementStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
 }
 
 pub type BreakStatement = Rc<BreakStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct BreakStatementStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
 }
 
 pub type ReturnStatement = Rc<ReturnStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct ReturnStatementStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub expression: Option<Expression>,
 }
 
 pub type EmitStatement = Rc<EmitStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct EmitStatementStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub event: IdentifierPath,
     pub arguments: ArgumentsDeclaration,
@@ -450,8 +498,9 @@ pub struct EmitStatementStruct {
 
 pub type TryStatement = Rc<TryStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct TryStatementStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub expression: Expression,
     pub returns: Option<Parameters>,
@@ -461,8 +510,9 @@ pub struct TryStatementStruct {
 
 pub type CatchClause = Rc<CatchClauseStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct CatchClauseStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub error: Option<CatchClauseError>,
     pub body: Block,
@@ -470,8 +520,9 @@ pub struct CatchClauseStruct {
 
 pub type CatchClauseError = Rc<CatchClauseErrorStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct CatchClauseErrorStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub name: Option<Rc<TerminalNode>>,
     pub parameters: Parameters,
@@ -479,8 +530,9 @@ pub struct CatchClauseErrorStruct {
 
 pub type RevertStatement = Rc<RevertStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct RevertStatementStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub error: IdentifierPath,
     pub arguments: ArgumentsDeclaration,
@@ -488,15 +540,17 @@ pub struct RevertStatementStruct {
 
 pub type ThrowStatement = Rc<ThrowStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct ThrowStatementStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
 }
 
 pub type AssignmentExpression = Rc<AssignmentExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct AssignmentExpressionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub left_operand: Expression,
     pub operator: Rc<TerminalNode>,
@@ -505,8 +559,9 @@ pub struct AssignmentExpressionStruct {
 
 pub type ConditionalExpression = Rc<ConditionalExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct ConditionalExpressionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub operand: Expression,
     pub true_expression: Expression,
@@ -515,8 +570,9 @@ pub struct ConditionalExpressionStruct {
 
 pub type OrExpression = Rc<OrExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct OrExpressionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub left_operand: Expression,
     pub right_operand: Expression,
@@ -524,8 +580,9 @@ pub struct OrExpressionStruct {
 
 pub type AndExpression = Rc<AndExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct AndExpressionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub left_operand: Expression,
     pub right_operand: Expression,
@@ -533,8 +590,9 @@ pub struct AndExpressionStruct {
 
 pub type EqualityExpression = Rc<EqualityExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct EqualityExpressionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub left_operand: Expression,
     pub operator: Rc<TerminalNode>,
@@ -543,8 +601,9 @@ pub struct EqualityExpressionStruct {
 
 pub type InequalityExpression = Rc<InequalityExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct InequalityExpressionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub left_operand: Expression,
     pub operator: Rc<TerminalNode>,
@@ -553,8 +612,9 @@ pub struct InequalityExpressionStruct {
 
 pub type BitwiseOrExpression = Rc<BitwiseOrExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct BitwiseOrExpressionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub left_operand: Expression,
     pub right_operand: Expression,
@@ -562,8 +622,9 @@ pub struct BitwiseOrExpressionStruct {
 
 pub type BitwiseXorExpression = Rc<BitwiseXorExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct BitwiseXorExpressionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub left_operand: Expression,
     pub right_operand: Expression,
@@ -571,8 +632,9 @@ pub struct BitwiseXorExpressionStruct {
 
 pub type BitwiseAndExpression = Rc<BitwiseAndExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct BitwiseAndExpressionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub left_operand: Expression,
     pub right_operand: Expression,
@@ -580,8 +642,9 @@ pub struct BitwiseAndExpressionStruct {
 
 pub type ShiftExpression = Rc<ShiftExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct ShiftExpressionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub left_operand: Expression,
     pub operator: Rc<TerminalNode>,
@@ -590,8 +653,9 @@ pub struct ShiftExpressionStruct {
 
 pub type AdditiveExpression = Rc<AdditiveExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct AdditiveExpressionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub left_operand: Expression,
     pub operator: Rc<TerminalNode>,
@@ -600,8 +664,9 @@ pub struct AdditiveExpressionStruct {
 
 pub type MultiplicativeExpression = Rc<MultiplicativeExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct MultiplicativeExpressionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub left_operand: Expression,
     pub operator: Rc<TerminalNode>,
@@ -610,8 +675,9 @@ pub struct MultiplicativeExpressionStruct {
 
 pub type ExponentiationExpression = Rc<ExponentiationExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct ExponentiationExpressionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub left_operand: Expression,
     pub operator: Rc<TerminalNode>,
@@ -620,8 +686,9 @@ pub struct ExponentiationExpressionStruct {
 
 pub type PostfixExpression = Rc<PostfixExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct PostfixExpressionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub operand: Expression,
     pub operator: Rc<TerminalNode>,
@@ -629,8 +696,9 @@ pub struct PostfixExpressionStruct {
 
 pub type PrefixExpression = Rc<PrefixExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct PrefixExpressionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub operator: Rc<TerminalNode>,
     pub operand: Expression,
@@ -638,8 +706,9 @@ pub struct PrefixExpressionStruct {
 
 pub type FunctionCallExpression = Rc<FunctionCallExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct FunctionCallExpressionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub operand: Expression,
     pub arguments: ArgumentsDeclaration,
@@ -647,8 +716,9 @@ pub struct FunctionCallExpressionStruct {
 
 pub type CallOptionsExpression = Rc<CallOptionsExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct CallOptionsExpressionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub operand: Expression,
     pub options: CallOptions,
@@ -656,8 +726,9 @@ pub struct CallOptionsExpressionStruct {
 
 pub type MemberAccessExpression = Rc<MemberAccessExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct MemberAccessExpressionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub operand: Expression,
     pub member: Rc<TerminalNode>,
@@ -665,8 +736,9 @@ pub struct MemberAccessExpressionStruct {
 
 pub type IndexAccessExpression = Rc<IndexAccessExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct IndexAccessExpressionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub operand: Expression,
     pub start: Option<Expression>,
@@ -675,8 +747,9 @@ pub struct IndexAccessExpressionStruct {
 
 pub type NamedArgument = Rc<NamedArgumentStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct NamedArgumentStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
     pub value: Expression,
@@ -684,48 +757,54 @@ pub struct NamedArgumentStruct {
 
 pub type TypeExpression = Rc<TypeExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct TypeExpressionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub type_name: TypeName,
 }
 
 pub type NewExpression = Rc<NewExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct NewExpressionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub type_name: TypeName,
 }
 
 pub type TupleExpression = Rc<TupleExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct TupleExpressionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub items: TupleValues,
 }
 
 pub type TupleValue = Rc<TupleValueStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct TupleValueStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub expression: Option<Expression>,
 }
 
 pub type ArrayExpression = Rc<ArrayExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct ArrayExpressionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub items: ArrayValues,
 }
 
 pub type HexNumberExpression = Rc<HexNumberExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct HexNumberExpressionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub literal: Rc<TerminalNode>,
     pub unit: Option<NumberUnit>,
@@ -733,8 +812,9 @@ pub struct HexNumberExpressionStruct {
 
 pub type DecimalNumberExpression = Rc<DecimalNumberExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct DecimalNumberExpressionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub literal: Rc<TerminalNode>,
     pub unit: Option<NumberUnit>,
@@ -742,16 +822,18 @@ pub struct DecimalNumberExpressionStruct {
 
 pub type YulBlock = Rc<YulBlockStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct YulBlockStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub statements: YulStatements,
 }
 
 pub type YulFunctionDefinition = Rc<YulFunctionDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct YulFunctionDefinitionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub name: Rc<TerminalNode>,
     pub parameters: YulParameters,
@@ -761,8 +843,9 @@ pub struct YulFunctionDefinitionStruct {
 
 pub type YulVariableDeclarationStatement = Rc<YulVariableDeclarationStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct YulVariableDeclarationStatementStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub variables: YulVariableNames,
     pub value: Option<YulVariableDeclarationValue>,
@@ -770,8 +853,9 @@ pub struct YulVariableDeclarationStatementStruct {
 
 pub type YulVariableDeclarationValue = Rc<YulVariableDeclarationValueStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct YulVariableDeclarationValueStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub assignment: YulAssignmentOperator,
     pub expression: YulExpression,
@@ -779,8 +863,9 @@ pub struct YulVariableDeclarationValueStruct {
 
 pub type YulVariableAssignmentStatement = Rc<YulVariableAssignmentStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct YulVariableAssignmentStatementStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub variables: YulPaths,
     pub assignment: YulAssignmentOperator,
@@ -789,15 +874,17 @@ pub struct YulVariableAssignmentStatementStruct {
 
 pub type YulColonAndEqual = Rc<YulColonAndEqualStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct YulColonAndEqualStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
 }
 
 pub type YulStackAssignmentStatement = Rc<YulStackAssignmentStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct YulStackAssignmentStatementStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub assignment: YulStackAssignmentOperator,
     pub variable: Rc<TerminalNode>,
@@ -805,15 +892,17 @@ pub struct YulStackAssignmentStatementStruct {
 
 pub type YulEqualAndColon = Rc<YulEqualAndColonStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct YulEqualAndColonStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
 }
 
 pub type YulIfStatement = Rc<YulIfStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct YulIfStatementStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub condition: YulExpression,
     pub body: YulBlock,
@@ -821,8 +910,9 @@ pub struct YulIfStatementStruct {
 
 pub type YulForStatement = Rc<YulForStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct YulForStatementStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub initialization: YulBlock,
     pub condition: YulExpression,
@@ -832,8 +922,9 @@ pub struct YulForStatementStruct {
 
 pub type YulSwitchStatement = Rc<YulSwitchStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct YulSwitchStatementStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub expression: YulExpression,
     pub cases: YulSwitchCases,
@@ -841,16 +932,18 @@ pub struct YulSwitchStatementStruct {
 
 pub type YulDefaultCase = Rc<YulDefaultCaseStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct YulDefaultCaseStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub body: YulBlock,
 }
 
 pub type YulValueCase = Rc<YulValueCaseStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct YulValueCaseStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub value: YulLiteral,
     pub body: YulBlock,
@@ -858,37 +951,42 @@ pub struct YulValueCaseStruct {
 
 pub type YulLeaveStatement = Rc<YulLeaveStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct YulLeaveStatementStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
 }
 
 pub type YulBreakStatement = Rc<YulBreakStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct YulBreakStatementStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
 }
 
 pub type YulContinueStatement = Rc<YulContinueStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct YulContinueStatementStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
 }
 
 pub type YulLabel = Rc<YulLabelStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct YulLabelStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub label: Rc<TerminalNode>,
 }
 
 pub type YulFunctionCallExpression = Rc<YulFunctionCallExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct YulFunctionCallExpressionStruct {
+    #[serde(skip)]
     pub node_id: NodeId,
     pub operand: YulExpression,
     pub arguments: YulArguments,
@@ -898,7 +996,7 @@ pub struct YulFunctionCallExpressionStruct {
 // Choices:
 //
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum SourceUnitMember {
     PragmaDirective(PragmaDirective),
     ContractDefinition(ContractDefinition),
@@ -915,33 +1013,33 @@ pub enum SourceUnitMember {
     ImportClause(ImportClause),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum Pragma {
     VersionPragma(VersionPragma),
     AbicoderPragma(AbicoderPragma),
     ExperimentalPragma(ExperimentalPragma),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum AbicoderVersion {
     AbicoderV1Keyword,
     AbicoderV2Keyword,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum ExperimentalFeature {
     StringLiteral(Rc<TerminalNode>),
     ABIEncoderV2Keyword,
     SMTCheckerKeyword,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum VersionExpression {
     VersionRange(VersionRange),
     VersionTerm(VersionTerm),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum VersionOperator {
     Caret,
     Tilde,
@@ -952,26 +1050,26 @@ pub enum VersionOperator {
     GreaterThanEqual,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum VersionLiteral {
     SimpleVersionLiteral(SimpleVersionLiteral),
     SingleQuotedVersionLiteral(Rc<TerminalNode>),
     DoubleQuotedVersionLiteral(Rc<TerminalNode>),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum ImportClause {
     PathImport(PathImport),
     ImportDeconstruction(ImportDeconstruction),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum UsingClause {
     IdentifierPath(IdentifierPath),
     UsingDeconstruction(UsingDeconstruction),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum UsingOperator {
     Ampersand,
     Asterisk,
@@ -990,13 +1088,13 @@ pub enum UsingOperator {
     Tilde,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum UsingTarget {
     TypeName(TypeName),
     Asterisk,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum ContractMember {
     UsingDirective(UsingDirective),
     FunctionDefinition(FunctionDefinition),
@@ -1009,7 +1107,7 @@ pub enum ContractMember {
     ConstantDefinition(ConstantDefinition),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum TypeName {
     ArrayTypeName(ArrayTypeName),
     FunctionType(FunctionType),
@@ -1018,7 +1116,7 @@ pub enum TypeName {
     IdentifierPath(IdentifierPath),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum ElementaryType {
     AddressType(AddressType),
     BytesKeyword(Rc<TerminalNode>),
@@ -1031,7 +1129,7 @@ pub enum ElementaryType {
     StringKeyword,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum Statement {
     IfStatement(IfStatement),
     ForStatement(ForStatement),
@@ -1052,14 +1150,14 @@ pub enum Statement {
     ExpressionStatement(ExpressionStatement),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum StorageLocation {
     MemoryKeyword,
     StorageKeyword,
     CallDataKeyword,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum ForStatementInitialization {
     TupleDeconstructionStatement(TupleDeconstructionStatement),
     VariableDeclarationStatement(VariableDeclarationStatement),
@@ -1067,13 +1165,13 @@ pub enum ForStatementInitialization {
     Semicolon,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum ForStatementCondition {
     ExpressionStatement(ExpressionStatement),
     Semicolon,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum Expression {
     AssignmentExpression(AssignmentExpression),
     ConditionalExpression(ConditionalExpression),
@@ -1110,13 +1208,13 @@ pub enum Expression {
     FalseKeyword,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum ArgumentsDeclaration {
     PositionalArguments(PositionalArguments),
     NamedArguments(NamedArguments),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum NumberUnit {
     WeiKeyword,
     GweiKeyword,
@@ -1131,14 +1229,14 @@ pub enum NumberUnit {
     YearsKeyword,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum StringExpression {
     Strings(Strings),
     HexStrings(HexStrings),
     UnicodeStrings(UnicodeStrings),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum YulStatement {
     YulBlock(YulBlock),
     YulFunctionDefinition(YulFunctionDefinition),
@@ -1155,32 +1253,32 @@ pub enum YulStatement {
     YulExpression(YulExpression),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum YulAssignmentOperator {
     YulColonAndEqual(YulColonAndEqual),
     ColonEqual,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum YulStackAssignmentOperator {
     YulEqualAndColon(YulEqualAndColon),
     EqualColon,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum YulSwitchCase {
     YulDefaultCase(YulDefaultCase),
     YulValueCase(YulValueCase),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum YulExpression {
     YulFunctionCallExpression(YulFunctionCallExpression),
     YulLiteral(YulLiteral),
     YulPath(YulPath),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum YulLiteral {
     YulDecimalLiteral(Rc<TerminalNode>),
     YulHexLiteral(Rc<TerminalNode>),
@@ -1190,7 +1288,7 @@ pub enum YulLiteral {
     YulFalseKeyword,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum FunctionKind {
     Regular,
     Constructor,
@@ -1200,7 +1298,7 @@ pub enum FunctionKind {
     Modifier,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum FunctionVisibility {
     Public,
     Private,
@@ -1208,7 +1306,7 @@ pub enum FunctionVisibility {
     External,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum FunctionMutability {
     Pure,
     View,
@@ -1216,14 +1314,14 @@ pub enum FunctionMutability {
     Payable,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum StateVariableVisibility {
     Public,
     Private,
     Internal,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum StateVariableMutability {
     Mutable,
     Constant,
@@ -1231,7 +1329,7 @@ pub enum StateVariableMutability {
     Transient,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum TupleDeconstructionMember {
     VariableDeclarationStatement(VariableDeclarationStatement),
     Identifier(Rc<TerminalNode>),
