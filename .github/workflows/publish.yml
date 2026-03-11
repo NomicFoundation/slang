@@ -15,8 +15,6 @@ concurrency:
   group: "${{ github.workflow }}"
   cancel-in-progress: false
 
-permissions: {}
-
 jobs:
   cooldown-check:
     name: "Cargo cooldown check"
@@ -30,7 +28,8 @@ jobs:
         uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
       - uses: "./.github/actions/cooldown-check"
 
-  changesets:
+  publish:
+    needs: [cooldown-check]
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
 
     # Only run on the main repo (not forks), and only on the 'main' branch:
@@ -38,10 +37,8 @@ jobs:
 
     permissions:
       contents: "write" # to create new branches and releases
+      id-token: "write" # OIDC token (needed for trusted publishing)
       pull-requests: "write" # to create new pull requests for changesets
-
-    outputs:
-      hasChangesets: "${{ steps.runChangesets.outputs.hasChangesets }}"
 
     steps:
       - name: "Checkout Repository"
@@ -83,32 +80,8 @@ jobs:
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-  publish:
-    needs: [changesets, cooldown-check]
-    if: "${{ needs.changesets.outputs.hasChangesets == 'false' }}"
-
-    environment: "slang-release"
-
-    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
-
-    permissions:
-      contents: "write" # to create new releases
-      id-token: "write" # OIDC token (needed for trusted publishing)
-
-    steps:
-      - name: "Checkout Repository"
-        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
-
-      - name: "Restore Cache"
-        uses: "./.github/actions/cache/restore"
-
-      - name: "infra setup"
-        run: "./scripts/bin/infra setup"
-
-      - name: "Update npm to support Trusted Publishing"
-        run: "npm install -g npm@v11.6.2"
-
       - name: "infra publish npm"
+        if: "${{ steps.runChangesets.outputs.hasChangesets == 'false' }}"
         run: "./scripts/bin/infra publish npm"
 
       - name: "Exchange Cargo Token"
@@ -116,11 +89,13 @@ jobs:
         uses: "rust-lang/crates-io-auth-action@b7e9a28eded4986ec6b1fa40eeee8f8f165559ec"
 
       - name: "infra publish cargo"
+        if: "${{ steps.runChangesets.outputs.hasChangesets == 'false' }}"
         run: "./scripts/bin/infra publish cargo"
         env:
           CARGO_REGISTRY_TOKEN: "${{ steps.exchangeCargoToken.outputs.token }}"
 
       - name: "infra publish github-release"
+        if: "${{ steps.runChangesets.outputs.hasChangesets == 'false' }}"
         run: "./scripts/bin/infra publish github-release"
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
