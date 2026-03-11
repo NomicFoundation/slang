@@ -1,0 +1,2 @@
+cooldown_minutes = 10080 # 7 days
+cache_dir = "./target/slang-cache/cargo-cooldown-check"

@@ -26,7 +26,20 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  cooldown-check:
+    name: "Cargo cooldown check"
+    runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+
+    # Only run on the main repo (not forks), unless it is a dry run:
+    if: "${{ github.repository == 'NomicFoundation/slang' || inputs.dryRun == true }}"
+
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+      - uses: "./.github/actions/cooldown-check"
+
   benchmark:
+    needs: [cooldown-check]
     runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
 
     # Only run on the main repo (not forks), unless it is a dry run:
