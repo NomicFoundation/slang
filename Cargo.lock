@@ -3748,6 +3748,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "slang_solidity_v2_semantic"
+version = "1.3.4"
+dependencies = [
+ "slang_solidity_v2_common",
+ "slang_solidity_v2_cst",
+]
+
+[[package]]
 name = "slug"
 version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
