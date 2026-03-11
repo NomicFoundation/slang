@@ -22,7 +22,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  cooldown-check:
+    name: "Cargo cooldown check"
+    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+      - uses: "./.github/actions/cooldown-check"
+
   ci:
+    needs: [cooldown-check]
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
 
     steps:

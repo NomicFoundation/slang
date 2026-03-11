@@ -1,3 +1,5 @@
+sources = ["https://github.com/NomicFoundation/cargo-cooldown-check.git", "https://github.com/cashapp/hermit-packages.git"]
+
 env = {
   // Infra:
   "PATH": "${HERMIT_ENV}/scripts/bin:${PATH}",
