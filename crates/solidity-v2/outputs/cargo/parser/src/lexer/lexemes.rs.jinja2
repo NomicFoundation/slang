@@ -1,6 +1,6 @@
 use std::ops::Range;
 
-use strum_macros::IntoStaticStr;
+use strum_macros::{Display, EnumString, IntoStaticStr};
 
 #[derive(Debug)]
 pub struct Lexeme {
@@ -8,7 +8,7 @@ pub struct Lexeme {
     pub range: Range<usize>,
 }
 
-#[derive(Clone, Debug, IntoStaticStr, PartialEq)]
+#[derive(Clone, Debug, Display, EnumString, IntoStaticStr, PartialEq)]
 #[allow(clippy::upper_case_acronyms, non_camel_case_types)]
 pub enum LexemeKind {
     UNRECOGNIZED,

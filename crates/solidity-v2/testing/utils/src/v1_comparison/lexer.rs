@@ -1,19 +1,22 @@
+//! This module provides a `Comparator` that can be used to compare the output of the new lexer with the output of the old lexer (as represented by the CST).
+//!
 //! TODO(v2): remove this temporary API once the lexer is fully integrated into the parser, and can be tested through it:
 
-use semver::Version;
-use slang_solidity::cst::{Cursor, Node, NonterminalKind, TextRange, TextRangeExtensions};
-use slang_solidity::diagnostic::{Diagnostic, Severity};
+use std::ops::Range;
 
-use crate::lexer::contexts::ContextKind;
-use crate::lexer::definition::Lexer;
+use semver::Version;
+use slang_solidity::cst::{Cursor, Node, NonterminalKind, TextRangeExtensions};
+use slang_solidity_v2_parser::{ContextKind, Lexer};
+
+use crate::reporting::diagnostic::{Diagnostic, Severity};
 
 pub struct Error {
     pub message: String,
-    pub text_range: TextRange,
+    pub text_range: Range<usize>,
 }
 
 impl Diagnostic for Error {
-    fn text_range(&self) -> TextRange {
+    fn text_range(&self) -> Range<usize> {
         self.text_range.clone()
     }
 
@@ -127,7 +130,7 @@ impl<'source> Comparator<'source> {
     fn add_error(&mut self, message: String) {
         self.errors.push(Error {
             message,
-            text_range: self.cursor.text_range().clone(),
+            text_range: self.cursor.text_range().start.utf8..self.cursor.text_range().end.utf8,
         });
     }
 }
