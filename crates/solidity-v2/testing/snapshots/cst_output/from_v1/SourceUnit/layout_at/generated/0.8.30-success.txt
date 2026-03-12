@@ -7,25 +7,25 @@ SourceUnitStruct {
                 ContractDefinitionStruct {
                     abstract_keyword: None,
                     contract_keyword: ContractKeyword {
-                        range: 190..198,
+                        range: 95..103,
                     },
                     name: Identifier {
-                        range: 199..207,
+                        range: 104..112,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [
                             StorageLayoutSpecifier(
                                 StorageLayoutSpecifierStruct {
                                     layout_keyword: LayoutKeyword {
-                                        range: 208..214,
+                                        range: 113..119,
                                     },
                                     at_keyword: AtKeyword {
-                                        range: 215..217,
+                                        range: 120..122,
                                     },
                                     expression: DecimalNumberExpression(
                                         DecimalNumberExpressionStruct {
                                             literal: DecimalLiteral {
-                                                range: 218..221,
+                                                range: 123..126,
                                             },
                                             unit: None,
                                         },
@@ -35,13 +35,13 @@ SourceUnitStruct {
                         ],
                     },
                     open_brace: OpenBrace {
-                        range: 223..224,
+                        range: 128..129,
                     },
                     members: ContractMembers {
                         elements: [],
                     },
                     close_brace: CloseBrace {
-                        range: 225..226,
+                        range: 130..131,
                     },
                 },
             ),
@@ -49,44 +49,44 @@ SourceUnitStruct {
                 ContractDefinitionStruct {
                     abstract_keyword: None,
                     contract_keyword: ContractKeyword {
-                        range: 228..236,
+                        range: 133..141,
                     },
                     name: Identifier {
-                        range: 237..245,
+                        range: 142..150,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [
                             StorageLayoutSpecifier(
                                 StorageLayoutSpecifierStruct {
                                     layout_keyword: LayoutKeyword {
-                                        range: 246..252,
+                                        range: 151..157,
                                     },
                                     at_keyword: AtKeyword {
-                                        range: 253..255,
+                                        range: 158..160,
                                     },
                                     expression: CallOptionsExpression(
                                         CallOptionsExpressionStruct {
                                             operand: Identifier(
                                                 Identifier {
-                                                    range: 256..259,
+                                                    range: 161..164,
                                                 },
                                             ),
                                             open_brace: OpenBrace {
-                                                range: 259..260,
+                                                range: 164..165,
                                             },
                                             options: CallOptions {
                                                 elements: [
                                                     NamedArgumentStruct {
                                                         name: Identifier {
-                                                            range: 260..263,
+                                                            range: 165..168,
                                                         },
                                                         colon: Colon {
-                                                            range: 263..264,
+                                                            range: 168..169,
                                                         },
                                                         value: DecimalNumberExpression(
                                                             DecimalNumberExpressionStruct {
                                                                 literal: DecimalLiteral {
-                                                                    range: 264..267,
+                                                                    range: 169..172,
                                                                 },
                                                                 unit: None,
                                                             },
@@ -95,7 +95,7 @@ SourceUnitStruct {
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 267..268,
+                                                range: 172..173,
                                             },
                                         },
                                     ),
@@ -104,13 +104,13 @@ SourceUnitStruct {
                         ],
                     },
                     open_brace: OpenBrace {
-                        range: 270..271,
+                        range: 175..176,
                     },
                     members: ContractMembers {
                         elements: [],
                     },
                     close_brace: CloseBrace {
-                        range: 272..273,
+                        range: 177..178,
                     },
                 },
             ),
@@ -118,38 +118,38 @@ SourceUnitStruct {
                 ContractDefinitionStruct {
                     abstract_keyword: None,
                     contract_keyword: ContractKeyword {
-                        range: 275..283,
+                        range: 180..188,
                     },
                     name: Identifier {
-                        range: 284..292,
+                        range: 189..197,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [
                             StorageLayoutSpecifier(
                                 StorageLayoutSpecifierStruct {
                                     layout_keyword: LayoutKeyword {
-                                        range: 293..299,
+                                        range: 198..204,
                                     },
                                     at_keyword: AtKeyword {
-                                        range: 300..302,
+                                        range: 205..207,
                                     },
                                     expression: FunctionCallExpression(
                                         FunctionCallExpressionStruct {
                                             operand: Identifier(
                                                 Identifier {
-                                                    range: 303..306,
+                                                    range: 208..211,
                                                 },
                                             ),
                                             arguments: PositionalArgumentsDeclaration(
                                                 PositionalArgumentsDeclarationStruct {
                                                     open_paren: OpenParen {
-                                                        range: 306..307,
+                                                        range: 211..212,
                                                     },
                                                     arguments: PositionalArguments {
                                                         elements: [],
                                                     },
                                                     close_paren: CloseParen {
-                                                        range: 307..308,
+                                                        range: 212..213,
                                                     },
                                                 },
                                             ),
@@ -160,13 +160,13 @@ SourceUnitStruct {
                         ],
                     },
                     open_brace: OpenBrace {
-                        range: 310..311,
+                        range: 215..216,
                     },
                     members: ContractMembers {
                         elements: [],
                     },
                     close_brace: CloseBrace {
-                        range: 312..313,
+                        range: 217..218,
                     },
                 },
             ),
@@ -174,39 +174,39 @@ SourceUnitStruct {
                 ContractDefinitionStruct {
                     abstract_keyword: None,
                     contract_keyword: ContractKeyword {
-                        range: 315..323,
+                        range: 220..228,
                     },
                     name: Identifier {
-                        range: 324..332,
+                        range: 229..237,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [
                             StorageLayoutSpecifier(
                                 StorageLayoutSpecifierStruct {
                                     layout_keyword: LayoutKeyword {
-                                        range: 333..339,
+                                        range: 238..244,
                                     },
                                     at_keyword: AtKeyword {
-                                        range: 340..342,
+                                        range: 245..247,
                                     },
                                     expression: AdditiveExpression(
                                         AdditiveExpressionStruct {
                                             left_operand: DecimalNumberExpression(
                                                 DecimalNumberExpressionStruct {
                                                     literal: DecimalLiteral {
-                                                        range: 343..346,
+                                                        range: 248..251,
                                                     },
                                                     unit: None,
                                                 },
                                             ),
                                             expression_additive_expression_operator: Plus(
                                                 Plus {
-                                                    range: 347..348,
+                                                    range: 252..253,
                                                 },
                                             ),
                                             right_operand: Identifier(
                                                 Identifier {
-                                                    range: 349..352,
+                                                    range: 254..257,
                                                 },
                                             ),
                                         },
@@ -216,13 +216,13 @@ SourceUnitStruct {
                         ],
                     },
                     open_brace: OpenBrace {
-                        range: 354..355,
+                        range: 259..260,
                     },
                     members: ContractMembers {
                         elements: [],
                     },
                     close_brace: CloseBrace {
-                        range: 356..357,
+                        range: 261..262,
                     },
                 },
             ),

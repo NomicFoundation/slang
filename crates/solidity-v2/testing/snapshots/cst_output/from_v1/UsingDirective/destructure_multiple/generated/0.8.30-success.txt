@@ -6,12 +6,12 @@ SourceUnitStruct {
             UsingDirective(
                 UsingDirectiveStruct {
                     using_keyword: UsingKeyword {
-                        range: 205..210,
+                        range: 110..115,
                     },
                     clause: UsingDeconstruction(
                         UsingDeconstructionStruct {
                             open_brace: OpenBrace {
-                                range: 211..212,
+                                range: 116..117,
                             },
                             symbols: UsingDeconstructionSymbols {
                                 elements: [
@@ -20,7 +20,7 @@ SourceUnitStruct {
                                             elements: [
                                                 Identifier(
                                                     Identifier {
-                                                        range: 212..215,
+                                                        range: 117..120,
                                                     },
                                                 ),
                                             ],
@@ -28,11 +28,11 @@ SourceUnitStruct {
                                         alias: Some(
                                             UsingAliasStruct {
                                                 as_keyword: AsKeyword {
-                                                    range: 216..218,
+                                                    range: 121..123,
                                                 },
                                                 operator: Plus(
                                                     Plus {
-                                                        range: 219..220,
+                                                        range: 124..125,
                                                     },
                                                 ),
                                             },
@@ -43,7 +43,7 @@ SourceUnitStruct {
                                             elements: [
                                                 Identifier(
                                                     Identifier {
-                                                        range: 222..225,
+                                                        range: 127..130,
                                                     },
                                                 ),
                                             ],
@@ -55,7 +55,7 @@ SourceUnitStruct {
                                             elements: [
                                                 Identifier(
                                                     Identifier {
-                                                        range: 227..230,
+                                                        range: 132..135,
                                                     },
                                                 ),
                                             ],
@@ -67,7 +67,7 @@ SourceUnitStruct {
                                             elements: [
                                                 Identifier(
                                                     Identifier {
-                                                        range: 232..235,
+                                                        range: 137..140,
                                                     },
                                                 ),
                                             ],
@@ -75,11 +75,11 @@ SourceUnitStruct {
                                         alias: Some(
                                             UsingAliasStruct {
                                                 as_keyword: AsKeyword {
-                                                    range: 236..238,
+                                                    range: 141..143,
                                                 },
                                                 operator: Slash(
                                                     Slash {
-                                                        range: 239..240,
+                                                        range: 144..145,
                                                     },
                                                 ),
                                             },
@@ -88,12 +88,12 @@ SourceUnitStruct {
                                 ],
                             },
                             close_brace: CloseBrace {
-                                range: 240..241,
+                                range: 145..146,
                             },
                         },
                     ),
                     for_keyword: ForKeyword {
-                        range: 242..245,
+                        range: 147..150,
                     },
                     target: TypeName(
                         IdentifierPath(
@@ -101,7 +101,7 @@ SourceUnitStruct {
                                 elements: [
                                     Identifier(
                                         Identifier {
-                                            range: 246..249,
+                                            range: 151..154,
                                         },
                                     ),
                                 ],
@@ -110,11 +110,11 @@ SourceUnitStruct {
                     ),
                     global_keyword: Some(
                         GlobalKeyword {
-                            range: 250..256,
+                            range: 155..161,
                         },
                     ),
                     semicolon: Semicolon {
-                        range: 256..257,
+                        range: 161..162,
                     },
                 },
             ),

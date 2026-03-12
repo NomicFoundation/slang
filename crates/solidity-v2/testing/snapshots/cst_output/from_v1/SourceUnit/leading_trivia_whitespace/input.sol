@@ -1,0 +1,3 @@
+// >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/leading_trivia_whitespace/input.sol
+   
+// <<<

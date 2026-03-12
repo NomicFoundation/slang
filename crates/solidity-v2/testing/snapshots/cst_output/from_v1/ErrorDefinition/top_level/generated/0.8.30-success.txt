@@ -6,24 +6,24 @@ SourceUnitStruct {
             ErrorDefinition(
                 ErrorDefinitionStruct {
                     error_keyword: ErrorKeyword {
-                        range: 195..200,
+                        range: 100..105,
                     },
                     name: Identifier {
-                        range: 201..208,
+                        range: 106..113,
                     },
                     members: ErrorParametersDeclarationStruct {
                         open_paren: OpenParen {
-                            range: 208..209,
+                            range: 113..114,
                         },
                         parameters: ErrorParameters {
                             elements: [],
                         },
                         close_paren: CloseParen {
-                            range: 209..210,
+                            range: 114..115,
                         },
                     },
                     semicolon: Semicolon {
-                        range: 210..211,
+                        range: 115..116,
                     },
                 },
             ),

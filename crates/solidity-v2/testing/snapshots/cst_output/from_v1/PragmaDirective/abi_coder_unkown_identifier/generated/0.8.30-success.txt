@@ -6,7 +6,7 @@ SourceUnitStruct {
             PragmaDirective(
                 PragmaDirectiveStruct {
                     pragma_keyword: PragmaKeyword {
-                        range: 213..219,
+                        range: 118..124,
                     },
                     pragma: AbicoderPragma(
                         AbicoderPragmaStruct {
@@ -21,7 +21,7 @@ SourceUnitStruct {
                         },
                     ),
                     semicolon: Semicolon {
-                        range: 232..233,
+                        range: 137..138,
                     },
                 },
             ),

@@ -7,16 +7,16 @@ SourceUnitStruct {
                 ContractDefinitionStruct {
                     abstract_keyword: None,
                     contract_keyword: ContractKeyword {
-                        range: 95..103,
+                        range: 0..8,
                     },
                     name: Identifier {
-                        range: 104..105,
+                        range: 9..10,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [],
                     },
                     open_brace: OpenBrace {
-                        range: 106..107,
+                        range: 11..12,
                     },
                     members: ContractMembers {
                         elements: [
@@ -27,7 +27,7 @@ SourceUnitStruct {
                                             elements: [
                                                 Identifier(
                                                     Identifier {
-                                                        range: 222..228,
+                                                        range: 127..133,
                                                     },
                                                 ),
                                             ],
@@ -37,18 +37,18 @@ SourceUnitStruct {
                                         elements: [],
                                     },
                                     name: Identifier {
-                                        range: 236..237,
+                                        range: 141..142,
                                     },
                                     value: None,
                                     semicolon: Semicolon {
-                                        range: 237..238,
+                                        range: 142..143,
                                     },
                                 },
                             ),
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 239..240,
+                        range: 144..145,
                     },
                 },
             ),

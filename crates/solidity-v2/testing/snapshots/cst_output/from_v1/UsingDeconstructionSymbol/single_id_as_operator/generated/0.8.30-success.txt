@@ -6,12 +6,12 @@ SourceUnitStruct {
             UsingDirective(
                 UsingDirectiveStruct {
                     using_keyword: UsingKeyword {
-                        range: 95..100,
+                        range: 0..5,
                     },
                     clause: UsingDeconstruction(
                         UsingDeconstructionStruct {
                             open_brace: OpenBrace {
-                                range: 101..102,
+                                range: 6..7,
                             },
                             symbols: UsingDeconstructionSymbols {
                                 elements: [
@@ -20,7 +20,7 @@ SourceUnitStruct {
                                             elements: [
                                                 Identifier(
                                                     Identifier {
-                                                        range: 225..228,
+                                                        range: 130..133,
                                                     },
                                                 ),
                                             ],
@@ -28,11 +28,11 @@ SourceUnitStruct {
                                         alias: Some(
                                             UsingAliasStruct {
                                                 as_keyword: AsKeyword {
-                                                    range: 229..231,
+                                                    range: 134..136,
                                                 },
                                                 operator: Slash(
                                                     Slash {
-                                                        range: 232..233,
+                                                        range: 137..138,
                                                     },
                                                 ),
                                             },
@@ -41,25 +41,25 @@ SourceUnitStruct {
                                 ],
                             },
                             close_brace: CloseBrace {
-                                range: 241..242,
+                                range: 146..147,
                             },
                         },
                     ),
                     for_keyword: ForKeyword {
-                        range: 243..246,
+                        range: 148..151,
                     },
                     target: TypeName(
                         ElementaryType(
                             UintKeyword(
                                 UintKeyword {
-                                    range: 247..251,
+                                    range: 152..156,
                                 },
                             ),
                         ),
                     ),
                     global_keyword: None,
                     semicolon: Semicolon {
-                        range: 251..252,
+                        range: 156..157,
                     },
                 },
             ),

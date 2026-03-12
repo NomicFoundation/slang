@@ -7,22 +7,22 @@ SourceUnitStruct {
                 ContractDefinitionStruct {
                     abstract_keyword: None,
                     contract_keyword: ContractKeyword {
-                        range: 203..211,
+                        range: 108..116,
                     },
                     name: Identifier {
-                        range: 212..218,
+                        range: 117..123,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [],
                     },
                     open_brace: OpenBrace {
-                        range: 219..220,
+                        range: 124..125,
                     },
                     members: ContractMembers {
                         elements: [],
                     },
                     close_brace: CloseBrace {
-                        range: 220..221,
+                        range: 125..126,
                     },
                 },
             ),

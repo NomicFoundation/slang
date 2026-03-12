@@ -6,33 +6,33 @@ SourceUnitStruct {
             ImportDirective(
                 ImportDirectiveStruct {
                     import_keyword: ImportKeyword {
-                        range: 198..204,
+                        range: 103..109,
                     },
                     clause: NamedImport(
                         NamedImportStruct {
                             asterisk: Asterisk {
-                                range: 205..206,
+                                range: 110..111,
                             },
                             alias: ImportAliasStruct {
                                 as_keyword: AsKeyword {
-                                    range: 207..209,
+                                    range: 112..114,
                                 },
                                 identifier: Identifier {
-                                    range: 210..213,
+                                    range: 115..118,
                                 },
                             },
                             from_keyword: FromKeyword {
-                                range: 214..218,
+                                range: 119..123,
                             },
                             path: DoubleQuotedStringLiteral(
                                 DoubleQuotedStringLiteral {
-                                    range: 219..224,
+                                    range: 124..129,
                                 },
                             ),
                         },
                     ),
                     semicolon: Semicolon {
-                        range: 224..225,
+                        range: 129..130,
                     },
                 },
             ),

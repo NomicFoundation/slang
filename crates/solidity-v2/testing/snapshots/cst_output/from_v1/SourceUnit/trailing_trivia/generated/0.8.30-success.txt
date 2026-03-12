@@ -7,22 +7,22 @@ SourceUnitStruct {
                 ContractDefinitionStruct {
                     abstract_keyword: None,
                     contract_keyword: ContractKeyword {
-                        range: 196..204,
+                        range: 101..109,
                     },
                     name: Identifier {
-                        range: 205..210,
+                        range: 110..115,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [],
                     },
                     open_brace: OpenBrace {
-                        range: 211..212,
+                        range: 116..117,
                     },
                     members: ContractMembers {
                         elements: [],
                     },
                     close_brace: CloseBrace {
-                        range: 212..213,
+                        range: 117..118,
                     },
                 },
             ),
@@ -30,22 +30,22 @@ SourceUnitStruct {
                 ContractDefinitionStruct {
                     abstract_keyword: None,
                     contract_keyword: ContractKeyword {
-                        range: 325..333,
+                        range: 230..238,
                     },
                     name: Identifier {
-                        range: 334..340,
+                        range: 239..245,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [],
                     },
                     open_brace: OpenBrace {
-                        range: 341..342,
+                        range: 246..247,
                     },
                     members: ContractMembers {
                         elements: [],
                     },
                     close_brace: CloseBrace {
-                        range: 342..343,
+                        range: 247..248,
                     },
                 },
             ),

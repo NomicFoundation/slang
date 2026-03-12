@@ -6,16 +6,16 @@ SourceUnitStruct {
             FunctionDefinition(
                 FunctionDefinitionStruct {
                     function_keyword: FunctionKeyword {
-                        range: 212..220,
+                        range: 117..125,
                     },
                     name: Identifier(
                         Identifier {
-                            range: 221..233,
+                            range: 126..138,
                         },
                     ),
                     parameters: ParametersDeclarationStruct {
                         open_paren: OpenParen {
-                            range: 233..234,
+                            range: 138..139,
                         },
                         parameters: Parameters {
                             elements: [
@@ -24,7 +24,7 @@ SourceUnitStruct {
                                         AddressType(
                                             AddressTypeStruct {
                                                 address_keyword: AddressKeyword {
-                                                    range: 234..241,
+                                                    range: 139..146,
                                                 },
                                                 payable_keyword: None,
                                             },
@@ -33,7 +33,7 @@ SourceUnitStruct {
                                     storage_location: None,
                                     name: Some(
                                         Identifier {
-                                            range: 242..246,
+                                            range: 147..151,
                                         },
                                     ),
                                 },
@@ -42,7 +42,7 @@ SourceUnitStruct {
                                         AddressType(
                                             AddressTypeStruct {
                                                 address_keyword: AddressKeyword {
-                                                    range: 248..255,
+                                                    range: 153..160,
                                                 },
                                                 payable_keyword: None,
                                             },
@@ -51,7 +51,7 @@ SourceUnitStruct {
                                     storage_location: None,
                                     name: Some(
                                         Identifier {
-                                            range: 256..258,
+                                            range: 161..163,
                                         },
                                     ),
                                 },
@@ -59,28 +59,28 @@ SourceUnitStruct {
                                     type_name: ElementaryType(
                                         UintKeyword(
                                             UintKeyword {
-                                                range: 260..267,
+                                                range: 165..172,
                                             },
                                         ),
                                     ),
                                     storage_location: None,
                                     name: Some(
                                         Identifier {
-                                            range: 268..274,
+                                            range: 173..179,
                                         },
                                     ),
                                 },
                             ],
                         },
                         close_paren: CloseParen {
-                            range: 274..275,
+                            range: 179..180,
                         },
                     },
                     attributes: FunctionAttributes {
                         elements: [
                             ExternalKeyword(
                                 ExternalKeyword {
-                                    range: 276..284,
+                                    range: 181..189,
                                 },
                             ),
                         ],
@@ -88,11 +88,11 @@ SourceUnitStruct {
                     returns: Some(
                         ReturnsDeclarationStruct {
                             returns_keyword: ReturnsKeyword {
-                                range: 285..292,
+                                range: 190..197,
                             },
                             variables: ParametersDeclarationStruct {
                                 open_paren: OpenParen {
-                                    range: 293..294,
+                                    range: 198..199,
                                 },
                                 parameters: Parameters {
                                     elements: [
@@ -100,7 +100,7 @@ SourceUnitStruct {
                                             type_name: ElementaryType(
                                                 BoolKeyword(
                                                     BoolKeyword {
-                                                        range: 294..298,
+                                                        range: 199..203,
                                                     },
                                                 ),
                                             ),
@@ -110,14 +110,14 @@ SourceUnitStruct {
                                     ],
                                 },
                                 close_paren: CloseParen {
-                                    range: 298..299,
+                                    range: 203..204,
                                 },
                             },
                         },
                     ),
                     body: Semicolon(
                         Semicolon {
-                            range: 299..300,
+                            range: 204..205,
                         },
                     ),
                 },

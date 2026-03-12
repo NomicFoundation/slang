@@ -7,25 +7,25 @@ SourceUnitStruct {
                 ContractDefinitionStruct {
                     abstract_keyword: None,
                     contract_keyword: ContractKeyword {
-                        range: 225..233,
+                        range: 130..138,
                     },
                     name: Identifier {
-                        range: 234..237,
+                        range: 139..142,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [
                             StorageLayoutSpecifier(
                                 StorageLayoutSpecifierStruct {
                                     layout_keyword: LayoutKeyword {
-                                        range: 238..244,
+                                        range: 143..149,
                                     },
                                     at_keyword: AtKeyword {
-                                        range: 245..247,
+                                        range: 150..152,
                                     },
                                     expression: DecimalNumberExpression(
                                         DecimalNumberExpressionStruct {
                                             literal: DecimalLiteral {
-                                                range: 248..249,
+                                                range: 153..154,
                                             },
                                             unit: None,
                                         },
@@ -35,7 +35,7 @@ SourceUnitStruct {
                             InheritanceSpecifier(
                                 InheritanceSpecifierStruct {
                                     is_keyword: IsKeyword {
-                                        range: 250..252,
+                                        range: 155..157,
                                     },
                                     types: InheritanceTypes {
                                         elements: [
@@ -44,7 +44,7 @@ SourceUnitStruct {
                                                     elements: [
                                                         Identifier(
                                                             Identifier {
-                                                                range: 253..256,
+                                                                range: 158..161,
                                                             },
                                                         ),
                                                     ],
@@ -58,13 +58,13 @@ SourceUnitStruct {
                         ],
                     },
                     open_brace: OpenBrace {
-                        range: 257..258,
+                        range: 162..163,
                     },
                     members: ContractMembers {
                         elements: [],
                     },
                     close_brace: CloseBrace {
-                        range: 259..260,
+                        range: 164..165,
                     },
                 },
             ),

@@ -7,52 +7,52 @@ SourceUnitStruct {
                 ContractDefinitionStruct {
                     abstract_keyword: None,
                     contract_keyword: ContractKeyword {
-                        range: 211..219,
+                        range: 116..124,
                     },
                     name: Identifier {
-                        range: 220..226,
+                        range: 125..131,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [],
                     },
                     open_brace: OpenBrace {
-                        range: 227..228,
+                        range: 132..133,
                     },
                     members: ContractMembers {
                         elements: [
                             EnumDefinition(
                                 EnumDefinitionStruct {
                                     enum_keyword: EnumKeyword {
-                                        range: 231..235,
+                                        range: 136..140,
                                     },
                                     name: Identifier {
-                                        range: 236..241,
+                                        range: 141..146,
                                     },
                                     open_brace: OpenBrace {
-                                        range: 242..243,
+                                        range: 147..148,
                                     },
                                     members: EnumMembers {
                                         elements: [
                                             Identifier {
-                                                range: 248..249,
+                                                range: 153..154,
                                             },
                                             Identifier {
-                                                range: 255..256,
+                                                range: 160..161,
                                             },
                                             Identifier {
-                                                range: 262..263,
+                                                range: 167..168,
                                             },
                                         ],
                                     },
                                     close_brace: CloseBrace {
-                                        range: 266..267,
+                                        range: 171..172,
                                     },
                                 },
                             ),
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 268..269,
+                        range: 173..174,
                     },
                 },
             ),

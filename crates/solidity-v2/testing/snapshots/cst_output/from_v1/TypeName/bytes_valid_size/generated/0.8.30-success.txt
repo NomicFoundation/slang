@@ -7,16 +7,16 @@ SourceUnitStruct {
                 ContractDefinitionStruct {
                     abstract_keyword: None,
                     contract_keyword: ContractKeyword {
-                        range: 95..103,
+                        range: 0..8,
                     },
                     name: Identifier {
-                        range: 104..105,
+                        range: 9..10,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [],
                     },
                     open_brace: OpenBrace {
-                        range: 106..107,
+                        range: 11..12,
                     },
                     members: ContractMembers {
                         elements: [
@@ -25,7 +25,7 @@ SourceUnitStruct {
                                     type_name: ElementaryType(
                                         BytesKeyword(
                                             BytesKeyword {
-                                                range: 208..215,
+                                                range: 113..120,
                                             },
                                         ),
                                     ),
@@ -33,18 +33,18 @@ SourceUnitStruct {
                                         elements: [],
                                     },
                                     name: Identifier {
-                                        range: 223..224,
+                                        range: 128..129,
                                     },
                                     value: None,
                                     semicolon: Semicolon {
-                                        range: 224..225,
+                                        range: 129..130,
                                     },
                                 },
                             ),
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 226..227,
+                        range: 131..132,
                     },
                 },
             ),

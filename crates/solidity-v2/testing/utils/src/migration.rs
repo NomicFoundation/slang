@@ -1,9 +1,8 @@
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::HashSet;
 use std::fmt::Write;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use anyhow::{bail, Result};
-use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::{FileWalker, PathExtensions};
 
 /// Migrates v1 test inputs to v2 format by wrapping them in valid `SourceUnit` boilerplate.
@@ -11,15 +10,8 @@ use infra_utils::paths::{FileWalker, PathExtensions};
 /// Each v1 test input is a snippet for a specific nonterminal (e.g., `Expression`, `Block`).
 /// The v2 parser only supports parsing `SourceUnit`, so we wrap each snippet in appropriate
 /// Solidity context.
-///
-/// Returns a map of group names to test names, suitable for passing to
-/// `generate_cst_output_test_harness`.
-pub fn migrate_v1_tests_to_v2(
-    v1_snapshots_dir: &Path,
-    v2_output_dir: &Path,
-) -> Result<BTreeMap<String, BTreeSet<String>>> {
-    let mut fs = CodegenFileSystem::default();
-    let mut tests = BTreeMap::<String, BTreeSet<String>>::new();
+pub fn migrate_v1_tests_to_v2(v1_snapshots_dir: &Path, v2_output_dir: &Path) -> Result<()> {
+    let mut written_files = HashSet::<PathBuf>::new();
 
     for file in FileWalker::from_directory(v1_snapshots_dir).find_all()? {
         if file.is_generated() {
@@ -36,22 +28,16 @@ pub fn migrate_v1_tests_to_v2(
             [group_name, test_name, "input.sol"] => {
                 let content = file.read_to_string()?;
                 let wrapped = wrap_test_input(group_name, test_name, &content);
-                let output_path = v2_output_dir.join(format!(
-                    "{group_name}/{test_name}/input/generated/input.sol"
-                ));
-                fs.write_file_raw(&output_path, wrapped)?;
-
-                tests
-                    .entry(group_name.to_owned())
-                    .or_default()
-                    .insert(test_name.to_owned());
+                let output_path = v2_output_dir.join(format!("{group_name}/{test_name}/input.sol"));
+                write_file(&output_path, &wrapped)?;
+                written_files.insert(output_path);
             }
             [group_name, test_name, ".gitattributes"] => {
                 let content = file.read_to_string()?;
-                let output_path = v2_output_dir.join(format!(
-                    "{group_name}/{test_name}/input/generated/.gitattributes"
-                ));
-                fs.write_file_raw(&output_path, content)?;
+                let output_path =
+                    v2_output_dir.join(format!("{group_name}/{test_name}/.gitattributes"));
+                write_file(&output_path, &content)?;
+                written_files.insert(output_path);
             }
             _ => {
                 bail!("Unexpected file in v1 snapshots: {file:?}");
@@ -59,7 +45,29 @@ pub fn migrate_v1_tests_to_v2(
         }
     }
 
-    Ok(tests)
+    // Clean up stale files that were not written in this run.
+    // Only remove non-generated files (generated/ dirs are managed by the test runner).
+    for file in FileWalker::from_directory(v2_output_dir).find_all()? {
+        if file.is_generated() {
+            continue;
+        }
+        if !written_files.contains(&file) {
+            std::fs::remove_file(&file)?;
+        }
+    }
+
+    Ok(())
+}
+
+fn write_file(path: &Path, contents: &str) -> Result<()> {
+    std::fs::create_dir_all(path.unwrap_parent())?;
+
+    // Skip writing if already up to date.
+    if path.exists() && contents == path.read_to_string()? {
+        return Ok(());
+    }
+
+    path.write_string(contents)
 }
 
 fn wrap_test_input(group_name: &str, test_name: &str, content: &str) -> String {

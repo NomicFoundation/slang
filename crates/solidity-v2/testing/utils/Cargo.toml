@@ -16,5 +16,9 @@ slang_solidity_v2_common = { workspace = true }
 slang_solidity_v2_cst = { workspace = true }
 slang_solidity_v2_parser = { workspace = true, features = ["__private_testing_utils"] }
 
+[[bin]]
+name = "migrate_v1_tests_to_v2"
+path = "src/bin/migrate.rs"
+
 [lints]
 workspace = true

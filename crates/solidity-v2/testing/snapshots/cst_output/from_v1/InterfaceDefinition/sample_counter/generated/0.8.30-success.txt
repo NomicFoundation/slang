@@ -6,48 +6,48 @@ SourceUnitStruct {
             InterfaceDefinition(
                 InterfaceDefinitionStruct {
                     interface_keyword: InterfaceKeyword {
-                        range: 204..213,
+                        range: 109..118,
                     },
                     name: Identifier {
-                        range: 214..222,
+                        range: 119..127,
                     },
                     inheritance: None,
                     open_brace: OpenBrace {
-                        range: 223..224,
+                        range: 128..129,
                     },
                     members: InterfaceMembers {
                         elements: [
                             FunctionDefinition(
                                 FunctionDefinitionStruct {
                                     function_keyword: FunctionKeyword {
-                                        range: 262..270,
+                                        range: 167..175,
                                     },
                                     name: Identifier(
                                         Identifier {
-                                            range: 271..276,
+                                            range: 176..181,
                                         },
                                     ),
                                     parameters: ParametersDeclarationStruct {
                                         open_paren: OpenParen {
-                                            range: 276..277,
+                                            range: 181..182,
                                         },
                                         parameters: Parameters {
                                             elements: [],
                                         },
                                         close_paren: CloseParen {
-                                            range: 277..278,
+                                            range: 182..183,
                                         },
                                     },
                                     attributes: FunctionAttributes {
                                         elements: [
                                             ExternalKeyword(
                                                 ExternalKeyword {
-                                                    range: 279..287,
+                                                    range: 184..192,
                                                 },
                                             ),
                                             ViewKeyword(
                                                 ViewKeyword {
-                                                    range: 288..292,
+                                                    range: 193..197,
                                                 },
                                             ),
                                         ],
@@ -55,11 +55,11 @@ SourceUnitStruct {
                                     returns: Some(
                                         ReturnsDeclarationStruct {
                                             returns_keyword: ReturnsKeyword {
-                                                range: 293..300,
+                                                range: 198..205,
                                             },
                                             variables: ParametersDeclarationStruct {
                                                 open_paren: OpenParen {
-                                                    range: 301..302,
+                                                    range: 206..207,
                                                 },
                                                 parameters: Parameters {
                                                     elements: [
@@ -67,7 +67,7 @@ SourceUnitStruct {
                                                             type_name: ElementaryType(
                                                                 UintKeyword(
                                                                     UintKeyword {
-                                                                        range: 302..306,
+                                                                        range: 207..211,
                                                                     },
                                                                 ),
                                                             ),
@@ -77,14 +77,14 @@ SourceUnitStruct {
                                                     ],
                                                 },
                                                 close_paren: CloseParen {
-                                                    range: 306..307,
+                                                    range: 211..212,
                                                 },
                                             },
                                         },
                                     ),
                                     body: Semicolon(
                                         Semicolon {
-                                            range: 307..308,
+                                            range: 212..213,
                                         },
                                     ),
                                 },
@@ -92,29 +92,29 @@ SourceUnitStruct {
                             FunctionDefinition(
                                 FunctionDefinitionStruct {
                                     function_keyword: FunctionKeyword {
-                                        range: 344..352,
+                                        range: 249..257,
                                     },
                                     name: Identifier(
                                         Identifier {
-                                            range: 353..362,
+                                            range: 258..267,
                                         },
                                     ),
                                     parameters: ParametersDeclarationStruct {
                                         open_paren: OpenParen {
-                                            range: 362..363,
+                                            range: 267..268,
                                         },
                                         parameters: Parameters {
                                             elements: [],
                                         },
                                         close_paren: CloseParen {
-                                            range: 363..364,
+                                            range: 268..269,
                                         },
                                     },
                                     attributes: FunctionAttributes {
                                         elements: [
                                             ExternalKeyword(
                                                 ExternalKeyword {
-                                                    range: 365..373,
+                                                    range: 270..278,
                                                 },
                                             ),
                                         ],
@@ -122,7 +122,7 @@ SourceUnitStruct {
                                     returns: None,
                                     body: Semicolon(
                                         Semicolon {
-                                            range: 373..374,
+                                            range: 278..279,
                                         },
                                     ),
                                 },
@@ -130,7 +130,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 375..376,
+                        range: 280..281,
                     },
                 },
             ),

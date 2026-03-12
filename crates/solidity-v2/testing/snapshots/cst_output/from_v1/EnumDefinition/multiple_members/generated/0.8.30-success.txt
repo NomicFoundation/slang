@@ -6,29 +6,29 @@ SourceUnitStruct {
             EnumDefinition(
                 EnumDefinitionStruct {
                     enum_keyword: EnumKeyword {
-                        range: 201..205,
+                        range: 106..110,
                     },
                     name: Identifier {
-                        range: 206..209,
+                        range: 111..114,
                     },
                     open_brace: OpenBrace {
-                        range: 210..211,
+                        range: 115..116,
                     },
                     members: EnumMembers {
                         elements: [
                             Identifier {
-                                range: 216..220,
+                                range: 121..125,
                             },
                             Identifier {
-                                range: 226..230,
+                                range: 131..135,
                             },
                             Identifier {
-                                range: 236..240,
+                                range: 141..145,
                             },
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 241..242,
+                        range: 146..147,
                     },
                 },
             ),

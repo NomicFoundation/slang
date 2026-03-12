@@ -7,38 +7,38 @@ SourceUnitStruct {
                 ContractDefinitionStruct {
                     abstract_keyword: None,
                     contract_keyword: ContractKeyword {
-                        range: 95..103,
+                        range: 0..8,
                     },
                     name: Identifier {
-                        range: 104..105,
+                        range: 9..10,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [],
                     },
                     open_brace: OpenBrace {
-                        range: 106..107,
+                        range: 11..12,
                     },
                     members: ContractMembers {
                         elements: [
                             FunctionDefinition(
                                 FunctionDefinitionStruct {
                                     function_keyword: FunctionKeyword {
-                                        range: 215..223,
+                                        range: 120..128,
                                     },
                                     name: Identifier(
                                         Identifier {
-                                            range: 224..228,
+                                            range: 129..133,
                                         },
                                     ),
                                     parameters: ParametersDeclarationStruct {
                                         open_paren: OpenParen {
-                                            range: 228..229,
+                                            range: 133..134,
                                         },
                                         parameters: Parameters {
                                             elements: [],
                                         },
                                         close_paren: CloseParen {
-                                            range: 229..230,
+                                            range: 134..135,
                                         },
                                     },
                                     attributes: FunctionAttributes {
@@ -48,7 +48,7 @@ SourceUnitStruct {
                                     body: Block(
                                         BlockStruct {
                                             open_brace: OpenBrace {
-                                                range: 231..232,
+                                                range: 136..137,
                                             },
                                             statements: Statements {
                                                 elements: [
@@ -60,33 +60,33 @@ SourceUnitStruct {
                                                                         type_name: ElementaryType(
                                                                             UintKeyword(
                                                                                 UintKeyword {
-                                                                                    range: 235..239,
+                                                                                    range: 140..144,
                                                                                 },
                                                                             ),
                                                                         ),
                                                                         storage_location: None,
                                                                         name: Identifier {
-                                                                            range: 240..241,
+                                                                            range: 145..146,
                                                                         },
                                                                     },
                                                                     value: Some(
                                                                         VariableDeclarationValueStruct {
                                                                             equal: Equal {
-                                                                                range: 242..243,
+                                                                                range: 147..148,
                                                                             },
                                                                             expression: AdditiveExpression(
                                                                                 AdditiveExpressionStruct {
                                                                                     left_operand: DecimalNumberExpression(
                                                                                         DecimalNumberExpressionStruct {
                                                                                             literal: DecimalLiteral {
-                                                                                                range: 244..245,
+                                                                                                range: 149..150,
                                                                                             },
                                                                                             unit: None,
                                                                                         },
                                                                                     ),
                                                                                     expression_additive_expression_operator: Plus(
                                                                                         Plus {
-                                                                                            range: 246..247,
+                                                                                            range: 151..152,
                                                                                         },
                                                                                     ),
                                                                                     right_operand: MultiplicativeExpression(
@@ -94,20 +94,20 @@ SourceUnitStruct {
                                                                                             left_operand: DecimalNumberExpression(
                                                                                                 DecimalNumberExpressionStruct {
                                                                                                     literal: DecimalLiteral {
-                                                                                                        range: 248..249,
+                                                                                                        range: 153..154,
                                                                                                     },
                                                                                                     unit: None,
                                                                                                 },
                                                                                             ),
                                                                                             expression_multiplicative_expression_operator: Asterisk(
                                                                                                 Asterisk {
-                                                                                                    range: 250..251,
+                                                                                                    range: 155..156,
                                                                                                 },
                                                                                             ),
                                                                                             right_operand: DecimalNumberExpression(
                                                                                                 DecimalNumberExpressionStruct {
                                                                                                     literal: DecimalLiteral {
-                                                                                                        range: 252..253,
+                                                                                                        range: 157..158,
                                                                                                     },
                                                                                                     unit: None,
                                                                                                 },
@@ -121,14 +121,14 @@ SourceUnitStruct {
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 253..254,
+                                                                range: 158..159,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 255..256,
+                                                range: 160..161,
                                             },
                                         },
                                     ),
@@ -137,7 +137,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 265..266,
+                        range: 170..171,
                     },
                 },
             ),

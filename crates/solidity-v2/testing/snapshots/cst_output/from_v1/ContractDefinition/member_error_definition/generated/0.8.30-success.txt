@@ -7,47 +7,47 @@ SourceUnitStruct {
                 ContractDefinitionStruct {
                     abstract_keyword: None,
                     contract_keyword: ContractKeyword {
-                        range: 212..220,
+                        range: 117..125,
                     },
                     name: Identifier {
-                        range: 221..227,
+                        range: 126..132,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [],
                     },
                     open_brace: OpenBrace {
-                        range: 228..229,
+                        range: 133..134,
                     },
                     members: ContractMembers {
                         elements: [
                             ErrorDefinition(
                                 ErrorDefinitionStruct {
                                     error_keyword: ErrorKeyword {
-                                        range: 232..237,
+                                        range: 137..142,
                                     },
                                     name: Identifier {
-                                        range: 238..244,
+                                        range: 143..149,
                                     },
                                     members: ErrorParametersDeclarationStruct {
                                         open_paren: OpenParen {
-                                            range: 244..245,
+                                            range: 149..150,
                                         },
                                         parameters: ErrorParameters {
                                             elements: [],
                                         },
                                         close_paren: CloseParen {
-                                            range: 245..246,
+                                            range: 150..151,
                                         },
                                     },
                                     semicolon: Semicolon {
-                                        range: 246..247,
+                                        range: 151..152,
                                     },
                                 },
                             ),
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 248..249,
+                        range: 153..154,
                     },
                 },
             ),

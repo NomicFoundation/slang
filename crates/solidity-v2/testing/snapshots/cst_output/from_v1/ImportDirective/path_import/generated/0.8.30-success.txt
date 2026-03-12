@@ -6,20 +6,20 @@ SourceUnitStruct {
             ImportDirective(
                 ImportDirectiveStruct {
                     import_keyword: ImportKeyword {
-                        range: 197..203,
+                        range: 102..108,
                     },
                     clause: PathImport(
                         PathImportStruct {
                             path: DoubleQuotedStringLiteral(
                                 DoubleQuotedStringLiteral {
-                                    range: 204..209,
+                                    range: 109..114,
                                 },
                             ),
                             alias: None,
                         },
                     ),
                     semicolon: Semicolon {
-                        range: 209..210,
+                        range: 114..115,
                     },
                 },
             ),

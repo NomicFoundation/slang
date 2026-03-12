@@ -6,21 +6,21 @@ SourceUnitStruct {
             UsingDirective(
                 UsingDirectiveStruct {
                     using_keyword: UsingKeyword {
-                        range: 195..200,
+                        range: 100..105,
                     },
                     clause: IdentifierPath(
                         IdentifierPath {
                             elements: [
                                 Identifier(
                                     Identifier {
-                                        range: 201..204,
+                                        range: 106..109,
                                     },
                                 ),
                             ],
                         },
                     ),
                     for_keyword: ForKeyword {
-                        range: 205..208,
+                        range: 110..113,
                     },
                     target: TypeName(
                         IdentifierPath(
@@ -28,7 +28,7 @@ SourceUnitStruct {
                                 elements: [
                                     Identifier(
                                         Identifier {
-                                            range: 209..212,
+                                            range: 114..117,
                                         },
                                     ),
                                 ],
@@ -37,11 +37,11 @@ SourceUnitStruct {
                     ),
                     global_keyword: Some(
                         GlobalKeyword {
-                            range: 213..219,
+                            range: 118..124,
                         },
                     ),
                     semicolon: Semicolon {
-                        range: 219..220,
+                        range: 124..125,
                     },
                 },
             ),

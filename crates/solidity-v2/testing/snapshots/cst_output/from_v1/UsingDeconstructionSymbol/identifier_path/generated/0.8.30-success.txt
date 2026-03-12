@@ -6,12 +6,12 @@ SourceUnitStruct {
             UsingDirective(
                 UsingDirectiveStruct {
                     using_keyword: UsingKeyword {
-                        range: 95..100,
+                        range: 0..5,
                     },
                     clause: UsingDeconstruction(
                         UsingDeconstructionStruct {
                             open_brace: OpenBrace {
-                                range: 101..102,
+                                range: 6..7,
                             },
                             symbols: UsingDeconstructionSymbols {
                                 elements: [
@@ -20,12 +20,12 @@ SourceUnitStruct {
                                             elements: [
                                                 Identifier(
                                                     Identifier {
-                                                        range: 219..222,
+                                                        range: 124..127,
                                                     },
                                                 ),
                                                 Identifier(
                                                     Identifier {
-                                                        range: 223..226,
+                                                        range: 128..131,
                                                     },
                                                 ),
                                             ],
@@ -35,25 +35,25 @@ SourceUnitStruct {
                                 ],
                             },
                             close_brace: CloseBrace {
-                                range: 234..235,
+                                range: 139..140,
                             },
                         },
                     ),
                     for_keyword: ForKeyword {
-                        range: 236..239,
+                        range: 141..144,
                     },
                     target: TypeName(
                         ElementaryType(
                             UintKeyword(
                                 UintKeyword {
-                                    range: 240..244,
+                                    range: 145..149,
                                 },
                             ),
                         ),
                     ),
                     global_keyword: None,
                     semicolon: Semicolon {
-                        range: 244..245,
+                        range: 149..150,
                     },
                 },
             ),

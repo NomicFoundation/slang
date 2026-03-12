@@ -1,9 +1,9 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Error: Unexpected Semicolon. One of OpenBrace was expected
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/from_v1/Expression/keyword_unchecked/input/generated/input.sol:8:1]
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/from_v1/Expression/keyword_unchecked/input.sol:6:1]
    │
- 8 │ ;
+ 6 │ ;
    │ ┬  
    │ ╰── Error occurred here.
 ───╯

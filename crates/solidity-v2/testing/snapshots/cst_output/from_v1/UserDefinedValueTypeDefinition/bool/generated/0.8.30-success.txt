@@ -6,21 +6,21 @@ SourceUnitStruct {
             UserDefinedValueTypeDefinition(
                 UserDefinedValueTypeDefinitionStruct {
                     type_keyword: TypeKeyword {
-                        range: 205..209,
+                        range: 110..114,
                     },
                     name: Identifier {
-                        range: 210..213,
+                        range: 115..118,
                     },
                     is_keyword: IsKeyword {
-                        range: 214..216,
+                        range: 119..121,
                     },
                     value_type: BoolKeyword(
                         BoolKeyword {
-                            range: 217..221,
+                            range: 122..126,
                         },
                     ),
                     semicolon: Semicolon {
-                        range: 221..222,
+                        range: 126..127,
                     },
                 },
             ),

@@ -6,47 +6,47 @@ SourceUnitStruct {
             LibraryDefinition(
                 LibraryDefinitionStruct {
                     library_keyword: LibraryKeyword {
-                        range: 197..204,
+                        range: 102..109,
                     },
                     name: Identifier {
-                        range: 205..213,
+                        range: 110..118,
                     },
                     open_brace: OpenBrace {
-                        range: 214..215,
+                        range: 119..120,
                     },
                     members: LibraryMembers {
                         elements: [
                             FunctionDefinition(
                                 FunctionDefinitionStruct {
                                     function_keyword: FunctionKeyword {
-                                        range: 218..226,
+                                        range: 123..131,
                                     },
                                     name: Identifier(
                                         Identifier {
-                                            range: 227..233,
+                                            range: 132..138,
                                         },
                                     ),
                                     parameters: ParametersDeclarationStruct {
                                         open_paren: OpenParen {
-                                            range: 233..234,
+                                            range: 138..139,
                                         },
                                         parameters: Parameters {
                                             elements: [],
                                         },
                                         close_paren: CloseParen {
-                                            range: 234..235,
+                                            range: 139..140,
                                         },
                                     },
                                     attributes: FunctionAttributes {
                                         elements: [
                                             InternalKeyword(
                                                 InternalKeyword {
-                                                    range: 236..244,
+                                                    range: 141..149,
                                                 },
                                             ),
                                             PureKeyword(
                                                 PureKeyword {
-                                                    range: 245..249,
+                                                    range: 150..154,
                                                 },
                                             ),
                                         ],
@@ -55,14 +55,14 @@ SourceUnitStruct {
                                     body: Block(
                                         BlockStruct {
                                             open_brace: OpenBrace {
-                                                range: 250..251,
+                                                range: 155..156,
                                             },
                                             statements: Statements {
                                                 elements: [
                                                     ReturnStatement(
                                                         ReturnStatementStruct {
                                                             return_keyword: ReturnKeyword {
-                                                                range: 342..348,
+                                                                range: 247..253,
                                                             },
                                                             expression: Some(
                                                                 AssignmentExpression(
@@ -70,7 +70,7 @@ SourceUnitStruct {
                                                                         left_operand: TupleExpression(
                                                                             TupleExpressionStruct {
                                                                                 open_paren: OpenParen {
-                                                                                    range: 349..350,
+                                                                                    range: 254..255,
                                                                                 },
                                                                                 items: TupleValues {
                                                                                     elements: [
@@ -81,7 +81,7 @@ SourceUnitStruct {
                                                                                             expression: Some(
                                                                                                 Identifier(
                                                                                                     Identifier {
-                                                                                                        range: 352..353,
+                                                                                                        range: 257..258,
                                                                                                     },
                                                                                                 ),
                                                                                             ),
@@ -92,32 +92,32 @@ SourceUnitStruct {
                                                                                     ],
                                                                                 },
                                                                                 close_paren: CloseParen {
-                                                                                    range: 355..356,
+                                                                                    range: 260..261,
                                                                                 },
                                                                             },
                                                                         ),
                                                                         expression_assignment_expression_operator: Equal(
                                                                             Equal {
-                                                                                range: 357..358,
+                                                                                range: 262..263,
                                                                             },
                                                                         ),
                                                                         right_operand: Identifier(
                                                                             Identifier {
-                                                                                range: 359..362,
+                                                                                range: 264..267,
                                                                             },
                                                                         ),
                                                                     },
                                                                 ),
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 362..363,
+                                                                range: 267..268,
                                                             },
                                                         },
                                                     ),
                                                     ReturnStatement(
                                                         ReturnStatementStruct {
                                                             return_keyword: ReturnKeyword {
-                                                                range: 368..374,
+                                                                range: 273..279,
                                                             },
                                                             expression: Some(
                                                                 AssignmentExpression(
@@ -125,7 +125,7 @@ SourceUnitStruct {
                                                                         left_operand: TupleExpression(
                                                                             TupleExpressionStruct {
                                                                                 open_paren: OpenParen {
-                                                                                    range: 375..376,
+                                                                                    range: 280..281,
                                                                                 },
                                                                                 items: TupleValues {
                                                                                     elements: [
@@ -133,7 +133,7 @@ SourceUnitStruct {
                                                                                             expression: Some(
                                                                                                 Identifier(
                                                                                                     Identifier {
-                                                                                                        range: 376..377,
+                                                                                                        range: 281..282,
                                                                                                     },
                                                                                                 ),
                                                                                             ),
@@ -142,7 +142,7 @@ SourceUnitStruct {
                                                                                             expression: Some(
                                                                                                 Identifier(
                                                                                                     Identifier {
-                                                                                                        range: 379..380,
+                                                                                                        range: 284..285,
                                                                                                     },
                                                                                                 ),
                                                                                             ),
@@ -150,32 +150,32 @@ SourceUnitStruct {
                                                                                     ],
                                                                                 },
                                                                                 close_paren: CloseParen {
-                                                                                    range: 380..381,
+                                                                                    range: 285..286,
                                                                                 },
                                                                             },
                                                                         ),
                                                                         expression_assignment_expression_operator: Equal(
                                                                             Equal {
-                                                                                range: 382..383,
+                                                                                range: 287..288,
                                                                             },
                                                                         ),
                                                                         right_operand: Identifier(
                                                                             Identifier {
-                                                                                range: 384..387,
+                                                                                range: 289..292,
                                                                             },
                                                                         ),
                                                                     },
                                                                 ),
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 387..388,
+                                                                range: 292..293,
                                                             },
                                                         },
                                                     ),
                                                     ReturnStatement(
                                                         ReturnStatementStruct {
                                                             return_keyword: ReturnKeyword {
-                                                                range: 393..399,
+                                                                range: 298..304,
                                                             },
                                                             expression: Some(
                                                                 AssignmentExpression(
@@ -183,7 +183,7 @@ SourceUnitStruct {
                                                                         left_operand: TupleExpression(
                                                                             TupleExpressionStruct {
                                                                                 open_paren: OpenParen {
-                                                                                    range: 400..401,
+                                                                                    range: 305..306,
                                                                                 },
                                                                                 items: TupleValues {
                                                                                     elements: [
@@ -191,7 +191,7 @@ SourceUnitStruct {
                                                                                             expression: Some(
                                                                                                 Identifier(
                                                                                                     Identifier {
-                                                                                                        range: 401..402,
+                                                                                                        range: 306..307,
                                                                                                     },
                                                                                                 ),
                                                                                             ),
@@ -203,7 +203,7 @@ SourceUnitStruct {
                                                                                             expression: Some(
                                                                                                 Identifier(
                                                                                                     Identifier {
-                                                                                                        range: 406..407,
+                                                                                                        range: 311..312,
                                                                                                     },
                                                                                                 ),
                                                                                             ),
@@ -211,32 +211,32 @@ SourceUnitStruct {
                                                                                     ],
                                                                                 },
                                                                                 close_paren: CloseParen {
-                                                                                    range: 407..408,
+                                                                                    range: 312..313,
                                                                                 },
                                                                             },
                                                                         ),
                                                                         expression_assignment_expression_operator: Equal(
                                                                             Equal {
-                                                                                range: 409..410,
+                                                                                range: 314..315,
                                                                             },
                                                                         ),
                                                                         right_operand: Identifier(
                                                                             Identifier {
-                                                                                range: 411..414,
+                                                                                range: 316..319,
                                                                             },
                                                                         ),
                                                                     },
                                                                 ),
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 414..415,
+                                                                range: 319..320,
                                                             },
                                                         },
                                                     ),
                                                     ReturnStatement(
                                                         ReturnStatementStruct {
                                                             return_keyword: ReturnKeyword {
-                                                                range: 420..426,
+                                                                range: 325..331,
                                                             },
                                                             expression: Some(
                                                                 AssignmentExpression(
@@ -244,7 +244,7 @@ SourceUnitStruct {
                                                                         left_operand: TupleExpression(
                                                                             TupleExpressionStruct {
                                                                                 open_paren: OpenParen {
-                                                                                    range: 427..428,
+                                                                                    range: 332..333,
                                                                                 },
                                                                                 items: TupleValues {
                                                                                     elements: [
@@ -264,7 +264,7 @@ SourceUnitStruct {
                                                                                             expression: Some(
                                                                                                 Identifier(
                                                                                                     Identifier {
-                                                                                                        range: 436..437,
+                                                                                                        range: 341..342,
                                                                                                     },
                                                                                                 ),
                                                                                             ),
@@ -272,32 +272,32 @@ SourceUnitStruct {
                                                                                     ],
                                                                                 },
                                                                                 close_paren: CloseParen {
-                                                                                    range: 437..438,
+                                                                                    range: 342..343,
                                                                                 },
                                                                             },
                                                                         ),
                                                                         expression_assignment_expression_operator: Equal(
                                                                             Equal {
-                                                                                range: 439..440,
+                                                                                range: 344..345,
                                                                             },
                                                                         ),
                                                                         right_operand: Identifier(
                                                                             Identifier {
-                                                                                range: 441..444,
+                                                                                range: 346..349,
                                                                             },
                                                                         ),
                                                                     },
                                                                 ),
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 444..445,
+                                                                range: 349..350,
                                                             },
                                                         },
                                                     ),
                                                     ReturnStatement(
                                                         ReturnStatementStruct {
                                                             return_keyword: ReturnKeyword {
-                                                                range: 450..456,
+                                                                range: 355..361,
                                                             },
                                                             expression: Some(
                                                                 AssignmentExpression(
@@ -305,7 +305,7 @@ SourceUnitStruct {
                                                                         left_operand: TupleExpression(
                                                                             TupleExpressionStruct {
                                                                                 open_paren: OpenParen {
-                                                                                    range: 457..458,
+                                                                                    range: 362..363,
                                                                                 },
                                                                                 items: TupleValues {
                                                                                     elements: [
@@ -313,7 +313,7 @@ SourceUnitStruct {
                                                                                             expression: Some(
                                                                                                 Identifier(
                                                                                                     Identifier {
-                                                                                                        range: 458..459,
+                                                                                                        range: 363..364,
                                                                                                     },
                                                                                                 ),
                                                                                             ),
@@ -324,25 +324,25 @@ SourceUnitStruct {
                                                                                     ],
                                                                                 },
                                                                                 close_paren: CloseParen {
-                                                                                    range: 461..462,
+                                                                                    range: 366..367,
                                                                                 },
                                                                             },
                                                                         ),
                                                                         expression_assignment_expression_operator: Equal(
                                                                             Equal {
-                                                                                range: 463..464,
+                                                                                range: 368..369,
                                                                             },
                                                                         ),
                                                                         right_operand: Identifier(
                                                                             Identifier {
-                                                                                range: 465..468,
+                                                                                range: 370..373,
                                                                             },
                                                                         ),
                                                                     },
                                                                 ),
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 468..469,
+                                                                range: 373..374,
                                                             },
                                                         },
                                                     ),
@@ -353,7 +353,7 @@ SourceUnitStruct {
                                                                     left_operand: TupleExpression(
                                                                         TupleExpressionStruct {
                                                                             open_paren: OpenParen {
-                                                                                range: 475..476,
+                                                                                range: 380..381,
                                                                             },
                                                                             items: TupleValues {
                                                                                 elements: [
@@ -364,7 +364,7 @@ SourceUnitStruct {
                                                                                         expression: Some(
                                                                                             Identifier(
                                                                                                 Identifier {
-                                                                                                    range: 478..479,
+                                                                                                    range: 383..384,
                                                                                                 },
                                                                                             ),
                                                                                         ),
@@ -375,24 +375,24 @@ SourceUnitStruct {
                                                                                 ],
                                                                             },
                                                                             close_paren: CloseParen {
-                                                                                range: 481..482,
+                                                                                range: 386..387,
                                                                             },
                                                                         },
                                                                     ),
                                                                     expression_assignment_expression_operator: Equal(
                                                                         Equal {
-                                                                            range: 483..484,
+                                                                            range: 388..389,
                                                                         },
                                                                     ),
                                                                     right_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 485..488,
+                                                                            range: 390..393,
                                                                         },
                                                                     ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 488..489,
+                                                                range: 393..394,
                                                             },
                                                         },
                                                     ),
@@ -403,7 +403,7 @@ SourceUnitStruct {
                                                                     left_operand: TupleExpression(
                                                                         TupleExpressionStruct {
                                                                             open_paren: OpenParen {
-                                                                                range: 494..495,
+                                                                                range: 399..400,
                                                                             },
                                                                             items: TupleValues {
                                                                                 elements: [
@@ -411,7 +411,7 @@ SourceUnitStruct {
                                                                                         expression: Some(
                                                                                             Identifier(
                                                                                                 Identifier {
-                                                                                                    range: 495..496,
+                                                                                                    range: 400..401,
                                                                                                 },
                                                                                             ),
                                                                                         ),
@@ -420,7 +420,7 @@ SourceUnitStruct {
                                                                                         expression: Some(
                                                                                             Identifier(
                                                                                                 Identifier {
-                                                                                                    range: 498..499,
+                                                                                                    range: 403..404,
                                                                                                 },
                                                                                             ),
                                                                                         ),
@@ -428,24 +428,24 @@ SourceUnitStruct {
                                                                                 ],
                                                                             },
                                                                             close_paren: CloseParen {
-                                                                                range: 499..500,
+                                                                                range: 404..405,
                                                                             },
                                                                         },
                                                                     ),
                                                                     expression_assignment_expression_operator: Equal(
                                                                         Equal {
-                                                                            range: 501..502,
+                                                                            range: 406..407,
                                                                         },
                                                                     ),
                                                                     right_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 503..506,
+                                                                            range: 408..411,
                                                                         },
                                                                     ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 506..507,
+                                                                range: 411..412,
                                                             },
                                                         },
                                                     ),
@@ -456,7 +456,7 @@ SourceUnitStruct {
                                                                     left_operand: TupleExpression(
                                                                         TupleExpressionStruct {
                                                                             open_paren: OpenParen {
-                                                                                range: 512..513,
+                                                                                range: 417..418,
                                                                             },
                                                                             items: TupleValues {
                                                                                 elements: [
@@ -464,7 +464,7 @@ SourceUnitStruct {
                                                                                         expression: Some(
                                                                                             Identifier(
                                                                                                 Identifier {
-                                                                                                    range: 513..514,
+                                                                                                    range: 418..419,
                                                                                                 },
                                                                                             ),
                                                                                         ),
@@ -476,7 +476,7 @@ SourceUnitStruct {
                                                                                         expression: Some(
                                                                                             Identifier(
                                                                                                 Identifier {
-                                                                                                    range: 518..519,
+                                                                                                    range: 423..424,
                                                                                                 },
                                                                                             ),
                                                                                         ),
@@ -484,24 +484,24 @@ SourceUnitStruct {
                                                                                 ],
                                                                             },
                                                                             close_paren: CloseParen {
-                                                                                range: 519..520,
+                                                                                range: 424..425,
                                                                             },
                                                                         },
                                                                     ),
                                                                     expression_assignment_expression_operator: Equal(
                                                                         Equal {
-                                                                            range: 521..522,
+                                                                            range: 426..427,
                                                                         },
                                                                     ),
                                                                     right_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 523..526,
+                                                                            range: 428..431,
                                                                         },
                                                                     ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 526..527,
+                                                                range: 431..432,
                                                             },
                                                         },
                                                     ),
@@ -512,7 +512,7 @@ SourceUnitStruct {
                                                                     left_operand: TupleExpression(
                                                                         TupleExpressionStruct {
                                                                             open_paren: OpenParen {
-                                                                                range: 532..533,
+                                                                                range: 437..438,
                                                                             },
                                                                             items: TupleValues {
                                                                                 elements: [
@@ -532,7 +532,7 @@ SourceUnitStruct {
                                                                                         expression: Some(
                                                                                             Identifier(
                                                                                                 Identifier {
-                                                                                                    range: 541..542,
+                                                                                                    range: 446..447,
                                                                                                 },
                                                                                             ),
                                                                                         ),
@@ -540,24 +540,24 @@ SourceUnitStruct {
                                                                                 ],
                                                                             },
                                                                             close_paren: CloseParen {
-                                                                                range: 542..543,
+                                                                                range: 447..448,
                                                                             },
                                                                         },
                                                                     ),
                                                                     expression_assignment_expression_operator: Equal(
                                                                         Equal {
-                                                                            range: 544..545,
+                                                                            range: 449..450,
                                                                         },
                                                                     ),
                                                                     right_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 546..549,
+                                                                            range: 451..454,
                                                                         },
                                                                     ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 549..550,
+                                                                range: 454..455,
                                                             },
                                                         },
                                                     ),
@@ -568,7 +568,7 @@ SourceUnitStruct {
                                                                     left_operand: TupleExpression(
                                                                         TupleExpressionStruct {
                                                                             open_paren: OpenParen {
-                                                                                range: 555..556,
+                                                                                range: 460..461,
                                                                             },
                                                                             items: TupleValues {
                                                                                 elements: [
@@ -576,7 +576,7 @@ SourceUnitStruct {
                                                                                         expression: Some(
                                                                                             Identifier(
                                                                                                 Identifier {
-                                                                                                    range: 556..557,
+                                                                                                    range: 461..462,
                                                                                                 },
                                                                                             ),
                                                                                         ),
@@ -587,31 +587,31 @@ SourceUnitStruct {
                                                                                 ],
                                                                             },
                                                                             close_paren: CloseParen {
-                                                                                range: 559..560,
+                                                                                range: 464..465,
                                                                             },
                                                                         },
                                                                     ),
                                                                     expression_assignment_expression_operator: Equal(
                                                                         Equal {
-                                                                            range: 561..562,
+                                                                            range: 466..467,
                                                                         },
                                                                     ),
                                                                     right_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 563..566,
+                                                                            range: 468..471,
                                                                         },
                                                                     ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 566..567,
+                                                                range: 471..472,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 570..571,
+                                                range: 475..476,
                                             },
                                         },
                                     ),
@@ -620,7 +620,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 572..573,
+                        range: 477..478,
                     },
                 },
             ),

@@ -6,12 +6,12 @@ SourceUnitStruct {
             UsingDirective(
                 UsingDirectiveStruct {
                     using_keyword: UsingKeyword {
-                        range: 95..100,
+                        range: 0..5,
                     },
                     clause: UsingDeconstruction(
                         UsingDeconstructionStruct {
                             open_brace: OpenBrace {
-                                range: 101..102,
+                                range: 6..7,
                             },
                             symbols: UsingDeconstructionSymbols {
                                 elements: [
@@ -20,7 +20,7 @@ SourceUnitStruct {
                                             elements: [
                                                 Identifier(
                                                     Identifier {
-                                                        range: 213..216,
+                                                        range: 118..121,
                                                     },
                                                 ),
                                             ],
@@ -30,25 +30,25 @@ SourceUnitStruct {
                                 ],
                             },
                             close_brace: CloseBrace {
-                                range: 224..225,
+                                range: 129..130,
                             },
                         },
                     ),
                     for_keyword: ForKeyword {
-                        range: 226..229,
+                        range: 131..134,
                     },
                     target: TypeName(
                         ElementaryType(
                             UintKeyword(
                                 UintKeyword {
-                                    range: 230..234,
+                                    range: 135..139,
                                 },
                             ),
                         ),
                     ),
                     global_keyword: None,
                     semicolon: Semicolon {
-                        range: 234..235,
+                        range: 139..140,
                     },
                 },
             ),

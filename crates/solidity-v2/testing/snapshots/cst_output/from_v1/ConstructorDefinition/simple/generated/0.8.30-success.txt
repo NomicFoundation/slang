@@ -7,33 +7,33 @@ SourceUnitStruct {
                 ContractDefinitionStruct {
                     abstract_keyword: None,
                     contract_keyword: ContractKeyword {
-                        range: 95..103,
+                        range: 0..8,
                     },
                     name: Identifier {
-                        range: 104..105,
+                        range: 9..10,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [],
                     },
                     open_brace: OpenBrace {
-                        range: 106..107,
+                        range: 11..12,
                     },
                     members: ContractMembers {
                         elements: [
                             ConstructorDefinition(
                                 ConstructorDefinitionStruct {
                                     constructor_keyword: ConstructorKeyword {
-                                        range: 211..222,
+                                        range: 116..127,
                                     },
                                     parameters: ParametersDeclarationStruct {
                                         open_paren: OpenParen {
-                                            range: 223..224,
+                                            range: 128..129,
                                         },
                                         parameters: Parameters {
                                             elements: [],
                                         },
                                         close_paren: CloseParen {
-                                            range: 224..225,
+                                            range: 129..130,
                                         },
                                     },
                                     attributes: ConstructorAttributes {
@@ -41,13 +41,13 @@ SourceUnitStruct {
                                     },
                                     body: BlockStruct {
                                         open_brace: OpenBrace {
-                                            range: 226..227,
+                                            range: 131..132,
                                         },
                                         statements: Statements {
                                             elements: [],
                                         },
                                         close_brace: CloseBrace {
-                                            range: 227..228,
+                                            range: 132..133,
                                         },
                                     },
                                 },
@@ -55,7 +55,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 236..237,
+                        range: 141..142,
                     },
                 },
             ),

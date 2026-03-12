@@ -6,14 +6,14 @@ SourceUnitStruct {
             ErrorDefinition(
                 ErrorDefinitionStruct {
                     error_keyword: ErrorKeyword {
-                        range: 197..202,
+                        range: 102..107,
                     },
                     name: Identifier {
-                        range: 203..210,
+                        range: 108..115,
                     },
                     members: ErrorParametersDeclarationStruct {
                         open_paren: OpenParen {
-                            range: 210..211,
+                            range: 115..116,
                         },
                         parameters: ErrorParameters {
                             elements: [
@@ -21,13 +21,13 @@ SourceUnitStruct {
                                     type_name: ElementaryType(
                                         UintKeyword(
                                             UintKeyword {
-                                                range: 211..218,
+                                                range: 116..123,
                                             },
                                         ),
                                     ),
                                     name: Some(
                                         Identifier {
-                                            range: 219..220,
+                                            range: 124..125,
                                         },
                                     ),
                                 },
@@ -35,24 +35,24 @@ SourceUnitStruct {
                                     type_name: ElementaryType(
                                         UintKeyword(
                                             UintKeyword {
-                                                range: 222..229,
+                                                range: 127..134,
                                             },
                                         ),
                                     ),
                                     name: Some(
                                         Identifier {
-                                            range: 230..231,
+                                            range: 135..136,
                                         },
                                     ),
                                 },
                             ],
                         },
                         close_paren: CloseParen {
-                            range: 231..232,
+                            range: 136..137,
                         },
                     },
                     semicolon: Semicolon {
-                        range: 232..233,
+                        range: 137..138,
                     },
                 },
             ),
@@ -60,30 +60,30 @@ SourceUnitStruct {
                 ContractDefinitionStruct {
                     abstract_keyword: None,
                     contract_keyword: ContractKeyword {
-                        range: 235..243,
+                        range: 140..148,
                     },
                     name: Identifier {
-                        range: 244..245,
+                        range: 149..150,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [],
                     },
                     open_brace: OpenBrace {
-                        range: 246..247,
+                        range: 151..152,
                     },
                     members: ContractMembers {
                         elements: [
                             ErrorDefinition(
                                 ErrorDefinitionStruct {
                                     error_keyword: ErrorKeyword {
-                                        range: 250..255,
+                                        range: 155..160,
                                     },
                                     name: Identifier {
-                                        range: 256..268,
+                                        range: 161..173,
                                     },
                                     members: ErrorParametersDeclarationStruct {
                                         open_paren: OpenParen {
-                                            range: 268..269,
+                                            range: 173..174,
                                         },
                                         parameters: ErrorParameters {
                                             elements: [
@@ -92,7 +92,7 @@ SourceUnitStruct {
                                                         AddressType(
                                                             AddressTypeStruct {
                                                                 address_keyword: AddressKeyword {
-                                                                    range: 269..276,
+                                                                    range: 174..181,
                                                                 },
                                                                 payable_keyword: None,
                                                             },
@@ -100,18 +100,18 @@ SourceUnitStruct {
                                                     ),
                                                     name: Some(
                                                         Identifier {
-                                                            range: 277..281,
+                                                            range: 182..186,
                                                         },
                                                     ),
                                                 },
                                             ],
                                         },
                                         close_paren: CloseParen {
-                                            range: 281..282,
+                                            range: 186..187,
                                         },
                                     },
                                     semicolon: Semicolon {
-                                        range: 282..283,
+                                        range: 187..188,
                                     },
                                 },
                             ),
@@ -122,7 +122,7 @@ SourceUnitStruct {
                                             elements: [
                                                 Identifier(
                                                     Identifier {
-                                                        range: 286..291,
+                                                        range: 191..196,
                                                     },
                                                 ),
                                             ],
@@ -132,18 +132,18 @@ SourceUnitStruct {
                                         elements: [],
                                     },
                                     name: Identifier {
-                                        range: 292..295,
+                                        range: 197..200,
                                     },
                                     value: None,
                                     semicolon: Semicolon {
-                                        range: 295..296,
+                                        range: 200..201,
                                     },
                                 },
                             ),
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 297..298,
+                        range: 202..203,
                     },
                 },
             ),

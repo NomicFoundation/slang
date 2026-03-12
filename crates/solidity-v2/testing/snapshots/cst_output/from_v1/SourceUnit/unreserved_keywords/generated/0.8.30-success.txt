@@ -7,16 +7,16 @@ SourceUnitStruct {
                 ContractDefinitionStruct {
                     abstract_keyword: None,
                     contract_keyword: ContractKeyword {
-                        range: 200..208,
+                        range: 105..113,
                     },
                     name: Identifier {
-                        range: 209..210,
+                        range: 114..115,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [],
                     },
                     open_brace: OpenBrace {
-                        range: 211..212,
+                        range: 116..117,
                     },
                     members: ContractMembers {
                         elements: [
@@ -25,7 +25,7 @@ SourceUnitStruct {
                                     type_name: ElementaryType(
                                         UintKeyword(
                                             UintKeyword {
-                                                range: 214..218,
+                                                range: 119..123,
                                             },
                                         ),
                                     ),
@@ -33,17 +33,17 @@ SourceUnitStruct {
                                         elements: [
                                             TransientKeyword(
                                                 TransientKeyword {
-                                                    range: 219..228,
+                                                    range: 124..133,
                                                 },
                                             ),
                                         ],
                                     },
                                     name: Identifier {
-                                        range: 229..232,
+                                        range: 134..137,
                                     },
                                     value: None,
                                     semicolon: Semicolon {
-                                        range: 232..233,
+                                        range: 137..138,
                                     },
                                 },
                             ),
@@ -52,7 +52,7 @@ SourceUnitStruct {
                                     type_name: ElementaryType(
                                         UintKeyword(
                                             UintKeyword {
-                                                range: 235..239,
+                                                range: 140..144,
                                             },
                                         ),
                                     ),
@@ -60,18 +60,18 @@ SourceUnitStruct {
                                         elements: [],
                                     },
                                     name: Identifier {
-                                        range: 240..249,
+                                        range: 145..154,
                                     },
                                     value: None,
                                     semicolon: Semicolon {
-                                        range: 249..250,
+                                        range: 154..155,
                                     },
                                 },
                             ),
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 251..252,
+                        range: 156..157,
                     },
                 },
             ),

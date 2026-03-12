@@ -7,29 +7,29 @@ SourceUnitStruct {
                 ContractDefinitionStruct {
                     abstract_keyword: None,
                     contract_keyword: ContractKeyword {
-                        range: 213..221,
+                        range: 118..126,
                     },
                     name: Identifier {
-                        range: 222..228,
+                        range: 127..133,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [],
                     },
                     open_brace: OpenBrace {
-                        range: 229..230,
+                        range: 134..135,
                     },
                     members: ContractMembers {
                         elements: [
                             StructDefinition(
                                 StructDefinitionStruct {
                                     struct_keyword: StructKeyword {
-                                        range: 233..239,
+                                        range: 138..144,
                                     },
                                     name: Identifier {
-                                        range: 240..241,
+                                        range: 145..146,
                                     },
                                     open_brace: OpenBrace {
-                                        range: 242..243,
+                                        range: 147..148,
                                     },
                                     members: StructMembers {
                                         elements: [
@@ -37,43 +37,43 @@ SourceUnitStruct {
                                                 type_name: ElementaryType(
                                                     UintKeyword(
                                                         UintKeyword {
-                                                            range: 248..252,
+                                                            range: 153..157,
                                                         },
                                                     ),
                                                 ),
                                                 name: Identifier {
-                                                    range: 253..254,
+                                                    range: 158..159,
                                                 },
                                                 semicolon: Semicolon {
-                                                    range: 254..255,
+                                                    range: 159..160,
                                                 },
                                             },
                                             StructMemberStruct {
                                                 type_name: ElementaryType(
                                                     UintKeyword(
                                                         UintKeyword {
-                                                            range: 260..264,
+                                                            range: 165..169,
                                                         },
                                                     ),
                                                 ),
                                                 name: Identifier {
-                                                    range: 265..266,
+                                                    range: 170..171,
                                                 },
                                                 semicolon: Semicolon {
-                                                    range: 266..267,
+                                                    range: 171..172,
                                                 },
                                             },
                                         ],
                                     },
                                     close_brace: CloseBrace {
-                                        range: 270..271,
+                                        range: 175..176,
                                     },
                                 },
                             ),
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 272..273,
+                        range: 177..178,
                     },
                 },
             ),

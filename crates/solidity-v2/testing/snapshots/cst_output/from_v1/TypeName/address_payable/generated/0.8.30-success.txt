@@ -7,16 +7,16 @@ SourceUnitStruct {
                 ContractDefinitionStruct {
                     abstract_keyword: None,
                     contract_keyword: ContractKeyword {
-                        range: 95..103,
+                        range: 0..8,
                     },
                     name: Identifier {
-                        range: 104..105,
+                        range: 9..10,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [],
                     },
                     open_brace: OpenBrace {
-                        range: 106..107,
+                        range: 11..12,
                     },
                     members: ContractMembers {
                         elements: [
@@ -26,11 +26,11 @@ SourceUnitStruct {
                                         AddressType(
                                             AddressTypeStruct {
                                                 address_keyword: AddressKeyword {
-                                                    range: 207..214,
+                                                    range: 112..119,
                                                 },
                                                 payable_keyword: Some(
                                                     PayableKeyword {
-                                                        range: 215..222,
+                                                        range: 120..127,
                                                     },
                                                 ),
                                             },
@@ -40,18 +40,18 @@ SourceUnitStruct {
                                         elements: [],
                                     },
                                     name: Identifier {
-                                        range: 231..232,
+                                        range: 136..137,
                                     },
                                     value: None,
                                     semicolon: Semicolon {
-                                        range: 232..233,
+                                        range: 137..138,
                                     },
                                 },
                             ),
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 234..235,
+                        range: 139..140,
                     },
                 },
             ),

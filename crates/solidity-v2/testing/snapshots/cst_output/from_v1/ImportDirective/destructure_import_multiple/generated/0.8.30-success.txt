@@ -6,47 +6,47 @@ SourceUnitStruct {
             ImportDirective(
                 ImportDirectiveStruct {
                     import_keyword: ImportKeyword {
-                        range: 213..219,
+                        range: 118..124,
                     },
                     clause: ImportDeconstruction(
                         ImportDeconstructionStruct {
                             open_brace: OpenBrace {
-                                range: 220..221,
+                                range: 125..126,
                             },
                             symbols: ImportDeconstructionSymbols {
                                 elements: [
                                     ImportDeconstructionSymbolStruct {
                                         name: Identifier {
-                                            range: 222..224,
+                                            range: 127..129,
                                         },
                                         alias: Some(
                                             ImportAliasStruct {
                                                 as_keyword: AsKeyword {
-                                                    range: 225..227,
+                                                    range: 130..132,
                                                 },
                                                 identifier: Identifier {
-                                                    range: 228..230,
+                                                    range: 133..135,
                                                 },
                                             },
                                         ),
                                     },
                                     ImportDeconstructionSymbolStruct {
                                         name: Identifier {
-                                            range: 232..234,
+                                            range: 137..139,
                                         },
                                         alias: None,
                                     },
                                     ImportDeconstructionSymbolStruct {
                                         name: Identifier {
-                                            range: 236..238,
+                                            range: 141..143,
                                         },
                                         alias: Some(
                                             ImportAliasStruct {
                                                 as_keyword: AsKeyword {
-                                                    range: 239..241,
+                                                    range: 144..146,
                                                 },
                                                 identifier: Identifier {
-                                                    range: 242..244,
+                                                    range: 147..149,
                                                 },
                                             },
                                         ),
@@ -54,20 +54,20 @@ SourceUnitStruct {
                                 ],
                             },
                             close_brace: CloseBrace {
-                                range: 245..246,
+                                range: 150..151,
                             },
                             from_keyword: FromKeyword {
-                                range: 247..251,
+                                range: 152..156,
                             },
                             path: DoubleQuotedStringLiteral(
                                 DoubleQuotedStringLiteral {
-                                    range: 252..257,
+                                    range: 157..162,
                                 },
                             ),
                         },
                     ),
                     semicolon: Semicolon {
-                        range: 257..258,
+                        range: 162..163,
                     },
                 },
             ),

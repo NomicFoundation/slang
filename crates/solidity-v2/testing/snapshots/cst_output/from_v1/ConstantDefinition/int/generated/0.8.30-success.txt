@@ -8,29 +8,29 @@ SourceUnitStruct {
                     type_name: ElementaryType(
                         IntKeyword(
                             IntKeyword {
-                                range: 192..195,
+                                range: 97..100,
                             },
                         ),
                     ),
                     constant_keyword: ConstantKeyword {
-                        range: 196..204,
+                        range: 101..109,
                     },
                     name: Identifier {
-                        range: 205..208,
+                        range: 110..113,
                     },
                     equal: Equal {
-                        range: 209..210,
+                        range: 114..115,
                     },
                     value: DecimalNumberExpression(
                         DecimalNumberExpressionStruct {
                             literal: DecimalLiteral {
-                                range: 211..212,
+                                range: 116..117,
                             },
                             unit: None,
                         },
                     ),
                     semicolon: Semicolon {
-                        range: 212..213,
+                        range: 117..118,
                     },
                 },
             ),

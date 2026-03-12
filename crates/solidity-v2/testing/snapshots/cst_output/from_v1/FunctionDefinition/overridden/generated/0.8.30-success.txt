@@ -6,40 +6,40 @@ SourceUnitStruct {
             FunctionDefinition(
                 FunctionDefinitionStruct {
                     function_keyword: FunctionKeyword {
-                        range: 199..207,
+                        range: 104..112,
                     },
                     name: Identifier(
                         Identifier {
-                            range: 208..212,
+                            range: 113..117,
                         },
                     ),
                     parameters: ParametersDeclarationStruct {
                         open_paren: OpenParen {
-                            range: 212..213,
+                            range: 117..118,
                         },
                         parameters: Parameters {
                             elements: [],
                         },
                         close_paren: CloseParen {
-                            range: 213..214,
+                            range: 118..119,
                         },
                     },
                     attributes: FunctionAttributes {
                         elements: [
                             PublicKeyword(
                                 PublicKeyword {
-                                    range: 215..221,
+                                    range: 120..126,
                                 },
                             ),
                             VirtualKeyword(
                                 VirtualKeyword {
-                                    range: 222..229,
+                                    range: 127..134,
                                 },
                             ),
                             OverrideSpecifier(
                                 OverrideSpecifierStruct {
                                     override_keyword: OverrideKeyword {
-                                        range: 230..238,
+                                        range: 135..143,
                                     },
                                     overridden: None,
                                 },
@@ -49,11 +49,11 @@ SourceUnitStruct {
                     returns: Some(
                         ReturnsDeclarationStruct {
                             returns_keyword: ReturnsKeyword {
-                                range: 239..246,
+                                range: 144..151,
                             },
                             variables: ParametersDeclarationStruct {
                                 open_paren: OpenParen {
-                                    range: 247..248,
+                                    range: 152..153,
                                 },
                                 parameters: Parameters {
                                     elements: [
@@ -61,7 +61,7 @@ SourceUnitStruct {
                                             type_name: ElementaryType(
                                                 UintKeyword(
                                                     UintKeyword {
-                                                        range: 248..255,
+                                                        range: 153..160,
                                                     },
                                                 ),
                                             ),
@@ -71,7 +71,7 @@ SourceUnitStruct {
                                     ],
                                 },
                                 close_paren: CloseParen {
-                                    range: 255..256,
+                                    range: 160..161,
                                 },
                             },
                         },
@@ -79,34 +79,34 @@ SourceUnitStruct {
                     body: Block(
                         BlockStruct {
                             open_brace: OpenBrace {
-                                range: 257..258,
+                                range: 162..163,
                             },
                             statements: Statements {
                                 elements: [
                                     ReturnStatement(
                                         ReturnStatementStruct {
                                             return_keyword: ReturnKeyword {
-                                                range: 260..266,
+                                                range: 165..171,
                                             },
                                             expression: Some(
                                                 DecimalNumberExpression(
                                                     DecimalNumberExpressionStruct {
                                                         literal: DecimalLiteral {
-                                                            range: 267..268,
+                                                            range: 172..173,
                                                         },
                                                         unit: None,
                                                     },
                                                 ),
                                             ),
                                             semicolon: Semicolon {
-                                                range: 268..269,
+                                                range: 173..174,
                                             },
                                         },
                                     ),
                                 ],
                             },
                             close_brace: CloseBrace {
-                                range: 270..271,
+                                range: 175..176,
                             },
                         },
                     ),

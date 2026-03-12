@@ -7,16 +7,16 @@ SourceUnitStruct {
                 ContractDefinitionStruct {
                     abstract_keyword: None,
                     contract_keyword: ContractKeyword {
-                        range: 95..103,
+                        range: 0..8,
                     },
                     name: Identifier {
-                        range: 104..105,
+                        range: 9..10,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [],
                     },
                     open_brace: OpenBrace {
-                        range: 106..107,
+                        range: 11..12,
                     },
                     members: ContractMembers {
                         elements: [
@@ -25,24 +25,24 @@ SourceUnitStruct {
                                     type_name: FunctionType(
                                         FunctionTypeStruct {
                                             function_keyword: FunctionKeyword {
-                                                range: 227..235,
+                                                range: 132..140,
                                             },
                                             parameters: ParametersDeclarationStruct {
                                                 open_paren: OpenParen {
-                                                    range: 235..236,
+                                                    range: 140..141,
                                                 },
                                                 parameters: Parameters {
                                                     elements: [],
                                                 },
                                                 close_paren: CloseParen {
-                                                    range: 236..237,
+                                                    range: 141..142,
                                                 },
                                             },
                                             attributes: FunctionTypeAttributes {
                                                 elements: [
                                                     PureKeyword(
                                                         PureKeyword {
-                                                            range: 238..242,
+                                                            range: 143..147,
                                                         },
                                                     ),
                                                 ],
@@ -54,18 +54,18 @@ SourceUnitStruct {
                                         elements: [],
                                     },
                                     name: Identifier {
-                                        range: 243..246,
+                                        range: 148..151,
                                     },
                                     value: None,
                                     semicolon: Semicolon {
-                                        range: 246..247,
+                                        range: 151..152,
                                     },
                                 },
                             ),
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 256..257,
+                        range: 161..162,
                     },
                 },
             ),

@@ -7,53 +7,53 @@ SourceUnitStruct {
                 ContractDefinitionStruct {
                     abstract_keyword: None,
                     contract_keyword: ContractKeyword {
-                        range: 218..226,
+                        range: 123..131,
                     },
                     name: Identifier {
-                        range: 227..233,
+                        range: 132..138,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [],
                     },
                     open_brace: OpenBrace {
-                        range: 234..235,
+                        range: 139..140,
                     },
                     members: ContractMembers {
                         elements: [
                             ConstructorDefinition(
                                 ConstructorDefinitionStruct {
                                     constructor_keyword: ConstructorKeyword {
-                                        range: 238..249,
+                                        range: 143..154,
                                     },
                                     parameters: ParametersDeclarationStruct {
                                         open_paren: OpenParen {
-                                            range: 249..250,
+                                            range: 154..155,
                                         },
                                         parameters: Parameters {
                                             elements: [],
                                         },
                                         close_paren: CloseParen {
-                                            range: 250..251,
+                                            range: 155..156,
                                         },
                                     },
                                     attributes: ConstructorAttributes {
                                         elements: [
                                             PublicKeyword(
                                                 PublicKeyword {
-                                                    range: 252..258,
+                                                    range: 157..163,
                                                 },
                                             ),
                                         ],
                                     },
                                     body: BlockStruct {
                                         open_brace: OpenBrace {
-                                            range: 259..260,
+                                            range: 164..165,
                                         },
                                         statements: Statements {
                                             elements: [],
                                         },
                                         close_brace: CloseBrace {
-                                            range: 263..264,
+                                            range: 168..169,
                                         },
                                     },
                                 },
@@ -61,7 +61,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 265..266,
+                        range: 170..171,
                     },
                 },
             ),

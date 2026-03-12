@@ -6,29 +6,29 @@ SourceUnitStruct {
             FunctionDefinition(
                 FunctionDefinitionStruct {
                     function_keyword: FunctionKeyword {
-                        range: 210..218,
+                        range: 115..123,
                     },
                     name: Identifier(
                         Identifier {
-                            range: 219..220,
+                            range: 124..125,
                         },
                     ),
                     parameters: ParametersDeclarationStruct {
                         open_paren: OpenParen {
-                            range: 220..221,
+                            range: 125..126,
                         },
                         parameters: Parameters {
                             elements: [],
                         },
                         close_paren: CloseParen {
-                            range: 221..222,
+                            range: 126..127,
                         },
                     },
                     attributes: FunctionAttributes {
                         elements: [
                             PureKeyword(
                                 PureKeyword {
-                                    range: 223..227,
+                                    range: 128..132,
                                 },
                             ),
                         ],
@@ -37,13 +37,13 @@ SourceUnitStruct {
                     body: Block(
                         BlockStruct {
                             open_brace: OpenBrace {
-                                range: 228..229,
+                                range: 133..134,
                             },
                             statements: Statements {
                                 elements: [],
                             },
                             close_brace: CloseBrace {
-                                range: 229..230,
+                                range: 134..135,
                             },
                         },
                     ),

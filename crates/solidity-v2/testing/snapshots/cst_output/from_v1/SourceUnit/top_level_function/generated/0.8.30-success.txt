@@ -6,22 +6,22 @@ SourceUnitStruct {
             FunctionDefinition(
                 FunctionDefinitionStruct {
                     function_keyword: FunctionKeyword {
-                        range: 199..207,
+                        range: 104..112,
                     },
                     name: Identifier(
                         Identifier {
-                            range: 208..211,
+                            range: 113..116,
                         },
                     ),
                     parameters: ParametersDeclarationStruct {
                         open_paren: OpenParen {
-                            range: 211..212,
+                            range: 116..117,
                         },
                         parameters: Parameters {
                             elements: [],
                         },
                         close_paren: CloseParen {
-                            range: 212..213,
+                            range: 117..118,
                         },
                     },
                     attributes: FunctionAttributes {
@@ -31,13 +31,13 @@ SourceUnitStruct {
                     body: Block(
                         BlockStruct {
                             open_brace: OpenBrace {
-                                range: 214..215,
+                                range: 119..120,
                             },
                             statements: Statements {
                                 elements: [],
                             },
                             close_brace: CloseBrace {
-                                range: 216..217,
+                                range: 121..122,
                             },
                         },
                     ),

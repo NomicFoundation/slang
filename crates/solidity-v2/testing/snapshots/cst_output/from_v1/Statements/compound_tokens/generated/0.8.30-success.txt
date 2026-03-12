@@ -7,38 +7,38 @@ SourceUnitStruct {
                 ContractDefinitionStruct {
                     abstract_keyword: None,
                     contract_keyword: ContractKeyword {
-                        range: 95..103,
+                        range: 0..8,
                     },
                     name: Identifier {
-                        range: 104..105,
+                        range: 9..10,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [],
                     },
                     open_brace: OpenBrace {
-                        range: 106..107,
+                        range: 11..12,
                     },
                     members: ContractMembers {
                         elements: [
                             FunctionDefinition(
                                 FunctionDefinitionStruct {
                                     function_keyword: FunctionKeyword {
-                                        range: 112..120,
+                                        range: 17..25,
                                     },
                                     name: Identifier(
                                         Identifier {
-                                            range: 121..122,
+                                            range: 26..27,
                                         },
                                     ),
                                     parameters: ParametersDeclarationStruct {
                                         open_paren: OpenParen {
-                                            range: 122..123,
+                                            range: 27..28,
                                         },
                                         parameters: Parameters {
                                             elements: [],
                                         },
                                         close_paren: CloseParen {
-                                            range: 123..124,
+                                            range: 28..29,
                                         },
                                     },
                                     attributes: FunctionAttributes {
@@ -48,7 +48,7 @@ SourceUnitStruct {
                                     body: Block(
                                         BlockStruct {
                                             open_brace: OpenBrace {
-                                                range: 125..126,
+                                                range: 30..31,
                                             },
                                             statements: Statements {
                                                 elements: [
@@ -58,21 +58,21 @@ SourceUnitStruct {
                                                                 AndExpressionStruct {
                                                                     left_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 228..229,
+                                                                            range: 133..134,
                                                                         },
                                                                     ),
                                                                     operator: AmpersandAmpersand {
-                                                                        range: 230..232,
+                                                                        range: 135..137,
                                                                     },
                                                                     right_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 233..234,
+                                                                            range: 138..139,
                                                                         },
                                                                     ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 234..235,
+                                                                range: 139..140,
                                                             },
                                                         },
                                                     ),
@@ -82,23 +82,23 @@ SourceUnitStruct {
                                                                 AssignmentExpressionStruct {
                                                                     left_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 236..237,
+                                                                            range: 141..142,
                                                                         },
                                                                     ),
                                                                     expression_assignment_expression_operator: AmpersandEqual(
                                                                         AmpersandEqual {
-                                                                            range: 238..240,
+                                                                            range: 143..145,
                                                                         },
                                                                     ),
                                                                     right_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 241..242,
+                                                                            range: 146..147,
                                                                         },
                                                                     ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 242..243,
+                                                                range: 147..148,
                                                             },
                                                         },
                                                     ),
@@ -108,21 +108,21 @@ SourceUnitStruct {
                                                                 OrExpressionStruct {
                                                                     left_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 244..245,
+                                                                            range: 149..150,
                                                                         },
                                                                     ),
                                                                     operator: BarBar {
-                                                                        range: 246..248,
+                                                                        range: 151..153,
                                                                     },
                                                                     right_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 249..250,
+                                                                            range: 154..155,
                                                                         },
                                                                     ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 250..251,
+                                                                range: 155..156,
                                                             },
                                                         },
                                                     ),
@@ -132,23 +132,23 @@ SourceUnitStruct {
                                                                 AssignmentExpressionStruct {
                                                                     left_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 252..253,
+                                                                            range: 157..158,
                                                                         },
                                                                     ),
                                                                     expression_assignment_expression_operator: BarEqual(
                                                                         BarEqual {
-                                                                            range: 254..256,
+                                                                            range: 159..161,
                                                                         },
                                                                     ),
                                                                     right_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 257..258,
+                                                                            range: 162..163,
                                                                         },
                                                                     ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 258..259,
+                                                                range: 163..164,
                                                             },
                                                         },
                                                     ),
@@ -158,23 +158,23 @@ SourceUnitStruct {
                                                                 MultiplicativeExpressionStruct {
                                                                     left_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 260..261,
+                                                                            range: 165..166,
                                                                         },
                                                                     ),
                                                                     expression_multiplicative_expression_operator: Slash(
                                                                         Slash {
-                                                                            range: 262..263,
+                                                                            range: 167..168,
                                                                         },
                                                                     ),
                                                                     right_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 264..265,
+                                                                            range: 169..170,
                                                                         },
                                                                     ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 265..266,
+                                                                range: 170..171,
                                                             },
                                                         },
                                                     ),
@@ -184,23 +184,23 @@ SourceUnitStruct {
                                                                 AssignmentExpressionStruct {
                                                                     left_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 267..268,
+                                                                            range: 172..173,
                                                                         },
                                                                     ),
                                                                     expression_assignment_expression_operator: SlashEqual(
                                                                         SlashEqual {
-                                                                            range: 269..271,
+                                                                            range: 174..176,
                                                                         },
                                                                     ),
                                                                     right_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 272..273,
+                                                                            range: 177..178,
                                                                         },
                                                                     ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 273..274,
+                                                                range: 178..179,
                                                             },
                                                         },
                                                     ),
@@ -210,23 +210,23 @@ SourceUnitStruct {
                                                                 InequalityExpressionStruct {
                                                                     left_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 275..276,
+                                                                            range: 180..181,
                                                                         },
                                                                     ),
                                                                     expression_inequality_expression_operator: GreaterThan(
                                                                         GreaterThan {
-                                                                            range: 277..278,
+                                                                            range: 182..183,
                                                                         },
                                                                     ),
                                                                     right_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 279..280,
+                                                                            range: 184..185,
                                                                         },
                                                                     ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 280..281,
+                                                                range: 185..186,
                                                             },
                                                         },
                                                     ),
@@ -236,23 +236,23 @@ SourceUnitStruct {
                                                                 InequalityExpressionStruct {
                                                                     left_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 282..283,
+                                                                            range: 187..188,
                                                                         },
                                                                     ),
                                                                     expression_inequality_expression_operator: GreaterThanEqual(
                                                                         GreaterThanEqual {
-                                                                            range: 284..286,
+                                                                            range: 189..191,
                                                                         },
                                                                     ),
                                                                     right_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 287..288,
+                                                                            range: 192..193,
                                                                         },
                                                                     ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 288..289,
+                                                                range: 193..194,
                                                             },
                                                         },
                                                     ),
@@ -262,23 +262,23 @@ SourceUnitStruct {
                                                                 ShiftExpressionStruct {
                                                                     left_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 290..291,
+                                                                            range: 195..196,
                                                                         },
                                                                     ),
                                                                     expression_shift_expression_operator: GreaterThanGreaterThan(
                                                                         GreaterThanGreaterThan {
-                                                                            range: 292..294,
+                                                                            range: 197..199,
                                                                         },
                                                                     ),
                                                                     right_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 295..296,
+                                                                            range: 200..201,
                                                                         },
                                                                     ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 296..297,
+                                                                range: 201..202,
                                                             },
                                                         },
                                                     ),
@@ -288,23 +288,23 @@ SourceUnitStruct {
                                                                 AssignmentExpressionStruct {
                                                                     left_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 298..299,
+                                                                            range: 203..204,
                                                                         },
                                                                     ),
                                                                     expression_assignment_expression_operator: GreaterThanGreaterThanEqual(
                                                                         GreaterThanGreaterThanEqual {
-                                                                            range: 300..303,
+                                                                            range: 205..208,
                                                                         },
                                                                     ),
                                                                     right_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 304..305,
+                                                                            range: 209..210,
                                                                         },
                                                                     ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 305..306,
+                                                                range: 210..211,
                                                             },
                                                         },
                                                     ),
@@ -314,23 +314,23 @@ SourceUnitStruct {
                                                                 AssignmentExpressionStruct {
                                                                     left_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 307..308,
+                                                                            range: 212..213,
                                                                         },
                                                                     ),
                                                                     expression_assignment_expression_operator: GreaterThanGreaterThanGreaterThanEqual(
                                                                         GreaterThanGreaterThanGreaterThanEqual {
-                                                                            range: 309..313,
+                                                                            range: 214..218,
                                                                         },
                                                                     ),
                                                                     right_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 314..315,
+                                                                            range: 219..220,
                                                                         },
                                                                     ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 315..316,
+                                                                range: 220..221,
                                                             },
                                                         },
                                                     ),
@@ -340,23 +340,23 @@ SourceUnitStruct {
                                                                 ShiftExpressionStruct {
                                                                     left_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 317..318,
+                                                                            range: 222..223,
                                                                         },
                                                                     ),
                                                                     expression_shift_expression_operator: LessThanLessThan(
                                                                         LessThanLessThan {
-                                                                            range: 319..321,
+                                                                            range: 224..226,
                                                                         },
                                                                     ),
                                                                     right_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 322..323,
+                                                                            range: 227..228,
                                                                         },
                                                                     ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 323..324,
+                                                                range: 228..229,
                                                             },
                                                         },
                                                     ),
@@ -366,30 +366,30 @@ SourceUnitStruct {
                                                                 AssignmentExpressionStruct {
                                                                     left_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 325..326,
+                                                                            range: 230..231,
                                                                         },
                                                                     ),
                                                                     expression_assignment_expression_operator: LessThanLessThanEqual(
                                                                         LessThanLessThanEqual {
-                                                                            range: 327..330,
+                                                                            range: 232..235,
                                                                         },
                                                                     ),
                                                                     right_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 331..332,
+                                                                            range: 236..237,
                                                                         },
                                                                     ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 332..333,
+                                                                range: 237..238,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 346..347,
+                                                range: 251..252,
                                             },
                                         },
                                     ),
@@ -398,7 +398,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 348..349,
+                        range: 253..254,
                     },
                 },
             ),

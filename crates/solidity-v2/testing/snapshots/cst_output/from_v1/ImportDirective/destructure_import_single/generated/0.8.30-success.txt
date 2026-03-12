@@ -6,26 +6,26 @@ SourceUnitStruct {
             ImportDirective(
                 ImportDirectiveStruct {
                     import_keyword: ImportKeyword {
-                        range: 211..217,
+                        range: 116..122,
                     },
                     clause: ImportDeconstruction(
                         ImportDeconstructionStruct {
                             open_brace: OpenBrace {
-                                range: 218..219,
+                                range: 123..124,
                             },
                             symbols: ImportDeconstructionSymbols {
                                 elements: [
                                     ImportDeconstructionSymbolStruct {
                                         name: Identifier {
-                                            range: 220..221,
+                                            range: 125..126,
                                         },
                                         alias: Some(
                                             ImportAliasStruct {
                                                 as_keyword: AsKeyword {
-                                                    range: 222..224,
+                                                    range: 127..129,
                                                 },
                                                 identifier: Identifier {
-                                                    range: 225..226,
+                                                    range: 130..131,
                                                 },
                                             },
                                         ),
@@ -33,20 +33,20 @@ SourceUnitStruct {
                                 ],
                             },
                             close_brace: CloseBrace {
-                                range: 227..228,
+                                range: 132..133,
                             },
                             from_keyword: FromKeyword {
-                                range: 229..233,
+                                range: 134..138,
                             },
                             path: DoubleQuotedStringLiteral(
                                 DoubleQuotedStringLiteral {
-                                    range: 234..239,
+                                    range: 139..144,
                                 },
                             ),
                         },
                     ),
                     semicolon: Semicolon {
-                        range: 239..240,
+                        range: 144..145,
                     },
                 },
             ),

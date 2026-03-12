@@ -700,7 +700,6 @@ dependencies = [
  "rayon",
  "solidity_language",
  "solidity_v2_language",
- "solidity_v2_testing_utils",
 ]
 
 [[package]]

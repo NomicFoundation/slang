@@ -7,38 +7,38 @@ SourceUnitStruct {
                 ContractDefinitionStruct {
                     abstract_keyword: None,
                     contract_keyword: ContractKeyword {
-                        range: 95..103,
+                        range: 0..8,
                     },
                     name: Identifier {
-                        range: 104..105,
+                        range: 9..10,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [],
                     },
                     open_brace: OpenBrace {
-                        range: 106..107,
+                        range: 11..12,
                     },
                     members: ContractMembers {
                         elements: [
                             FunctionDefinition(
                                 FunctionDefinitionStruct {
                                     function_keyword: FunctionKeyword {
-                                        range: 112..120,
+                                        range: 17..25,
                                     },
                                     name: Identifier(
                                         Identifier {
-                                            range: 121..122,
+                                            range: 26..27,
                                         },
                                     ),
                                     parameters: ParametersDeclarationStruct {
                                         open_paren: OpenParen {
-                                            range: 122..123,
+                                            range: 27..28,
                                         },
                                         parameters: Parameters {
                                             elements: [],
                                         },
                                         close_paren: CloseParen {
-                                            range: 123..124,
+                                            range: 28..29,
                                         },
                                     },
                                     attributes: FunctionAttributes {
@@ -48,7 +48,7 @@ SourceUnitStruct {
                                     body: Block(
                                         BlockStruct {
                                             open_brace: OpenBrace {
-                                                range: 125..126,
+                                                range: 30..31,
                                             },
                                             statements: Statements {
                                                 elements: [
@@ -57,7 +57,7 @@ SourceUnitStruct {
                                                             expression: NewExpression(
                                                                 NewExpressionStruct {
                                                                     new_keyword: NewKeyword {
-                                                                        range: 224..227,
+                                                                        range: 129..132,
                                                                     },
                                                                     type_name: ArrayTypeName(
                                                                         ArrayTypeNameStruct {
@@ -66,32 +66,32 @@ SourceUnitStruct {
                                                                                     elements: [
                                                                                         Identifier(
                                                                                             Identifier {
-                                                                                                range: 228..231,
+                                                                                                range: 133..136,
                                                                                             },
                                                                                         ),
                                                                                     ],
                                                                                 },
                                                                             ),
                                                                             open_bracket: OpenBracket {
-                                                                                range: 231..232,
+                                                                                range: 136..137,
                                                                             },
                                                                             index: None,
                                                                             close_bracket: CloseBracket {
-                                                                                range: 232..233,
+                                                                                range: 137..138,
                                                                             },
                                                                         },
                                                                     ),
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 241..242,
+                                                                range: 146..147,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 247..248,
+                                                range: 152..153,
                                             },
                                         },
                                     ),
@@ -100,7 +100,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 249..250,
+                        range: 154..155,
                     },
                 },
             ),

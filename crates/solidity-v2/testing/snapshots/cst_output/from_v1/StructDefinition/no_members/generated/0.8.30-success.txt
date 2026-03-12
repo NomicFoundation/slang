@@ -6,19 +6,19 @@ SourceUnitStruct {
             StructDefinition(
                 StructDefinitionStruct {
                     struct_keyword: StructKeyword {
-                        range: 197..203,
+                        range: 102..108,
                     },
                     name: Identifier {
-                        range: 204..205,
+                        range: 109..110,
                     },
                     open_brace: OpenBrace {
-                        range: 206..207,
+                        range: 111..112,
                     },
                     members: StructMembers {
                         elements: [],
                     },
                     close_brace: CloseBrace {
-                        range: 208..209,
+                        range: 113..114,
                     },
                 },
             ),

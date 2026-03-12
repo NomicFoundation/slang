@@ -6,29 +6,29 @@ SourceUnitStruct {
             ImportDirective(
                 ImportDirectiveStruct {
                     import_keyword: ImportKeyword {
-                        range: 208..214,
+                        range: 113..119,
                     },
                     clause: PathImport(
                         PathImportStruct {
                             path: DoubleQuotedStringLiteral(
                                 DoubleQuotedStringLiteral {
-                                    range: 215..220,
+                                    range: 120..125,
                                 },
                             ),
                             alias: Some(
                                 ImportAliasStruct {
                                     as_keyword: AsKeyword {
-                                        range: 221..223,
+                                        range: 126..128,
                                     },
                                     identifier: Identifier {
-                                        range: 224..227,
+                                        range: 129..132,
                                     },
                                 },
                             ),
                         },
                     ),
                     semicolon: Semicolon {
-                        range: 227..228,
+                        range: 132..133,
                     },
                 },
             ),
