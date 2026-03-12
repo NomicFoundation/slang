@@ -7,4 +7,4 @@ mod parser;
 #[cfg(feature = "__private_testing_utils")]
 pub use lexer::{ContextKind, Lexer};
 pub use parser::parser_error::ParserError;
-pub use parser::SourceUnitParser;
+pub use parser::Parser;

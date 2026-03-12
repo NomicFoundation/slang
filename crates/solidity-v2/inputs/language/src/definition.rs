@@ -220,7 +220,7 @@ language_v2_macros::compile!(Language(
                                 Struct(
                                     name = SourceUnit,
                                     fields = (members = Required(SourceUnitMembers)),
-                                    parser_options = ParserOptions(inline = false, public = true)
+                                    parser_options = ParserOptions(inline = false)
                                 ),
                                 Repeated(
                                     name = SourceUnitMembers,
@@ -268,7 +268,6 @@ language_v2_macros::compile!(Language(
                                     // TODO(v2): Until the lexer can perform context switching, we ignore pragmas
                                     parser_options = ParserOptions(
                                         inline = false,
-                                        public = false,
                                         verbatim = r#"
 PragmaDirective: PragmaDirective = {
     <pragma_keyword: PragmaKeyword>  ! <semicolon: Semicolon>  => {
@@ -1897,7 +1896,7 @@ PragmaDirective: PragmaDirective = {
                                         members = Required(ContractMembers),
                                         close_brace = Required(CloseBrace)
                                     ),
-                                    parser_options = ParserOptions(inline = false, public = false, verbatim = "
+                                    parser_options = ParserOptions(inline = false, verbatim = "
 // Contracts are syntactically complex (for an LR parser) since the storage layout specifier
 // has a trailing expression, which can have a trailing option call (`{ ... }`), which conflicts
 // with the contract members block.
@@ -1921,7 +1920,7 @@ ContractDefinition: ContractDefinition = {
                                     name = ContractSpecifiers,
                                     reference = ContractSpecifier,
                                     allow_empty = true,
-                                    parser_options = ParserOptions(inline = false, public = false, verbatim = "
+                                    parser_options = ParserOptions(inline = false, verbatim = "
 // In this case, we require at least one specifier, the case with zero is handled above.
 // Note that the return type now includes the trailing members
 ContractSpecifiersTrailingMembers: (ContractSpecifiers, (OpenBrace, ContractMembers, CloseBrace)) = {
@@ -2167,7 +2166,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
                                         value = Optional(reference = StateVariableDefinitionValue),
                                         semicolon = Required(Semicolon)
                                     ),
-                                    parser_options = ParserOptions(inline = false, public = false, verbatim = r#"
+                                    parser_options = ParserOptions(inline = false, verbatim = r#"
 // State variable definitions have a conflict when used with function types, since some attributes
 // can be both function type attributes and state variable attributes.
 // For example in `function (uint a) internal internal foo;`, the first `internal` is a function type attribute,
@@ -2243,7 +2242,7 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                                     allow_empty = true,
                                     // We inline this to resolve a simple conflict, since some of the attributes
                                     // are unreserved (can be identifiers) the parser needs to wait before actually reducing.
-                                    parser_options = ParserOptions(inline = true, public = false)
+                                    parser_options = ParserOptions(inline = true)
                                 ),
                                 Enum(
                                     name = StateVariableAttribute,
@@ -2548,7 +2547,7 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                                         members = Required(ErrorParametersDeclaration),
                                         semicolon = Required(Semicolon)
                                     ),
-                                    parser_options = ParserOptions(inline = true, public = false)
+                                    parser_options = ParserOptions(inline = true)
                                 ),
                                 Struct(
                                     name = ErrorParametersDeclaration,
@@ -2613,7 +2612,7 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                                         PrimaryExpression(reference = ElementaryType),
                                         PrimaryExpression(reference = IdentifierPath)
                                     ],
-                                    parser_options = ParserOptions(inline = false, public = false, verbatim = "
+                                    parser_options = ParserOptions(inline = false, verbatim = "
 // TypeName has two peculiarities:
 // 1. We need to parametrize the FunctionRule to allow StateVariableDefinition to disable FunctionTypes without returns.
 //    Note that the ArrayTypeName doesn't respect this; most of these manual cases care about trailing constructs, as
@@ -2657,7 +2656,7 @@ NoIndexAccessPath: parser_helpers::IndexAccessPath = {};
                                         attributes = Required(FunctionTypeAttributes),
                                         returns = Optional(reference = ReturnsDeclaration)
                                     ),
-                                    parser_options = ParserOptions(inline = false, public = false, verbatim = "
+                                    parser_options = ParserOptions(inline = false, verbatim = "
 // The only reason to split FunctionType into two rules is to allow StateVariableDefinition
 // to choose whether to allow FunctionTypes without returns or not.
 // Note: This could be solved with macros, but is short enough to be explicit
@@ -2810,7 +2809,7 @@ FunctionTypeInternalReturn: FunctionType = {
                                         EnumVariant(reference = VariableDeclarationStatement),
                                         EnumVariant(reference = ExpressionStatement)
                                     ],
-                                    parser_options = ParserOptions(inline = false, public = false, verbatim = r#"
+                                    parser_options = ParserOptions(inline = false, verbatim = r#"
 // There's two issues with `Statement`:
 //
 // This is a common problem in grammars[1]. To not reinvent the wheel we follow advice from
@@ -2992,7 +2991,7 @@ IdentifierPathNoRevert: IdentifierPath = {
                                     name = MultiTypedDeclarationElements,
                                     reference = MultiTypedDeclarationElement,
                                     separator = Comma,
-                                    parser_options = ParserOptions(inline = false, public = false, verbatim = r#"
+                                    parser_options = ParserOptions(inline = false, verbatim = r#"
 // MultiTypedDeclaration conflict with tuple expression, for example, the following is ambiguous:
 //
 // |--------|  => Assignment expression
@@ -3061,7 +3060,7 @@ TuplePrefix: usize = {
                                         body = Required(Statement),
                                         else_branch = Optional(reference = ElseBranch)
                                     ),
-                                    parser_options = ParserOptions(inline = false, public = false, verbatim = r#"
+                                    parser_options = ParserOptions(inline = false, verbatim = r#"
 // As explained in the `Statement` rule, this solves the dangling else problem
 IfStatement<TrailingElse>: IfStatement = {
     // IfStatement only allows `if`s without an else if TrailingElse == "True"
@@ -3092,7 +3091,7 @@ IfStatement<TrailingElse>: IfStatement = {
                                         close_paren = Required(CloseParen),
                                         body = Required(Statement)
                                     ),
-                                    parser_options = ParserOptions(inline = false, public = false, verbatim = r#"
+                                    parser_options = ParserOptions(inline = false, verbatim = r#"
 // As explained in the `Statement` rule, this solves the dangling else problem
 //
 // Since a `ForStatement` can have a trailing `Statement` we need to parametrize it as well
@@ -3128,7 +3127,7 @@ ForStatement<TrailingElse>: ForStatement = {
                                         close_paren = Required(CloseParen),
                                         body = Required(Statement)
                                     ),
-                                    parser_options = ParserOptions(inline = false, public = false, verbatim = r#"
+                                    parser_options = ParserOptions(inline = false, verbatim = r#"
 // As explained in the `Statement` rule, this solves the dangling else problem
 //
 // Since a `WhileStatement` can have a trailing `Statement` we need to parametrize it as well
@@ -3202,7 +3201,7 @@ WhileStatement<TrailingElse>: WhileStatement = {
                                         body = Required(Block),
                                         catch_clauses = Required(CatchClauses)
                                     ),
-                                    parser_options = ParserOptions(inline = false, public = false, verbatim = r#"
+                                    parser_options = ParserOptions(inline = false, verbatim = r#"
 // A try statement conflicts with expressions since an expression can have named arguments (similar to a block)
 // at the end. For example, if the parser sees `try foo { a` it doesn't know whether foo is an expression and it should
 // start parsing a block (a reduce) or whether it should keep parsing a call options expression (a shift).
@@ -3255,7 +3254,7 @@ ExpressionTrailingBlock: (Expression, Block) = {
                                         semicolon = Required(Semicolon)
                                     ),
                                     // RevertStatement needs to be inline to disambiguate from VariableDeclarationStatement
-                                    parser_options = ParserOptions(inline = true, public = false)
+                                    parser_options = ParserOptions(inline = true)
                                 )
                             ]
                         )
@@ -3605,7 +3604,6 @@ ExpressionTrailingBlock: (Expression, Block) = {
                                     ],
                                     parser_options = ParserOptions(
                                         inline = false,
-                                        public = false,
                                         verbatim = r#"
 // Expression has a lot of tricky cases:
 // 1. There's conflicts with `TypeName`, for example `a.b[c]` can be either a member access over an identifier path, or
@@ -4020,7 +4018,6 @@ IndexAccessPath1<IdentPathRule>: parser_helpers::IndexAccessPath = {
                                     ),
                                     parser_options = ParserOptions(
                                         inline = false,
-                                        public = false,
                                         verbatim = r#"
 // We avoid function types entirely in new expressions, this is ok since they're not allowed
 // in Solidity, but the error will be syntactic rather than semantic, which may be confusing.
@@ -4053,7 +4050,6 @@ NoFunctionType: FunctionType = {};
                                     separator = Comma,
                                     parser_options = ParserOptions(
                                         inline = false,
-                                        public = false,
                                         verbatim = r#"
 // See the comment around TupleDeconstructionStatement for an explanation of this rule.
 #[inline]
@@ -4376,7 +4372,7 @@ TupleValues: TupleValues = {
                                     name = IdentifierPath,
                                     reference = IdentifierPathElement,
                                     separator = Period,
-                                    parser_options = ParserOptions(inline = false, public = false, verbatim = r#"
+                                    parser_options = ParserOptions(inline = false, verbatim = r#"
 // We need to force this to differentiate the first element from not being
 // an `AddressKeyword`
 IdentifierPath: IdentifierPath = {
@@ -4461,7 +4457,7 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                                     close_brace = Required(CloseBrace)
                                 ),
                                 // TODO(v2): Until the lexer can perform context switching, we ignore YulBlocks
-                                parser_options = ParserOptions(inline = false, public = false, verbatim = r#"
+                                parser_options = ParserOptions(inline = false, verbatim = r#"
 YulBlock: YulBlock = {
     <open_brace: OpenBrace>  !  <close_brace: CloseBrace>  => {
         new_yul_block(open_brace, new_yul_statements(vec![]), close_brace)

@@ -6,10 +6,10 @@ use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
 use slang_solidity::cst::{Node, NonterminalKind};
-use slang_solidity::parser::{ParseOutput, Parser};
+use slang_solidity::parser::{ParseOutput, Parser as V1Parser};
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit;
-use slang_solidity_v2_parser::{ParserError, SourceUnitParser};
+use slang_solidity_v2_parser::{Parser as V2Parser, ParserError};
 use solidity_v2_testing_utils::reporting::diagnostic;
 use solidity_v2_testing_utils::v1_comparison::parser::{NodeChecker, NodeCheckerError};
 
@@ -29,10 +29,11 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
     let mut last_diff = None;
 
     // TODO(v2): Test all breaking versions
+    // _SLANG_V2_PARSER_VERSION_ 
     let tested_versions = [LanguageVersion::V0_8_30];
 
     for lang_version in tested_versions {
-        let v2_output = SourceUnitParser::parse(&source, lang_version);
+        let v2_output = V2Parser::parse(&source, lang_version);
 
         let v2_output = match last_output {
             // Skip this version if it produces the same output.
@@ -62,7 +63,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
 
         // Now check the diff between V1 and V2
 
-        let v1_output = Parser::create(lang_version.into())?
+        let v1_output = V1Parser::create(lang_version.into())?
             .parse_nonterminal(NonterminalKind::SourceUnit, &source);
 
         let diff = diff_report(&v1_output, v2_output, &source_id, &source);

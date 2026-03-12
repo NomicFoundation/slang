@@ -6,7 +6,7 @@ use std::ops::Range;
 pub use node_checker::{NodeChecker, NodeCheckerError};
 use slang_solidity::cst::Cursor;
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_parser::{ParserError, SourceUnitParser};
+use slang_solidity_v2_parser::{Parser as V2Parser, ParserError};
 
 use crate::reporting::diagnostic::{Diagnostic, Severity};
 
@@ -39,7 +39,7 @@ impl Diagnostic for ComparisonError {
 }
 
 pub fn compare_with_v1_cursor(source: &str, root_cursor: &Cursor) -> Vec<ComparisonError> {
-    let v2_output = SourceUnitParser::parse(source, LanguageVersion::V0_8_30);
+    let v2_output = V2Parser::parse(source, LanguageVersion::V0_8_30);
 
     match v2_output {
         Ok(v2_tree) => v2_tree

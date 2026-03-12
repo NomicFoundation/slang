@@ -30,9 +30,9 @@ pub mod parser_error;
 /// TODO(v2): Error recovery, for now we just fail
 /// TODO(v2): Support multiple versions, for now only 0.8.30 is supported
 #[derive(Default)]
-pub struct SourceUnitParser;
+pub struct Parser;
 
-impl SourceUnitParser {
+impl Parser {
     pub fn parse(input: &str, version: LanguageVersion) -> Result<SourceUnit, ParserError> {
         Self::check_version(version);
 

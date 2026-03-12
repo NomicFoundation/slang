@@ -51,12 +51,12 @@ members = [
 
     "crates/solidity-v2/inputs/language",
 
-    "crates/solidity-v2/outputs/cargo/cst",
     "crates/solidity-v2/outputs/cargo/common",
+    "crates/solidity-v2/outputs/cargo/cst",
     "crates/solidity-v2/outputs/cargo/parser",
-    "crates/solidity-v2/testing/utils",
-    "crates/solidity-v2/testing/snapshots",
     "crates/solidity-v2/outputs/cargo/tests",
+    "crates/solidity-v2/testing/snapshots",
+    "crates/solidity-v2/testing/utils",
 ]
 
 [workspace.dependencies]
