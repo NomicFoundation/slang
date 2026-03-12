@@ -27,6 +27,15 @@ fn test_get_contracts_abi() -> Result<()> {
     Ok(())
 }
 
+macro_rules! assert_layout_item_eq {
+    ($item:expr, $name:expr, $slot:expr, $offset:expr, $type:expr) => {
+        assert_eq!($item.label, $name);
+        assert_eq!($item.r#type, $type);
+        assert_eq!($item.slot, $slot);
+        assert_eq!($item.offset, $offset);
+    };
+}
+
 #[test]
 fn test_storage_layout() -> Result<()> {
     let compilation_unit = fixtures::StorageLayout::build_compilation_unit()?;
@@ -56,14 +65,6 @@ fn test_storage_layout() -> Result<()> {
     // 12 [tttttttttttttttttttttttttttttttt] (t[1]:                             wwww)
     // 13 [                           ooooo]
 
-    macro_rules! assert_layout_item_eq {
-        ($item:expr, $name:expr, $slot:expr, $offset:expr, $type:expr) => {
-            assert_eq!($item.label, $name);
-            assert_eq!($item.r#type, $type);
-            assert_eq!($item.slot, $slot);
-            assert_eq!($item.offset, $offset);
-        };
-    }
     assert_eq!(layout.len(), 12);
 
     assert_layout_item_eq!(layout[0], "a", 0, 0, "uint256");
@@ -78,6 +79,46 @@ fn test_storage_layout() -> Result<()> {
     assert_layout_item_eq!(layout[9], "n", 7, 0, "bytes5[8]");
     assert_layout_item_eq!(layout[10], "t", 9, 0, "T[2]");
     assert_layout_item_eq!(layout[11], "o", 13, 0, "bytes5");
+
+    let transient_layout = &counter_abi.transient_storage_layout;
+    assert!(transient_layout.is_empty());
+
+    Ok(())
+}
+
+#[test]
+fn test_transient_and_custom_storage_layout() -> Result<()> {
+    let compilation_unit = fixtures::StorageLayout::build_compilation_unit()?;
+    let semantic_analysis = compilation_unit.semantic_analysis();
+
+    let d_contract = semantic_analysis
+        .find_contract_by_name("D")
+        .expect("contract can be found");
+    let d_abi = d_contract
+        .compute_abi_with_file_id("main.sol".to_string())
+        .expect("can compute ABI");
+    let d_layout = &d_abi.storage_layout;
+
+    assert_eq!(d_layout.len(), 2);
+    assert_layout_item_eq!(d_layout[0], "a", 42, 0, "uint256");
+    assert_layout_item_eq!(d_layout[1], "p", 43, 0, "uint256");
+
+    let e_contract = semantic_analysis
+        .find_contract_by_name("E")
+        .expect("contract can be found");
+    let e_abi = e_contract
+        .compute_abi_with_file_id("main.sol".to_string())
+        .expect("can compute ABI");
+    let e_layout = &e_abi.storage_layout;
+    let e_transient_layout = &e_abi.transient_storage_layout;
+
+    assert_eq!(e_layout.len(), 2);
+    assert_layout_item_eq!(e_layout[0], "q", 20, 0, "int8");
+    assert_layout_item_eq!(e_layout[1], "r", 20, 1, "bytes5");
+
+    assert_eq!(e_transient_layout.len(), 2);
+    assert_layout_item_eq!(e_transient_layout[0], "qt", 0, 0, "int8");
+    assert_layout_item_eq!(e_transient_layout[1], "rt", 0, 1, "bytes5");
 
     Ok(())
 }

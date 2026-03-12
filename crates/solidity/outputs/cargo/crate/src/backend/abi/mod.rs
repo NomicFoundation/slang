@@ -6,8 +6,8 @@ use sha3::{Digest, Keccak256};
 use super::binder::Definition;
 use super::ir::ast::{
     ContractDefinitionStruct, ErrorDefinitionStruct, EventDefinitionStruct,
-    FunctionDefinitionStruct, FunctionVisibility, ParametersStruct, StateVariableDefinitionStruct,
-    StateVariableMutability, StateVariableVisibility,
+    FunctionDefinitionStruct, FunctionVisibility, ParametersStruct, StateVariableDefinition,
+    StateVariableDefinitionStruct, StateVariableMutability, StateVariableVisibility,
 };
 use super::ir::ir2_flat_contracts as input_ir;
 use super::types::{Type, TypeId};
@@ -20,6 +20,7 @@ pub struct ContractAbi {
     pub file_id: String,
     pub entries: Vec<AbiEntry>,
     pub storage_layout: Vec<StorageItem>,
+    pub transient_storage_layout: Vec<StorageItem>,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -229,13 +230,14 @@ impl ContractDefinitionStruct {
     pub fn compute_abi_with_file_id(&self, file_id: String) -> Option<ContractAbi> {
         let name = self.ir_node.name.unparse();
         let entries = self.compute_abi_entries()?;
-        let storage_layout = self.compute_storage_layout()?;
+        let (storage_layout, transient_storage_layout) = self.compute_storage_layout()?;
         Some(ContractAbi {
             node_id: self.ir_node.node_id,
             name,
             file_id,
             entries,
             storage_layout,
+            transient_storage_layout,
         })
     }
 
@@ -265,23 +267,56 @@ impl ContractDefinitionStruct {
         Some(entries)
     }
 
-    fn compute_storage_layout(&self) -> Option<Vec<StorageItem>> {
-        let mut storage_layout = Vec::new();
-        // TODO: if the contract has a specific storage layout specifier, we
-        // need to compute its value and use it as the base
-        let mut ptr: usize = 0;
-        for state_variable in &self.compute_linearised_state_variables() {
-            let node_id = state_variable.ir_node.node_id;
-            // skip constants and immutable variables, since they are not placed in storage
-            // TODO: also, transient storage is laid out separately and we need
-            // to support that as well
-            if !matches!(
-                state_variable.mutability(),
-                StateVariableMutability::Mutable
-            ) {
-                continue;
-            }
+    /// Retrieves the custom base slot for this contract, if specified. This is
+    /// used for computing the base of the storage layout for non-transient
+    /// state variables.
+    fn base_slot(&self) -> Option<usize> {
+        let Definition::Contract(definition) = self
+            .semantic
+            .binder
+            .find_definition_by_id(self.ir_node.node_id)?
+        else {
+            unreachable!("definition is not a contract");
+        };
+        definition.base_slot
+    }
 
+    /// Computes the layouts of both permanent and transient state variables
+    fn compute_storage_layout(&self) -> Option<(Vec<StorageItem>, Vec<StorageItem>)> {
+        let all_state_variables = self.compute_linearised_state_variables();
+
+        // TODO(validation): it is an error if any contract in the hierarchy
+        // other than the leaf has a custom offset layout
+        let storage_layout = self.lay_out_state_variables(
+            self.base_slot().unwrap_or_default() * SemanticAnalysis::SLOT_SIZE,
+            all_state_variables.iter().filter(|state_variable| {
+                matches!(
+                    state_variable.mutability(),
+                    StateVariableMutability::Mutable
+                )
+            }),
+        )?;
+        let transient_storage_layout = self.lay_out_state_variables(
+            0usize,
+            all_state_variables.iter().filter(|state_variable| {
+                matches!(
+                    state_variable.mutability(),
+                    StateVariableMutability::Transient
+                )
+            }),
+        )?;
+        Some((storage_layout, transient_storage_layout))
+    }
+
+    fn lay_out_state_variables<'a>(
+        &self,
+        base_ptr: usize,
+        variables: impl Iterator<Item = &'a StateVariableDefinition>,
+    ) -> Option<Vec<StorageItem>> {
+        let mut storage_layout = Vec::new();
+        let mut ptr: usize = base_ptr;
+        for state_variable in variables {
+            let node_id = state_variable.ir_node.node_id;
             let variable_type_id = self.semantic.binder.node_typing(node_id).as_type_id()?;
             let variable_size = self.semantic.storage_size_of_type_id(variable_type_id)?;
 

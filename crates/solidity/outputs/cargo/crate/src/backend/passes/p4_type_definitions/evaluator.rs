@@ -8,7 +8,7 @@ use num_traits::Num;
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
 use crate::cst::{TerminalKind, TerminalNode};
 
-pub(crate) fn evaluate_fixed_array_size<Scope>(
+pub(crate) fn evaluate_compile_time_uint_constant<Scope>(
     expression: &input_ir::Expression,
     start_scope: Scope,
     identifier_resolver: &dyn ConstantIdentifierResolver<Scope>,

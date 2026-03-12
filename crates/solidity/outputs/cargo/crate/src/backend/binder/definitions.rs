@@ -47,6 +47,7 @@ pub struct ContractDefinition {
     pub(crate) ir_node: output_ir::ContractDefinition,
     pub bases: Option<Vec<NodeId>>,
     pub constructor_parameters_scope_id: Option<ScopeId>,
+    pub base_slot: Option<usize>,
 }
 
 #[derive(Debug)]
@@ -316,6 +317,7 @@ impl Definition {
             ir_node: Rc::clone(ir_node),
             bases: None,
             constructor_parameters_scope_id: None,
+            base_slot: None,
         })
     }
 

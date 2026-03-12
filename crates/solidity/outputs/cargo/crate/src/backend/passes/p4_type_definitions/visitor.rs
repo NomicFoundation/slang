@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
+use super::evaluator::evaluate_compile_time_uint_constant;
 use super::Pass;
 use crate::backend::binder::{Definition, Reference, Resolution, Scope, Typing, UsingDirective};
 use crate::backend::built_ins::BuiltIn;
@@ -42,6 +43,24 @@ impl Visitor for Pass<'_> {
 
         self.current_receiver_type = None;
         self.binder.mark_user_meta_type_node(node.node_id);
+
+        if let Some(base_slot_expression) = &node.storage_layout {
+            // TODO(validation): if the base slot expression cannot be computed
+            // at this time, it's not a compile time constant and hence it's an
+            // error
+            if let Some(base_slot) = evaluate_compile_time_uint_constant(
+                base_slot_expression,
+                self.current_contract_or_file_scope_id(),
+                self,
+            ) {
+                let Definition::Contract(contract_definition) =
+                    self.binder.get_definition_mut(node.node_id)
+                else {
+                    unreachable!("the definition is not a contract");
+                };
+                contract_definition.base_slot = Some(base_slot);
+            }
+        }
     }
 
     fn enter_interface_definition(&mut self, node: &input_ir::InterfaceDefinition) -> bool {
