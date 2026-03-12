@@ -29,7 +29,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
     let mut last_diff = None;
 
     // TODO(v2): Test all breaking versions
-    // _SLANG_V2_PARSER_VERSION_ 
+    // _SLANG_V2_PARSER_VERSION_
     let tested_versions = [LanguageVersion::V0_8_30];
 
     for lang_version in tested_versions {
