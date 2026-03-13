@@ -11,11 +11,11 @@ SourceUnitStruct {
                     pragma: AbicoderPragma(
                         AbicoderPragmaStruct {
                             abicoder_keyword: AbicoderKeyword {
-                                range: 0..0,
+                                range: 110..118,
                             },
-                            version: AbicoderV1Keyword(
-                                AbicoderV1Keyword {
-                                    range: 0..0,
+                            version: AbicoderV2Keyword(
+                                AbicoderV2Keyword {
+                                    range: 119..121,
                                 },
                             ),
                         },

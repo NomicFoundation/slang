@@ -64,7 +64,40 @@ SourceUnitStruct {
                                                                     range: 49..50,
                                                                 },
                                                                 statements: YulStatements {
-                                                                    elements: [],
+                                                                    elements: [
+                                                                        YulExpression(
+                                                                            YulFunctionCallExpression(
+                                                                                YulFunctionCallExpressionStruct {
+                                                                                    operand: YulPath(
+                                                                                        YulPath {
+                                                                                            elements: [
+                                                                                                YulIdentifier {
+                                                                                                    range: 153..156,
+                                                                                                },
+                                                                                            ],
+                                                                                        },
+                                                                                    ),
+                                                                                    open_paren: YulOpenParen {
+                                                                                        range: 156..157,
+                                                                                    },
+                                                                                    arguments: YulArguments {
+                                                                                        elements: [
+                                                                                            YulLiteral(
+                                                                                                YulDecimalLiteral(
+                                                                                                    YulDecimalLiteral {
+                                                                                                        range: 157..158,
+                                                                                                    },
+                                                                                                ),
+                                                                                            ),
+                                                                                        ],
+                                                                                    },
+                                                                                    close_paren: YulCloseParen {
+                                                                                        range: 158..159,
+                                                                                    },
+                                                                                },
+                                                                            ),
+                                                                        ),
+                                                                    ],
                                                                 },
                                                                 close_brace: YulCloseBrace {
                                                                     range: 175..176,

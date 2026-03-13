@@ -18,11 +18,6 @@ license = "MIT"
 keywords = ["parser"]
 categories = ["compilers", "parsing", "parser-implementations"]
 
-[features]
-# TODO(v2): Once all lexer/parser tests are migrated and we don't test the lexer by itself,
-# these private APIs shouldn't be needed
-__private_testing_utils = []
-
 [build-dependencies]
 lalrpop = { workspace = true }
 

@@ -14,6 +14,7 @@ pub enum ContextKind {
 
 #[derive(Clone)]
 pub struct ContextExtras {
+    #[allow(dead_code)]
     pub language_version: LanguageVersion,
 }
 
@@ -32,22 +33,6 @@ impl<'source> ContextWrapper<'source> {
                 Self::Solidity(SolidityContext::lexer_with_extras(source, extras))
             }
             ContextKind::Yul => Self::Yul(YulContext::lexer_with_extras(source, extras)),
-        }
-    }
-
-    pub fn source(&self) -> &'source str {
-        match self {
-            Self::Pragma(lexer) => lexer.source(),
-            Self::Solidity(lexer) => lexer.source(),
-            Self::Yul(lexer) => lexer.source(),
-        }
-    }
-
-    pub fn bump(&mut self, n: usize) {
-        match self {
-            Self::Pragma(lexer) => lexer.bump(n),
-            Self::Solidity(lexer) => lexer.bump(n),
-            Self::Yul(lexer) => lexer.bump(n),
         }
     }
 
@@ -302,7 +287,7 @@ pub enum SolidityContext {
     #[regex(r#"\^="#, |_| { LexemeKind::CaretEqual }, priority = 2000167)]
     #[regex(r#"~"#, |_| { LexemeKind::Tilde }, priority = 2000168)]
     #[regex(r#"0(x|X)(([0-9]|[a-f]|[A-F]))+(_(([0-9]|[a-f]|[A-F]))+)*"#, |_| { LexemeKind::HexLiteral }, priority = 2000169)]
-    #[regex(r#"(([0-9]+(_[0-9]+)*))(\.(([0-9]+(_[0-9]+)*))?)?(((e|E)-?(([0-9]+(_[0-9]+)*))))?"#, |_| { LexemeKind::DecimalLiteral }, priority = 2000170)]
+    #[regex(r#"(([0-9]+(_[0-9]+)*))(\.(([0-9]+(_[0-9]+)*)))?(((e|E)-?(([0-9]+(_[0-9]+)*))))?"#, |_| { LexemeKind::DecimalLiteral }, priority = 2000170)]
     #[regex(r#"\.(([0-9]+(_[0-9]+)*))(((e|E)-?(([0-9]+(_[0-9]+)*))))?"#, |_| { LexemeKind::DecimalLiteral }, priority = 2000171)]
     #[regex(r#"'(((\\([^xu]|((x(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))))|((u(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))))))|[^'\\\r\n])*'"#, |_| { LexemeKind::SingleQuotedStringLiteral }, priority = 2000172)]
     #[regex(r#""(((\\([^xu]|((x(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))))|((u(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))))))|[^"\\\r\n])*""#, |_| { LexemeKind::DoubleQuotedStringLiteral }, priority = 2000173)]
@@ -323,7 +308,7 @@ pub enum SolidityContext {
 #[derive(Clone, Debug, Logos)]
 #[logos(extras = ContextExtras)]
 pub enum YulContext {
-    #[regex(r#"((_|\$|[a-z]|[A-Z]))(((((_|\$|[a-z]|[A-Z]))|[0-9]))|\.)*"#, |_| { LexemeKind::YulIdentifier }, priority = 2000001)]
+    #[regex(r#"((_|\$|[a-z]|[A-Z]))((((_|\$|[a-z]|[A-Z]))|[0-9]))*"#, |_| { LexemeKind::YulIdentifier }, priority = 2000001)]
     #[regex(r#"0|([1-9][0-9]*)"#, |_| { LexemeKind::YulDecimalLiteral }, priority = 2000002)]
     #[regex(r#"0x(([0-9]|[a-f]|[A-F]))+"#, |_| { LexemeKind::YulHexLiteral }, priority = 2000003)]
     #[regex(r#"hex'(((([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(_?(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))*))?'"#, |_| { LexemeKind::YulSingleQuotedHexStringLiteral }, priority = 2000004)]
