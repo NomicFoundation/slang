@@ -12,6 +12,6 @@ fn main() -> Result<()> {
 
     solidity_v2_testing_utils::migration::migrate_v1_tests_to_v2(
         &v1_snapshots.join("cst_output"),
-        &v2_snapshots.join("cst_output/from_v1"),
+        &v2_snapshots.join("cst_output"),
     )
 }

@@ -116,7 +116,7 @@ fn generate_solidity_v2_tests() -> Result<()> {
     let tests_crate = CargoWorkspace::locate_source_crate("solidity_v2_cargo_tests")?;
 
     lang_def.generate_cst_output_tests(
-        &v2_snapshots.join("cst_output/from_v1"),
+        &v2_snapshots.join("cst_output"),
         &tests_crate.join("src/cst/cst_output/generated"),
     )?;
 

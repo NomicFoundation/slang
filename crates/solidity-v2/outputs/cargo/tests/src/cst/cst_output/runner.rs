@@ -15,7 +15,7 @@ use solidity_v2_testing_utils::v1_comparison::parser::{NodeChecker, NodeCheckerE
 
 pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
     let test_dir = CargoWorkspace::locate_source_crate("solidity_v2_testing_snapshots")?
-        .join("cst_output/from_v1")
+        .join("cst_output")
         .join(parser_name)
         .join(test_name);
 
