@@ -674,6 +674,7 @@ dependencies = [
  "codegen_ebnf",
  "codegen_v2_cst",
  "codegen_v2_parser",
+ "codegen_v2_semantic",
  "indexmap",
  "infra_utils",
  "language_definition",
@@ -742,6 +743,15 @@ version = "1.3.4"
 dependencies = [
  "language_v2_definition",
  "semver 1.0.26",
+ "serde",
+]
+
+[[package]]
+name = "codegen_v2_semantic"
+version = "1.3.4"
+dependencies = [
+ "indexmap",
+ "language_v2_definition",
  "serde",
 ]
 

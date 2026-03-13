@@ -11,6 +11,7 @@ use std::path::Path;
 use anyhow::Result;
 use codegen_v2_cst::structured_cst::model::StructuredCstModel;
 use codegen_v2_parser::parser::ParserModel as ParserModelV2;
+use codegen_v2_semantic::ir::builders::{build_v2_ir_models, GenericModelV2};
 use indexmap::IndexSet;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::{CodegenFileSystem, CodegenRuntime};
@@ -103,6 +104,7 @@ struct RuntimeModelV2 {
     language: LanguageModelV2,
 
     structured_cst_model: StructuredCstModel,
+    ir_languages: BTreeMap<String, GenericModelV2>,
 }
 
 impl RuntimeModelV2 {
@@ -111,6 +113,7 @@ impl RuntimeModelV2 {
             parser: ParserModelV2::from_language(language),
             language: LanguageModelV2::from_language(language),
             structured_cst_model: StructuredCstModel::from_language(language),
+            ir_languages: build_v2_ir_models(language),
         }
     }
 }

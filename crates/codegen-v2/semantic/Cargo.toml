@@ -1,0 +1,15 @@
+[package]
+name = "codegen_v2_semantic"
+description = "Utilities to generate the semantic analysis from a language definition."
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false
+
+[dependencies]
+language_v2_definition = { workspace = true }
+indexmap = { workspace = true }
+serde = { workspace = true }
+
+[lints]
+workspace = true

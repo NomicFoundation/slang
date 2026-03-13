@@ -72,6 +72,7 @@ codegen_testing = { path = "crates/codegen/testing", version = "1.3.4" }
 
 codegen_v2_cst = { path = "crates/codegen-v2/cst", version = "1.3.4" }
 codegen_v2_parser = { path = "crates/codegen-v2/parser", version = "1.3.4" }
+codegen_v2_semantic = { path = "crates/codegen-v2/semantic", version = "1.3.4" }
 
 infra_cli = { path = "crates/infra/cli", version = "1.3.4" }
 infra_utils = { path = "crates/infra/utils", version = "1.3.4" }
