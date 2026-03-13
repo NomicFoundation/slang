@@ -7,45 +7,45 @@ SourceUnitStruct {
                 ContractDefinitionStruct {
                     abstract_keyword: None,
                     contract_keyword: ContractKeyword {
-                        range: 217..225,
+                        range: 107..115,
                     },
                     name: Identifier {
-                        range: 226..230,
+                        range: 116..120,
                     },
                     specifiers: ContractSpecifiers {
                         elements: [],
                     },
                     open_brace: OpenBrace {
-                        range: 231..232,
+                        range: 121..122,
                     },
                     members: ContractMembers {
                         elements: [
                             FunctionDefinition(
                                 FunctionDefinitionStruct {
                                     function_keyword: FunctionKeyword {
-                                        range: 235..243,
+                                        range: 125..133,
                                     },
                                     name: Identifier(
                                         Identifier {
-                                            range: 244..247,
+                                            range: 134..137,
                                         },
                                     ),
                                     parameters: ParametersDeclarationStruct {
                                         open_paren: OpenParen {
-                                            range: 247..248,
+                                            range: 137..138,
                                         },
                                         parameters: Parameters {
                                             elements: [],
                                         },
                                         close_paren: CloseParen {
-                                            range: 248..249,
+                                            range: 138..139,
                                         },
                                     },
                                     attributes: FunctionAttributes {
                                         elements: [
                                             PublicKeyword(
                                                 PublicKeyword {
-                                                    range: 250..256,
+                                                    range: 140..146,
                                                 },
                                             ),
                                         ],
@@ -54,7 +54,7 @@ SourceUnitStruct {
                                     body: Block(
                                         BlockStruct {
                                             open_brace: OpenBrace {
-                                                range: 257..258,
+                                                range: 147..148,
                                             },
                                             statements: Statements {
                                                 elements: [
@@ -66,23 +66,23 @@ SourceUnitStruct {
                                                                         type_name: ElementaryType(
                                                                             BoolKeyword(
                                                                                 BoolKeyword {
-                                                                                    range: 263..267,
+                                                                                    range: 153..157,
                                                                                 },
                                                                             ),
                                                                         ),
                                                                         storage_location: None,
                                                                         name: Identifier {
-                                                                            range: 268..269,
+                                                                            range: 158..159,
                                                                         },
                                                                     },
                                                                     value: Some(
                                                                         VariableDeclarationValueStruct {
                                                                             equal: Equal {
-                                                                                range: 270..271,
+                                                                                range: 160..161,
                                                                             },
                                                                             expression: FalseKeyword(
                                                                                 FalseKeyword {
-                                                                                    range: 272..277,
+                                                                                    range: 162..167,
                                                                                 },
                                                                             ),
                                                                         },
@@ -90,7 +90,7 @@ SourceUnitStruct {
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 277..278,
+                                                                range: 167..168,
                                                             },
                                                         },
                                                     ),
@@ -102,23 +102,23 @@ SourceUnitStruct {
                                                                         type_name: ElementaryType(
                                                                             BoolKeyword(
                                                                                 BoolKeyword {
-                                                                                    range: 283..287,
+                                                                                    range: 173..177,
                                                                                 },
                                                                             ),
                                                                         ),
                                                                         storage_location: None,
                                                                         name: Identifier {
-                                                                            range: 288..289,
+                                                                            range: 178..179,
                                                                         },
                                                                     },
                                                                     value: Some(
                                                                         VariableDeclarationValueStruct {
                                                                             equal: Equal {
-                                                                                range: 290..291,
+                                                                                range: 180..181,
                                                                             },
                                                                             expression: TrueKeyword(
                                                                                 TrueKeyword {
-                                                                                    range: 292..296,
+                                                                                    range: 182..186,
                                                                                 },
                                                                             ),
                                                                         },
@@ -126,7 +126,7 @@ SourceUnitStruct {
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 296..297,
+                                                                range: 186..187,
                                                             },
                                                         },
                                                     ),
@@ -138,23 +138,23 @@ SourceUnitStruct {
                                                                         type_name: ElementaryType(
                                                                             BoolKeyword(
                                                                                 BoolKeyword {
-                                                                                    range: 302..306,
+                                                                                    range: 192..196,
                                                                                 },
                                                                             ),
                                                                         ),
                                                                         storage_location: None,
                                                                         name: Identifier {
-                                                                            range: 307..308,
+                                                                            range: 197..198,
                                                                         },
                                                                     },
                                                                     value: Some(
                                                                         VariableDeclarationValueStruct {
                                                                             equal: Equal {
-                                                                                range: 309..310,
+                                                                                range: 199..200,
                                                                             },
                                                                             expression: TrueKeyword(
                                                                                 TrueKeyword {
-                                                                                    range: 311..315,
+                                                                                    range: 201..205,
                                                                                 },
                                                                             ),
                                                                         },
@@ -162,7 +162,7 @@ SourceUnitStruct {
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 315..316,
+                                                                range: 205..206,
                                                             },
                                                         },
                                                     ),
@@ -174,23 +174,23 @@ SourceUnitStruct {
                                                                         type_name: ElementaryType(
                                                                             BoolKeyword(
                                                                                 BoolKeyword {
-                                                                                    range: 321..325,
+                                                                                    range: 211..215,
                                                                                 },
                                                                             ),
                                                                         ),
                                                                         storage_location: None,
                                                                         name: Identifier {
-                                                                            range: 326..327,
+                                                                            range: 216..217,
                                                                         },
                                                                     },
                                                                     value: Some(
                                                                         VariableDeclarationValueStruct {
                                                                             equal: Equal {
-                                                                                range: 328..329,
+                                                                                range: 218..219,
                                                                             },
                                                                             expression: FalseKeyword(
                                                                                 FalseKeyword {
-                                                                                    range: 330..335,
+                                                                                    range: 220..225,
                                                                                 },
                                                                             ),
                                                                         },
@@ -198,7 +198,7 @@ SourceUnitStruct {
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 335..336,
+                                                                range: 225..226,
                                                             },
                                                         },
                                                     ),
@@ -210,23 +210,23 @@ SourceUnitStruct {
                                                                         type_name: ElementaryType(
                                                                             BoolKeyword(
                                                                                 BoolKeyword {
-                                                                                    range: 341..345,
+                                                                                    range: 231..235,
                                                                                 },
                                                                             ),
                                                                         ),
                                                                         storage_location: None,
                                                                         name: Identifier {
-                                                                            range: 346..347,
+                                                                            range: 236..237,
                                                                         },
                                                                     },
                                                                     value: Some(
                                                                         VariableDeclarationValueStruct {
                                                                             equal: Equal {
-                                                                                range: 348..349,
+                                                                                range: 238..239,
                                                                             },
                                                                             expression: TrueKeyword(
                                                                                 TrueKeyword {
-                                                                                    range: 350..354,
+                                                                                    range: 240..244,
                                                                                 },
                                                                             ),
                                                                         },
@@ -234,53 +234,7 @@ SourceUnitStruct {
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 354..355,
-                                                            },
-                                                        },
-                                                    ),
-                                                    ExpressionStatement(
-                                                        ExpressionStatementStruct {
-                                                            expression: AssignmentExpression(
-                                                                AssignmentExpressionStruct {
-                                                                    left_operand: Identifier(
-                                                                        Identifier {
-                                                                            range: 361..362,
-                                                                        },
-                                                                    ),
-                                                                    expression_assignment_expression_operator: Equal(
-                                                                        Equal {
-                                                                            range: 363..364,
-                                                                        },
-                                                                    ),
-                                                                    right_operand: ConditionalExpression(
-                                                                        ConditionalExpressionStruct {
-                                                                            operand: Identifier(
-                                                                                Identifier {
-                                                                                    range: 365..366,
-                                                                                },
-                                                                            ),
-                                                                            question_mark: QuestionMark {
-                                                                                range: 367..368,
-                                                                            },
-                                                                            true_expression: Identifier(
-                                                                                Identifier {
-                                                                                    range: 369..370,
-                                                                                },
-                                                                            ),
-                                                                            colon: Colon {
-                                                                                range: 371..372,
-                                                                            },
-                                                                            false_expression: Identifier(
-                                                                                Identifier {
-                                                                                    range: 373..374,
-                                                                                },
-                                                                            ),
-                                                                        },
-                                                                    ),
-                                                                },
-                                                            ),
-                                                            semicolon: Semicolon {
-                                                                range: 374..375,
+                                                                range: 244..245,
                                                             },
                                                         },
                                                     ),
@@ -290,81 +244,41 @@ SourceUnitStruct {
                                                                 ConditionalExpressionStruct {
                                                                     operand: Identifier(
                                                                         Identifier {
-                                                                            range: 401..402,
+                                                                            range: 286..287,
                                                                         },
                                                                     ),
                                                                     question_mark: QuestionMark {
-                                                                        range: 403..404,
-                                                                    },
-                                                                    true_expression: AssignmentExpression(
-                                                                        AssignmentExpressionStruct {
-                                                                            left_operand: Identifier(
-                                                                                Identifier {
-                                                                                    range: 405..406,
-                                                                                },
-                                                                            ),
-                                                                            expression_assignment_expression_operator: Equal(
-                                                                                Equal {
-                                                                                    range: 407..408,
-                                                                                },
-                                                                            ),
-                                                                            right_operand: Identifier(
-                                                                                Identifier {
-                                                                                    range: 409..410,
-                                                                                },
-                                                                            ),
-                                                                        },
-                                                                    ),
-                                                                    colon: Colon {
-                                                                        range: 411..412,
-                                                                    },
-                                                                    false_expression: Identifier(
-                                                                        Identifier {
-                                                                            range: 413..414,
-                                                                        },
-                                                                    ),
-                                                                },
-                                                            ),
-                                                            semicolon: Semicolon {
-                                                                range: 414..415,
-                                                            },
-                                                        },
-                                                    ),
-                                                    ExpressionStatement(
-                                                        ExpressionStatementStruct {
-                                                            expression: ConditionalExpression(
-                                                                ConditionalExpressionStruct {
-                                                                    operand: Identifier(
-                                                                        Identifier {
-                                                                            range: 441..442,
-                                                                        },
-                                                                    ),
-                                                                    question_mark: QuestionMark {
-                                                                        range: 443..444,
+                                                                        range: 288..289,
                                                                     },
                                                                     true_expression: Identifier(
                                                                         Identifier {
-                                                                            range: 445..446,
+                                                                            range: 290..291,
                                                                         },
                                                                     ),
                                                                     colon: Colon {
-                                                                        range: 447..448,
+                                                                        range: 292..293,
                                                                     },
-                                                                    false_expression: AssignmentExpression(
-                                                                        AssignmentExpressionStruct {
-                                                                            left_operand: Identifier(
+                                                                    false_expression: ConditionalExpression(
+                                                                        ConditionalExpressionStruct {
+                                                                            operand: Identifier(
                                                                                 Identifier {
-                                                                                    range: 449..450,
+                                                                                    range: 294..295,
                                                                                 },
                                                                             ),
-                                                                            expression_assignment_expression_operator: Equal(
-                                                                                Equal {
-                                                                                    range: 451..452,
+                                                                            question_mark: QuestionMark {
+                                                                                range: 296..297,
+                                                                            },
+                                                                            true_expression: Identifier(
+                                                                                Identifier {
+                                                                                    range: 298..299,
                                                                                 },
                                                                             ),
-                                                                            right_operand: Identifier(
+                                                                            colon: Colon {
+                                                                                range: 300..301,
+                                                                            },
+                                                                            false_expression: Identifier(
                                                                                 Identifier {
-                                                                                    range: 453..454,
+                                                                                    range: 302..303,
                                                                                 },
                                                                             ),
                                                                         },
@@ -372,14 +286,66 @@ SourceUnitStruct {
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 454..455,
+                                                                range: 303..304,
+                                                            },
+                                                        },
+                                                    ),
+                                                    ExpressionStatement(
+                                                        ExpressionStatementStruct {
+                                                            expression: ConditionalExpression(
+                                                                ConditionalExpressionStruct {
+                                                                    operand: Identifier(
+                                                                        Identifier {
+                                                                            range: 334..335,
+                                                                        },
+                                                                    ),
+                                                                    question_mark: QuestionMark {
+                                                                        range: 336..337,
+                                                                    },
+                                                                    true_expression: ConditionalExpression(
+                                                                        ConditionalExpressionStruct {
+                                                                            operand: Identifier(
+                                                                                Identifier {
+                                                                                    range: 338..339,
+                                                                                },
+                                                                            ),
+                                                                            question_mark: QuestionMark {
+                                                                                range: 340..341,
+                                                                            },
+                                                                            true_expression: Identifier(
+                                                                                Identifier {
+                                                                                    range: 342..343,
+                                                                                },
+                                                                            ),
+                                                                            colon: Colon {
+                                                                                range: 344..345,
+                                                                            },
+                                                                            false_expression: Identifier(
+                                                                                Identifier {
+                                                                                    range: 346..347,
+                                                                                },
+                                                                            ),
+                                                                        },
+                                                                    ),
+                                                                    colon: Colon {
+                                                                        range: 348..349,
+                                                                    },
+                                                                    false_expression: Identifier(
+                                                                        Identifier {
+                                                                            range: 350..351,
+                                                                        },
+                                                                    ),
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 351..352,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 479..480,
+                                                range: 380..381,
                                             },
                                         },
                                     ),
@@ -388,7 +354,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 481..482,
+                        range: 382..383,
                     },
                 },
             ),
