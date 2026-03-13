@@ -1,6 +1,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use indexmap::IndexMap;
+use inflector::Inflector;
 use language_v2_definition::model;
 use serde::ser::SerializeMap;
 use serde::Serialize;
@@ -8,9 +9,7 @@ use serde::Serialize;
 #[derive(Default, Serialize)]
 pub struct IrModel {
     // Terminal nodes and whether they are unique or their value depends on the
-    // content. The collection is not needed for generating the code, so it's
-    // not necessary to serialize it.
-    #[serde(skip)]
+    // content.
     pub terminals: BTreeMap<model::Identifier, bool>,
 
     pub sequences: BTreeMap<model::Identifier, Sequence>,
@@ -306,6 +305,7 @@ impl IrModelBuilder {
 
             let ident =
                 model::Identifier::from(format!("{}_{}_Operator", base_name, expression.name));
+            let label = ident.as_str().to_snake_case().into();
 
             // Insert the created choice
             self.choices.insert(
@@ -317,7 +317,7 @@ impl IrModelBuilder {
 
             // The only field we care about then is a reference to that special operator
             vec![Field {
-                label: ident.clone(),
+                label,
                 r#type: NodeType::Nonterminal(ident),
                 is_optional: false,
             }]

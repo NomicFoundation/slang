@@ -7,6 +7,7 @@ edition.workspace = true
 publish = false
 
 [dependencies]
+Inflector = { workspace = true }
 indexmap = { workspace = true }
 language_v2_definition = { workspace = true }
 serde = { workspace = true }

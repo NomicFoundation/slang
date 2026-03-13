@@ -1,4 +1,5 @@
 use std::collections::BTreeMap;
+
 use language_v2_definition::model;
 use serde::Serialize;
 
@@ -14,9 +15,7 @@ pub struct IrModelMutator {
     pub collapsed_sequences: BTreeMap<model::Identifier, CollapsedSequence>,
 
     // Terminal nodes and whether they are unique or their value depends on the
-    // content. The collection is not needed for generating the code, so it's
-    // not necessary to serialize it.
-    #[serde(skip)]
+    // content.
     pub terminals: BTreeMap<model::Identifier, bool>,
 }
 
@@ -344,14 +343,20 @@ impl IrModelMutator {
     // replacing all instances with the contents of such field.
     pub fn collapse_sequence(&mut self, sequence_id: &str) {
         let identifier: model::Identifier = sequence_id.into();
-        let Some(mut sequence) = self.sequences.remove(&identifier) else {
+        let Some(sequence) = self.sequences.remove(&identifier) else {
             panic!("Sequence {sequence_id} not found in IR model");
         };
+        let mut fields_iter = sequence
+            .fields
+            .into_iter()
+            .filter(|field| !field.is_removed);
+        let replace_field = fields_iter
+            .next()
+            .expect("Sequence to collapse {sequence_id} contains at least one field");
         assert!(
-            sequence.fields.len() == 1,
-            "Sequence to collapse {sequence_id} contains does not contain a single field"
+            fields_iter.next().is_none(),
+            "Sequence to collapse {sequence_id} contains more than one field"
         );
-        let replace_field = sequence.fields.remove(0);
         assert!(
             !replace_field.is_optional,
             "Cannot collapse sequence {sequence_id} of an optional field"

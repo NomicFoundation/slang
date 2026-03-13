@@ -22,19 +22,3 @@ impl From<IrModelMutator> for ModelWithBuilder {
         }
     }
 }
-
-#[derive(Serialize)]
-pub struct ModelWithTransformer {
-    pub target: IrModel,
-    pub transformer: IrModelMutator,
-}
-
-impl From<IrModelMutator> for ModelWithTransformer {
-    fn from(mutator: IrModelMutator) -> Self {
-        let target = mutator.build_target();
-        Self {
-            target,
-            transformer: mutator,
-        }
-    }
-}
