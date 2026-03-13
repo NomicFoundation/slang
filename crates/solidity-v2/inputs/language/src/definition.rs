@@ -2228,6 +2228,8 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
         <override_specifier: OverrideSpecifier>  => new_state_variable_attribute_override_specifier(<>),
         <immutable_keyword: ImmutableKeyword>  => new_state_variable_attribute_immutable_keyword(<>),
         <transient_keyword: TransientKeyword>  => new_state_variable_attribute_transient_keyword(<>),
+        // As a note, Constant can be a function attribute until 0.5.0
+        <constant_keyword: ConstantKeyword>  => new_state_variable_attribute_constant_keyword(<>),
 };
 "#)
                                 ),
@@ -3808,8 +3810,8 @@ Expression17<Tail>: (Expression, Tail) = {
     
     <expression: Expression16<Tail>>  => <>,
 };
-Expression18<Tail>: (Expression, Tail) = {
-    <expression: Expression17<EmptyTail>>  <question_mark: QuestionMark>  <true_expression: Expression18<EmptyTail>>  <colon: Colon>  <false_expression: Expression18<Tail>>  => {
+Expression19<Tail>: (Expression, Tail) = {
+    <expression: Expression17<EmptyTail>>  <question_mark: QuestionMark>  <true_expression: Expression19<EmptyTail>>  <colon: Colon>  <false_expression: Expression19<Tail>>  => {
         #[allow(clippy::ignored_unit_patterns)]
         let (cond_expr, _) = expression;
         #[allow(clippy::ignored_unit_patterns)]
@@ -3818,20 +3820,16 @@ Expression18<Tail>: (Expression, Tail) = {
         (new_expression_conditional_expression(new_conditional_expression(cond_expr, question_mark, true_expr, colon, false_expr)), tail)
     },
     
-    <expression: Expression17<Tail>>  => <>,
-};
-Expression19<Tail>: (Expression, Tail) = {
-    <expression: Expression19<EmptyTail>>  <expression_assignment_expression_operator: Expression_AssignmentExpression_Operator>  <expression_2: Expression18<Tail>>  => {
+    <expression: Expression17<EmptyTail>>  <expression_assignment_expression_operator: Expression_AssignmentExpression_Operator>  <expression_2: Expression19<Tail>>  => {
         #[allow(clippy::ignored_unit_patterns)]
         let (e, _) = expression;
         let (e2, tail) = expression_2;
         (new_expression_assignment_expression(new_assignment_expression(e, expression_assignment_expression_operator, e2)), tail)
     },
     
-    <expression: Expression18<Tail>>  => <>,
+    <expression: Expression17<Tail>>  => <>,
 };
 
-// Expression is public
 Expression: Expression = {
     // By default, we expect no tail
     <expression: Expression19<EmptyTail>>  => expression.0,
