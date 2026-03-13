@@ -1,4 +1,4 @@
-use indexmap::IndexMap;
+use std::collections::BTreeMap;
 use language_v2_definition::model;
 use serde::Serialize;
 
@@ -6,18 +6,18 @@ use super::model::{Choice, Collection, Field, IrModel, NodeType, Sequence};
 
 #[derive(Default, Serialize)]
 pub struct IrModelMutator {
-    pub sequences: IndexMap<model::Identifier, MutatedSequence>,
-    pub choices: IndexMap<model::Identifier, MutatedChoice>,
-    pub collections: IndexMap<model::Identifier, MutatedCollection>,
+    pub sequences: BTreeMap<model::Identifier, MutatedSequence>,
+    pub choices: BTreeMap<model::Identifier, MutatedChoice>,
+    pub collections: BTreeMap<model::Identifier, MutatedCollection>,
 
     // Single field sequences that should be collapsed to their content.
-    pub collapsed_sequences: IndexMap<model::Identifier, CollapsedSequence>,
+    pub collapsed_sequences: BTreeMap<model::Identifier, CollapsedSequence>,
 
     // Terminal nodes and whether they are unique or their value depends on the
     // content. The collection is not needed for generating the code, so it's
     // not necessary to serialize it.
     #[serde(skip)]
-    pub terminals: IndexMap<model::Identifier, bool>,
+    pub terminals: BTreeMap<model::Identifier, bool>,
 }
 
 #[derive(Clone, Serialize)]
@@ -191,7 +191,7 @@ impl IrModelMutator {
             sequences,
             choices,
             collections,
-            collapsed_sequences: IndexMap::new(),
+            collapsed_sequences: BTreeMap::new(),
             terminals,
         }
     }
@@ -273,14 +273,14 @@ impl IrModelMutator {
     pub fn remove_type(&mut self, name: &str) {
         let removed_type = self.find_node_type(&name.into());
         let identifier: model::Identifier = name.into();
-        let removed = self.sequences.shift_remove(&identifier).is_some()
-            || self.choices.shift_remove(&identifier).is_some()
-            || self.collections.shift_remove(&identifier).is_some()
-            || self.terminals.shift_remove(&identifier).is_some();
+        let removed = self.sequences.remove(&identifier).is_some()
+            || self.choices.remove(&identifier).is_some()
+            || self.collections.remove(&identifier).is_some()
+            || self.terminals.remove(&identifier).is_some();
 
         assert!(removed, "Could not find type {name} to remove");
 
-        for (_, sequence) in &mut self.sequences {
+        for sequence in self.sequences.values_mut() {
             for field in &mut sequence.fields {
                 if field.target_type == identifier {
                     field.is_removed = true;
@@ -288,7 +288,7 @@ impl IrModelMutator {
             }
         }
 
-        for (_, choice) in &mut self.choices {
+        for choice in self.choices.values_mut() {
             if choice.variants.contains(&removed_type) {
                 choice.has_removed_variants = true;
             }
@@ -354,7 +354,7 @@ impl IrModelMutator {
     // replacing all instances with the contents of such field.
     pub fn collapse_sequence(&mut self, sequence_id: &str) {
         let identifier: model::Identifier = sequence_id.into();
-        let Some(mut sequence) = self.sequences.shift_remove(&identifier) else {
+        let Some(mut sequence) = self.sequences.remove(&identifier) else {
             panic!("Sequence {sequence_id} not found in IR model");
         };
         assert!(
@@ -370,7 +370,7 @@ impl IrModelMutator {
 
         // Iterate remaining sequences and replace any fields referencing the
         // removed type by the target type
-        for (_, sequence) in &mut self.sequences {
+        for sequence in self.sequences.values_mut() {
             for field in &mut sequence.fields {
                 if field.target_type == identifier {
                     field.target_type = replace_field.target_type.clone();
@@ -382,7 +382,7 @@ impl IrModelMutator {
         // replacement variant instead
         // TODO: the transformer for this case is not generated automatically,
         // but if we change the structure of `MutatedChoice` we could accomodate it
-        for (_, choice) in &mut self.choices {
+        for choice in self.choices.values_mut() {
             if choice.variants.contains(&replaced_type) {
                 choice.has_removed_variants = true;
                 choice.variants.retain(|item| *item != identifier);
@@ -415,7 +415,7 @@ impl IrModelMutator {
 
         // Conversely, check if we need to update any other previously collapsed
         // sequences
-        for (_, collapsed) in &mut self.collapsed_sequences {
+        for collapsed in self.collapsed_sequences.values_mut() {
             if collapsed.target_type == identifier {
                 collapsed.target_type = replace_field.r#type.clone();
             }

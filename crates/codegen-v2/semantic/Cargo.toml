@@ -7,8 +7,8 @@ edition.workspace = true
 publish = false
 
 [dependencies]
-language_v2_definition = { workspace = true }
 indexmap = { workspace = true }
+language_v2_definition = { workspace = true }
 serde = { workspace = true }
 
 [lints]

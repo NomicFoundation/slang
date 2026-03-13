@@ -1,3 +1,5 @@
+use std::collections::BTreeMap;
+
 use indexmap::IndexMap;
 use language_v2_definition::model;
 use serde::ser::SerializeMap;
@@ -9,11 +11,11 @@ pub struct IrModel {
     // content. The collection is not needed for generating the code, so it's
     // not necessary to serialize it.
     #[serde(skip)]
-    pub terminals: IndexMap<model::Identifier, bool>,
+    pub terminals: BTreeMap<model::Identifier, bool>,
 
-    pub sequences: IndexMap<model::Identifier, Sequence>,
-    pub choices: IndexMap<model::Identifier, Choice>,
-    pub collections: IndexMap<model::Identifier, Collection>,
+    pub sequences: BTreeMap<model::Identifier, Sequence>,
+    pub choices: BTreeMap<model::Identifier, Choice>,
+    pub collections: BTreeMap<model::Identifier, Collection>,
 }
 
 #[derive(Clone, Serialize)]
@@ -117,19 +119,19 @@ impl IrModel {
 }
 
 struct IrModelBuilder {
-    pub terminals: IndexMap<model::Identifier, bool>,
-    pub sequences: IndexMap<model::Identifier, Sequence>,
-    pub choices: IndexMap<model::Identifier, Choice>,
-    pub collections: IndexMap<model::Identifier, Collection>,
+    pub terminals: BTreeMap<model::Identifier, bool>,
+    pub sequences: BTreeMap<model::Identifier, Sequence>,
+    pub choices: BTreeMap<model::Identifier, Choice>,
+    pub collections: BTreeMap<model::Identifier, Collection>,
 }
 
 impl IrModelBuilder {
     fn create(language: &model::Language) -> Self {
         let mut builder = Self {
-            terminals: IndexMap::new(),
-            sequences: IndexMap::new(),
-            choices: IndexMap::new(),
-            collections: IndexMap::new(),
+            terminals: BTreeMap::new(),
+            sequences: BTreeMap::new(),
+            choices: BTreeMap::new(),
+            collections: BTreeMap::new(),
         };
 
         // First pass: collect all terminals:
