@@ -22,28 +22,28 @@ pub(super) fn run(contract: &Contract, unit: &CompilationUnit, events: &Events) 
             continue;
         }
 
-        let source = contract.read_file(file.id()).unwrap();
-        let v2_errors =
-            solidity_v2_testing_utils::v1_comparison::lexer::Comparator::compare_with_v1_output(
-                contract.version.clone(),
-                &source,
-                file.create_tree_cursor(),
-            );
-
-        if !v2_errors.is_empty() {
-            print_errors(
-                contract,
-                events,
-                file.id(),
-                &v2_errors,
-                solidity_v2_testing_utils::reporting::diagnostic::render,
-            );
-            test_outcome = TestOutcome::Failed;
-            continue;
-        }
-
-        // The V2 parser only supports 0.8.0 and above
+        // The V2 language only supports 0.8.0 and above
         if contract.version >= Version::new(0, 8, 0) {
+            let source = contract.read_file(file.id()).unwrap();
+            let v2_errors =
+                solidity_v2_testing_utils::v1_comparison::lexer::Comparator::compare_with_v1_output(
+                    contract.version.clone(),
+                    &source,
+                    file.create_tree_cursor(),
+                );
+
+            if !v2_errors.is_empty() {
+                print_errors(
+                    contract,
+                    events,
+                    file.id(),
+                    &v2_errors,
+                    solidity_v2_testing_utils::reporting::diagnostic::render,
+                );
+                test_outcome = TestOutcome::Failed;
+                continue;
+            }
+
             let v2_errors =
                 solidity_v2_testing_utils::v1_comparison::parser::compare_with_v1_cursor(
                     &source,
