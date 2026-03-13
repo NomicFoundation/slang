@@ -156,16 +156,10 @@ Repeated<T>: Vec<T> = {
         <constant_definition: ConstantDefinition>  => new_source_unit_member_constant_definition(<>),
         
     };
-    
-    
-PragmaDirective: PragmaDirective = {
-    <pragma_keyword: PragmaKeyword>  ! <semicolon: Semicolon>  => {
-    let abicoder = new_pragma_abicoder_pragma(new_abicoder_pragma(new_abicoder_keyword(0..0, source), new_abicoder_version_abicoder_v1_keyword(new_abicoder_v1_keyword(0..0, source))));
-    let semicolon = new_pragma_semicolon(semicolon.range, source);
-    new_pragma_directive(pragma_keyword, abicoder , semicolon)
-    }
-};
-
+    PragmaDirective: PragmaDirective = {
+        <pragma_keyword: PragmaKeyword>  <pragma: Pragma>  <semicolon: PragmaSemicolon>  => new_pragma_directive(<>),
+        
+    };
     ImportDirective: ImportDirective = {
         <import_keyword: ImportKeyword>  <clause: ImportClause>  <semicolon: Semicolon>  => new_import_directive(<>),
         
@@ -913,14 +907,10 @@ IdentifierPathNoRevert: IdentifierPath = {
         <expression: Expression>  <semicolon: Semicolon>  => new_expression_statement(<>),
         
     };
-    
-    
-AssemblyStatement: AssemblyStatement = {
-    <assembly_keyword: AssemblyKeyword> ! <body: YulBlock> => {
-        new_assembly_statement(assembly_keyword, None, None, body)
-    }
-};
-
+    AssemblyStatement: AssemblyStatement = {
+        <assembly_keyword: AssemblyKeyword>  <label: (YulStringLiteral)?>  <flags: (AssemblyFlagsDeclaration)?>  <body: YulBlock>  => new_assembly_statement(<>),
+        
+    };
     
 
 // Rules for topic Declaration Statements
@@ -1613,17 +1603,10 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
         <yul_string_literal: Separated<YulComma, <YulStringLiteral>>>  => new_assembly_flags(<>),
         
     };
-    
-    
-YulBlock: YulBlock = {
-    <open_brace: OpenBrace>  !  <close_brace: CloseBrace>  => {
-        let open_brace = new_yul_open_brace(open_brace.range, source);
-        let statements = new_yul_statements(vec![]);
-        let close_brace = new_yul_close_brace(close_brace.range, source);
-        new_yul_block(open_brace, statements, close_brace)
-    }
-};
-
+    YulBlock: YulBlock = {
+        <open_brace: YulOpenBrace>  <statements: YulStatements>  <close_brace: YulCloseBrace>  => new_yul_block(<>),
+        
+    };
     YulStatements: YulStatements = {
         <yul_statement: RepeatedAllowEmpty<<YulStatement>>>  => new_yul_statements(<>),
         

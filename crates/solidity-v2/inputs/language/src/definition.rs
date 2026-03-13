@@ -352,19 +352,6 @@ language_v2_macros::compile!(Language(
                                         pragma_keyword = Required(PragmaKeyword),
                                         pragma = Required(Pragma),
                                         semicolon = Required(PragmaSemicolon)
-                                    ),
-                                    // TODO(v2): Until the lexer can perform context switching, we ignore pragmas
-                                    parser_options = ParserOptions(
-                                        inline = false,
-                                        verbatim = r#"
-PragmaDirective: PragmaDirective = {
-    <pragma_keyword: PragmaKeyword>  ! <semicolon: Semicolon>  => {
-    let abicoder = new_pragma_abicoder_pragma(new_abicoder_pragma(new_abicoder_keyword(0..0, source), new_abicoder_version_abicoder_v1_keyword(new_abicoder_v1_keyword(0..0, source))));
-    let semicolon = new_pragma_semicolon(semicolon.range, source);
-    new_pragma_directive(pragma_keyword, abicoder , semicolon)
-    }
-};
-"#
                                     )
                                 ),
                                 Struct(
@@ -3000,15 +2987,7 @@ IdentifierPathNoRevert: IdentifierPath = {
                                             enabled = From("0.8.13")
                                         ),
                                         body = Required(YulBlock)
-                                    ),
-                                    // TODO(v2): Until the lexer can perform context switching, we skip label and flags
-                                    parser_options = ParserOptions(inline = false, verbatim = r#"
-AssemblyStatement: AssemblyStatement = {
-    <assembly_keyword: AssemblyKeyword> ! <body: YulBlock> => {
-        new_assembly_statement(assembly_keyword, None, None, body)
-    }
-};
-"#)
+                                    )
                                 )
                             ]
                         ),
@@ -4201,7 +4180,7 @@ TupleValues: TupleValues = {
                                             Fragment(DecimalDigits),
                                             Optional(Sequence([
                                                 Atom("."),
-                                                Optional(Fragment(DecimalDigits))
+                                                Fragment(DecimalDigits)
                                             ])),
                                             Optional(Fragment(DecimalExponent))
                                         ])),
@@ -4545,18 +4524,7 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                                     open_brace = Required(YulOpenBrace),
                                     statements = Required(YulStatements),
                                     close_brace = Required(YulCloseBrace)
-                                ),
-                                // TODO(v2): Until the lexer can perform context switching, we ignore YulBlocks
-                                parser_options = ParserOptions(inline = false, verbatim = r#"
-YulBlock: YulBlock = {
-    <open_brace: OpenBrace>  !  <close_brace: CloseBrace>  => {
-        let open_brace = new_yul_open_brace(open_brace.range, source);
-        let statements = new_yul_statements(vec![]);
-        let close_brace = new_yul_close_brace(close_brace.range, source);
-        new_yul_block(open_brace, statements, close_brace)
-    }
-};
-"#)
+                                )
                             ),
                             Repeated(
                                 name = YulStatements,
@@ -4748,7 +4716,7 @@ YulBlock: YulBlock = {
                                 name = YulIdentifier,
                                 definitions = [TokenDefinition(Sequence([
                                     Fragment(YulIdentifierStart),
-                                    ZeroOrMore(Choice([Fragment(YulIdentifierPart), Atom(".")]))
+                                    ZeroOrMore(Fragment(YulIdentifierPart))
                                 ]))]
                             ),
                             Fragment(

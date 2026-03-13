@@ -1,0 +1,9 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Error: Unexpected UNRECOGNIZED. One of AbicoderV1Keyword_Reserved, AbicoderV2Keyword_Reserved was expected
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/PragmaDirective/abi_coder_unkown_identifier/input.sol:2:17]
+   │
+ 2 │ pragma abicoder foo;
+   │                 ┬  
+   │                 ╰── Error occurred here.
+───╯

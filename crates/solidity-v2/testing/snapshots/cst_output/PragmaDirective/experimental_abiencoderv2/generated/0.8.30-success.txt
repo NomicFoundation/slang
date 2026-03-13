@@ -8,14 +8,14 @@ SourceUnitStruct {
                     pragma_keyword: PragmaKeyword {
                         range: 116..122,
                     },
-                    pragma: AbicoderPragma(
-                        AbicoderPragmaStruct {
-                            abicoder_keyword: AbicoderKeyword {
-                                range: 0..0,
+                    pragma: ExperimentalPragma(
+                        ExperimentalPragmaStruct {
+                            experimental_keyword: ExperimentalKeyword {
+                                range: 123..135,
                             },
-                            version: AbicoderV1Keyword(
-                                AbicoderV1Keyword {
-                                    range: 0..0,
+                            feature: SMTCheckerKeyword(
+                                SMTCheckerKeyword {
+                                    range: 136..146,
                                 },
                             ),
                         },

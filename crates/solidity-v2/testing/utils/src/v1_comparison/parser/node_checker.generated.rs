@@ -861,13 +861,13 @@ impl NodeChecker for AssemblyFlagsDeclaration {
     }
 }
 
-// TODO(v2): AssemblyStatement ignores label and flags for now until the Lexer can
-// perform a context switch, therefore the checker ignores those edges
+/// Generic `NodeChecker` for sequences
 impl NodeChecker for AssemblyStatement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::AssemblyStatement) {
+            // Don't even check the rest
             return vec![NodeCheckerError::new(
                 format!(
                     "Expected node kind to be {}, but it was {}",
@@ -879,37 +879,100 @@ impl NodeChecker for AssemblyStatement {
         }
 
         let mut children = children_with_offsets(node, text_offset);
+
         let mut errors = vec![];
 
         // assembly_keyword
-        if let Some((child, child_offset)) =
-            extract_with_label(&mut children, EdgeLabel::AssemblyKeyword)
+
         {
-            errors.extend(
-                self.assembly_keyword
-                    .check_node_with_offset(&child.node, child_offset),
-            );
-        } else {
-            errors.push(NodeCheckerError::new(
-                "Expected assembly_keyword to be present in the CST, but it was not".to_string(),
-                node_range.clone(),
-            ));
+            let assembly_keyword = &self.assembly_keyword;
+
+            // Prepare edge label
+
+            if let Some((child, child_offset)) =
+                extract_with_label(&mut children, EdgeLabel::AssemblyKeyword)
+            {
+                let child_errors =
+                    assembly_keyword.check_node_with_offset(&child.node, child_offset);
+                errors.extend(child_errors);
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected assembly_keyword to be present in the CST, but it was not"
+                        .to_string(),
+                    node_range.clone(),
+                ));
+            }
         }
 
-        // label — skip (V2 can't parse this yet without context switching)
-        extract_with_label(&mut children, EdgeLabel::Label);
+        // label
+        if let Some(label) = &self.label {
+            // Prepare edge label
 
-        // flags — skip (V2 can't parse this yet without context switching)
-        extract_with_label(&mut children, EdgeLabel::Flags);
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Label)
+            {
+                let child_errors = label.check_node_with_offset(&child.node, child_offset);
+                errors.extend(child_errors);
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected label to be present in the CST, but it was not".to_string(),
+                    node_range.clone(),
+                ));
+            }
+        } else {
+            // If it's not there on the AST, it shouldn't be in the CST
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Label) {
+                errors.push(NodeCheckerError::new(
+                    format!(
+                        "Expected label to not be present in the CST, but it was there: {child:#?}"
+                    ),
+                    node_range.clone(),
+                ));
+            }
+        }
+
+        // flags
+        if let Some(flags) = &self.flags {
+            // Prepare edge label
+
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Flags)
+            {
+                let child_errors = flags.check_node_with_offset(&child.node, child_offset);
+                errors.extend(child_errors);
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected flags to be present in the CST, but it was not".to_string(),
+                    node_range.clone(),
+                ));
+            }
+        } else {
+            // If it's not there on the AST, it shouldn't be in the CST
+            if let Some((child, _)) = extract_with_label(&mut children, EdgeLabel::Flags) {
+                errors.push(NodeCheckerError::new(
+                    format!(
+                        "Expected flags to not be present in the CST, but it was there: {child:#?}"
+                    ),
+                    node_range.clone(),
+                ));
+            }
+        }
 
         // body
-        if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Body) {
-            errors.extend(self.body.check_node_with_offset(&child.node, child_offset));
-        } else {
-            errors.push(NodeCheckerError::new(
-                "Expected body to be present in the CST, but it was not".to_string(),
-                node_range.clone(),
-            ));
+
+        {
+            let body = &self.body;
+
+            // Prepare edge label
+
+            if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Body)
+            {
+                let child_errors = body.check_node_with_offset(&child.node, child_offset);
+                errors.extend(child_errors);
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected body to be present in the CST, but it was not".to_string(),
+                    node_range.clone(),
+                ));
+            }
         }
 
         if !children.is_empty() {
@@ -7957,8 +8020,7 @@ impl NodeChecker for PostfixExpression {
     }
 }
 
-// TODO(v2): PragmaDirective ignores the pragma value for now until the Lexer can
-// perform a context switch, therefore the checker ignores that edge
+/// Generic `NodeChecker` for sequences
 impl NodeChecker for PragmaDirective {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
@@ -8002,10 +8064,15 @@ impl NodeChecker for PragmaDirective {
         // pragma
 
         {
+            let pragma = &self.pragma;
+
             // Prepare edge label
 
-            if extract_with_label(&mut children, EdgeLabel::Pragma).is_some() {
-                // We don't check, since V2 can't parse these yet
+            if let Some((child, child_offset)) =
+                extract_with_label(&mut children, EdgeLabel::Pragma)
+            {
+                let child_errors = pragma.check_node_with_offset(&child.node, child_offset);
+                errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
                     "Expected pragma to be present in the CST, but it was not".to_string(),
@@ -10847,8 +10914,7 @@ impl NodeChecker for WhileStatement {
     }
 }
 
-// TODO(v2): YulBlock ignores the statements for now until the Lexer can
-// perform a context switch, therefore the checker ignores that edge
+/// Generic `NodeChecker` for sequences
 impl NodeChecker for YulBlock {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
@@ -10892,10 +10958,15 @@ impl NodeChecker for YulBlock {
         // statements
 
         {
+            let statements = &self.statements;
+
             // Prepare edge label
 
-            if extract_with_label(&mut children, EdgeLabel::Statements).is_some() {
-                // We don't check statements, since V2 can't parse them yet
+            if let Some((child, child_offset)) =
+                extract_with_label(&mut children, EdgeLabel::Statements)
+            {
+                let child_errors = statements.check_node_with_offset(&child.node, child_offset);
+                errors.extend(child_errors);
             } else {
                 errors.push(NodeCheckerError::new(
                     "Expected statements to be present in the CST, but it was not".to_string(),
@@ -20908,7 +20979,7 @@ impl NodeChecker for PragmaBarBar {
         let mut errors = vec![];
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "PragmaBarBar";
+            let v2_kind = "BarBar";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
@@ -20936,7 +21007,7 @@ impl NodeChecker for PragmaCaret {
         let mut errors = vec![];
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "PragmaCaret";
+            let v2_kind = "Caret";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
@@ -20964,7 +21035,7 @@ impl NodeChecker for PragmaDoubleQuotedStringLiteral {
         let mut errors = vec![];
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "PragmaDoubleQuotedStringLiteral";
+            let v2_kind = "DoubleQuotedStringLiteral";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
@@ -20992,7 +21063,7 @@ impl NodeChecker for PragmaEqual {
         let mut errors = vec![];
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "PragmaEqual";
+            let v2_kind = "Equal";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
@@ -21020,7 +21091,7 @@ impl NodeChecker for PragmaGreaterThan {
         let mut errors = vec![];
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "PragmaGreaterThan";
+            let v2_kind = "GreaterThan";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
@@ -21048,7 +21119,7 @@ impl NodeChecker for PragmaGreaterThanEqual {
         let mut errors = vec![];
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "PragmaGreaterThanEqual";
+            let v2_kind = "GreaterThanEqual";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
@@ -21104,7 +21175,7 @@ impl NodeChecker for PragmaLessThan {
         let mut errors = vec![];
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "PragmaLessThan";
+            let v2_kind = "LessThan";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
@@ -21132,7 +21203,7 @@ impl NodeChecker for PragmaLessThanEqual {
         let mut errors = vec![];
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "PragmaLessThanEqual";
+            let v2_kind = "LessThanEqual";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
@@ -21160,7 +21231,7 @@ impl NodeChecker for PragmaMinus {
         let mut errors = vec![];
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "PragmaMinus";
+            let v2_kind = "Minus";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
@@ -21188,7 +21259,7 @@ impl NodeChecker for PragmaPeriod {
         let mut errors = vec![];
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "PragmaPeriod";
+            let v2_kind = "Period";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
@@ -21244,7 +21315,7 @@ impl NodeChecker for PragmaSingleQuotedStringLiteral {
         let mut errors = vec![];
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "PragmaSingleQuotedStringLiteral";
+            let v2_kind = "SingleQuotedStringLiteral";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
@@ -21272,7 +21343,7 @@ impl NodeChecker for PragmaTilde {
         let mut errors = vec![];
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "PragmaTilde";
+            let v2_kind = "Tilde";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
@@ -22896,7 +22967,7 @@ impl NodeChecker for YulCloseParen {
         let mut errors = vec![];
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "YulCloseParen";
+            let v2_kind = "CloseParen";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
@@ -22917,28 +22988,54 @@ impl NodeChecker for YulCloseParen {
     }
 }
 
-/// Generic `NodeChecker` for terminals
+// In V1, `YulColonEqual` is represented as a `YulAssignmentOperator` nonterminal
+// wrapping a `ColonEqual` terminal. This custom impl unwraps that nonterminal.
 impl NodeChecker for YulColonEqual {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
-        let mut errors = vec![];
-        if let NodeKind::Terminal(terminal_kind) = node.kind() {
-            let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "YulColonEqual";
 
+        if node.kind() != NodeKind::Nonterminal(NonterminalKind::YulAssignmentOperator) {
+            return vec![NodeCheckerError::new(
+                format!(
+                    "Expected node kind to be YulAssignmentOperator, but it was {}",
+                    node.kind()
+                ),
+                node_range,
+            )];
+        }
+
+        let children = children_with_offsets(node, text_offset);
+
+        if children.len() != 1 {
+            return vec![NodeCheckerError::new(
+                format!(
+                    "Expected exactly one child for YulAssignmentOperator, but got: {children:#?}"
+                ),
+                node_range,
+            )];
+        }
+
+        let (child, child_offset) = &children[0];
+        let child_node = &child.node;
+        let child_range = *child_offset..(*child_offset + child_node.text_len());
+
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = child_node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "ColonEqual";
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
                     format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
-                    node_range,
+                    child_range,
                 ));
             }
         } else {
             errors.push(NodeCheckerError::new(
                 format!(
-                    "Expected node kind to be a terminal, but it was {}",
-                    node.kind()
+                    "Expected terminal ColonEqual inside YulAssignmentOperator, but got {}",
+                    child_node.kind()
                 ),
-                node_range,
+                child_range,
             ));
         }
         errors
@@ -22952,7 +23049,7 @@ impl NodeChecker for YulComma {
         let mut errors = vec![];
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "YulComma";
+            let v2_kind = "Comma";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
@@ -23064,7 +23161,7 @@ impl NodeChecker for YulDoubleQuotedHexStringLiteral {
         let mut errors = vec![];
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "YulDoubleQuotedHexStringLiteral";
+            let v2_kind = "DoubleQuotedHexStringLiteral";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
@@ -23092,7 +23189,7 @@ impl NodeChecker for YulDoubleQuotedStringLiteral {
         let mut errors = vec![];
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "YulDoubleQuotedStringLiteral";
+            let v2_kind = "DoubleQuotedStringLiteral";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
@@ -23372,7 +23469,7 @@ impl NodeChecker for YulMinusGreaterThan {
         let mut errors = vec![];
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "YulMinusGreaterThan";
+            let v2_kind = "MinusGreaterThan";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
@@ -23428,7 +23525,7 @@ impl NodeChecker for YulOpenParen {
         let mut errors = vec![];
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "YulOpenParen";
+            let v2_kind = "OpenParen";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
@@ -23456,7 +23553,7 @@ impl NodeChecker for YulPeriod {
         let mut errors = vec![];
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "YulPeriod";
+            let v2_kind = "Period";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
@@ -23484,7 +23581,7 @@ impl NodeChecker for YulSingleQuotedHexStringLiteral {
         let mut errors = vec![];
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "YulSingleQuotedHexStringLiteral";
+            let v2_kind = "SingleQuotedHexStringLiteral";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
@@ -23512,7 +23609,7 @@ impl NodeChecker for YulSingleQuotedStringLiteral {
         let mut errors = vec![];
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "YulSingleQuotedStringLiteral";
+            let v2_kind = "SingleQuotedStringLiteral";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(

@@ -12,6 +12,7 @@ pub enum ContextKind {
 
 #[derive(Clone)]
 pub struct ContextExtras {
+    #[allow(dead_code)]
     pub language_version: LanguageVersion,
 }
 
@@ -29,22 +30,6 @@ impl<'source> ContextWrapper<'source> {
                 ContextKind::{{ context.name }} => Self::{{ context.name }}(
                     {{ context.name }}Context::lexer_with_extras(source, extras)
                 ),
-            {%- endfor -%}
-        }
-    }
-
-    pub fn source(&self) -> &'source str {
-        match self {
-            {%- for context in model.parser.lexer.contexts %}
-                Self::{{ context.name }}(lexer) => lexer.source(),
-            {%- endfor -%}
-        }
-    }
-
-    pub fn bump(&mut self, n: usize) {
-        match self {
-            {%- for context in model.parser.lexer.contexts %}
-                Self::{{ context.name }}(lexer) => lexer.bump(n),
             {%- endfor -%}
         }
     }
