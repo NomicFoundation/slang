@@ -1,0 +1,173 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 0..8,
+                    },
+                    name: Identifier {
+                        range: 9..10,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 11..12,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            FunctionDefinition(
+                                FunctionDefinitionStruct {
+                                    function_keyword: FunctionKeyword {
+                                        range: 17..25,
+                                    },
+                                    name: Identifier(
+                                        Identifier {
+                                            range: 26..27,
+                                        },
+                                    ),
+                                    parameters: ParametersDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            range: 27..28,
+                                        },
+                                        parameters: Parameters {
+                                            elements: [],
+                                        },
+                                        close_paren: CloseParen {
+                                            range: 28..29,
+                                        },
+                                    },
+                                    attributes: FunctionAttributes {
+                                        elements: [],
+                                    },
+                                    returns: None,
+                                    body: Block(
+                                        BlockStruct {
+                                            open_brace: OpenBrace {
+                                                range: 30..31,
+                                            },
+                                            statements: Statements {
+                                                elements: [
+                                                    VariableDeclarationStatement(
+                                                        VariableDeclarationStatementStruct {
+                                                            target: SingleTypedDeclaration(
+                                                                SingleTypedDeclarationStruct {
+                                                                    declaration: VariableDeclarationStruct {
+                                                                        type_name: ElementaryType(
+                                                                            UintKeyword(
+                                                                                UintKeyword {
+                                                                                    range: 137..144,
+                                                                                },
+                                                                            ),
+                                                                        ),
+                                                                        storage_location: None,
+                                                                        name: Identifier {
+                                                                            range: 145..150,
+                                                                        },
+                                                                    },
+                                                                    value: None,
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 150..151,
+                                                            },
+                                                        },
+                                                    ),
+                                                    VariableDeclarationStatement(
+                                                        VariableDeclarationStatementStruct {
+                                                            target: SingleTypedDeclaration(
+                                                                SingleTypedDeclarationStruct {
+                                                                    declaration: VariableDeclarationStruct {
+                                                                        type_name: ElementaryType(
+                                                                            UintKeyword(
+                                                                                UintKeyword {
+                                                                                    range: 152..159,
+                                                                                },
+                                                                            ),
+                                                                        ),
+                                                                        storage_location: None,
+                                                                        name: Identifier {
+                                                                            range: 160..164,
+                                                                        },
+                                                                    },
+                                                                    value: None,
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 164..165,
+                                                            },
+                                                        },
+                                                    ),
+                                                    VariableDeclarationStatement(
+                                                        VariableDeclarationStatementStruct {
+                                                            target: SingleTypedDeclaration(
+                                                                SingleTypedDeclarationStruct {
+                                                                    declaration: VariableDeclarationStruct {
+                                                                        type_name: ElementaryType(
+                                                                            UintKeyword(
+                                                                                UintKeyword {
+                                                                                    range: 166..173,
+                                                                                },
+                                                                            ),
+                                                                        ),
+                                                                        storage_location: None,
+                                                                        name: Identifier {
+                                                                            range: 174..180,
+                                                                        },
+                                                                    },
+                                                                    value: None,
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 180..181,
+                                                            },
+                                                        },
+                                                    ),
+                                                    VariableDeclarationStatement(
+                                                        VariableDeclarationStatementStruct {
+                                                            target: SingleTypedDeclaration(
+                                                                SingleTypedDeclarationStruct {
+                                                                    declaration: VariableDeclarationStruct {
+                                                                        type_name: ElementaryType(
+                                                                            UintKeyword(
+                                                                                UintKeyword {
+                                                                                    range: 182..189,
+                                                                                },
+                                                                            ),
+                                                                        ),
+                                                                        storage_location: None,
+                                                                        name: Identifier {
+                                                                            range: 190..196,
+                                                                        },
+                                                                    },
+                                                                    value: None,
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 196..197,
+                                                            },
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                            close_brace: CloseBrace {
+                                                range: 210..211,
+                                            },
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 212..213,
+                    },
+                },
+            ),
+        ],
+    },
+}

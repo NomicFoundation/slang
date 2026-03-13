@@ -27,7 +27,7 @@ pub fn generate_header(file_path: &Path) -> Option<String> {
         (_, "dot" | "js" | "mts" | "rs" | "sol" | "ts" | "wit" | "lalrpop") => {
             format!("// {warning_line}")
         }
-        (_, "yml" | "txt") => format!("# {warning_line}"),
+        (_, "yml" | "txt") | (".gitattributes", "") => format!("# {warning_line}"),
         (_, "mmd") => format!("%% {warning_line}"),
 
         // Does not support comments:

@@ -1,4 +1,5 @@
 use std::convert::TryFrom;
+use std::fmt::{Display, Formatter};
 
 use semver::Version;
 use thiserror::Error;
@@ -44,5 +45,25 @@ impl TryFrom<Version> for LanguageVersion {
             {%- endfor %}
             _ => return Err(FromSemverError::UnsupportedVersion),
         })
+    }
+}
+
+impl From<LanguageVersion> for Version {
+    fn from(version: LanguageVersion) -> Self {
+        match version {
+            {%- for version in model.language.versions %}
+                LanguageVersion::V{{ version | split(pat=".") | join(sep="_") }} => Version::new({{ version | split(pat=".") | first }}, {{ version | split(pat=".") | slice(start=1, end=2) | first }}, {{ version | split(pat=".") | last }}),
+            {%- endfor %}
+        }
+    }
+}
+
+impl Display for LanguageVersion {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            {%- for version in model.language.versions %}
+                LanguageVersion::V{{ version | split(pat=".") | join(sep="_") }} => write!(f, "{{ version }}"),
+            {%- endfor %}
+        }
     }
 }

@@ -1,0 +1,238 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 0..8,
+                    },
+                    name: Identifier {
+                        range: 9..10,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 11..12,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            FunctionDefinition(
+                                FunctionDefinitionStruct {
+                                    function_keyword: FunctionKeyword {
+                                        range: 17..25,
+                                    },
+                                    name: Identifier(
+                                        Identifier {
+                                            range: 26..27,
+                                        },
+                                    ),
+                                    parameters: ParametersDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            range: 27..28,
+                                        },
+                                        parameters: Parameters {
+                                            elements: [],
+                                        },
+                                        close_paren: CloseParen {
+                                            range: 28..29,
+                                        },
+                                    },
+                                    attributes: FunctionAttributes {
+                                        elements: [],
+                                    },
+                                    returns: None,
+                                    body: Block(
+                                        BlockStruct {
+                                            open_brace: OpenBrace {
+                                                range: 30..31,
+                                            },
+                                            statements: Statements {
+                                                elements: [
+                                                    VariableDeclarationStatement(
+                                                        VariableDeclarationStatementStruct {
+                                                            target: MultiTypedDeclaration(
+                                                                MultiTypedDeclarationStruct {
+                                                                    open_paren: OpenParen {
+                                                                        range: 157..158,
+                                                                    },
+                                                                    elements: MultiTypedDeclarationElements {
+                                                                        elements: [
+                                                                            MultiTypedDeclarationElementStruct {
+                                                                                member: Some(
+                                                                                    VariableDeclarationStruct {
+                                                                                        type_name: ElementaryType(
+                                                                                            UintKeyword(
+                                                                                                UintKeyword {
+                                                                                                    range: 158..164,
+                                                                                                },
+                                                                                            ),
+                                                                                        ),
+                                                                                        storage_location: None,
+                                                                                        name: Identifier {
+                                                                                            range: 165..166,
+                                                                                        },
+                                                                                    },
+                                                                                ),
+                                                                            },
+                                                                            MultiTypedDeclarationElementStruct {
+                                                                                member: Some(
+                                                                                    VariableDeclarationStruct {
+                                                                                        type_name: ArrayTypeName(
+                                                                                            ArrayTypeNameStruct {
+                                                                                                operand: ElementaryType(
+                                                                                                    UintKeyword(
+                                                                                                        UintKeyword {
+                                                                                                            range: 168..174,
+                                                                                                        },
+                                                                                                    ),
+                                                                                                ),
+                                                                                                open_bracket: OpenBracket {
+                                                                                                    range: 174..175,
+                                                                                                },
+                                                                                                index: None,
+                                                                                                close_bracket: CloseBracket {
+                                                                                                    range: 175..176,
+                                                                                                },
+                                                                                            },
+                                                                                        ),
+                                                                                        storage_location: Some(
+                                                                                            MemoryKeyword(
+                                                                                                MemoryKeyword {
+                                                                                                    range: 177..183,
+                                                                                                },
+                                                                                            ),
+                                                                                        ),
+                                                                                        name: Identifier {
+                                                                                            range: 184..185,
+                                                                                        },
+                                                                                    },
+                                                                                ),
+                                                                            },
+                                                                        ],
+                                                                    },
+                                                                    close_paren: CloseParen {
+                                                                        range: 185..186,
+                                                                    },
+                                                                    value: VariableDeclarationValueStruct {
+                                                                        equal: Equal {
+                                                                            range: 187..188,
+                                                                        },
+                                                                        expression: FunctionCallExpression(
+                                                                            FunctionCallExpressionStruct {
+                                                                                operand: MemberAccessExpression(
+                                                                                    MemberAccessExpressionStruct {
+                                                                                        operand: Identifier(
+                                                                                            Identifier {
+                                                                                                range: 189..192,
+                                                                                            },
+                                                                                        ),
+                                                                                        period: Period {
+                                                                                            range: 0..0,
+                                                                                        },
+                                                                                        member: Identifier(
+                                                                                            Identifier {
+                                                                                                range: 193..199,
+                                                                                            },
+                                                                                        ),
+                                                                                    },
+                                                                                ),
+                                                                                arguments: PositionalArgumentsDeclaration(
+                                                                                    PositionalArgumentsDeclarationStruct {
+                                                                                        open_paren: OpenParen {
+                                                                                            range: 199..200,
+                                                                                        },
+                                                                                        arguments: PositionalArguments {
+                                                                                            elements: [
+                                                                                                Identifier(
+                                                                                                    Identifier {
+                                                                                                        range: 200..204,
+                                                                                                    },
+                                                                                                ),
+                                                                                                TupleExpression(
+                                                                                                    TupleExpressionStruct {
+                                                                                                        open_paren: OpenParen {
+                                                                                                            range: 206..207,
+                                                                                                        },
+                                                                                                        items: TupleValues {
+                                                                                                            elements: [
+                                                                                                                TupleValueStruct {
+                                                                                                                    expression: Some(
+                                                                                                                        ElementaryType(
+                                                                                                                            UintKeyword(
+                                                                                                                                UintKeyword {
+                                                                                                                                    range: 207..213,
+                                                                                                                                },
+                                                                                                                            ),
+                                                                                                                        ),
+                                                                                                                    ),
+                                                                                                                },
+                                                                                                                TupleValueStruct {
+                                                                                                                    expression: Some(
+                                                                                                                        IndexAccessExpression(
+                                                                                                                            IndexAccessExpressionStruct {
+                                                                                                                                operand: ElementaryType(
+                                                                                                                                    UintKeyword(
+                                                                                                                                        UintKeyword {
+                                                                                                                                            range: 215..221,
+                                                                                                                                        },
+                                                                                                                                    ),
+                                                                                                                                ),
+                                                                                                                                open_bracket: OpenBracket {
+                                                                                                                                    range: 221..222,
+                                                                                                                                },
+                                                                                                                                start: None,
+                                                                                                                                end: None,
+                                                                                                                                close_bracket: CloseBracket {
+                                                                                                                                    range: 222..223,
+                                                                                                                                },
+                                                                                                                            },
+                                                                                                                        ),
+                                                                                                                    ),
+                                                                                                                },
+                                                                                                            ],
+                                                                                                        },
+                                                                                                        close_paren: CloseParen {
+                                                                                                            range: 223..224,
+                                                                                                        },
+                                                                                                    },
+                                                                                                ),
+                                                                                            ],
+                                                                                        },
+                                                                                        close_paren: CloseParen {
+                                                                                            range: 224..225,
+                                                                                        },
+                                                                                    },
+                                                                                ),
+                                                                            },
+                                                                        ),
+                                                                    },
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 225..226,
+                                                            },
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                            close_brace: CloseBrace {
+                                                range: 238..239,
+                                            },
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 240..241,
+                    },
+                },
+            ),
+        ],
+    },
+}

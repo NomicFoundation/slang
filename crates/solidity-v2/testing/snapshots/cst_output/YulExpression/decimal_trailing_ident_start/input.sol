@@ -1,0 +1,10 @@
+contract C {
+    function f() {
+        assembly {
+// >>> Copied from crates/solidity/testing/snapshots/cst_output/YulExpression/decimal_trailing_ident_start/input.sol
+1a
+
+// <<<
+        }
+    }
+}

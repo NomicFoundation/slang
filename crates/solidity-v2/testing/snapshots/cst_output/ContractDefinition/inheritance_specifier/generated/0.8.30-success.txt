@@ -1,0 +1,110 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 115..123,
+                    },
+                    name: Identifier {
+                        range: 124..130,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [
+                            InheritanceSpecifier(
+                                InheritanceSpecifierStruct {
+                                    is_keyword: IsKeyword {
+                                        range: 131..133,
+                                    },
+                                    types: InheritanceTypes {
+                                        elements: [
+                                            InheritanceTypeStruct {
+                                                type_name: IdentifierPath {
+                                                    elements: [
+                                                        Identifier(
+                                                            Identifier {
+                                                                range: 134..137,
+                                                            },
+                                                        ),
+                                                    ],
+                                                },
+                                                arguments: None,
+                                            },
+                                            InheritanceTypeStruct {
+                                                type_name: IdentifierPath {
+                                                    elements: [
+                                                        Identifier(
+                                                            Identifier {
+                                                                range: 139..142,
+                                                            },
+                                                        ),
+                                                    ],
+                                                },
+                                                arguments: Some(
+                                                    PositionalArgumentsDeclaration(
+                                                        PositionalArgumentsDeclarationStruct {
+                                                            open_paren: OpenParen {
+                                                                range: 142..143,
+                                                            },
+                                                            arguments: PositionalArguments {
+                                                                elements: [
+                                                                    DecimalNumberExpression(
+                                                                        DecimalNumberExpressionStruct {
+                                                                            literal: DecimalLiteral {
+                                                                                range: 143..144,
+                                                                            },
+                                                                            unit: None,
+                                                                        },
+                                                                    ),
+                                                                    DecimalNumberExpression(
+                                                                        DecimalNumberExpressionStruct {
+                                                                            literal: DecimalLiteral {
+                                                                                range: 146..147,
+                                                                            },
+                                                                            unit: None,
+                                                                        },
+                                                                    ),
+                                                                ],
+                                                            },
+                                                            close_paren: CloseParen {
+                                                                range: 147..148,
+                                                            },
+                                                        },
+                                                    ),
+                                                ),
+                                            },
+                                            InheritanceTypeStruct {
+                                                type_name: IdentifierPath {
+                                                    elements: [
+                                                        Identifier(
+                                                            Identifier {
+                                                                range: 150..153,
+                                                            },
+                                                        ),
+                                                    ],
+                                                },
+                                                arguments: None,
+                                            },
+                                        ],
+                                    },
+                                },
+                            ),
+                        ],
+                    },
+                    open_brace: OpenBrace {
+                        range: 154..155,
+                    },
+                    members: ContractMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        range: 155..156,
+                    },
+                },
+            ),
+        ],
+    },
+}

@@ -1,0 +1,137 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 0..8,
+                    },
+                    name: Identifier {
+                        range: 9..10,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 11..12,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            FunctionDefinition(
+                                FunctionDefinitionStruct {
+                                    function_keyword: FunctionKeyword {
+                                        range: 17..25,
+                                    },
+                                    name: Identifier(
+                                        Identifier {
+                                            range: 26..27,
+                                        },
+                                    ),
+                                    parameters: ParametersDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            range: 27..28,
+                                        },
+                                        parameters: Parameters {
+                                            elements: [],
+                                        },
+                                        close_paren: CloseParen {
+                                            range: 28..29,
+                                        },
+                                    },
+                                    attributes: FunctionAttributes {
+                                        elements: [],
+                                    },
+                                    returns: None,
+                                    body: Block(
+                                        BlockStruct {
+                                            open_brace: OpenBrace {
+                                                range: 30..31,
+                                            },
+                                            statements: Statements {
+                                                elements: [
+                                                    ExpressionStatement(
+                                                        ExpressionStatementStruct {
+                                                            expression: ConditionalExpression(
+                                                                ConditionalExpressionStruct {
+                                                                    operand: TupleExpression(
+                                                                        TupleExpressionStruct {
+                                                                            open_paren: OpenParen {
+                                                                                range: 140..141,
+                                                                            },
+                                                                            items: TupleValues {
+                                                                                elements: [
+                                                                                    TupleValueStruct {
+                                                                                        expression: Some(
+                                                                                            EqualityExpression(
+                                                                                                EqualityExpressionStruct {
+                                                                                                    left_operand: Identifier(
+                                                                                                        Identifier {
+                                                                                                            range: 141..144,
+                                                                                                        },
+                                                                                                    ),
+                                                                                                    expression_equality_expression_operator: EqualEqual(
+                                                                                                        EqualEqual {
+                                                                                                            range: 145..147,
+                                                                                                        },
+                                                                                                    ),
+                                                                                                    right_operand: Identifier(
+                                                                                                        Identifier {
+                                                                                                            range: 148..151,
+                                                                                                        },
+                                                                                                    ),
+                                                                                                },
+                                                                                            ),
+                                                                                        ),
+                                                                                    },
+                                                                                ],
+                                                                            },
+                                                                            close_paren: CloseParen {
+                                                                                range: 151..152,
+                                                                            },
+                                                                        },
+                                                                    ),
+                                                                    question_mark: QuestionMark {
+                                                                        range: 153..154,
+                                                                    },
+                                                                    true_expression: TrueKeyword(
+                                                                        TrueKeyword {
+                                                                            range: 155..159,
+                                                                        },
+                                                                    ),
+                                                                    colon: Colon {
+                                                                        range: 160..161,
+                                                                    },
+                                                                    false_expression: FalseKeyword(
+                                                                        FalseKeyword {
+                                                                            range: 162..167,
+                                                                        },
+                                                                    ),
+                                                                },
+                                                            ),
+                                                            semicolon: Semicolon {
+                                                                range: 175..176,
+                                                            },
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                            close_brace: CloseBrace {
+                                                range: 181..182,
+                                            },
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 183..184,
+                    },
+                },
+            ),
+        ],
+    },
+}

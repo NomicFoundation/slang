@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            StructDefinition(
+                StructDefinitionStruct {
+                    struct_keyword: StructKeyword {
+                        range: 102..108,
+                    },
+                    name: Identifier {
+                        range: 109..110,
+                    },
+                    open_brace: OpenBrace {
+                        range: 111..112,
+                    },
+                    members: StructMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        range: 113..114,
+                    },
+                },
+            ),
+        ],
+    },
+}

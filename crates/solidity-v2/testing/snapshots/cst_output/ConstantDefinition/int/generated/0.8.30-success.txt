@@ -1,0 +1,39 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ConstantDefinition(
+                ConstantDefinitionStruct {
+                    type_name: ElementaryType(
+                        IntKeyword(
+                            IntKeyword {
+                                range: 97..100,
+                            },
+                        ),
+                    ),
+                    constant_keyword: ConstantKeyword {
+                        range: 101..109,
+                    },
+                    name: Identifier {
+                        range: 110..113,
+                    },
+                    equal: Equal {
+                        range: 114..115,
+                    },
+                    value: DecimalNumberExpression(
+                        DecimalNumberExpressionStruct {
+                            literal: DecimalLiteral {
+                                range: 116..117,
+                            },
+                            unit: None,
+                        },
+                    ),
+                    semicolon: Semicolon {
+                        range: 117..118,
+                    },
+                },
+            ),
+        ],
+    },
+}

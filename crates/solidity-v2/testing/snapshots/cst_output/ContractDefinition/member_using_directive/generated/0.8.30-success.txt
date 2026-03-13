@@ -1,0 +1,62 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 116..124,
+                    },
+                    name: Identifier {
+                        range: 125..131,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 132..133,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            UsingDirective(
+                                UsingDirectiveStruct {
+                                    using_keyword: UsingKeyword {
+                                        range: 136..141,
+                                    },
+                                    clause: IdentifierPath(
+                                        IdentifierPath {
+                                            elements: [
+                                                Identifier(
+                                                    Identifier {
+                                                        range: 142..143,
+                                                    },
+                                                ),
+                                            ],
+                                        },
+                                    ),
+                                    for_keyword: ForKeyword {
+                                        range: 144..147,
+                                    },
+                                    target: Asterisk(
+                                        Asterisk {
+                                            range: 148..149,
+                                        },
+                                    ),
+                                    global_keyword: None,
+                                    semicolon: Semicolon {
+                                        range: 149..150,
+                                    },
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 151..152,
+                    },
+                },
+            ),
+        ],
+    },
+}

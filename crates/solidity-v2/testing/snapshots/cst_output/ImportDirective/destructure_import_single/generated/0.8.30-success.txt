@@ -1,0 +1,55 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ImportDirective(
+                ImportDirectiveStruct {
+                    import_keyword: ImportKeyword {
+                        range: 116..122,
+                    },
+                    clause: ImportDeconstruction(
+                        ImportDeconstructionStruct {
+                            open_brace: OpenBrace {
+                                range: 123..124,
+                            },
+                            symbols: ImportDeconstructionSymbols {
+                                elements: [
+                                    ImportDeconstructionSymbolStruct {
+                                        name: Identifier {
+                                            range: 125..126,
+                                        },
+                                        alias: Some(
+                                            ImportAliasStruct {
+                                                as_keyword: AsKeyword {
+                                                    range: 127..129,
+                                                },
+                                                identifier: Identifier {
+                                                    range: 130..131,
+                                                },
+                                            },
+                                        ),
+                                    },
+                                ],
+                            },
+                            close_brace: CloseBrace {
+                                range: 132..133,
+                            },
+                            from_keyword: FromKeyword {
+                                range: 134..138,
+                            },
+                            path: DoubleQuotedStringLiteral(
+                                DoubleQuotedStringLiteral {
+                                    range: 139..144,
+                                },
+                            ),
+                        },
+                    ),
+                    semicolon: Semicolon {
+                        range: 144..145,
+                    },
+                },
+            ),
+        ],
+    },
+}

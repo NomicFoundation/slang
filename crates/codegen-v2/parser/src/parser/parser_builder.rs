@@ -20,37 +20,45 @@ impl<'a> ParserBuilder<'a> {
         Self { language }
     }
 
-    pub(crate) fn build(self) -> Vec<ParserSection> {
+    pub(crate) fn build(&self) -> Vec<ParserSection> {
         self.language
             .contexts
             .iter()
-            .flat_map(Self::collect_context)
+            .flat_map(|ctx| self.collect_context(ctx))
             .collect()
     }
 
-    fn collect_context(context: &LexicalContext) -> Vec<ParserSection> {
-        context.sections.iter().map(Self::collect_section).collect()
+    fn collect_context(&self, context: &LexicalContext) -> Vec<ParserSection> {
+        context
+            .sections
+            .iter()
+            .map(|section| self.collect_section(section))
+            .collect()
     }
 
-    fn collect_section(section: &Section) -> ParserSection {
+    fn collect_section(&self, section: &Section) -> ParserSection {
         ParserSection {
             title: section.title.clone(),
-            topics: section.topics.iter().map(Self::collect_topic).collect(),
+            topics: section
+                .topics
+                .iter()
+                .map(|topic| self.collect_topic(topic))
+                .collect(),
         }
     }
 
-    fn collect_topic(topic: &Topic) -> ParserTopic {
+    fn collect_topic(&self, topic: &Topic) -> ParserTopic {
         ParserTopic {
             title: topic.title.clone(),
             items: topic
                 .items
                 .iter()
-                .map(Self::language_item_to_lalrpop_item)
+                .map(|item| self.language_item_to_lalrpop_item(item))
                 .collect(),
         }
     }
 
-    fn language_item_to_lalrpop_item(item: &LanguageItem) -> LALRPOPItem {
+    fn language_item_to_lalrpop_item(&self, item: &LanguageItem) -> LALRPOPItem {
         // Apply manual parser options
         let parser_options = match item {
             LanguageItem::Struct { item } => &item.parser_options,
@@ -86,11 +94,19 @@ impl<'a> ParserBuilder<'a> {
         };
 
         // Apply parser options to all generated items
-        if let Some(ParserOptions { inline, public, .. }) = parser_options {
+        let is_root = item.name() == &self.language.root_item;
+        if let Some(ParserOptions { inline, .. }) = parser_options {
             for item in &mut items {
                 item.inline = *inline;
-                item.public = *public;
             }
+        }
+
+        debug_assert!(
+            !is_root || items.len() == 1,
+            "Root item should generate exactly one LALRPOP item"
+        );
+        for item in &mut items {
+            item.public = is_root;
         }
 
         LALRPOPItem::Items(items)

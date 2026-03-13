@@ -19,6 +19,7 @@ fn main() {
     [
         || generate_solidity_spec(),
         || generate_solidity_tests(),
+        || generate_solidity_v2_tests(),
         || {
             let mut fs = CodegenFileSystem::default();
             let language = SolidityDefinition::create();
@@ -104,6 +105,19 @@ fn generate_solidity_tests() -> Result<()> {
     lang_def.generate_binder_tests(
         &snapshots_crate.join("bindings_output"),
         &tests_crate.join("src/binder/generated"),
+    )?;
+
+    Ok(())
+}
+
+fn generate_solidity_v2_tests() -> Result<()> {
+    let lang_def = SolidityDefinition::create();
+    let v2_snapshots = CargoWorkspace::locate_source_crate("solidity_v2_testing_snapshots")?;
+    let tests_crate = CargoWorkspace::locate_source_crate("solidity_v2_cargo_tests")?;
+
+    lang_def.generate_cst_output_tests(
+        &v2_snapshots.join("cst_output"),
+        &tests_crate.join("src/cst/cst_output/generated"),
     )?;
 
     Ok(())

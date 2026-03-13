@@ -1,0 +1,66 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 0..8,
+                    },
+                    name: Identifier {
+                        range: 9..10,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 11..12,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            ReceiveFunctionDefinition(
+                                ReceiveFunctionDefinitionStruct {
+                                    receive_keyword: ReceiveKeyword {
+                                        range: 120..127,
+                                    },
+                                    parameters: ParametersDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            range: 128..129,
+                                        },
+                                        parameters: Parameters {
+                                            elements: [],
+                                        },
+                                        close_paren: CloseParen {
+                                            range: 129..130,
+                                        },
+                                    },
+                                    attributes: ReceiveFunctionAttributes {
+                                        elements: [],
+                                    },
+                                    body: Block(
+                                        BlockStruct {
+                                            open_brace: OpenBrace {
+                                                range: 131..132,
+                                            },
+                                            statements: Statements {
+                                                elements: [],
+                                            },
+                                            close_brace: CloseBrace {
+                                                range: 132..133,
+                                            },
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 141..142,
+                    },
+                },
+            ),
+        ],
+    },
+}
