@@ -1,8 +1,6 @@
 use std::fmt::Debug;
 use std::rc::Rc;
 
-use indexmap::IndexMap;
-
 use crate::compiler::analysis::Analysis;
 use crate::compiler::utils::version_set::VersionSet;
 use crate::internals::Spanned;
@@ -30,13 +28,20 @@ pub(crate) fn run(analysis: &mut Analysis) {
         &language.root_item,
         &enablement,
         &[Struct, Enum, Repeated, Separated, Precedence],
+        None,
     );
 
     check_trivia_parser(analysis, &language.leading_trivia, &enablement);
     check_trivia_parser(analysis, &language.trailing_trivia, &enablement);
 
-    for item in language.items() {
-        check_item(analysis, item, &enablement);
+    for lexical_context in &language.contexts {
+        for section in &lexical_context.sections {
+            for topic in &section.topics {
+                for item in &topic.items {
+                    check_item(analysis, item, &enablement, &lexical_context.name);
+                }
+            }
+        }
     }
 
     for built_in_context in &language.built_ins {
@@ -46,42 +51,53 @@ pub(crate) fn run(analysis: &mut Analysis) {
     }
 }
 
-fn check_item(analysis: &mut Analysis, item: &SpannedItem, enablement: &VersionSet) {
+fn check_item(
+    analysis: &mut Analysis,
+    item: &SpannedItem,
+    enablement: &VersionSet,
+    lexical_context: &Identifier,
+) {
     match item {
         SpannedItem::Struct { item } => {
-            check_struct(analysis, item, enablement);
+            check_struct(analysis, item, enablement, lexical_context);
         }
         SpannedItem::Enum { item } => {
-            check_enum(analysis, item, enablement);
+            check_enum(analysis, item, enablement, lexical_context);
         }
         SpannedItem::Repeated { item } => {
-            check_repeated(analysis, item, enablement);
+            check_repeated(analysis, item, enablement, lexical_context);
         }
         SpannedItem::Separated { item } => {
-            check_separated(analysis, item, enablement);
+            check_separated(analysis, item, enablement, lexical_context);
         }
         SpannedItem::Precedence { item } => {
-            check_precedence(analysis, item, enablement);
+            check_precedence(analysis, item, enablement, lexical_context);
         }
         SpannedItem::Trivia { item } => {
-            check_trivia(analysis, item, enablement);
+            check_trivia(analysis, item, enablement, lexical_context);
         }
         SpannedItem::Keyword { item } => {
             check_keyword(analysis, item, enablement);
         }
         SpannedItem::Token { item } => {
-            check_token(analysis, item, enablement);
+            check_token(analysis, item, enablement, lexical_context);
         }
         SpannedItem::Fragment { item } => {
-            check_fragment(analysis, item, enablement);
+            check_fragment(analysis, item, enablement, lexical_context);
         }
     }
 }
 
-fn check_struct(analysis: &mut Analysis, item: &SpannedStructItem, enablement: &VersionSet) {
+fn check_struct(
+    analysis: &mut Analysis,
+    item: &SpannedStructItem,
+    enablement: &VersionSet,
+    lexical_context: &Identifier,
+) {
     let SpannedStructItem {
         name,
         enabled,
+        switch_lexical_context,
         error_recovery: _,
         fields,
         parser_options: _,
@@ -89,10 +105,35 @@ fn check_struct(analysis: &mut Analysis, item: &SpannedStructItem, enablement: &
 
     let enablement = update_enablement(analysis, enablement, enabled.as_ref());
 
-    check_fields(analysis, name, fields, &enablement);
+    if let Some(gateway_lexical_context) = switch_lexical_context {
+        if **gateway_lexical_context == *lexical_context {
+            analysis.errors.add(
+                gateway_lexical_context,
+                &Errors::UnnecessaryLexicalContextSwitch,
+            );
+        }
+
+        let mut fields = fields.values();
+        if let Some(gateway_field) = fields.next() {
+            check_gateway_field(analysis, name, gateway_field, &enablement, lexical_context);
+
+            for field in fields {
+                check_field(analysis, name, field, &enablement, gateway_lexical_context);
+            }
+        }
+    } else {
+        for field in fields.values() {
+            check_field(analysis, name, field, &enablement, lexical_context);
+        }
+    }
 }
 
-fn check_enum(analysis: &mut Analysis, item: &SpannedEnumItem, enablement: &VersionSet) {
+fn check_enum(
+    analysis: &mut Analysis,
+    item: &SpannedEnumItem,
+    enablement: &VersionSet,
+    lexical_context: &Identifier,
+) {
     let SpannedEnumItem {
         name,
         enabled,
@@ -115,11 +156,17 @@ fn check_enum(analysis: &mut Analysis, item: &SpannedEnumItem, enablement: &Vers
             &[
                 Struct, Enum, Repeated, Separated, Precedence, Keyword, Token,
             ],
+            Some(lexical_context),
         );
     }
 }
 
-fn check_repeated(analysis: &mut Analysis, item: &SpannedRepeatedItem, enablement: &VersionSet) {
+fn check_repeated(
+    analysis: &mut Analysis,
+    item: &SpannedRepeatedItem,
+    enablement: &VersionSet,
+    lexical_context: &Identifier,
+) {
     let SpannedRepeatedItem {
         name,
         reference,
@@ -138,10 +185,16 @@ fn check_repeated(analysis: &mut Analysis, item: &SpannedRepeatedItem, enablemen
         &[
             Struct, Enum, Repeated, Separated, Precedence, Keyword, Token,
         ],
+        Some(lexical_context),
     );
 }
 
-fn check_separated(analysis: &mut Analysis, item: &SpannedSeparatedItem, enablement: &VersionSet) {
+fn check_separated(
+    analysis: &mut Analysis,
+    item: &SpannedSeparatedItem,
+    enablement: &VersionSet,
+    lexical_context: &Identifier,
+) {
     let SpannedSeparatedItem {
         name,
         reference,
@@ -161,15 +214,24 @@ fn check_separated(analysis: &mut Analysis, item: &SpannedSeparatedItem, enablem
         &[
             Struct, Enum, Repeated, Separated, Precedence, Keyword, Token,
         ],
+        Some(lexical_context),
     );
 
-    check_reference(analysis, Some(name), separator, &enablement, &[Token]);
+    check_reference(
+        analysis,
+        Some(name),
+        separator,
+        &enablement,
+        &[Token],
+        Some(lexical_context),
+    );
 }
 
 fn check_precedence(
     analysis: &mut Analysis,
     item: &SpannedPrecedenceItem,
     enablement: &VersionSet,
+    lexical_context: &Identifier,
 ) {
     let SpannedPrecedenceItem {
         name,
@@ -194,7 +256,9 @@ fn check_precedence(
 
             let enablement = update_enablement(analysis, &enablement, enabled.as_ref());
 
-            check_fields(analysis, name, fields, &enablement);
+            for field in fields.values() {
+                check_field(analysis, name, field, &enablement, lexical_context);
+            }
         }
     }
 
@@ -211,62 +275,89 @@ fn check_precedence(
             &[
                 Struct, Enum, Repeated, Separated, Precedence, Keyword, Token,
             ],
+            Some(lexical_context),
         );
     }
 }
 
-fn check_fields(
+fn check_field(
     analysis: &mut Analysis,
     source: &Identifier,
-    fields: &IndexMap<Spanned<Identifier>, SpannedField>,
+    field: &SpannedField,
     enablement: &VersionSet,
+    lexical_context: &Identifier,
 ) {
-    for field in fields.values() {
-        match field {
-            SpannedField::Required { reference } => {
-                check_reference(
-                    analysis,
-                    Some(source),
-                    reference,
-                    enablement,
-                    &[
-                        Struct, Enum, Repeated, Separated, Precedence, Keyword, Token,
-                    ],
-                );
-            }
-            SpannedField::Optional { reference, enabled } => {
-                let enablement = update_enablement(analysis, enablement, enabled.as_ref());
+    match field {
+        SpannedField::Required { reference } => {
+            check_reference(
+                analysis,
+                Some(source),
+                reference,
+                enablement,
+                &[
+                    Struct, Enum, Repeated, Separated, Precedence, Keyword, Token,
+                ],
+                Some(lexical_context),
+            );
+        }
+        SpannedField::Optional { reference, enabled } => {
+            let enablement = update_enablement(analysis, enablement, enabled.as_ref());
 
-                check_reference(
-                    analysis,
-                    Some(source),
-                    reference,
-                    &enablement,
-                    &[
-                        Struct, Enum, Repeated, Separated, Precedence, Keyword, Token,
-                    ],
-                );
+            check_reference(
+                analysis,
+                Some(source),
+                reference,
+                &enablement,
+                &[
+                    Struct, Enum, Repeated, Separated, Precedence, Keyword, Token,
+                ],
+                Some(lexical_context),
+            );
 
-                if let Some(target) = analysis.metadata.get_mut(&**reference) {
-                    match &target.item {
-                        SpannedItem::Repeated { item: child } => {
-                            if child.allow_empty.as_ref().is_some_and(|b| **b) {
-                                analysis
-                                    .errors
-                                    .add(reference, &Errors::OptionalFieldAllowsEmpty);
-                            }
-                        }
-                        SpannedItem::Separated { item: child } => {
-                            if child.allow_empty.as_ref().is_some_and(|b| **b) {
-                                analysis
-                                    .errors
-                                    .add(reference, &Errors::OptionalFieldAllowsEmpty);
-                            }
-                        }
-                        _ => {}
+            if let Some(target) = analysis.metadata.get(&**reference) {
+                if match &target.item {
+                    SpannedItem::Repeated { item: child } => {
+                        child.allow_empty.as_ref().is_some_and(|b| **b)
                     }
+                    SpannedItem::Separated { item: child } => {
+                        child.allow_empty.as_ref().is_some_and(|b| **b)
+                    }
+                    _ => false,
+                } {
+                    analysis
+                        .errors
+                        .add(reference, &Errors::OptionalFieldAllowsEmpty);
                 }
             }
+        }
+    }
+}
+
+fn check_gateway_field(
+    analysis: &mut Analysis,
+    source: &Identifier,
+    field: &SpannedField,
+    enablement: &VersionSet,
+    lexical_context: &Identifier,
+) {
+    match field {
+        SpannedField::Required { reference } => {
+            check_reference(
+                analysis,
+                Some(source),
+                reference,
+                enablement,
+                &[Keyword],
+                Some(lexical_context),
+            );
+        }
+        SpannedField::Optional {
+            reference,
+            enabled: _,
+        } => {
+            analysis
+                .errors
+                .add(reference, &Errors::OptionalGatewayField);
         }
     }
 }
@@ -288,15 +379,20 @@ fn check_trivia_parser(
             check_trivia_parser(analysis, parser, enablement);
         }
         SpannedTriviaParser::Trivia { reference } => {
-            check_reference(analysis, None, reference, enablement, &[Trivia]);
+            check_reference(analysis, None, reference, enablement, &[Trivia], None);
         }
     }
 }
 
-fn check_trivia(analysis: &mut Analysis, item: &SpannedTriviaItem, enablement: &VersionSet) {
+fn check_trivia(
+    analysis: &mut Analysis,
+    item: &SpannedTriviaItem,
+    enablement: &VersionSet,
+    lexical_context: &Identifier,
+) {
     let SpannedTriviaItem { name, scanner } = item;
 
-    check_scanner(analysis, Some(name), scanner, enablement);
+    check_scanner(analysis, Some(name), scanner, enablement, lexical_context);
 }
 
 fn check_keyword(analysis: &mut Analysis, item: &SpannedKeywordItem, enablement: &VersionSet) {
@@ -309,7 +405,12 @@ fn check_keyword(analysis: &mut Analysis, item: &SpannedKeywordItem, enablement:
     let _ = update_enablement(analysis, enablement, enabled.as_ref());
 }
 
-fn check_token(analysis: &mut Analysis, item: &SpannedTokenItem, enablement: &VersionSet) {
+fn check_token(
+    analysis: &mut Analysis,
+    item: &SpannedTokenItem,
+    enablement: &VersionSet,
+    lexical_context: &Identifier,
+) {
     let SpannedTokenItem {
         name,
         enabled,
@@ -321,11 +422,16 @@ fn check_token(analysis: &mut Analysis, item: &SpannedTokenItem, enablement: &Ve
     for definition in definitions {
         let SpannedTokenDefinition { scanner } = definition;
 
-        check_scanner(analysis, Some(name), scanner, &enablement);
+        check_scanner(analysis, Some(name), scanner, &enablement, lexical_context);
     }
 }
 
-fn check_fragment(analysis: &mut Analysis, item: &SpannedFragmentItem, enablement: &VersionSet) {
+fn check_fragment(
+    analysis: &mut Analysis,
+    item: &SpannedFragmentItem,
+    enablement: &VersionSet,
+    lexical_context: &Identifier,
+) {
     let SpannedFragmentItem {
         name,
         enabled,
@@ -334,7 +440,7 @@ fn check_fragment(analysis: &mut Analysis, item: &SpannedFragmentItem, enablemen
 
     let enablement = update_enablement(analysis, enablement, enabled.as_ref());
 
-    check_scanner(analysis, Some(name), scanner, &enablement);
+    check_scanner(analysis, Some(name), scanner, &enablement, lexical_context);
 }
 
 fn check_scanner(
@@ -342,17 +448,18 @@ fn check_scanner(
     source: Option<&Identifier>,
     scanner: &SpannedScanner,
     enablement: &VersionSet,
+    lexical_context: &Identifier,
 ) {
     match scanner {
         SpannedScanner::Sequence { scanners } | SpannedScanner::Choice { scanners } => {
             for scanner in scanners {
-                check_scanner(analysis, source, scanner, enablement);
+                check_scanner(analysis, source, scanner, enablement, lexical_context);
             }
         }
         SpannedScanner::Optional { scanner }
         | SpannedScanner::ZeroOrMore { scanner }
         | SpannedScanner::OneOrMore { scanner } => {
-            check_scanner(analysis, source, scanner, enablement);
+            check_scanner(analysis, source, scanner, enablement, lexical_context);
         }
         SpannedScanner::Not { chars: _ }
         | SpannedScanner::Range {
@@ -363,7 +470,14 @@ fn check_scanner(
             // Nothing to check for now.
         }
         SpannedScanner::Fragment { reference } => {
-            check_reference(analysis, source, reference, enablement, &[Fragment]);
+            check_reference(
+                analysis,
+                source,
+                reference,
+                enablement,
+                &[Fragment],
+                Some(lexical_context),
+            );
         }
     }
 }
@@ -374,6 +488,7 @@ fn check_reference(
     reference: &Spanned<Identifier>,
     enablement: &VersionSet,
     expected_kinds: &[SpannedItemDiscriminants],
+    lexical_context: Option<&Identifier>,
 ) {
     let Some(target) = analysis.metadata.get_mut(&**reference) else {
         analysis
@@ -396,6 +511,15 @@ fn check_reference(
             reference,
             &Errors::InvalidReferenceFilter(reference, &actual_kind, expected_kinds),
         );
+    }
+
+    if let Some(expected) = lexical_context {
+        if target.lexical_context != *expected {
+            analysis.errors.add(
+                reference,
+                &Errors::InvalidReferenceContext(reference, &target.lexical_context, expected),
+            );
+        }
     }
 
     target.used_in.add_version_set(enablement);
@@ -511,4 +635,10 @@ enum Errors<'err> {
         &'err SpannedItemDiscriminants,
         &'err [SpannedItemDiscriminants],
     ),
+    #[error("Reference '{0}' is in context '{1}', but expected context '{2}'.")]
+    InvalidReferenceContext(&'err Identifier, &'err Identifier, &'err Identifier),
+    #[error("Unnecessary switch to the same lexical context.")]
+    UnnecessaryLexicalContextSwitch,
+    #[error("First field in a context switch cannot be optional.")]
+    OptionalGatewayField,
 }
