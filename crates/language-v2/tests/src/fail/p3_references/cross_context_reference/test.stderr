@@ -1,0 +1,5 @@
+error: Reference 'Two' is in context 'ContextA', but expected context 'ContextB'.
+  --> src/fail/p3_references/cross_context_reference/test.rs:30:75
+   |
+30 |                         Struct(name = Three, fields = (field_1 = Required(Two))),
+   |                                                                           ^^^

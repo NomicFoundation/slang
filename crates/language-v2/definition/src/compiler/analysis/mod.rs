@@ -22,6 +22,7 @@ pub(crate) struct Analysis {
 pub(crate) struct ItemMetadata {
     pub name: Spanned<Identifier>,
     pub item: SpannedItem,
+    pub lexical_context: Identifier,
 
     pub defined_in: VersionSet,
     pub used_in: VersionSet,

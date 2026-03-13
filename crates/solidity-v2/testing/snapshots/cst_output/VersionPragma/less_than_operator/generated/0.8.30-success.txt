@@ -20,7 +20,7 @@ SourceUnitStruct {
                             ),
                         },
                     ),
-                    semicolon: Semicolon {
+                    semicolon: PragmaSemicolon {
                         range: 137..138,
                     },
                 },

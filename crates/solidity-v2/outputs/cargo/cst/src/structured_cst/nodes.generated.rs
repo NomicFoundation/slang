@@ -153,15 +153,15 @@ pub type AssemblyFlagsDeclaration = Rc<AssemblyFlagsDeclarationStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct AssemblyFlagsDeclarationStruct {
-    pub open_paren: OpenParen,
+    pub open_paren: YulOpenParen,
     pub flags: AssemblyFlags,
-    pub close_paren: CloseParen,
+    pub close_paren: YulCloseParen,
 }
 
 pub fn new_assembly_flags_declaration(
-    open_paren: OpenParen,
+    open_paren: YulOpenParen,
     flags: AssemblyFlags,
-    close_paren: CloseParen,
+    close_paren: YulCloseParen,
 ) -> AssemblyFlagsDeclaration {
     Rc::new(AssemblyFlagsDeclarationStruct {
         open_paren,
@@ -175,14 +175,14 @@ pub type AssemblyStatement = Rc<AssemblyStatementStruct>;
 #[derive(Clone, Debug, PartialEq)]
 pub struct AssemblyStatementStruct {
     pub assembly_keyword: AssemblyKeyword,
-    pub label: Option<StringLiteral>,
+    pub label: Option<YulStringLiteral>,
     pub flags: Option<AssemblyFlagsDeclaration>,
     pub body: YulBlock,
 }
 
 pub fn new_assembly_statement(
     assembly_keyword: AssemblyKeyword,
-    label: Option<StringLiteral>,
+    label: Option<YulStringLiteral>,
     flags: Option<AssemblyFlagsDeclaration>,
     body: YulBlock,
 ) -> AssemblyStatement {
@@ -1643,13 +1643,13 @@ pub type PragmaDirective = Rc<PragmaDirectiveStruct>;
 pub struct PragmaDirectiveStruct {
     pub pragma_keyword: PragmaKeyword,
     pub pragma: Pragma,
-    pub semicolon: Semicolon,
+    pub semicolon: PragmaSemicolon,
 }
 
 pub fn new_pragma_directive(
     pragma_keyword: PragmaKeyword,
     pragma: Pragma,
-    semicolon: Semicolon,
+    semicolon: PragmaSemicolon,
 ) -> PragmaDirective {
     Rc::new(PragmaDirectiveStruct {
         pragma_keyword,
@@ -2201,11 +2201,15 @@ pub type VersionRange = Rc<VersionRangeStruct>;
 #[derive(Clone, Debug, PartialEq)]
 pub struct VersionRangeStruct {
     pub start: VersionLiteral,
-    pub minus: Minus,
+    pub minus: PragmaMinus,
     pub end: VersionLiteral,
 }
 
-pub fn new_version_range(start: VersionLiteral, minus: Minus, end: VersionLiteral) -> VersionRange {
+pub fn new_version_range(
+    start: VersionLiteral,
+    minus: PragmaMinus,
+    end: VersionLiteral,
+) -> VersionRange {
     Rc::new(VersionRangeStruct { start, minus, end })
 }
 
@@ -2252,15 +2256,15 @@ pub type YulBlock = Rc<YulBlockStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulBlockStruct {
-    pub open_brace: OpenBrace,
+    pub open_brace: YulOpenBrace,
     pub statements: YulStatements,
-    pub close_brace: CloseBrace,
+    pub close_brace: YulCloseBrace,
 }
 
 pub fn new_yul_block(
-    open_brace: OpenBrace,
+    open_brace: YulOpenBrace,
     statements: YulStatements,
-    close_brace: CloseBrace,
+    close_brace: YulCloseBrace,
 ) -> YulBlock {
     Rc::new(YulBlockStruct {
         open_brace,
@@ -2338,16 +2342,16 @@ pub type YulFunctionCallExpression = Rc<YulFunctionCallExpressionStruct>;
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulFunctionCallExpressionStruct {
     pub operand: YulExpression,
-    pub open_paren: OpenParen,
+    pub open_paren: YulOpenParen,
     pub arguments: YulArguments,
-    pub close_paren: CloseParen,
+    pub close_paren: YulCloseParen,
 }
 
 pub fn new_yul_function_call_expression(
     operand: YulExpression,
-    open_paren: OpenParen,
+    open_paren: YulOpenParen,
     arguments: YulArguments,
-    close_paren: CloseParen,
+    close_paren: YulCloseParen,
 ) -> YulFunctionCallExpression {
     Rc::new(YulFunctionCallExpressionStruct {
         operand,
@@ -2420,15 +2424,15 @@ pub type YulParametersDeclaration = Rc<YulParametersDeclarationStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulParametersDeclarationStruct {
-    pub open_paren: OpenParen,
+    pub open_paren: YulOpenParen,
     pub parameters: YulParameters,
-    pub close_paren: CloseParen,
+    pub close_paren: YulCloseParen,
 }
 
 pub fn new_yul_parameters_declaration(
-    open_paren: OpenParen,
+    open_paren: YulOpenParen,
     parameters: YulParameters,
-    close_paren: CloseParen,
+    close_paren: YulCloseParen,
 ) -> YulParametersDeclaration {
     Rc::new(YulParametersDeclarationStruct {
         open_paren,
@@ -2441,12 +2445,12 @@ pub type YulReturnsDeclaration = Rc<YulReturnsDeclarationStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulReturnsDeclarationStruct {
-    pub minus_greater_than: MinusGreaterThan,
+    pub minus_greater_than: YulMinusGreaterThan,
     pub variables: YulVariableNames,
 }
 
 pub fn new_yul_returns_declaration(
-    minus_greater_than: MinusGreaterThan,
+    minus_greater_than: YulMinusGreaterThan,
     variables: YulVariableNames,
 ) -> YulReturnsDeclaration {
     Rc::new(YulReturnsDeclarationStruct {
@@ -2502,13 +2506,13 @@ pub type YulVariableAssignmentStatement = Rc<YulVariableAssignmentStatementStruc
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulVariableAssignmentStatementStruct {
     pub variables: YulPaths,
-    pub assignment: ColonEqual,
+    pub assignment: YulColonEqual,
     pub expression: YulExpression,
 }
 
 pub fn new_yul_variable_assignment_statement(
     variables: YulPaths,
-    assignment: ColonEqual,
+    assignment: YulColonEqual,
     expression: YulExpression,
 ) -> YulVariableAssignmentStatement {
     Rc::new(YulVariableAssignmentStatementStruct {
@@ -2543,12 +2547,12 @@ pub type YulVariableDeclarationValue = Rc<YulVariableDeclarationValueStruct>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulVariableDeclarationValueStruct {
-    pub assignment: ColonEqual,
+    pub assignment: YulColonEqual,
     pub expression: YulExpression,
 }
 
 pub fn new_yul_variable_declaration_value(
-    assignment: ColonEqual,
+    assignment: YulColonEqual,
     expression: YulExpression,
 ) -> YulVariableDeclarationValue {
     Rc::new(YulVariableDeclarationValueStruct {
@@ -2762,7 +2766,7 @@ pub fn new_elementary_type_ufixed_keyword(element: UfixedKeyword) -> ElementaryT
 pub enum ExperimentalFeature {
     ABIEncoderV2Keyword(ABIEncoderV2Keyword),
     SMTCheckerKeyword(SMTCheckerKeyword),
-    StringLiteral(StringLiteral),
+    PragmaStringLiteral(PragmaStringLiteral),
 }
 
 pub fn new_experimental_feature_abi_encoder_v2_keyword(
@@ -2777,8 +2781,10 @@ pub fn new_experimental_feature_smt_checker_keyword(
     ExperimentalFeature::SMTCheckerKeyword(element)
 }
 
-pub fn new_experimental_feature_string_literal(element: StringLiteral) -> ExperimentalFeature {
-    ExperimentalFeature::StringLiteral(element)
+pub fn new_experimental_feature_pragma_string_literal(
+    element: PragmaStringLiteral,
+) -> ExperimentalFeature {
+    ExperimentalFeature::PragmaStringLiteral(element)
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -3595,6 +3601,24 @@ pub fn new_pragma_experimental_pragma(element: ExperimentalPragma) -> Pragma {
 }
 
 #[derive(Clone, Debug, PartialEq)]
+pub enum PragmaStringLiteral {
+    PragmaSingleQuotedStringLiteral(PragmaSingleQuotedStringLiteral),
+    PragmaDoubleQuotedStringLiteral(PragmaDoubleQuotedStringLiteral),
+}
+
+pub fn new_pragma_string_literal_pragma_single_quoted_string_literal(
+    element: PragmaSingleQuotedStringLiteral,
+) -> PragmaStringLiteral {
+    PragmaStringLiteral::PragmaSingleQuotedStringLiteral(element)
+}
+
+pub fn new_pragma_string_literal_pragma_double_quoted_string_literal(
+    element: PragmaDoubleQuotedStringLiteral,
+) -> PragmaStringLiteral {
+    PragmaStringLiteral::PragmaDoubleQuotedStringLiteral(element)
+}
+
+#[derive(Clone, Debug, PartialEq)]
 pub enum ReceiveFunctionAttribute {
     ModifierInvocation(ModifierInvocation),
     OverrideSpecifier(OverrideSpecifier),
@@ -4109,41 +4133,45 @@ pub fn new_version_literal_double_quoted_version_literal(
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum VersionOperator {
-    Caret(Caret),
-    Tilde(Tilde),
-    Equal(Equal),
-    LessThan(LessThan),
-    GreaterThan(GreaterThan),
-    LessThanEqual(LessThanEqual),
-    GreaterThanEqual(GreaterThanEqual),
+    PragmaCaret(PragmaCaret),
+    PragmaTilde(PragmaTilde),
+    PragmaEqual(PragmaEqual),
+    PragmaLessThan(PragmaLessThan),
+    PragmaGreaterThan(PragmaGreaterThan),
+    PragmaLessThanEqual(PragmaLessThanEqual),
+    PragmaGreaterThanEqual(PragmaGreaterThanEqual),
 }
 
-pub fn new_version_operator_caret(element: Caret) -> VersionOperator {
-    VersionOperator::Caret(element)
+pub fn new_version_operator_pragma_caret(element: PragmaCaret) -> VersionOperator {
+    VersionOperator::PragmaCaret(element)
 }
 
-pub fn new_version_operator_tilde(element: Tilde) -> VersionOperator {
-    VersionOperator::Tilde(element)
+pub fn new_version_operator_pragma_tilde(element: PragmaTilde) -> VersionOperator {
+    VersionOperator::PragmaTilde(element)
 }
 
-pub fn new_version_operator_equal(element: Equal) -> VersionOperator {
-    VersionOperator::Equal(element)
+pub fn new_version_operator_pragma_equal(element: PragmaEqual) -> VersionOperator {
+    VersionOperator::PragmaEqual(element)
 }
 
-pub fn new_version_operator_less_than(element: LessThan) -> VersionOperator {
-    VersionOperator::LessThan(element)
+pub fn new_version_operator_pragma_less_than(element: PragmaLessThan) -> VersionOperator {
+    VersionOperator::PragmaLessThan(element)
 }
 
-pub fn new_version_operator_greater_than(element: GreaterThan) -> VersionOperator {
-    VersionOperator::GreaterThan(element)
+pub fn new_version_operator_pragma_greater_than(element: PragmaGreaterThan) -> VersionOperator {
+    VersionOperator::PragmaGreaterThan(element)
 }
 
-pub fn new_version_operator_less_than_equal(element: LessThanEqual) -> VersionOperator {
-    VersionOperator::LessThanEqual(element)
+pub fn new_version_operator_pragma_less_than_equal(
+    element: PragmaLessThanEqual,
+) -> VersionOperator {
+    VersionOperator::PragmaLessThanEqual(element)
 }
 
-pub fn new_version_operator_greater_than_equal(element: GreaterThanEqual) -> VersionOperator {
-    VersionOperator::GreaterThanEqual(element)
+pub fn new_version_operator_pragma_greater_than_equal(
+    element: PragmaGreaterThanEqual,
+) -> VersionOperator {
+    VersionOperator::PragmaGreaterThanEqual(element)
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -4168,13 +4196,31 @@ pub fn new_yul_expression_yul_path(element: YulPath) -> YulExpression {
 }
 
 #[derive(Clone, Debug, PartialEq)]
+pub enum YulHexStringLiteral {
+    YulSingleQuotedHexStringLiteral(YulSingleQuotedHexStringLiteral),
+    YulDoubleQuotedHexStringLiteral(YulDoubleQuotedHexStringLiteral),
+}
+
+pub fn new_yul_hex_string_literal_yul_single_quoted_hex_string_literal(
+    element: YulSingleQuotedHexStringLiteral,
+) -> YulHexStringLiteral {
+    YulHexStringLiteral::YulSingleQuotedHexStringLiteral(element)
+}
+
+pub fn new_yul_hex_string_literal_yul_double_quoted_hex_string_literal(
+    element: YulDoubleQuotedHexStringLiteral,
+) -> YulHexStringLiteral {
+    YulHexStringLiteral::YulDoubleQuotedHexStringLiteral(element)
+}
+
+#[derive(Clone, Debug, PartialEq)]
 pub enum YulLiteral {
     YulTrueKeyword(YulTrueKeyword),
     YulFalseKeyword(YulFalseKeyword),
     YulDecimalLiteral(YulDecimalLiteral),
     YulHexLiteral(YulHexLiteral),
-    HexStringLiteral(HexStringLiteral),
-    StringLiteral(StringLiteral),
+    YulHexStringLiteral(YulHexStringLiteral),
+    YulStringLiteral(YulStringLiteral),
 }
 
 pub fn new_yul_literal_yul_true_keyword(element: YulTrueKeyword) -> YulLiteral {
@@ -4193,12 +4239,12 @@ pub fn new_yul_literal_yul_hex_literal(element: YulHexLiteral) -> YulLiteral {
     YulLiteral::YulHexLiteral(element)
 }
 
-pub fn new_yul_literal_hex_string_literal(element: HexStringLiteral) -> YulLiteral {
-    YulLiteral::HexStringLiteral(element)
+pub fn new_yul_literal_yul_hex_string_literal(element: YulHexStringLiteral) -> YulLiteral {
+    YulLiteral::YulHexStringLiteral(element)
 }
 
-pub fn new_yul_literal_string_literal(element: StringLiteral) -> YulLiteral {
-    YulLiteral::StringLiteral(element)
+pub fn new_yul_literal_yul_string_literal(element: YulStringLiteral) -> YulLiteral {
+    YulLiteral::YulStringLiteral(element)
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -4265,6 +4311,24 @@ pub fn new_yul_statement_yul_expression(element: YulExpression) -> YulStatement 
 }
 
 #[derive(Clone, Debug, PartialEq)]
+pub enum YulStringLiteral {
+    YulSingleQuotedStringLiteral(YulSingleQuotedStringLiteral),
+    YulDoubleQuotedStringLiteral(YulDoubleQuotedStringLiteral),
+}
+
+pub fn new_yul_string_literal_yul_single_quoted_string_literal(
+    element: YulSingleQuotedStringLiteral,
+) -> YulStringLiteral {
+    YulStringLiteral::YulSingleQuotedStringLiteral(element)
+}
+
+pub fn new_yul_string_literal_yul_double_quoted_string_literal(
+    element: YulDoubleQuotedStringLiteral,
+) -> YulStringLiteral {
+    YulStringLiteral::YulDoubleQuotedStringLiteral(element)
+}
+
+#[derive(Clone, Debug, PartialEq)]
 pub enum YulSwitchCase {
     YulDefaultCase(YulDefaultCase),
     YulValueCase(YulValueCase),
@@ -4294,10 +4358,10 @@ pub fn new_array_values(elements: Vec<Expression>) -> ArrayValues {
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct AssemblyFlags {
-    pub elements: Vec<StringLiteral>,
+    pub elements: Vec<YulStringLiteral>,
 }
 
-pub fn new_assembly_flags(elements: Vec<StringLiteral>) -> AssemblyFlags {
+pub fn new_assembly_flags(elements: Vec<YulStringLiteral>) -> AssemblyFlags {
     AssemblyFlags { elements }
 }
 
@@ -5042,15 +5106,6 @@ pub fn new_colon(range: Range<usize>, _source: &str) -> Colon {
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct ColonEqual {
-    pub range: Range<usize>,
-}
-
-pub fn new_colon_equal(range: Range<usize>, _source: &str) -> ColonEqual {
-    ColonEqual { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub struct Comma {
     pub range: Range<usize>,
 }
@@ -5711,15 +5766,6 @@ pub fn new_minus_equal(range: Range<usize>, _source: &str) -> MinusEqual {
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct MinusGreaterThan {
-    pub range: Range<usize>,
-}
-
-pub fn new_minus_greater_than(range: Range<usize>, _source: &str) -> MinusGreaterThan {
-    MinusGreaterThan { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub struct MinusMinus {
     pub range: Range<usize>,
 }
@@ -5912,12 +5958,135 @@ pub fn new_plus_plus(range: Range<usize>, _source: &str) -> PlusPlus {
 }
 
 #[derive(Clone, Debug, PartialEq)]
+pub struct PragmaBarBar {
+    pub range: Range<usize>,
+}
+
+pub fn new_pragma_bar_bar(range: Range<usize>, _source: &str) -> PragmaBarBar {
+    PragmaBarBar { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct PragmaCaret {
+    pub range: Range<usize>,
+}
+
+pub fn new_pragma_caret(range: Range<usize>, _source: &str) -> PragmaCaret {
+    PragmaCaret { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct PragmaDoubleQuotedStringLiteral {
+    pub range: Range<usize>,
+}
+
+pub fn new_pragma_double_quoted_string_literal(
+    range: Range<usize>,
+    _source: &str,
+) -> PragmaDoubleQuotedStringLiteral {
+    PragmaDoubleQuotedStringLiteral { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct PragmaEqual {
+    pub range: Range<usize>,
+}
+
+pub fn new_pragma_equal(range: Range<usize>, _source: &str) -> PragmaEqual {
+    PragmaEqual { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct PragmaGreaterThan {
+    pub range: Range<usize>,
+}
+
+pub fn new_pragma_greater_than(range: Range<usize>, _source: &str) -> PragmaGreaterThan {
+    PragmaGreaterThan { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct PragmaGreaterThanEqual {
+    pub range: Range<usize>,
+}
+
+pub fn new_pragma_greater_than_equal(range: Range<usize>, _source: &str) -> PragmaGreaterThanEqual {
+    PragmaGreaterThanEqual { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
 pub struct PragmaKeyword {
     pub range: Range<usize>,
 }
 
 pub fn new_pragma_keyword(range: Range<usize>, _source: &str) -> PragmaKeyword {
     PragmaKeyword { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct PragmaLessThan {
+    pub range: Range<usize>,
+}
+
+pub fn new_pragma_less_than(range: Range<usize>, _source: &str) -> PragmaLessThan {
+    PragmaLessThan { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct PragmaLessThanEqual {
+    pub range: Range<usize>,
+}
+
+pub fn new_pragma_less_than_equal(range: Range<usize>, _source: &str) -> PragmaLessThanEqual {
+    PragmaLessThanEqual { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct PragmaMinus {
+    pub range: Range<usize>,
+}
+
+pub fn new_pragma_minus(range: Range<usize>, _source: &str) -> PragmaMinus {
+    PragmaMinus { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct PragmaPeriod {
+    pub range: Range<usize>,
+}
+
+pub fn new_pragma_period(range: Range<usize>, _source: &str) -> PragmaPeriod {
+    PragmaPeriod { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct PragmaSemicolon {
+    pub range: Range<usize>,
+}
+
+pub fn new_pragma_semicolon(range: Range<usize>, _source: &str) -> PragmaSemicolon {
+    PragmaSemicolon { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct PragmaSingleQuotedStringLiteral {
+    pub range: Range<usize>,
+}
+
+pub fn new_pragma_single_quoted_string_literal(
+    range: Range<usize>,
+    _source: &str,
+) -> PragmaSingleQuotedStringLiteral {
+    PragmaSingleQuotedStringLiteral { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct PragmaTilde {
+    pub range: Range<usize>,
+}
+
+pub fn new_pragma_tilde(range: Range<usize>, _source: &str) -> PragmaTilde {
+    PragmaTilde { range }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -6440,6 +6609,42 @@ pub fn new_yul_case_keyword(range: Range<usize>, _source: &str) -> YulCaseKeywor
 }
 
 #[derive(Clone, Debug, PartialEq)]
+pub struct YulCloseBrace {
+    pub range: Range<usize>,
+}
+
+pub fn new_yul_close_brace(range: Range<usize>, _source: &str) -> YulCloseBrace {
+    YulCloseBrace { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct YulCloseParen {
+    pub range: Range<usize>,
+}
+
+pub fn new_yul_close_paren(range: Range<usize>, _source: &str) -> YulCloseParen {
+    YulCloseParen { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct YulColonEqual {
+    pub range: Range<usize>,
+}
+
+pub fn new_yul_colon_equal(range: Range<usize>, _source: &str) -> YulColonEqual {
+    YulColonEqual { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct YulComma {
+    pub range: Range<usize>,
+}
+
+pub fn new_yul_comma(range: Range<usize>, _source: &str) -> YulComma {
+    YulComma { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
 pub struct YulContinueKeyword {
     pub range: Range<usize>,
 }
@@ -6464,6 +6669,30 @@ pub struct YulDefaultKeyword {
 
 pub fn new_yul_default_keyword(range: Range<usize>, _source: &str) -> YulDefaultKeyword {
     YulDefaultKeyword { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct YulDoubleQuotedHexStringLiteral {
+    pub range: Range<usize>,
+}
+
+pub fn new_yul_double_quoted_hex_string_literal(
+    range: Range<usize>,
+    _source: &str,
+) -> YulDoubleQuotedHexStringLiteral {
+    YulDoubleQuotedHexStringLiteral { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct YulDoubleQuotedStringLiteral {
+    pub range: Range<usize>,
+}
+
+pub fn new_yul_double_quoted_string_literal(
+    range: Range<usize>,
+    _source: &str,
+) -> YulDoubleQuotedStringLiteral {
+    YulDoubleQuotedStringLiteral { range }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -6545,6 +6774,66 @@ pub struct YulLetKeyword {
 
 pub fn new_yul_let_keyword(range: Range<usize>, _source: &str) -> YulLetKeyword {
     YulLetKeyword { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct YulMinusGreaterThan {
+    pub range: Range<usize>,
+}
+
+pub fn new_yul_minus_greater_than(range: Range<usize>, _source: &str) -> YulMinusGreaterThan {
+    YulMinusGreaterThan { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct YulOpenBrace {
+    pub range: Range<usize>,
+}
+
+pub fn new_yul_open_brace(range: Range<usize>, _source: &str) -> YulOpenBrace {
+    YulOpenBrace { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct YulOpenParen {
+    pub range: Range<usize>,
+}
+
+pub fn new_yul_open_paren(range: Range<usize>, _source: &str) -> YulOpenParen {
+    YulOpenParen { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct YulPeriod {
+    pub range: Range<usize>,
+}
+
+pub fn new_yul_period(range: Range<usize>, _source: &str) -> YulPeriod {
+    YulPeriod { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct YulSingleQuotedHexStringLiteral {
+    pub range: Range<usize>,
+}
+
+pub fn new_yul_single_quoted_hex_string_literal(
+    range: Range<usize>,
+    _source: &str,
+) -> YulSingleQuotedHexStringLiteral {
+    YulSingleQuotedHexStringLiteral { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct YulSingleQuotedStringLiteral {
+    pub range: Range<usize>,
+}
+
+pub fn new_yul_single_quoted_string_literal(
+    range: Range<usize>,
+    _source: &str,
+) -> YulSingleQuotedStringLiteral {
+    YulSingleQuotedStringLiteral { range }
 }
 
 #[derive(Clone, Debug, PartialEq)]

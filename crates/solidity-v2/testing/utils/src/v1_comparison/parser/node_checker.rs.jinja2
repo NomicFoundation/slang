@@ -372,6 +372,61 @@ impl NodeChecker for YulBlock {
     }
 }
 
+{% elif parent_type == "AssemblyStatement" %}
+// TODO(v2): AssemblyStatement ignores label and flags for now until the Lexer can
+// perform a context switch, therefore the checker ignores those edges
+impl NodeChecker for AssemblyStatement {
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
+        let node_range = text_offset..(text_offset + node.text_len());
+
+        if node.kind() != NodeKind::Nonterminal(NonterminalKind::AssemblyStatement) {
+            return vec![NodeCheckerError::new(format!(
+                "Expected node kind to be {}, but it was {}",
+                NonterminalKind::AssemblyStatement,
+                node.kind()
+            ), node_range)];
+        }
+
+        let mut children = children_with_offsets(node, text_offset);
+        let mut errors = vec![];
+
+        // assembly_keyword
+        if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::AssemblyKeyword) {
+            errors.extend(self.assembly_keyword.check_node_with_offset(&child.node, child_offset));
+        } else {
+            errors.push(NodeCheckerError::new(
+                "Expected assembly_keyword to be present in the CST, but it was not".to_string(),
+                node_range.clone(),
+            ));
+        }
+
+        // label — skip (V2 can't parse this yet without context switching)
+        extract_with_label(&mut children, EdgeLabel::Label);
+
+        // flags — skip (V2 can't parse this yet without context switching)
+        extract_with_label(&mut children, EdgeLabel::Flags);
+
+        // body
+        if let Some((child, child_offset)) = extract_with_label(&mut children, EdgeLabel::Body) {
+            errors.extend(self.body.check_node_with_offset(&child.node, child_offset));
+        } else {
+            errors.push(NodeCheckerError::new(
+                "Expected body to be present in the CST, but it was not".to_string(),
+                node_range.clone(),
+            ));
+        }
+
+        if !children.is_empty() {
+            errors.push(NodeCheckerError::new(
+                format!("Expected 0 children left, but there's some left {children:#?}"),
+                node_range,
+            ));
+        }
+
+        errors
+    }
+}
+
 {% elif parent_type == "VariableDeclarationStatement" %}
 /// `NodeChecker` for `VariableDeclarationStatement` - V2 consolidates V1's `VariableDeclarationStatement` and `TupleDeconstructionStatement`
 impl NodeChecker for VariableDeclarationStatement {
@@ -1182,20 +1237,31 @@ impl NodeChecker for UntypedDeclarationNames {
 }
 
 {% else %}
+
+{% if parent_type == "PragmaStringLiteral" %}
+    {% set old_parent_type = "StringLiteral" %}
+{% elif parent_type == "YulStringLiteral" %}
+    {% set old_parent_type = "StringLiteral" %}
+{% elif parent_type == "YulHexStringLiteral" %}
+    {% set old_parent_type = "HexStringLiteral" %}
+{% else %}
+    {% set old_parent_type = parent_type %}
+{% endif %}
+
 /// Generic `NodeChecker` for choices
 impl NodeChecker for {{ parent_type }} {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
-        if node.kind() != NodeKind::Nonterminal(NonterminalKind::{{ parent_type }}) {
+        if node.kind() != NodeKind::Nonterminal(NonterminalKind::{{ old_parent_type }}) {
             // Don't even check the rest
-            return vec![NodeCheckerError::new(format!("Expected node kind to be {}, but it was {}", NonterminalKind::{{ parent_type }}, node.kind()), node_range)];
+            return vec![NodeCheckerError::new(format!("Expected node kind to be {}, but it was {}", NonterminalKind::{{ old_parent_type }}, node.kind()), node_range)];
         }
 
         let children = children_with_offsets(node, text_offset);
 
         if children.len() != 1 {
-            return vec![NodeCheckerError::new(format!("Expected exactly one child for {}, but got: {children:#?}", NonterminalKind::{{ parent_type }}), node_range)];
+            return vec![NodeCheckerError::new(format!("Expected exactly one child for {}, but got: {children:#?}", NonterminalKind::{{ old_parent_type }}), node_range)];
         }
 
         let (child, child_offset) = &children[0];
@@ -1325,6 +1391,15 @@ impl NodeChecker for {{ parent_type }} {
 // Terminals
 
 {% for parent_type in target.terminals %}
+{% if parent_type == "PragmaSemicolon" %}
+    {% set v1_kind_str = "Semicolon" %}
+{% elif parent_type == "YulOpenBrace" %}
+    {% set v1_kind_str = "OpenBrace" %}
+{% elif parent_type == "YulCloseBrace" %}
+    {% set v1_kind_str = "CloseBrace" %}
+{% else %}
+    {% set v1_kind_str = parent_type %}
+{% endif %}
 /// Generic `NodeChecker` for terminals
 impl NodeChecker for {{ parent_type }} {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
@@ -1332,7 +1407,7 @@ impl NodeChecker for {{ parent_type }} {
         let mut errors = vec![];
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "{{ parent_type }}";
+            let v2_kind = "{{ v1_kind_str }}";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"), node_range));
