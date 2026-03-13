@@ -5,11 +5,6 @@ pub(super) fn build_from(cst_model: &IrModel) -> ModelWithBuilder {
 
     // remove fields from sequences that contain redundant terminal nodes
     for (sequence_id, sequence) in &cst_model.sequences {
-        if sequence.multiple_operators {
-            // don't remove terminals if the sequence is modelling a precedence
-            // expression with multiple variant operators
-            continue;
-        }
         for field in &sequence.fields {
             if !field.is_optional
                 && field.r#type.is_terminal()

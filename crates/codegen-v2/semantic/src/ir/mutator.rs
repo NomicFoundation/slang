@@ -26,10 +26,6 @@ pub struct MutatedSequence {
     // Indicates that new fields where added to the sequence, making it
     // impossible to auto-generate a transformer function.
     pub has_added_fields: bool,
-    // If true, this sequence models a precedence expression with multiple
-    // operators and the terminals should not be elided. This is only relevant
-    // for the initial builder from the CST.
-    pub multiple_operators: bool,
 }
 
 impl From<&Sequence> for MutatedSequence {
@@ -37,7 +33,6 @@ impl From<&Sequence> for MutatedSequence {
         Self {
             fields: value.fields.iter().map(|field| field.into()).collect(),
             has_added_fields: false,
-            multiple_operators: value.multiple_operators,
         }
     }
 }
@@ -55,12 +50,7 @@ impl From<&MutatedSequence> for Sequence {
                 }
             })
             .collect();
-        Self {
-            fields,
-            // NOTE: not strictly correct, but this info is only used for the
-            // transformation from the CST model into L1
-            multiple_operators: value.multiple_operators,
-        }
+        Self { fields }
     }
 }
 
