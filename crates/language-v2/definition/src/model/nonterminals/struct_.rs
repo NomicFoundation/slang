@@ -15,6 +15,12 @@ pub struct StructItem {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub enabled: Option<VersionSpecifier>,
 
+    /// If set, this struct acts as a "gateway" that switches to a different lexical context.
+    /// The first field references a keyword in the struct's own context, while remaining fields
+    /// reference items in the specified target context.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub switch_lexical_context: Option<Identifier>,
+
     /// Error recovery information if this struct supports it
     #[serde(skip_serializing_if = "Option::is_none")]
     pub error_recovery: Option<FieldsErrorRecovery>,

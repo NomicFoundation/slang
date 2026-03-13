@@ -65,7 +65,7 @@ language_v2_macros::compile!(Language(
                                 variants = [
                                     EnumVariant(reference = ABIEncoderV2Keyword),
                                     EnumVariant(reference = SMTCheckerKeyword),
-                                    EnumVariant(reference = StringLiteral)
+                                    EnumVariant(reference = PragmaStringLiteral)
                                 ]
                             ),
                             Struct(
@@ -78,7 +78,7 @@ language_v2_macros::compile!(Language(
                             Separated(
                                 name = VersionExpressionSets,
                                 reference = VersionExpressionSet,
-                                separator = BarBar
+                                separator = PragmaBarBar
                             ),
                             Repeated(name = VersionExpressionSet, reference = VersionExpression),
                             Enum(
@@ -92,7 +92,7 @@ language_v2_macros::compile!(Language(
                                 name = VersionRange,
                                 fields = (
                                     start = Required(VersionLiteral),
-                                    minus = Required(Minus),
+                                    minus = Required(PragmaMinus),
                                     end = Required(VersionLiteral)
                                 )
                             ),
@@ -106,13 +106,13 @@ language_v2_macros::compile!(Language(
                             Enum(
                                 name = VersionOperator,
                                 variants = [
-                                    EnumVariant(reference = Caret),
-                                    EnumVariant(reference = Tilde),
-                                    EnumVariant(reference = Equal),
-                                    EnumVariant(reference = LessThan),
-                                    EnumVariant(reference = GreaterThan),
-                                    EnumVariant(reference = LessThanEqual),
-                                    EnumVariant(reference = GreaterThanEqual)
+                                    EnumVariant(reference = PragmaCaret),
+                                    EnumVariant(reference = PragmaTilde),
+                                    EnumVariant(reference = PragmaEqual),
+                                    EnumVariant(reference = PragmaLessThan),
+                                    EnumVariant(reference = PragmaGreaterThan),
+                                    EnumVariant(reference = PragmaLessThanEqual),
+                                    EnumVariant(reference = PragmaGreaterThanEqual)
                                 ]
                             ),
                             Enum(
@@ -127,7 +127,7 @@ language_v2_macros::compile!(Language(
                                 // __SLANG_VERSION_SPECIFIER_SYNTAX__ (keep in sync)
                                 name = SimpleVersionLiteral,
                                 reference = VersionSpecifier,
-                                separator = Period
+                                separator = PragmaPeriod
                             ),
                             Token(
                                 // __SLANG_VERSION_SPECIFIER_SYNTAX__ (keep in sync)
@@ -203,6 +203,93 @@ language_v2_macros::compile!(Language(
                                 definitions = [KeywordDefinition(value = Atom("solidity"))]
                             )
                         ]
+                    ),
+                    Topic(
+                        title = "Pragma Punctuation",
+                        items = [
+                            Token(name = PragmaBarBar, definitions = [TokenDefinition(Atom("||"))]),
+                            Token(name = PragmaCaret, definitions = [TokenDefinition(Atom("^"))]),
+                            Token(name = PragmaEqual, definitions = [TokenDefinition(Atom("="))]),
+                            Token(name = PragmaGreaterThan, definitions = [TokenDefinition(Atom(">"))]),
+                            Token(name = PragmaGreaterThanEqual, definitions = [TokenDefinition(Atom(">="))]),
+                            Token(name = PragmaLessThan, definitions = [TokenDefinition(Atom("<"))]),
+                            Token(name = PragmaLessThanEqual, definitions = [TokenDefinition(Atom("<="))]),
+                            Token(name = PragmaMinus, definitions = [TokenDefinition(Atom("-"))]),
+                            Token(name = PragmaPeriod, definitions = [TokenDefinition(Atom("."))]),
+                            Token(name = PragmaSemicolon, definitions = [TokenDefinition(Atom(";"))]),
+                            Token(name = PragmaTilde, definitions = [TokenDefinition(Atom("~"))])
+                        ]
+                    ),
+                    Topic(
+                        title = "Pragma String Literals",
+                        items = [
+                            Enum(
+                                name = PragmaStringLiteral,
+                                variants = [
+                                    EnumVariant(reference = PragmaSingleQuotedStringLiteral),
+                                    EnumVariant(reference = PragmaDoubleQuotedStringLiteral)
+                                ]
+                            ),
+                            Token(
+                                name = PragmaSingleQuotedStringLiteral,
+                                definitions = [TokenDefinition(Sequence([
+                                    Atom("'"),
+                                    ZeroOrMore(Choice([
+                                        Fragment(PragmaEscapeSequence),
+                                        Not(['\'', '\\', '\r', '\n'])
+                                    ])),
+                                    Atom("'")
+                                ]))]
+                            ),
+                            Token(
+                                name = PragmaDoubleQuotedStringLiteral,
+                                definitions = [TokenDefinition(Sequence([
+                                    Atom("\""),
+                                    ZeroOrMore(Choice([
+                                        Fragment(PragmaEscapeSequence),
+                                        Not(['"', '\\', '\r', '\n'])
+                                    ])),
+                                    Atom("\"")
+                                ]))]
+                            ),
+                            Fragment(
+                                name = PragmaEscapeSequence,
+                                scanner = Sequence([
+                                    Atom("\\"),
+                                    Choice([
+                                        Not(['x', 'u']),
+                                        Fragment(PragmaHexByteEscape),
+                                        Fragment(PragmaUnicodeEscape)
+                                    ])
+                                ])
+                            ),
+                            Fragment(
+                                name = PragmaHexCharacter,
+                                scanner = Choice([
+                                    Range(inclusive_start = '0', inclusive_end = '9'),
+                                    Range(inclusive_start = 'a', inclusive_end = 'f'),
+                                    Range(inclusive_start = 'A', inclusive_end = 'F')
+                                ])
+                            ),
+                            Fragment(
+                                name = PragmaHexByteEscape,
+                                scanner = Sequence([
+                                    Atom("x"),
+                                    Fragment(PragmaHexCharacter),
+                                    Fragment(PragmaHexCharacter)
+                                ])
+                            ),
+                            Fragment(
+                                name = PragmaUnicodeEscape,
+                                scanner = Sequence([
+                                    Atom("u"),
+                                    Fragment(PragmaHexCharacter),
+                                    Fragment(PragmaHexCharacter),
+                                    Fragment(PragmaHexCharacter),
+                                    Fragment(PragmaHexCharacter)
+                                ])
+                            )
+                        ]
                     )
                 ]
             )]
@@ -259,11 +346,12 @@ language_v2_macros::compile!(Language(
                                 ),
                                 Struct(
                                     name = PragmaDirective,
+                                    switch_lexical_context = Pragma,
                                     error_recovery = FieldsErrorRecovery(terminator = semicolon),
                                     fields = (
                                         pragma_keyword = Required(PragmaKeyword),
                                         pragma = Required(Pragma),
-                                        semicolon = Required(Semicolon)
+                                        semicolon = Required(PragmaSemicolon)
                                     ),
                                     // TODO(v2): Until the lexer can perform context switching, we ignore pragmas
                                     parser_options = ParserOptions(
@@ -272,6 +360,7 @@ language_v2_macros::compile!(Language(
 PragmaDirective: PragmaDirective = {
     <pragma_keyword: PragmaKeyword>  ! <semicolon: Semicolon>  => {
     let abicoder = new_pragma_abicoder_pragma(new_abicoder_pragma(new_abicoder_keyword(0..0, source), new_abicoder_version_abicoder_v1_keyword(new_abicoder_v1_keyword(0..0, source))));
+    let semicolon = new_pragma_semicolon(semicolon.range, source);
     new_pragma_directive(pragma_keyword, abicoder , semicolon)
     }
 };
@@ -1758,10 +1847,6 @@ PragmaDirective: PragmaDirective = {
                                 ),
                                 Token(name = Semicolon, definitions = [TokenDefinition(Atom(";"))]),
                                 Token(name = Colon, definitions = [TokenDefinition(Atom(":"))]),
-                                Token(
-                                    name = ColonEqual,
-                                    definitions = [TokenDefinition(Atom(":="))]
-                                ),
                                 Token(name = Equal, definitions = [TokenDefinition(Atom("="))]),
                                 Token(
                                     name = EqualEqual,
@@ -1843,10 +1928,6 @@ PragmaDirective: PragmaDirective = {
                                 Token(
                                     name = MinusMinus,
                                     definitions = [TokenDefinition(Atom("--"))]
-                                ),
-                                Token(
-                                    name = MinusGreaterThan,
-                                    definitions = [TokenDefinition(Atom("->"))]
                                 ),
                                 Token(name = Slash, definitions = [TokenDefinition(Atom("/"))]),
                                 Token(
@@ -2910,34 +2991,24 @@ IdentifierPathNoRevert: IdentifierPath = {
                                 ),
                                 Struct(
                                     name = AssemblyStatement,
+                                    switch_lexical_context = Yul,
                                     fields = (
                                         assembly_keyword = Required(AssemblyKeyword),
-                                        label = Optional(reference = StringLiteral),
+                                        label = Optional(reference = YulStringLiteral),
                                         flags = Optional(
-                                            reference = AssemblyFlagsDeclaration,
+                                            reference = YulFlagsDeclaration,
                                             enabled = From("0.8.13")
                                         ),
                                         body = Required(YulBlock)
-                                    )
-                                ),
-                                Struct(
-                                    name = AssemblyFlagsDeclaration,
-                                    enabled = From("0.8.13"),
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_paren, close = close_paren)
                                     ),
-                                    fields = (
-                                        open_paren = Required(OpenParen),
-                                        flags = Required(AssemblyFlags),
-                                        close_paren = Required(CloseParen)
-                                    )
-                                ),
-                                Separated(
-                                    name = AssemblyFlags,
-                                    reference = StringLiteral,
-                                    separator = Comma,
-                                    enabled = From("0.8.13")
+                                    // TODO(v2): Until the lexer can perform context switching, we skip label and flags
+                                    parser_options = ParserOptions(inline = false, verbatim = r#"
+AssemblyStatement: AssemblyStatement = {
+    <assembly_keyword: AssemblyKeyword> ! <body: YulBlock> => {
+        new_assembly_statement(assembly_keyword, None, None, body)
+    }
+};
+"#)
                                 )
                             ]
                         ),
@@ -4446,21 +4517,43 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                         title = "Yul Statements",
                         items = [
                             Struct(
+                                name = YulFlagsDeclaration,
+                                enabled = From("0.8.13"),
+                                error_recovery = FieldsErrorRecovery(
+                                    delimiters =
+                                        FieldDelimiters(open = open_paren, close = close_paren)
+                                ),
+                                fields = (
+                                    open_paren = Required(YulOpenParen),
+                                    flags = Required(YulFlags),
+                                    close_paren = Required(YulCloseParen)
+                                )
+                            ),
+                            Separated(
+                                name = YulFlags,
+                                reference = YulStringLiteral,
+                                separator = YulComma,
+                                enabled = From("0.8.13")
+                            ),
+                            Struct(
                                 name = YulBlock,
                                 error_recovery = FieldsErrorRecovery(
                                     delimiters =
                                         FieldDelimiters(open = open_brace, close = close_brace)
                                 ),
                                 fields = (
-                                    open_brace = Required(OpenBrace),
+                                    open_brace = Required(YulOpenBrace),
                                     statements = Required(YulStatements),
-                                    close_brace = Required(CloseBrace)
+                                    close_brace = Required(YulCloseBrace)
                                 ),
                                 // TODO(v2): Until the lexer can perform context switching, we ignore YulBlocks
                                 parser_options = ParserOptions(inline = false, verbatim = r#"
 YulBlock: YulBlock = {
     <open_brace: OpenBrace>  !  <close_brace: CloseBrace>  => {
-        new_yul_block(open_brace, new_yul_statements(vec![]), close_brace)
+        let open_brace = new_yul_open_brace(open_brace.range, source);
+        let statements = new_yul_statements(vec![]);
+        let close_brace = new_yul_close_brace(close_brace.range, source);
+        new_yul_block(open_brace, statements, close_brace)
     }
 };
 "#)
@@ -4503,28 +4596,28 @@ YulBlock: YulBlock = {
                                         FieldDelimiters(open = open_paren, close = close_paren)
                                 ),
                                 fields = (
-                                    open_paren = Required(OpenParen),
+                                    open_paren = Required(YulOpenParen),
                                     parameters = Required(YulParameters),
-                                    close_paren = Required(CloseParen)
+                                    close_paren = Required(YulCloseParen)
                                 )
                             ),
                             Separated(
                                 name = YulParameters,
                                 reference = YulIdentifier,
-                                separator = Comma,
+                                separator = YulComma,
                                 allow_empty = true
                             ),
                             Struct(
                                 name = YulReturnsDeclaration,
                                 fields = (
-                                    minus_greater_than = Required(MinusGreaterThan),
+                                    minus_greater_than = Required(YulMinusGreaterThan),
                                     variables = Required(YulVariableNames)
                                 )
                             ),
                             Separated(
                                 name = YulVariableNames,
                                 reference = YulIdentifier,
-                                separator = Comma
+                                separator = YulComma
                             ),
                             Struct(
                                 name = YulVariableDeclarationStatement,
@@ -4537,7 +4630,7 @@ YulBlock: YulBlock = {
                             Struct(
                                 name = YulVariableDeclarationValue,
                                 fields = (
-                                    assignment = Required(ColonEqual),
+                                    assignment = Required(YulColonEqual),
                                     expression = Required(YulExpression)
                                 )
                             ),
@@ -4545,7 +4638,7 @@ YulBlock: YulBlock = {
                                 name = YulVariableAssignmentStatement,
                                 fields = (
                                     variables = Required(YulPaths),
-                                    assignment = Required(ColonEqual),
+                                    assignment = Required(YulColonEqual),
                                     expression = Required(YulExpression)
                                 )
                             ),
@@ -4628,9 +4721,9 @@ YulBlock: YulBlock = {
                                             )
                                         ),
                                         fields = (
-                                            open_paren = Required(OpenParen),
+                                            open_paren = Required(YulOpenParen),
                                             arguments = Required(YulArguments),
-                                            close_paren = Required(CloseParen)
+                                            close_paren = Required(YulCloseParen)
                                         )
                                     )]
                                 )],
@@ -4642,21 +4735,37 @@ YulBlock: YulBlock = {
                             Separated(
                                 name = YulArguments,
                                 reference = YulExpression,
-                                separator = Comma,
+                                separator = YulComma,
                                 allow_empty = true
                             ),
-                            Separated(name = YulPaths, reference = YulPath, separator = Comma),
+                            Separated(name = YulPaths, reference = YulPath, separator = YulComma),
                             Separated(
                                 name = YulPath,
                                 reference = YulIdentifier,
-                                separator = Period
+                                separator = YulPeriod
                             ),
                             Token(
                                 name = YulIdentifier,
                                 definitions = [TokenDefinition(Sequence([
-                                    Fragment(IdentifierStart),
-                                    ZeroOrMore(Choice([Fragment(IdentifierPart), Atom(".")]))
+                                    Fragment(YulIdentifierStart),
+                                    ZeroOrMore(Choice([Fragment(YulIdentifierPart), Atom(".")]))
                                 ]))]
+                            ),
+                            Fragment(
+                                name = YulIdentifierStart,
+                                scanner = Choice([
+                                    Atom("_"),
+                                    Atom("$"),
+                                    Range(inclusive_start = 'a', inclusive_end = 'z'),
+                                    Range(inclusive_start = 'A', inclusive_end = 'Z')
+                                ])
+                            ),
+                            Fragment(
+                                name = YulIdentifierPart,
+                                scanner = Choice([
+                                    Fragment(YulIdentifierStart),
+                                    Range(inclusive_start = '0', inclusive_end = '9')
+                                ])
                             ),
                             Enum(
                                 name = YulLiteral,
@@ -4665,8 +4774,8 @@ YulBlock: YulBlock = {
                                     EnumVariant(reference = YulFalseKeyword),
                                     EnumVariant(reference = YulDecimalLiteral),
                                     EnumVariant(reference = YulHexLiteral),
-                                    EnumVariant(reference = HexStringLiteral),
-                                    EnumVariant(reference = StringLiteral)
+                                    EnumVariant(reference = YulHexStringLiteral),
+                                    EnumVariant(reference = YulStringLiteral)
                                 ]
                             ),
                             Token(
@@ -4686,8 +4795,109 @@ YulBlock: YulBlock = {
                                 name = YulHexLiteral,
                                 definitions = [TokenDefinition(Sequence([
                                     Atom("0x"),
-                                    OneOrMore(Fragment(HexCharacter))
+                                    OneOrMore(Fragment(YulHexCharacter))
                                 ]))]
+                            ),
+                            Enum(
+                                name = YulHexStringLiteral,
+                                variants = [
+                                    EnumVariant(reference = YulSingleQuotedHexStringLiteral),
+                                    EnumVariant(reference = YulDoubleQuotedHexStringLiteral)
+                                ]
+                            ),
+                            Token(
+                                name = YulSingleQuotedHexStringLiteral,
+                                definitions = [TokenDefinition(Sequence([
+                                    Atom("hex'"),
+                                    Optional(Fragment(YulHexStringContents)),
+                                    Atom("'")
+                                ]))]
+                            ),
+                            Token(
+                                name = YulDoubleQuotedHexStringLiteral,
+                                definitions = [TokenDefinition(Sequence([
+                                    Atom("hex\""),
+                                    Optional(Fragment(YulHexStringContents)),
+                                    Atom("\"")
+                                ]))]
+                            ),
+                            Fragment(
+                                name = YulHexStringContents,
+                                scanner = Sequence([
+                                    Fragment(YulHexCharacter),
+                                    Fragment(YulHexCharacter),
+                                    ZeroOrMore(Sequence([
+                                        Optional(Atom("_")),
+                                        Fragment(YulHexCharacter),
+                                        Fragment(YulHexCharacter)
+                                    ]))
+                                ])
+                            ),
+                            Enum(
+                                name = YulStringLiteral,
+                                variants = [
+                                    EnumVariant(reference = YulSingleQuotedStringLiteral),
+                                    EnumVariant(reference = YulDoubleQuotedStringLiteral)
+                                ]
+                            ),
+                            Token(
+                                name = YulSingleQuotedStringLiteral,
+                                definitions = [TokenDefinition(Sequence([
+                                    Atom("'"),
+                                    ZeroOrMore(Choice([
+                                        Fragment(YulEscapeSequence),
+                                        Not(['\'', '\\', '\r', '\n'])
+                                    ])),
+                                    Atom("'")
+                                ]))]
+                            ),
+                            Token(
+                                name = YulDoubleQuotedStringLiteral,
+                                definitions = [TokenDefinition(Sequence([
+                                    Atom("\""),
+                                    ZeroOrMore(Choice([
+                                        Fragment(YulEscapeSequence),
+                                        Not(['"', '\\', '\r', '\n'])
+                                    ])),
+                                    Atom("\"")
+                                ]))]
+                            ),
+                            Fragment(
+                                name = YulEscapeSequence,
+                                scanner = Sequence([
+                                    Atom("\\"),
+                                    Choice([
+                                        Not(['x', 'u']),
+                                        Fragment(YulHexByteEscape),
+                                        Fragment(YulUnicodeEscape)
+                                    ])
+                                ])
+                            ),
+                            Fragment(
+                                name = YulHexByteEscape,
+                                scanner = Sequence([
+                                    Atom("x"),
+                                    Fragment(YulHexCharacter),
+                                    Fragment(YulHexCharacter)
+                                ])
+                            ),
+                            Fragment(
+                                name = YulUnicodeEscape,
+                                scanner = Sequence([
+                                    Atom("u"),
+                                    Fragment(YulHexCharacter),
+                                    Fragment(YulHexCharacter),
+                                    Fragment(YulHexCharacter),
+                                    Fragment(YulHexCharacter)
+                                ])
+                            ),
+                            Fragment(
+                                name = YulHexCharacter,
+                                scanner = Choice([
+                                    Range(inclusive_start = '0', inclusive_end = '9'),
+                                    Range(inclusive_start = 'a', inclusive_end = 'f'),
+                                    Range(inclusive_start = 'A', inclusive_end = 'F')
+                                ])
                             )
                         ]
                     ),
@@ -4763,6 +4973,19 @@ YulBlock: YulBlock = {
                                 name = YulTrueKeyword,
                                 definitions = [KeywordDefinition(value = Atom("true"))]
                             )
+                        ]
+                    ),
+                    Topic(
+                        title = "Yul Punctuation",
+                        items = [
+                            Token(name = YulCloseBrace, definitions = [TokenDefinition(Atom("}"))]),
+                            Token(name = YulCloseParen, definitions = [TokenDefinition(Atom(")"))]),
+                            Token(name = YulColonEqual, definitions = [TokenDefinition(Atom(":="))]),
+                            Token(name = YulComma, definitions = [TokenDefinition(Atom(","))]),
+                            Token(name = YulMinusGreaterThan, definitions = [TokenDefinition(Atom("->"))]),
+                            Token(name = YulOpenBrace, definitions = [TokenDefinition(Atom("{"))]),
+                            Token(name = YulOpenParen, definitions = [TokenDefinition(Atom("("))]),
+                            Token(name = YulPeriod, definitions = [TokenDefinition(Atom("."))])
                         ]
                     )
                 ]

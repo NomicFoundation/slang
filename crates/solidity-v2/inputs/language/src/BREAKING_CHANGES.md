@@ -98,3 +98,10 @@ Added types in V2:
 
 - Changed `arguments` field from `Optional(NamedArgumentGroup)` to `Required(NamedArgumentGroup)`.
 - This avoids ambiguity with empty argument lists `()` which could be either positional or named.
+
+### New Yul and Pragma terminals
+
+The new lexer isolates each lexical context completely, and they cannot reference each other,
+unless `switch_lexical_context` was used.
+So, new `Yul*` and `Pragma*` prefixed terminals (strings, numbers, some keywords) were added,
+with their structure/grammar mostly matching the original Solidity ones.
