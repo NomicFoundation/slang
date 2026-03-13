@@ -1,0 +1,105 @@
+{%- set target = model.ir_language_model.target -%}
+#![allow(non_camel_case_types)]
+
+#[allow(clippy::wildcard_imports)]
+use super::nodes::*;
+
+pub trait Visitor {
+  {%- for parent_type, sequence in target.sequences %}
+    fn enter_{{ parent_type | snake_case }}(&mut self, _node: &{{ parent_type }}) -> bool { true }
+    fn leave_{{ parent_type | snake_case }}(&mut self, _node: &{{ parent_type }}) {}
+  {% endfor -%}
+  {%- for parent_type, choice in target.choices %}
+    fn enter_{{ parent_type | snake_case }}(&mut self, _node: &{{ parent_type }}) -> bool { true }
+    fn leave_{{ parent_type | snake_case }}(&mut self, _node: &{{ parent_type }}) {}
+  {% endfor -%}
+  {%- for parent_type, collection in target.collections %}
+    fn enter_{{ parent_type | snake_case }}(&mut self, _items: &{{ parent_type }}) -> bool { true }
+    fn leave_{{ parent_type | snake_case }}(&mut self, _items: &{{ parent_type }}) {}
+  {% endfor -%}
+}
+
+//
+// Sequences
+//
+
+{% for parent_type, sequence in target.sequences %}
+  pub fn accept_{{ parent_type | snake_case }}(node: &{{ parent_type }}, visitor: &mut impl Visitor) {
+    if !visitor.enter_{{ parent_type | snake_case }}(node) {
+      return;
+    }
+    {% for field in sequence.fields -%}
+      {%- if not field.type.is_terminal -%}
+        {%- if field.is_optional -%}
+          if let Some(ref {{ field.label | snake_case }}) = node.{{ field.label | snake_case }} {
+            accept_{{ field.type.name | snake_case }}({{ field.label | snake_case }}, visitor);
+          }
+        {% else -%}
+          accept_{{ field.type.name | snake_case }}(&node.{{ field.label | snake_case }}, visitor);
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+    visitor.leave_{{ parent_type | snake_case }}(node);
+  }
+
+{% endfor %}
+
+//
+// Choices
+//
+
+{% for parent_type, choice in target.choices %}
+  {%- set nonterminals = choice.variants | filter(attribute="kind", value="Nonterminal") -%}
+  {%- set unique_terminals = choice.variants | filter(attribute="kind", value="UniqueTerminal") -%}
+  {%- set non_unique_terminals = choice.variants | filter(attribute="kind", value="Terminal") -%}
+  {% if nonterminals | length == 0 %}
+    pub fn accept_{{ parent_type | snake_case }}(_node: &{{ parent_type }}, _visitor: &mut impl Visitor) {}
+  {% else %}
+    pub fn accept_{{ parent_type | snake_case }}(node: &{{ parent_type }}, visitor: &mut impl Visitor) {
+      if !visitor.enter_{{ parent_type | snake_case }}(node) {
+        return;
+      }
+      match node {
+        {% for nonterminal in nonterminals -%}
+          {{ parent_type }}::{{ nonterminal.name }}(ref {{ nonterminal.name | snake_case }}) => {
+            accept_{{ nonterminal.name | snake_case }}({{ nonterminal.name | snake_case }}, visitor);
+          }
+        {%- endfor %}
+        {%- if non_unique_terminals | length > 0 %}
+          {%- for terminal in non_unique_terminals -%}
+            {%- if not loop.first -%} | {%- endif -%}
+            {{ parent_type }}::{{ terminal.name }}(_)
+          {%- endfor -%}
+          => {}
+        {% endif -%}
+        {%- if unique_terminals | length > 0 %}
+          {%- for terminal in unique_terminals -%}
+            {%- if not loop.first -%} | {%- endif -%}
+            {{ parent_type }}::{{ terminal.name }}
+          {%- endfor -%}
+          => {}
+        {% endif -%}
+      }
+      visitor.leave_{{ parent_type | snake_case }}(node);
+    }
+  {% endif %}
+{% endfor %}
+
+//
+// Repeated & Separated
+//
+
+{% for parent_type, collection in target.collections -%}
+  #[inline]
+  fn accept_{{ parent_type | snake_case }}(items: &Vec<{{ collection.item_type.name }}>, visitor: &mut impl Visitor) {
+    if !visitor.enter_{{ parent_type | snake_case }}(items) {
+      return;
+    }
+    {%- if not collection.item_type.is_terminal %}
+      for item in items {
+        accept_{{ collection.item_type.name | snake_case }}(item, visitor);
+      }
+    {% endif -%}
+    visitor.leave_{{ parent_type | snake_case }}(items);
+  }
+{% endfor %}
