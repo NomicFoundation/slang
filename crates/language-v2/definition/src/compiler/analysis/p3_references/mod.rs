@@ -98,7 +98,6 @@ fn check_struct(
         name,
         enabled,
         switch_lexical_context,
-        error_recovery: _,
         fields,
         parser_options: _,
     } = item;
@@ -250,7 +249,6 @@ fn check_precedence(
             let SpannedPrecedenceOperator {
                 model: _,
                 enabled,
-                error_recovery: _,
                 fields,
             } = operator;
 

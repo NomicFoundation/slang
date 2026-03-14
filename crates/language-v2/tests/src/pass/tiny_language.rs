@@ -62,7 +62,6 @@ fn definition() {
                                     name: "Foo".into(),
                                     enabled: None,
                                     switch_lexical_context: None,
-                                    error_recovery: None,
                                     fields: [
                                         (
                                             "bar".into(),

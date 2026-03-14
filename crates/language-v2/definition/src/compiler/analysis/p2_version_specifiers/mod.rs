@@ -65,7 +65,6 @@ fn check_struct(analysis: &mut Analysis, item: &SpannedStructItem) {
         name: _,
         enabled,
         switch_lexical_context: _,
-        error_recovery: _,
         fields,
         parser_options: _,
     } = item;
@@ -137,7 +136,6 @@ fn check_precedence(analysis: &mut Analysis, item: &SpannedPrecedenceItem) {
             let SpannedPrecedenceOperator {
                 model: _,
                 enabled,
-                error_recovery: _,
                 fields,
             } = operator;
 
