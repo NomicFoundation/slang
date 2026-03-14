@@ -2,7 +2,7 @@ use lalrpop_util::lalrpop_mod;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit;
 
-use crate::lexer::{ContextKind, LexemeKind, Lexer};
+use crate::lexer::{LexemeKind, Lexer};
 use crate::parser::parser_error::ParserError;
 
 mod parser_helpers;
@@ -36,7 +36,7 @@ impl Parser {
     pub fn parse(input: &str, version: LanguageVersion) -> Result<SourceUnit, ParserError> {
         Self::check_version(version);
 
-        let lexer = Lexer::new(ContextKind::Solidity, input, version);
+        let lexer = Lexer::new(input, version);
         let parser = grammar::SourceUnitParser::new();
         parser.parse(input, lexer).map_err(|e| e.into())
     }

@@ -3,13 +3,6 @@ use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::lexer::lexemes::{Lexeme, LexemeKind};
 
-#[derive(Clone, Copy, Debug)]
-pub enum ContextKind {
-    {%- for context in model.parser.lexer.contexts %}
-        {{ context.name }},
-    {%- endfor -%}
-}
-
 #[derive(Clone)]
 pub struct ContextExtras {
     #[allow(dead_code)]
@@ -24,34 +17,26 @@ pub enum ContextWrapper<'source> {
 }
 
 impl<'source> ContextWrapper<'source> {
-    pub fn new(kind: ContextKind, source: &'source str, extras: ContextExtras) -> Self {
-        match kind {
-            {% for context in model.parser.lexer.contexts %}
-                ContextKind::{{ context.name }} => Self::{{ context.name }}(
-                    {{ context.name }}Context::lexer_with_extras(source, extras)
-                ),
-            {%- endfor -%}
-        }
+    pub fn new(source: &'source str, extras: ContextExtras) -> Self {
+        Self::Solidity(SolidityContext::lexer_with_extras(source, extras))
     }
 
+    {% for new_context in model.parser.lexer.contexts %}
     #[must_use]
-    pub fn morph(self, kind: ContextKind) -> Self {
+    pub fn morph_to_{{ new_context.name | lower }}(self) -> Self {
         match self {
             {%- for old_context in model.parser.lexer.contexts %}
-                Self::{{ old_context.name }}(lexer) => match kind {
-                    {%- for new_context in model.parser.lexer.contexts %}
-                        ContextKind::{{ new_context.name }} => {
-                            {%- if old_context.name == new_context.name -%}
-                                Self::{{ new_context.name }}(lexer)
-                            {%- else -%}
-                                Self::{{ new_context.name }}(lexer.morph())
-                            {%- endif -%}
-                        },
-                    {%- endfor -%}
+                Self::{{ old_context.name }}(lexer) => {
+                    {%- if old_context.name == new_context.name -%}
+                        Self::{{ new_context.name }}(lexer)
+                    {%- else -%}
+                        Self::{{ new_context.name }}(lexer.morph())
+                    {%- endif -%}
                 },
             {%- endfor -%}
         }
     }
+    {%- endfor %}
 
     pub fn next_lexeme(&mut self) -> Option<Lexeme> {
         let (kind, range) = match self {
