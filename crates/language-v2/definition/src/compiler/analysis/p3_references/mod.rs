@@ -399,7 +399,8 @@ fn check_keyword(analysis: &mut Analysis, item: &SpannedKeywordItem, enablement:
     let SpannedKeywordItem {
         name: _,
         enabled,
-        definitions: _,
+        reserved: _,
+        value: _,
     } = item;
 
     let _ = update_enablement(analysis, enablement, enabled.as_ref());

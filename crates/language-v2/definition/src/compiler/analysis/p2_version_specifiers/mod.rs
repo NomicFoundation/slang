@@ -9,10 +9,9 @@ use crate::internals::Spanned;
 use crate::model::{
     Identifier, SpannedBuiltIn, SpannedBuiltInField, SpannedBuiltInFunction, SpannedBuiltInType,
     SpannedEnumItem, SpannedEnumVariant, SpannedField, SpannedFragmentItem, SpannedItem,
-    SpannedKeywordDefinition, SpannedKeywordItem, SpannedPrecedenceExpression,
-    SpannedPrecedenceItem, SpannedPrecedenceOperator, SpannedPrimaryExpression,
-    SpannedRepeatedItem, SpannedSeparatedItem, SpannedStructItem, SpannedTokenItem,
-    SpannedVersionSpecifier,
+    SpannedKeywordItem, SpannedPrecedenceExpression, SpannedPrecedenceItem,
+    SpannedPrecedenceOperator, SpannedPrimaryExpression, SpannedRepeatedItem, SpannedSeparatedItem,
+    SpannedStructItem, SpannedTokenItem, SpannedVersionSpecifier,
 };
 
 pub(crate) fn run(analysis: &mut Analysis) {
@@ -175,16 +174,12 @@ fn check_keyword(analysis: &mut Analysis, item: &SpannedKeywordItem) {
     let SpannedKeywordItem {
         name: _,
         enabled,
-        definitions,
+        reserved,
+        value: _,
     } = item;
 
     check_version_specifier(analysis, enabled.as_ref());
-
-    for definition in definitions {
-        let SpannedKeywordDefinition { reserved, value: _ } = definition;
-
-        check_version_specifier(analysis, reserved.as_ref());
-    }
+    check_version_specifier(analysis, reserved.as_ref());
 }
 
 fn check_token(analysis: &mut Analysis, item: &SpannedTokenItem) {

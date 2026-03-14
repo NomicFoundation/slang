@@ -18,10 +18,7 @@ language_v2_macros::compile!(Language(
                         switch_lexical_context = ContextA,
                         fields = (entry = Required(Two), field_1 = Required(Three))
                     ),
-                    Keyword(
-                        name = Two,
-                        definitions = [KeywordDefinition(value = Atom("two"))]
-                    ),
+                    Keyword(name = Two, value = Atom("two")),
                     Token(name = Three, definitions = [TokenDefinition(Atom("three"))])
                 ]
             )]
