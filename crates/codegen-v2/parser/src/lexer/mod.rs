@@ -2,7 +2,8 @@ mod builder;
 
 use std::collections::BTreeSet;
 
-use language_v2_definition::model::{Language, VersionSpecifier};
+use indexmap::IndexMap;
+use language_v2_definition::model::{Identifier, Language, VersionSpecifier};
 use serde::Serialize;
 
 use crate::lexer::builder::LexerModelBuilder;
@@ -23,6 +24,7 @@ impl LexerModel {
 pub struct LexicalContext {
     pub name: String,
     pub lexemes: Vec<Lexeme>,
+    pub subpatterns: IndexMap<Identifier, String>,
 }
 
 #[derive(Clone, Debug, Serialize)]
