@@ -136,7 +136,6 @@ fn get_spanned_type(input: Type) -> Type {
         | "Section"
         | "SeparatedItem"
         | "StructItem"
-        | "TokenDefinition"
         | "TokenItem"
         | "Topic"
         | "TriviaItem"
