@@ -12,10 +12,7 @@ language_v2_macros::compile!(Language(
             title = "Section One",
             topics = [Topic(
                 title = "Topic One",
-                items = [Token(
-                    name = Bar,
-                    definitions = [TokenDefinition(Atom("bar"))]
-                )],
+                items = [Token(name = Bar, scanner = Atom("bar"))],
                 unrecognized_field = true
             )]
         )]

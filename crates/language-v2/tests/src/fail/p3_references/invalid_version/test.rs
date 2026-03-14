@@ -40,7 +40,7 @@ language_v2_macros::compile!(Language(
                     Token(
                         name = Baz,
                         enabled = Range(from = "2.0.0", till = "3.0.0"),
-                        definitions = [TokenDefinition(Atom("baz"))]
+                        scanner = Atom("baz")
                     )
                 ]
             )]

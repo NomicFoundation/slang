@@ -19,7 +19,7 @@ language_v2_macros::compile!(Language(
                         fields = (entry = Required(Two), field_1 = Required(Three))
                     ),
                     Keyword(name = Two, value = Atom("two")),
-                    Token(name = Three, definitions = [TokenDefinition(Atom("three"))])
+                    Token(name = Three, scanner = Atom("three"))
                 ]
             )]
         )]
