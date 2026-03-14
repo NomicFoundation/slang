@@ -1,6 +1,6 @@
 use slang_solidity_v2_common::versions::LanguageVersion;
 
-use crate::lexer::contexts::{ContextExtras, ContextKind, ContextWrapper};
+use crate::lexer::contexts::{ContextExtras, ContextWrapper};
 use crate::lexer::lexemes::{Lexeme, LexemeKind};
 
 pub struct Lexer<'source> {
@@ -9,10 +9,10 @@ pub struct Lexer<'source> {
 }
 
 impl<'source> Lexer<'source> {
-    pub fn new(kind: ContextKind, source: &'source str, language_version: LanguageVersion) -> Self {
+    pub fn new(source: &'source str, language_version: LanguageVersion) -> Self {
         let extras = ContextExtras { language_version };
 
-        let context = ContextWrapper::new(kind, source, extras);
+        let context = ContextWrapper::new(source, extras);
 
         Self {
             context,
@@ -25,15 +25,15 @@ impl<'source> Lexer<'source> {
 
         match lexeme.kind {
             LexemeKind::PragmaKeyword_Reserved => {
-                self.context = self.context.clone().morph(ContextKind::Pragma);
+                self.context = self.context.clone().morph_to_pragma();
             }
             LexemeKind::PragmaSemicolon => {
-                self.context = self.context.clone().morph(ContextKind::Solidity);
+                self.context = self.context.clone().morph_to_solidity();
             }
 
             LexemeKind::AssemblyKeyword_Reserved => {
                 self.brace_depth = 0;
-                self.context = self.context.clone().morph(ContextKind::Yul);
+                self.context = self.context.clone().morph_to_yul();
             }
             LexemeKind::YulOpenBrace => {
                 self.brace_depth += 1;
@@ -41,7 +41,7 @@ impl<'source> Lexer<'source> {
             LexemeKind::YulCloseBrace => {
                 self.brace_depth -= 1;
                 if self.brace_depth == 0 {
-                    self.context = self.context.clone().morph(ContextKind::Solidity);
+                    self.context = self.context.clone().morph_to_solidity();
                 }
             }
 

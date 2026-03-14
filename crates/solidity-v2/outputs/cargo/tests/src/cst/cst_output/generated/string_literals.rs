@@ -17,6 +17,11 @@ fn double_quote() -> Result<()> {
 }
 
 #[test]
+fn double_quote_empty() -> Result<()> {
+    run(T, "double_quote_empty")
+}
+
+#[test]
 fn double_quote_unicode() -> Result<()> {
     run(T, "double_quote_unicode")
 }
@@ -24,6 +29,11 @@ fn double_quote_unicode() -> Result<()> {
 #[test]
 fn single_quote() -> Result<()> {
     run(T, "single_quote")
+}
+
+#[test]
+fn single_quote_empty() -> Result<()> {
+    run(T, "single_quote_empty")
 }
 
 #[test]

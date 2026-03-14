@@ -1,0 +1,68 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ConstantDefinition(
+                ConstantDefinitionStruct {
+                    type_name: ElementaryType(
+                        UintKeyword(
+                            UintKeyword {
+                                range: 0..4,
+                            },
+                        ),
+                    ),
+                    constant_keyword: ConstantKeyword {
+                        range: 5..13,
+                    },
+                    name: Identifier {
+                        range: 14..15,
+                    },
+                    equal: Equal {
+                        range: 16..17,
+                    },
+                    value: AdditiveExpression(
+                        AdditiveExpressionStruct {
+                            left_operand: MemberAccessExpression(
+                                MemberAccessExpressionStruct {
+                                    operand: DecimalNumberExpression(
+                                        DecimalNumberExpressionStruct {
+                                            literal: DecimalLiteral {
+                                                range: 18..19,
+                                            },
+                                            unit: None,
+                                        },
+                                    ),
+                                    period: Period {
+                                        range: 19..20,
+                                    },
+                                    member: Identifier(
+                                        Identifier {
+                                            range: 20..21,
+                                        },
+                                    ),
+                                },
+                            ),
+                            expression_additive_expression_operator: Minus(
+                                Minus {
+                                    range: 21..22,
+                                },
+                            ),
+                            right_operand: DecimalNumberExpression(
+                                DecimalNumberExpressionStruct {
+                                    literal: DecimalLiteral {
+                                        range: 22..23,
+                                    },
+                                    unit: None,
+                                },
+                            ),
+                        },
+                    ),
+                    semicolon: Semicolon {
+                        range: 23..24,
+                    },
+                },
+            ),
+        ],
+    },
+}
