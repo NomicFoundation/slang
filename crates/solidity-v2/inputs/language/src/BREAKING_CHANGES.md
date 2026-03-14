@@ -14,7 +14,7 @@
 
 - Removed `Scanner::TrailingContext` as the new lexer has no backtracking, and tries to scan the longest match by default. Terminals now have a priority (to resolve ambiguities), defined by their kind (`Trivia` < `Tokens` < `Keywords`), then by their order of declaration in the grammar. Later definitions like `SingleLineNatSpecComment` (`///`) have a higher priority than earlier definitions like `SingleLineComment` (`//`).
 - Promoted `TokenDefinition::enabled` to `TokenItem::enabled`, as the new lexer doesn't version individual definitions (all of them are matched in all versions). We can decide on whether to keep or remove the additional `TokenDefinition` structure after we consider how to handle post-lexing processing (e.g. `DecimalLiteral` and `YulIdentifier` version breaks).
-- Promoted `KeywordDefinition::enabled` to `KeywordItem::enabled`, as the new lexer doesn't version individual definitions (all of them are matched in all versions). We can decide on whether to keep or remove the additional `KeywordDefinition` structure after we consider how to handle variations in `reserved` status between them (mainly the four `*fixed*` keywords).
+- Removed `KeywordDefinition` and inlined its `reserved` and `value` fields into `KeywordItem`. Since no keyword had multiple definitions with different `reserved` status, the extra indirection was unnecessary.
 
 ## Grammar
 

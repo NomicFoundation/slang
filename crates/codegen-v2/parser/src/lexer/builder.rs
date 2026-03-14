@@ -128,9 +128,9 @@ impl LexicalContextBuilder {
                 | Item::Trivia { .. } => {}
 
                 Item::Keyword { item } => {
-                    let lexemes =
+                    let lexeme =
                         Self::convert_keyword(item, language_context.identifier_token.as_ref());
-                    instance.lexemes.extend(lexemes);
+                    instance.lexemes.push(lexeme);
                 }
                 Item::Token { item } => {
                     let lexemes = instance.convert_token(item);
@@ -178,19 +178,13 @@ impl LexicalContextBuilder {
         }
     }
 
-    fn convert_keyword(item: &KeywordItem, identifier: Option<&Identifier>) -> Vec<Lexeme> {
-        let mut result = Vec::new();
-
-        for definition in &item.definitions {
-            result.push(Lexeme::Keyword {
-                kind: item.name.to_string(),
-                identifier: identifier.map(|id| id.to_string()),
-                regex: Self::convert_keyword_value(&definition.value),
-                reserved: definition.reserved.clone().unwrap_or_default(),
-            });
+    fn convert_keyword(item: &KeywordItem, identifier: Option<&Identifier>) -> Lexeme {
+        Lexeme::Keyword {
+            kind: item.name.to_string(),
+            identifier: identifier.map(|id| id.to_string()),
+            regex: Self::convert_keyword_value(&item.value),
+            reserved: item.reserved.clone().unwrap_or_default(),
         }
-
-        result
     }
 
     fn convert_token(&mut self, item: &TokenItem) -> Vec<Lexeme> {
