@@ -5,6 +5,10 @@ use std::rc::Rc;
 use std::ops::Range;
 use std::vec::Vec;
 
+#[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[repr(transparent)]
+pub struct NodeId(usize);
+
 //
 // Sequences
 //
@@ -30,6 +34,12 @@ use std::vec::Vec;
         {%- endif -%}
       {%- endif -%}
     {% endfor -%}
+  }
+
+  impl {{ parent_type }}Struct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+      NodeId(Rc::as_ptr(self) as usize)
+    }
   }
 
 {% endfor %}
@@ -67,11 +77,26 @@ use std::vec::Vec;
 // Non-unique Terminals
 //
 
-{% for terminal_type, unique in target.terminals %}
-  {% if not unique %}
-    #[derive(Clone, Debug, PartialEq)]
-    pub struct {{ terminal_type }} {
-      pub range: Range<usize>,
-    }
+{% for terminal_type, terminal in target.terminals %}
+  {% if not terminal.is_unique %}
+    {% if terminal.is_identifier %}
+      pub type {{ terminal_type }} = Rc<{{ terminal_type }}Struct>;
+
+      #[derive(Clone, Debug, PartialEq)]
+      pub struct {{ terminal_type }}Struct {
+        pub range: Range<usize>,
+      }
+
+      impl {{ terminal_type }}Struct {
+        pub fn id(self: &Rc<Self>) -> NodeId {
+          NodeId(Rc::as_ptr(self) as usize)
+        }
+      }
+    {% else %}
+      #[derive(Clone, Debug, PartialEq)]
+      pub struct {{ terminal_type }} {
+        pub range: Range<usize>,
+      }
+    {% endif %}
   {% endif %}
 {% endfor %}

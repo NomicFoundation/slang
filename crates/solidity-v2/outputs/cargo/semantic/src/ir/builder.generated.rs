@@ -2506,9 +2506,9 @@ pub trait Builder {
     }
 
     fn build_identifier(&mut self, source: &input::Identifier) -> output::Identifier {
-        output::Identifier {
+        Rc::new(output::IdentifierStruct {
             range: source.range.clone(),
-        }
+        })
     }
 
     fn build_int_keyword(&mut self, source: &input::IntKeyword) -> output::IntKeyword {
@@ -2632,8 +2632,8 @@ pub trait Builder {
     }
 
     fn build_yul_identifier(&mut self, source: &input::YulIdentifier) -> output::YulIdentifier {
-        output::YulIdentifier {
+        Rc::new(output::YulIdentifierStruct {
             range: source.range.clone(),
-        }
+        })
     }
 }

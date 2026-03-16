@@ -10,11 +10,17 @@ use serde::Serialize;
 pub struct IrModel {
     // Terminal nodes and whether they are unique or their value depends on the
     // content.
-    pub terminals: BTreeMap<model::Identifier, bool>,
+    pub terminals: BTreeMap<model::Identifier, Terminal>,
 
     pub sequences: BTreeMap<model::Identifier, Sequence>,
     pub choices: BTreeMap<model::Identifier, Choice>,
     pub collections: BTreeMap<model::Identifier, Collection>,
+}
+
+#[derive(Clone, Serialize)]
+pub struct Terminal {
+    pub is_unique: bool,
+    pub is_identifier: bool,
 }
 
 #[derive(Clone, Serialize)]
@@ -114,7 +120,7 @@ impl IrModel {
 }
 
 struct IrModelBuilder {
-    pub terminals: BTreeMap<model::Identifier, bool>,
+    pub terminals: BTreeMap<model::Identifier, Terminal>,
     pub sequences: BTreeMap<model::Identifier, Sequence>,
     pub choices: BTreeMap<model::Identifier, Choice>,
     pub collections: BTreeMap<model::Identifier, Collection>,
@@ -139,6 +145,12 @@ impl IrModelBuilder {
     }
 
     fn collect_terminals(&mut self, language: &model::Language) {
+        let identifier_tokens = language
+            .contexts
+            .iter()
+            .filter_map(|context| context.identifier_token.clone())
+            .collect::<BTreeSet<_>>();
+
         for item in language.items() {
             match item {
                 model::Item::Struct { .. }
@@ -149,13 +161,31 @@ impl IrModelBuilder {
                     // These items are nonterminals.
                 }
                 model::Item::Trivia { item } => {
-                    self.terminals.insert(item.name.clone(), false);
+                    self.terminals.insert(
+                        item.name.clone(),
+                        Terminal {
+                            is_unique: false,
+                            is_identifier: false,
+                        },
+                    );
                 }
                 model::Item::Keyword { item } => {
-                    self.terminals.insert(item.name.clone(), item.is_unique());
+                    self.terminals.insert(
+                        item.name.clone(),
+                        Terminal {
+                            is_unique: item.is_unique(),
+                            is_identifier: false,
+                        },
+                    );
                 }
                 model::Item::Token { item } => {
-                    self.terminals.insert(item.name.clone(), item.is_unique());
+                    self.terminals.insert(
+                        item.name.clone(),
+                        Terminal {
+                            is_unique: item.is_unique(),
+                            is_identifier: identifier_tokens.contains(&item.name),
+                        },
+                    );
                 }
                 model::Item::Fragment { .. } => {
                     // These items are inlined.
@@ -201,8 +231,13 @@ impl IrModelBuilder {
     fn find_node_type(&self, identifier: &model::Identifier) -> NodeType {
         match self.terminals.get(identifier) {
             None => NodeType::Nonterminal(identifier.clone()),
-            Some(false) => NodeType::Terminal(identifier.clone()),
-            Some(true) => NodeType::UniqueTerminal(identifier.clone()),
+            Some(terminal) => {
+                if terminal.is_unique {
+                    NodeType::UniqueTerminal(identifier.clone())
+                } else {
+                    NodeType::Terminal(identifier.clone())
+                }
+            }
         }
     }
 

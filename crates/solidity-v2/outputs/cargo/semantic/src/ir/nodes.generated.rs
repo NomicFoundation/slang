@@ -6,6 +6,10 @@ use std::ops::Range;
 use std::rc::Rc;
 use std::vec::Vec;
 
+#[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[repr(transparent)]
+pub struct NodeId(usize);
+
 //
 // Sequences
 //
@@ -17,6 +21,12 @@ pub struct AbicoderPragmaStruct {
     pub version: AbicoderVersion,
 }
 
+impl AbicoderPragmaStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type AdditiveExpression = Rc<AdditiveExpressionStruct>;
 
 #[derive(Debug)]
@@ -26,11 +36,23 @@ pub struct AdditiveExpressionStruct {
     pub right_operand: Expression,
 }
 
+impl AdditiveExpressionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type AddressType = Rc<AddressTypeStruct>;
 
 #[derive(Debug)]
 pub struct AddressTypeStruct {
     pub payable_keyword: bool,
+}
+
+impl AddressTypeStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type AndExpression = Rc<AndExpressionStruct>;
@@ -41,11 +63,23 @@ pub struct AndExpressionStruct {
     pub right_operand: Expression,
 }
 
+impl AndExpressionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type ArrayExpression = Rc<ArrayExpressionStruct>;
 
 #[derive(Debug)]
 pub struct ArrayExpressionStruct {
     pub items: ArrayValues,
+}
+
+impl ArrayExpressionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type ArrayTypeName = Rc<ArrayTypeNameStruct>;
@@ -54,6 +88,12 @@ pub type ArrayTypeName = Rc<ArrayTypeNameStruct>;
 pub struct ArrayTypeNameStruct {
     pub operand: TypeName,
     pub index: Option<Expression>,
+}
+
+impl ArrayTypeNameStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type AssemblyStatement = Rc<AssemblyStatementStruct>;
@@ -65,6 +105,12 @@ pub struct AssemblyStatementStruct {
     pub label: Option<StringLiteral>,
 }
 
+impl AssemblyStatementStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type AssignmentExpression = Rc<AssignmentExpressionStruct>;
 
 #[derive(Debug)]
@@ -72,6 +118,12 @@ pub struct AssignmentExpressionStruct {
     pub left_operand: Expression,
     pub expression_assignment_expression_operator: Expression_AssignmentExpression_Operator,
     pub right_operand: Expression,
+}
+
+impl AssignmentExpressionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type BitwiseAndExpression = Rc<BitwiseAndExpressionStruct>;
@@ -82,12 +134,24 @@ pub struct BitwiseAndExpressionStruct {
     pub right_operand: Expression,
 }
 
+impl BitwiseAndExpressionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type BitwiseOrExpression = Rc<BitwiseOrExpressionStruct>;
 
 #[derive(Debug)]
 pub struct BitwiseOrExpressionStruct {
     pub left_operand: Expression,
     pub right_operand: Expression,
+}
+
+impl BitwiseOrExpressionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type BitwiseXorExpression = Rc<BitwiseXorExpressionStruct>;
@@ -98,6 +162,12 @@ pub struct BitwiseXorExpressionStruct {
     pub right_operand: Expression,
 }
 
+impl BitwiseXorExpressionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type Block = Rc<BlockStruct>;
 
 #[derive(Debug)]
@@ -105,10 +175,22 @@ pub struct BlockStruct {
     pub statements: Statements,
 }
 
+impl BlockStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type BreakStatement = Rc<BreakStatementStruct>;
 
 #[derive(Debug)]
 pub struct BreakStatementStruct {}
+
+impl BreakStatementStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
 
 pub type CallOptionsExpression = Rc<CallOptionsExpressionStruct>;
 
@@ -116,6 +198,12 @@ pub type CallOptionsExpression = Rc<CallOptionsExpressionStruct>;
 pub struct CallOptionsExpressionStruct {
     pub operand: Expression,
     pub options: CallOptions,
+}
+
+impl CallOptionsExpressionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type CatchClause = Rc<CatchClauseStruct>;
@@ -126,12 +214,24 @@ pub struct CatchClauseStruct {
     pub body: Block,
 }
 
+impl CatchClauseStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type CatchClauseError = Rc<CatchClauseErrorStruct>;
 
 #[derive(Debug)]
 pub struct CatchClauseErrorStruct {
     pub name: Option<Identifier>,
     pub parameters: Parameters,
+}
+
+impl CatchClauseErrorStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type ConditionalExpression = Rc<ConditionalExpressionStruct>;
@@ -141,6 +241,12 @@ pub struct ConditionalExpressionStruct {
     pub operand: Expression,
     pub true_expression: Expression,
     pub false_expression: Expression,
+}
+
+impl ConditionalExpressionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type ConstantDefinition = Rc<ConstantDefinitionStruct>;
@@ -153,10 +259,22 @@ pub struct ConstantDefinitionStruct {
     pub value: Option<Expression>,
 }
 
+impl ConstantDefinitionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type ContinueStatement = Rc<ContinueStatementStruct>;
 
 #[derive(Debug)]
 pub struct ContinueStatementStruct {}
+
+impl ContinueStatementStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
 
 pub type ContractDefinition = Rc<ContractDefinitionStruct>;
 
@@ -169,12 +287,24 @@ pub struct ContractDefinitionStruct {
     pub storage_layout: Option<Expression>,
 }
 
+impl ContractDefinitionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type DecimalNumberExpression = Rc<DecimalNumberExpressionStruct>;
 
 #[derive(Debug)]
 pub struct DecimalNumberExpressionStruct {
     pub literal: DecimalLiteral,
     pub unit: Option<NumberUnit>,
+}
+
+impl DecimalNumberExpressionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type DoWhileStatement = Rc<DoWhileStatementStruct>;
@@ -185,6 +315,12 @@ pub struct DoWhileStatementStruct {
     pub condition: Expression,
 }
 
+impl DoWhileStatementStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type EmitStatement = Rc<EmitStatementStruct>;
 
 #[derive(Debug)]
@@ -193,12 +329,24 @@ pub struct EmitStatementStruct {
     pub arguments: ArgumentsDeclaration,
 }
 
+impl EmitStatementStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type EnumDefinition = Rc<EnumDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct EnumDefinitionStruct {
     pub name: Identifier,
     pub members: EnumMembers,
+}
+
+impl EnumDefinitionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type EqualityExpression = Rc<EqualityExpressionStruct>;
@@ -210,12 +358,24 @@ pub struct EqualityExpressionStruct {
     pub right_operand: Expression,
 }
 
+impl EqualityExpressionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type ErrorDefinition = Rc<ErrorDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct ErrorDefinitionStruct {
     pub name: Identifier,
     pub parameters: Parameters,
+}
+
+impl ErrorDefinitionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type EventDefinition = Rc<EventDefinitionStruct>;
@@ -227,11 +387,23 @@ pub struct EventDefinitionStruct {
     pub parameters: Parameters,
 }
 
+impl EventDefinitionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type ExperimentalPragma = Rc<ExperimentalPragmaStruct>;
 
 #[derive(Debug)]
 pub struct ExperimentalPragmaStruct {
     pub feature: ExperimentalFeature,
+}
+
+impl ExperimentalPragmaStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type ExponentiationExpression = Rc<ExponentiationExpressionStruct>;
@@ -242,11 +414,23 @@ pub struct ExponentiationExpressionStruct {
     pub right_operand: Expression,
 }
 
+impl ExponentiationExpressionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type ExpressionStatement = Rc<ExpressionStatementStruct>;
 
 #[derive(Debug)]
 pub struct ExpressionStatementStruct {
     pub expression: Expression,
+}
+
+impl ExpressionStatementStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type ForStatement = Rc<ForStatementStruct>;
@@ -259,12 +443,24 @@ pub struct ForStatementStruct {
     pub body: Statement,
 }
 
+impl ForStatementStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type FunctionCallExpression = Rc<FunctionCallExpressionStruct>;
 
 #[derive(Debug)]
 pub struct FunctionCallExpressionStruct {
     pub operand: Expression,
     pub arguments: ArgumentsDeclaration,
+}
+
+impl FunctionCallExpressionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type FunctionDefinition = Rc<FunctionDefinitionStruct>;
@@ -283,6 +479,12 @@ pub struct FunctionDefinitionStruct {
     pub modifier_invocations: ModifierInvocations,
 }
 
+impl FunctionDefinitionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type FunctionType = Rc<FunctionTypeStruct>;
 
 #[derive(Debug)]
@@ -293,11 +495,23 @@ pub struct FunctionTypeStruct {
     pub mutability: FunctionMutability,
 }
 
+impl FunctionTypeStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type HexNumberExpression = Rc<HexNumberExpressionStruct>;
 
 #[derive(Debug)]
 pub struct HexNumberExpressionStruct {
     pub literal: HexLiteral,
+}
+
+impl HexNumberExpressionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type IfStatement = Rc<IfStatementStruct>;
@@ -309,6 +523,12 @@ pub struct IfStatementStruct {
     pub else_branch: Option<Statement>,
 }
 
+impl IfStatementStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type ImportDeconstruction = Rc<ImportDeconstructionStruct>;
 
 #[derive(Debug)]
@@ -317,12 +537,24 @@ pub struct ImportDeconstructionStruct {
     pub path: StringLiteral,
 }
 
+impl ImportDeconstructionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type ImportDeconstructionSymbol = Rc<ImportDeconstructionSymbolStruct>;
 
 #[derive(Debug)]
 pub struct ImportDeconstructionSymbolStruct {
     pub name: Identifier,
     pub alias: Option<Identifier>,
+}
+
+impl ImportDeconstructionSymbolStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type IndexAccessExpression = Rc<IndexAccessExpressionStruct>;
@@ -334,6 +566,12 @@ pub struct IndexAccessExpressionStruct {
     pub end: Option<Expression>,
 }
 
+impl IndexAccessExpressionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type InequalityExpression = Rc<InequalityExpressionStruct>;
 
 #[derive(Debug)]
@@ -343,12 +581,24 @@ pub struct InequalityExpressionStruct {
     pub right_operand: Expression,
 }
 
+impl InequalityExpressionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type InheritanceType = Rc<InheritanceTypeStruct>;
 
 #[derive(Debug)]
 pub struct InheritanceTypeStruct {
     pub type_name: IdentifierPath,
     pub arguments: Option<ArgumentsDeclaration>,
+}
+
+impl InheritanceTypeStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type InterfaceDefinition = Rc<InterfaceDefinitionStruct>;
@@ -360,12 +610,24 @@ pub struct InterfaceDefinitionStruct {
     pub members: InterfaceMembers,
 }
 
+impl InterfaceDefinitionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type LibraryDefinition = Rc<LibraryDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct LibraryDefinitionStruct {
     pub name: Identifier,
     pub members: LibraryMembers,
+}
+
+impl LibraryDefinitionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type MappingType = Rc<MappingTypeStruct>;
@@ -376,12 +638,24 @@ pub struct MappingTypeStruct {
     pub value_type: Parameter,
 }
 
+impl MappingTypeStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type MemberAccessExpression = Rc<MemberAccessExpressionStruct>;
 
 #[derive(Debug)]
 pub struct MemberAccessExpressionStruct {
     pub operand: Expression,
     pub member: IdentifierPathElement,
+}
+
+impl MemberAccessExpressionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type ModifierInvocation = Rc<ModifierInvocationStruct>;
@@ -392,6 +666,12 @@ pub struct ModifierInvocationStruct {
     pub arguments: Option<ArgumentsDeclaration>,
 }
 
+impl ModifierInvocationStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type MultiTypedDeclaration = Rc<MultiTypedDeclarationStruct>;
 
 #[derive(Debug)]
@@ -400,11 +680,23 @@ pub struct MultiTypedDeclarationStruct {
     pub value: Expression,
 }
 
+impl MultiTypedDeclarationStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type MultiTypedDeclarationElement = Rc<MultiTypedDeclarationElementStruct>;
 
 #[derive(Debug)]
 pub struct MultiTypedDeclarationElementStruct {
     pub member: Option<VariableDeclaration>,
+}
+
+impl MultiTypedDeclarationElementStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type MultiplicativeExpression = Rc<MultiplicativeExpressionStruct>;
@@ -416,6 +708,12 @@ pub struct MultiplicativeExpressionStruct {
     pub right_operand: Expression,
 }
 
+impl MultiplicativeExpressionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type NamedArgument = Rc<NamedArgumentStruct>;
 
 #[derive(Debug)]
@@ -424,11 +722,23 @@ pub struct NamedArgumentStruct {
     pub value: Expression,
 }
 
+impl NamedArgumentStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type NewExpression = Rc<NewExpressionStruct>;
 
 #[derive(Debug)]
 pub struct NewExpressionStruct {
     pub type_name: TypeName,
+}
+
+impl NewExpressionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type OrExpression = Rc<OrExpressionStruct>;
@@ -439,11 +749,23 @@ pub struct OrExpressionStruct {
     pub right_operand: Expression,
 }
 
+impl OrExpressionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type OverrideSpecifier = Rc<OverrideSpecifierStruct>;
 
 #[derive(Debug)]
 pub struct OverrideSpecifierStruct {
     pub overridden: Option<OverridePaths>,
+}
+
+impl OverrideSpecifierStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type Parameter = Rc<ParameterStruct>;
@@ -456,12 +778,24 @@ pub struct ParameterStruct {
     pub indexed: bool,
 }
 
+impl ParameterStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type PathImport = Rc<PathImportStruct>;
 
 #[derive(Debug)]
 pub struct PathImportStruct {
     pub alias: Option<Identifier>,
     pub path: StringLiteral,
+}
+
+impl PathImportStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type PostfixExpression = Rc<PostfixExpressionStruct>;
@@ -472,11 +806,23 @@ pub struct PostfixExpressionStruct {
     pub expression_postfix_expression_operator: Expression_PostfixExpression_Operator,
 }
 
+impl PostfixExpressionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type PragmaDirective = Rc<PragmaDirectiveStruct>;
 
 #[derive(Debug)]
 pub struct PragmaDirectiveStruct {
     pub pragma: Pragma,
+}
+
+impl PragmaDirectiveStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type PrefixExpression = Rc<PrefixExpressionStruct>;
@@ -487,11 +833,23 @@ pub struct PrefixExpressionStruct {
     pub operand: Expression,
 }
 
+impl PrefixExpressionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type ReturnStatement = Rc<ReturnStatementStruct>;
 
 #[derive(Debug)]
 pub struct ReturnStatementStruct {
     pub expression: Option<Expression>,
+}
+
+impl ReturnStatementStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type RevertStatement = Rc<RevertStatementStruct>;
@@ -500,6 +858,12 @@ pub type RevertStatement = Rc<RevertStatementStruct>;
 pub struct RevertStatementStruct {
     pub error: IdentifierPath,
     pub arguments: ArgumentsDeclaration,
+}
+
+impl RevertStatementStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type ShiftExpression = Rc<ShiftExpressionStruct>;
@@ -511,6 +875,12 @@ pub struct ShiftExpressionStruct {
     pub right_operand: Expression,
 }
 
+impl ShiftExpressionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type SingleTypedDeclaration = Rc<SingleTypedDeclarationStruct>;
 
 #[derive(Debug)]
@@ -519,11 +889,23 @@ pub struct SingleTypedDeclarationStruct {
     pub value: Option<Expression>,
 }
 
+impl SingleTypedDeclarationStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type SourceUnit = Rc<SourceUnitStruct>;
 
 #[derive(Debug)]
 pub struct SourceUnitStruct {
     pub members: SourceUnitMembers,
+}
+
+impl SourceUnitStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type StateVariableDefinition = Rc<StateVariableDefinitionStruct>;
@@ -538,6 +920,12 @@ pub struct StateVariableDefinitionStruct {
     pub override_specifier: Option<OverridePaths>,
 }
 
+impl StateVariableDefinitionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type StructDefinition = Rc<StructDefinitionStruct>;
 
 #[derive(Debug)]
@@ -546,12 +934,24 @@ pub struct StructDefinitionStruct {
     pub members: StructMembers,
 }
 
+impl StructDefinitionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type StructMember = Rc<StructMemberStruct>;
 
 #[derive(Debug)]
 pub struct StructMemberStruct {
     pub type_name: TypeName,
     pub name: Identifier,
+}
+
+impl StructMemberStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type TryStatement = Rc<TryStatementStruct>;
@@ -564,11 +964,23 @@ pub struct TryStatementStruct {
     pub catch_clauses: CatchClauses,
 }
 
+impl TryStatementStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type TupleExpression = Rc<TupleExpressionStruct>;
 
 #[derive(Debug)]
 pub struct TupleExpressionStruct {
     pub items: TupleValues,
+}
+
+impl TupleExpressionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type TupleValue = Rc<TupleValueStruct>;
@@ -578,6 +990,12 @@ pub struct TupleValueStruct {
     pub expression: Option<Expression>,
 }
 
+impl TupleValueStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type TypeExpression = Rc<TypeExpressionStruct>;
 
 #[derive(Debug)]
@@ -585,11 +1003,23 @@ pub struct TypeExpressionStruct {
     pub type_name: TypeName,
 }
 
+impl TypeExpressionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type UncheckedBlock = Rc<UncheckedBlockStruct>;
 
 #[derive(Debug)]
 pub struct UncheckedBlockStruct {
     pub block: Block,
+}
+
+impl UncheckedBlockStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type UserDefinedValueTypeDefinition = Rc<UserDefinedValueTypeDefinitionStruct>;
@@ -600,11 +1030,23 @@ pub struct UserDefinedValueTypeDefinitionStruct {
     pub value_type: ElementaryType,
 }
 
+impl UserDefinedValueTypeDefinitionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type UsingDeconstruction = Rc<UsingDeconstructionStruct>;
 
 #[derive(Debug)]
 pub struct UsingDeconstructionStruct {
     pub symbols: UsingDeconstructionSymbols,
+}
+
+impl UsingDeconstructionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type UsingDeconstructionSymbol = Rc<UsingDeconstructionSymbolStruct>;
@@ -613,6 +1055,12 @@ pub type UsingDeconstructionSymbol = Rc<UsingDeconstructionSymbolStruct>;
 pub struct UsingDeconstructionSymbolStruct {
     pub name: IdentifierPath,
     pub alias: Option<UsingOperator>,
+}
+
+impl UsingDeconstructionSymbolStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type UsingDirective = Rc<UsingDirectiveStruct>;
@@ -624,6 +1072,12 @@ pub struct UsingDirectiveStruct {
     pub global_keyword: bool,
 }
 
+impl UsingDirectiveStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type VariableDeclaration = Rc<VariableDeclarationStruct>;
 
 #[derive(Debug)]
@@ -633,6 +1087,12 @@ pub struct VariableDeclarationStruct {
     pub name: Identifier,
 }
 
+impl VariableDeclarationStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type VariableDeclarationStatement = Rc<VariableDeclarationStatementStruct>;
 
 #[derive(Debug)]
@@ -640,11 +1100,23 @@ pub struct VariableDeclarationStatementStruct {
     pub target: VariableDeclarationTarget,
 }
 
+impl VariableDeclarationStatementStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type VersionPragma = Rc<VersionPragmaStruct>;
 
 #[derive(Debug)]
 pub struct VersionPragmaStruct {
     pub sets: VersionExpressionSets,
+}
+
+impl VersionPragmaStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type VersionRange = Rc<VersionRangeStruct>;
@@ -655,12 +1127,24 @@ pub struct VersionRangeStruct {
     pub end: VersionLiteral,
 }
 
+impl VersionRangeStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type VersionTerm = Rc<VersionTermStruct>;
 
 #[derive(Debug)]
 pub struct VersionTermStruct {
     pub operator: Option<VersionOperator>,
     pub literal: VersionLiteral,
+}
+
+impl VersionTermStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type WhileStatement = Rc<WhileStatementStruct>;
@@ -671,6 +1155,12 @@ pub struct WhileStatementStruct {
     pub body: Statement,
 }
 
+impl WhileStatementStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type YulBlock = Rc<YulBlockStruct>;
 
 #[derive(Debug)]
@@ -678,21 +1168,45 @@ pub struct YulBlockStruct {
     pub statements: YulStatements,
 }
 
+impl YulBlockStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type YulBreakStatement = Rc<YulBreakStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulBreakStatementStruct {}
+
+impl YulBreakStatementStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
 
 pub type YulContinueStatement = Rc<YulContinueStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulContinueStatementStruct {}
 
+impl YulContinueStatementStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type YulDefaultCase = Rc<YulDefaultCaseStruct>;
 
 #[derive(Debug)]
 pub struct YulDefaultCaseStruct {
     pub body: YulBlock,
+}
+
+impl YulDefaultCaseStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type YulForStatement = Rc<YulForStatementStruct>;
@@ -705,12 +1219,24 @@ pub struct YulForStatementStruct {
     pub body: YulBlock,
 }
 
+impl YulForStatementStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type YulFunctionCallExpression = Rc<YulFunctionCallExpressionStruct>;
 
 #[derive(Debug)]
 pub struct YulFunctionCallExpressionStruct {
     pub operand: YulExpression,
     pub arguments: YulArguments,
+}
+
+impl YulFunctionCallExpressionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type YulFunctionDefinition = Rc<YulFunctionDefinitionStruct>;
@@ -723,6 +1249,12 @@ pub struct YulFunctionDefinitionStruct {
     pub body: YulBlock,
 }
 
+impl YulFunctionDefinitionStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type YulIfStatement = Rc<YulIfStatementStruct>;
 
 #[derive(Debug)]
@@ -731,10 +1263,22 @@ pub struct YulIfStatementStruct {
     pub body: YulBlock,
 }
 
+impl YulIfStatementStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type YulLeaveStatement = Rc<YulLeaveStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulLeaveStatementStruct {}
+
+impl YulLeaveStatementStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
 
 pub type YulSwitchStatement = Rc<YulSwitchStatementStruct>;
 
@@ -742,6 +1286,12 @@ pub type YulSwitchStatement = Rc<YulSwitchStatementStruct>;
 pub struct YulSwitchStatementStruct {
     pub expression: YulExpression,
     pub cases: YulSwitchCases,
+}
+
+impl YulSwitchStatementStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type YulValueCase = Rc<YulValueCaseStruct>;
@@ -752,12 +1302,24 @@ pub struct YulValueCaseStruct {
     pub body: YulBlock,
 }
 
+impl YulValueCaseStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type YulVariableAssignmentStatement = Rc<YulVariableAssignmentStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulVariableAssignmentStatementStruct {
     pub variables: YulPaths,
     pub expression: YulExpression,
+}
+
+impl YulVariableAssignmentStatementStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 pub type YulVariableDeclarationStatement = Rc<YulVariableDeclarationStatementStruct>;
@@ -768,11 +1330,23 @@ pub struct YulVariableDeclarationStatementStruct {
     pub value: Option<YulVariableDeclarationValue>,
 }
 
+impl YulVariableDeclarationStatementStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+}
+
 pub type YulVariableDeclarationValue = Rc<YulVariableDeclarationValueStruct>;
 
 #[derive(Debug)]
 pub struct YulVariableDeclarationValueStruct {
     pub expression: YulExpression,
+}
+
+impl YulVariableDeclarationValueStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 //
@@ -1297,9 +1871,17 @@ pub struct HexStringLiteral {
     pub range: Range<usize>,
 }
 
+pub type Identifier = Rc<IdentifierStruct>;
+
 #[derive(Clone, Debug, PartialEq)]
-pub struct Identifier {
+pub struct IdentifierStruct {
     pub range: Range<usize>,
+}
+
+impl IdentifierStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -1387,7 +1969,15 @@ pub struct YulHexLiteral {
     pub range: Range<usize>,
 }
 
+pub type YulIdentifier = Rc<YulIdentifierStruct>;
+
 #[derive(Clone, Debug, PartialEq)]
-pub struct YulIdentifier {
+pub struct YulIdentifierStruct {
     pub range: Range<usize>,
+}
+
+impl YulIdentifierStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
 }

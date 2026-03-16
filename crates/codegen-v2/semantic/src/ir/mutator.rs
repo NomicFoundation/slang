@@ -3,7 +3,7 @@ use std::collections::BTreeMap;
 use language_v2_definition::model;
 use serde::Serialize;
 
-use super::model::{Choice, Collection, Field, IrModel, NodeType, Sequence};
+use super::model::{Choice, Collection, Field, IrModel, NodeType, Sequence, Terminal};
 
 #[derive(Default, Serialize)]
 pub struct IrModelMutator {
@@ -157,23 +157,28 @@ impl From<&MutatedCollection> for Collection {
 #[derive(Clone, Serialize)]
 pub struct MutatedTerminal {
     pub is_unique: bool,
+    pub is_identifier: bool,
 
     // Indicates this is a new terminal, created in this language.
     pub is_new: bool,
 }
 
-impl From<&bool> for MutatedTerminal {
-    fn from(value: &bool) -> Self {
+impl From<&Terminal> for MutatedTerminal {
+    fn from(terminal: &Terminal) -> Self {
         Self {
-            is_unique: *value,
+            is_unique: terminal.is_unique,
+            is_identifier: terminal.is_identifier,
             is_new: false,
         }
     }
 }
 
-impl From<&MutatedTerminal> for bool {
+impl From<&MutatedTerminal> for Terminal {
     fn from(value: &MutatedTerminal) -> Self {
-        value.is_unique
+        Self {
+            is_unique: value.is_unique,
+            is_identifier: value.is_identifier,
+        }
     }
 }
 
@@ -282,6 +287,7 @@ impl IrModelMutator {
                     identifier,
                     MutatedTerminal {
                         is_unique: true,
+                        is_identifier: false,
                         is_new: true,
                     },
                 );
@@ -485,6 +491,7 @@ impl IrModelMutator {
                 identifier,
                 MutatedTerminal {
                     is_unique: false,
+                    is_identifier: false,
                     is_new: true,
                 },
             );

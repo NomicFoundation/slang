@@ -113,9 +113,15 @@ pub trait Builder {
     {# and new terminals cannot be automatically built #}
     {% if not terminal.is_new and not terminal.is_unique %}
       fn build_{{ terminal_type | snake_case }}(&mut self, source: &input::{{ terminal_type }}) -> output::{{ terminal_type }} {
-        output::{{ terminal_type }} {
-          range: source.range.clone(),
-        }
+        {% if terminal.is_identifier %}
+          Rc::new(output::{{ terminal_type }}Struct {
+            range: source.range.clone(),
+          })
+        {% else %}
+          output::{{ terminal_type }} {
+            range: source.range.clone(),
+          }
+        {% endif %}
       }
     {% endif %}
   {% endfor %}
