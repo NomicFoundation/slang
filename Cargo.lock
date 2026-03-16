@@ -3762,7 +3762,10 @@ dependencies = [
 name = "slang_solidity_v2_semantic"
 version = "1.3.4"
 dependencies = [
+ "anyhow",
+ "slang_solidity_v2_common",
  "slang_solidity_v2_cst",
+ "slang_solidity_v2_parser",
 ]
 
 [[package]]

@@ -5,6 +5,9 @@ use slang_solidity_v2_cst::structured_cst::nodes as input;
 use crate::ir::builder::Builder;
 use crate::ir::{self as output};
 
+#[cfg(test)]
+pub mod tests;
+
 pub struct CstToIrBuilder {}
 
 pub fn run(source_unit: &input::SourceUnit) -> output::SourceUnit {
