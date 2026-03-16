@@ -2309,7 +2309,6 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
         <override_specifier: OverrideSpecifier>  => new_state_variable_attribute_override_specifier(<>),
         <immutable_keyword: ImmutableKeyword>  => new_state_variable_attribute_immutable_keyword(<>),
         <transient_keyword: TransientKeyword>  => new_state_variable_attribute_transient_keyword(<>),
-        // As a note, Constant can be a function attribute until 0.5.0
         <constant_keyword: ConstantKeyword>  => new_state_variable_attribute_constant_keyword(<>),
 };
 "#)
