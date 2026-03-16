@@ -11,7 +11,7 @@ use std::path::Path;
 use anyhow::Result;
 use codegen_v2_cst::structured_cst::model::StructuredCstModel;
 use codegen_v2_parser::parser::ParserModel as ParserModelV2;
-use codegen_v2_semantic::ir::builders::build_v2_ir_model;
+use codegen_v2_semantic::ir::builder::build_v2_ir_model;
 use codegen_v2_semantic::ir::ModelWithBuilder;
 use indexmap::IndexSet;
 use infra_utils::cargo::CargoWorkspace;
