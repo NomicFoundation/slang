@@ -16,7 +16,7 @@ pub struct IrModelMutator {
 
     // Terminal nodes and whether they are unique or their value depends on the
     // content.
-    pub terminals: BTreeMap<model::Identifier, bool>,
+    pub terminals: BTreeMap<model::Identifier, MutatedTerminal>,
 }
 
 #[derive(Clone, Serialize)]
@@ -154,6 +154,29 @@ impl From<&MutatedCollection> for Collection {
     }
 }
 
+#[derive(Clone, Serialize)]
+pub struct MutatedTerminal {
+    pub is_unique: bool,
+
+    // Indicates this is a new terminal, created in this language.
+    pub is_new: bool,
+}
+
+impl From<&bool> for MutatedTerminal {
+    fn from(value: &bool) -> Self {
+        Self {
+            is_unique: *value,
+            is_new: false,
+        }
+    }
+}
+
+impl From<&MutatedTerminal> for bool {
+    fn from(value: &MutatedTerminal) -> Self {
+        value.is_unique
+    }
+}
+
 impl IrModelMutator {
     pub fn create_from(source: &IrModel) -> Self {
         let sequences = source
@@ -174,7 +197,11 @@ impl IrModelMutator {
             .map(|(identifier, collection)| (identifier.clone(), collection.into()))
             .collect();
 
-        let terminals = source.terminals.clone();
+        let terminals = source
+            .terminals
+            .iter()
+            .map(|(identifier, unique)| (identifier.clone(), unique.into()))
+            .collect();
 
         IrModelMutator {
             sequences,
@@ -186,7 +213,11 @@ impl IrModelMutator {
     }
 
     pub fn build_target(&self) -> IrModel {
-        let terminals = self.terminals.clone();
+        let terminals = self
+            .terminals
+            .iter()
+            .map(|(identifier, terminal)| (identifier.clone(), terminal.into()))
+            .collect();
 
         let sequences = self
             .sequences
@@ -240,12 +271,21 @@ impl IrModelMutator {
     pub fn add_enum_type(&mut self, name: &str, variants: &[&str]) {
         let mut added_variants = Vec::new();
         for variant in variants {
-            assert!(
-                self.terminals
-                    .insert((*variant).into(), true)
-                    .is_none_or(|is_unique| is_unique),
-                "Attempt to insert an already existing terminal '{variant}' that is non-unique"
-            );
+            let identifier: model::Identifier = (*variant).into();
+            if let Some(existing) = self.terminals.get(&identifier) {
+                assert!(
+                    existing.is_unique,
+                    "Attempt to insert an already existing terminal '{variant}' that is non-unique"
+                );
+            } else {
+                self.terminals.insert(
+                    identifier,
+                    MutatedTerminal {
+                        is_unique: true,
+                        is_new: true,
+                    },
+                );
+            }
             added_variants.push(NodeType::UniqueTerminal((*variant).into()));
         }
         self.choices.insert(
@@ -312,8 +352,13 @@ impl IrModelMutator {
     fn find_node_type(&self, identifier: &model::Identifier) -> NodeType {
         match self.terminals.get(identifier) {
             None => NodeType::Nonterminal(identifier.clone()),
-            Some(false) => NodeType::Terminal(identifier.clone()),
-            Some(true) => NodeType::UniqueTerminal(identifier.clone()),
+            Some(MutatedTerminal { is_unique, .. }) => {
+                if *is_unique {
+                    NodeType::UniqueTerminal(identifier.clone())
+                } else {
+                    NodeType::Terminal(identifier.clone())
+                }
+            }
         }
     }
 
@@ -429,11 +474,20 @@ impl IrModelMutator {
     }
 
     pub fn add_non_unique_terminal(&mut self, identifier: &str) {
-        assert!(
-            self.terminals
-                .insert(identifier.into(), false)
-                .is_none_or(|unique| !unique),
-            "Existing terminal {identifier} is unique"
-        );
+        let identifier: model::Identifier = (*identifier).into();
+        if let Some(existing) = self.terminals.get(&identifier) {
+            assert!(
+                !existing.is_unique,
+                "Existing terminal {identifier} is unique",
+            );
+        } else {
+            self.terminals.insert(
+                identifier,
+                MutatedTerminal {
+                    is_unique: false,
+                    is_new: true,
+                },
+            );
+        }
     }
 }
