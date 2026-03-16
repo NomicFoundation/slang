@@ -46,7 +46,7 @@ pub(crate) fn collect_snapshot_tests(
                     .insert(test_name.to_owned());
             }
             [.., ".gitattributes"] => {
-                /* Some tests depend on having CRLF being explicitly specified as EOL */
+                /* Some tests have special line endings (CRLF/CR) stored as binary */
             }
             _ => {
                 bail!("Invalid test input. Should be in the form of '<tests-dir>/GROUP_NAME/TEST_NAME/input.sol', but found: {file:?}");
