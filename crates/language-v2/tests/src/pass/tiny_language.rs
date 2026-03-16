@@ -61,6 +61,7 @@ fn definition() {
                                 item: StructItem {
                                     name: "Foo".into(),
                                     enabled: None,
+                                    switch_lexical_context: None,
                                     error_recovery: None,
                                     fields: [
                                         (
