@@ -12,16 +12,6 @@ fn braces_inside_assembly() -> Result<()> {
 }
 
 #[test]
-fn condition_and_assignment_expressions() -> Result<()> {
-    run(T, "condition_and_assignment_expressions")
-}
-
-#[test]
-fn condition_expressions() -> Result<()> {
-    run(T, "condition_expressions")
-}
-
-#[test]
 fn empty_file() -> Result<()> {
     run(T, "empty_file")
 }
