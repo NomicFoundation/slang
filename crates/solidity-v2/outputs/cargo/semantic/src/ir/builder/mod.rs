@@ -2,10 +2,18 @@ use std::rc::Rc;
 
 use slang_solidity_v2_cst::structured_cst::nodes as input;
 
-use crate::ir::default_builder::Builder;
+#[path = "default.generated.rs"]
+mod default;
+use default::Builder;
+
 use crate::ir::nodes as output;
 
-pub struct CstToIrBuilder {}
+pub fn build_source_unit(source_unit: &input::SourceUnit) -> output::SourceUnit {
+    let mut builder = CstToIrBuilder {};
+    builder.build_source_unit(source_unit)
+}
+
+struct CstToIrBuilder {}
 
 impl Builder for CstToIrBuilder {
     //
