@@ -26,20 +26,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  cooldown-check:
-    name: "Cargo cooldown check"
-    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
-
-    # Only run on the main repo (not forks), unless it is a dry run:
-    if: "${{ github.repository == 'NomicFoundation/slang' || inputs.dryRun == true }}"
-
-    steps:
-      - name: "Checkout Repository"
-        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
-      - uses: "./.github/actions/cooldown-check"
-
   benchmark:
-    needs: [cooldown-check]
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
 
     # Only run on the main repo (not forks), unless it is a dry run:
@@ -50,6 +37,17 @@ jobs:
         uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
         with:
           persist-credentials: false
+
+      - name: "Cache cooldown data"
+        uses: "actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830" # v4.3.0
+        with:
+          path: "**/target/slang-cache/cargo-cooldown-check"
+          key: "cooldown-check-v1-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}"
+          restore-keys: |
+            cooldown-check-v1-${{ runner.os }}-
+
+      - name: "Cargo cooldown check"
+        run: "./scripts/bin/with-hermit cargo-cooldown-check"
 
       - name: "Restore Cache"
         uses: "./.github/actions/cache/restore"
