@@ -13996,13 +13996,12 @@ impl NodeChecker for Pragma {
     }
 }
 
-/// Generic `NodeChecker` for choices
+/// Custom `NodeChecker` for `PragmaStringLiteral` — remaps version literal variants to string literal V1 equivalents
 impl NodeChecker for PragmaStringLiteral {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::StringLiteral) {
-            // Don't even check the rest
             return vec![NodeCheckerError::new(
                 format!(
                     "Expected node kind to be {}, but it was {}",
@@ -14038,19 +14037,64 @@ impl NodeChecker for PragmaStringLiteral {
             )];
         }
 
-        let mut errors = vec![];
-
         match self {
             Self::PragmaSingleQuotedStringLiteral(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
+                element.check_node_with_offset(&child.node, *child_offset)
             }
-
             Self::PragmaDoubleQuotedStringLiteral(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
+                element.check_node_with_offset(&child.node, *child_offset)
+            }
+            Self::SingleQuotedVersionLiteral(_) => {
+                // Version literals in pragma context map to V1's string literals, not version literals
+                let child_range = *child_offset..(*child_offset + child.node.text_len());
+                if let NodeKind::Terminal(terminal_kind) = child.node.kind() {
+                    if terminal_kind.as_ref() != "SingleQuotedStringLiteral" {
+                        vec![NodeCheckerError::new(
+                            format!(
+                                "Expected node kind to be SingleQuotedStringLiteral, but it was {}",
+                                terminal_kind.as_ref()
+                            ),
+                            child_range,
+                        )]
+                    } else {
+                        vec![]
+                    }
+                } else {
+                    vec![NodeCheckerError::new(
+                        format!(
+                            "Expected node kind to be a terminal, but it was {}",
+                            child.node.kind()
+                        ),
+                        child_range,
+                    )]
+                }
+            }
+            Self::DoubleQuotedVersionLiteral(_) => {
+                // Version literals in pragma context map to V1's string literals, not version literals
+                let child_range = *child_offset..(*child_offset + child.node.text_len());
+                if let NodeKind::Terminal(terminal_kind) = child.node.kind() {
+                    if terminal_kind.as_ref() != "DoubleQuotedStringLiteral" {
+                        vec![NodeCheckerError::new(
+                            format!(
+                                "Expected node kind to be DoubleQuotedStringLiteral, but it was {}",
+                                terminal_kind.as_ref()
+                            ),
+                            child_range,
+                        )]
+                    } else {
+                        vec![]
+                    }
+                } else {
+                    vec![NodeCheckerError::new(
+                        format!(
+                            "Expected node kind to be a terminal, but it was {}",
+                            child.node.kind()
+                        ),
+                        child_range,
+                    )]
+                }
             }
         }
-
-        errors
     }
 }
 
