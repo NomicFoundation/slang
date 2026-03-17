@@ -4,7 +4,7 @@ use anyhow::{anyhow, Result};
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_parser::Parser;
 
-use crate::{builder, ir};
+use crate::ir;
 
 #[test]
 fn test_build_ir_tree() -> Result<()> {
@@ -18,7 +18,7 @@ contract Test is Base layout at 0 {}
     let version = LanguageVersion::V0_8_30;
     let source_unit_cst =
         Parser::parse(CONTENTS, version).map_err(|message| anyhow!(format!("{message:?}")))?;
-    let source_unit = builder::run(&source_unit_cst);
+    let source_unit = ir::build(&source_unit_cst);
 
     assert_eq!(2, source_unit.members.len());
 
