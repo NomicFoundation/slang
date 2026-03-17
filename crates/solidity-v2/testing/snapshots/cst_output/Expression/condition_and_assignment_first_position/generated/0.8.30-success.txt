@@ -58,29 +58,35 @@ SourceUnitStruct {
                                                                 AssignmentExpressionStruct {
                                                                     left_operand: Identifier(
                                                                         Identifier {
-                                                                            range: 143..144,
+                                                                            range: 157..158,
                                                                         },
                                                                     ),
-                                                                    expression_assignment_expression_operator: PlusEqual(
-                                                                        PlusEqual {
-                                                                            range: 145..147,
+                                                                    expression_assignment_expression_operator: Equal(
+                                                                        Equal {
+                                                                            range: 159..160,
                                                                         },
                                                                     ),
-                                                                    right_operand: AssignmentExpression(
-                                                                        AssignmentExpressionStruct {
-                                                                            left_operand: Identifier(
+                                                                    right_operand: ConditionalExpression(
+                                                                        ConditionalExpressionStruct {
+                                                                            operand: Identifier(
                                                                                 Identifier {
-                                                                                    range: 148..149,
+                                                                                    range: 161..162,
                                                                                 },
                                                                             ),
-                                                                            expression_assignment_expression_operator: MinusEqual(
-                                                                                MinusEqual {
-                                                                                    range: 150..152,
+                                                                            question_mark: QuestionMark {
+                                                                                range: 163..164,
+                                                                            },
+                                                                            true_expression: Identifier(
+                                                                                Identifier {
+                                                                                    range: 165..166,
                                                                                 },
                                                                             ),
-                                                                            right_operand: Identifier(
+                                                                            colon: Colon {
+                                                                                range: 167..168,
+                                                                            },
+                                                                            false_expression: Identifier(
                                                                                 Identifier {
-                                                                                    range: 153..154,
+                                                                                    range: 169..170,
                                                                                 },
                                                                             ),
                                                                         },
@@ -88,14 +94,14 @@ SourceUnitStruct {
                                                                 },
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 163..164,
+                                                                range: 200..201,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 169..170,
+                                                range: 206..207,
                                             },
                                         },
                                     ),
@@ -104,7 +110,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 171..172,
+                        range: 208..209,
                     },
                 },
             ),

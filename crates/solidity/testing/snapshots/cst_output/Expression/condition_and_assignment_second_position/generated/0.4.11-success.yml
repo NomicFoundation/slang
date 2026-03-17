@@ -1,0 +1,29 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ a ? b = c : d // (a ? (b = c) : d)                                               │ 0..34
+
+Errors: []
+
+Tree:
+  - (root꞉ Expression) ► (variant꞉ ConditionalExpression): # "a ? b = c : d // (a ? (b = c) : d)\n" (0..35)
+      - (operand꞉ Expression) ► (variant꞉ Identifier): "a" # (0..1)
+      - (leading_trivia꞉ Whitespace): " " # (1..2)
+      - (question_mark꞉ QuestionMark): "?" # (2..3)
+      - (true_expression꞉ Expression) ► (variant꞉ AssignmentExpression): # " b = c" (3..9)
+          - (left_operand꞉ Expression): # " b" (3..5)
+              - (leading_trivia꞉ Whitespace): " " # (3..4)
+              - (variant꞉ Identifier): "b" # (4..5)
+          - (leading_trivia꞉ Whitespace): " " # (5..6)
+          - (operator꞉ Equal): "=" # (6..7)
+          - (right_operand꞉ Expression): # " c" (7..9)
+              - (leading_trivia꞉ Whitespace): " " # (7..8)
+              - (variant꞉ Identifier): "c" # (8..9)
+      - (leading_trivia꞉ Whitespace): " " # (9..10)
+      - (colon꞉ Colon): ":" # (10..11)
+      - (false_expression꞉ Expression): # " d // (a ? (b = c) : d)\n" (11..35)
+          - (leading_trivia꞉ Whitespace): " " # (11..12)
+          - (variant꞉ Identifier): "d" # (12..13)
+          - (trailing_trivia꞉ Whitespace): " " # (13..14)
+          - (trailing_trivia꞉ SingleLineComment): "// (a ? (b = c) : d)" # (14..34)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (34..35)

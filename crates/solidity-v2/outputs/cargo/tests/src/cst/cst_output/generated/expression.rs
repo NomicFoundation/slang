@@ -42,6 +42,21 @@ fn chained_assignment() -> Result<()> {
 }
 
 #[test]
+fn condition_and_assignment_first_position() -> Result<()> {
+    run(T, "condition_and_assignment_first_position")
+}
+
+#[test]
+fn condition_and_assignment_second_position() -> Result<()> {
+    run(T, "condition_and_assignment_second_position")
+}
+
+#[test]
+fn condition_and_assignment_third_position() -> Result<()> {
+    run(T, "condition_and_assignment_third_position")
+}
+
+#[test]
 fn delete() -> Result<()> {
     run(T, "delete")
 }
@@ -384,6 +399,16 @@ fn returna() -> Result<()> {
 #[test]
 fn returns() -> Result<()> {
     run(T, "returns")
+}
+
+#[test]
+fn two_conditions_false_case() -> Result<()> {
+    run(T, "two_conditions_false_case")
+}
+
+#[test]
+fn two_conditions_true_case() -> Result<()> {
+    run(T, "two_conditions_true_case")
 }
 
 #[test]
