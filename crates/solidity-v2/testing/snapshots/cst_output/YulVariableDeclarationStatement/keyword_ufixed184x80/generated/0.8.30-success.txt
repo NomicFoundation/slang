@@ -64,7 +64,23 @@ SourceUnitStruct {
                                                                     range: 49..50,
                                                                 },
                                                                 statements: YulStatements {
-                                                                    elements: [],
+                                                                    elements: [
+                                                                        YulVariableDeclarationStatement(
+                                                                            YulVariableDeclarationStatementStruct {
+                                                                                let_keyword: YulLetKeyword {
+                                                                                    range: 241..244,
+                                                                                },
+                                                                                variables: YulVariableNames {
+                                                                                    elements: [
+                                                                                        YulIdentifier {
+                                                                                            range: 245..257,
+                                                                                        },
+                                                                                    ],
+                                                                                },
+                                                                                value: None,
+                                                                            },
+                                                                        ),
+                                                                    ],
                                                                 },
                                                                 close_brace: YulCloseBrace {
                                                                     range: 274..275,

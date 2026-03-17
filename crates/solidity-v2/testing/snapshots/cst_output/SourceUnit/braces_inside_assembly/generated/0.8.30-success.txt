@@ -1,0 +1,232 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            PragmaDirective(
+                PragmaDirectiveStruct {
+                    pragma_keyword: PragmaKeyword {
+                        range: 239..245,
+                    },
+                    pragma: VersionPragma(
+                        VersionPragmaStruct {
+                            solidity_keyword: SolidityKeyword {
+                                range: 246..254,
+                            },
+                            sets: VersionExpressionSets {
+                                elements: [
+                                    VersionExpressionSet {
+                                        elements: [
+                                            VersionTerm(
+                                                VersionTermStruct {
+                                                    operator: Some(
+                                                        PragmaCaret(
+                                                            PragmaCaret {
+                                                                range: 255..256,
+                                                            },
+                                                        ),
+                                                    ),
+                                                    literal: SimpleVersionLiteral(
+                                                        SimpleVersionLiteral {
+                                                            elements: [
+                                                                VersionSpecifier {
+                                                                    range: 256..257,
+                                                                },
+                                                                VersionSpecifier {
+                                                                    range: 258..259,
+                                                                },
+                                                                VersionSpecifier {
+                                                                    range: 260..262,
+                                                                },
+                                                            ],
+                                                        },
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                ],
+                            },
+                        },
+                    ),
+                    semicolon: PragmaSemicolon {
+                        range: 262..263,
+                    },
+                },
+            ),
+            LibraryDefinition(
+                LibraryDefinitionStruct {
+                    library_keyword: LibraryKeyword {
+                        range: 265..272,
+                    },
+                    name: Identifier {
+                        range: 273..282,
+                    },
+                    open_brace: OpenBrace {
+                        range: 283..284,
+                    },
+                    members: LibraryMembers {
+                        elements: [
+                            FunctionDefinition(
+                                FunctionDefinitionStruct {
+                                    function_keyword: FunctionKeyword {
+                                        range: 287..295,
+                                    },
+                                    name: Identifier(
+                                        Identifier {
+                                            range: 296..315,
+                                        },
+                                    ),
+                                    parameters: ParametersDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            range: 315..316,
+                                        },
+                                        parameters: Parameters {
+                                            elements: [],
+                                        },
+                                        close_paren: CloseParen {
+                                            range: 316..317,
+                                        },
+                                    },
+                                    attributes: FunctionAttributes {
+                                        elements: [
+                                            PrivateKeyword(
+                                                PrivateKeyword {
+                                                    range: 318..325,
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                    returns: None,
+                                    body: Block(
+                                        BlockStruct {
+                                            open_brace: OpenBrace {
+                                                range: 326..327,
+                                            },
+                                            statements: Statements {
+                                                elements: [
+                                                    AssemblyStatement(
+                                                        AssemblyStatementStruct {
+                                                            assembly_keyword: AssemblyKeyword {
+                                                                range: 332..340,
+                                                            },
+                                                            label: None,
+                                                            flags: None,
+                                                            body: YulBlockStruct {
+                                                                open_brace: YulOpenBrace {
+                                                                    range: 341..342,
+                                                                },
+                                                                statements: YulStatements {
+                                                                    elements: [
+                                                                        YulIfStatement(
+                                                                            YulIfStatementStruct {
+                                                                                if_keyword: YulIfKeyword {
+                                                                                    range: 349..351,
+                                                                                },
+                                                                                condition: YulFunctionCallExpression(
+                                                                                    YulFunctionCallExpressionStruct {
+                                                                                        operand: YulPath(
+                                                                                            YulPath {
+                                                                                                elements: [
+                                                                                                    YulIdentifier {
+                                                                                                        range: 352..358,
+                                                                                                    },
+                                                                                                ],
+                                                                                            },
+                                                                                        ),
+                                                                                        open_paren: YulOpenParen {
+                                                                                            range: 358..359,
+                                                                                        },
+                                                                                        arguments: YulArguments {
+                                                                                            elements: [
+                                                                                                YulPath(
+                                                                                                    YulPath {
+                                                                                                        elements: [
+                                                                                                            YulIdentifier {
+                                                                                                                range: 359..366,
+                                                                                                            },
+                                                                                                        ],
+                                                                                                    },
+                                                                                                ),
+                                                                                            ],
+                                                                                        },
+                                                                                        close_paren: YulCloseParen {
+                                                                                            range: 366..367,
+                                                                                        },
+                                                                                    },
+                                                                                ),
+                                                                                body: YulBlockStruct {
+                                                                                    open_brace: YulOpenBrace {
+                                                                                        range: 368..369,
+                                                                                    },
+                                                                                    statements: YulStatements {
+                                                                                        elements: [
+                                                                                            YulExpression(
+                                                                                                YulFunctionCallExpression(
+                                                                                                    YulFunctionCallExpressionStruct {
+                                                                                                        operand: YulPath(
+                                                                                                            YulPath {
+                                                                                                                elements: [
+                                                                                                                    YulIdentifier {
+                                                                                                                        range: 378..384,
+                                                                                                                    },
+                                                                                                                ],
+                                                                                                            },
+                                                                                                        ),
+                                                                                                        open_paren: YulOpenParen {
+                                                                                                            range: 384..385,
+                                                                                                        },
+                                                                                                        arguments: YulArguments {
+                                                                                                            elements: [
+                                                                                                                YulPath(
+                                                                                                                    YulPath {
+                                                                                                                        elements: [
+                                                                                                                            YulIdentifier {
+                                                                                                                                range: 385..388,
+                                                                                                                            },
+                                                                                                                        ],
+                                                                                                                    },
+                                                                                                                ),
+                                                                                                            ],
+                                                                                                        },
+                                                                                                        close_paren: YulCloseParen {
+                                                                                                            range: 388..389,
+                                                                                                        },
+                                                                                                    },
+                                                                                                ),
+                                                                                            ),
+                                                                                        ],
+                                                                                    },
+                                                                                    close_brace: YulCloseBrace {
+                                                                                        range: 396..397,
+                                                                                    },
+                                                                                },
+                                                                            },
+                                                                        ),
+                                                                    ],
+                                                                },
+                                                                close_brace: YulCloseBrace {
+                                                                    range: 402..403,
+                                                                },
+                                                            },
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                            close_brace: CloseBrace {
+                                                range: 406..407,
+                                            },
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 408..409,
+                    },
+                },
+            ),
+        ],
+    },
+}

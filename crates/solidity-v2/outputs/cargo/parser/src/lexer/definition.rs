@@ -1,6 +1,3 @@
-use std::collections::VecDeque;
-
-use logos::Logos;
 use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::lexer::contexts::{ContextExtras, ContextKind, ContextWrapper};
@@ -8,7 +5,7 @@ use crate::lexer::lexemes::{Lexeme, LexemeKind};
 
 pub struct Lexer<'source> {
     context: ContextWrapper<'source>,
-    queue: VecDeque<Lexeme>,
+    brace_depth: usize,
 }
 
 impl<'source> Lexer<'source> {
@@ -19,112 +16,38 @@ impl<'source> Lexer<'source> {
 
         Self {
             context,
-            queue: VecDeque::new(),
+            brace_depth: 0,
         }
-    }
-
-    pub fn switch_context(&mut self, kind: ContextKind) {
-        self.context = self.context.clone().morph(kind);
-    }
-
-    pub fn bump(&mut self, n: usize) {
-        self.context.bump(n);
     }
 
     pub fn next_lexeme(&mut self) -> Option<Lexeme> {
-        if let Some(lexeme) = self.queue.pop_front() {
-            return Some(lexeme);
-        }
-
         let lexeme = self.context.next_lexeme()?;
 
-        // TODO(v2):
-        // Some lexemes are split/post-processed after lexing to handle historical bugs in older Solidity versions.
-        // Remove this post-processing since we no longer support the older versions.
         match lexeme.kind {
-            LexemeKind::DecimalLiteral => self.handle_decimal_literal(lexeme),
-            LexemeKind::YulIdentifier => self.handle_yul_identifier(lexeme),
-            _ => Some(lexeme),
-        }
-    }
-}
+            LexemeKind::PragmaKeyword_Reserved => {
+                self.context = self.context.clone().morph(ContextKind::Pragma);
+            }
+            LexemeKind::PragmaSemicolon => {
+                self.context = self.context.clone().morph(ContextKind::Solidity);
+            }
 
-impl Lexer<'_> {
-    fn handle_decimal_literal(&mut self, original: Lexeme) -> Option<Lexeme> {
-        // `DecimalLiteral` included a lone dot suffix without a fractional part (e.g. `1.` and `1.e1`)
-        // before `0.5.0` as part of the same terminal. Afterwards, a lone `Period` should be its own lexeme,
-        // with anything after (exponents, negative sign, and digits) being separate subsequent lexemes:
+            LexemeKind::AssemblyKeyword_Reserved => {
+                self.brace_depth = 0;
+                self.context = self.context.clone().morph(ContextKind::Yul);
+            }
+            LexemeKind::YulOpenBrace => {
+                self.brace_depth += 1;
+            }
+            LexemeKind::YulCloseBrace => {
+                self.brace_depth -= 1;
+                if self.brace_depth == 0 {
+                    self.context = self.context.clone().morph(ContextKind::Solidity);
+                }
+            }
 
-        #[derive(Logos, Debug)]
-        enum Splitter {
-            #[regex(r#"(([0-9]+(_[0-9]+)*))(\.(([0-9]+(_[0-9]+)*)))?(((e|E)-?(([0-9]+(_[0-9]+)*))))?"#, |_| { LexemeKind::DecimalLiteral })]
-            #[regex(r#"\.(([0-9]+(_[0-9]+)*))(((e|E)-?(([0-9]+(_[0-9]+)*))))?"#, |_| { LexemeKind::DecimalLiteral })]
-            #[regex(r#"\."#, |_| { LexemeKind::Period })]
-            #[regex(r#"(e|E)([0-9]+(_[0-9]+)*)?"#, |_| { LexemeKind::Identifier })]
-            #[regex(r#"-"#, |_| { LexemeKind::Minus })]
-            Lexeme(LexemeKind),
-        }
-
-        // if self.language_version < LanguageVersion::V0_5_0 {
-        //     return Some(original);
-        // }
-
-        let original_start = original.range.start;
-        let original_source = self.context.source()[original.range].as_ref();
-
-        let mut parts = Splitter::lexer(original_source)
-            .spanned()
-            .map(|(lexeme, range)| {
-                let kind = match lexeme {
-                    Ok(Splitter::Lexeme(kind)) => kind,
-                    Err(()) => LexemeKind::UNRECOGNIZED,
-                };
-
-                let range = (range.start + original_start)..(range.end + original_start);
-
-                Lexeme { kind, range }
-            });
-
-        let first_part = parts.next();
-        self.queue.extend(parts);
-        first_part
-    }
-
-    fn handle_yul_identifier(&mut self, original: Lexeme) -> Option<Lexeme> {
-        // `YulIdentifier` allowed periods (i.e. `foo.bar.baz`) from `0.5.8` till `0.7.0`:
-        // Otherwise, they should be split into multiple `YulIdentifier` and `Period` lexemes:
-
-        #[derive(Logos, Debug)]
-        enum Splitter {
-            #[regex(r#"(_|\$|[a-z]|[A-Z]|[0-9])+"#, |_| { LexemeKind::YulIdentifier })]
-            #[regex(r#"\."#, |_| { LexemeKind::Period })]
-            Lexeme(LexemeKind),
+            _ => {}
         }
 
-        // if LanguageVersion::V0_5_8 <= self.language_version
-        //     && self.language_version < LanguageVersion::V0_7_0
-        // {
-        //     return Some(original);
-        // }
-
-        let original_start = original.range.start;
-        let original_source = self.context.source()[original.range].as_ref();
-
-        let mut parts = Splitter::lexer(original_source)
-            .spanned()
-            .map(|(lexeme, range)| {
-                let kind = match lexeme {
-                    Ok(Splitter::Lexeme(kind)) => kind,
-                    Err(()) => LexemeKind::UNRECOGNIZED,
-                };
-
-                let range = (range.start + original_start)..(range.end + original_start);
-
-                Lexeme { kind, range }
-            });
-
-        let first_part = parts.next();
-        self.queue.extend(parts);
-        first_part
+        Some(lexeme)
     }
 }

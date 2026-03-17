@@ -8,16 +8,59 @@ SourceUnitStruct {
                     pragma_keyword: PragmaKeyword {
                         range: 0..6,
                     },
-                    pragma: AbicoderPragma(
-                        AbicoderPragmaStruct {
-                            abicoder_keyword: AbicoderKeyword {
-                                range: 0..0,
+                    pragma: VersionPragma(
+                        VersionPragmaStruct {
+                            solidity_keyword: SolidityKeyword {
+                                range: 119..127,
                             },
-                            version: AbicoderV1Keyword(
-                                AbicoderV1Keyword {
-                                    range: 0..0,
-                                },
-                            ),
+                            sets: VersionExpressionSets {
+                                elements: [
+                                    VersionExpressionSet {
+                                        elements: [
+                                            VersionTerm(
+                                                VersionTermStruct {
+                                                    operator: None,
+                                                    literal: SimpleVersionLiteral(
+                                                        SimpleVersionLiteral {
+                                                            elements: [
+                                                                VersionSpecifier {
+                                                                    range: 128..129,
+                                                                },
+                                                                VersionSpecifier {
+                                                                    range: 130..131,
+                                                                },
+                                                                VersionSpecifier {
+                                                                    range: 132..133,
+                                                                },
+                                                            ],
+                                                        },
+                                                    ),
+                                                },
+                                            ),
+                                            VersionTerm(
+                                                VersionTermStruct {
+                                                    operator: None,
+                                                    literal: SimpleVersionLiteral(
+                                                        SimpleVersionLiteral {
+                                                            elements: [
+                                                                VersionSpecifier {
+                                                                    range: 134..135,
+                                                                },
+                                                                VersionSpecifier {
+                                                                    range: 136..137,
+                                                                },
+                                                                VersionSpecifier {
+                                                                    range: 138..139,
+                                                                },
+                                                            ],
+                                                        },
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                ],
+                            },
                         },
                     ),
                     semicolon: PragmaSemicolon {

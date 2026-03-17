@@ -64,7 +64,17 @@ SourceUnitStruct {
                                                                     range: 49..50,
                                                                 },
                                                                 statements: YulStatements {
-                                                                    elements: [],
+                                                                    elements: [
+                                                                        YulExpression(
+                                                                            YulLiteral(
+                                                                                YulFalseKeyword(
+                                                                                    YulFalseKeyword {
+                                                                                        range: 153..158,
+                                                                                    },
+                                                                                ),
+                                                                            ),
+                                                                        ),
+                                                                    ],
                                                                 },
                                                                 close_brace: YulCloseBrace {
                                                                     range: 175..176,

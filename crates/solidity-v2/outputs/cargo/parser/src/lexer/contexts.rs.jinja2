@@ -12,6 +12,11 @@ pub enum ContextKind {
 
 #[derive(Clone)]
 pub struct ContextExtras {
+    // Since we restricted Slang v2 lexer to only support Solidity 0.8.0+, all the remaining keywords
+    // are either `Always` or `Never` versioned in the remaining versions, so we don't need this
+    // information today. However, that might always change with new version releases.
+    // So, let's keep it for now, even if we don't generate code that uses it yet.
+    #[allow(dead_code)]
     pub language_version: LanguageVersion,
 }
 
@@ -29,22 +34,6 @@ impl<'source> ContextWrapper<'source> {
                 ContextKind::{{ context.name }} => Self::{{ context.name }}(
                     {{ context.name }}Context::lexer_with_extras(source, extras)
                 ),
-            {%- endfor -%}
-        }
-    }
-
-    pub fn source(&self) -> &'source str {
-        match self {
-            {%- for context in model.parser.lexer.contexts %}
-                Self::{{ context.name }}(lexer) => lexer.source(),
-            {%- endfor -%}
-        }
-    }
-
-    pub fn bump(&mut self, n: usize) {
-        match self {
-            {%- for context in model.parser.lexer.contexts %}
-                Self::{{ context.name }}(lexer) => lexer.bump(n),
             {%- endfor -%}
         }
     }

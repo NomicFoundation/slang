@@ -64,7 +64,22 @@ SourceUnitStruct {
                                                                     range: 49..50,
                                                                 },
                                                                 statements: YulStatements {
-                                                                    elements: [],
+                                                                    elements: [
+                                                                        YulExpression(
+                                                                            YulPath(
+                                                                                YulPath {
+                                                                                    elements: [
+                                                                                        YulIdentifier {
+                                                                                            range: 241..244,
+                                                                                        },
+                                                                                        YulIdentifier {
+                                                                                            range: 245..248,
+                                                                                        },
+                                                                                    ],
+                                                                                },
+                                                                            ),
+                                                                        ),
+                                                                    ],
                                                                 },
                                                                 close_brace: YulCloseBrace {
                                                                     range: 265..266,
