@@ -755,19 +755,6 @@ impl OrExpressionStruct {
     }
 }
 
-pub type OverrideSpecifier = Rc<OverrideSpecifierStruct>;
-
-#[derive(Debug)]
-pub struct OverrideSpecifierStruct {
-    pub overridden: Option<OverridePaths>,
-}
-
-impl OverrideSpecifierStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
-        NodeId(Rc::as_ptr(self) as usize)
-    }
-}
-
 pub type Parameter = Rc<ParameterStruct>;
 
 #[derive(Debug)]
@@ -1837,11 +1824,6 @@ pub struct DoubleQuotedVersionLiteral {
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct EndOfLine {
-    pub range: Range<usize>,
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub struct FixedKeyword {
     pub range: Range<usize>,
 }
@@ -1875,26 +1857,6 @@ pub struct IntKeyword {
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct MultiLineComment {
-    pub range: Range<usize>,
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct MultiLineNatSpecComment {
-    pub range: Range<usize>,
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct SingleLineComment {
-    pub range: Range<usize>,
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct SingleLineNatSpecComment {
-    pub range: Range<usize>,
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub struct SingleQuotedVersionLiteral {
     pub range: Range<usize>,
 }
@@ -1921,11 +1883,6 @@ pub struct UnicodeStringLiteral {
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct VersionSpecifier {
-    pub range: Range<usize>,
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct Whitespace {
     pub range: Range<usize>,
 }
 

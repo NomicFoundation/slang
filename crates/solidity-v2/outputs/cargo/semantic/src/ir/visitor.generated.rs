@@ -269,11 +269,6 @@ pub trait Visitor {
     }
     fn leave_or_expression(&mut self, _node: &OrExpression) {}
 
-    fn enter_override_specifier(&mut self, _node: &OverrideSpecifier) -> bool {
-        true
-    }
-    fn leave_override_specifier(&mut self, _node: &OverrideSpecifier) {}
-
     fn enter_parameter(&mut self, _node: &Parameter) -> bool {
         true
     }
@@ -1478,16 +1473,6 @@ pub fn accept_or_expression(node: &OrExpression, visitor: &mut impl Visitor) {
     accept_expression(&node.left_operand, visitor);
     accept_expression(&node.right_operand, visitor);
     visitor.leave_or_expression(node);
-}
-
-pub fn accept_override_specifier(node: &OverrideSpecifier, visitor: &mut impl Visitor) {
-    if !visitor.enter_override_specifier(node) {
-        return;
-    }
-    if let Some(ref overridden) = node.overridden {
-        accept_override_paths(overridden, visitor);
-    }
-    visitor.leave_override_specifier(node);
 }
 
 pub fn accept_parameter(node: &Parameter, visitor: &mut impl Visitor) {

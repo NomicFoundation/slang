@@ -17,6 +17,7 @@ pub fn build_v2_ir_model(language: &Language) -> ModelWithBuilder {
     simplify_imports(&mut mutator);
     simplify_parameters(&mut mutator);
     simplify_mapping_type_parameters(&mut mutator);
+    remove_unused_types(&mut mutator);
 
     mutator.into()
 }
@@ -341,4 +342,18 @@ fn simplify_mapping_type_parameters(mutator: &mut IrModelMutator) {
 
     mutator.add_sequence_field("MappingType", "key_type", "Parameter", false);
     mutator.add_sequence_field("MappingType", "value_type", "Parameter", false);
+}
+
+fn remove_unused_types(mutator: &mut IrModelMutator) {
+    // `OverrideSpecifier` was used both in function attributes and state
+    // variable attributes, but it's no longer needed
+    mutator.remove_type("OverrideSpecifier");
+
+    // Non-unique terminals that are not needed for the IR
+    mutator.remove_type("EndOfLine");
+    mutator.remove_type("MultiLineComment");
+    mutator.remove_type("MultiLineNatSpecComment");
+    mutator.remove_type("SingleLineComment");
+    mutator.remove_type("SingleLineNatSpecComment");
+    mutator.remove_type("Whitespace");
 }

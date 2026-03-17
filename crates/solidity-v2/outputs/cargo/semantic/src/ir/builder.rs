@@ -275,6 +275,8 @@ impl Builder for CstToIrBuilder {
     // Choice dispatch overrides
     //
 
+    // TODO: this would not be necessary if we can automatically generate code
+    // for choices when some variants are collapsed
     fn build_source_unit_member(
         &mut self,
         source: &input::SourceUnitMember,
@@ -282,7 +284,7 @@ impl Builder for CstToIrBuilder {
         match source {
             input::SourceUnitMember::ImportDirective(import_directive) => {
                 output::SourceUnitMember::ImportClause(
-                    self.build_import_clause(&import_directive.clause),
+                    self.build_import_directive(import_directive),
                 )
             }
             _ => self.default_build_source_unit_member(source),

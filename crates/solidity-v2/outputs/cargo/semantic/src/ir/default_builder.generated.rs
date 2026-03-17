@@ -538,18 +538,6 @@ pub trait Builder {
         })
     }
 
-    fn build_override_specifier(
-        &mut self,
-        source: &input::OverrideSpecifier,
-    ) -> output::OverrideSpecifier {
-        let overridden = source
-            .overridden
-            .as_ref()
-            .map(|value| self.build_override_paths_declaration(value));
-
-        Rc::new(output::OverrideSpecifierStruct { overridden })
-    }
-
     fn build_parameter(&mut self, source: &input::Parameter) -> output::Parameter;
 
     fn build_path_import(&mut self, source: &input::PathImport) -> output::PathImport;
@@ -2464,12 +2452,6 @@ pub trait Builder {
         }
     }
 
-    fn build_end_of_line(&mut self, source: &input::EndOfLine) -> output::EndOfLine {
-        output::EndOfLine {
-            range: source.range.clone(),
-        }
-    }
-
     fn build_fixed_keyword(&mut self, source: &input::FixedKeyword) -> output::FixedKeyword {
         output::FixedKeyword {
             range: source.range.clone(),
@@ -2490,42 +2472,6 @@ pub trait Builder {
 
     fn build_int_keyword(&mut self, source: &input::IntKeyword) -> output::IntKeyword {
         output::IntKeyword {
-            range: source.range.clone(),
-        }
-    }
-
-    fn build_multi_line_comment(
-        &mut self,
-        source: &input::MultiLineComment,
-    ) -> output::MultiLineComment {
-        output::MultiLineComment {
-            range: source.range.clone(),
-        }
-    }
-
-    fn build_multi_line_nat_spec_comment(
-        &mut self,
-        source: &input::MultiLineNatSpecComment,
-    ) -> output::MultiLineNatSpecComment {
-        output::MultiLineNatSpecComment {
-            range: source.range.clone(),
-        }
-    }
-
-    fn build_single_line_comment(
-        &mut self,
-        source: &input::SingleLineComment,
-    ) -> output::SingleLineComment {
-        output::SingleLineComment {
-            range: source.range.clone(),
-        }
-    }
-
-    fn build_single_line_nat_spec_comment(
-        &mut self,
-        source: &input::SingleLineNatSpecComment,
-    ) -> output::SingleLineNatSpecComment {
-        output::SingleLineNatSpecComment {
             range: source.range.clone(),
         }
     }
@@ -2556,12 +2502,6 @@ pub trait Builder {
         source: &input::VersionSpecifier,
     ) -> output::VersionSpecifier {
         output::VersionSpecifier {
-            range: source.range.clone(),
-        }
-    }
-
-    fn build_whitespace(&mut self, source: &input::Whitespace) -> output::Whitespace {
-        output::Whitespace {
             range: source.range.clone(),
         }
     }
