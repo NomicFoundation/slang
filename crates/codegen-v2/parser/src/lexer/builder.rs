@@ -278,8 +278,8 @@ impl LexerModelBuilder {
             // use alphanumerics as-is:
             'a'..='z' | 'A'..='Z' | '0'..='9' => c.to_string(),
             // use punctuation as-is:
-            ' ' | '_' | '-' | ',' | ';' | ':' | '!' | '"' | '/' | '\'' | '&' | '%' | '<' | '='
-            | '>' | '~' => c.to_string(),
+            ' ' | '_' | '-' | ',' | ';' | ':' | '!' | '"' | '#' | '/' | '\'' | '&' | '%' | '<'
+            | '=' | '>' | '~' => c.to_string(),
             // escape regex control characters:
             '^' | '$' | '|' | '?' | '.' | '(' | ')' | '[' | ']' | '{' | '}' | '*' | '\\' | '+' => {
                 format!("\\{c}")

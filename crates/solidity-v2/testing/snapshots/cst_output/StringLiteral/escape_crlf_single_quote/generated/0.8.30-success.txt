@@ -23,22 +23,22 @@ SourceUnitStruct {
                             FunctionDefinition(
                                 FunctionDefinitionStruct {
                                     function_keyword: FunctionKeyword {
-                                        range: 17..25,
+                                        range: 18..26,
                                     },
                                     name: Identifier(
                                         Identifier {
-                                            range: 26..27,
+                                            range: 27..28,
                                         },
                                     ),
                                     parameters: ParametersDeclarationStruct {
                                         open_paren: OpenParen {
-                                            range: 27..28,
+                                            range: 28..29,
                                         },
                                         parameters: Parameters {
                                             elements: [],
                                         },
                                         close_paren: CloseParen {
-                                            range: 28..29,
+                                            range: 29..30,
                                         },
                                     },
                                     attributes: FunctionAttributes {
@@ -48,7 +48,7 @@ SourceUnitStruct {
                                     body: Block(
                                         BlockStruct {
                                             open_brace: OpenBrace {
-                                                range: 30..31,
+                                                range: 31..32,
                                             },
                                             statements: Statements {
                                                 elements: [
@@ -58,9 +58,9 @@ SourceUnitStruct {
                                                                 StringLiterals(
                                                                     StringLiterals {
                                                                         elements: [
-                                                                            DoubleQuotedStringLiteral(
-                                                                                DoubleQuotedStringLiteral {
-                                                                                    range: 141..152,
+                                                                            SingleQuotedStringLiteral(
+                                                                                SingleQuotedStringLiteral {
+                                                                                    range: 148..159,
                                                                                 },
                                                                             ),
                                                                         ],
@@ -68,14 +68,14 @@ SourceUnitStruct {
                                                                 ),
                                                             ),
                                                             semicolon: Semicolon {
-                                                                range: 161..162,
+                                                                range: 171..172,
                                                             },
                                                         },
                                                     ),
                                                 ],
                                             },
                                             close_brace: CloseBrace {
-                                                range: 167..168,
+                                                range: 178..179,
                                             },
                                         },
                                     ),
@@ -84,7 +84,7 @@ SourceUnitStruct {
                         ],
                     },
                     close_brace: CloseBrace {
-                        range: 169..170,
+                        range: 181..182,
                     },
                 },
             ),

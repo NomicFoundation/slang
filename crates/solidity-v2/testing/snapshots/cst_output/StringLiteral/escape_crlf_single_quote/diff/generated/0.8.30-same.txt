@@ -1,4 +1,3 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-V1 Parser: Invalid
-V2 Parser: Valid
+V2 parser produced the same output as V1 output.
