@@ -9,6 +9,8 @@ use crate::ir::nodes as output;
 use slang_solidity_v2_cst::structured_cst::nodes as input;
 
 pub trait Builder {
+  fn next_id(&mut self) -> output::NodeId;
+
   //
   // Sequences
   //
@@ -16,6 +18,7 @@ pub trait Builder {
     fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }}
     {% if not sequence.has_added_fields %}
       {
+        let id = self.next_id();
         {% for field in sequence.fields %}
           {%- if not field.is_removed -%}
             let {{ field.label | snake_case }} =
@@ -35,6 +38,7 @@ pub trait Builder {
         {%- endfor %}
 
         Rc::new(output::{{ parent_type }}Struct {
+          id,
           {%- for field in sequence.fields -%}
             {%- if not field.is_removed -%}
               {{ field.label | snake_case }},
@@ -108,6 +112,7 @@ pub trait Builder {
           input::{{ parent_type }}::{{ variant.source.name }}(terminal) => {
             {% if collapsed.target_is_identifier -%}
               Rc::new(output::{{ collapsed.target.name }}Struct {
+                id: self.next_id(),
                 range: terminal.range.clone(),
               })
             {%- else -%}
@@ -146,6 +151,7 @@ pub trait Builder {
       fn build_{{ terminal_type | snake_case }}(&mut self, source: &input::{{ terminal_type }}) -> output::{{ terminal_type }} {
         {% if terminal.is_identifier %}
           Rc::new(output::{{ terminal_type }}Struct {
+            id: self.next_id(),
             range: source.range.clone(),
           })
         {% else %}
@@ -165,6 +171,7 @@ pub trait Builder {
       fn build_{{ source_type | snake_case }}(&mut self, source: &input::{{ source_type }}) -> output::{{ normalized.target }} {
         {% if normalized.target_is_identifier %}
           Rc::new(output::{{ normalized.target }}Struct {
+            id: self.next_id(),
             range: source.range.clone(),
           })
         {% else %}
