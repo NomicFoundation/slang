@@ -14,4 +14,4 @@ pub mod visitor;
 #[cfg(test)]
 pub mod tests;
 
-pub use builder::build_source_unit as build;
+pub use builder::{build_source_unit as build, NodeIdGenerator};
