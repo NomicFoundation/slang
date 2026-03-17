@@ -4115,6 +4115,7 @@ dependencies = [
  "ariadne",
  "infra_utils",
  "itertools 0.13.0",
+ "semver 1.0.26",
  "slang_solidity",
  "slang_solidity_v2_common",
  "slang_solidity_v2_cst",
