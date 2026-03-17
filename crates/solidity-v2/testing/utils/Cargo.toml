@@ -10,6 +10,7 @@ anyhow = { workspace = true }
 ariadne = { workspace = true }
 infra_utils = { workspace = true }
 itertools = { workspace = true }
+semver = { workspace = true }
 slang_solidity = { workspace = true }
 slang_solidity_v2_common = { workspace = true }
 slang_solidity_v2_cst = { workspace = true }
