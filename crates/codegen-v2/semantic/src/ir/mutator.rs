@@ -438,6 +438,14 @@ impl IrModelMutator {
             }
         }
 
+        // Check that no collection type has the collapsed sequence as its item
+        // type because we cannot handle that case yet
+        for (collection_id, collection) in &self.collections {
+            if collection.item_type == replaced_type {
+                unreachable!("Cannot collapse {sequence_id} because it's the item type of collection {collection_id}");
+            }
+        }
+
         // Determine the target type; the type of the single field may be
         // already collapsed, so we need to use it in that case
         let target_type = if let Some(collapsed) = self
