@@ -236,7 +236,9 @@ language_v2_macros::compile!(Language(
                                     Atom("'"),
                                     ZeroOrMore(Choice([
                                         Fragment(PragmaEscapeSequence),
-                                        Not(['\'', '\\', '\r', '\n'])
+                                        Range(inclusive_start = ' ', inclusive_end = '&'),
+                                        Range(inclusive_start = '(', inclusive_end = '['),
+                                        Range(inclusive_start = ']', inclusive_end = '~')
                                     ])),
                                     Atom("'")
                                 ]))]
@@ -247,7 +249,9 @@ language_v2_macros::compile!(Language(
                                     Atom("\""),
                                     ZeroOrMore(Choice([
                                         Fragment(PragmaEscapeSequence),
-                                        Not(['"', '\\', '\r', '\n'])
+                                        Range(inclusive_start = ' ', inclusive_end = '!'),
+                                        Range(inclusive_start = '#', inclusive_end = '['),
+                                        Range(inclusive_start = ']', inclusive_end = '~')
                                     ])),
                                     Atom("\"")
                                 ]))]
@@ -257,18 +261,24 @@ language_v2_macros::compile!(Language(
                                 scanner = Sequence([
                                     Atom("\\"),
                                     Choice([
-                                        Not(['x', 'u']),
+                                        Fragment(PragmaAsciiEscape),
                                         Fragment(PragmaHexByteEscape),
                                         Fragment(PragmaUnicodeEscape)
                                     ])
                                 ])
                             ),
                             Fragment(
-                                name = PragmaHexCharacter,
+                                name = PragmaAsciiEscape,
                                 scanner = Choice([
-                                    Range(inclusive_start = '0', inclusive_end = '9'),
-                                    Range(inclusive_start = 'a', inclusive_end = 'f'),
-                                    Range(inclusive_start = 'A', inclusive_end = 'F')
+                                    Atom("n"),
+                                    Atom("r"),
+                                    Atom("t"),
+                                    Atom("'"),
+                                    Atom("\""),
+                                    Atom("\\"),
+                                    Atom("\r\n"),
+                                    Atom("\r"),
+                                    Atom("\n")
                                 ])
                             ),
                             Fragment(
@@ -287,6 +297,14 @@ language_v2_macros::compile!(Language(
                                     Fragment(PragmaHexCharacter),
                                     Fragment(PragmaHexCharacter),
                                     Fragment(PragmaHexCharacter)
+                                ])
+                            ),
+                            Fragment(
+                                name = PragmaHexCharacter,
+                                scanner = Choice([
+                                    Range(inclusive_start = '0', inclusive_end = '9'),
+                                    Range(inclusive_start = 'a', inclusive_end = 'f'),
+                                    Range(inclusive_start = 'A', inclusive_end = 'F')
                                 ])
                             )
                         ]
@@ -352,19 +370,6 @@ language_v2_macros::compile!(Language(
                                         pragma_keyword = Required(PragmaKeyword),
                                         pragma = Required(Pragma),
                                         semicolon = Required(PragmaSemicolon)
-                                    ),
-                                    // TODO(v2): Until the lexer can perform context switching, we ignore pragmas
-                                    parser_options = ParserOptions(
-                                        inline = false,
-                                        verbatim = r#"
-PragmaDirective: PragmaDirective = {
-    <pragma_keyword: PragmaKeyword>  ! <semicolon: Semicolon>  => {
-    let abicoder = new_pragma_abicoder_pragma(new_abicoder_pragma(new_abicoder_keyword(0..0, source), new_abicoder_version_abicoder_v1_keyword(new_abicoder_v1_keyword(0..0, source))));
-    let semicolon = new_pragma_semicolon(semicolon.range, source);
-    new_pragma_directive(pragma_keyword, abicoder , semicolon)
-    }
-};
-"#
                                     )
                                 ),
                                 Struct(
@@ -3001,15 +3006,7 @@ IdentifierPathNoRevert: IdentifierPath = {
                                             enabled = From("0.8.13")
                                         ),
                                         body = Required(YulBlock)
-                                    ),
-                                    // TODO(v2): Until the lexer can perform context switching, we skip label and flags
-                                    parser_options = ParserOptions(inline = false, verbatim = r#"
-AssemblyStatement: AssemblyStatement = {
-    <assembly_keyword: AssemblyKeyword> ! <body: YulBlock> => {
-        new_assembly_statement(assembly_keyword, None, None, body)
-    }
-};
-"#)
+                                    )
                                 )
                             ]
                         ),
@@ -4182,8 +4179,7 @@ TupleValues: TupleValues = {
                                 Token(
                                     name = HexLiteral,
                                     definitions = [TokenDefinition(Sequence([
-                                        Atom("0"),
-                                        Choice([Atom("x"), Atom("X")]),
+                                        Atom("0x"),
                                         OneOrMore(Fragment(HexCharacter)),
                                         ZeroOrMore(Sequence([
                                             Atom("_"),
@@ -4198,7 +4194,7 @@ TupleValues: TupleValues = {
                                             Fragment(DecimalDigits),
                                             Optional(Sequence([
                                                 Atom("."),
-                                                Optional(Fragment(DecimalDigits))
+                                                Fragment(DecimalDigits)
                                             ])),
                                             Optional(Fragment(DecimalExponent))
                                         ])),
@@ -4279,7 +4275,9 @@ TupleValues: TupleValues = {
                                         Atom("'"),
                                         ZeroOrMore(Choice([
                                             Fragment(EscapeSequence),
-                                            Not(['\'', '\\', '\r', '\n'])
+                                            Range(inclusive_start = ' ', inclusive_end = '&'),
+                                            Range(inclusive_start = '(', inclusive_end = '['),
+                                            Range(inclusive_start = ']', inclusive_end = '~')
                                         ])),
                                         Atom("'")
                                     ]))]
@@ -4290,7 +4288,9 @@ TupleValues: TupleValues = {
                                         Atom("\""),
                                         ZeroOrMore(Choice([
                                             Fragment(EscapeSequence),
-                                            Not(['"', '\\', '\r', '\n'])
+                                            Range(inclusive_start = ' ', inclusive_end = '!'),
+                                            Range(inclusive_start = '#', inclusive_end = '['),
+                                            Range(inclusive_start = ']', inclusive_end = '~')
                                         ])),
                                         Atom("\"")
                                     ]))]
@@ -4300,7 +4300,7 @@ TupleValues: TupleValues = {
                                     scanner = Sequence([
                                         Atom("\\"),
                                         Choice([
-                                            Not(['x', 'u']),
+                                            Fragment(AsciiEscape),
                                             Fragment(HexByteEscape),
                                             Fragment(UnicodeEscape)
                                         ])
@@ -4343,14 +4343,6 @@ TupleValues: TupleValues = {
                                             Fragment(HexCharacter),
                                             Fragment(HexCharacter)
                                         ]))
-                                    ])
-                                ),
-                                Fragment(
-                                    name = HexCharacter,
-                                    scanner = Choice([
-                                        Range(inclusive_start = '0', inclusive_end = '9'),
-                                        Range(inclusive_start = 'a', inclusive_end = 'f'),
-                                        Range(inclusive_start = 'A', inclusive_end = 'F')
                                     ])
                                 ),
                                 Repeated(
@@ -4427,6 +4419,14 @@ TupleValues: TupleValues = {
                                         Fragment(HexCharacter),
                                         Fragment(HexCharacter),
                                         Fragment(HexCharacter)
+                                    ])
+                                ),
+                                Fragment(
+                                    name = HexCharacter,
+                                    scanner = Choice([
+                                        Range(inclusive_start = '0', inclusive_end = '9'),
+                                        Range(inclusive_start = 'a', inclusive_end = 'f'),
+                                        Range(inclusive_start = 'A', inclusive_end = 'F')
                                     ])
                                 )
                             ]
@@ -4542,18 +4542,7 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                                     open_brace = Required(YulOpenBrace),
                                     statements = Required(YulStatements),
                                     close_brace = Required(YulCloseBrace)
-                                ),
-                                // TODO(v2): Until the lexer can perform context switching, we ignore YulBlocks
-                                parser_options = ParserOptions(inline = false, verbatim = r#"
-YulBlock: YulBlock = {
-    <open_brace: OpenBrace>  !  <close_brace: CloseBrace>  => {
-        let open_brace = new_yul_open_brace(open_brace.range, source);
-        let statements = new_yul_statements(vec![]);
-        let close_brace = new_yul_close_brace(close_brace.range, source);
-        new_yul_block(open_brace, statements, close_brace)
-    }
-};
-"#)
+                                )
                             ),
                             Repeated(
                                 name = YulStatements,
@@ -4745,7 +4734,7 @@ YulBlock: YulBlock = {
                                 name = YulIdentifier,
                                 definitions = [TokenDefinition(Sequence([
                                     Fragment(YulIdentifierStart),
-                                    ZeroOrMore(Choice([Fragment(YulIdentifierPart), Atom(".")]))
+                                    ZeroOrMore(Fragment(YulIdentifierPart))
                                 ]))]
                             ),
                             Fragment(
@@ -4843,7 +4832,9 @@ YulBlock: YulBlock = {
                                     Atom("'"),
                                     ZeroOrMore(Choice([
                                         Fragment(YulEscapeSequence),
-                                        Not(['\'', '\\', '\r', '\n'])
+                                        Range(inclusive_start = ' ', inclusive_end = '&'),
+                                        Range(inclusive_start = '(', inclusive_end = '['),
+                                        Range(inclusive_start = ']', inclusive_end = '~')
                                     ])),
                                     Atom("'")
                                 ]))]
@@ -4854,7 +4845,9 @@ YulBlock: YulBlock = {
                                     Atom("\""),
                                     ZeroOrMore(Choice([
                                         Fragment(YulEscapeSequence),
-                                        Not(['"', '\\', '\r', '\n'])
+                                        Range(inclusive_start = ' ', inclusive_end = '!'),
+                                        Range(inclusive_start = '#', inclusive_end = '['),
+                                        Range(inclusive_start = ']', inclusive_end = '~')
                                     ])),
                                     Atom("\"")
                                 ]))]
@@ -4864,10 +4857,24 @@ YulBlock: YulBlock = {
                                 scanner = Sequence([
                                     Atom("\\"),
                                     Choice([
-                                        Not(['x', 'u']),
+                                        Fragment(YulAsciiEscape),
                                         Fragment(YulHexByteEscape),
                                         Fragment(YulUnicodeEscape)
                                     ])
+                                ])
+                            ),
+                            Fragment(
+                                name = YulAsciiEscape,
+                                scanner = Choice([
+                                    Atom("n"),
+                                    Atom("r"),
+                                    Atom("t"),
+                                    Atom("'"),
+                                    Atom("\""),
+                                    Atom("\\"),
+                                    Atom("\r\n"),
+                                    Atom("\r"),
+                                    Atom("\n")
                                 ])
                             ),
                             Fragment(

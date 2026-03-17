@@ -17,7 +17,7 @@ fn yul_identifier() {
         "foo.bar",
         &[
             (L::YulIdentifier, 0..3),
-            (L::Period, 3..4),
+            (L::YulPeriod, 3..4),
             (L::YulIdentifier, 4..7),
         ],
         LanguageVersion::V0_8_0,

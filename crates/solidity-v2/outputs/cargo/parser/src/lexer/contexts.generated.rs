@@ -14,6 +14,11 @@ pub enum ContextKind {
 
 #[derive(Clone)]
 pub struct ContextExtras {
+    // Since we restricted Slang v2 lexer to only support Solidity 0.8.0+, all the remaining keywords
+    // are either `Always` or `Never` versioned in the remaining versions, so we don't need this
+    // information today. However, that might always change with new version releases.
+    // So, let's keep it for now, even if we don't generate code that uses it yet.
+    #[allow(dead_code)]
     pub language_version: LanguageVersion,
 }
 
@@ -32,22 +37,6 @@ impl<'source> ContextWrapper<'source> {
                 Self::Solidity(SolidityContext::lexer_with_extras(source, extras))
             }
             ContextKind::Yul => Self::Yul(YulContext::lexer_with_extras(source, extras)),
-        }
-    }
-
-    pub fn source(&self) -> &'source str {
-        match self {
-            Self::Pragma(lexer) => lexer.source(),
-            Self::Solidity(lexer) => lexer.source(),
-            Self::Yul(lexer) => lexer.source(),
-        }
-    }
-
-    pub fn bump(&mut self, n: usize) {
-        match self {
-            Self::Pragma(lexer) => lexer.bump(n),
-            Self::Solidity(lexer) => lexer.bump(n),
-            Self::Yul(lexer) => lexer.bump(n),
         }
     }
 
@@ -119,8 +108,8 @@ pub enum PragmaContext {
     #[regex(r#"\."#, |_| { LexemeKind::PragmaPeriod }, priority = 2000019)]
     #[regex(r#";"#, |_| { LexemeKind::PragmaSemicolon }, priority = 2000020)]
     #[regex(r#"~"#, |_| { LexemeKind::PragmaTilde }, priority = 2000021)]
-    #[regex(r#"'(((\\([^xu]|((x(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))))|((u(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))))))|[^'\\\r\n])*'"#, |_| { LexemeKind::PragmaSingleQuotedStringLiteral }, priority = 2000022)]
-    #[regex(r#""(((\\([^xu]|((x(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))))|((u(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))))))|[^"\\\r\n])*""#, |_| { LexemeKind::PragmaDoubleQuotedStringLiteral }, priority = 2000023)]
+    #[regex(r#"'(((\\(((n|r|t|'|"|\\|\r\n|\r|\n))|((x(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))))|((u(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))))))|[ -&]|[\(-\[]|[\]-~])*'"#, |_| { LexemeKind::PragmaSingleQuotedStringLiteral }, priority = 2000022)]
+    #[regex(r#""(((\\(((n|r|t|'|"|\\|\r\n|\r|\n))|((x(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))))|((u(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))))))|[ -!]|[#-\[]|[\]-~])*""#, |_| { LexemeKind::PragmaDoubleQuotedStringLiteral }, priority = 2000023)]
     #[regex(r#"( |\t)+"#, |_| { LexemeKind::Whitespace }, priority = 1000024, allow_greedy = true)]
     #[regex(r#"\n|(\r\n?)"#, |_| { LexemeKind::EndOfLine }, priority = 1000025, allow_greedy = true)]
     #[regex(r#"//[^\r\n]*"#, |_| { LexemeKind::SingleLineComment }, priority = 1000026, allow_greedy = true)]
@@ -301,11 +290,11 @@ pub enum SolidityContext {
     #[regex(r#"\^"#, |_| { LexemeKind::Caret }, priority = 2000166)]
     #[regex(r#"\^="#, |_| { LexemeKind::CaretEqual }, priority = 2000167)]
     #[regex(r#"~"#, |_| { LexemeKind::Tilde }, priority = 2000168)]
-    #[regex(r#"0(x|X)(([0-9]|[a-f]|[A-F]))+(_(([0-9]|[a-f]|[A-F]))+)*"#, |_| { LexemeKind::HexLiteral }, priority = 2000169)]
-    #[regex(r#"(([0-9]+(_[0-9]+)*))(\.(([0-9]+(_[0-9]+)*))?)?(((e|E)-?(([0-9]+(_[0-9]+)*))))?"#, |_| { LexemeKind::DecimalLiteral }, priority = 2000170)]
+    #[regex(r#"0x(([0-9]|[a-f]|[A-F]))+(_(([0-9]|[a-f]|[A-F]))+)*"#, |_| { LexemeKind::HexLiteral }, priority = 2000169)]
+    #[regex(r#"(([0-9]+(_[0-9]+)*))(\.(([0-9]+(_[0-9]+)*)))?(((e|E)-?(([0-9]+(_[0-9]+)*))))?"#, |_| { LexemeKind::DecimalLiteral }, priority = 2000170)]
     #[regex(r#"\.(([0-9]+(_[0-9]+)*))(((e|E)-?(([0-9]+(_[0-9]+)*))))?"#, |_| { LexemeKind::DecimalLiteral }, priority = 2000171)]
-    #[regex(r#"'(((\\([^xu]|((x(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))))|((u(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))))))|[^'\\\r\n])*'"#, |_| { LexemeKind::SingleQuotedStringLiteral }, priority = 2000172)]
-    #[regex(r#""(((\\([^xu]|((x(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))))|((u(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))))))|[^"\\\r\n])*""#, |_| { LexemeKind::DoubleQuotedStringLiteral }, priority = 2000173)]
+    #[regex(r#"'(((\\(((n|r|t|'|"|\\|\r\n|\r|\n))|((x(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))))|((u(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))))))|[ -&]|[\(-\[]|[\]-~])*'"#, |_| { LexemeKind::SingleQuotedStringLiteral }, priority = 2000172)]
+    #[regex(r#""(((\\(((n|r|t|'|"|\\|\r\n|\r|\n))|((x(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))))|((u(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))))))|[ -!]|[#-\[]|[\]-~])*""#, |_| { LexemeKind::DoubleQuotedStringLiteral }, priority = 2000173)]
     #[regex(r#"hex'(((([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(_?(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))*))?'"#, |_| { LexemeKind::SingleQuotedHexStringLiteral }, priority = 2000174)]
     #[regex(r#"hex"(((([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(_?(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))*))?""#, |_| { LexemeKind::DoubleQuotedHexStringLiteral }, priority = 2000175)]
     #[regex(r#"unicode'(((\\(((n|r|t|'|"|\\|\r\n|\r|\n))|((x(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))))|((u(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))))))|[^'\\\r\n])*'"#, |_| { LexemeKind::SingleQuotedUnicodeStringLiteral }, priority = 2000176)]
@@ -323,13 +312,13 @@ pub enum SolidityContext {
 #[derive(Clone, Debug, Logos)]
 #[logos(extras = ContextExtras)]
 pub enum YulContext {
-    #[regex(r#"((_|\$|[a-z]|[A-Z]))(((((_|\$|[a-z]|[A-Z]))|[0-9]))|\.)*"#, |_| { LexemeKind::YulIdentifier }, priority = 2000001)]
+    #[regex(r#"((_|\$|[a-z]|[A-Z]))((((_|\$|[a-z]|[A-Z]))|[0-9]))*"#, |_| { LexemeKind::YulIdentifier }, priority = 2000001)]
     #[regex(r#"0|([1-9][0-9]*)"#, |_| { LexemeKind::YulDecimalLiteral }, priority = 2000002)]
     #[regex(r#"0x(([0-9]|[a-f]|[A-F]))+"#, |_| { LexemeKind::YulHexLiteral }, priority = 2000003)]
     #[regex(r#"hex'(((([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(_?(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))*))?'"#, |_| { LexemeKind::YulSingleQuotedHexStringLiteral }, priority = 2000004)]
     #[regex(r#"hex"(((([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(_?(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))*))?""#, |_| { LexemeKind::YulDoubleQuotedHexStringLiteral }, priority = 2000005)]
-    #[regex(r#"'(((\\([^xu]|((x(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))))|((u(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))))))|[^'\\\r\n])*'"#, |_| { LexemeKind::YulSingleQuotedStringLiteral }, priority = 2000006)]
-    #[regex(r#""(((\\([^xu]|((x(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))))|((u(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))))))|[^"\\\r\n])*""#, |_| { LexemeKind::YulDoubleQuotedStringLiteral }, priority = 2000007)]
+    #[regex(r#"'(((\\(((n|r|t|'|"|\\|\r\n|\r|\n))|((x(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))))|((u(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))))))|[ -&]|[\(-\[]|[\]-~])*'"#, |_| { LexemeKind::YulSingleQuotedStringLiteral }, priority = 2000006)]
+    #[regex(r#""(((\\(((n|r|t|'|"|\\|\r\n|\r|\n))|((x(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))))|((u(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))))))|[ -!]|[#-\[]|[\]-~])*""#, |_| { LexemeKind::YulDoubleQuotedStringLiteral }, priority = 2000007)]
     #[regex(r#"break"#, |_| { LexemeKind::YulBreakKeyword_Reserved }, priority = 3000008)]
     #[regex(r#"case"#, |_| { LexemeKind::YulCaseKeyword_Reserved }, priority = 3000009)]
     #[regex(r#"continue"#, |_| { LexemeKind::YulContinueKeyword_Reserved }, priority = 3000010)]

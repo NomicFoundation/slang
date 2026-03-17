@@ -8,15 +8,17 @@ SourceUnitStruct {
                     pragma_keyword: PragmaKeyword {
                         range: 110..116,
                     },
-                    pragma: AbicoderPragma(
-                        AbicoderPragmaStruct {
-                            abicoder_keyword: AbicoderKeyword {
-                                range: 0..0,
+                    pragma: ExperimentalPragma(
+                        ExperimentalPragmaStruct {
+                            experimental_keyword: ExperimentalKeyword {
+                                range: 117..129,
                             },
-                            version: AbicoderV1Keyword(
-                                AbicoderV1Keyword {
-                                    range: 0..0,
-                                },
+                            feature: PragmaStringLiteral(
+                                PragmaDoubleQuotedStringLiteral(
+                                    PragmaDoubleQuotedStringLiteral {
+                                        range: 130..144,
+                                    },
+                                ),
                             ),
                         },
                     ),

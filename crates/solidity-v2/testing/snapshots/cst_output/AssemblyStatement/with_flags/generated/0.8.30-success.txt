@@ -57,8 +57,32 @@ SourceUnitStruct {
                                                             assembly_keyword: AssemblyKeyword {
                                                                 range: 135..143,
                                                             },
-                                                            label: None,
-                                                            flags: None,
+                                                            label: Some(
+                                                                YulDoubleQuotedStringLiteral(
+                                                                    YulDoubleQuotedStringLiteral {
+                                                                        range: 144..152,
+                                                                    },
+                                                                ),
+                                                            ),
+                                                            flags: Some(
+                                                                YulFlagsDeclarationStruct {
+                                                                    open_paren: YulOpenParen {
+                                                                        range: 153..154,
+                                                                    },
+                                                                    flags: YulFlags {
+                                                                        elements: [
+                                                                            YulDoubleQuotedStringLiteral(
+                                                                                YulDoubleQuotedStringLiteral {
+                                                                                    range: 154..167,
+                                                                                },
+                                                                            ),
+                                                                        ],
+                                                                    },
+                                                                    close_paren: YulCloseParen {
+                                                                        range: 167..168,
+                                                                    },
+                                                                },
+                                                            ),
                                                             body: YulBlockStruct {
                                                                 open_brace: YulOpenBrace {
                                                                     range: 169..170,

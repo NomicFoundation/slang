@@ -8,16 +8,39 @@ SourceUnitStruct {
                     pragma_keyword: PragmaKeyword {
                         range: 96..102,
                     },
-                    pragma: AbicoderPragma(
-                        AbicoderPragmaStruct {
-                            abicoder_keyword: AbicoderKeyword {
-                                range: 0..0,
+                    pragma: VersionPragma(
+                        VersionPragmaStruct {
+                            solidity_keyword: SolidityKeyword {
+                                range: 103..111,
                             },
-                            version: AbicoderV1Keyword(
-                                AbicoderV1Keyword {
-                                    range: 0..0,
-                                },
-                            ),
+                            sets: VersionExpressionSets {
+                                elements: [
+                                    VersionExpressionSet {
+                                        elements: [
+                                            VersionTerm(
+                                                VersionTermStruct {
+                                                    operator: None,
+                                                    literal: SimpleVersionLiteral(
+                                                        SimpleVersionLiteral {
+                                                            elements: [
+                                                                VersionSpecifier {
+                                                                    range: 112..113,
+                                                                },
+                                                                VersionSpecifier {
+                                                                    range: 114..115,
+                                                                },
+                                                                VersionSpecifier {
+                                                                    range: 116..117,
+                                                                },
+                                                            ],
+                                                        },
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                ],
+                            },
                         },
                     ),
                     semicolon: PragmaSemicolon {

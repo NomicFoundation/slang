@@ -8,16 +8,86 @@ SourceUnitStruct {
                     pragma_keyword: PragmaKeyword {
                         range: 0..6,
                     },
-                    pragma: AbicoderPragma(
-                        AbicoderPragmaStruct {
-                            abicoder_keyword: AbicoderKeyword {
-                                range: 0..0,
+                    pragma: VersionPragma(
+                        VersionPragmaStruct {
+                            solidity_keyword: SolidityKeyword {
+                                range: 114..122,
                             },
-                            version: AbicoderV1Keyword(
-                                AbicoderV1Keyword {
-                                    range: 0..0,
-                                },
-                            ),
+                            sets: VersionExpressionSets {
+                                elements: [
+                                    VersionExpressionSet {
+                                        elements: [
+                                            VersionTerm(
+                                                VersionTermStruct {
+                                                    operator: Some(
+                                                        PragmaCaret(
+                                                            PragmaCaret {
+                                                                range: 123..124,
+                                                            },
+                                                        ),
+                                                    ),
+                                                    literal: SimpleVersionLiteral(
+                                                        SimpleVersionLiteral {
+                                                            elements: [
+                                                                VersionSpecifier {
+                                                                    range: 124..125,
+                                                                },
+                                                                VersionSpecifier {
+                                                                    range: 126..127,
+                                                                },
+                                                                VersionSpecifier {
+                                                                    range: 128..129,
+                                                                },
+                                                            ],
+                                                        },
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                    VersionExpressionSet {
+                                        elements: [
+                                            VersionRange(
+                                                VersionRangeStruct {
+                                                    start: SimpleVersionLiteral(
+                                                        SimpleVersionLiteral {
+                                                            elements: [
+                                                                VersionSpecifier {
+                                                                    range: 133..134,
+                                                                },
+                                                                VersionSpecifier {
+                                                                    range: 135..136,
+                                                                },
+                                                                VersionSpecifier {
+                                                                    range: 137..138,
+                                                                },
+                                                            ],
+                                                        },
+                                                    ),
+                                                    minus: PragmaMinus {
+                                                        range: 138..139,
+                                                    },
+                                                    end: SimpleVersionLiteral(
+                                                        SimpleVersionLiteral {
+                                                            elements: [
+                                                                VersionSpecifier {
+                                                                    range: 139..140,
+                                                                },
+                                                                VersionSpecifier {
+                                                                    range: 141..142,
+                                                                },
+                                                                VersionSpecifier {
+                                                                    range: 143..144,
+                                                                },
+                                                            ],
+                                                        },
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                ],
+                            },
                         },
                     ),
                     semicolon: PragmaSemicolon {
