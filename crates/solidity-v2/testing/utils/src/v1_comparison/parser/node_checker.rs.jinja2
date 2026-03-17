@@ -1023,11 +1023,69 @@ impl NodeChecker for UntypedDeclarationNames {
     }
 }
 
+{% elif parent_type == "PragmaStringLiteral" %}
+/// Custom `NodeChecker` for `PragmaStringLiteral` — remaps version literal variants to string literal V1 equivalents
+impl NodeChecker for PragmaStringLiteral {
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
+        let node_range = text_offset..(text_offset + node.text_len());
+
+        if node.kind() != NodeKind::Nonterminal(NonterminalKind::StringLiteral) {
+            return vec![NodeCheckerError::new(format!("Expected node kind to be {}, but it was {}", NonterminalKind::StringLiteral, node.kind()), node_range)];
+        }
+
+        let children = children_with_offsets(node, text_offset);
+
+        if children.len() != 1 {
+            return vec![NodeCheckerError::new(format!("Expected exactly one child for {}, but got: {children:#?}", NonterminalKind::StringLiteral), node_range)];
+        }
+
+        let (child, child_offset) = &children[0];
+
+        if child.label != EdgeLabel::Variant {
+            let child_range = *child_offset..(*child_offset + child.node.text_len());
+            return vec![NodeCheckerError::new(format!("Expected child to be of variant type, but it was {}", child.label), child_range)];
+        }
+
+        match self {
+            Self::PragmaSingleQuotedStringLiteral(element) => {
+                element.check_node_with_offset(&child.node, *child_offset)
+            }
+            Self::PragmaDoubleQuotedStringLiteral(element) => {
+                element.check_node_with_offset(&child.node, *child_offset)
+            }
+            Self::SingleQuotedVersionLiteral(_) => {
+                // Version literals in pragma context map to V1's string literals, not version literals
+                let child_range = *child_offset..(*child_offset + child.node.text_len());
+                if let NodeKind::Terminal(terminal_kind) = child.node.kind() {
+                    if terminal_kind.as_ref() == "SingleQuotedStringLiteral" {
+                        vec![]
+                    } else {
+                        vec![NodeCheckerError::new(format!("Expected node kind to be SingleQuotedStringLiteral, but it was {}", terminal_kind.as_ref()), child_range)]
+                    }
+                } else {
+                    vec![NodeCheckerError::new(format!("Expected node kind to be a terminal, but it was {}", child.node.kind()), child_range)]
+                }
+            }
+            Self::DoubleQuotedVersionLiteral(_) => {
+                // Version literals in pragma context map to V1's string literals, not version literals
+                let child_range = *child_offset..(*child_offset + child.node.text_len());
+                if let NodeKind::Terminal(terminal_kind) = child.node.kind() {
+                    if terminal_kind.as_ref() == "DoubleQuotedStringLiteral" {
+                        vec![]
+                    } else {
+                        vec![NodeCheckerError::new(format!("Expected node kind to be DoubleQuotedStringLiteral, but it was {}", terminal_kind.as_ref()), child_range)]
+                    }
+                } else {
+                    vec![NodeCheckerError::new(format!("Expected node kind to be a terminal, but it was {}", child.node.kind()), child_range)]
+                }
+            }
+        }
+    }
+}
+
 {% else %}
 
-{% if parent_type == "PragmaStringLiteral" %}
-    {% set old_parent_type = "StringLiteral" %}
-{% elif parent_type == "YulHexStringLiteral" %}
+{% if parent_type == "YulHexStringLiteral" %}
     {% set old_parent_type = "HexStringLiteral" %}
 {% elif parent_type == "YulStringLiteral" %}
     {% set old_parent_type = "StringLiteral" %}

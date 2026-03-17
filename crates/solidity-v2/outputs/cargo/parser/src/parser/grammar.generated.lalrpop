@@ -69,6 +69,19 @@ Repeated<T>: Vec<T> = {
         <solidity_keyword: SolidityKeyword>  <sets: VersionExpressionSets>  => new_version_pragma(<>),
         
     };
+    
+
+// Rules for topic Pragma String Literals
+    PragmaStringLiteral: PragmaStringLiteral = {
+        <pragma_single_quoted_string_literal: PragmaSingleQuotedStringLiteral>  => new_pragma_string_literal_pragma_single_quoted_string_literal(<>),
+        <pragma_double_quoted_string_literal: PragmaDoubleQuotedStringLiteral>  => new_pragma_string_literal_pragma_double_quoted_string_literal(<>),
+        <single_quoted_version_literal: SingleQuotedVersionLiteral>  => new_pragma_string_literal_single_quoted_version_literal(<>),
+        <double_quoted_version_literal: DoubleQuotedVersionLiteral>  => new_pragma_string_literal_double_quoted_version_literal(<>),
+        
+    };
+    
+
+// Rules for topic Pragma Versions
     VersionExpressionSets: VersionExpressionSets = {
         <version_expression_set: Separated<PragmaBarBar, <VersionExpressionSet>>>  => new_version_expression_sets(<>),
         
@@ -116,14 +129,6 @@ Repeated<T>: Vec<T> = {
     
 
 // Rules for topic Pragma Punctuation
-    
-
-// Rules for topic Pragma String Literals
-    PragmaStringLiteral: PragmaStringLiteral = {
-        <pragma_single_quoted_string_literal: PragmaSingleQuotedStringLiteral>  => new_pragma_string_literal_pragma_single_quoted_string_literal(<>),
-        <pragma_double_quoted_string_literal: PragmaDoubleQuotedStringLiteral>  => new_pragma_string_literal_pragma_double_quoted_string_literal(<>),
-        
-    };
     
 
 

@@ -3604,6 +3604,8 @@ pub fn new_pragma_experimental_pragma(element: ExperimentalPragma) -> Pragma {
 pub enum PragmaStringLiteral {
     PragmaSingleQuotedStringLiteral(PragmaSingleQuotedStringLiteral),
     PragmaDoubleQuotedStringLiteral(PragmaDoubleQuotedStringLiteral),
+    SingleQuotedVersionLiteral(SingleQuotedVersionLiteral),
+    DoubleQuotedVersionLiteral(DoubleQuotedVersionLiteral),
 }
 
 pub fn new_pragma_string_literal_pragma_single_quoted_string_literal(
@@ -3616,6 +3618,18 @@ pub fn new_pragma_string_literal_pragma_double_quoted_string_literal(
     element: PragmaDoubleQuotedStringLiteral,
 ) -> PragmaStringLiteral {
     PragmaStringLiteral::PragmaDoubleQuotedStringLiteral(element)
+}
+
+pub fn new_pragma_string_literal_single_quoted_version_literal(
+    element: SingleQuotedVersionLiteral,
+) -> PragmaStringLiteral {
+    PragmaStringLiteral::SingleQuotedVersionLiteral(element)
+}
+
+pub fn new_pragma_string_literal_double_quoted_version_literal(
+    element: DoubleQuotedVersionLiteral,
+) -> PragmaStringLiteral {
+    PragmaStringLiteral::DoubleQuotedVersionLiteral(element)
 }
 
 #[derive(Clone, Debug, PartialEq)]

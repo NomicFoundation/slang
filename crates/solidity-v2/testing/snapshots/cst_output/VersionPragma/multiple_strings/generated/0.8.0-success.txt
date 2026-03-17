@@ -1,0 +1,70 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            PragmaDirective(
+                PragmaDirectiveStruct {
+                    pragma_keyword: PragmaKeyword {
+                        range: 0..6,
+                    },
+                    pragma: VersionPragma(
+                        VersionPragmaStruct {
+                            solidity_keyword: SolidityKeyword {
+                                range: 112..120,
+                            },
+                            sets: VersionExpressionSets {
+                                elements: [
+                                    VersionExpressionSet {
+                                        elements: [
+                                            VersionTerm(
+                                                VersionTermStruct {
+                                                    operator: Some(
+                                                        PragmaCaret(
+                                                            PragmaCaret {
+                                                                range: 121..122,
+                                                            },
+                                                        ),
+                                                    ),
+                                                    literal: DoubleQuotedVersionLiteral(
+                                                        DoubleQuotedVersionLiteral {
+                                                            range: 122..129,
+                                                        },
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                    VersionExpressionSet {
+                                        elements: [
+                                            VersionRange(
+                                                VersionRangeStruct {
+                                                    start: DoubleQuotedVersionLiteral(
+                                                        DoubleQuotedVersionLiteral {
+                                                            range: 133..140,
+                                                        },
+                                                    ),
+                                                    minus: PragmaMinus {
+                                                        range: 140..141,
+                                                    },
+                                                    end: SingleQuotedVersionLiteral(
+                                                        SingleQuotedVersionLiteral {
+                                                            range: 141..148,
+                                                        },
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                ],
+                            },
+                        },
+                    ),
+                    semicolon: PragmaSemicolon {
+                        range: 157..158,
+                    },
+                },
+            ),
+        ],
+    },
+}
