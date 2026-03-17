@@ -60,13 +60,13 @@ SourceUnitStruct {
                                                             label: None,
                                                             flags: None,
                                                             body: YulBlockStruct {
-                                                                open_brace: OpenBrace {
+                                                                open_brace: YulOpenBrace {
                                                                     range: 49..50,
                                                                 },
                                                                 statements: YulStatements {
                                                                     elements: [],
                                                                 },
-                                                                close_brace: CloseBrace {
+                                                                close_brace: YulCloseBrace {
                                                                     range: 168..169,
                                                                 },
                                                             },

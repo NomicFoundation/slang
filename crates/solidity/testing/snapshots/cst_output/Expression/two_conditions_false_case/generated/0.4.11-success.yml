@@ -1,0 +1,34 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ a ? b : c ? d : e // (a ? b : (c ? d : e))                                       │ 0..42
+
+Errors: []
+
+Tree:
+  - (root꞉ Expression) ► (variant꞉ ConditionalExpression): # "a ? b : c ? d : e // (a ? b : (c ? d : e))\n" (0..43)
+      - (operand꞉ Expression) ► (variant꞉ Identifier): "a" # (0..1)
+      - (leading_trivia꞉ Whitespace): " " # (1..2)
+      - (question_mark꞉ QuestionMark): "?" # (2..3)
+      - (true_expression꞉ Expression): # " b" (3..5)
+          - (leading_trivia꞉ Whitespace): " " # (3..4)
+          - (variant꞉ Identifier): "b" # (4..5)
+      - (leading_trivia꞉ Whitespace): " " # (5..6)
+      - (colon꞉ Colon): ":" # (6..7)
+      - (false_expression꞉ Expression) ► (variant꞉ ConditionalExpression): # " c ? d : e // (a ? b : (c ? d : e))\n" (7..43)
+          - (operand꞉ Expression): # " c" (7..9)
+              - (leading_trivia꞉ Whitespace): " " # (7..8)
+              - (variant꞉ Identifier): "c" # (8..9)
+          - (leading_trivia꞉ Whitespace): " " # (9..10)
+          - (question_mark꞉ QuestionMark): "?" # (10..11)
+          - (true_expression꞉ Expression): # " d" (11..13)
+              - (leading_trivia꞉ Whitespace): " " # (11..12)
+              - (variant꞉ Identifier): "d" # (12..13)
+          - (leading_trivia꞉ Whitespace): " " # (13..14)
+          - (colon꞉ Colon): ":" # (14..15)
+          - (false_expression꞉ Expression): # " e // (a ? b : (c ? d : e))\n" (15..43)
+              - (leading_trivia꞉ Whitespace): " " # (15..16)
+              - (variant꞉ Identifier): "e" # (16..17)
+              - (trailing_trivia꞉ Whitespace): " " # (17..18)
+              - (trailing_trivia꞉ SingleLineComment): "// (a ? b : (c ? d : e))" # (18..42)
+              - (trailing_trivia꞉ EndOfLine): "\n" # (42..43)
