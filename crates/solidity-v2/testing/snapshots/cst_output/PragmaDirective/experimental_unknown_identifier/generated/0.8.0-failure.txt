@@ -1,6 +1,6 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Error: Unexpected UNRECOGNIZED. One of ABIEncoderV2Keyword_Reserved, PragmaDoubleQuotedStringLiteral, PragmaSingleQuotedStringLiteral, SMTCheckerKeyword_Reserved was expected
+Error: Unexpected UNRECOGNIZED. One of ABIEncoderV2Keyword_Reserved, DoubleQuotedVersionLiteral, PragmaDoubleQuotedStringLiteral, PragmaSingleQuotedStringLiteral, SMTCheckerKeyword_Reserved, SingleQuotedVersionLiteral was expected
    ╭─[crates/solidity-v2/testing/snapshots/cst_output/PragmaDirective/experimental_unknown_identifier/input.sol:2:21]
    │
  2 │ pragma experimental foo;

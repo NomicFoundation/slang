@@ -17,7 +17,7 @@ language_v2_macros::compile!(Language(
         Trivia(EndOfLine)
     ]),
     versions = [
-        "0.8.0",  "0.8.1",  "0.8.2",  "0.8.3",  "0.8.4",  "0.8.5",  "0.8.6",  "0.8.7",  "0.8.8",  "0.8.9", 
+        "0.8.0",  "0.8.1",  "0.8.2",  "0.8.3",  "0.8.4",  "0.8.5",  "0.8.6",  "0.8.7",  "0.8.8",  "0.8.9",
         "0.8.10", "0.8.11", "0.8.12", "0.8.13", "0.8.14", "0.8.15", "0.8.16", "0.8.17", "0.8.18", "0.8.19",
         "0.8.20", "0.8.21", "0.8.22", "0.8.23", "0.8.24", "0.8.25", "0.8.26", "0.8.27", "0.8.28", "0.8.29",
         "0.8.30", "0.8.31", "0.8.32", "0.8.33", "0.8.34"
@@ -74,7 +74,108 @@ language_v2_macros::compile!(Language(
                                     solidity_keyword = Required(SolidityKeyword),
                                     sets = Required(VersionExpressionSets)
                                 )
+                            )
+                        ]
+                    ),
+                    Topic(
+                        title = "Pragma String Literals",
+                        items = [
+                            Enum(
+                                name = PragmaStringLiteral,
+                                variants = [
+                                    EnumVariant(reference = PragmaSingleQuotedStringLiteral),
+                                    EnumVariant(reference = PragmaDoubleQuotedStringLiteral),
+                                    // Quoted version literal conflict at the lexer level with string
+                                    // literals, therefore they are given more priority
+                                    // Therefore, they should also be considered valid string
+                                    // literals
+                                    EnumVariant(reference = SingleQuotedVersionLiteral),
+                                    EnumVariant(reference = DoubleQuotedVersionLiteral)
+
+                                ]
                             ),
+                            Token(
+                                name = PragmaSingleQuotedStringLiteral,
+                                definitions = [TokenDefinition(Sequence([
+                                    Atom("'"),
+                                    ZeroOrMore(Choice([
+                                        Fragment(PragmaEscapeSequence),
+                                        Range(inclusive_start = ' ', inclusive_end = '&'),
+                                        Range(inclusive_start = '(', inclusive_end = '['),
+                                        Range(inclusive_start = ']', inclusive_end = '~')
+                                    ])),
+                                    Atom("'")
+                                ]))]
+                            ),
+                            Token(
+                                name = PragmaDoubleQuotedStringLiteral,
+                                definitions = [TokenDefinition(Sequence([
+                                    Atom("\""),
+                                    ZeroOrMore(Choice([
+                                        Fragment(PragmaEscapeSequence),
+                                        Range(inclusive_start = ' ', inclusive_end = '!'),
+                                        Range(inclusive_start = '#', inclusive_end = '['),
+                                        Range(inclusive_start = ']', inclusive_end = '~')
+                                    ])),
+                                    Atom("\"")
+                                ]))]
+                            ),
+                            Fragment(
+                                name = PragmaEscapeSequence,
+                                scanner = Sequence([
+                                    Atom("\\"),
+                                    Choice([
+                                        Fragment(PragmaAsciiEscape),
+                                        Fragment(PragmaHexByteEscape),
+                                        Fragment(PragmaUnicodeEscape)
+                                    ])
+                                ])
+                            ),
+                            Fragment(
+                                name = PragmaAsciiEscape,
+                                scanner = Choice([
+                                    Atom("n"),
+                                    Atom("r"),
+                                    Atom("t"),
+                                    Atom("'"),
+                                    Atom("\""),
+                                    Atom("\\"),
+                                    Atom("\r\n"),
+                                    Atom("\r"),
+                                    Atom("\n")
+                                ])
+                            ),
+                            Fragment(
+                                name = PragmaHexByteEscape,
+                                scanner = Sequence([
+                                    Atom("x"),
+                                    Fragment(PragmaHexCharacter),
+                                    Fragment(PragmaHexCharacter)
+                                ])
+                            ),
+                            Fragment(
+                                name = PragmaUnicodeEscape,
+                                scanner = Sequence([
+                                    Atom("u"),
+                                    Fragment(PragmaHexCharacter),
+                                    Fragment(PragmaHexCharacter),
+                                    Fragment(PragmaHexCharacter),
+                                    Fragment(PragmaHexCharacter)
+                                ])
+                            ),
+                            Fragment(
+                                name = PragmaHexCharacter,
+                                scanner = Choice([
+                                    Range(inclusive_start = '0', inclusive_end = '9'),
+                                    Range(inclusive_start = 'a', inclusive_end = 'f'),
+                                    Range(inclusive_start = 'A', inclusive_end = 'F')
+                                ])
+                            )
+                        ]
+                    ),
+                    Topic(
+                        title = "Pragma Versions",
+                        items = [
                             Separated(
                                 name = VersionExpressionSets,
                                 reference = VersionExpressionSet,
@@ -218,95 +319,6 @@ language_v2_macros::compile!(Language(
                             Token(name = PragmaPeriod, definitions = [TokenDefinition(Atom("."))]),
                             Token(name = PragmaSemicolon, definitions = [TokenDefinition(Atom(";"))]),
                             Token(name = PragmaTilde, definitions = [TokenDefinition(Atom("~"))])
-                        ]
-                    ),
-                    Topic(
-                        title = "Pragma String Literals",
-                        items = [
-                            Enum(
-                                name = PragmaStringLiteral,
-                                variants = [
-                                    EnumVariant(reference = PragmaSingleQuotedStringLiteral),
-                                    EnumVariant(reference = PragmaDoubleQuotedStringLiteral)
-                                ]
-                            ),
-                            Token(
-                                name = PragmaSingleQuotedStringLiteral,
-                                definitions = [TokenDefinition(Sequence([
-                                    Atom("'"),
-                                    ZeroOrMore(Choice([
-                                        Fragment(PragmaEscapeSequence),
-                                        Range(inclusive_start = ' ', inclusive_end = '&'),
-                                        Range(inclusive_start = '(', inclusive_end = '['),
-                                        Range(inclusive_start = ']', inclusive_end = '~')
-                                    ])),
-                                    Atom("'")
-                                ]))]
-                            ),
-                            Token(
-                                name = PragmaDoubleQuotedStringLiteral,
-                                definitions = [TokenDefinition(Sequence([
-                                    Atom("\""),
-                                    ZeroOrMore(Choice([
-                                        Fragment(PragmaEscapeSequence),
-                                        Range(inclusive_start = ' ', inclusive_end = '!'),
-                                        Range(inclusive_start = '#', inclusive_end = '['),
-                                        Range(inclusive_start = ']', inclusive_end = '~')
-                                    ])),
-                                    Atom("\"")
-                                ]))]
-                            ),
-                            Fragment(
-                                name = PragmaEscapeSequence,
-                                scanner = Sequence([
-                                    Atom("\\"),
-                                    Choice([
-                                        Fragment(PragmaAsciiEscape),
-                                        Fragment(PragmaHexByteEscape),
-                                        Fragment(PragmaUnicodeEscape)
-                                    ])
-                                ])
-                            ),
-                            Fragment(
-                                name = PragmaAsciiEscape,
-                                scanner = Choice([
-                                    Atom("n"),
-                                    Atom("r"),
-                                    Atom("t"),
-                                    Atom("'"),
-                                    Atom("\""),
-                                    Atom("\\"),
-                                    Atom("\r\n"),
-                                    Atom("\r"),
-                                    Atom("\n")
-                                ])
-                            ),
-                            Fragment(
-                                name = PragmaHexByteEscape,
-                                scanner = Sequence([
-                                    Atom("x"),
-                                    Fragment(PragmaHexCharacter),
-                                    Fragment(PragmaHexCharacter)
-                                ])
-                            ),
-                            Fragment(
-                                name = PragmaUnicodeEscape,
-                                scanner = Sequence([
-                                    Atom("u"),
-                                    Fragment(PragmaHexCharacter),
-                                    Fragment(PragmaHexCharacter),
-                                    Fragment(PragmaHexCharacter),
-                                    Fragment(PragmaHexCharacter)
-                                ])
-                            ),
-                            Fragment(
-                                name = PragmaHexCharacter,
-                                scanner = Choice([
-                                    Range(inclusive_start = '0', inclusive_end = '9'),
-                                    Range(inclusive_start = 'a', inclusive_end = 'f'),
-                                    Range(inclusive_start = 'A', inclusive_end = 'F')
-                                ])
-                            )
                         ]
                     )
                 ]
