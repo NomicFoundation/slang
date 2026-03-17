@@ -4,6 +4,10 @@ pub use nodes::*;
 
 mod builder;
 
+mod extensions;
+mod source;
+pub use source::Source;
+
 #[path = "visitor.generated.rs"]
 pub mod visitor;
 

@@ -6,6 +6,8 @@ use std::ops::Range;
 use std::rc::Rc;
 use std::vec::Vec;
 
+use super::source::Source;
+
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(transparent)]
 pub struct NodeId(usize);
@@ -1813,9 +1815,21 @@ pub struct BytesKeyword {
     pub range: Range<usize>,
 }
 
+impl BytesKeyword {
+    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
+        source.text(self.range.clone())
+    }
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct DecimalLiteral {
     pub range: Range<usize>,
+}
+
+impl DecimalLiteral {
+    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
+        source.text(self.range.clone())
+    }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -1823,9 +1837,21 @@ pub struct DoubleQuotedVersionLiteral {
     pub range: Range<usize>,
 }
 
+impl DoubleQuotedVersionLiteral {
+    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
+        source.text(self.range.clone())
+    }
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct FixedKeyword {
     pub range: Range<usize>,
+}
+
+impl FixedKeyword {
+    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
+        source.text(self.range.clone())
+    }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -1833,9 +1859,21 @@ pub struct HexLiteral {
     pub range: Range<usize>,
 }
 
+impl HexLiteral {
+    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
+        source.text(self.range.clone())
+    }
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct HexStringLiteral {
     pub range: Range<usize>,
+}
+
+impl HexStringLiteral {
+    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
+        source.text(self.range.clone())
+    }
 }
 
 pub type Identifier = Rc<IdentifierStruct>;
@@ -1849,6 +1887,10 @@ impl IdentifierStruct {
     pub fn id(self: &Rc<Self>) -> NodeId {
         NodeId(Rc::as_ptr(self) as usize)
     }
+
+    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
+        source.text(self.range.clone())
+    }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -1856,9 +1898,21 @@ pub struct IntKeyword {
     pub range: Range<usize>,
 }
 
+impl IntKeyword {
+    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
+        source.text(self.range.clone())
+    }
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct SingleQuotedVersionLiteral {
     pub range: Range<usize>,
+}
+
+impl SingleQuotedVersionLiteral {
+    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
+        source.text(self.range.clone())
+    }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -1866,9 +1920,21 @@ pub struct StringLiteral {
     pub range: Range<usize>,
 }
 
+impl StringLiteral {
+    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
+        source.text(self.range.clone())
+    }
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct UfixedKeyword {
     pub range: Range<usize>,
+}
+
+impl UfixedKeyword {
+    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
+        source.text(self.range.clone())
+    }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -1876,9 +1942,21 @@ pub struct UintKeyword {
     pub range: Range<usize>,
 }
 
+impl UintKeyword {
+    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
+        source.text(self.range.clone())
+    }
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct UnicodeStringLiteral {
     pub range: Range<usize>,
+}
+
+impl UnicodeStringLiteral {
+    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
+        source.text(self.range.clone())
+    }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -1886,14 +1964,32 @@ pub struct VersionSpecifier {
     pub range: Range<usize>,
 }
 
+impl VersionSpecifier {
+    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
+        source.text(self.range.clone())
+    }
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulDecimalLiteral {
     pub range: Range<usize>,
 }
 
+impl YulDecimalLiteral {
+    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
+        source.text(self.range.clone())
+    }
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulHexLiteral {
     pub range: Range<usize>,
+}
+
+impl YulHexLiteral {
+    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
+        source.text(self.range.clone())
+    }
 }
 
 pub type YulIdentifier = Rc<YulIdentifierStruct>;
@@ -1906,5 +2002,9 @@ pub struct YulIdentifierStruct {
 impl YulIdentifierStruct {
     pub fn id(self: &Rc<Self>) -> NodeId {
         NodeId(Rc::as_ptr(self) as usize)
+    }
+
+    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
+        source.text(self.range.clone())
     }
 }

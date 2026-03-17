@@ -5,6 +5,8 @@ use std::rc::Rc;
 use std::ops::Range;
 use std::vec::Vec;
 
+use super::source::Source;
+
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(transparent)]
 pub struct NodeId(usize);
@@ -91,11 +93,21 @@ pub struct NodeId(usize);
         pub fn id(self: &Rc<Self>) -> NodeId {
           NodeId(Rc::as_ptr(self) as usize)
         }
+
+        pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
+          source.text(self.range.clone())
+        }
       }
     {% else %}
       #[derive(Clone, Debug, PartialEq)]
       pub struct {{ terminal_type }} {
         pub range: Range<usize>,
+      }
+
+      impl {{ terminal_type }} {
+        pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
+          source.text(self.range.clone())
+        }
       }
     {% endif %}
   {% endif %}
