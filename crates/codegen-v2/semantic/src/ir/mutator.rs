@@ -22,7 +22,7 @@ pub struct IrModelMutator {
 #[derive(Clone, Serialize)]
 pub struct MutatedSequence {
     pub fields: Vec<MutatedField>,
-    // Indicates that new fields where added to the sequence, making it
+    // Indicates that new fields were added to the sequence, making it
     // impossible to auto-generate a transformer function.
     pub has_added_fields: bool,
 }
@@ -306,8 +306,8 @@ impl IrModelMutator {
     }
 
     pub fn remove_type(&mut self, name: &str) {
-        let removed_type = self.find_node_type(&name.into());
         let identifier: model::Identifier = name.into();
+        let removed_type = self.find_node_type(&identifier);
         let removed = self.sequences.remove(&identifier).is_some()
             || self.choices.remove(&identifier).is_some()
             || self.collections.remove(&identifier).is_some()
