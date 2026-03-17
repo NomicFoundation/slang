@@ -64,7 +64,28 @@ SourceUnitStruct {
                                                                     range: 49..50,
                                                                 },
                                                                 statements: YulStatements {
-                                                                    elements: [],
+                                                                    elements: [
+                                                                        YulExpression(
+                                                                            YulLiteral(
+                                                                                YulDecimalLiteral(
+                                                                                    YulDecimalLiteral {
+                                                                                        range: 168..169,
+                                                                                    },
+                                                                                ),
+                                                                            ),
+                                                                        ),
+                                                                        YulExpression(
+                                                                            YulPath(
+                                                                                YulPath {
+                                                                                    elements: [
+                                                                                        YulIdentifier {
+                                                                                            range: 169..170,
+                                                                                        },
+                                                                                    ],
+                                                                                },
+                                                                            ),
+                                                                        ),
+                                                                    ],
                                                                 },
                                                                 close_brace: YulCloseBrace {
                                                                     range: 187..188,

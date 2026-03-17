@@ -8,16 +8,45 @@ SourceUnitStruct {
                     pragma_keyword: PragmaKeyword {
                         range: 133..139,
                     },
-                    pragma: AbicoderPragma(
-                        AbicoderPragmaStruct {
-                            abicoder_keyword: AbicoderKeyword {
-                                range: 0..0,
+                    pragma: VersionPragma(
+                        VersionPragmaStruct {
+                            solidity_keyword: SolidityKeyword {
+                                range: 140..148,
                             },
-                            version: AbicoderV1Keyword(
-                                AbicoderV1Keyword {
-                                    range: 0..0,
-                                },
-                            ),
+                            sets: VersionExpressionSets {
+                                elements: [
+                                    VersionExpressionSet {
+                                        elements: [
+                                            VersionTerm(
+                                                VersionTermStruct {
+                                                    operator: Some(
+                                                        PragmaCaret(
+                                                            PragmaCaret {
+                                                                range: 149..150,
+                                                            },
+                                                        ),
+                                                    ),
+                                                    literal: SimpleVersionLiteral(
+                                                        SimpleVersionLiteral {
+                                                            elements: [
+                                                                VersionSpecifier {
+                                                                    range: 150..151,
+                                                                },
+                                                                VersionSpecifier {
+                                                                    range: 152..153,
+                                                                },
+                                                                VersionSpecifier {
+                                                                    range: 154..155,
+                                                                },
+                                                            ],
+                                                        },
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                ],
+                            },
                         },
                     ),
                     semicolon: PragmaSemicolon {
