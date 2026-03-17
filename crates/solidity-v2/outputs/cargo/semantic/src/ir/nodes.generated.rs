@@ -101,7 +101,7 @@ pub type AssemblyStatement = Rc<AssemblyStatementStruct>;
 #[derive(Debug)]
 pub struct AssemblyStatementStruct {
     pub body: YulBlock,
-    pub flags: AssemblyFlags,
+    pub flags: YulFlags,
     pub label: Option<StringLiteral>,
 }
 
@@ -1696,13 +1696,13 @@ pub enum VersionLiteral {
 
 #[derive(Clone, Debug)]
 pub enum VersionOperator {
-    Caret,
-    Tilde,
-    Equal,
-    LessThan,
-    GreaterThan,
-    LessThanEqual,
-    GreaterThanEqual,
+    PragmaCaret,
+    PragmaTilde,
+    PragmaEqual,
+    PragmaLessThan,
+    PragmaGreaterThan,
+    PragmaLessThanEqual,
+    PragmaGreaterThanEqual,
 }
 
 #[derive(Clone, Debug)]
@@ -1748,8 +1748,6 @@ pub enum YulSwitchCase {
 //
 
 pub type ArrayValues = Vec<Expression>;
-
-pub type AssemblyFlags = Vec<StringLiteral>;
 
 pub type CallOptions = Vec<NamedArgument>;
 
@@ -1805,6 +1803,8 @@ pub type VersionExpressionSets = Vec<VersionExpressionSet>;
 
 pub type YulArguments = Vec<YulExpression>;
 
+pub type YulFlags = Vec<StringLiteral>;
+
 pub type YulParameters = Vec<YulIdentifier>;
 
 pub type YulPath = Vec<YulIdentifier>;
@@ -1828,21 +1828,6 @@ pub struct BytesKeyword {
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct DecimalLiteral {
-    pub range: Range<usize>,
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct DoubleQuotedHexStringLiteral {
-    pub range: Range<usize>,
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct DoubleQuotedStringLiteral {
-    pub range: Range<usize>,
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct DoubleQuotedUnicodeStringLiteral {
     pub range: Range<usize>,
 }
 
@@ -1906,21 +1891,6 @@ pub struct SingleLineComment {
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct SingleLineNatSpecComment {
-    pub range: Range<usize>,
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct SingleQuotedHexStringLiteral {
-    pub range: Range<usize>,
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct SingleQuotedStringLiteral {
-    pub range: Range<usize>,
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct SingleQuotedUnicodeStringLiteral {
     pub range: Range<usize>,
 }
 

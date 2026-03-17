@@ -30,10 +30,10 @@ impl Builder for CstToIrBuilder {
                 .flags
                 .elements
                 .iter()
-                .map(Self::string_literal_to_ir)
+                .map(Self::yul_string_literal_to_ir)
                 .collect()
         });
-        let label = source.label.as_ref().map(Self::string_literal_to_ir);
+        let label = source.label.as_ref().map(Self::yul_string_literal_to_ir);
 
         Rc::new(output::AssemblyStatementStruct { body, flags, label })
     }
@@ -384,8 +384,8 @@ impl Builder for CstToIrBuilder {
         source: &input::ExperimentalFeature,
     ) -> output::ExperimentalFeature {
         match source {
-            input::ExperimentalFeature::StringLiteral(string_literal) => {
-                output::ExperimentalFeature::StringLiteral(Self::string_literal_to_ir(
+            input::ExperimentalFeature::PragmaStringLiteral(string_literal) => {
+                output::ExperimentalFeature::StringLiteral(Self::pragma_string_literal_to_ir(
                     string_literal,
                 ))
             }
@@ -395,11 +395,11 @@ impl Builder for CstToIrBuilder {
 
     fn build_yul_literal(&mut self, source: &input::YulLiteral) -> output::YulLiteral {
         match source {
-            input::YulLiteral::StringLiteral(string_literal) => {
-                output::YulLiteral::StringLiteral(Self::string_literal_to_ir(string_literal))
+            input::YulLiteral::YulStringLiteral(string_literal) => {
+                output::YulLiteral::StringLiteral(Self::yul_string_literal_to_ir(string_literal))
             }
-            input::YulLiteral::HexStringLiteral(hex_string_literal) => {
-                output::YulLiteral::HexStringLiteral(Self::hex_string_literal_to_ir(
+            input::YulLiteral::YulHexStringLiteral(hex_string_literal) => {
+                output::YulLiteral::HexStringLiteral(Self::yul_hex_string_literal_to_ir(
                     hex_string_literal,
                 ))
             }
@@ -1030,5 +1030,39 @@ impl CstToIrBuilder {
             }
         };
         output::UnicodeStringLiteral { range }
+    }
+
+    fn yul_string_literal_to_ir(source: &input::YulStringLiteral) -> output::StringLiteral {
+        let range = match source {
+            input::YulStringLiteral::YulSingleQuotedStringLiteral(literal) => literal.range.clone(),
+            input::YulStringLiteral::YulDoubleQuotedStringLiteral(literal) => literal.range.clone(),
+        };
+        output::StringLiteral { range }
+    }
+
+    fn yul_hex_string_literal_to_ir(
+        source: &input::YulHexStringLiteral,
+    ) -> output::HexStringLiteral {
+        let range = match source {
+            input::YulHexStringLiteral::YulSingleQuotedHexStringLiteral(literal) => {
+                literal.range.clone()
+            }
+            input::YulHexStringLiteral::YulDoubleQuotedHexStringLiteral(literal) => {
+                literal.range.clone()
+            }
+        };
+        output::HexStringLiteral { range }
+    }
+
+    fn pragma_string_literal_to_ir(source: &input::PragmaStringLiteral) -> output::StringLiteral {
+        let range = match source {
+            input::PragmaStringLiteral::PragmaSingleQuotedStringLiteral(literal) => {
+                literal.range.clone()
+            }
+            input::PragmaStringLiteral::PragmaDoubleQuotedStringLiteral(literal) => {
+                literal.range.clone()
+            }
+        };
+        output::StringLiteral { range }
     }
 }

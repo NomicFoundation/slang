@@ -250,10 +250,25 @@ fn simplify_string_literals(mutator: &mut IrModelMutator) {
     // Remove all existing types, as we will simplify them to 3 variants
     mutator.remove_type("StringLiterals");
     mutator.remove_type("StringLiteral");
+    mutator.remove_type("SingleQuotedStringLiteral");
+    mutator.remove_type("DoubleQuotedStringLiteral");
     mutator.remove_type("HexStringLiterals");
     mutator.remove_type("HexStringLiteral");
+    mutator.remove_type("SingleQuotedHexStringLiteral");
+    mutator.remove_type("DoubleQuotedHexStringLiteral");
     mutator.remove_type("UnicodeStringLiterals");
     mutator.remove_type("UnicodeStringLiteral");
+    mutator.remove_type("SingleQuotedUnicodeStringLiteral");
+    mutator.remove_type("DoubleQuotedUnicodeStringLiteral");
+    mutator.remove_type("YulStringLiteral");
+    mutator.remove_type("YulSingleQuotedStringLiteral");
+    mutator.remove_type("YulDoubleQuotedStringLiteral");
+    mutator.remove_type("YulHexStringLiteral");
+    mutator.remove_type("YulSingleQuotedHexStringLiteral");
+    mutator.remove_type("YulDoubleQuotedHexStringLiteral");
+    mutator.remove_type("PragmaStringLiteral");
+    mutator.remove_type("PragmaSingleQuotedStringLiteral");
+    mutator.remove_type("PragmaDoubleQuotedStringLiteral");
 
     // Re-declare `StringLiteral`, `HexStringLiteral` and `UnicodeStringLiteral`
     // as non-unique terminals
@@ -281,10 +296,10 @@ fn simplify_string_literals(mutator: &mut IrModelMutator) {
     mutator.add_choice_variant("YulLiteral", "StringLiteral");
     mutator.add_choice_variant("YulLiteral", "HexStringLiteral");
 
-    // For `AssemblyFlags`, also remove the enclosing declaration structure
-    mutator.remove_type("AssemblyFlagsDeclaration");
-    mutator.add_collection_type("AssemblyFlags", "StringLiteral");
-    mutator.add_sequence_field("AssemblyStatement", "flags", "AssemblyFlags", false);
+    // For `YulFlags`, also remove the enclosing declaration structure
+    mutator.remove_type("YulFlagsDeclaration");
+    mutator.add_collection_type("YulFlags", "StringLiteral");
+    mutator.add_sequence_field("AssemblyStatement", "flags", "YulFlags", false);
     mutator.add_sequence_field("AssemblyStatement", "label", "StringLiteral", true);
 }
 

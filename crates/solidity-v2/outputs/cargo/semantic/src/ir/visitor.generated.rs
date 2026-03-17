@@ -770,11 +770,6 @@ pub trait Visitor {
     }
     fn leave_array_values(&mut self, _items: &ArrayValues) {}
 
-    fn enter_assembly_flags(&mut self, _items: &AssemblyFlags) -> bool {
-        true
-    }
-    fn leave_assembly_flags(&mut self, _items: &AssemblyFlags) {}
-
     fn enter_call_options(&mut self, _items: &CallOptions) -> bool {
         true
     }
@@ -916,6 +911,11 @@ pub trait Visitor {
     }
     fn leave_yul_arguments(&mut self, _items: &YulArguments) {}
 
+    fn enter_yul_flags(&mut self, _items: &YulFlags) -> bool {
+        true
+    }
+    fn leave_yul_flags(&mut self, _items: &YulFlags) {}
+
     fn enter_yul_parameters(&mut self, _items: &YulParameters) -> bool {
         true
     }
@@ -1012,7 +1012,7 @@ pub fn accept_assembly_statement(node: &AssemblyStatement, visitor: &mut impl Vi
         return;
     }
     accept_yul_block(&node.body, visitor);
-    accept_assembly_flags(&node.flags, visitor);
+    accept_yul_flags(&node.flags, visitor);
     visitor.leave_assembly_statement(node);
 }
 
@@ -2539,13 +2539,6 @@ fn accept_array_values(items: &Vec<Expression>, visitor: &mut impl Visitor) {
     visitor.leave_array_values(items);
 }
 #[inline]
-fn accept_assembly_flags(items: &Vec<StringLiteral>, visitor: &mut impl Visitor) {
-    if !visitor.enter_assembly_flags(items) {
-        return;
-    }
-    visitor.leave_assembly_flags(items);
-}
-#[inline]
 fn accept_call_options(items: &Vec<NamedArgument>, visitor: &mut impl Visitor) {
     if !visitor.enter_call_options(items) {
         return;
@@ -2808,6 +2801,13 @@ fn accept_yul_arguments(items: &Vec<YulExpression>, visitor: &mut impl Visitor) 
         accept_yul_expression(item, visitor);
     }
     visitor.leave_yul_arguments(items);
+}
+#[inline]
+fn accept_yul_flags(items: &Vec<StringLiteral>, visitor: &mut impl Visitor) {
+    if !visitor.enter_yul_flags(items) {
+        return;
+    }
+    visitor.leave_yul_flags(items);
 }
 #[inline]
 fn accept_yul_parameters(items: &Vec<YulIdentifier>, visitor: &mut impl Visitor) {

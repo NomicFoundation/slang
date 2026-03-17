@@ -2011,14 +2011,18 @@ pub trait Builder {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::VersionOperator::Caret(_) => output::VersionOperator::Caret,
-            input::VersionOperator::Tilde(_) => output::VersionOperator::Tilde,
-            input::VersionOperator::Equal(_) => output::VersionOperator::Equal,
-            input::VersionOperator::LessThan(_) => output::VersionOperator::LessThan,
-            input::VersionOperator::GreaterThan(_) => output::VersionOperator::GreaterThan,
-            input::VersionOperator::LessThanEqual(_) => output::VersionOperator::LessThanEqual,
-            input::VersionOperator::GreaterThanEqual(_) => {
-                output::VersionOperator::GreaterThanEqual
+            input::VersionOperator::PragmaCaret(_) => output::VersionOperator::PragmaCaret,
+            input::VersionOperator::PragmaTilde(_) => output::VersionOperator::PragmaTilde,
+            input::VersionOperator::PragmaEqual(_) => output::VersionOperator::PragmaEqual,
+            input::VersionOperator::PragmaLessThan(_) => output::VersionOperator::PragmaLessThan,
+            input::VersionOperator::PragmaGreaterThan(_) => {
+                output::VersionOperator::PragmaGreaterThan
+            }
+            input::VersionOperator::PragmaLessThanEqual(_) => {
+                output::VersionOperator::PragmaLessThanEqual
+            }
+            input::VersionOperator::PragmaGreaterThanEqual(_) => {
+                output::VersionOperator::PragmaGreaterThanEqual
             }
         }
     }
@@ -2451,33 +2455,6 @@ pub trait Builder {
         }
     }
 
-    fn build_double_quoted_hex_string_literal(
-        &mut self,
-        source: &input::DoubleQuotedHexStringLiteral,
-    ) -> output::DoubleQuotedHexStringLiteral {
-        output::DoubleQuotedHexStringLiteral {
-            range: source.range.clone(),
-        }
-    }
-
-    fn build_double_quoted_string_literal(
-        &mut self,
-        source: &input::DoubleQuotedStringLiteral,
-    ) -> output::DoubleQuotedStringLiteral {
-        output::DoubleQuotedStringLiteral {
-            range: source.range.clone(),
-        }
-    }
-
-    fn build_double_quoted_unicode_string_literal(
-        &mut self,
-        source: &input::DoubleQuotedUnicodeStringLiteral,
-    ) -> output::DoubleQuotedUnicodeStringLiteral {
-        output::DoubleQuotedUnicodeStringLiteral {
-            range: source.range.clone(),
-        }
-    }
-
     fn build_double_quoted_version_literal(
         &mut self,
         source: &input::DoubleQuotedVersionLiteral,
@@ -2549,33 +2526,6 @@ pub trait Builder {
         source: &input::SingleLineNatSpecComment,
     ) -> output::SingleLineNatSpecComment {
         output::SingleLineNatSpecComment {
-            range: source.range.clone(),
-        }
-    }
-
-    fn build_single_quoted_hex_string_literal(
-        &mut self,
-        source: &input::SingleQuotedHexStringLiteral,
-    ) -> output::SingleQuotedHexStringLiteral {
-        output::SingleQuotedHexStringLiteral {
-            range: source.range.clone(),
-        }
-    }
-
-    fn build_single_quoted_string_literal(
-        &mut self,
-        source: &input::SingleQuotedStringLiteral,
-    ) -> output::SingleQuotedStringLiteral {
-        output::SingleQuotedStringLiteral {
-            range: source.range.clone(),
-        }
-    }
-
-    fn build_single_quoted_unicode_string_literal(
-        &mut self,
-        source: &input::SingleQuotedUnicodeStringLiteral,
-    ) -> output::SingleQuotedUnicodeStringLiteral {
-        output::SingleQuotedUnicodeStringLiteral {
             range: source.range.clone(),
         }
     }
