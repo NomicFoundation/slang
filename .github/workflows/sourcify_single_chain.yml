@@ -48,6 +48,8 @@ jobs:
     steps:
       - name: "Checkout Repository"
         uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+        with:
+          persist-credentials: false
       - name: "Restore Cache"
         uses: "./.github/actions/cache/restore"
       - name: "Build Test Binary"
@@ -140,6 +142,8 @@ jobs:
     steps:
       - name: "Checkout Repository"
         uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+        with:
+          persist-credentials: false
 
       - name: "Restore Cache"
         uses: "./.github/actions/cache/restore"
@@ -173,6 +177,8 @@ jobs:
     steps:
       - name: "Checkout Repository"
         uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+        with:
+          persist-credentials: false
 
       - name: "Restore Cache"
         uses: "./.github/actions/cache/restore"
