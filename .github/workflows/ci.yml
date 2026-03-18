@@ -13,7 +13,8 @@ on:
 
   # Run on pushes to 'main' to refresh the CI cache from scratch, so that it doesn't grow indefinitely:
   push:
-    branches: ["main"]
+    branches:
+      - "main"
 
 # In the event that there is a new push to the ref, cancel any running jobs because they are now obsolete, wasting resources.
 concurrency:
