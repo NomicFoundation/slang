@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: "Checkout Repository"
         uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+        with:
+          persist-credentials: false
 
       # Cache is updated in this workflow, and reused in subsequent workflows.
       # Always start with a fresh cache when running on the main branch.
@@ -57,6 +59,8 @@ jobs:
     steps:
       - name: "Checkout Repository"
         uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+        with:
+          persist-credentials: false
 
       - name: "infra setup pipenv"
         uses: "./.github/actions/devcontainer/run"
