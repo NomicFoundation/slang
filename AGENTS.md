@@ -129,6 +129,14 @@ When source changes cause snapshot mismatches, the test output shows the diff.
 Simply re-run the tests, and they will update the snapshot files on disk automatically.
 Then commit the updated snapshots alongside your code change.
 
+## YAML Style
+
+All YAML files are linted by `yamllint` (config: `.yamllint.yml`). Key rules:
+
+- **No flow sequences or mappings**: Use block style, not `["main"]` or `{key: value}`.
+- **All strings must be double-quoted**: `"value"`, not `value` or `'value'`.
+- **No empty values** in block or flow mappings.
+
 ## Important Gotchas
 
 - **Asking for help/more info**: If you need more context or have questions, use the `AskUserQuestion` tool to ask the user for clarification. Don't guess or make assumptions about project details.
