@@ -4152,6 +4152,7 @@ TupleValues: TupleValues = {
                                 ),
                                 Token(
                                     name = HexLiteral,
+                                    not_followed_by = Fragment(IdentifierStart),
                                     definitions = [TokenDefinition(Sequence([
                                         Atom("0x"),
                                         OneOrMore(Fragment(HexCharacter)),
@@ -4163,6 +4164,7 @@ TupleValues: TupleValues = {
                                 ),
                                 Token(
                                     name = DecimalLiteral,
+                                    not_followed_by = Fragment(IdentifierStart),
                                     definitions = [
                                         TokenDefinition(Sequence([
                                             Fragment(DecimalDigits),
@@ -4740,6 +4742,7 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                             ),
                             Token(
                                 name = YulDecimalLiteral,
+                                not_followed_by = Fragment(YulIdentifierStart),
                                 definitions = [TokenDefinition(Choice([
                                     Atom("0"),
                                     Sequence([
@@ -4753,6 +4756,7 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                             ),
                             Token(
                                 name = YulHexLiteral,
+                                not_followed_by = Fragment(YulIdentifierStart),
                                 definitions = [TokenDefinition(Sequence([
                                     Atom("0x"),
                                     OneOrMore(Fragment(YulHexCharacter))

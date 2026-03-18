@@ -1,6 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use logos::{Lexer, Logos};
+use logos::{FilterResult, Lexer, Logos};
 use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::lexer::lexemes::{Lexeme, LexemeKind};
@@ -113,9 +113,34 @@ pub enum PragmaContext {
     #[regex(r#"/\*\*([^/\*][^\*]*)?\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineNatSpecComment }, priority = 1000027, allow_greedy = true)]
     Lexeme(LexemeKind),
 }
+#[allow(non_snake_case)]
+fn not_followed_by__HexLiteral(
+    lex: &mut Lexer<'_, SolidityContext>,
+) -> FilterResult<LexemeKind, ()> {
+    static PATTERN: std::sync::LazyLock<regex::Regex> =
+        std::sync::LazyLock::new(|| regex::Regex::new(r#"^((?&IdentifierStart))"#).unwrap());
+    if PATTERN.is_match(lex.remainder()) {
+        FilterResult::Error(())
+    } else {
+        FilterResult::Emit(LexemeKind::HexLiteral)
+    }
+}
+#[allow(non_snake_case)]
+fn not_followed_by__DecimalLiteral(
+    lex: &mut Lexer<'_, SolidityContext>,
+) -> FilterResult<LexemeKind, ()> {
+    static PATTERN: std::sync::LazyLock<regex::Regex> =
+        std::sync::LazyLock::new(|| regex::Regex::new(r#"^((?&IdentifierStart))"#).unwrap());
+    if PATTERN.is_match(lex.remainder()) {
+        FilterResult::Error(())
+    } else {
+        FilterResult::Emit(LexemeKind::DecimalLiteral)
+    }
+}
 
 #[derive(Clone, Debug, Logos)]
 #[logos(extras = ContextExtras)]
+#[logos(subpattern IdentifierStart = r#"_|\$|[a-z]|[A-Z]"#)]
 #[logos(subpattern HexCharacter = r#"[0-9]|[a-f]|[A-F]"#)]
 #[logos(subpattern DecimalDigits = r#"[0-9]+(_[0-9]+)*"#)]
 #[logos(subpattern DecimalExponent = r#"(e|E)-?(?&DecimalDigits)"#)]
@@ -125,7 +150,6 @@ pub enum PragmaContext {
 #[logos(subpattern EscapeSequence = r#"\\((?&AsciiEscape)|(?&HexByteEscape)|(?&UnicodeEscape))"#)]
 #[logos(subpattern HexStringContents = r#"(?&HexCharacter)(?&HexCharacter)(_?(?&HexCharacter)(?&HexCharacter))*"#)]
 #[logos(subpattern UnicodeEscapeSequence = r#"\\((?&AsciiEscape)|(?&HexByteEscape)|(?&UnicodeEscape))"#)]
-#[logos(subpattern IdentifierStart = r#"_|\$|[a-z]|[A-Z]"#)]
 #[logos(subpattern IdentifierPart = r#"(?&IdentifierStart)|[0-9]"#)]
 pub enum SolidityContext {
     #[regex(r#"abstract"#, |_| { LexemeKind::AbstractKeyword_Reserved }, priority = 3000001)]
@@ -296,9 +320,21 @@ pub enum SolidityContext {
     #[regex(r#"\^"#, |_| { LexemeKind::Caret }, priority = 2000166)]
     #[regex(r#"\^="#, |_| { LexemeKind::CaretEqual }, priority = 2000167)]
     #[regex(r#"~"#, |_| { LexemeKind::Tilde }, priority = 2000168)]
-    #[regex(r#"0x(?&HexCharacter)+(_(?&HexCharacter)+)*"#, |_| { LexemeKind::HexLiteral }, priority = 2000169)]
-    #[regex(r#"(?&DecimalDigits)(\.(?&DecimalDigits))?(?&DecimalExponent)?"#, |_| { LexemeKind::DecimalLiteral }, priority = 2000170)]
-    #[regex(r#"\.(?&DecimalDigits)(?&DecimalExponent)?"#, |_| { LexemeKind::DecimalLiteral }, priority = 2000171)]
+    #[regex(
+        r#"0x(?&HexCharacter)+(_(?&HexCharacter)+)*"#,
+        not_followed_by__HexLiteral,
+        priority = 2000169
+    )]
+    #[regex(
+        r#"(?&DecimalDigits)(\.(?&DecimalDigits))?(?&DecimalExponent)?"#,
+        not_followed_by__DecimalLiteral,
+        priority = 2000170
+    )]
+    #[regex(
+        r#"\.(?&DecimalDigits)(?&DecimalExponent)?"#,
+        not_followed_by__DecimalLiteral,
+        priority = 2000171
+    )]
     #[regex(r#"'((?&EscapeSequence)|[ -&]|[\(-\[]|[\]-~])*'"#, |_| { LexemeKind::SingleQuotedStringLiteral }, priority = 2000172)]
     #[regex(r#""((?&EscapeSequence)|[ -!]|[#-\[]|[\]-~])*""#, |_| { LexemeKind::DoubleQuotedStringLiteral }, priority = 2000173)]
     #[regex(r#"hex'(?&HexStringContents)?'"#, |_| { LexemeKind::SingleQuotedHexStringLiteral }, priority = 2000174)]
@@ -314,6 +350,28 @@ pub enum SolidityContext {
     #[regex(r#"/\*\*([^/\*][^\*]*)?\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineNatSpecComment }, priority = 1000184, allow_greedy = true)]
     Lexeme(LexemeKind),
 }
+#[allow(non_snake_case)]
+fn not_followed_by__YulDecimalLiteral(
+    lex: &mut Lexer<'_, YulContext>,
+) -> FilterResult<LexemeKind, ()> {
+    static PATTERN: std::sync::LazyLock<regex::Regex> =
+        std::sync::LazyLock::new(|| regex::Regex::new(r#"^((?&YulIdentifierStart))"#).unwrap());
+    if PATTERN.is_match(lex.remainder()) {
+        FilterResult::Error(())
+    } else {
+        FilterResult::Emit(LexemeKind::YulDecimalLiteral)
+    }
+}
+#[allow(non_snake_case)]
+fn not_followed_by__YulHexLiteral(lex: &mut Lexer<'_, YulContext>) -> FilterResult<LexemeKind, ()> {
+    static PATTERN: std::sync::LazyLock<regex::Regex> =
+        std::sync::LazyLock::new(|| regex::Regex::new(r#"^((?&YulIdentifierStart))"#).unwrap());
+    if PATTERN.is_match(lex.remainder()) {
+        FilterResult::Error(())
+    } else {
+        FilterResult::Emit(LexemeKind::YulHexLiteral)
+    }
+}
 
 #[derive(Clone, Debug, Logos)]
 #[logos(extras = ContextExtras)]
@@ -327,8 +385,16 @@ pub enum SolidityContext {
 #[logos(subpattern YulEscapeSequence = r#"\\((?&YulAsciiEscape)|(?&YulHexByteEscape)|(?&YulUnicodeEscape))"#)]
 pub enum YulContext {
     #[regex(r#"(?&YulIdentifierStart)(?&YulIdentifierPart)*"#, |_| { LexemeKind::YulIdentifier }, priority = 2000001)]
-    #[regex(r#"0|([1-9][0-9]*)"#, |_| { LexemeKind::YulDecimalLiteral }, priority = 2000002)]
-    #[regex(r#"0x(?&YulHexCharacter)+"#, |_| { LexemeKind::YulHexLiteral }, priority = 2000003)]
+    #[regex(
+        r#"0|([1-9][0-9]*)"#,
+        not_followed_by__YulDecimalLiteral,
+        priority = 2000002
+    )]
+    #[regex(
+        r#"0x(?&YulHexCharacter)+"#,
+        not_followed_by__YulHexLiteral,
+        priority = 2000003
+    )]
     #[regex(r#"hex'(?&YulHexStringContents)?'"#, |_| { LexemeKind::YulSingleQuotedHexStringLiteral }, priority = 2000004)]
     #[regex(r#"hex"(?&YulHexStringContents)?""#, |_| { LexemeKind::YulDoubleQuotedHexStringLiteral }, priority = 2000005)]
     #[regex(r#"'((?&YulEscapeSequence)|[ -&]|[\(-\[]|[\]-~])*'"#, |_| { LexemeKind::YulSingleQuotedStringLiteral }, priority = 2000006)]

@@ -192,10 +192,16 @@ impl LexicalContextBuilder {
     fn convert_token(&mut self, item: &TokenItem) -> Vec<Lexeme> {
         let mut result = Vec::new();
 
+        let not_followed_by = item
+            .not_followed_by
+            .as_ref()
+            .map(|scanner| self.convert_scanner(scanner));
+
         for definition in &item.definitions {
             result.push(Lexeme::Token {
                 kind: item.name.to_string(),
                 regex: self.convert_scanner(&definition.scanner),
+                not_followed_by: not_followed_by.clone(),
             });
         }
 

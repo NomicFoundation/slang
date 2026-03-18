@@ -11,6 +11,9 @@ pub struct TokenItem {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub enabled: Option<VersionSpecifier>,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub not_followed_by: Option<Scanner>,
+
     pub definitions: Vec<TokenDefinition>,
 }
 
