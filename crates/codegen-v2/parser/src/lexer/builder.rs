@@ -184,9 +184,15 @@ impl LexicalContextBuilder {
     }
 
     fn convert_token(&mut self, item: &TokenItem) -> Lexeme {
+        let not_followed_by = item
+            .not_followed_by
+            .as_ref()
+            .map(|scanner| self.convert_scanner(scanner));
+
         Lexeme::Token {
             kind: item.name.to_string(),
             regex: self.convert_scanner(&item.scanner),
+            not_followed_by: not_followed_by,
         }
     }
 

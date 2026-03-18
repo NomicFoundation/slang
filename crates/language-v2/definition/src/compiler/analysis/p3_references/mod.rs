@@ -413,10 +413,15 @@ fn check_token(
     let SpannedTokenItem {
         name,
         enabled,
+        not_followed_by,
         scanner,
     } = item;
 
     let enablement = update_enablement(analysis, enablement, enabled.as_ref());
+
+    if let Some(scanner) = not_followed_by {
+        check_scanner(analysis, Some(name), scanner, &enablement, lexical_context);
+    }
 
     check_scanner(analysis, Some(name), scanner, &enablement, lexical_context);
 }

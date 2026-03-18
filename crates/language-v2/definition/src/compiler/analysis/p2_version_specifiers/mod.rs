@@ -184,6 +184,7 @@ fn check_token(analysis: &mut Analysis, item: &SpannedTokenItem) {
     let SpannedTokenItem {
         name: _,
         enabled,
+        not_followed_by: _,
         scanner: _,
     } = item;
 

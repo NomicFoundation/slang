@@ -24,6 +24,7 @@ lalrpop = { workspace = true }
 [dependencies]
 lalrpop-util = { workspace = true }
 logos = { workspace = true }
+regex = { workspace = true }
 slang_solidity_v2_cst = { workspace = true }
 slang_solidity_v2_common = { workspace = true }
 strum = { workspace = true }
