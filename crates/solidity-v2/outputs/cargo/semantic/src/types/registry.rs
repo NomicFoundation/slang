@@ -30,9 +30,9 @@ pub struct TypeRegistry {
     void_type_id: TypeId,
 }
 
-impl TypeRegistry {
+impl Default for TypeRegistry {
     #[allow(clippy::similar_names)]
-    pub fn new() -> Self {
+    fn default() -> Self {
         let mut types = IndexSet::new();
         let (address_type, _) = types.insert_full(Type::Address { payable: false });
         let (address_payable_type, _) = types.insert_full(Type::Address { payable: true });
@@ -84,7 +84,9 @@ impl TypeRegistry {
             void_type_id: TypeId(void_type),
         }
     }
+}
 
+impl TypeRegistry {
     pub fn find_type(&self, type_: &Type) -> Option<TypeId> {
         self.types.get_index_of(type_).map(TypeId)
     }
