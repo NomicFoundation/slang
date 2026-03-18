@@ -12,6 +12,11 @@ fn label() -> Result<()> {
 }
 
 #[test]
+fn switch_decimal_trailing_case() -> Result<()> {
+    run(T, "switch_decimal_trailing_case")
+}
+
+#[test]
 fn var_assign_colon_and_equals() -> Result<()> {
     run(T, "var_assign_colon_and_equals")
 }
