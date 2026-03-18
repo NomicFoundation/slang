@@ -17,6 +17,11 @@ fn days_unit() -> Result<()> {
 }
 
 #[test]
+fn decimal_eof() -> Result<()> {
+    run(T, "decimal_eof")
+}
+
+#[test]
 fn decimal_no_unit() -> Result<()> {
     run(T, "decimal_no_unit")
 }

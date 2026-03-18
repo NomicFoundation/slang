@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::{BTreeMap, BTreeSet, HashSet};
 use std::mem::discriminant;
 use std::rc::Rc;
 
@@ -8,7 +8,7 @@ use language_v2_definition::model::{
     Scanner, TokenItem, TriviaItem, VersionSpecifier,
 };
 
-use crate::lexer::{Lexeme, LexerModel, LexicalContext};
+use crate::lexer::{CallbackDef, Lexeme, LexerModel, LexicalContext};
 
 pub struct LexerModelBuilder;
 
@@ -150,11 +150,39 @@ impl LexicalContextBuilder {
             ..
         } = instance;
 
+        let callbacks = Self::collect_callbacks(&lexemes);
+
         LexicalContext {
             name: language_context.name.to_string(),
             lexemes,
             subpatterns,
+            callbacks,
         }
+    }
+
+    fn collect_callbacks(lexemes: &[Lexeme]) -> Vec<CallbackDef> {
+        let mut seen = HashSet::new();
+        let mut callbacks = Vec::new();
+
+        for lexeme in lexemes {
+            if let Lexeme::Token {
+                kind,
+                not_followed_by: Some(pattern),
+                ..
+            } = lexeme
+            {
+                if seen.insert(kind.clone()) {
+                    let name = format!("not_followed_by__{kind}");
+                    callbacks.push(CallbackDef {
+                        name,
+                        kind: kind.clone(),
+                        pattern: pattern.clone(),
+                    });
+                }
+            }
+        }
+
+        callbacks
     }
 
     fn add_subpattern(&mut self, name: &Identifier) {

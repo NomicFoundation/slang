@@ -113,24 +113,28 @@ pub enum PragmaContext {
     #[regex(r#"/\*\*([^/\*][^\*]*)?\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineNatSpecComment }, priority = 1000027, allow_greedy = true)]
     Lexeme(LexemeKind),
 }
+
 #[allow(non_snake_case)]
 fn not_followed_by__HexLiteral(
     lex: &mut Lexer<'_, SolidityContext>,
 ) -> FilterResult<LexemeKind, ()> {
-    static PATTERN: std::sync::LazyLock<regex::Regex> =
-        std::sync::LazyLock::new(|| regex::Regex::new(r#"^((?&IdentifierStart))"#).unwrap());
+    static PATTERN: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
+        regex::Regex::new(r#"^((?&IdentifierStart))"#).expect("valid not_followed_by pattern")
+    });
     if PATTERN.is_match(lex.remainder()) {
         FilterResult::Error(())
     } else {
         FilterResult::Emit(LexemeKind::HexLiteral)
     }
 }
+
 #[allow(non_snake_case)]
 fn not_followed_by__DecimalLiteral(
     lex: &mut Lexer<'_, SolidityContext>,
 ) -> FilterResult<LexemeKind, ()> {
-    static PATTERN: std::sync::LazyLock<regex::Regex> =
-        std::sync::LazyLock::new(|| regex::Regex::new(r#"^((?&IdentifierStart))"#).unwrap());
+    static PATTERN: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
+        regex::Regex::new(r#"^((?&IdentifierStart))"#).expect("valid not_followed_by pattern")
+    });
     if PATTERN.is_match(lex.remainder()) {
         FilterResult::Error(())
     } else {
@@ -333,22 +337,26 @@ pub enum SolidityContext {
     #[regex(r#"/\*\*([^/\*][^\*]*)?\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineNatSpecComment }, priority = 1000175, allow_greedy = true)]
     Lexeme(LexemeKind),
 }
+
 #[allow(non_snake_case)]
 fn not_followed_by__YulDecimalLiteral(
     lex: &mut Lexer<'_, YulContext>,
 ) -> FilterResult<LexemeKind, ()> {
-    static PATTERN: std::sync::LazyLock<regex::Regex> =
-        std::sync::LazyLock::new(|| regex::Regex::new(r#"^((?&YulIdentifierStart))"#).unwrap());
+    static PATTERN: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
+        regex::Regex::new(r#"^((?&YulIdentifierStart))"#).expect("valid not_followed_by pattern")
+    });
     if PATTERN.is_match(lex.remainder()) {
         FilterResult::Error(())
     } else {
         FilterResult::Emit(LexemeKind::YulDecimalLiteral)
     }
 }
+
 #[allow(non_snake_case)]
 fn not_followed_by__YulHexLiteral(lex: &mut Lexer<'_, YulContext>) -> FilterResult<LexemeKind, ()> {
-    static PATTERN: std::sync::LazyLock<regex::Regex> =
-        std::sync::LazyLock::new(|| regex::Regex::new(r#"^((?&YulIdentifierStart))"#).unwrap());
+    static PATTERN: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
+        regex::Regex::new(r#"^((?&YulIdentifierStart))"#).expect("valid not_followed_by pattern")
+    });
     if PATTERN.is_match(lex.remainder()) {
         FilterResult::Error(())
     } else {
