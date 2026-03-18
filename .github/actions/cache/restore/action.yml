@@ -12,6 +12,9 @@ runs:
           ~/.cache/hermit/
           ~/.local/share/virtualenvs/
           .hermit/
+          ~/.cargo/registry/
+          ~/.cargo/git/
+          ~/.pnpm-store/
         restore-keys: |
           cache-${{ github.ref_name }}-
           cache-main-
