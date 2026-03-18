@@ -299,6 +299,7 @@ pub enum EdgeLabel {
 
 impl crate::cst::EdgeLabelExtensions for EdgeLabel {}
 
+#[allow(clippy::derivable_impls)] // generated
 impl Default for EdgeLabel {
     fn default() -> Self {
         Self::Root

@@ -10,7 +10,7 @@ mod test;
 mod watch;
 
 use anyhow::Result;
-use clap::{command, Parser, Subcommand};
+use clap::{Parser, Subcommand};
 
 use crate::commands::check::CheckController;
 use crate::commands::ci::CiController;

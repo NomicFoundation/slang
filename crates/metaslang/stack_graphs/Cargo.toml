@@ -47,6 +47,7 @@ thiserror = { workspace = true }
 # serde_with = { version = "3.1", optional = true }
 
 [lints.rust]
+mismatched_lifetime_syntaxes = "allow" # __NOMIC_FOUNDATION_FORK__ (disable lints to minimize changes to the fork)
 unexpected_cfgs = "allow" # __NOMIC_FOUNDATION_FORK__ (disable warning about non-existing features, disabled above)
 
 [lints.rustdoc]

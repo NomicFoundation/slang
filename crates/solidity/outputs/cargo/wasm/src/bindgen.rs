@@ -1,3 +1,5 @@
+#![allow(clippy::same_length_and_capacity)] // we don't control the generated code by `wit_bindgen`
+
 // The `generate!()` macro below expands into the Rust bindings to be implemented by our wrappers.
 // You can use 'cargo expand' to see its output, or run the 'wit-bindgen rust' command.
 
