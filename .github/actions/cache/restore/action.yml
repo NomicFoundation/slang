@@ -14,7 +14,7 @@ runs:
           .hermit/
           ~/.cargo/registry/
           ~/.cargo/git/
-          ~/.pnpm-store/
+          ~/.local/share/pnpm/store/
         restore-keys: |
           cache-${{ github.ref_name }}-
           cache-main-

@@ -14,4 +14,4 @@ runs:
           .hermit/
           ~/.cargo/registry/
           ~/.cargo/git/
-          ~/.pnpm-store/
+          ~/.local/share/pnpm/store/
