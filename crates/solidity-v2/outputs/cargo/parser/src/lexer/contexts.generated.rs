@@ -5,13 +5,6 @@ use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::lexer::lexemes::{Lexeme, LexemeKind};
 
-#[derive(Clone, Copy, Debug)]
-pub enum ContextKind {
-    Pragma,
-    Solidity,
-    Yul,
-}
-
 #[derive(Clone)]
 pub struct ContextExtras {
     // Since we restricted Slang v2 lexer to only support Solidity 0.8.0+, all the remaining keywords
@@ -30,34 +23,32 @@ pub enum ContextWrapper<'source> {
 }
 
 impl<'source> ContextWrapper<'source> {
-    pub fn new(kind: ContextKind, source: &'source str, extras: ContextExtras) -> Self {
-        match kind {
-            ContextKind::Pragma => Self::Pragma(PragmaContext::lexer_with_extras(source, extras)),
-            ContextKind::Solidity => {
-                Self::Solidity(SolidityContext::lexer_with_extras(source, extras))
-            }
-            ContextKind::Yul => Self::Yul(YulContext::lexer_with_extras(source, extras)),
-        }
+    pub fn new(source: &'source str, extras: ContextExtras) -> Self {
+        Self::Solidity(SolidityContext::lexer_with_extras(source, extras))
     }
 
     #[must_use]
-    pub fn morph(self, kind: ContextKind) -> Self {
+    pub fn morph_to_pragma(self) -> Self {
         match self {
-            Self::Pragma(lexer) => match kind {
-                ContextKind::Pragma => Self::Pragma(lexer),
-                ContextKind::Solidity => Self::Solidity(lexer.morph()),
-                ContextKind::Yul => Self::Yul(lexer.morph()),
-            },
-            Self::Solidity(lexer) => match kind {
-                ContextKind::Pragma => Self::Pragma(lexer.morph()),
-                ContextKind::Solidity => Self::Solidity(lexer),
-                ContextKind::Yul => Self::Yul(lexer.morph()),
-            },
-            Self::Yul(lexer) => match kind {
-                ContextKind::Pragma => Self::Pragma(lexer.morph()),
-                ContextKind::Solidity => Self::Solidity(lexer.morph()),
-                ContextKind::Yul => Self::Yul(lexer),
-            },
+            Self::Pragma(lexer) => Self::Pragma(lexer),
+            Self::Solidity(lexer) => Self::Pragma(lexer.morph()),
+            Self::Yul(lexer) => Self::Pragma(lexer.morph()),
+        }
+    }
+    #[must_use]
+    pub fn morph_to_solidity(self) -> Self {
+        match self {
+            Self::Pragma(lexer) => Self::Solidity(lexer.morph()),
+            Self::Solidity(lexer) => Self::Solidity(lexer),
+            Self::Yul(lexer) => Self::Solidity(lexer.morph()),
+        }
+    }
+    #[must_use]
+    pub fn morph_to_yul(self) -> Self {
+        match self {
+            Self::Pragma(lexer) => Self::Yul(lexer.morph()),
+            Self::Solidity(lexer) => Self::Yul(lexer.morph()),
+            Self::Yul(lexer) => Self::Yul(lexer),
         }
     }
 
