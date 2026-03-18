@@ -12,6 +12,11 @@ fn decimal_literal() -> Result<()> {
 }
 
 #[test]
+fn decimal_trailing_dollar() -> Result<()> {
+    run(T, "decimal_trailing_dollar")
+}
+
+#[test]
 fn decimal_trailing_ident_start() -> Result<()> {
     run(T, "decimal_trailing_ident_start")
 }
@@ -34,6 +39,11 @@ fn hex_literal() -> Result<()> {
 #[test]
 fn hex_trailing_ident_start() -> Result<()> {
     run(T, "hex_trailing_ident_start")
+}
+
+#[test]
+fn hex_trailing_letter() -> Result<()> {
+    run(T, "hex_trailing_letter")
 }
 
 #[test]
