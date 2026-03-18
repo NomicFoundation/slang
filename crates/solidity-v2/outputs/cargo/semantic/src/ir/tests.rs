@@ -14,8 +14,10 @@ contract Test is Base layout at 0 {}
     let version = LanguageVersion::V0_8_30;
     let source_unit_cst =
         Parser::parse(CONTENTS, version).map_err(|message| anyhow!(format!("{message:?}")))?;
-    let source_unit = ir::build(&source_unit_cst);
+    let mut id_generator = ir::NodeIdGenerator::default();
+    let source_unit = ir::build(&source_unit_cst, &mut id_generator);
 
+    assert_eq!(id_generator.next_id(), 9usize.into());
     assert_eq!(2, source_unit.members.len());
 
     let ir::SourceUnitMember::ContractDefinition(base_contract) = &source_unit.members[0] else {
