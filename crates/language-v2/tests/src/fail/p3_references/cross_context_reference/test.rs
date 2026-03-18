@@ -15,7 +15,7 @@ language_v2_macros::compile!(Language(
                     title = "Topic One",
                     items = [
                         Struct(name = One, fields = (field_1 = Required(Two))),
-                        Token(name = Two, definitions = [TokenDefinition(Atom("two"))])
+                        Token(name = Two, scanner = Atom("two"))
                     ]
                 )]
             )]
@@ -28,7 +28,7 @@ language_v2_macros::compile!(Language(
                     title = "Topic Two",
                     items = [
                         Struct(name = Three, fields = (field_1 = Required(Two))),
-                        Token(name = Four, definitions = [TokenDefinition(Atom("four"))])
+                        Token(name = Four, scanner = Atom("four"))
                     ]
                 )]
             )]

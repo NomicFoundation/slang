@@ -19,7 +19,7 @@ language_v2_macros::compile!(Language(
                             switch_lexical_context = ContextB,
                             fields = (entry = Required(Two), field_1 = Required(Three))
                         ),
-                        Token(name = Two, definitions = [TokenDefinition(Atom("two"))])
+                        Token(name = Two, scanner = Atom("two"))
                     ]
                 )]
             )]
@@ -30,10 +30,7 @@ language_v2_macros::compile!(Language(
                 title = "Section Two",
                 topics = [Topic(
                     title = "Topic Two",
-                    items = [Token(
-                        name = Three,
-                        definitions = [TokenDefinition(Atom("three"))]
-                    )]
+                    items = [Token(name = Three, scanner = Atom("three"))]
                 )]
             )]
         )

@@ -1,6 +1,6 @@
 use language_v2_definition::model::{
-    Field, Item, Language, LexicalContext, Scanner, Section, StructItem, TokenDefinition,
-    TokenItem, Topic, TriviaParser,
+    Field, Item, Language, LexicalContext, Scanner, Section, StructItem, TokenItem, Topic,
+    TriviaParser,
 };
 use semver::Version;
 
@@ -25,8 +25,8 @@ language_v2_macros::compile!(Language(
                             baz_again = Required(Baz)
                         )
                     ),
-                    Token(name = Bar, definitions = [TokenDefinition(Atom("bar"))]),
-                    Token(name = Baz, definitions = [TokenDefinition(Atom("baz"))])
+                    Token(name = Bar, scanner = Atom("bar")),
+                    Token(name = Baz, scanner = Atom("baz"))
                 ]
             )]
         )]
@@ -92,10 +92,7 @@ fn definition() {
                                 item: TokenItem {
                                     name: "Bar".into(),
                                     enabled: None,
-                                    definitions: [TokenDefinition {
-                                        scanner: Scanner::Atom { atom: "bar".into() }
-                                    }]
-                                    .into()
+                                    scanner: Scanner::Atom { atom: "bar".into() }
                                 }
                                 .into()
                             },
@@ -103,10 +100,7 @@ fn definition() {
                                 item: TokenItem {
                                     name: "Baz".into(),
                                     enabled: None,
-                                    definitions: [TokenDefinition {
-                                        scanner: Scanner::Atom { atom: "baz".into() }
-                                    }]
-                                    .into()
+                                    scanner: Scanner::Atom { atom: "baz".into() }
                                 }
                                 .into()
                             }
