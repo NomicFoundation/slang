@@ -58,29 +58,22 @@ impl<'source> ContextWrapper<'source> {
 }
 
 {% for context in model.parser.lexer.contexts %}
-    {%- set_global emitted_callbacks = "" -%}
-    {%- for lexeme in context.lexemes -%}
-        {%- if lexeme.type == "Token" and lexeme.not_followed_by -%}
-            {%- set callback_name = "not_followed_by__" ~ lexeme.kind -%}
-            {%- if not emitted_callbacks is containing(callback_name) -%}
-                {%- set_global emitted_callbacks = callback_name ~ "," ~ emitted_callbacks -%}
+    {%- for callback in context.callbacks %}
 
     #[allow(non_snake_case)]
-    fn {{ callback_name }}(
+    fn {{ callback.name }}(
         lex: &mut Lexer<'_, {{ context.name }}Context>,
     ) -> FilterResult<LexemeKind, ()> {
         static PATTERN: std::sync::LazyLock<regex::Regex> =
             std::sync::LazyLock::new(|| {
-                regex::Regex::new(r#"^({{ lexeme.not_followed_by }})"#).unwrap()
+                regex::Regex::new(r#"^({{ callback.pattern }})"#).expect("valid not_followed_by pattern")
             });
         if PATTERN.is_match(lex.remainder()) {
             FilterResult::Error(())
         } else {
-            FilterResult::Emit(LexemeKind::{{ lexeme.kind }})
+            FilterResult::Emit(LexemeKind::{{ callback.kind }})
         }
     }
-            {%- endif -%}
-        {%- endif -%}
     {%- endfor %}
 
     #[derive(Clone, Debug, Logos)]
