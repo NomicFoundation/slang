@@ -78,11 +78,13 @@ The project uses a custom `infra` CLI that orchestrates all build operations. Us
 ./scripts/bin/infra test         # Run all tests (cargo nextest + jest)
 ./scripts/bin/infra test --help  # See test subcommands (cargo, npm) and passthrough args
 ./scripts/bin/infra lint         # Run all linters
-./scripts/bin/infra lint --help  # See lint subcommands (markdownlint, rustfmt, prettier, etc.)
+./scripts/bin/infra lint --help  # See lint subcommands (markdownlint, rustfmt, yamllint, prettier, etc.)
 ./scripts/bin/infra ci           # Full CI run: setup + check + test + lint
 ```
 
 Always run `infra setup` when initializing a new workspace, to ensure all tools/dependencies are available.
+
+Individual lint subcommands can be run for quick checks (e.g., `./scripts/bin/infra lint yamllint` for YAML files, `./scripts/bin/infra lint rustfmt` for Rust formatting).
 
 You can also use `nextest` directly for faster iteration on Rust tests:
 
@@ -128,14 +130,6 @@ For testing, we maintain snapshots checked into the repo:
 When source changes cause snapshot mismatches, the test output shows the diff.
 Simply re-run the tests, and they will update the snapshot files on disk automatically.
 Then commit the updated snapshots alongside your code change.
-
-## YAML Style
-
-All YAML files are linted by `yamllint` (config: `.yamllint.yml`). Key rules:
-
-- **No flow sequences or mappings**: Use block style, not `["main"]` or `{key: value}`.
-- **All strings must be double-quoted**: `"value"`, not `value` or `'value'`.
-- **No empty values** in block or flow mappings.
 
 ## Important Gotchas
 
