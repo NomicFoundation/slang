@@ -62,6 +62,9 @@ pub trait Builder {
   //
   {% for parent_type, choice in builder.choices %}
     {% if not choice.is_new -%}
+      {% if choice.has_removed_variants -%}
+        #[allow(dead_code)]
+      {%- endif %}
       fn default_build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }} {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
@@ -84,9 +87,14 @@ pub trait Builder {
           {% endif %}
         }
       }
-      fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }} {
-        self.default_build_{{ parent_type | snake_case }}(source)
-      }
+      fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }}
+      {%- if choice.has_removed_variants -%}
+        ;
+      {%- else -%}
+        {
+          self.default_build_{{ parent_type | snake_case }}(source)
+        }
+      {%- endif %}
     {%- endif %}
   {% endfor %}
 

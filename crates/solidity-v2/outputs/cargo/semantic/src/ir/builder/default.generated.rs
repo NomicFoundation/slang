@@ -1066,6 +1066,7 @@ pub trait Builder {
         self.default_build_abicoder_version(source)
     }
 
+    #[allow(dead_code)]
     fn default_build_arguments_declaration(
         &mut self,
         source: &input::ArgumentsDeclaration,
@@ -1079,10 +1080,9 @@ pub trait Builder {
     fn build_arguments_declaration(
         &mut self,
         source: &input::ArgumentsDeclaration,
-    ) -> output::ArgumentsDeclaration {
-        self.default_build_arguments_declaration(source)
-    }
+    ) -> output::ArgumentsDeclaration;
 
+    #[allow(dead_code)]
     fn default_build_contract_member(
         &mut self,
         source: &input::ContractMember,
@@ -1129,9 +1129,7 @@ pub trait Builder {
             _ => panic!("Unexpected variant {source:?}"),
         }
     }
-    fn build_contract_member(&mut self, source: &input::ContractMember) -> output::ContractMember {
-        self.default_build_contract_member(source)
-    }
+    fn build_contract_member(&mut self, source: &input::ContractMember) -> output::ContractMember;
 
     fn default_build_elementary_type(
         &mut self,
@@ -1166,6 +1164,7 @@ pub trait Builder {
         self.default_build_elementary_type(source)
     }
 
+    #[allow(dead_code)]
     fn default_build_experimental_feature(
         &mut self,
         source: &input::ExperimentalFeature,
@@ -1185,9 +1184,7 @@ pub trait Builder {
     fn build_experimental_feature(
         &mut self,
         source: &input::ExperimentalFeature,
-    ) -> output::ExperimentalFeature {
-        self.default_build_experimental_feature(source)
-    }
+    ) -> output::ExperimentalFeature;
 
     fn default_build_expression(&mut self, source: &input::Expression) -> output::Expression {
         #[allow(clippy::match_wildcard_for_single_variants)]
@@ -1594,6 +1591,7 @@ pub trait Builder {
         self.default_build_identifier_path_element(source)
     }
 
+    #[allow(dead_code)]
     fn default_build_import_clause(
         &mut self,
         source: &input::ImportClause,
@@ -1612,9 +1610,7 @@ pub trait Builder {
             _ => panic!("Unexpected variant {source:?}"),
         }
     }
-    fn build_import_clause(&mut self, source: &input::ImportClause) -> output::ImportClause {
-        self.default_build_import_clause(source)
-    }
+    fn build_import_clause(&mut self, source: &input::ImportClause) -> output::ImportClause;
 
     fn default_build_number_unit(&mut self, source: &input::NumberUnit) -> output::NumberUnit {
         #[allow(clippy::match_wildcard_for_single_variants)]
@@ -1655,6 +1651,7 @@ pub trait Builder {
         self.default_build_pragma(source)
     }
 
+    #[allow(dead_code)]
     fn default_build_source_unit_member(
         &mut self,
         source: &input::SourceUnitMember,
@@ -1728,9 +1725,7 @@ pub trait Builder {
     fn build_source_unit_member(
         &mut self,
         source: &input::SourceUnitMember,
-    ) -> output::SourceUnitMember {
-        self.default_build_source_unit_member(source)
-    }
+    ) -> output::SourceUnitMember;
 
     fn default_build_statement(&mut self, source: &input::Statement) -> output::Statement {
         #[allow(clippy::match_wildcard_for_single_variants)]
@@ -1814,6 +1809,7 @@ pub trait Builder {
         self.default_build_storage_location(source)
     }
 
+    #[allow(dead_code)]
     fn default_build_string_expression(
         &mut self,
         source: &input::StringExpression,
@@ -1827,9 +1823,7 @@ pub trait Builder {
     fn build_string_expression(
         &mut self,
         source: &input::StringExpression,
-    ) -> output::StringExpression {
-        self.default_build_string_expression(source)
-    }
+    ) -> output::StringExpression;
 
     fn default_build_type_name(&mut self, source: &input::TypeName) -> output::TypeName {
         #[allow(clippy::match_wildcard_for_single_variants)]
@@ -2045,6 +2039,7 @@ pub trait Builder {
         self.default_build_yul_expression(source)
     }
 
+    #[allow(dead_code)]
     fn default_build_yul_literal(&mut self, source: &input::YulLiteral) -> output::YulLiteral {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
@@ -2062,9 +2057,7 @@ pub trait Builder {
             _ => panic!("Unexpected variant {source:?}"),
         }
     }
-    fn build_yul_literal(&mut self, source: &input::YulLiteral) -> output::YulLiteral {
-        self.default_build_yul_literal(source)
-    }
+    fn build_yul_literal(&mut self, source: &input::YulLiteral) -> output::YulLiteral;
 
     fn default_build_yul_statement(
         &mut self,

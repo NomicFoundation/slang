@@ -26,7 +26,7 @@ pub struct NodeId(usize);
         {%- if field.is_optional -%}
           bool,
         {%- else -%}
-          {{ field.type.name }},
+          {{ throw(message="Cannot generate sequence field for non-optional unique terminal") }},
         {%- endif -%}
       {%- else -%}
         {%- if field.is_optional -%}
