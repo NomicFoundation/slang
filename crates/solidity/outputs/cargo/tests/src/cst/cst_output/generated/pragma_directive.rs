@@ -37,6 +37,11 @@ fn experimental_string() -> Result<()> {
 }
 
 #[test]
+fn experimental_string_version() -> Result<()> {
+    run(T, "experimental_string_version")
+}
+
+#[test]
 fn experimental_unknown_identifier() -> Result<()> {
     run(T, "experimental_unknown_identifier")
 }
@@ -44,4 +49,9 @@ fn experimental_unknown_identifier() -> Result<()> {
 #[test]
 fn version() -> Result<()> {
     run(T, "version")
+}
+
+#[test]
+fn version_string() -> Result<()> {
+    run(T, "version_string")
 }

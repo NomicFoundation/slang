@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ pragma experimental "1.2.3";                                                     │ 0..28
+
+Errors: # 1 total
+  - >
+    Error: Expected SolidityKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/PragmaDirective/experimental_string_version/input.sol:1:8]
+       │
+     1 │ pragma experimental "1.2.3";
+       │        ──────────┬─────────  
+       │                  ╰─────────── Error occurred here.
+    ───╯
+
+Tree:
+  - (root꞉ PragmaDirective): # 'pragma experimental "1.2.3";\n' (0..29)
+      - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+      - (leading_trivia꞉ Whitespace): " " # (6..7)
+      - (unrecognized꞉ UNRECOGNIZED): 'experimental "1.2.3"' # (7..27)
+      - (semicolon꞉ Semicolon): ";" # (27..28)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (28..29)

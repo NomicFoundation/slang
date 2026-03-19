@@ -17,7 +17,7 @@ language_v2_macros::compile!(Language(
         Trivia(EndOfLine)
     ]),
     versions = [
-        "0.8.0",  "0.8.1",  "0.8.2",  "0.8.3",  "0.8.4",  "0.8.5",  "0.8.6",  "0.8.7",  "0.8.8",  "0.8.9", 
+        "0.8.0",  "0.8.1",  "0.8.2",  "0.8.3",  "0.8.4",  "0.8.5",  "0.8.6",  "0.8.7",  "0.8.8",  "0.8.9",
         "0.8.10", "0.8.11", "0.8.12", "0.8.13", "0.8.14", "0.8.15", "0.8.16", "0.8.17", "0.8.18", "0.8.19",
         "0.8.20", "0.8.21", "0.8.22", "0.8.23", "0.8.24", "0.8.25", "0.8.26", "0.8.27", "0.8.28", "0.8.29",
         "0.8.30", "0.8.31", "0.8.32", "0.8.33", "0.8.34"
@@ -119,8 +119,8 @@ language_v2_macros::compile!(Language(
                                 name = VersionLiteral,
                                 variants = [
                                     EnumVariant(reference = SimpleVersionLiteral),
-                                    EnumVariant(reference = SingleQuotedVersionLiteral),
-                                    EnumVariant(reference = DoubleQuotedVersionLiteral)
+                                    EnumVariant(reference = PragmaSingleQuotedStringLiteral),
+                                    EnumVariant(reference = PragmaDoubleQuotedStringLiteral)
                                 ]
                             ),
                             Separated(
@@ -133,32 +133,6 @@ language_v2_macros::compile!(Language(
                                 // __SLANG_VERSION_SPECIFIER_SYNTAX__ (keep in sync)
                                 name = VersionSpecifier,
                                 definitions = [TokenDefinition(Fragment(VersionSpecifierFragment))]
-                            ),
-                            Token(
-                                // __SLANG_VERSION_SPECIFIER_SYNTAX__ (keep in sync)
-                                name = SingleQuotedVersionLiteral,
-                                definitions = [TokenDefinition(Sequence([
-                                    Atom("'"),
-                                    Fragment(VersionSpecifierFragment),
-                                    ZeroOrMore(Sequence([
-                                        Atom("."),
-                                        Fragment(VersionSpecifierFragment)
-                                    ])),
-                                    Atom("'")
-                                ]))]
-                            ),
-                            Token(
-                                // __SLANG_VERSION_SPECIFIER_SYNTAX__ (keep in sync)
-                                name = DoubleQuotedVersionLiteral,
-                                definitions = [TokenDefinition(Sequence([
-                                    Atom("\""),
-                                    Fragment(VersionSpecifierFragment),
-                                    ZeroOrMore(Sequence([
-                                        Atom("."),
-                                        Fragment(VersionSpecifierFragment)
-                                    ])),
-                                    Atom("\"")
-                                ]))]
                             ),
                             Fragment(
                                 name = VersionSpecifierFragment,
