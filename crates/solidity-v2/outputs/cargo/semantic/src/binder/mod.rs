@@ -9,10 +9,7 @@ mod references;
 mod scopes;
 
 pub use definitions::Definition;
-pub(crate) use definitions::{
-    ContractDefinition, FunctionVisibility, ImportDefinition, InterfaceDefinition,
-    StateVariableVisibility,
-};
+pub(crate) use definitions::{ContractDefinition, ImportDefinition, InterfaceDefinition};
 pub use references::{Reference, Resolution};
 use scopes::ContractScope;
 pub(crate) use scopes::{
@@ -203,7 +200,7 @@ impl Binder {
     pub(crate) fn insert_definition_in_scope(
         &mut self,
         definition: Definition,
-        source: &impl Source,
+        source: &(impl Source + ?Sized),
         scope_id: ScopeId,
     ) {
         let scope = self.get_scope_mut(scope_id);

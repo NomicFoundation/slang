@@ -1,8 +1,8 @@
 use std::collections::{HashMap, HashSet};
 
 use super::ScopeId;
-use crate::types::TypeId;
 use crate::ir::{self, NodeId};
+use crate::types::TypeId;
 
 //////////////////////////////////////////////////////////////////////////////
 // Scopes - types
