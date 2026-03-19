@@ -5,7 +5,7 @@ use slang_solidity::cst::{Cursor, TextRange};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
 
 use crate::command::{CheckBinderMode, TestOptions};
-use crate::events::{Events, TestOutcome};
+use crate::events::{Events, TestOutcome, VersionOutcome};
 use crate::sourcify::{Contract, ContractArchive, Manifest};
 
 mod binder_v1_check;
@@ -69,22 +69,21 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
         Ok(unit) => {
             let mut test_outcome = parser_check::run(contract, &unit, events);
 
-            if opts.check_infer_version && test_outcome == TestOutcome::Passed {
-                test_outcome = version_inference_check::run(contract, &unit, events);
-            }
+            if let TestOutcome::Tested { ref mut v1, .. } = test_outcome {
+                if opts.check_infer_version && *v1 == VersionOutcome::Passed {
+                    *v1 = version_inference_check::run(contract, &unit, events);
+                }
 
-            if test_outcome == TestOutcome::Passed {
-                match opts.check_binder {
-                    Some(CheckBinderMode::V1) => {
-                        test_outcome = binder_v1_check::run(contract, &unit, events);
+                if *v1 == VersionOutcome::Passed {
+                    if let Some(mode) = &opts.check_binder {
+                        *v1 = match mode {
+                            CheckBinderMode::V1 => binder_v1_check::run(contract, &unit, events),
+                            CheckBinderMode::V2 => binder_v2_check::run(contract, &unit, events),
+                            CheckBinderMode::Compare => {
+                                compare_binders::run(contract, &unit, events)
+                            }
+                        };
                     }
-                    Some(CheckBinderMode::V2) => {
-                        test_outcome = binder_v2_check::run(contract, &unit, events);
-                    }
-                    Some(CheckBinderMode::Compare) => {
-                        test_outcome = compare_binders::run(contract, &unit, events);
-                    }
-                    _ => {}
                 }
             }
 
@@ -102,7 +101,10 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
                     e.backtrace()
                 ));
 
-                TestOutcome::Failed
+                TestOutcome::Tested {
+                    v1: VersionOutcome::Failed,
+                    v2: VersionOutcome::NotTested,
+                }
             }
         }
     };

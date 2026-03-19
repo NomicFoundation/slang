@@ -10,9 +10,18 @@ use crate::results::ShardResults;
 const MAX_PRINTED_FAILURES: u64 = 1000;
 
 #[derive(Clone, Copy, Eq, PartialEq)]
-pub enum TestOutcome {
+pub enum VersionOutcome {
     Passed,
     Failed,
+    NotTested,
+}
+
+#[derive(Clone, Copy, Eq, PartialEq)]
+pub enum TestOutcome {
+    Tested {
+        v1: VersionOutcome,
+        v2: VersionOutcome,
+    },
     Incompatible,
 }
 
@@ -24,8 +33,10 @@ pub struct Events {
 
     source_files: ProgressBar,
 
-    passed_contracts: ProgressBar,
-    failed_contracts: ProgressBar,
+    v1_passed_contracts: ProgressBar,
+    v1_failed_contracts: ProgressBar,
+    v2_passed_contracts: ProgressBar,
+    v2_failed_contracts: ProgressBar,
     incompatible_contracts: ProgressBar,
 
     total_definitions: ProgressBar,
@@ -49,8 +60,10 @@ impl Events {
         reporter.add_blank();
         reporter.add_label("Contract Stats:");
 
-        let passed_contracts = reporter.add_counter("✅ Passed contracts", Color::Green, 0);
-        let failed_contracts = reporter.add_counter("❌ Failed contracts", Color::Red, 0);
+        let v1_passed_contracts = reporter.add_counter("✅ V1 Passed", Color::Green, 0);
+        let v1_failed_contracts = reporter.add_counter("❌ V1 Failed", Color::Red, 0);
+        let v2_passed_contracts = reporter.add_counter("✅ V2 Passed", Color::Green, 0);
+        let v2_failed_contracts = reporter.add_counter("❌ V2 Failed", Color::Red, 0);
         let incompatible_contracts =
             reporter.add_counter("❕ Incompatible contracts", Color::White, 0);
 
@@ -68,8 +81,10 @@ impl Events {
 
             source_files,
 
-            passed_contracts,
-            failed_contracts,
+            v1_passed_contracts,
+            v1_failed_contracts,
+            v2_passed_contracts,
+            v2_failed_contracts,
             incompatible_contracts,
 
             total_definitions,
@@ -80,7 +95,7 @@ impl Events {
 
     #[allow(clippy::cast_possible_truncation)]
     pub fn failure_count(&self) -> usize {
-        self.failed_contracts.position() as usize
+        (self.v1_failed_contracts.position() + self.v2_failed_contracts.position()) as usize
     }
 
     pub fn start_archive(&mut self, contract_count: usize) {
@@ -123,19 +138,33 @@ impl Events {
     pub fn test(&self, outcome: TestOutcome) {
         self.current_archive.inc(1);
 
-        self.passed_contracts.inc_length(1);
-        self.failed_contracts.inc_length(1);
+        self.v1_passed_contracts.inc_length(1);
+        self.v1_failed_contracts.inc_length(1);
+        self.v2_passed_contracts.inc_length(1);
+        self.v2_failed_contracts.inc_length(1);
         self.incompatible_contracts.inc_length(1);
 
         match outcome {
-            TestOutcome::Passed => self.passed_contracts.inc(1),
-            TestOutcome::Failed => self.failed_contracts.inc(1),
+            TestOutcome::Tested { v1, v2 } => {
+                match v1 {
+                    VersionOutcome::Passed => self.v1_passed_contracts.inc(1),
+                    VersionOutcome::Failed => self.v1_failed_contracts.inc(1),
+                    VersionOutcome::NotTested => panic!("V1 should always be tested"),
+                }
+                match v2 {
+                    VersionOutcome::Passed => self.v2_passed_contracts.inc(1),
+                    VersionOutcome::Failed => self.v2_failed_contracts.inc(1),
+                    VersionOutcome::NotTested => {}
+                }
+            }
             TestOutcome::Incompatible => self.incompatible_contracts.inc(1),
         }
     }
 
     fn test_error(&self, message: impl AsRef<str>) {
-        match self.failed_contracts.position().cmp(&MAX_PRINTED_FAILURES) {
+        let total_failures =
+            self.v1_failed_contracts.position() + self.v2_failed_contracts.position();
+        match total_failures.cmp(&MAX_PRINTED_FAILURES) {
             cmp::Ordering::Less => {
                 self.reporter.println(message);
             }
@@ -169,8 +198,10 @@ impl Events {
     pub fn to_results(&self) -> ShardResults {
         ShardResults {
             source_files: self.source_files.position(),
-            passed: self.passed_contracts.position(),
-            failed: self.failed_contracts.position(),
+            v1_passed: self.v1_passed_contracts.position(),
+            v1_failed: self.v1_failed_contracts.position(),
+            v2_passed: self.v2_passed_contracts.position(),
+            v2_failed: self.v2_failed_contracts.position(),
             incompatible: self.incompatible_contracts.position(),
             elapsed: self.all_archives.elapsed(),
         }

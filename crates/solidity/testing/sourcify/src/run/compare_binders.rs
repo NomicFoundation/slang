@@ -1,20 +1,20 @@
 use slang_solidity::compilation::CompilationUnit;
 
 use super::BindingError;
-use crate::events::{Events, TestOutcome};
+use crate::events::{Events, VersionOutcome};
 use crate::sourcify::Contract;
 
 pub(super) fn run(
     contract: &Contract,
     compilation_unit: &CompilationUnit,
     events: &Events,
-) -> TestOutcome {
+) -> VersionOutcome {
     let semantic_analysis = compilation_unit.semantic_analysis();
     let binder = semantic_analysis.binder();
 
     let binding_graph = compilation_unit.binding_graph();
 
-    let mut outcome = TestOutcome::Passed;
+    let mut outcome = VersionOutcome::Passed;
 
     let mut definitions = 0;
     for definition in binding_graph.all_definitions() {
@@ -41,7 +41,7 @@ pub(super) fn run(
                 version = contract.version,
             ));
 
-            outcome = TestOutcome::Failed;
+            outcome = VersionOutcome::Failed;
         }
     }
     events.inc_definitions(definitions);
@@ -79,7 +79,7 @@ pub(super) fn run(
                 version = contract.version,
             ));
 
-            outcome = TestOutcome::Failed;
+            outcome = VersionOutcome::Failed;
         }
     }
     events.inc_references(references);

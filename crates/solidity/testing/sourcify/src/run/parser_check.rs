@@ -1,11 +1,16 @@
 use semver::Version;
 use slang_solidity::compilation::CompilationUnit;
 
-use crate::events::{Events, TestOutcome};
+use crate::events::{Events, TestOutcome, VersionOutcome};
 use crate::sourcify::Contract;
 
 pub(super) fn run(contract: &Contract, unit: &CompilationUnit, events: &Events) -> TestOutcome {
-    let mut test_outcome = TestOutcome::Passed;
+    let mut v1_outcome = VersionOutcome::Passed;
+    let mut v2_outcome = if contract.version >= Version::new(0, 8, 0) {
+        VersionOutcome::Passed
+    } else {
+        VersionOutcome::NotTested
+    };
 
     for file in unit.files() {
         let v1_errors = file.errors();
@@ -18,8 +23,7 @@ pub(super) fn run(contract: &Contract, unit: &CompilationUnit, events: &Events) 
                 v1_errors,
                 slang_solidity::diagnostic::render,
             );
-            test_outcome = TestOutcome::Failed;
-            continue;
+            v1_outcome = VersionOutcome::Failed;
         }
 
         // The V2 language only supports 0.8.0 and above
@@ -40,13 +44,15 @@ pub(super) fn run(contract: &Contract, unit: &CompilationUnit, events: &Events) 
                     &v2_errors,
                     solidity_v2_testing_utils::reporting::diagnostic::render,
                 );
-                test_outcome = TestOutcome::Failed;
-                continue;
+                v2_outcome = VersionOutcome::Failed;
             }
         }
     }
 
-    test_outcome
+    TestOutcome::Tested {
+        v1: v1_outcome,
+        v2: v2_outcome,
+    }
 }
 
 /// Given a vector of errors, and a function that can render them,

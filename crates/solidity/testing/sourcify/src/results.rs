@@ -8,8 +8,10 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct ShardResults {
     pub source_files: u64,
-    pub passed: u64,
-    pub failed: u64,
+    pub v1_passed: u64,
+    pub v1_failed: u64,
+    pub v2_passed: u64,
+    pub v2_failed: u64,
     pub incompatible: u64,
     pub elapsed: Duration,
 }
@@ -70,39 +72,49 @@ impl<'de> Visitor<'de> for AllResultsVisitor {
 
 pub fn display_all_results(all_results: &AllResults) {
     let mut totals = ShardResults::default();
-    println!("Shard ID | Source files |       Passed |       Failed | Incompatible | Elapsed");
-    println!("----------------------------------------------------------------------------------");
+    println!("Shard ID | Source files |    V1 Passed |    V1 Failed |    V2 Passed |    V2 Failed | Incompatible | Elapsed");
+    println!("-------------------------------------------------------------------------------------------------------------");
     for (shard_index, shard_results) in &all_results.shards {
         println!(
             "{shard_index:<8} | \
              {source_files:>12} | \
-             {passed:>12} | \
-             {failed:>12} | \
+             {v1_passed:>12} | \
+             {v1_failed:>12} | \
+             {v2_passed:>12} | \
+             {v2_failed:>12} | \
              {incompatible:>12} | \
              {elapsed}",
             source_files = format!("{}", HumanCount(shard_results.source_files)),
-            passed = format!("{}", HumanCount(shard_results.passed)),
-            failed = format!("{}", HumanCount(shard_results.failed)),
+            v1_passed = format!("{}", HumanCount(shard_results.v1_passed)),
+            v1_failed = format!("{}", HumanCount(shard_results.v1_failed)),
+            v2_passed = format!("{}", HumanCount(shard_results.v2_passed)),
+            v2_failed = format!("{}", HumanCount(shard_results.v2_failed)),
             incompatible = format!("{}", HumanCount(shard_results.incompatible)),
             elapsed = FormattedDuration(shard_results.elapsed),
         );
         totals.source_files += shard_results.source_files;
-        totals.passed += shard_results.passed;
-        totals.failed += shard_results.failed;
+        totals.v1_passed += shard_results.v1_passed;
+        totals.v1_failed += shard_results.v1_failed;
+        totals.v2_passed += shard_results.v2_passed;
+        totals.v2_failed += shard_results.v2_failed;
         totals.incompatible += shard_results.incompatible;
         totals.elapsed += shard_results.elapsed;
     }
-    println!("------------------------------------------------------------------------------------------------");
+    println!("-------------------------------------------------------------------------------------------------------------");
     println!(
         "TOTALS   | \
          {source_files:>12} | \
-         {passed:>12} | \
-         {failed:>12} | \
+         {v1_passed:>12} | \
+         {v1_failed:>12} | \
+         {v2_passed:>12} | \
+         {v2_failed:>12} | \
          {incompatible:>12} | \
          {elapsed}",
         source_files = format!("{}", HumanCount(totals.source_files)),
-        passed = format!("{}", HumanCount(totals.passed)),
-        failed = format!("{}", HumanCount(totals.failed)),
+        v1_passed = format!("{}", HumanCount(totals.v1_passed)),
+        v1_failed = format!("{}", HumanCount(totals.v1_failed)),
+        v2_passed = format!("{}", HumanCount(totals.v2_passed)),
+        v2_failed = format!("{}", HumanCount(totals.v2_failed)),
         incompatible = format!("{}", HumanCount(totals.incompatible)),
         elapsed = FormattedDuration(totals.elapsed),
     );

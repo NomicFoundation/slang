@@ -2,17 +2,17 @@ use slang_solidity::compilation::CompilationUnit;
 use slang_solidity::cst::{NodeKind, TerminalKindExtensions};
 
 use super::BindingError;
-use crate::events::{Events, TestOutcome};
+use crate::events::{Events, VersionOutcome};
 use crate::sourcify::Contract;
 
 pub(super) fn run(
     contract: &Contract,
     compilation_unit: &CompilationUnit,
     events: &Events,
-) -> TestOutcome {
+) -> VersionOutcome {
     let binding_graph = compilation_unit.binding_graph();
 
-    let mut test_outcome = TestOutcome::Passed;
+    let mut outcome = VersionOutcome::Passed;
 
     let mut definitions = 0;
     for definition in binding_graph.all_definitions() {
@@ -56,7 +56,7 @@ pub(super) fn run(
                 version = contract.version,
             ));
 
-            test_outcome = TestOutcome::Failed;
+            outcome = VersionOutcome::Failed;
         }
     }
     events.inc_references(references);
@@ -84,10 +84,10 @@ pub(super) fn run(
                     version = contract.version,
                 ));
 
-                test_outcome = TestOutcome::Failed;
+                outcome = VersionOutcome::Failed;
             }
         }
     }
 
-    test_outcome
+    outcome
 }
