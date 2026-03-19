@@ -14,7 +14,8 @@ contract Test is Base layout at 0 {}
     let version = LanguageVersion::V0_8_30;
     let source_unit_cst =
         Parser::parse(CONTENTS, version).map_err(|message| anyhow!(format!("{message:?}")))?;
-    let source_unit = ir::build(&source_unit_cst);
+    let mut interner = ir::Interner::new();
+    let source_unit = ir::build(&source_unit_cst, CONTENTS, &mut interner);
 
     assert_eq!(2, source_unit.members.len());
 
@@ -22,6 +23,7 @@ contract Test is Base layout at 0 {}
         panic!("Expected ContractDefinition");
     };
     assert_eq!("Base", base_contract.name.unparse(CONTENTS));
+    assert_eq!("Base", interner.resolve(base_contract.name.symbol));
     assert!(base_contract.inheritance_types.is_empty());
     assert!(base_contract.storage_layout.is_none());
 
@@ -29,6 +31,7 @@ contract Test is Base layout at 0 {}
         panic!("Expected ContractDefinition");
     };
     assert_eq!("Test", test_contract.name.unparse(CONTENTS));
+    assert_eq!("Test", interner.resolve(test_contract.name.symbol));
     assert_eq!(1, test_contract.inheritance_types.len());
     assert_eq!(
         "Base",
@@ -40,6 +43,16 @@ contract Test is Base layout at 0 {}
             .join(".")
     );
     assert!(test_contract.storage_layout.is_some());
+
+    // Verify that two references to the same name yield the same Symbol
+    let base_name_symbol = base_contract.name.symbol;
+    assert_eq!(
+        base_name_symbol,
+        test_contract.inheritance_types[0].type_name[0].symbol
+    );
+
+    // Verify that different names yield different symbols
+    assert_ne!(base_contract.name.symbol, test_contract.name.symbol);
 
     Ok(())
 }
