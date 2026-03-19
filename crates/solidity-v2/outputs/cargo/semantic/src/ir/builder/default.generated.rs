@@ -1138,6 +1138,8 @@ pub trait Builder {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
+            input::ElementaryType::BoolKeyword(_) => output::ElementaryType::BoolKeyword,
+            input::ElementaryType::StringKeyword(_) => output::ElementaryType::StringKeyword,
             input::ElementaryType::AddressType(ref address_type) => {
                 output::ElementaryType::AddressType(self.build_address_type(address_type))
             }
@@ -1156,8 +1158,6 @@ pub trait Builder {
             input::ElementaryType::UfixedKeyword(ref ufixed_keyword) => {
                 output::ElementaryType::UfixedKeyword(self.build_ufixed_keyword(ufixed_keyword))
             }
-            input::ElementaryType::BoolKeyword(_) => output::ElementaryType::BoolKeyword,
-            input::ElementaryType::StringKeyword(_) => output::ElementaryType::StringKeyword,
         }
     }
     fn build_elementary_type(&mut self, source: &input::ElementaryType) -> output::ElementaryType {
@@ -1309,14 +1309,14 @@ pub trait Builder {
             input::Expression::ElementaryType(ref elementary_type) => {
                 output::Expression::ElementaryType(self.build_elementary_type(elementary_type))
             }
-            input::Expression::Identifier(ref identifier) => {
-                output::Expression::Identifier(self.build_identifier(identifier))
-            }
             input::Expression::PayableKeyword(_) => output::Expression::PayableKeyword,
             input::Expression::ThisKeyword(_) => output::Expression::ThisKeyword,
             input::Expression::SuperKeyword(_) => output::Expression::SuperKeyword,
             input::Expression::TrueKeyword(_) => output::Expression::TrueKeyword,
             input::Expression::FalseKeyword(_) => output::Expression::FalseKeyword,
+            input::Expression::Identifier(ref identifier) => {
+                output::Expression::Identifier(self.build_identifier(identifier))
+            }
         }
     }
     fn build_expression(&mut self, source: &input::Expression) -> output::Expression {
@@ -1352,8 +1352,43 @@ pub trait Builder {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-          input::Expression_AssignmentExpression_Operator::AmpersandEqual(_) => output::Expression_AssignmentExpression_Operator::AmpersandEqual,input::Expression_AssignmentExpression_Operator::AsteriskEqual(_) => output::Expression_AssignmentExpression_Operator::AsteriskEqual,input::Expression_AssignmentExpression_Operator::BarEqual(_) => output::Expression_AssignmentExpression_Operator::BarEqual,input::Expression_AssignmentExpression_Operator::CaretEqual(_) => output::Expression_AssignmentExpression_Operator::CaretEqual,input::Expression_AssignmentExpression_Operator::Equal(_) => output::Expression_AssignmentExpression_Operator::Equal,input::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanEqual(_) => output::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanEqual,input::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanGreaterThanEqual(_) => output::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanGreaterThanEqual,input::Expression_AssignmentExpression_Operator::LessThanLessThanEqual(_) => output::Expression_AssignmentExpression_Operator::LessThanLessThanEqual,input::Expression_AssignmentExpression_Operator::MinusEqual(_) => output::Expression_AssignmentExpression_Operator::MinusEqual,input::Expression_AssignmentExpression_Operator::PercentEqual(_) => output::Expression_AssignmentExpression_Operator::PercentEqual,input::Expression_AssignmentExpression_Operator::PlusEqual(_) => output::Expression_AssignmentExpression_Operator::PlusEqual,input::Expression_AssignmentExpression_Operator::SlashEqual(_) => output::Expression_AssignmentExpression_Operator::SlashEqual,
-        }
+          input::Expression_AssignmentExpression_Operator::AmpersandEqual(_) => {
+                  output::Expression_AssignmentExpression_Operator::AmpersandEqual
+                }
+              input::Expression_AssignmentExpression_Operator::AsteriskEqual(_) => {
+                  output::Expression_AssignmentExpression_Operator::AsteriskEqual
+                }
+              input::Expression_AssignmentExpression_Operator::BarEqual(_) => {
+                  output::Expression_AssignmentExpression_Operator::BarEqual
+                }
+              input::Expression_AssignmentExpression_Operator::CaretEqual(_) => {
+                  output::Expression_AssignmentExpression_Operator::CaretEqual
+                }
+              input::Expression_AssignmentExpression_Operator::Equal(_) => {
+                  output::Expression_AssignmentExpression_Operator::Equal
+                }
+              input::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanEqual(_) => {
+                  output::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanEqual
+                }
+              input::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanGreaterThanEqual(_) => {
+                  output::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanGreaterThanEqual
+                }
+              input::Expression_AssignmentExpression_Operator::LessThanLessThanEqual(_) => {
+                  output::Expression_AssignmentExpression_Operator::LessThanLessThanEqual
+                }
+              input::Expression_AssignmentExpression_Operator::MinusEqual(_) => {
+                  output::Expression_AssignmentExpression_Operator::MinusEqual
+                }
+              input::Expression_AssignmentExpression_Operator::PercentEqual(_) => {
+                  output::Expression_AssignmentExpression_Operator::PercentEqual
+                }
+              input::Expression_AssignmentExpression_Operator::PlusEqual(_) => {
+                  output::Expression_AssignmentExpression_Operator::PlusEqual
+                }
+              input::Expression_AssignmentExpression_Operator::SlashEqual(_) => {
+                  output::Expression_AssignmentExpression_Operator::SlashEqual
+                }
+              }
     }
     fn build_expression_assignment_expression_operator(
         &mut self,
@@ -1651,7 +1686,6 @@ pub trait Builder {
         self.default_build_pragma(source)
     }
 
-    #[allow(dead_code)]
     fn default_build_source_unit_member(
         &mut self,
         source: &input::SourceUnitMember,
@@ -1662,6 +1696,11 @@ pub trait Builder {
             input::SourceUnitMember::PragmaDirective(ref pragma_directive) => {
                 output::SourceUnitMember::PragmaDirective(
                     self.build_pragma_directive(pragma_directive),
+                )
+            }
+            input::SourceUnitMember::ImportDirective(ref import_directive) => {
+                output::SourceUnitMember::ImportClause(
+                    self.build_import_directive(import_directive),
                 )
             }
             input::SourceUnitMember::ContractDefinition(ref contract_definition) => {
@@ -1719,13 +1758,14 @@ pub trait Builder {
                     self.build_constant_definition(constant_definition),
                 )
             }
-            _ => panic!("Unexpected variant {source:?}"),
         }
     }
     fn build_source_unit_member(
         &mut self,
         source: &input::SourceUnitMember,
-    ) -> output::SourceUnitMember;
+    ) -> output::SourceUnitMember {
+        self.default_build_source_unit_member(source)
+    }
 
     fn default_build_statement(&mut self, source: &input::Statement) -> output::Statement {
         #[allow(clippy::match_wildcard_for_single_variants)]
@@ -2044,16 +2084,16 @@ pub trait Builder {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
+            input::YulLiteral::YulTrueKeyword(_) => output::YulLiteral::TrueKeyword,
+            input::YulLiteral::YulFalseKeyword(_) => output::YulLiteral::FalseKeyword,
             input::YulLiteral::YulDecimalLiteral(ref yul_decimal_literal) => {
-                output::YulLiteral::YulDecimalLiteral(
+                output::YulLiteral::DecimalLiteral(
                     self.build_yul_decimal_literal(yul_decimal_literal),
                 )
             }
             input::YulLiteral::YulHexLiteral(ref yul_hex_literal) => {
-                output::YulLiteral::YulHexLiteral(self.build_yul_hex_literal(yul_hex_literal))
+                output::YulLiteral::HexLiteral(self.build_yul_hex_literal(yul_hex_literal))
             }
-            input::YulLiteral::YulTrueKeyword(_) => output::YulLiteral::YulTrueKeyword,
-            input::YulLiteral::YulFalseKeyword(_) => output::YulLiteral::YulFalseKeyword,
             _ => panic!("Unexpected variant {source:?}"),
         }
     }
@@ -2499,23 +2539,27 @@ pub trait Builder {
         }
     }
 
+    //
+    // Normalized Terminals
+    //
+
     fn build_yul_decimal_literal(
         &mut self,
         source: &input::YulDecimalLiteral,
-    ) -> output::YulDecimalLiteral {
-        output::YulDecimalLiteral {
+    ) -> output::DecimalLiteral {
+        output::DecimalLiteral {
             range: source.range.clone(),
         }
     }
 
-    fn build_yul_hex_literal(&mut self, source: &input::YulHexLiteral) -> output::YulHexLiteral {
-        output::YulHexLiteral {
+    fn build_yul_hex_literal(&mut self, source: &input::YulHexLiteral) -> output::HexLiteral {
+        output::HexLiteral {
             range: source.range.clone(),
         }
     }
 
-    fn build_yul_identifier(&mut self, source: &input::YulIdentifier) -> output::YulIdentifier {
-        Rc::new(output::YulIdentifierStruct {
+    fn build_yul_identifier(&mut self, source: &input::YulIdentifier) -> output::Identifier {
+        Rc::new(output::IdentifierStruct {
             range: source.range.clone(),
         })
     }

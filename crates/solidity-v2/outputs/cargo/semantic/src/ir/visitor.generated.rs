@@ -2201,6 +2201,9 @@ pub fn accept_source_unit_member(node: &SourceUnitMember, visitor: &mut impl Vis
         SourceUnitMember::PragmaDirective(ref pragma_directive) => {
             accept_pragma_directive(pragma_directive, visitor);
         }
+        SourceUnitMember::ImportClause(ref import_clause) => {
+            accept_import_clause(import_clause, visitor);
+        }
         SourceUnitMember::ContractDefinition(ref contract_definition) => {
             accept_contract_definition(contract_definition, visitor);
         }
@@ -2235,9 +2238,6 @@ pub fn accept_source_unit_member(node: &SourceUnitMember, visitor: &mut impl Vis
         }
         SourceUnitMember::ConstantDefinition(ref constant_definition) => {
             accept_constant_definition(constant_definition, visitor);
-        }
-        SourceUnitMember::ImportClause(ref import_clause) => {
-            accept_import_clause(import_clause, visitor);
         }
     }
     visitor.leave_source_unit_member(node);
@@ -2795,14 +2795,14 @@ fn accept_yul_flags(items: &Vec<StringLiteral>, visitor: &mut impl Visitor) {
     visitor.leave_yul_flags(items);
 }
 #[inline]
-fn accept_yul_parameters(items: &Vec<YulIdentifier>, visitor: &mut impl Visitor) {
+fn accept_yul_parameters(items: &Vec<Identifier>, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_parameters(items) {
         return;
     }
     visitor.leave_yul_parameters(items);
 }
 #[inline]
-fn accept_yul_path(items: &Vec<YulIdentifier>, visitor: &mut impl Visitor) {
+fn accept_yul_path(items: &Vec<Identifier>, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_path(items) {
         return;
     }
@@ -2839,7 +2839,7 @@ fn accept_yul_switch_cases(items: &Vec<YulSwitchCase>, visitor: &mut impl Visito
     visitor.leave_yul_switch_cases(items);
 }
 #[inline]
-fn accept_yul_variable_names(items: &Vec<YulIdentifier>, visitor: &mut impl Visitor) {
+fn accept_yul_variable_names(items: &Vec<Identifier>, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_variable_names(items) {
         return;
     }

@@ -14,6 +14,7 @@ pub fn build_v2_ir_model(language: &Language) -> ModelWithBuilder {
     transmute_constant_state_variables(&mut mutator);
     collapse_redundant_node_types(&mut mutator);
     simplify_string_literals(&mut mutator);
+    normalize_yul_terminals(&mut mutator);
     simplify_imports(&mut mutator);
     simplify_parameters(&mut mutator);
     simplify_mapping_type_parameters(&mut mutator);
@@ -302,6 +303,14 @@ fn simplify_string_literals(mutator: &mut IrModelMutator) {
     mutator.add_collection_type("YulFlags", "StringLiteral");
     mutator.add_sequence_field("AssemblyStatement", "flags", "YulFlags", false);
     mutator.add_sequence_field("AssemblyStatement", "label", "StringLiteral", true);
+}
+
+fn normalize_yul_terminals(mutator: &mut IrModelMutator) {
+    mutator.normalize_terminal("YulIdentifier", "Identifier");
+    mutator.normalize_terminal("YulDecimalLiteral", "DecimalLiteral");
+    mutator.normalize_terminal("YulHexLiteral", "HexLiteral");
+    mutator.normalize_terminal("YulTrueKeyword", "TrueKeyword");
+    mutator.normalize_terminal("YulFalseKeyword", "FalseKeyword");
 }
 
 fn simplify_imports(mutator: &mut IrModelMutator) {
