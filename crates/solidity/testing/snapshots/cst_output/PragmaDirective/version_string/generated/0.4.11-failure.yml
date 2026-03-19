@@ -1,0 +1,25 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ pragma solidity "Y";                                                             │ 0..20
+
+Errors: # 1 total
+  - >
+    Error: Expected DoubleQuotedVersionLiteral or SingleQuotedVersionLiteral or VersionSpecifier.
+       ╭─[crates/solidity/testing/snapshots/cst_output/PragmaDirective/version_string/input.sol:1:17]
+       │
+     1 │ pragma solidity "Y";
+       │                 ─┬─  
+       │                  ╰─── Error occurred here.
+    ───╯
+
+Tree:
+  - (root꞉ PragmaDirective): # 'pragma solidity "Y";\n' (0..21)
+      - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+      - (pragma꞉ Pragma) ► (variant꞉ VersionPragma): # " solidity" (6..15)
+          - (leading_trivia꞉ Whitespace): " " # (6..7)
+          - (solidity_keyword꞉ SolidityKeyword): "solidity" # (7..15)
+      - (leading_trivia꞉ Whitespace): " " # (15..16)
+      - (unrecognized꞉ UNRECOGNIZED): '"Y"' # (16..19)
+      - (semicolon꞉ Semicolon): ";" # (19..20)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (20..21)

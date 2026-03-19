@@ -50,3 +50,8 @@ fn experimental_unknown_identifier() -> Result<()> {
 fn version() -> Result<()> {
     run(T, "version")
 }
+
+#[test]
+fn version_string() -> Result<()> {
+    run(T, "version_string")
+}
