@@ -26,8 +26,8 @@ SourceUnitStruct {
                                                             },
                                                         ),
                                                     ),
-                                                    literal: DoubleQuotedVersionLiteral(
-                                                        DoubleQuotedVersionLiteral {
+                                                    literal: PragmaDoubleQuotedStringLiteral(
+                                                        PragmaDoubleQuotedStringLiteral {
                                                             range: 122..129,
                                                         },
                                                     ),
@@ -39,16 +39,16 @@ SourceUnitStruct {
                                         elements: [
                                             VersionRange(
                                                 VersionRangeStruct {
-                                                    start: DoubleQuotedVersionLiteral(
-                                                        DoubleQuotedVersionLiteral {
+                                                    start: PragmaDoubleQuotedStringLiteral(
+                                                        PragmaDoubleQuotedStringLiteral {
                                                             range: 133..140,
                                                         },
                                                     ),
                                                     minus: PragmaMinus {
                                                         range: 140..141,
                                                     },
-                                                    end: SingleQuotedVersionLiteral(
-                                                        SingleQuotedVersionLiteral {
+                                                    end: PragmaSingleQuotedStringLiteral(
+                                                        PragmaSingleQuotedStringLiteral {
                                                             range: 141..148,
                                                         },
                                                     ),

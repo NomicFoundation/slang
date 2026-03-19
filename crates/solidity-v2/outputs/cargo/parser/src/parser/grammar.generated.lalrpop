@@ -69,19 +69,6 @@ Repeated<T>: Vec<T> = {
         <solidity_keyword: SolidityKeyword>  <sets: VersionExpressionSets>  => new_version_pragma(<>),
         
     };
-    
-
-// Rules for topic Pragma String Literals
-    PragmaStringLiteral: PragmaStringLiteral = {
-        <pragma_single_quoted_string_literal: PragmaSingleQuotedStringLiteral>  => new_pragma_string_literal_pragma_single_quoted_string_literal(<>),
-        <pragma_double_quoted_string_literal: PragmaDoubleQuotedStringLiteral>  => new_pragma_string_literal_pragma_double_quoted_string_literal(<>),
-        <single_quoted_version_literal: SingleQuotedVersionLiteral>  => new_pragma_string_literal_single_quoted_version_literal(<>),
-        <double_quoted_version_literal: DoubleQuotedVersionLiteral>  => new_pragma_string_literal_double_quoted_version_literal(<>),
-        
-    };
-    
-
-// Rules for topic Pragma Versions
     VersionExpressionSets: VersionExpressionSets = {
         <version_expression_set: Separated<PragmaBarBar, <VersionExpressionSet>>>  => new_version_expression_sets(<>),
         
@@ -115,8 +102,8 @@ Repeated<T>: Vec<T> = {
     };
     VersionLiteral: VersionLiteral = {
         <simple_version_literal: SimpleVersionLiteral>  => new_version_literal_simple_version_literal(<>),
-        <single_quoted_version_literal: SingleQuotedVersionLiteral>  => new_version_literal_single_quoted_version_literal(<>),
-        <double_quoted_version_literal: DoubleQuotedVersionLiteral>  => new_version_literal_double_quoted_version_literal(<>),
+        <pragma_single_quoted_string_literal: PragmaSingleQuotedStringLiteral>  => new_version_literal_pragma_single_quoted_string_literal(<>),
+        <pragma_double_quoted_string_literal: PragmaDoubleQuotedStringLiteral>  => new_version_literal_pragma_double_quoted_string_literal(<>),
         
     };
     SimpleVersionLiteral: SimpleVersionLiteral = {
@@ -129,6 +116,14 @@ Repeated<T>: Vec<T> = {
     
 
 // Rules for topic Pragma Punctuation
+    
+
+// Rules for topic Pragma String Literals
+    PragmaStringLiteral: PragmaStringLiteral = {
+        <pragma_single_quoted_string_literal: PragmaSingleQuotedStringLiteral>  => new_pragma_string_literal_pragma_single_quoted_string_literal(<>),
+        <pragma_double_quoted_string_literal: PragmaDoubleQuotedStringLiteral>  => new_pragma_string_literal_pragma_double_quoted_string_literal(<>),
+        
+    };
     
 
 
@@ -2092,12 +2087,6 @@ DoubleQuotedUnicodeStringLiteral: DoubleQuotedUnicodeStringLiteral = {
 
 };
 #[inline]
-DoubleQuotedVersionLiteral: DoubleQuotedVersionLiteral = {
-
-        <l:@L> L_DoubleQuotedVersionLiteral <r:@L> => new_double_quoted_version_literal(l..r, source),
-
-};
-#[inline]
 ElseKeyword: ElseKeyword = {
 
         <l:@L> L_ElseKeyword_Reserved <r:@L> => new_else_keyword(l..r, source),
@@ -2780,12 +2769,6 @@ SingleQuotedUnicodeStringLiteral: SingleQuotedUnicodeStringLiteral = {
 
 };
 #[inline]
-SingleQuotedVersionLiteral: SingleQuotedVersionLiteral = {
-
-        <l:@L> L_SingleQuotedVersionLiteral <r:@L> => new_single_quoted_version_literal(l..r, source),
-
-};
-#[inline]
 SizeOfKeyword: SizeOfKeyword = {
 
         <l:@L> L_SizeOfKeyword_Reserved <r:@L> => new_size_of_keyword(l..r, source),
@@ -3225,7 +3208,6 @@ extern {
         L_DoubleQuotedHexStringLiteral => LexemeKind::DoubleQuotedHexStringLiteral,
         L_DoubleQuotedStringLiteral => LexemeKind::DoubleQuotedStringLiteral,
         L_DoubleQuotedUnicodeStringLiteral => LexemeKind::DoubleQuotedUnicodeStringLiteral,
-        L_DoubleQuotedVersionLiteral => LexemeKind::DoubleQuotedVersionLiteral,
         L_ElseKeyword_Reserved => LexemeKind::ElseKeyword_Reserved,
         L_EmitKeyword_Reserved => LexemeKind::EmitKeyword_Reserved,
         L_EndOfLine => LexemeKind::EndOfLine,
@@ -3336,7 +3318,6 @@ extern {
         L_SingleQuotedHexStringLiteral => LexemeKind::SingleQuotedHexStringLiteral,
         L_SingleQuotedStringLiteral => LexemeKind::SingleQuotedStringLiteral,
         L_SingleQuotedUnicodeStringLiteral => LexemeKind::SingleQuotedUnicodeStringLiteral,
-        L_SingleQuotedVersionLiteral => LexemeKind::SingleQuotedVersionLiteral,
         L_SizeOfKeyword_Reserved => LexemeKind::SizeOfKeyword_Reserved,
         L_Slash => LexemeKind::Slash,
         L_SlashEqual => LexemeKind::SlashEqual,
