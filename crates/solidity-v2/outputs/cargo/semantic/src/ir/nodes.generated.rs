@@ -1232,7 +1232,7 @@ pub type YulFunctionDefinition = Rc<YulFunctionDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct YulFunctionDefinitionStruct {
-    pub name: YulIdentifier,
+    pub name: Identifier,
     pub parameters: YulParameters,
     pub returns: Option<YulVariableNames>,
     pub body: YulBlock,
@@ -1562,6 +1562,7 @@ pub enum Pragma {
 #[derive(Clone, Debug)]
 pub enum SourceUnitMember {
     PragmaDirective(PragmaDirective),
+    ImportClause(ImportClause),
     ContractDefinition(ContractDefinition),
     InterfaceDefinition(InterfaceDefinition),
     LibraryDefinition(LibraryDefinition),
@@ -1573,7 +1574,6 @@ pub enum SourceUnitMember {
     UsingDirective(UsingDirective),
     EventDefinition(EventDefinition),
     ConstantDefinition(ConstantDefinition),
-    ImportClause(ImportClause),
 }
 
 #[derive(Clone, Debug)]
@@ -1702,12 +1702,12 @@ pub enum YulExpression {
 
 #[derive(Clone, Debug)]
 pub enum YulLiteral {
-    YulDecimalLiteral(YulDecimalLiteral),
-    YulHexLiteral(YulHexLiteral),
+    DecimalLiteral(DecimalLiteral),
+    HexLiteral(HexLiteral),
     StringLiteral(StringLiteral),
     HexStringLiteral(HexStringLiteral),
-    YulTrueKeyword,
-    YulFalseKeyword,
+    TrueKeyword,
+    FalseKeyword,
 }
 
 #[derive(Clone, Debug)]
@@ -1793,9 +1793,9 @@ pub type YulArguments = Vec<YulExpression>;
 
 pub type YulFlags = Vec<StringLiteral>;
 
-pub type YulParameters = Vec<YulIdentifier>;
+pub type YulParameters = Vec<Identifier>;
 
-pub type YulPath = Vec<YulIdentifier>;
+pub type YulPath = Vec<Identifier>;
 
 pub type YulPaths = Vec<YulPath>;
 
@@ -1803,7 +1803,7 @@ pub type YulStatements = Vec<YulStatement>;
 
 pub type YulSwitchCases = Vec<YulSwitchCase>;
 
-pub type YulVariableNames = Vec<YulIdentifier>;
+pub type YulVariableNames = Vec<Identifier>;
 
 //
 // Non-unique Terminals
@@ -1942,45 +1942,6 @@ pub struct VersionSpecifier {
 }
 
 impl VersionSpecifier {
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
-    }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulDecimalLiteral {
-    pub range: Range<usize>,
-}
-
-impl YulDecimalLiteral {
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
-    }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulHexLiteral {
-    pub range: Range<usize>,
-}
-
-impl YulHexLiteral {
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
-    }
-}
-
-pub type YulIdentifier = Rc<YulIdentifierStruct>;
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulIdentifierStruct {
-    pub range: Range<usize>,
-}
-
-impl YulIdentifierStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
-        NodeId(Rc::as_ptr(self) as usize)
-    }
-
     pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
         source.text(self.range.clone())
     }
