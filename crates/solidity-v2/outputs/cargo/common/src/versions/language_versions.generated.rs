@@ -154,65 +154,6 @@ impl From<LanguageVersion> for Version {
     }
 }
 
-impl LanguageVersion {
-    pub const ALL: &[Self] = &[
-        Self::V0_8_0,
-        Self::V0_8_1,
-        Self::V0_8_2,
-        Self::V0_8_3,
-        Self::V0_8_4,
-        Self::V0_8_5,
-        Self::V0_8_6,
-        Self::V0_8_7,
-        Self::V0_8_8,
-        Self::V0_8_9,
-        Self::V0_8_10,
-        Self::V0_8_11,
-        Self::V0_8_12,
-        Self::V0_8_13,
-        Self::V0_8_14,
-        Self::V0_8_15,
-        Self::V0_8_16,
-        Self::V0_8_17,
-        Self::V0_8_18,
-        Self::V0_8_19,
-        Self::V0_8_20,
-        Self::V0_8_21,
-        Self::V0_8_22,
-        Self::V0_8_23,
-        Self::V0_8_24,
-        Self::V0_8_25,
-        Self::V0_8_26,
-        Self::V0_8_27,
-        Self::V0_8_28,
-        Self::V0_8_29,
-        Self::V0_8_30,
-        Self::V0_8_31,
-        Self::V0_8_32,
-        Self::V0_8_33,
-        Self::V0_8_34,
-    ];
-
-    pub const BREAKING: &[Self] = &[
-        Self::V0_8_0,
-        Self::V0_8_2,
-        Self::V0_8_4,
-        Self::V0_8_7,
-        Self::V0_8_8,
-        Self::V0_8_11,
-        Self::V0_8_13,
-        Self::V0_8_15,
-        Self::V0_8_18,
-        Self::V0_8_19,
-        Self::V0_8_22,
-        Self::V0_8_24,
-        Self::V0_8_26,
-        Self::V0_8_27,
-        Self::V0_8_29,
-        Self::V0_8_31,
-    ];
-}
-
 impl Display for LanguageVersion {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {

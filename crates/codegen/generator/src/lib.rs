@@ -85,7 +85,6 @@ impl RuntimeModel {
 struct LanguageModelV2 {
     name: String,
     versions: IndexSet<Version>,
-    breaking_versions: BTreeSet<Version>,
 }
 
 impl LanguageModelV2 {
@@ -93,7 +92,6 @@ impl LanguageModelV2 {
         Self {
             name: language.name.to_string(),
             versions: language.versions.clone(),
-            breaking_versions: language.collect_all_breaking_versions(),
         }
     }
 }
