@@ -3604,8 +3604,6 @@ pub fn new_pragma_experimental_pragma(element: ExperimentalPragma) -> Pragma {
 pub enum PragmaStringLiteral {
     PragmaSingleQuotedStringLiteral(PragmaSingleQuotedStringLiteral),
     PragmaDoubleQuotedStringLiteral(PragmaDoubleQuotedStringLiteral),
-    SingleQuotedVersionLiteral(SingleQuotedVersionLiteral),
-    DoubleQuotedVersionLiteral(DoubleQuotedVersionLiteral),
 }
 
 pub fn new_pragma_string_literal_pragma_single_quoted_string_literal(
@@ -3618,18 +3616,6 @@ pub fn new_pragma_string_literal_pragma_double_quoted_string_literal(
     element: PragmaDoubleQuotedStringLiteral,
 ) -> PragmaStringLiteral {
     PragmaStringLiteral::PragmaDoubleQuotedStringLiteral(element)
-}
-
-pub fn new_pragma_string_literal_single_quoted_version_literal(
-    element: SingleQuotedVersionLiteral,
-) -> PragmaStringLiteral {
-    PragmaStringLiteral::SingleQuotedVersionLiteral(element)
-}
-
-pub fn new_pragma_string_literal_double_quoted_version_literal(
-    element: DoubleQuotedVersionLiteral,
-) -> PragmaStringLiteral {
-    PragmaStringLiteral::DoubleQuotedVersionLiteral(element)
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -4125,24 +4111,24 @@ pub fn new_version_expression_version_term(element: VersionTerm) -> VersionExpre
 #[derive(Clone, Debug, PartialEq)]
 pub enum VersionLiteral {
     SimpleVersionLiteral(SimpleVersionLiteral),
-    SingleQuotedVersionLiteral(SingleQuotedVersionLiteral),
-    DoubleQuotedVersionLiteral(DoubleQuotedVersionLiteral),
+    PragmaSingleQuotedStringLiteral(PragmaSingleQuotedStringLiteral),
+    PragmaDoubleQuotedStringLiteral(PragmaDoubleQuotedStringLiteral),
 }
 
 pub fn new_version_literal_simple_version_literal(element: SimpleVersionLiteral) -> VersionLiteral {
     VersionLiteral::SimpleVersionLiteral(element)
 }
 
-pub fn new_version_literal_single_quoted_version_literal(
-    element: SingleQuotedVersionLiteral,
+pub fn new_version_literal_pragma_single_quoted_string_literal(
+    element: PragmaSingleQuotedStringLiteral,
 ) -> VersionLiteral {
-    VersionLiteral::SingleQuotedVersionLiteral(element)
+    VersionLiteral::PragmaSingleQuotedStringLiteral(element)
 }
 
-pub fn new_version_literal_double_quoted_version_literal(
-    element: DoubleQuotedVersionLiteral,
+pub fn new_version_literal_pragma_double_quoted_string_literal(
+    element: PragmaDoubleQuotedStringLiteral,
 ) -> VersionLiteral {
-    VersionLiteral::DoubleQuotedVersionLiteral(element)
+    VersionLiteral::PragmaDoubleQuotedStringLiteral(element)
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -5264,18 +5250,6 @@ pub fn new_double_quoted_unicode_string_literal(
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct DoubleQuotedVersionLiteral {
-    pub range: Range<usize>,
-}
-
-pub fn new_double_quoted_version_literal(
-    range: Range<usize>,
-    _source: &str,
-) -> DoubleQuotedVersionLiteral {
-    DoubleQuotedVersionLiteral { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub struct ElseKeyword {
     pub range: Range<usize>,
 }
@@ -6293,18 +6267,6 @@ pub fn new_single_quoted_unicode_string_literal(
     _source: &str,
 ) -> SingleQuotedUnicodeStringLiteral {
     SingleQuotedUnicodeStringLiteral { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct SingleQuotedVersionLiteral {
-    pub range: Range<usize>,
-}
-
-pub fn new_single_quoted_version_literal(
-    range: Range<usize>,
-    _source: &str,
-) -> SingleQuotedVersionLiteral {
-    SingleQuotedVersionLiteral { range }
 }
 
 #[derive(Clone, Debug, PartialEq)]

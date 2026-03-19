@@ -14,8 +14,8 @@ SourceUnitStruct {
                                 range: 125..137,
                             },
                             feature: PragmaStringLiteral(
-                                DoubleQuotedVersionLiteral(
-                                    DoubleQuotedVersionLiteral {
+                                PragmaDoubleQuotedStringLiteral(
+                                    PragmaDoubleQuotedStringLiteral {
                                         range: 138..145,
                                     },
                                 ),

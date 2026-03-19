@@ -6,12 +6,12 @@ SourceUnitStruct {
             PragmaDirective(
                 PragmaDirectiveStruct {
                     pragma_keyword: PragmaKeyword {
-                        range: 0..6,
+                        range: 105..111,
                     },
                     pragma: VersionPragma(
                         VersionPragmaStruct {
                             solidity_keyword: SolidityKeyword {
-                                range: 115..123,
+                                range: 112..120,
                             },
                             sets: VersionExpressionSets {
                                 elements: [
@@ -20,9 +20,9 @@ SourceUnitStruct {
                                             VersionTerm(
                                                 VersionTermStruct {
                                                     operator: None,
-                                                    literal: PragmaSingleQuotedStringLiteral(
-                                                        PragmaSingleQuotedStringLiteral {
-                                                            range: 124..131,
+                                                    literal: PragmaDoubleQuotedStringLiteral(
+                                                        PragmaDoubleQuotedStringLiteral {
+                                                            range: 121..124,
                                                         },
                                                     ),
                                                 },
@@ -34,7 +34,7 @@ SourceUnitStruct {
                         },
                     ),
                     semicolon: PragmaSemicolon {
-                        range: 140..141,
+                        range: 124..125,
                     },
                 },
             ),

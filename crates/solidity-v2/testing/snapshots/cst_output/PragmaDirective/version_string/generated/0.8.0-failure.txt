@@ -1,9 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-Error: Unexpected PragmaDoubleQuotedStringLiteral. One of DoubleQuotedVersionLiteral, PragmaCaret, PragmaEqual, PragmaGreaterThan, PragmaGreaterThanEqual, PragmaLessThan, PragmaLessThanEqual, PragmaTilde, SingleQuotedVersionLiteral, VersionSpecifier was expected
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/PragmaDirective/version_string/input.sol:2:17]
-   │
- 2 │ pragma solidity "Y";
-   │                 ─┬─  
-   │                  ╰─── Error occurred here.
-───╯

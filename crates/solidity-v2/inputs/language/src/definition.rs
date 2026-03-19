@@ -74,7 +74,122 @@ language_v2_macros::compile!(Language(
                                     solidity_keyword = Required(SolidityKeyword),
                                     sets = Required(VersionExpressionSets)
                                 )
+                            ),
+                            Separated(
+                                name = VersionExpressionSets,
+                                reference = VersionExpressionSet,
+                                separator = PragmaBarBar
+                            ),
+                            Repeated(name = VersionExpressionSet, reference = VersionExpression),
+                            Enum(
+                                name = VersionExpression,
+                                variants = [
+                                    EnumVariant(reference = VersionRange),
+                                    EnumVariant(reference = VersionTerm)
+                                ]
+                            ),
+                            Struct(
+                                name = VersionRange,
+                                fields = (
+                                    start = Required(VersionLiteral),
+                                    minus = Required(PragmaMinus),
+                                    end = Required(VersionLiteral)
+                                )
+                            ),
+                            Struct(
+                                name = VersionTerm,
+                                fields = (
+                                    operator = Optional(reference = VersionOperator),
+                                    literal = Required(VersionLiteral)
+                                )
+                            ),
+                            Enum(
+                                name = VersionOperator,
+                                variants = [
+                                    EnumVariant(reference = PragmaCaret),
+                                    EnumVariant(reference = PragmaTilde),
+                                    EnumVariant(reference = PragmaEqual),
+                                    EnumVariant(reference = PragmaLessThan),
+                                    EnumVariant(reference = PragmaGreaterThan),
+                                    EnumVariant(reference = PragmaLessThanEqual),
+                                    EnumVariant(reference = PragmaGreaterThanEqual)
+                                ]
+                            ),
+                            Enum(
+                                name = VersionLiteral,
+                                variants = [
+                                    EnumVariant(reference = SimpleVersionLiteral),
+                                    EnumVariant(reference = PragmaSingleQuotedStringLiteral),
+                                    EnumVariant(reference = PragmaDoubleQuotedStringLiteral)
+                                ]
+                            ),
+                            Separated(
+                                name = SimpleVersionLiteral,
+                                reference = VersionSpecifier,
+                                separator = PragmaPeriod
+                            ),
+                            Token(
+                                name = VersionSpecifier,
+                                definitions = [TokenDefinition(Fragment(VersionSpecifierFragment))]
+                            ),
+                            Fragment(
+                                name = VersionSpecifierFragment,
+                                scanner = OneOrMore(Choice([
+                                    Range(inclusive_start = '0', inclusive_end = '9'),
+                                    Atom("x"),
+                                    Atom("X"),
+                                    Atom("*")
+                                ]))
                             )
+                        ]
+                    ),
+                    Topic(
+                        title = "Pragma Keywords",
+                        items = [
+                            Keyword(
+                                name = AbicoderKeyword,
+                                definitions = [KeywordDefinition(value = Atom("abicoder"))]
+                            ),
+                            Keyword(
+                                name = ExperimentalKeyword,
+                                definitions = [KeywordDefinition(value = Atom("experimental"))]
+                            ),
+                            Keyword(
+                                name = AbicoderV1Keyword,
+                                definitions = [KeywordDefinition(value = Atom("v1"))]
+                            ),
+                            Keyword(
+                                name = AbicoderV2Keyword,
+                                definitions = [KeywordDefinition(value = Atom("v2"))]
+                            ),
+                            Keyword(
+                                name = ABIEncoderV2Keyword,
+                                definitions = [KeywordDefinition(value = Atom("ABIEncoderV2"))]
+                            ),
+                            Keyword(
+                                name = SMTCheckerKeyword,
+                                definitions = [KeywordDefinition(value = Atom("SMTChecker"))]
+                            ),
+                            Keyword(
+                                name = SolidityKeyword,
+                                definitions = [KeywordDefinition(value = Atom("solidity"))]
+                            )
+                        ]
+                    ),
+                    Topic(
+                        title = "Pragma Punctuation",
+                        items = [
+                            Token(name = PragmaBarBar, definitions = [TokenDefinition(Atom("||"))]),
+                            Token(name = PragmaCaret, definitions = [TokenDefinition(Atom("^"))]),
+                            Token(name = PragmaEqual, definitions = [TokenDefinition(Atom("="))]),
+                            Token(name = PragmaGreaterThan, definitions = [TokenDefinition(Atom(">"))]),
+                            Token(name = PragmaGreaterThanEqual, definitions = [TokenDefinition(Atom(">="))]),
+                            Token(name = PragmaLessThan, definitions = [TokenDefinition(Atom("<"))]),
+                            Token(name = PragmaLessThanEqual, definitions = [TokenDefinition(Atom("<="))]),
+                            Token(name = PragmaMinus, definitions = [TokenDefinition(Atom("-"))]),
+                            Token(name = PragmaPeriod, definitions = [TokenDefinition(Atom("."))]),
+                            Token(name = PragmaSemicolon, definitions = [TokenDefinition(Atom(";"))]),
+                            Token(name = PragmaTilde, definitions = [TokenDefinition(Atom("~"))])
                         ]
                     ),
                     Topic(
@@ -84,14 +199,7 @@ language_v2_macros::compile!(Language(
                                 name = PragmaStringLiteral,
                                 variants = [
                                     EnumVariant(reference = PragmaSingleQuotedStringLiteral),
-                                    EnumVariant(reference = PragmaDoubleQuotedStringLiteral),
-                                    // Quoted version literal conflict at the lexer level with string
-                                    // literals, therefore they are given more priority
-                                    // Therefore, they should also be considered valid string
-                                    // literals
-                                    EnumVariant(reference = SingleQuotedVersionLiteral),
-                                    EnumVariant(reference = DoubleQuotedVersionLiteral)
-
+                                    EnumVariant(reference = PragmaDoubleQuotedStringLiteral)
                                 ]
                             ),
                             Token(
@@ -171,154 +279,6 @@ language_v2_macros::compile!(Language(
                                     Range(inclusive_start = 'A', inclusive_end = 'F')
                                 ])
                             )
-                        ]
-                    ),
-                    Topic(
-                        title = "Pragma Versions",
-                        items = [
-                            Separated(
-                                name = VersionExpressionSets,
-                                reference = VersionExpressionSet,
-                                separator = PragmaBarBar
-                            ),
-                            Repeated(name = VersionExpressionSet, reference = VersionExpression),
-                            Enum(
-                                name = VersionExpression,
-                                variants = [
-                                    EnumVariant(reference = VersionRange),
-                                    EnumVariant(reference = VersionTerm)
-                                ]
-                            ),
-                            Struct(
-                                name = VersionRange,
-                                fields = (
-                                    start = Required(VersionLiteral),
-                                    minus = Required(PragmaMinus),
-                                    end = Required(VersionLiteral)
-                                )
-                            ),
-                            Struct(
-                                name = VersionTerm,
-                                fields = (
-                                    operator = Optional(reference = VersionOperator),
-                                    literal = Required(VersionLiteral)
-                                )
-                            ),
-                            Enum(
-                                name = VersionOperator,
-                                variants = [
-                                    EnumVariant(reference = PragmaCaret),
-                                    EnumVariant(reference = PragmaTilde),
-                                    EnumVariant(reference = PragmaEqual),
-                                    EnumVariant(reference = PragmaLessThan),
-                                    EnumVariant(reference = PragmaGreaterThan),
-                                    EnumVariant(reference = PragmaLessThanEqual),
-                                    EnumVariant(reference = PragmaGreaterThanEqual)
-                                ]
-                            ),
-                            Enum(
-                                name = VersionLiteral,
-                                variants = [
-                                    EnumVariant(reference = SimpleVersionLiteral),
-                                    EnumVariant(reference = SingleQuotedVersionLiteral),
-                                    EnumVariant(reference = DoubleQuotedVersionLiteral)
-                                ]
-                            ),
-                            Separated(
-                                // __SLANG_VERSION_SPECIFIER_SYNTAX__ (keep in sync)
-                                name = SimpleVersionLiteral,
-                                reference = VersionSpecifier,
-                                separator = PragmaPeriod
-                            ),
-                            Token(
-                                // __SLANG_VERSION_SPECIFIER_SYNTAX__ (keep in sync)
-                                name = VersionSpecifier,
-                                definitions = [TokenDefinition(Fragment(VersionSpecifierFragment))]
-                            ),
-                            Token(
-                                // __SLANG_VERSION_SPECIFIER_SYNTAX__ (keep in sync)
-                                name = SingleQuotedVersionLiteral,
-                                definitions = [TokenDefinition(Sequence([
-                                    Atom("'"),
-                                    Fragment(VersionSpecifierFragment),
-                                    ZeroOrMore(Sequence([
-                                        Atom("."),
-                                        Fragment(VersionSpecifierFragment)
-                                    ])),
-                                    Atom("'")
-                                ]))]
-                            ),
-                            Token(
-                                // __SLANG_VERSION_SPECIFIER_SYNTAX__ (keep in sync)
-                                name = DoubleQuotedVersionLiteral,
-                                definitions = [TokenDefinition(Sequence([
-                                    Atom("\""),
-                                    Fragment(VersionSpecifierFragment),
-                                    ZeroOrMore(Sequence([
-                                        Atom("."),
-                                        Fragment(VersionSpecifierFragment)
-                                    ])),
-                                    Atom("\"")
-                                ]))]
-                            ),
-                            Fragment(
-                                name = VersionSpecifierFragment,
-                                scanner = OneOrMore(Choice([
-                                    Range(inclusive_start = '0', inclusive_end = '9'),
-                                    Atom("x"),
-                                    Atom("X"),
-                                    Atom("*")
-                                ]))
-                            )
-                        ]
-                    ),
-                    Topic(
-                        title = "Pragma Keywords",
-                        items = [
-                            Keyword(
-                                name = AbicoderKeyword,
-                                definitions = [KeywordDefinition(value = Atom("abicoder"))]
-                            ),
-                            Keyword(
-                                name = ExperimentalKeyword,
-                                definitions = [KeywordDefinition(value = Atom("experimental"))]
-                            ),
-                            Keyword(
-                                name = AbicoderV1Keyword,
-                                definitions = [KeywordDefinition(value = Atom("v1"))]
-                            ),
-                            Keyword(
-                                name = AbicoderV2Keyword,
-                                definitions = [KeywordDefinition(value = Atom("v2"))]
-                            ),
-                            Keyword(
-                                name = ABIEncoderV2Keyword,
-                                definitions = [KeywordDefinition(value = Atom("ABIEncoderV2"))]
-                            ),
-                            Keyword(
-                                name = SMTCheckerKeyword,
-                                definitions = [KeywordDefinition(value = Atom("SMTChecker"))]
-                            ),
-                            Keyword(
-                                name = SolidityKeyword,
-                                definitions = [KeywordDefinition(value = Atom("solidity"))]
-                            )
-                        ]
-                    ),
-                    Topic(
-                        title = "Pragma Punctuation",
-                        items = [
-                            Token(name = PragmaBarBar, definitions = [TokenDefinition(Atom("||"))]),
-                            Token(name = PragmaCaret, definitions = [TokenDefinition(Atom("^"))]),
-                            Token(name = PragmaEqual, definitions = [TokenDefinition(Atom("="))]),
-                            Token(name = PragmaGreaterThan, definitions = [TokenDefinition(Atom(">"))]),
-                            Token(name = PragmaGreaterThanEqual, definitions = [TokenDefinition(Atom(">="))]),
-                            Token(name = PragmaLessThan, definitions = [TokenDefinition(Atom("<"))]),
-                            Token(name = PragmaLessThanEqual, definitions = [TokenDefinition(Atom("<="))]),
-                            Token(name = PragmaMinus, definitions = [TokenDefinition(Atom("-"))]),
-                            Token(name = PragmaPeriod, definitions = [TokenDefinition(Atom("."))]),
-                            Token(name = PragmaSemicolon, definitions = [TokenDefinition(Atom(";"))]),
-                            Token(name = PragmaTilde, definitions = [TokenDefinition(Atom("~"))])
                         ]
                     )
                 ]
