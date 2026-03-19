@@ -8,9 +8,12 @@ use std::rc::Rc;
 
 use slang_solidity_v2_cst::structured_cst::nodes as input;
 
+use crate::ir::interner::Symbol;
 use crate::ir::nodes as output;
 
 pub trait Builder {
+    fn intern_identifier(&mut self, range: std::ops::Range<usize>) -> Symbol;
+
     //
     // Sequences
     //
@@ -2498,8 +2501,10 @@ pub trait Builder {
     }
 
     fn build_identifier(&mut self, source: &input::Identifier) -> output::Identifier {
+        let symbol = self.intern_identifier(source.range.clone());
         Rc::new(output::IdentifierStruct {
             range: source.range.clone(),
+            symbol,
         })
     }
 
@@ -2559,8 +2564,10 @@ pub trait Builder {
     }
 
     fn build_yul_identifier(&mut self, source: &input::YulIdentifier) -> output::Identifier {
+        let symbol = self.intern_identifier(source.range.clone());
         Rc::new(output::IdentifierStruct {
             range: source.range.clone(),
+            symbol,
         })
     }
 }

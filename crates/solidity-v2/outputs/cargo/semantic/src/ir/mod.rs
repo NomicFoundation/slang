@@ -5,6 +5,8 @@ pub use nodes::*;
 mod builder;
 
 mod extensions;
+mod interner;
+pub use interner::{Interner, Symbol};
 mod source;
 pub use source::Source;
 
