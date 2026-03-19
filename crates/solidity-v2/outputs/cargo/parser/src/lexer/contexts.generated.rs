@@ -119,7 +119,7 @@ fn not_followed_by__HexLiteral(
     lex: &mut Lexer<'_, SolidityContext>,
 ) -> FilterResult<LexemeKind, ()> {
     static PATTERN: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
-        regex::Regex::new(r#"^((?&IdentifierStart))"#).expect("valid not_followed_by pattern")
+        regex::Regex::new(r#"^(_|\$|[a-z]|[A-Z])"#).expect("valid not_followed_by pattern")
     });
     if PATTERN.is_match(lex.remainder()) {
         FilterResult::Error(())
@@ -133,7 +133,7 @@ fn not_followed_by__DecimalLiteral(
     lex: &mut Lexer<'_, SolidityContext>,
 ) -> FilterResult<LexemeKind, ()> {
     static PATTERN: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
-        regex::Regex::new(r#"^((?&IdentifierStart))"#).expect("valid not_followed_by pattern")
+        regex::Regex::new(r#"^(_|\$|[a-z]|[A-Z])"#).expect("valid not_followed_by pattern")
     });
     if PATTERN.is_match(lex.remainder()) {
         FilterResult::Error(())
@@ -144,7 +144,6 @@ fn not_followed_by__DecimalLiteral(
 
 #[derive(Clone, Debug, Logos)]
 #[logos(extras = ContextExtras)]
-#[logos(subpattern IdentifierStart = r#"_|\$|[a-z]|[A-Z]"#)]
 #[logos(subpattern HexCharacter = r#"[0-9]|[a-f]|[A-F]"#)]
 #[logos(subpattern DecimalDigits = r#"[0-9]+(_[0-9]+)*"#)]
 #[logos(subpattern DecimalExponent = r#"(e|E)-?(?&DecimalDigits)"#)]
@@ -154,6 +153,7 @@ fn not_followed_by__DecimalLiteral(
 #[logos(subpattern EscapeSequence = r#"\\((?&AsciiEscape)|(?&HexByteEscape)|(?&UnicodeEscape))"#)]
 #[logos(subpattern HexStringContents = r#"(?&HexCharacter)(?&HexCharacter)(_?(?&HexCharacter)(?&HexCharacter))*"#)]
 #[logos(subpattern UnicodeEscapeSequence = r#"\\((?&AsciiEscape)|(?&HexByteEscape)|(?&UnicodeEscape))"#)]
+#[logos(subpattern IdentifierStart = r#"_|\$|[a-z]|[A-Z]"#)]
 #[logos(subpattern IdentifierPart = r#"(?&IdentifierStart)|[0-9]"#)]
 pub enum SolidityContext {
     #[regex(r#"abstract"#, |_| { LexemeKind::AbstractKeyword_Reserved }, priority = 3000001)]
@@ -360,7 +360,7 @@ fn not_followed_by__YulDecimalLiteral(
     lex: &mut Lexer<'_, YulContext>,
 ) -> FilterResult<LexemeKind, ()> {
     static PATTERN: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
-        regex::Regex::new(r#"^((?&YulIdentifierStart))"#).expect("valid not_followed_by pattern")
+        regex::Regex::new(r#"^(_|\$|[a-z]|[A-Z])"#).expect("valid not_followed_by pattern")
     });
     if PATTERN.is_match(lex.remainder()) {
         FilterResult::Error(())
@@ -372,7 +372,7 @@ fn not_followed_by__YulDecimalLiteral(
 #[allow(non_snake_case)]
 fn not_followed_by__YulHexLiteral(lex: &mut Lexer<'_, YulContext>) -> FilterResult<LexemeKind, ()> {
     static PATTERN: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
-        regex::Regex::new(r#"^((?&YulIdentifierStart))"#).expect("valid not_followed_by pattern")
+        regex::Regex::new(r#"^(_|\$|[a-z]|[A-Z])"#).expect("valid not_followed_by pattern")
     });
     if PATTERN.is_match(lex.remainder()) {
         FilterResult::Error(())
