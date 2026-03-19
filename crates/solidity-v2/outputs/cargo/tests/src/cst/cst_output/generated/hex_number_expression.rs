@@ -42,8 +42,18 @@ fn hex_trailing_ident_start() -> Result<()> {
 }
 
 #[test]
+fn hex_trailing_letter() -> Result<()> {
+    run(T, "hex_trailing_letter")
+}
+
+#[test]
 fn hex_trailing_underscore() -> Result<()> {
     run(T, "hex_trailing_underscore")
+}
+
+#[test]
+fn hex_trailing_unit() -> Result<()> {
+    run(T, "hex_trailing_unit")
 }
 
 #[test]

@@ -25,6 +25,18 @@ pub struct LexicalContext {
     pub name: String,
     pub lexemes: Vec<Lexeme>,
     pub subpatterns: IndexMap<Identifier, String>,
+    pub callbacks: Vec<CallbackDef>,
+}
+
+#[derive(Clone, Debug, Serialize)]
+pub struct CallbackDef {
+    pub name: String,
+    pub kind: String,
+    // NOTE: Current not_followed_by patterns are simple character classes
+    // (e.g., [a-zA-Z_$]). If performance becomes a concern, these could be
+    // replaced with hand-written char checks instead of regex. We use regex
+    // for generality in case future patterns are more complex.
+    pub pattern: String,
 }
 
 #[derive(Clone, Debug, Serialize)]
@@ -37,6 +49,7 @@ pub enum Lexeme {
     Token {
         kind: String,
         regex: String,
+        not_followed_by: Option<String>,
     },
     Keyword {
         kind: String,

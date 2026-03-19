@@ -1,0 +1,1 @@
+switch 1case 0 {} default {}

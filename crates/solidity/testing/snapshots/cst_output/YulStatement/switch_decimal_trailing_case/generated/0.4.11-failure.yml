@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ switch 1case 0 {} default {}                                                     │ 0..28
+
+Errors: # 1 total
+  - >
+    Error: Expected DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or YulDecimalLiteral or YulHexLiteral or YulIdentifier.
+       ╭─[crates/solidity/testing/snapshots/cst_output/YulStatement/switch_decimal_trailing_case/input.sol:1:7]
+       │
+     1 │ switch 1case 0 {} default {}
+       │       ───────────┬──────────  
+       │                  ╰──────────── Error occurred here.
+    ───╯
+
+Tree:
+  - (root꞉ YulStatement): # "switch 1case 0 {} default {}" (0..28)
+      - (variant꞉ YulSwitchStatement) ► (switch_keyword꞉ YulSwitchKeyword): "switch" # (0..6)
+      - (unrecognized꞉ UNRECOGNIZED): " 1case 0 {} default {}" # (6..28)

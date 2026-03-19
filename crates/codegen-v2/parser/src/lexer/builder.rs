@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::{BTreeMap, BTreeSet, HashSet};
 use std::mem::discriminant;
 use std::rc::Rc;
 
@@ -8,7 +8,7 @@ use language_v2_definition::model::{
     Scanner, TokenItem, TriviaItem, VersionSpecifier,
 };
 
-use crate::lexer::{Lexeme, LexerModel, LexicalContext};
+use crate::lexer::{CallbackDef, Lexeme, LexerModel, LexicalContext};
 
 pub struct LexerModelBuilder;
 
@@ -150,11 +150,39 @@ impl LexicalContextBuilder {
             ..
         } = instance;
 
+        let callbacks = Self::collect_callbacks(&lexemes);
+
         LexicalContext {
             name: language_context.name.to_string(),
             lexemes,
             subpatterns,
+            callbacks,
         }
+    }
+
+    fn collect_callbacks(lexemes: &[Lexeme]) -> Vec<CallbackDef> {
+        let mut seen = HashSet::new();
+        let mut callbacks = Vec::new();
+
+        for lexeme in lexemes {
+            if let Lexeme::Token {
+                kind,
+                not_followed_by: Some(pattern),
+                ..
+            } = lexeme
+            {
+                if seen.insert(kind.clone()) {
+                    let name = format!("not_followed_by__{kind}");
+                    callbacks.push(CallbackDef {
+                        name,
+                        kind: kind.clone(),
+                        pattern: pattern.clone(),
+                    });
+                }
+            }
+        }
+
+        callbacks
     }
 
     fn add_subpattern(&mut self, name: &Identifier) {
@@ -163,14 +191,14 @@ impl LexicalContextBuilder {
         }
 
         let scanner = self.fragments[name].clone();
-        let regex = self.convert_scanner(&scanner);
+        let regex = self.convert_scanner(&scanner, false);
         self.subpatterns.insert(name.clone(), regex);
     }
 
     fn convert_trivia(&mut self, item: &TriviaItem) -> Lexeme {
         Lexeme::Trivia {
             kind: item.name.to_string(),
-            regex: self.convert_scanner(&item.scanner),
+            regex: self.convert_scanner(&item.scanner, false),
         }
     }
 
@@ -192,10 +220,16 @@ impl LexicalContextBuilder {
     fn convert_token(&mut self, item: &TokenItem) -> Vec<Lexeme> {
         let mut result = Vec::new();
 
+        let not_followed_by = item
+            .not_followed_by
+            .as_ref()
+            .map(|scanner| self.convert_scanner(scanner, true));
+
         for definition in &item.definitions {
             result.push(Lexeme::Token {
                 kind: item.name.to_string(),
-                regex: self.convert_scanner(&definition.scanner),
+                regex: self.convert_scanner(&definition.scanner, false),
+                not_followed_by: not_followed_by.clone(),
             });
         }
 
@@ -244,12 +278,12 @@ impl LexicalContextBuilder {
         }
     }
 
-    fn convert_scanner(&mut self, parent: &Scanner) -> String {
+    fn convert_scanner(&mut self, parent: &Scanner, inline_fragment: bool) -> String {
         match parent {
             Scanner::Sequence { scanners } => {
                 let mut result = String::new();
                 for scanner in scanners {
-                    result.push_str(&self.convert_child_scanner(parent, scanner));
+                    result.push_str(&self.convert_child_scanner(parent, scanner, inline_fragment));
                 }
                 result
             }
@@ -257,21 +291,30 @@ impl LexicalContextBuilder {
             Scanner::Choice { scanners } => {
                 let mut parts = Vec::new();
                 for scanner in scanners {
-                    parts.push(self.convert_child_scanner(parent, scanner));
+                    parts.push(self.convert_child_scanner(parent, scanner, inline_fragment));
                 }
                 parts.join("|")
             }
 
             Scanner::Optional { scanner } => {
-                format!("{}?", self.convert_child_scanner(parent, scanner))
+                format!(
+                    "{}?",
+                    self.convert_child_scanner(parent, scanner, inline_fragment)
+                )
             }
 
             Scanner::ZeroOrMore { scanner } => {
-                format!("{}*", self.convert_child_scanner(parent, scanner))
+                format!(
+                    "{}*",
+                    self.convert_child_scanner(parent, scanner, inline_fragment)
+                )
             }
 
             Scanner::OneOrMore { scanner } => {
-                format!("{}+", self.convert_child_scanner(parent, scanner))
+                format!(
+                    "{}+",
+                    self.convert_child_scanner(parent, scanner, inline_fragment)
+                )
             }
 
             Scanner::Not { chars } => {
@@ -296,20 +339,30 @@ impl LexicalContextBuilder {
             Scanner::Atom { atom } => Self::convert_atom(atom),
 
             Scanner::Fragment { reference } => {
-                self.add_subpattern(reference);
-                format!("(?&{reference})")
+                if inline_fragment {
+                    let scanner = self.fragments[reference].clone();
+                    self.convert_scanner(&scanner, true)
+                } else {
+                    self.add_subpattern(reference);
+                    format!("(?&{reference})")
+                }
             }
         }
     }
 
-    fn convert_child_scanner(&mut self, parent: &Scanner, child: &Scanner) -> String {
+    fn convert_child_scanner(
+        &mut self,
+        parent: &Scanner,
+        child: &Scanner,
+        inline_fragment: bool,
+    ) -> String {
         let needs_parens = discriminant(parent) != discriminant(child)
             && Self::scanner_precedence(child) <= Self::scanner_precedence(parent);
         if needs_parens {
-            let inner = self.convert_scanner(child);
+            let inner = self.convert_scanner(child, inline_fragment);
             format!("({inner})")
         } else {
-            self.convert_scanner(child)
+            self.convert_scanner(child, inline_fragment)
         }
     }
 
