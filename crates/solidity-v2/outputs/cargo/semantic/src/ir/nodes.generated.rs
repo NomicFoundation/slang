@@ -1342,7 +1342,7 @@ impl YulVariableDeclarationValueStruct {
 // Choices
 //
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum AbicoderVersion {
     AbicoderV1Keyword,
     AbicoderV2Keyword,
@@ -1423,13 +1423,13 @@ pub enum Expression {
     FalseKeyword,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Expression_AdditiveExpression_Operator {
     Minus,
     Plus,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Expression_AssignmentExpression_Operator {
     AmpersandEqual,
     AsteriskEqual,
@@ -1445,13 +1445,13 @@ pub enum Expression_AssignmentExpression_Operator {
     SlashEqual,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Expression_EqualityExpression_Operator {
     BangEqual,
     EqualEqual,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Expression_InequalityExpression_Operator {
     GreaterThan,
     GreaterThanEqual,
@@ -1459,20 +1459,20 @@ pub enum Expression_InequalityExpression_Operator {
     LessThanEqual,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Expression_MultiplicativeExpression_Operator {
     Asterisk,
     Percent,
     Slash,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Expression_PostfixExpression_Operator {
     MinusMinus,
     PlusPlus,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Expression_PrefixExpression_Operator {
     Bang,
     DeleteKeyword,
@@ -1482,7 +1482,7 @@ pub enum Expression_PrefixExpression_Operator {
     Tilde,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Expression_ShiftExpression_Operator {
     GreaterThanGreaterThan,
     GreaterThanGreaterThanGreaterThan,
@@ -1502,7 +1502,7 @@ pub enum ForStatementInitialization {
     Semicolon,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum FunctionKind {
     Regular,
     Constructor,
@@ -1512,7 +1512,7 @@ pub enum FunctionKind {
     Modifier,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum FunctionMutability {
     Pure,
     View,
@@ -1520,7 +1520,7 @@ pub enum FunctionMutability {
     Payable,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum FunctionVisibility {
     Public,
     Private,
@@ -1540,7 +1540,7 @@ pub enum ImportClause {
     ImportDeconstruction(ImportDeconstruction),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum NumberUnit {
     WeiKeyword,
     GweiKeyword,
@@ -1576,7 +1576,7 @@ pub enum SourceUnitMember {
     ConstantDefinition(ConstantDefinition),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum StateVariableMutability {
     Mutable,
     Constant,
@@ -1584,7 +1584,7 @@ pub enum StateVariableMutability {
     Transient,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum StateVariableVisibility {
     Public,
     Private,
@@ -1610,7 +1610,7 @@ pub enum Statement {
     ExpressionStatement(ExpressionStatement),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum StorageLocation {
     MemoryKeyword,
     StorageKeyword,
@@ -1639,7 +1639,7 @@ pub enum UsingClause {
     UsingDeconstruction(UsingDeconstruction),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum UsingOperator {
     Ampersand,
     Asterisk,
@@ -1682,7 +1682,7 @@ pub enum VersionLiteral {
     StringLiteral(StringLiteral),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum VersionOperator {
     PragmaCaret,
     PragmaTilde,
@@ -1809,7 +1809,7 @@ pub type YulVariableNames = Vec<Identifier>;
 // Non-unique Terminals
 //
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct BytesKeyword {
     pub range: Range<usize>,
 }
@@ -1820,7 +1820,7 @@ impl BytesKeyword {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct DecimalLiteral {
     pub range: Range<usize>,
 }
@@ -1831,7 +1831,7 @@ impl DecimalLiteral {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct FixedKeyword {
     pub range: Range<usize>,
 }
@@ -1842,7 +1842,7 @@ impl FixedKeyword {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct HexLiteral {
     pub range: Range<usize>,
 }
@@ -1853,7 +1853,7 @@ impl HexLiteral {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct HexStringLiteral {
     pub range: Range<usize>,
 }
@@ -1866,7 +1866,7 @@ impl HexStringLiteral {
 
 pub type Identifier = Rc<IdentifierStruct>;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct IdentifierStruct {
     pub range: Range<usize>,
 }
@@ -1881,7 +1881,7 @@ impl IdentifierStruct {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct IntKeyword {
     pub range: Range<usize>,
 }
@@ -1892,7 +1892,7 @@ impl IntKeyword {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct StringLiteral {
     pub range: Range<usize>,
 }
@@ -1903,7 +1903,7 @@ impl StringLiteral {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct UfixedKeyword {
     pub range: Range<usize>,
 }
@@ -1914,7 +1914,7 @@ impl UfixedKeyword {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct UintKeyword {
     pub range: Range<usize>,
 }
@@ -1925,7 +1925,7 @@ impl UintKeyword {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct UnicodeStringLiteral {
     pub range: Range<usize>,
 }
@@ -1936,7 +1936,7 @@ impl UnicodeStringLiteral {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct VersionSpecifier {
     pub range: Range<usize>,
 }
