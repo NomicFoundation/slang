@@ -32,11 +32,6 @@ fn decimal_trailing_unit() -> Result<()> {
 }
 
 #[test]
-fn decimal_trailing_unit_ether() -> Result<()> {
-    run(T, "decimal_trailing_unit_ether")
-}
-
-#[test]
 fn ether_unit() -> Result<()> {
     run(T, "ether_unit")
 }
@@ -44,11 +39,6 @@ fn ether_unit() -> Result<()> {
 #[test]
 fn exponent_trailing_ident_start() -> Result<()> {
     run(T, "exponent_trailing_ident_start")
-}
-
-#[test]
-fn exponent_trailing_unit() -> Result<()> {
-    run(T, "exponent_trailing_unit")
 }
 
 #[test]
