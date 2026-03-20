@@ -16,6 +16,9 @@ impl Interner {
     }
 
     pub fn intern(&mut self, text: &str) -> Symbol {
+        if let Some(index) = self.set.get_index_of(text) {
+            return Symbol(index);
+        }
         let (index, _) = self.set.insert_full(text.to_owned());
         Symbol(index)
     }
@@ -24,14 +27,6 @@ impl Interner {
         self.set
             .get_index(symbol.0)
             .expect("invalid IdentifierSymbol")
-    }
-
-    pub fn len(&self) -> usize {
-        self.set.len()
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.set.is_empty()
     }
 }
 
