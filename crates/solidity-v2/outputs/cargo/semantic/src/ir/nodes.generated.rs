@@ -6,7 +6,7 @@ use std::ops::Range;
 use std::rc::Rc;
 use std::vec::Vec;
 
-use super::interner::Symbol;
+use super::interner::StringId;
 use super::source::Source;
 
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
@@ -1882,7 +1882,7 @@ pub type Identifier = Rc<IdentifierStruct>;
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct IdentifierStruct {
     pub range: Range<usize>,
-    pub symbol: Symbol,
+    pub string_id: StringId,
 }
 
 impl IdentifierStruct {

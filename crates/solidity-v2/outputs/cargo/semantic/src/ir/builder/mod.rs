@@ -6,7 +6,7 @@ use slang_solidity_v2_cst::structured_cst::nodes as input;
 mod default;
 use default::Builder;
 
-use crate::ir::interner::{Interner, Symbol};
+use crate::ir::interner::{Interner, StringId};
 use crate::ir::nodes as output;
 
 pub fn build_source_unit(
@@ -24,7 +24,7 @@ struct CstToIrBuilder<'a> {
 }
 
 impl Builder for CstToIrBuilder<'_> {
-    fn intern_identifier(&mut self, range: std::ops::Range<usize>) -> Symbol {
+    fn intern_identifier(&mut self, range: std::ops::Range<usize>) -> StringId {
         let text = &self.source[range];
         self.interner.intern(text)
     }

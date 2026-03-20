@@ -6,7 +6,7 @@ mod builder;
 
 mod extensions;
 mod interner;
-pub use interner::{Interner, Symbol};
+pub use interner::{Interner, StringId};
 mod source;
 pub use source::Source;
 
