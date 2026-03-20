@@ -14,8 +14,8 @@ pub enum LanguageVersion {
 
 #[derive(Debug, Error, PartialEq)]
 pub enum FromSemverError {
-    #[error("provided version '{0}' is not supported")]
-    UnsupportedVersion(Version),
+    #[error("provided version is not supported")]
+    UnsupportedVersion,
     #[error("versions with pre-release or build metadata are not supported")]
     UnexpectedMetadata,
 }
@@ -43,7 +43,7 @@ impl TryFrom<Version> for LanguageVersion {
                     LanguageVersion::V{{ version | split(pat=".") | join(sep="_") }}
                 }
             {%- endfor %}
-            _ => return Err(FromSemverError::UnsupportedVersion(version)),
+            _ => return Err(FromSemverError::UnsupportedVersion),
         })
     }
 }
