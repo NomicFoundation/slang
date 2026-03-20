@@ -138,9 +138,7 @@ impl CargoController {
     }
 
     fn run_iai_bench(&self, package_name: &str, bench_name: &str, bencher_project: &str) {
-        let test_runner = format!(
-            "cargo bench --package {package_name} --bench {bench_name} --message-format json"
-        );
+        let test_runner = format!("cargo bench --package {package_name} --bench {bench_name}");
 
         // 1% threshold: iai-callgrind uses deterministic hardware counters (not wall clock),
         // so any change reflects a real code change, not noise.
