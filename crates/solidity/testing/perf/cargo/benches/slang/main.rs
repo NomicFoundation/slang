@@ -21,6 +21,8 @@ mod __dependencies_used_in_lib__ {
     use serde as _;
     use serde_json as _;
     use slang_solidity as _;
+    use slang_solidity_v2_common as _;
+    use slang_solidity_v2_parser as _;
     use solar as _;
     use solidity_testing_utils as _;
     use streaming_iterator as _;
