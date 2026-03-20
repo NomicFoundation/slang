@@ -2,6 +2,7 @@ use std::collections::{HashMap, HashSet, VecDeque};
 
 use super::built_ins::BuiltIn;
 use super::types::{Type, TypeId};
+use crate::file::FileId;
 use crate::interner::StringId;
 use crate::ir::NodeId;
 
@@ -92,7 +93,7 @@ pub struct Binder {
     /// Scopes (set of definitions contained and relationship to other scopes), indexed by `NodeId`
     scopes_by_node_id: HashMap<NodeId, ScopeId>,
     /// Index of root `FileScope`s for all files in the `CompilationUnit`
-    scopes_by_file_id: HashMap<String, ScopeId>,
+    scopes_by_file_id: HashMap<FileId, ScopeId>,
     /// `UsingDirective` objects registered globally (contract level directives
     /// are stored in the corresponding `ContractScope`)
     global_using_directives: Vec<UsingDirective>,
@@ -157,21 +158,17 @@ impl Binder {
         self.scopes_by_node_id.get(&node_id).copied()
     }
 
-    pub(crate) fn scope_id_for_file_id(&self, file_id: &str) -> Option<ScopeId> {
-        self.scopes_by_file_id.get(file_id).copied()
+    pub(crate) fn scope_id_for_file_id(&self, file_id: FileId) -> Option<ScopeId> {
+        self.scopes_by_file_id.get(&file_id).copied()
     }
 
     pub(crate) fn insert_scope(&mut self, scope: Scope) -> ScopeId {
         let scope_id = ScopeId(self.scopes.len());
 
         if let Scope::File(file_scope) = &scope {
-            let file_id = &file_scope.file_id;
-            if self
-                .scopes_by_file_id
-                .insert(file_id.clone(), scope_id)
-                .is_some()
-            {
-                unreachable!("attempt to insert duplicate file scope for {file_id}");
+            let file_id = file_scope.file_id;
+            if self.scopes_by_file_id.insert(file_id, scope_id).is_some() {
+                unreachable!("attempt to insert duplicate file scope");
             }
         }
 
@@ -372,9 +369,9 @@ impl Binder {
 
     // File scope resolution context
 
-    fn get_file_scope(&self, file_id: &str) -> &FileScope {
+    fn get_file_scope(&self, file_id: FileId) -> &FileScope {
         self.scopes_by_file_id
-            .get(file_id)
+            .get(&file_id)
             .and_then(|scope_id| self.scopes.get(scope_id.0))
             .and_then(|scope| match scope {
                 Scope::File(file_scope) => Some(file_scope),
@@ -386,20 +383,20 @@ impl Binder {
     // Resolving a symbol in a file scope is special because of default imports.
     // We want to find *all* definitions with the given symbol reachable from
     // the file.
-    fn resolve_in_file_scope(&self, file_id: &str, symbol: StringId) -> Resolution {
+    fn resolve_in_file_scope(&self, file_id: FileId, symbol: StringId) -> Resolution {
         let mut found_definitions = Vec::new();
         let mut visited_files = HashSet::new();
         let mut files_to_search = VecDeque::new();
-        files_to_search.push_back(file_id.to_owned());
+        files_to_search.push_back(file_id);
 
         while let Some(file_id) = files_to_search.pop_front() {
-            let file_scope = self.get_file_scope(&file_id);
+            let file_scope = self.get_file_scope(file_id);
             if !visited_files.insert(file_id) {
                 continue;
             }
 
             found_definitions.extend(file_scope.lookup_symbol(symbol));
-            files_to_search.extend(file_scope.imported_files.iter().cloned());
+            files_to_search.extend(file_scope.imported_files.iter().copied());
         }
 
         Resolution::from(found_definitions)
@@ -501,7 +498,7 @@ impl Binder {
                 })
             }
             Scope::Enum(enum_scope) => enum_scope.definitions.get(&symbol).into(),
-            Scope::File(file_scope) => self.resolve_in_file_scope(&file_scope.file_id, symbol),
+            Scope::File(file_scope) => self.resolve_in_file_scope(file_scope.file_id, symbol),
             Scope::Function(function_scope) => function_scope
                 .definitions
                 .get(&symbol)
@@ -584,7 +581,7 @@ impl Binder {
                 let Some(scope_id) = imported_symbol
                     .resolved_file_id
                     .as_ref()
-                    .and_then(|file_id| self.scope_id_for_file_id(file_id))
+                    .and_then(|file_id| self.scope_id_for_file_id(*file_id))
                 else {
                     continue;
                 };

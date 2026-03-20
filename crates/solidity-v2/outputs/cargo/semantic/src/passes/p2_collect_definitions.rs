@@ -1,5 +1,5 @@
 use crate::binder::{Binder, Definition, FileScope, ParametersScope, Scope, ScopeId};
-use crate::file::File;
+use crate::file::{File, FileId};
 use crate::ir;
 use crate::ir::visitor::Visitor;
 use crate::ir::NodeId;
@@ -127,10 +127,9 @@ impl<'a> Pass<'a> {
             .insert_definition_in_scope(definition, self.current_scope_id());
     }
 
-    fn resolve_import_path(&self, import_path: &ir::StringLiteral) -> Option<String> {
+    fn resolve_import_path(&self, import_path: &ir::StringLiteral) -> Option<FileId> {
         self.current_file()
             .resolved_import(import_path.range.clone())
-            .map(|file_id| file_id.to_string())
 
         // TODO(validation): emit an error/warning if the file cannot be resolved
     }
@@ -252,11 +251,8 @@ impl Visitor for Pass<'_> {
         let imported_file_id = self.resolve_import_path(&node.path);
 
         for symbol in &node.symbols {
-            let definition = Definition::new_imported_symbol(
-                symbol,
-                symbol.name.string_id,
-                imported_file_id.clone(),
-            );
+            let definition =
+                Definition::new_imported_symbol(symbol, symbol.name.string_id, imported_file_id);
             self.insert_definition_in_current_scope(definition);
         }
 
