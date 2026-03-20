@@ -6,16 +6,29 @@ use slang_solidity_v2_cst::structured_cst::nodes as input;
 mod default;
 use default::Builder;
 
+use crate::interner::{Interner, StringId};
 use crate::ir::nodes as output;
 
-pub fn build_source_unit(source_unit: &input::SourceUnit) -> output::SourceUnit {
-    let mut builder = CstToIrBuilder {};
+pub fn build_source_unit(
+    source_unit: &input::SourceUnit,
+    source: &str,
+    interner: &mut Interner,
+) -> output::SourceUnit {
+    let mut builder = CstToIrBuilder { source, interner };
     builder.build_source_unit(source_unit)
 }
 
-struct CstToIrBuilder {}
+struct CstToIrBuilder<'a> {
+    source: &'a str,
+    interner: &'a mut Interner,
+}
 
-impl Builder for CstToIrBuilder {
+impl Builder for CstToIrBuilder<'_> {
+    fn intern_identifier(&mut self, range: std::ops::Range<usize>) -> StringId {
+        let text = &self.source[range];
+        self.interner.intern(text)
+    }
+
     //
     // Abstract sequence methods
     //
@@ -416,7 +429,7 @@ impl Builder for CstToIrBuilder {
 // Private helper methods
 //
 
-impl CstToIrBuilder {
+impl CstToIrBuilder<'_> {
     fn build_function_body(&mut self, source: &input::FunctionBody) -> Option<output::Block> {
         match source {
             input::FunctionBody::Block(block) => Some(self.build_block(block)),
