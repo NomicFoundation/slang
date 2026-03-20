@@ -13,8 +13,9 @@ use solidity_testing_perf_cargo::tests;
 mod __dependencies_used_in_lib__ {
     use {
         anyhow as _, infra_utils as _, semver as _, serde as _, serde_json as _,
-        slang_solidity as _, solar as _, solidity_testing_utils as _, streaming_iterator as _,
-        tree_sitter as _, tree_sitter_solidity as _,
+        slang_solidity as _, slang_solidity_v2_common as _, slang_solidity_v2_parser as _,
+        solar as _, solidity_testing_utils as _, streaming_iterator as _, tree_sitter as _,
+        tree_sitter_solidity as _,
     };
 }
 
@@ -54,16 +55,29 @@ macro_rules! tree_sitter_test {
     };
 }
 
+macro_rules! slang_v2_test {
+    ($prj:ident) => {
+        paste! {
+            #[library_benchmark(setup = tests::setup::setup)]
+            #[bench::test(stringify!($prj))]
+            pub fn [<slang_v2_ $prj>](project: &SolidityProject) {
+                black_box(tests::slang_v2_parser::run(project));
+            }
+        }
+    };
+}
+
 // Some projects can't be parsed by tree-sitter, so we test them only in slang and solar.
 // This macro abstracts that logic.
 macro_rules! slang_and_solar_tests {
     ($prj:ident) => {
         slang_test!($prj);
+        slang_v2_test!($prj);
         solar_test!($prj);
         paste! {
             library_benchmark_group!(
               name = [< $prj _group >];
-              benchmarks = [< slang_ $prj >],[< solar_ $prj >],
+              benchmarks = [< slang_ $prj >],[< slang_v2_ $prj >],[< solar_ $prj >],
           );
         }
     };
@@ -76,13 +90,25 @@ macro_rules! slang_and_solar_tests {
  */
 macro_rules! comparison_tests {
     (mooniswap) => {
-        // Incompatible with solar
+        // Incompatible with solar or slang v2
         slang_test!(mooniswap);
         tree_sitter_test!(mooniswap);
         library_benchmark_group!(
             name = mooniswap_group;
             benchmarks = slang_mooniswap,tree_sitter_mooniswap,
         );
+    };
+    (weighted_pool) => {
+        // Incompatible with slang v2 (Solidity 0.7.1)
+        slang_test!(weighted_pool);
+        solar_test!(weighted_pool);
+        tree_sitter_test!(weighted_pool);
+        paste! {
+          library_benchmark_group!(
+              name = weighted_pool_group;
+              benchmarks = slang_weighted_pool,solar_weighted_pool,tree_sitter_weighted_pool,
+          );
+        }
     };
     (uniswap) => {
         slang_and_solar_tests!(uniswap);
@@ -95,12 +121,13 @@ macro_rules! comparison_tests {
     };
     ($prj:ident) => {
         slang_test!($prj);
+        slang_v2_test!($prj);
         solar_test!($prj);
         tree_sitter_test!($prj);
         paste! {
           library_benchmark_group!(
               name = [< $prj _group >];
-              benchmarks = [< slang_ $prj >],[< solar_ $prj >],[< tree_sitter_ $prj >],
+              benchmarks = [< slang_ $prj >],[< slang_v2_ $prj >],[< solar_ $prj >],[< tree_sitter_ $prj >],
           );
         }
     };
