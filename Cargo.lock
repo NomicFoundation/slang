@@ -674,6 +674,7 @@ dependencies = [
  "codegen_ebnf",
  "codegen_v2_cst",
  "codegen_v2_parser",
+ "codegen_v2_semantic",
  "indexmap",
  "infra_utils",
  "language_definition",
@@ -740,6 +741,16 @@ dependencies = [
 name = "codegen_v2_parser"
 version = "1.3.4"
 dependencies = [
+ "indexmap",
+ "language_v2_definition",
+ "serde",
+]
+
+[[package]]
+name = "codegen_v2_semantic"
+version = "1.3.4"
+dependencies = [
+ "Inflector",
  "indexmap",
  "language_v2_definition",
  "serde",
@@ -3745,6 +3756,16 @@ dependencies = [
  "slang_solidity_v2_cst",
  "strum 0.26.3",
  "strum_macros 0.26.4",
+]
+
+[[package]]
+name = "slang_solidity_v2_semantic"
+version = "1.3.4"
+dependencies = [
+ "anyhow",
+ "slang_solidity_v2_common",
+ "slang_solidity_v2_cst",
+ "slang_solidity_v2_parser",
 ]
 
 [[package]]

@@ -1,0 +1,136 @@
+{%- set builder = model.ir_language_model.builder -%}
+{%- set target = model.ir_language_model.target -%}
+// Builder from StructuredCstModel
+#![allow(clippy::too_many_lines)]
+#![allow(unused_variables)]
+
+use std::rc::Rc;
+use crate::ir::nodes as output;
+use slang_solidity_v2_cst::structured_cst::nodes as input;
+
+pub trait Builder {
+  //
+  // Sequences
+  //
+  {% for parent_type, sequence in builder.sequences %}
+    fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }}
+    {% if not sequence.has_added_fields %}
+      {
+        {% for field in sequence.fields %}
+          {%- if not field.is_removed -%}
+            let {{ field.label | snake_case }} =
+            {%- if field.is_optional -%}
+              {%- if field.type.kind == "UniqueTerminal" -%}
+                source.{{ field.label }}.is_some();
+              {%- else -%}
+                source.{{ field.label }}.as_ref().map(
+                  |value| self.build_{{ field.type.name | snake_case }}(value)
+                );
+              {%- endif -%}
+            {%- else -%}
+              {# Non-optional unique terminals should be elided at this point #}
+              self.build_{{ field.type.name | snake_case }}(&source.{{ field.label | snake_case }});
+            {%- endif -%}
+          {%- endif -%}
+        {%- endfor %}
+
+        Rc::new(output::{{ parent_type }}Struct {
+          {%- for field in sequence.fields -%}
+            {%- if not field.is_removed -%}
+              {{ field.label | snake_case }},
+            {%- endif -%}
+          {%- endfor %}
+        })
+      }
+    {% else %}
+      ;
+    {% endif %}
+  {% endfor %}
+
+  //
+  // Collapsed sequences
+  //
+  {% for parent_type, collapsed in builder.collapsed_sequences %}
+    fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ collapsed.target_type.name }}
+    {
+      self.build_{{ collapsed.type.name | snake_case }}(&source.{{ collapsed.label }})
+    }
+  {% endfor %}
+
+  //
+  // Choices
+  //
+  {% for parent_type, choice in builder.choices %}
+    {% if not choice.is_new -%}
+      {% if choice.has_removed_variants -%}
+        #[allow(dead_code)]
+      {%- endif %}
+      fn default_build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }} {
+        #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
+        match source {
+          {% for nonterminal in choice.variants | filter(attribute="kind", value="Nonterminal") -%}
+            input::{{ parent_type }}::{{ nonterminal.name }}(ref {{ nonterminal.name | snake_case }}) => {
+              output::{{ parent_type }}::{{ nonterminal.name }}(self.build_{{ nonterminal.name | snake_case }}({{ nonterminal.name | snake_case }}))
+            }
+          {%- endfor -%}
+          {% for terminal in choice.variants | filter(attribute="kind", value="Terminal") -%}
+            input::{{ parent_type }}::{{ terminal.name }}(ref {{ terminal.name | snake_case }}) => {
+              output::{{ parent_type }}::{{ terminal.name }}(self.build_{{ terminal.name | snake_case }}({{ terminal.name | snake_case }}))
+            }
+          {%- endfor -%}
+          {% for terminal in choice.variants | filter(attribute="kind", value="UniqueTerminal") -%}
+            input::{{ parent_type }}::{{ terminal.name }}(_) => output::{{ parent_type }}::{{ terminal.name }},
+          {%- endfor -%}
+          {% if choice.has_removed_variants %}
+            _ => panic!("Unexpected variant {source:?}"),
+          {% endif %}
+        }
+      }
+      fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }}
+      {%- if choice.has_removed_variants -%}
+        ;
+      {%- else -%}
+        {
+          self.default_build_{{ parent_type | snake_case }}(source)
+        }
+      {%- endif %}
+    {%- endif %}
+  {% endfor %}
+
+  //
+  // Repeated & Separated
+  //
+
+  {% for parent_type, collection in builder.collections %}
+    {% if not collection.is_new -%}
+      fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }} {
+        source.elements.iter().map(|item|
+          self.build_{{ collection.item_type.name | snake_case }}(item)
+        ).collect()
+      }
+    {%- endif %}
+  {% endfor %}
+
+  //
+  // Terminals
+  //
+
+  {% for terminal_type, terminal in builder.terminals %}
+    {# Unique terminals don't need cloning because they are not present in the IR, #}
+    {# and new terminals cannot be automatically built #}
+    {% if not terminal.is_new and not terminal.is_unique %}
+      fn build_{{ terminal_type | snake_case }}(&mut self, source: &input::{{ terminal_type }}) -> output::{{ terminal_type }} {
+        {% if terminal.is_identifier %}
+          Rc::new(output::{{ terminal_type }}Struct {
+            range: source.range.clone(),
+          })
+        {% else %}
+          output::{{ terminal_type }} {
+            range: source.range.clone(),
+          }
+        {% endif %}
+      }
+    {% endif %}
+  {% endfor %}
+}
