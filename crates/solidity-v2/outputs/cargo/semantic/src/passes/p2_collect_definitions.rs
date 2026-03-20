@@ -43,7 +43,7 @@ impl<'a> Pass<'a> {
     fn visit_file(&mut self, file: &'a File) {
         assert!(self.current_file.is_none());
         self.current_file = Some(file);
-        ir::visitor::accept_source_unit(&file.source_unit, self);
+        ir::visitor::accept_source_unit(file.source_unit(), self);
         self.current_file = None;
         assert!(self.scope_stack.is_empty());
     }
@@ -127,9 +127,12 @@ impl<'a> Pass<'a> {
             .insert_definition_in_scope(definition, self.current_scope_id());
     }
 
-    fn resolve_import_path(&self, _import_path: &ir::StringLiteral) -> Option<String> {
-        // TODO: implement import resolution for v2
-        None
+    fn resolve_import_path(&self, import_path: &ir::StringLiteral) -> Option<String> {
+        self.current_file()
+            .resolved_import(import_path.range.clone())
+            .map(|file_id| file_id.to_string())
+
+        // TODO(validation): emit an error/warning if the file cannot be resolved
     }
 
     // Collects *all* the sequential parameters making and registering

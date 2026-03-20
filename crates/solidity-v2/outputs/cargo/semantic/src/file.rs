@@ -1,19 +1,31 @@
+use std::collections::HashMap;
+use std::ops::Range;
+
 use crate::ir;
 
 pub struct File {
-    pub source: String,
-    pub file_id: String,
-    pub source_unit: ir::SourceUnit,
+    source: String,
+    id: String,
+    source_unit: ir::SourceUnit,
+    resolved_imports: HashMap<Range<usize>, String>,
 }
 
 impl File {
     pub fn id(&self) -> &str {
-        &self.file_id
+        &self.id
+    }
+
+    pub(crate) fn source_unit(&self) -> &ir::SourceUnit {
+        &self.source_unit
+    }
+
+    pub(crate) fn resolved_import(&self, range: Range<usize>) -> Option<String> {
+        self.resolved_imports.get(&range).cloned()
     }
 }
 
 impl ir::Source for File {
-    fn text(&self, range: std::ops::Range<usize>) -> &str {
+    fn text(&self, range: Range<usize>) -> &str {
         self.source.text(range)
     }
 }
