@@ -4,7 +4,7 @@ pub mod dataset;
 pub mod tests;
 
 mod __dependencies_used_in_benches__ {
-    use {iai_callgrind as _, infra_utils as _, paste as _};
+    use {iai_callgrind as _, infra_utils as _, paste as _, slang_solidity_v2_cst as _};
 }
 
 #[cfg(test)]
@@ -53,8 +53,8 @@ mod unit_tests {
         #[test]
         fn parser() {
             let payload = crate::tests::setup::setup(super::PROJECT_TO_TEST);
-            crate::tests::slang_v2_parser::test(payload);
-            // TODO(V2): Count contracts in V2
+            let contract_count = crate::tests::slang_v2_parser::test(payload);
+            assert_eq!(contract_count, super::CONTRACT_COUNT);
         }
     }
 
