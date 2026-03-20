@@ -1,18 +1,12 @@
 use language_v2_definition::model::{
     EnumItem, Field, Identifier, OperatorModel, PrecedenceItem, RepeatedItem, SeparatedItem,
-    StructItem, VersionSpecifier,
+    StructItem,
 };
-use semver::Version;
 use serde::Serialize;
 
 /// Newtype for the already generated Rust code, not to be confused with regular strings.
 #[derive(Serialize, Debug, Clone)]
 struct RustCode(String);
-
-// TODO(v2): Support multiple versions
-// This is exported as it's currently being checked in various places
-// _SLANG_V2_PARSER_VERSION_ (keep in sync)
-pub const VERSION: Version = Version::new(0, 8, 30);
 
 /// An `LALRPOPDerivedItem` represents a single LALRPOP rule, for example:
 ///
@@ -68,13 +62,6 @@ struct LALRPOPDefinition {
 struct LALRPOPField {
     capturing_name: Identifier,
     rule: RustCode,
-}
-
-/// Checks if a given version specifier enables the supported version
-fn is_enabled(enabled: Option<&VersionSpecifier>) -> bool {
-    enabled
-        .unwrap_or(&VersionSpecifier::default())
-        .contains(&VERSION)
 }
 
 /// Helper rules for LALRPOP matching rules
@@ -145,13 +132,10 @@ mod node_constructors {
 pub(crate) fn struct_item_to_lalrpop_items(item: &StructItem) -> Vec<LALRPOPDerivedItem> {
     use node_constructors::constructor;
 
-    if !is_enabled(item.enabled.as_ref()) {
-        return vec![];
-    }
     let fields = item
         .fields
         .iter()
-        .filter_map(|(name, field)| field_to_lalrpop_field(name, field));
+        .map(|(name, field)| field_to_lalrpop_field(name, field));
 
     let option = LALRPOPDefinition {
         fields: fields.collect(),
@@ -179,13 +163,9 @@ pub(crate) fn enum_item_to_lalrpop_items(item: &EnumItem) -> Vec<LALRPOPDerivedI
     use lalrpop_rules::simple_match;
     use node_constructors::variant_constructor;
 
-    if !is_enabled(item.enabled.as_ref()) {
-        return vec![];
-    }
     let options = item
         .variants
         .iter()
-        .filter(|variant| is_enabled(variant.enabled.as_ref()))
         .map(|variant| {
             let capturing_name = variant.reference.to_string();
             let fields = vec![LALRPOPField {
@@ -218,9 +198,6 @@ pub(crate) fn repeated_item_to_lalrpop_items(item: &RepeatedItem) -> Vec<LALRPOP
     use lalrpop_rules::{capture, repeated};
     use node_constructors::constructor;
 
-    if !is_enabled(item.enabled.as_ref()) {
-        return vec![];
-    }
     let capturing_name = item.reference.to_string();
     let fields = vec![LALRPOPField {
         capturing_name: capturing_name.clone().into(),
@@ -253,9 +230,6 @@ pub(crate) fn separated_item_to_lalrpop_items(item: &SeparatedItem) -> Vec<LALRP
     use lalrpop_rules::{capture, separated};
     use node_constructors::constructor;
 
-    if !is_enabled(item.enabled.as_ref()) {
-        return vec![];
-    }
     let capturing_name = item.reference.to_string();
     let fields = vec![LALRPOPField {
         capturing_name: capturing_name.clone().into(),
@@ -299,9 +273,6 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
     use lalrpop_rules::simple_match;
     use node_constructors::{constructor, variant_constructor};
 
-    if !is_enabled(item.enabled.as_ref()) {
-        return vec![];
-    }
     // The final items
     let mut ans = Vec::new();
 
@@ -320,14 +291,10 @@ pub(crate) fn precedence_item_to_lalrpop_items(item: &PrecedenceItem) -> Vec<LAL
         let pre_processed_fields = if prec.operators.len() == 1 {
             // If there's a single operator, we use its fields directly
             let op = &prec.operators[0];
-            if is_enabled(op.enabled.as_ref()) {
-                op.fields
-                    .iter()
-                    .filter_map(|(name, field)| field_to_lalrpop_field(name, field))
-                    .collect()
-            } else {
-                vec![]
-            }
+            op.fields
+                .iter()
+                .map(|(name, field)| field_to_lalrpop_field(name, field))
+                .collect()
         } else {
             // If there are multiple operators, we create a choice between them as a new rule.
             // And the pre_processed_fields refer to the new rule alone (ie `Expression_PostfixExpression_Operator`)
@@ -493,7 +460,6 @@ fn precedence_operator_to_lalrpop_item(
     let options = prec
         .operators
         .iter()
-        .filter(|op| is_enabled(op.enabled.as_ref()))
         .map(|op| {
             assert!(
                 op.fields.len() == 1,
@@ -507,7 +473,7 @@ fn precedence_operator_to_lalrpop_item(
             );
             if let Field::Required { reference } = field {
                 LALRPOPDefinition {
-                    fields: vec![field_to_lalrpop_field(identifier, field).unwrap()],
+                    fields: vec![field_to_lalrpop_field(identifier, field)],
                     constructor: Some(variant_constructor(&operator_ident, reference)),
                 }
             } else {
@@ -538,7 +504,6 @@ fn collect_primaries(item: &PrecedenceItem, prec_counter: i32) -> LALRPOPDerived
     let primaries: Vec<LALRPOPDefinition> = item
         .primary_expressions
         .iter()
-        .filter(|exp| is_enabled(exp.enabled.as_ref()))
         .map(|exp| {
             let capturing_name = exp.reference.to_string();
             LALRPOPDefinition {
@@ -559,21 +524,18 @@ fn collect_primaries(item: &PrecedenceItem, prec_counter: i32) -> LALRPOPDerived
 }
 
 /// Given a field, produce an `LALRPOPField` if the field is enabled
-fn field_to_lalrpop_field(name: &Identifier, field: &Field) -> Option<LALRPOPField> {
+fn field_to_lalrpop_field(name: &Identifier, field: &Field) -> LALRPOPField {
     use lalrpop_rules::{optional, simple_match};
 
     let capturing_name = format!("_{name}");
     match field {
-        Field::Required { reference } => Some(LALRPOPField {
+        Field::Required { reference } => LALRPOPField {
             capturing_name: capturing_name.clone().into(),
             rule: simple_match(reference),
-        }),
-        Field::Optional { reference, enabled } if is_enabled(enabled.as_ref()) => {
-            Some(LALRPOPField {
-                capturing_name: capturing_name.clone().into(),
-                rule: optional(&simple_match(reference)),
-            })
-        }
-        Field::Optional { .. } => None,
+        },
+        Field::Optional { reference, .. } => LALRPOPField {
+            capturing_name: capturing_name.clone().into(),
+            rule: optional(&simple_match(reference)),
+        },
     }
 }

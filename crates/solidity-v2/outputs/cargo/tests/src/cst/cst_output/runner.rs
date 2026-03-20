@@ -10,6 +10,7 @@ use slang_solidity::parser::{ParseOutput, Parser as V1Parser};
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit;
 use slang_solidity_v2_parser::{Parser as V2Parser, ParserError};
+use solidity_v2_language::SolidityDefinition;
 use solidity_v2_testing_utils::reporting::diagnostic;
 use solidity_v2_testing_utils::v1_comparison::parser::{NodeChecker, NodeCheckerError};
 
@@ -28,11 +29,13 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
     let mut last_output = None;
     let mut last_diff = None;
 
-    // TODO(v2): Test all breaking versions
-    // _SLANG_V2_PARSER_VERSION_
-    let tested_versions = [LanguageVersion::V0_8_30];
+    let tested_versions: Vec<LanguageVersion> = SolidityDefinition::create()
+        .collect_all_breaking_versions()
+        .into_iter()
+        .map(|v| LanguageVersion::try_from(v).unwrap())
+        .collect();
 
-    for lang_version in tested_versions {
+    for &lang_version in &tested_versions {
         let v2_output = V2Parser::parse(&source, lang_version);
 
         let v2_output = match last_output {
