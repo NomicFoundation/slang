@@ -6,7 +6,7 @@ use slang_solidity_v2_cst::structured_cst::nodes as input;
 mod default;
 use default::Builder;
 
-use crate::ir::interner::{Interner, StringId};
+use crate::interner::{Interner, StringId};
 use crate::ir::nodes as output;
 
 pub fn build_source_unit(

@@ -8,7 +8,7 @@ use std::rc::Rc;
 
 use slang_solidity_v2_cst::structured_cst::nodes as input;
 
-use crate::ir::interner::StringId;
+use crate::interner::StringId;
 use crate::ir::nodes as output;
 
 pub trait Builder {
