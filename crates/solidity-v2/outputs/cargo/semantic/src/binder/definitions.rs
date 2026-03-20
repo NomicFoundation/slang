@@ -1,6 +1,7 @@
 use std::rc::Rc;
 
 use super::ScopeId;
+use crate::interner::StringId;
 use crate::ir::{self, NodeId};
 use crate::types::TypeId;
 
@@ -86,7 +87,7 @@ pub struct ImportDefinition {
 #[derive(Debug)]
 pub struct ImportedSymbolDefinition {
     pub(crate) ir_node: ir::ImportDeconstructionSymbol,
-    pub symbol: String,
+    pub symbol: StringId,
     pub resolved_file_id: Option<String>,
 }
 
@@ -230,9 +231,7 @@ impl Definition {
                 &state_variable_definition.ir_node.name
             }
             Self::Struct(struct_definition) => &struct_definition.ir_node.name,
-            Self::StructMember(struct_member_definition) => {
-                &struct_member_definition.ir_node.name
-            }
+            Self::StructMember(struct_member_definition) => &struct_member_definition.ir_node.name,
             Self::TypeParameter(parameter_definition) => {
                 // Definitions are created only for named type parameters
                 parameter_definition.ir_node.name.as_ref().unwrap()
@@ -364,7 +363,7 @@ impl Definition {
 
     pub(crate) fn new_imported_symbol(
         ir_node: &ir::ImportDeconstructionSymbol,
-        symbol: String,
+        symbol: StringId,
         resolved_file_id: Option<String>,
     ) -> Self {
         Self::ImportedSymbol(ImportedSymbolDefinition {

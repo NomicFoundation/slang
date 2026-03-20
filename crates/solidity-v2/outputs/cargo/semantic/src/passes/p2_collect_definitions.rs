@@ -123,11 +123,8 @@ impl<'a> Pass<'a> {
     }
 
     fn insert_definition_in_current_scope(&mut self, definition: Definition) {
-        self.binder.insert_definition_in_scope(
-            definition,
-            self.current_file(),
-            self.current_scope_id(),
-        );
+        self.binder
+            .insert_definition_in_scope(definition, self.current_scope_id());
     }
 
     fn resolve_import_path(&self, _import_path: &ir::StringLiteral) -> Option<String> {
@@ -141,11 +138,8 @@ impl<'a> Pass<'a> {
     fn collect_parameters(&mut self, parameters: &ir::Parameters) -> ScopeId {
         let mut scope = ParametersScope::new();
         for parameter in parameters {
-            let name = parameter
-                .name
-                .as_ref()
-                .map(|id| id.unparse(self.current_file()).to_string());
-            scope.add_parameter(name.as_ref(), parameter.id());
+            let name = parameter.name.as_ref().map(|id| id.string_id);
+            scope.add_parameter(name, parameter.id());
             if parameter.name.is_some() {
                 let definition = Definition::new_parameter(parameter);
                 self.binder.insert_definition_no_scope(definition);
@@ -165,8 +159,7 @@ impl<'a> Pass<'a> {
         for parameter in parameters {
             if parameter.name.is_some() {
                 let definition = Definition::new_parameter(parameter);
-                self.binder
-                    .insert_definition_in_scope(definition, self.current_file(), scope_id);
+                self.binder.insert_definition_in_scope(definition, scope_id);
             }
         }
     }
@@ -258,7 +251,7 @@ impl Visitor for Pass<'_> {
         for symbol in &node.symbols {
             let definition = Definition::new_imported_symbol(
                 symbol,
-                symbol.name.unparse(self.current_file()).to_string(),
+                symbol.name.string_id,
                 imported_file_id.clone(),
             );
             self.insert_definition_in_current_scope(definition);
@@ -321,7 +314,7 @@ impl Visitor for Pass<'_> {
         for member in &node.members {
             let definition = Definition::new_enum_member(member);
             self.binder
-                .insert_definition_in_scope(definition, self.current_file(), enum_scope_id);
+                .insert_definition_in_scope(definition, enum_scope_id);
         }
 
         false
@@ -335,11 +328,8 @@ impl Visitor for Pass<'_> {
         let struct_scope_id = self.binder.insert_scope(struct_scope);
         for member in &node.members {
             let definition = Definition::new_struct_member(member);
-            self.binder.insert_definition_in_scope(
-                definition,
-                self.current_file(),
-                struct_scope_id,
-            );
+            self.binder
+                .insert_definition_in_scope(definition, struct_scope_id);
         }
 
         true
@@ -502,14 +492,12 @@ impl Visitor for Pass<'_> {
 
         for parameter in &node.parameters {
             let definition = Definition::new_yul_parameter(parameter);
-            self.binder
-                .insert_definition_in_scope(definition, self.current_file(), scope_id);
+            self.binder.insert_definition_in_scope(definition, scope_id);
         }
         if let Some(returns) = &node.returns {
             for variable in returns {
                 let definition = Definition::new_yul_variable(variable);
-                self.binder
-                    .insert_definition_in_scope(definition, self.current_file(), scope_id);
+                self.binder.insert_definition_in_scope(definition, scope_id);
             }
         }
 
