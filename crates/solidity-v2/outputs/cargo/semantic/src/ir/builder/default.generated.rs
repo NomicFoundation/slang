@@ -8,11 +8,11 @@ use std::rc::Rc;
 
 use slang_solidity_v2_cst::structured_cst::nodes as input;
 
-use crate::ir::interner::Symbol;
+use crate::ir::interner::StringId;
 use crate::ir::nodes as output;
 
 pub trait Builder {
-    fn intern_identifier(&mut self, range: std::ops::Range<usize>) -> Symbol;
+    fn intern_identifier(&mut self, range: std::ops::Range<usize>) -> StringId;
 
     //
     // Sequences
@@ -2239,17 +2239,17 @@ pub trait Builder {
     ) -> output::Identifier {
         match source {
             input::IdentifierPathElement::Identifier(terminal) => {
-                let symbol = self.intern_identifier(terminal.range.clone());
+                let string_id = self.intern_identifier(terminal.range.clone());
                 Rc::new(output::IdentifierStruct {
                     range: terminal.range.clone(),
-                    symbol,
+                    string_id,
                 })
             }
             input::IdentifierPathElement::AddressKeyword(terminal) => {
-                let symbol = self.intern_identifier(terminal.range.clone());
+                let string_id = self.intern_identifier(terminal.range.clone());
                 Rc::new(output::IdentifierStruct {
                     range: terminal.range.clone(),
-                    symbol,
+                    string_id,
                 })
             }
         }
@@ -2685,10 +2685,10 @@ pub trait Builder {
     }
 
     fn build_identifier(&mut self, source: &input::Identifier) -> output::Identifier {
-        let symbol = self.intern_identifier(source.range.clone());
+        let string_id = self.intern_identifier(source.range.clone());
         Rc::new(output::IdentifierStruct {
             range: source.range.clone(),
-            symbol,
+            string_id,
         })
     }
 
@@ -2739,10 +2739,10 @@ pub trait Builder {
     }
 
     fn build_yul_identifier(&mut self, source: &input::YulIdentifier) -> output::Identifier {
-        let symbol = self.intern_identifier(source.range.clone());
+        let string_id = self.intern_identifier(source.range.clone());
         Rc::new(output::IdentifierStruct {
             range: source.range.clone(),
-            symbol,
+            string_id,
         })
     }
 }

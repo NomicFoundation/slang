@@ -23,7 +23,7 @@ contract Test is Base layout at 0 {}
         panic!("Expected ContractDefinition");
     };
     assert_eq!("Base", base_contract.name.unparse(CONTENTS));
-    assert_eq!("Base", interner.resolve(base_contract.name.symbol));
+    assert_eq!("Base", interner.resolve(base_contract.name.string_id));
     assert!(base_contract.inheritance_types.is_empty());
     assert!(base_contract.storage_layout.is_none());
 
@@ -31,7 +31,7 @@ contract Test is Base layout at 0 {}
         panic!("Expected ContractDefinition");
     };
     assert_eq!("Test", test_contract.name.unparse(CONTENTS));
-    assert_eq!("Test", interner.resolve(test_contract.name.symbol));
+    assert_eq!("Test", interner.resolve(test_contract.name.string_id));
     assert_eq!(1, test_contract.inheritance_types.len());
     assert_eq!(
         "Base",
@@ -44,15 +44,15 @@ contract Test is Base layout at 0 {}
     );
     assert!(test_contract.storage_layout.is_some());
 
-    // Verify that two references to the same name yield the same Symbol
-    let base_name_symbol = base_contract.name.symbol;
+    // Verify that two references to the same name yield the same StringId
+    let base_name_string_id = base_contract.name.string_id;
     assert_eq!(
-        base_name_symbol,
-        test_contract.inheritance_types[0].type_name[0].symbol
+        base_name_string_id,
+        test_contract.inheritance_types[0].type_name[0].string_id
     );
 
-    // Verify that different names yield different symbols
-    assert_ne!(base_contract.name.symbol, test_contract.name.symbol);
+    // Verify that different names yield different StringId
+    assert_ne!(base_contract.name.string_id, test_contract.name.string_id);
 
     Ok(())
 }

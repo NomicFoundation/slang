@@ -5,12 +5,12 @@
 #![allow(unused_variables)]
 
 use std::rc::Rc;
-use crate::ir::interner::Symbol;
+use crate::ir::interner::StringId;
 use crate::ir::nodes as output;
 use slang_solidity_v2_cst::structured_cst::nodes as input;
 
 pub trait Builder {
-  fn intern_identifier(&mut self, range: std::ops::Range<usize>) -> Symbol;
+  fn intern_identifier(&mut self, range: std::ops::Range<usize>) -> StringId;
 
   //
   // Sequences
@@ -110,10 +110,10 @@ pub trait Builder {
         {% for variant in collapsed.variants -%}
           input::{{ parent_type }}::{{ variant.source.name }}(terminal) => {
             {% if collapsed.target_is_identifier -%}
-              let symbol = self.intern_identifier(terminal.range.clone());
+              let string_id = self.intern_identifier(terminal.range.clone());
               Rc::new(output::{{ collapsed.target.name }}Struct {
                 range: terminal.range.clone(),
-                symbol,
+                string_id,
               })
             {%- else -%}
               output::{{ collapsed.target.name }} {
@@ -150,10 +150,10 @@ pub trait Builder {
     {% if not terminal.is_new and not terminal.is_unique %}
       fn build_{{ terminal_type | snake_case }}(&mut self, source: &input::{{ terminal_type }}) -> output::{{ terminal_type }} {
         {% if terminal.is_identifier %}
-          let symbol = self.intern_identifier(source.range.clone());
+          let string_id = self.intern_identifier(source.range.clone());
           Rc::new(output::{{ terminal_type }}Struct {
             range: source.range.clone(),
-            symbol,
+            string_id,
           })
         {% else %}
           output::{{ terminal_type }} {
@@ -171,10 +171,10 @@ pub trait Builder {
     {% if not normalized.is_unique %}
       fn build_{{ source_type | snake_case }}(&mut self, source: &input::{{ source_type }}) -> output::{{ normalized.target }} {
         {% if normalized.target_is_identifier %}
-          let symbol = self.intern_identifier(source.range.clone());
+          let string_id = self.intern_identifier(source.range.clone());
           Rc::new(output::{{ normalized.target }}Struct {
             range: source.range.clone(),
-            symbol,
+            string_id,
           })
         {% else %}
           output::{{ normalized.target }} {

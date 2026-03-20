@@ -2,7 +2,7 @@ use indexmap::IndexSet;
 
 #[derive(Clone, Copy, Debug, Hash, Eq, PartialEq, Ord, PartialOrd)]
 #[repr(transparent)]
-pub struct Symbol(usize);
+pub struct StringId(usize);
 
 pub struct Interner {
     set: IndexSet<String>,
@@ -15,15 +15,12 @@ impl Interner {
         }
     }
 
-    pub fn intern(&mut self, text: &str) -> Symbol {
-        if let Some(index) = self.set.get_index_of(text) {
-            return Symbol(index);
-        }
+    pub fn intern(&mut self, text: &str) -> StringId {
         let (index, _) = self.set.insert_full(text.to_owned());
-        Symbol(index)
+        StringId(index)
     }
 
-    pub fn resolve(&self, symbol: Symbol) -> &str {
+    pub fn resolve(&self, symbol: StringId) -> &str {
         self.set
             .get_index(symbol.0)
             .expect("invalid IdentifierSymbol")
