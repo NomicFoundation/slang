@@ -37,6 +37,11 @@ jobs:
         if: "${{ github.ref_name != 'main' }}"
         uses: "./.github/actions/cache/restore"
 
+      - name: "Rust Cache"
+        uses: "Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4" # v2.9.1
+        with:
+          cache-on-failure: true
+
       #
       # Run all CI steps in order: _SLANG_INFRA_CI_STEPS_ORDERED_ (keep in sync)
       #
