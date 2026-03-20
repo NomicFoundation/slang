@@ -1,5 +1,6 @@
 use semver::{BuildMetadata, Prerelease};
 use slang_solidity_v2_common::versions::LanguageVersion;
+use slang_solidity_v2_cst::structured_cst::nodes::SourceUnitMember;
 use slang_solidity_v2_parser::Parser;
 
 use crate::dataset::SolidityProject;
@@ -11,8 +12,21 @@ pub fn run(project: &SolidityProject) {
     }
 }
 
-pub fn test(project: &SolidityProject) {
-    run(project); // no contract counting available in v2 CST yet
+pub fn test(project: &SolidityProject) -> usize {
+    let lang_version = parse_version(project);
+    let mut contract_count = 0;
+    for source in project.sources.values() {
+        let source_unit = Parser::parse(source, lang_version).unwrap();
+        for member in &source_unit.members.elements {
+            match member {
+                SourceUnitMember::ContractDefinition(_)
+                | SourceUnitMember::InterfaceDefinition(_)
+                | SourceUnitMember::LibraryDefinition(_) => contract_count += 1,
+                _ => {}
+            }
+        }
+    }
+    contract_count
 }
 
 fn parse_version(project: &SolidityProject) -> LanguageVersion {
