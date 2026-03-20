@@ -2,6 +2,7 @@ use anyhow::{anyhow, Result};
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_parser::Parser;
 
+use crate::interner::Interner;
 use crate::ir;
 
 #[test]
@@ -14,7 +15,7 @@ contract Test is Base layout at 0 {}
     let version = LanguageVersion::V0_8_30;
     let source_unit_cst =
         Parser::parse(CONTENTS, version).map_err(|message| anyhow!(format!("{message:?}")))?;
-    let mut interner = ir::Interner::new();
+    let mut interner = Interner::new();
     let source_unit = ir::build(&source_unit_cst, CONTENTS, &mut interner);
 
     assert_eq!(2, source_unit.members.len());

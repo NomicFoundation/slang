@@ -4,8 +4,6 @@ pub use nodes::*;
 
 mod builder;
 
-mod interner;
-pub use interner::{Interner, StringId};
 mod source;
 pub use source::Source;
 

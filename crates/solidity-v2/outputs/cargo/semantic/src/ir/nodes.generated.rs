@@ -6,8 +6,8 @@ use std::ops::Range;
 use std::rc::Rc;
 use std::vec::Vec;
 
-use super::interner::StringId;
 use super::source::Source;
+use crate::interner::StringId;
 
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(transparent)]
