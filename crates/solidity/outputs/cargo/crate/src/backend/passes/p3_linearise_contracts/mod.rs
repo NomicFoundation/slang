@@ -68,10 +68,11 @@ impl<'a> Pass<'a> {
         node: &input_ir::InterfaceDefinition,
         scope_id: ScopeId,
     ) {
-        let mut resolved_bases = vec![];
-        if let Some(inheritance_types) = &node.inheritance {
-            resolved_bases = self.resolve_inheritance_types(inheritance_types, scope_id);
-        }
+        let resolved_bases = if let Some(inheritance_types) = &node.inheritance {
+            self.resolve_inheritance_types(inheritance_types, scope_id)
+        } else {
+            vec![]
+        };
 
         let Definition::Interface(definition) = self.binder.get_definition_mut(node.node_id) else {
             unreachable!("{node_id:?} should be an interface", node_id = node.node_id);

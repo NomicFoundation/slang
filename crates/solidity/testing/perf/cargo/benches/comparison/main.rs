@@ -11,11 +11,17 @@ use solidity_testing_perf_cargo::dataset::SolidityProject;
 use solidity_testing_perf_cargo::tests;
 
 mod __dependencies_used_in_lib__ {
-    use {
-        anyhow as _, infra_utils as _, semver as _, serde as _, serde_json as _,
-        slang_solidity as _, solar as _, solidity_testing_utils as _, streaming_iterator as _,
-        tree_sitter as _, tree_sitter_solidity as _,
-    };
+    use anyhow as _;
+    use infra_utils as _;
+    use semver as _;
+    use serde as _;
+    use serde_json as _;
+    use slang_solidity as _;
+    use solar as _;
+    use solidity_testing_utils as _;
+    use streaming_iterator as _;
+    use tree_sitter as _;
+    use tree_sitter_solidity as _;
 }
 
 macro_rules! slang_test {
