@@ -22,10 +22,7 @@ language_v2_macros::compile!(Language(
                                 field_1 = Required(Three)
                             )
                         ),
-                        Keyword(
-                            name = Two,
-                            definitions = [KeywordDefinition(value = Atom("two"))]
-                        )
+                        Keyword(name = Two, value = Atom("two"))
                     ]
                 )]
             )]

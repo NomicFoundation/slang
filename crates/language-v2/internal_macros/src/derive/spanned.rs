@@ -124,7 +124,6 @@ fn get_spanned_type(input: Type) -> Type {
         | "FragmentItem"
         | "InputItem"
         | "Item"
-        | "KeywordDefinition"
         | "KeywordItem"
         | "KeywordValue"
         | "LexicalContext"
