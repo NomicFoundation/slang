@@ -37,6 +37,12 @@ jobs:
         if: "${{ github.ref_name != 'main' }}"
         uses: "./.github/actions/cache/restore"
 
+      - name: "Activate Hermit"
+        run: |
+          source ./scripts/_common.sh
+          echo "CARGO_HOME=${CARGO_HOME}" >> "$GITHUB_ENV"
+          echo "${CARGO_HOME}/bin" >> "$GITHUB_PATH"
+
       - name: "Rust Cache"
         uses: "Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4" # v2.9.1
         with:
