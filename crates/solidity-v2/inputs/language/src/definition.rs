@@ -365,7 +365,6 @@ language_v2_macros::compile!(Language(
                                 Struct(
                                     name = PragmaDirective,
                                     switch_lexical_context = Pragma,
-                                    error_recovery = FieldsErrorRecovery(terminator = semicolon),
                                     fields = (
                                         pragma_keyword = Required(PragmaKeyword),
                                         pragma = Required(Pragma),
@@ -374,7 +373,6 @@ language_v2_macros::compile!(Language(
                                 ),
                                 Struct(
                                     name = ImportDirective,
-                                    error_recovery = FieldsErrorRecovery(terminator = semicolon),
                                     fields = (
                                         import_keyword = Required(ImportKeyword),
                                         clause = Required(ImportClause),
@@ -383,7 +381,6 @@ language_v2_macros::compile!(Language(
                                 ),
                                 Struct(
                                     name = UsingDirective,
-                                    error_recovery = FieldsErrorRecovery(terminator = semicolon),
                                     fields = (
                                         using_keyword = Required(UsingKeyword),
                                         clause = Required(UsingClause),
@@ -427,10 +424,6 @@ language_v2_macros::compile!(Language(
                                 ),
                                 Struct(
                                     name = ImportDeconstruction,
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_brace, close = close_brace)
-                                    ),
                                     fields = (
                                         open_brace = Required(OpenBrace),
                                         symbols = Required(ImportDeconstructionSymbols),
@@ -476,10 +469,6 @@ language_v2_macros::compile!(Language(
                                 Struct(
                                     name = UsingDeconstruction,
                                     enabled = From("0.8.13"),
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_brace, close = close_brace)
-                                    ),
                                     fields = (
                                         open_brace = Required(OpenBrace),
                                         symbols = Required(UsingDeconstructionSymbols),
@@ -1967,10 +1956,6 @@ language_v2_macros::compile!(Language(
                             items = [
                                 Struct(
                                     name = ContractDefinition,
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_brace, close = close_brace)
-                                    ),
                                     fields = (
                                         abstract_keyword = Optional(
                                             reference = AbstractKeyword
@@ -2122,10 +2107,6 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
                             items = [
                                 Struct(
                                     name = InterfaceDefinition,
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_brace, close = close_brace)
-                                    ),
                                     fields = (
                                         interface_keyword = Required(InterfaceKeyword),
                                         name = Required(Identifier),
@@ -2147,10 +2128,6 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
                             items = [
                                 Struct(
                                     name = LibraryDefinition,
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_brace, close = close_brace)
-                                    ),
                                     fields = (
                                         library_keyword = Required(LibraryKeyword),
                                         name = Required(Identifier),
@@ -2171,10 +2148,6 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
                             items = [
                                 Struct(
                                     name = StructDefinition,
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_brace, close = close_brace)
-                                    ),
                                     fields = (
                                         struct_keyword = Required(StructKeyword),
                                         name = Required(Identifier),
@@ -2190,7 +2163,6 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
                                 ),
                                 Struct(
                                     name = StructMember,
-                                    error_recovery = FieldsErrorRecovery(terminator = semicolon),
                                     fields = (
                                         type_name = Required(TypeName),
                                         name = Required(Identifier),
@@ -2204,10 +2176,6 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
                             items = [
                                 Struct(
                                     name = EnumDefinition,
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_brace, close = close_brace)
-                                    ),
                                     fields = (
                                         enum_keyword = Required(EnumKeyword),
                                         name = Required(Identifier),
@@ -2228,7 +2196,6 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
                             title = "Constants",
                             items = [Struct(
                                 name = ConstantDefinition,
-                                error_recovery = FieldsErrorRecovery(terminator = semicolon),
                                 fields = (
                                     type_name = Required(TypeName),
                                     constant_keyword = Required(ConstantKeyword),
@@ -2244,7 +2211,6 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
                             items = [
                                 Struct(
                                     name = StateVariableDefinition,
-                                    error_recovery = FieldsErrorRecovery(terminator = semicolon),
                                     fields = (
                                         type_name = Required(TypeName),
                                         attributes = Required(StateVariableAttributes),
@@ -2372,10 +2338,6 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                                 ),
                                 Struct(
                                     name = ParametersDeclaration,
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_paren, close = close_paren)
-                                    ),
                                     fields = (
                                         open_paren = Required(OpenParen),
                                         parameters = Required(Parameters),
@@ -2425,10 +2387,6 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                                 ),
                                 Struct(
                                     name = OverridePathsDeclaration,
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_paren, close = close_paren)
-                                    ),
                                     fields = (
                                         open_paren = Required(OpenParen),
                                         paths = Required(OverridePaths),
@@ -2569,7 +2527,6 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                             items = [
                                 Struct(
                                     name = EventDefinition,
-                                    error_recovery = FieldsErrorRecovery(terminator = semicolon),
                                     fields = (
                                         event_keyword = Required(EventKeyword),
                                         name = Required(Identifier),
@@ -2580,10 +2537,6 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                                 ),
                                 Struct(
                                     name = EventParametersDeclaration,
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_paren, close = close_paren)
-                                    ),
                                     fields = (
                                         open_paren = Required(OpenParen),
                                         parameters = Required(EventParameters),
@@ -2611,7 +2564,6 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                             items = [Struct(
                                 name = UserDefinedValueTypeDefinition,
                                 enabled = From("0.8.8"),
-                                error_recovery = FieldsErrorRecovery(terminator = semicolon),
                                 fields = (
                                     type_keyword = Required(TypeKeyword),
                                     name = Required(Identifier),
@@ -2627,7 +2579,6 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                                 Struct(
                                     name = ErrorDefinition,
                                     enabled = From("0.8.4"),
-                                    error_recovery = FieldsErrorRecovery(terminator = semicolon),
                                     fields = (
                                         error_keyword = Required(ErrorKeyword),
                                         name = Required(Identifier),
@@ -2639,10 +2590,6 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                                 Struct(
                                     name = ErrorParametersDeclaration,
                                     enabled = From("0.8.4"),
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_paren, close = close_paren)
-                                    ),
                                     fields = (
                                         open_paren = Required(OpenParen),
                                         parameters = Required(ErrorParameters),
@@ -2680,12 +2627,6 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                                         name = ArrayTypeName,
                                         operators = [PrecedenceOperator(
                                             model = Postfix,
-                                            error_recovery = FieldsErrorRecovery(
-                                                delimiters = FieldDelimiters(
-                                                    open = open_bracket,
-                                                    close = close_bracket
-                                                )
-                                            ),
                                             fields = (
                                                 open_bracket = Required(OpenBracket),
                                                 index = Optional(reference = Expression),
@@ -2780,10 +2721,6 @@ FunctionTypeInternalReturn: FunctionType = {
                                 ),
                                 Struct(
                                     name = MappingType,
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_paren, close = close_paren)
-                                    ),
                                     fields = (
                                         mapping_keyword = Required(MappingKeyword),
                                         open_paren = Required(OpenParen),
@@ -2859,10 +2796,6 @@ FunctionTypeInternalReturn: FunctionType = {
                             items = [
                                 Struct(
                                     name = Block,
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_brace, close = close_brace)
-                                    ),
                                     fields = (
                                         open_brace = Required(OpenBrace),
                                         statements = Required(Statements),
@@ -2989,7 +2922,6 @@ IdentifierPathNoRevert: IdentifierPath = {
                                 ),
                                 Struct(
                                     name = ExpressionStatement,
-                                    error_recovery = FieldsErrorRecovery(terminator = semicolon),
                                     fields = (
                                         expression = Required(Expression),
                                         semicolon = Required(Semicolon)
@@ -3023,7 +2955,6 @@ IdentifierPathNoRevert: IdentifierPath = {
                                 ),
                                 Struct(
                                     name = VariableDeclarationStatement,
-                                    error_recovery = FieldsErrorRecovery(terminator = semicolon),
                                     fields = (
                                         target = Required(VariableDeclarationTarget),
                                         semicolon = Required(Semicolon)
@@ -3045,10 +2976,6 @@ IdentifierPathNoRevert: IdentifierPath = {
                                 ),
                                 Struct(
                                     name = MultiTypedDeclaration,
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_paren, close = close_paren)
-                                    ),
                                     fields = (
                                         open_paren = Required(OpenParen),
                                         elements = Required(MultiTypedDeclarationElements),
@@ -3117,10 +3044,6 @@ TuplePrefix: usize = {
                             items = [
                                 Struct(
                                     name = IfStatement,
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_paren, close = close_paren)
-                                    ),
                                     fields = (
                                         if_keyword = Required(IfKeyword),
                                         open_paren = Required(OpenParen),
@@ -3147,10 +3070,6 @@ IfStatement<TrailingElse>: IfStatement = {
                                 ),
                                 Struct(
                                     name = ForStatement,
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_paren, close = close_paren)
-                                    ),
                                     fields = (
                                         for_keyword = Required(ForKeyword),
                                         open_paren = Required(OpenParen),
@@ -3185,10 +3104,6 @@ ForStatement<TrailingElse>: ForStatement = {
                                 ),
                                 Struct(
                                     name = WhileStatement,
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_paren, close = close_paren)
-                                    ),
                                     fields = (
                                         while_keyword = Required(WhileKeyword),
                                         open_paren = Required(OpenParen),
@@ -3206,11 +3121,6 @@ WhileStatement<TrailingElse>: WhileStatement = {
                                 ),
                                 Struct(
                                     name = DoWhileStatement,
-                                    error_recovery = FieldsErrorRecovery(
-                                        terminator = semicolon,
-                                        delimiters =
-                                            FieldDelimiters(open = open_paren, close = close_paren)
-                                    ),
                                     fields = (
                                         do_keyword = Required(DoKeyword),
                                         body = Required(Statement),
@@ -3223,7 +3133,6 @@ WhileStatement<TrailingElse>: WhileStatement = {
                                 ),
                                 Struct(
                                     name = ContinueStatement,
-                                    error_recovery = FieldsErrorRecovery(terminator = semicolon),
                                     fields = (
                                         continue_keyword = Required(ContinueKeyword),
                                         semicolon = Required(Semicolon)
@@ -3231,7 +3140,6 @@ WhileStatement<TrailingElse>: WhileStatement = {
                                 ),
                                 Struct(
                                     name = BreakStatement,
-                                    error_recovery = FieldsErrorRecovery(terminator = semicolon),
                                     fields = (
                                         break_keyword = Required(BreakKeyword),
                                         semicolon = Required(Semicolon)
@@ -3239,7 +3147,6 @@ WhileStatement<TrailingElse>: WhileStatement = {
                                 ),
                                 Struct(
                                     name = ReturnStatement,
-                                    error_recovery = FieldsErrorRecovery(terminator = semicolon),
                                     fields = (
                                         return_keyword = Required(ReturnKeyword),
                                         expression = Optional(reference = Expression),
@@ -3248,7 +3155,6 @@ WhileStatement<TrailingElse>: WhileStatement = {
                                 ),
                                 Struct(
                                     name = EmitStatement,
-                                    error_recovery = FieldsErrorRecovery(terminator = semicolon),
                                     fields = (
                                         emit_keyword = Required(EmitKeyword),
                                         event = Required(IdentifierPath),
@@ -3315,7 +3221,6 @@ ExpressionTrailingBlock: (Expression, Block) = {
                                 Struct(
                                     name = RevertStatement,
                                     enabled = From("0.8.4"),
-                                    error_recovery = FieldsErrorRecovery(terminator = semicolon),
                                     fields = (
                                         revert_keyword = Required(RevertKeyword),
                                         error = Required(IdentifierPath),
@@ -3592,29 +3497,6 @@ ExpressionTrailingBlock: (Expression, Block) = {
                                             name = CallOptionsExpression,
                                             operators = [PrecedenceOperator(
                                                 model = Postfix,
-                                                error_recovery = FieldsErrorRecovery(
-                                                    delimiters = FieldDelimiters(
-                                                        open = open_brace,
-                                                        close = close_brace,
-                                                        // NOTE: Despite `CallOptions` requiring at least one element, we should
-                                                        // only recover if we found at least two tokens ('Identifier' + 'Colon')
-                                                        // between the braces, as  otherwise, this may be ambiguous when followed
-                                                        // by an empty 'Block' node, for example, in a 'TryStatement':
-                                                        //
-                                                        //     try <EXPR> {
-                                                        //         /* not call options  */
-                                                        //     } catch {
-                                                        //     }
-                                                        //
-                                                        // Or in 'ContractDefinition' that has a 'StorageLayoutSpecifier':
-                                                        //
-                                                        //     contract Foo layout at <EXPR> {
-                                                        //         /* not call options  */
-                                                        //     }
-                                                        //
-                                                        terminals_matched_acceptance_threshold = 2
-                                                    )
-                                                ),
                                                 fields = (
                                                     open_brace = Required(OpenBrace),
                                                     options = Required(CallOptions),
@@ -3636,12 +3518,6 @@ ExpressionTrailingBlock: (Expression, Block) = {
                                             name = IndexAccessExpression,
                                             operators = [PrecedenceOperator(
                                                 model = Postfix,
-                                                error_recovery = FieldsErrorRecovery(
-                                                    delimiters = FieldDelimiters(
-                                                        open = open_bracket,
-                                                        close = close_bracket
-                                                    )
-                                                ),
                                                 fields = (
                                                     open_bracket = Required(OpenBracket),
                                                     start = Optional(reference = Expression),
@@ -3996,10 +3872,6 @@ IndexAccessPath1<IdentPathRule>: parser_helpers::IndexAccessPath = {
                                 ),
                                 Struct(
                                     name = PositionalArgumentsDeclaration,
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_paren, close = close_paren)
-                                    ),
                                     fields = (
                                         open_paren = Required(OpenParen),
                                         arguments = Required(PositionalArguments),
@@ -4014,10 +3886,6 @@ IndexAccessPath1<IdentPathRule>: parser_helpers::IndexAccessPath = {
                                 ),
                                 Struct(
                                     name = NamedArgumentsDeclaration,
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_paren, close = close_paren)
-                                    ),
                                     fields = (
                                         open_paren = Required(OpenParen),
                                         arguments = Required(NamedArgumentGroup),
@@ -4026,10 +3894,6 @@ IndexAccessPath1<IdentPathRule>: parser_helpers::IndexAccessPath = {
                                 ),
                                 Struct(
                                     name = NamedArgumentGroup,
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_brace, close = close_brace)
-                                    ),
                                     fields = (
                                         open_brace = Required(OpenBrace),
                                         arguments = Required(NamedArguments),
@@ -4064,10 +3928,6 @@ IndexAccessPath1<IdentPathRule>: parser_helpers::IndexAccessPath = {
                             items = [
                                 Struct(
                                     name = TypeExpression,
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_paren, close = close_paren)
-                                    ),
                                     fields = (
                                         type_keyword = Required(TypeKeyword),
                                         open_paren = Required(OpenParen),
@@ -4099,10 +3959,6 @@ NoFunctionType: FunctionType = {};
                                 ),
                                 Struct(
                                     name = TupleExpression,
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters =
-                                            FieldDelimiters(open = open_paren, close = close_paren)
-                                    ),
                                     fields = (
                                         open_paren = Required(OpenParen),
                                         items = Required(TupleValues),
@@ -4141,12 +3997,6 @@ TupleValues: TupleValues = {
                                 ),
                                 Struct(
                                     name = ArrayExpression,
-                                    error_recovery = FieldsErrorRecovery(
-                                        delimiters = FieldDelimiters(
-                                            open = open_bracket,
-                                            close = close_bracket
-                                        )
-                                    ),
                                     fields = (
                                         open_bracket = Required(OpenBracket),
                                         items = Required(ArrayValues),
@@ -4516,10 +4366,6 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                             Struct(
                                 name = YulFlagsDeclaration,
                                 enabled = From("0.8.13"),
-                                error_recovery = FieldsErrorRecovery(
-                                    delimiters =
-                                        FieldDelimiters(open = open_paren, close = close_paren)
-                                ),
                                 fields = (
                                     open_paren = Required(YulOpenParen),
                                     flags = Required(YulFlags),
@@ -4534,10 +4380,6 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                             ),
                             Struct(
                                 name = YulBlock,
-                                error_recovery = FieldsErrorRecovery(
-                                    delimiters =
-                                        FieldDelimiters(open = open_brace, close = close_brace)
-                                ),
                                 fields = (
                                     open_brace = Required(YulOpenBrace),
                                     statements = Required(YulStatements),
@@ -4577,10 +4419,6 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                             ),
                             Struct(
                                 name = YulParametersDeclaration,
-                                error_recovery = FieldsErrorRecovery(
-                                    delimiters =
-                                        FieldDelimiters(open = open_paren, close = close_paren)
-                                ),
                                 fields = (
                                     open_paren = Required(YulOpenParen),
                                     parameters = Required(YulParameters),
@@ -4700,12 +4538,6 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                                     name = YulFunctionCallExpression,
                                     operators = [PrecedenceOperator(
                                         model = Postfix,
-                                        error_recovery = FieldsErrorRecovery(
-                                            delimiters = FieldDelimiters(
-                                                open = open_paren,
-                                                close = close_paren
-                                            )
-                                        ),
                                         fields = (
                                             open_paren = Required(YulOpenParen),
                                             arguments = Required(YulArguments),
