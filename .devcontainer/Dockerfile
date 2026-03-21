@@ -21,7 +21,7 @@
 # Base Container
 
 # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
-FROM mcr.microsoft.com/devcontainers/base:ubuntu-22.04
+FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04
 
 RUN sudo apt-get update \
   && sudo apt-get install --yes "pkg-config" \
