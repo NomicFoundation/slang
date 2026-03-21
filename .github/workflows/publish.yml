@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   publish:
-    runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
 
     # Only run on the main repo (not forks), and only on the 'main' branch:
     if: "${{ github.repository == 'NomicFoundation/slang' && github.ref_name == 'main' }}"
