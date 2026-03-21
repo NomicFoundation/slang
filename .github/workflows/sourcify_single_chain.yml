@@ -44,7 +44,7 @@ on:
         default: null
 jobs:
   buildSlang:
-    runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
     steps:
       - name: "Checkout Repository"
         uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
@@ -63,7 +63,7 @@ jobs:
           retention-days: 1
 
   singleShard:
-    runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
     needs: "buildSlang"
     outputs:
       __SLANG_SOURCIFY_SHARD_RESULTS__0: "${{ steps.output-shard-results.outputs.__SLANG_SOURCIFY_SHARD_RESULTS__0 }}"
@@ -169,7 +169,7 @@ jobs:
         run: 'echo "__SLANG_SOURCIFY_SHARD_RESULTS__${{ matrix.shard_index }}=$(cat target/__SLANG_SOURCIFY_SHARD_RESULTS__.json)" >> "$GITHUB_OUTPUT"'
 
   combinedResults:
-    runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
     needs:
       - "buildSlang"
       - "singleShard"
