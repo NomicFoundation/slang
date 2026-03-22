@@ -63,9 +63,8 @@ jobs:
       - name: "infra lint"
         run: "./scripts/bin/infra lint"
 
-      # TODO: uncomment the if condition below after the cache is seeded
       - name: "Save Cargo Target Cache"
-        # if: "${{ github.ref == 'refs/heads/main' }}"
+        if: "${{ github.ref == 'refs/heads/main' }}"
         uses: "actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830" # v4.3.0
         with:
           path: "target/"
