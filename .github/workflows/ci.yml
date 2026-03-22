@@ -49,7 +49,8 @@ jobs:
           workspaces: ". -> target"
           cache-on-failure: true
           cache-all-crates: "true"
-          # TODO: revert before merge
+          # TODO: revert prefix-key and save-if before merge
+          prefix-key: "v1-rust"
           save-if: "true"
 
       #
