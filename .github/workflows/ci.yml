@@ -53,9 +53,8 @@ jobs:
           workspaces: ". -> target"
           cache-on-failure: true
           cache-all-crates: "true"
-          # TODO: revert prefix-key and save-if before merge
           prefix-key: "v2-rust"
-          save-if: "true"
+          save-if: "${{ github.ref == 'refs/heads/main' }}"
 
       #
       # Run all CI steps in order: _SLANG_INFRA_CI_STEPS_ORDERED_ (keep in sync)
