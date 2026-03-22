@@ -42,7 +42,9 @@ jobs:
         if: "${{ github.ref_name != 'main' }}"
         uses: "actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830" # v4.3.0
         with:
-          path: "target/"
+          path: |
+            target/
+            crates/infra/cli/target/
           key: "cargo-target-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}"
           restore-keys: |
             cargo-target-${{ runner.os }}-
@@ -67,7 +69,9 @@ jobs:
         if: "${{ github.ref == 'refs/heads/main' }}"
         uses: "actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830" # v4.3.0
         with:
-          path: "target/"
+          path: |
+            target/
+            crates/infra/cli/target/
           key: "cargo-target-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}"
 
       - name: "Save Cache"
