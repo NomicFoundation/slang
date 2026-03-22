@@ -48,6 +48,7 @@ jobs:
         with:
           workspaces: ". -> target"
           cache-on-failure: true
+          cache-all-crates: "true"
           # TODO: revert before merge
           save-if: "true"
 
