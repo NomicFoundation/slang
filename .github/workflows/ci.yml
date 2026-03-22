@@ -42,6 +42,10 @@ jobs:
           source ./scripts/_common.sh
           echo "CARGO_HOME=${CARGO_HOME}" >> "$GITHUB_ENV"
           echo "${CARGO_HOME}/bin" >> "$GITHUB_PATH"
+          # Workaround for https://github.com/Swatinem/rust-cache/issues/XXX
+          # rust-cache cleanup tries to opendir target/tests/target and target/tests/trybuild
+          # but the async call is missing await, so the ENOENT escapes the try-catch.
+          mkdir -p target/tests/target target/tests/trybuild
 
       - name: "Rust Cache"
         uses: "Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4" # v2.9.1
@@ -50,7 +54,7 @@ jobs:
           cache-on-failure: true
           cache-all-crates: "true"
           # TODO: revert prefix-key and save-if before merge
-          prefix-key: "v1-rust"
+          prefix-key: "v2-rust"
           save-if: "true"
 
       #
