@@ -28,6 +28,7 @@ pub mod parser_error;
 /// A Parser for Solidity Source Units
 ///
 /// TODO(v2): Error recovery, for now we just fail
+/// TODO(v2): Make the parser skip unique tokens, performance improvement
 #[derive(Default)]
 pub struct Parser;
 
