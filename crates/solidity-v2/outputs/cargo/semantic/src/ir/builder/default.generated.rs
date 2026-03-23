@@ -1604,28 +1604,6 @@ pub trait Builder {
         self.default_build_for_statement_initialization(source)
     }
 
-    fn default_build_identifier_path_element(
-        &mut self,
-        source: &input::IdentifierPathElement,
-    ) -> output::IdentifierPathElement {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        #[allow(clippy::match_single_binding)]
-        match source {
-            input::IdentifierPathElement::Identifier(ref identifier) => {
-                output::IdentifierPathElement::Identifier(self.build_identifier(identifier))
-            }
-            input::IdentifierPathElement::AddressKeyword(_) => {
-                output::IdentifierPathElement::AddressKeyword
-            }
-        }
-    }
-    fn build_identifier_path_element(
-        &mut self,
-        source: &input::IdentifierPathElement,
-    ) -> output::IdentifierPathElement {
-        self.default_build_identifier_path_element(source)
-    }
-
     #[allow(dead_code)]
     fn default_build_import_clause(
         &mut self,
@@ -2173,6 +2151,11 @@ pub trait Builder {
     //
     // Collapsed choices
     //
+
+    fn build_identifier_path_element(
+        &mut self,
+        source: &input::IdentifierPathElement,
+    ) -> output::Identifier;
 
     //
     // Repeated & Separated

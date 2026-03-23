@@ -651,7 +651,7 @@ pub type MemberAccessExpression = Rc<MemberAccessExpressionStruct>;
 #[derive(Debug)]
 pub struct MemberAccessExpressionStruct {
     pub operand: Expression,
-    pub member: IdentifierPathElement,
+    pub member: Identifier,
 }
 
 impl MemberAccessExpressionStruct {
@@ -1529,12 +1529,6 @@ pub enum FunctionVisibility {
 }
 
 #[derive(Clone, Debug)]
-pub enum IdentifierPathElement {
-    Identifier(Identifier),
-    AddressKeyword,
-}
-
-#[derive(Clone, Debug)]
 pub enum ImportClause {
     PathImport(PathImport),
     ImportDeconstruction(ImportDeconstruction),
@@ -1747,7 +1741,7 @@ pub type EnumMembers = Vec<Identifier>;
 
 pub type HexStrings = Vec<HexStringLiteral>;
 
-pub type IdentifierPath = Vec<IdentifierPathElement>;
+pub type IdentifierPath = Vec<Identifier>;
 
 pub type ImportDeconstructionSymbols = Vec<ImportDeconstructionSymbol>;
 

@@ -428,6 +428,26 @@ impl Builder for CstToIrBuilder {
             }
         }
     }
+
+    //
+    // Collapsed choices
+    //
+
+    fn build_identifier_path_element(
+        &mut self,
+        source: &input::IdentifierPathElement,
+    ) -> output::Identifier {
+        match source {
+            input::IdentifierPathElement::Identifier(identifier) => {
+                self.build_identifier(identifier)
+            }
+            input::IdentifierPathElement::AddressKeyword(address_keyword) => {
+                Rc::new(output::IdentifierStruct {
+                    range: address_keyword.range.clone(),
+                })
+            }
+        }
+    }
 }
 
 //

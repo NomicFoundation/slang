@@ -650,11 +650,6 @@ pub trait Visitor {
     }
     fn leave_function_visibility(&mut self, _node: &FunctionVisibility) {}
 
-    fn enter_identifier_path_element(&mut self, _node: &IdentifierPathElement) -> bool {
-        true
-    }
-    fn leave_identifier_path_element(&mut self, _node: &IdentifierPathElement) {}
-
     fn enter_import_clause(&mut self, _node: &ImportClause) -> bool {
         true
     }
@@ -1397,7 +1392,6 @@ pub fn accept_member_access_expression(node: &MemberAccessExpression, visitor: &
         return;
     }
     accept_expression(&node.operand, visitor);
-    accept_identifier_path_element(&node.member, visitor);
     visitor.leave_member_access_expression(node);
 }
 
@@ -2156,8 +2150,6 @@ pub fn accept_function_mutability(_node: &FunctionMutability, _visitor: &mut imp
 
 pub fn accept_function_visibility(_node: &FunctionVisibility, _visitor: &mut impl Visitor) {}
 
-pub fn accept_identifier_path_element(_node: &IdentifierPathElement, _visitor: &mut impl Visitor) {}
-
 pub fn accept_import_clause(node: &ImportClause, visitor: &mut impl Visitor) {
     if !visitor.enter_import_clause(node) {
         return;
@@ -2567,12 +2559,9 @@ fn accept_hex_strings(items: &Vec<HexStringLiteral>, visitor: &mut impl Visitor)
     visitor.leave_hex_strings(items);
 }
 #[inline]
-fn accept_identifier_path(items: &Vec<IdentifierPathElement>, visitor: &mut impl Visitor) {
+fn accept_identifier_path(items: &Vec<Identifier>, visitor: &mut impl Visitor) {
     if !visitor.enter_identifier_path(items) {
         return;
-    }
-    for item in items {
-        accept_identifier_path_element(item, visitor);
     }
     visitor.leave_identifier_path(items);
 }

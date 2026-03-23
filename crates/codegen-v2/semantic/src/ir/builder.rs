@@ -14,6 +14,7 @@ pub fn build_v2_ir_model(language: &Language) -> ModelWithBuilder {
 
     remove_redundant_terminal_nodes(&cst_model, &mut mutator);
     flatten_contract_specifiers(&mut mutator);
+    simplify_identifier_path_element(&mut mutator);
     unify_function_types(&mut mutator);
     flatten_function_attributes(&mut mutator);
     flatten_state_variable_attributes(&mut mutator);
@@ -57,6 +58,11 @@ fn flatten_contract_specifiers(mutator: &mut IrModelMutator) {
         false,
     );
     mutator.add_sequence_field("ContractDefinition", "storage_layout", "Expression", true);
+}
+
+fn simplify_identifier_path_element(mutator: &mut IrModelMutator) {
+    // Collapse `IdentifierPathElement` by expanding the `AddressKeyword` variant
+    mutator.collapse_choice("IdentifierPathElement", "Identifier");
 }
 
 fn unify_function_types(mutator: &mut IrModelMutator) {
