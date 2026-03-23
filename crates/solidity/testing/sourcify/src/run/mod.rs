@@ -113,17 +113,25 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
 
 fn uses_exotic_parser_bug(contract: &Contract) -> bool {
     static CONTRACTS_WITH_EXOTIC_PARSER_BUGS: &[&str] = &[
-        // 0.4.24: // Accepts malformed `* /` in multi-line comments:
+        // Accepts unterminated multi-line comments at EOF:
         // Fixed in 0.4.25: https://github.com/ethereum/solidity/pull/4937
         "0x79Bb6f4492D5CB13Fad8cA0ecfBccD9e2c26ac42",
-        // 0.5.11: Double `indexed` keyword
+        "0xf330AA697a1128B7A2D2204F6794afe0cAAF58FC",
+        "0x50fEc5D840995B5fcca57D4e8F4c6695b2Dd411f",
+        "0x5b8D776E4aECFebD8d03caD7d94f23424De1733A",
+        "0x7d81c361d6aC60634117dD81Ab1b01b8Dc795A9D",
+        // Double `indexed` keyword
         // Fixed in 0.8.18: https://github.com/ethereum/solidity/blob/develop/Changelog.md#0818-2023-02-01
         "0x9F4F8Cb4863D3467F03773cC4c172837106C21D8",
-        // 0.5.16: Double `indexed` keyword
-        // Fixed in 0.8.18: https://github.com/ethereum/solidity/blob/develop/Changelog.md#0818-2023-02-01
         "0xDe201dAec04ba73166d9917Fdf08e1728E270F06",
-        // 0.4.19: Unclosed multi-line comment at EOF
-        "0xf330AA697a1128B7A2D2204F6794afe0cAAF58FC",
+        "0x5ED57b8f59f8d3bc805FC1087d8DE93C78A87305", // Polygon Mainnet (137)
+        // Trailing comma in struct literal (fails from 0.4.12)
+        // Unclear in which version this landed: https://github.com/argotorg/solidity/pull/2392
+        "0x1D80F890f497b1672F9487862978032666179338",
+        "0x66D58F0a2A44742688843cEB8C0Fa8d8567E3C54",
+        // Invalid numeric literal `777777777_E18` (underscore before exponent)
+        // https://docs.soliditylang.org/en/latest/grammar.html#syntax-rule-SolidityLexer.DecimalNumber
+        "0xe483fdEa7403d28538bB2182a9f669709c297549", // Arbitrum One (42161)
     ];
 
     CONTRACTS_WITH_EXOTIC_PARSER_BUGS
