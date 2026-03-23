@@ -261,54 +261,23 @@ fn collapse_redundant_node_types(mutator: &mut IrModelMutator) {
 }
 
 fn simplify_string_literals(mutator: &mut IrModelMutator) {
-    // Remove all existing types, as we will simplify them to 3 variants
-    mutator.remove_type("StringLiterals");
-    mutator.remove_type("StringLiteral");
+    // Collapse base string literal choices to non-unique terminals.
+    // This transmutes each choice type into a terminal with the same name,
+    // updating all references (in collection item types, sequence fields, choice
+    // variants) in-place. Auto-generates builders that extract range from each variant.
+    mutator.collapse_choice("StringLiteral", "StringLiteral");
     mutator.remove_type("SingleQuotedStringLiteral");
     mutator.remove_type("DoubleQuotedStringLiteral");
-    mutator.remove_type("HexStringLiterals");
-    mutator.remove_type("HexStringLiteral");
+
+    mutator.collapse_choice("HexStringLiteral", "HexStringLiteral");
     mutator.remove_type("SingleQuotedHexStringLiteral");
     mutator.remove_type("DoubleQuotedHexStringLiteral");
-    mutator.remove_type("UnicodeStringLiterals");
-    mutator.remove_type("UnicodeStringLiteral");
+
+    mutator.collapse_choice("UnicodeStringLiteral", "UnicodeStringLiteral");
     mutator.remove_type("SingleQuotedUnicodeStringLiteral");
     mutator.remove_type("DoubleQuotedUnicodeStringLiteral");
-    mutator.remove_type("PragmaSingleQuotedStringLiteral");
-    mutator.remove_type("PragmaDoubleQuotedStringLiteral");
 
-    // Re-declare `StringLiteral`, `HexStringLiteral` and `UnicodeStringLiteral`
-    // as non-unique terminals
-    mutator.add_non_unique_terminal("StringLiteral");
-    mutator.add_non_unique_terminal("HexStringLiteral");
-    mutator.add_non_unique_terminal("UnicodeStringLiteral");
-
-    // Create the collection types using the double-quoted variants.
-    // The choice is irrelevant because we only care that it's a non-unique
-    // terminal, which is represented by an `Rc<TerminalNode>` anyway.
-    mutator.add_collection_type("Strings", "StringLiteral");
-    mutator.add_collection_type("HexStrings", "HexStringLiteral");
-    mutator.add_collection_type("UnicodeStrings", "UnicodeStringLiteral");
-
-    // Now we add the variants to the expression type
-    mutator.add_choice_variant("StringExpression", "Strings");
-    mutator.add_choice_variant("StringExpression", "HexStrings");
-    mutator.add_choice_variant("StringExpression", "UnicodeStrings");
-
-    // Update other uses of StringLiteral
-    mutator.add_sequence_field("PathImport", "path", "StringLiteral", false);
-    mutator.add_sequence_field("NamedImport", "path", "StringLiteral", false);
-    mutator.add_sequence_field("ImportDeconstruction", "path", "StringLiteral", false);
-    mutator.add_choice_variant("VersionLiteral", "StringLiteral");
-
-    // For `YulFlags`, also remove the enclosing declaration structure
-    mutator.remove_type("YulFlagsDeclaration");
-    mutator.add_collection_type("YulFlags", "StringLiteral");
-    mutator.add_sequence_field("AssemblyStatement", "flags", "YulFlags", false);
-
-    // Collapse Yul and Pragma string literal choices to their IR equivalents.
-    // This makes the default builders for YulLiteral and ExperimentalFeature
-    // auto-dispatch to these collapsed choice builders.
+    // Collapse Yul string literal choices (targets already exist from above)
     mutator.collapse_choice("YulStringLiteral", "StringLiteral");
     mutator.remove_type("YulSingleQuotedStringLiteral");
     mutator.remove_type("YulDoubleQuotedStringLiteral");
@@ -317,9 +286,18 @@ fn simplify_string_literals(mutator: &mut IrModelMutator) {
     mutator.remove_type("YulSingleQuotedHexStringLiteral");
     mutator.remove_type("YulDoubleQuotedHexStringLiteral");
 
-    // PragmaStringLiteral sub-terminals were already removed above (for
-    // VersionLiteral). Collapse the now-empty choice to StringLiteral.
+    // Collapse PragmaStringLiteral BEFORE removing sub-terminals
+    // (the auto-generated builder needs the variant list)
     mutator.collapse_choice("PragmaStringLiteral", "StringLiteral");
+    mutator.remove_type("PragmaSingleQuotedStringLiteral");
+    mutator.remove_type("PragmaDoubleQuotedStringLiteral");
+
+    // Add StringLiteral variant to VersionLiteral (replacing removed Pragma variants)
+    mutator.add_choice_variant("VersionLiteral", "StringLiteral");
+
+    // Collapse YulFlagsDeclaration to its inner YulFlags collection.
+    // This preserves AssemblyStatement.flags as optional.
+    mutator.collapse_sequence("YulFlagsDeclaration");
 }
 
 fn normalize_yul_terminals(mutator: &mut IrModelMutator) {

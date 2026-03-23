@@ -102,7 +102,23 @@ pub trait Builder {
   // Collapsed choices
   //
   {% for parent_type, collapsed in builder.collapsed_choices %}
-    fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ collapsed.target.name }};
+    fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ collapsed.target.name }} {
+      match source {
+        {% for variant in collapsed.variants -%}
+          input::{{ parent_type }}::{{ variant.source.name }}(terminal) => {
+            {% if collapsed.target_is_identifier -%}
+              Rc::new(output::{{ collapsed.target.name }}Struct {
+                range: terminal.range.clone(),
+              })
+            {%- else -%}
+              output::{{ collapsed.target.name }} {
+                range: terminal.range.clone(),
+              }
+            {%- endif %}
+          }
+        {% endfor -%}
+      }
+    }
   {% endfor %}
 
   //

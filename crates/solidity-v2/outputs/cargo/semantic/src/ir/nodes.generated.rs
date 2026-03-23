@@ -103,8 +103,8 @@ pub type AssemblyStatement = Rc<AssemblyStatementStruct>;
 #[derive(Debug)]
 pub struct AssemblyStatementStruct {
     pub label: Option<StringLiteral>,
+    pub flags: Option<YulFlags>,
     pub body: YulBlock,
-    pub flags: YulFlags,
 }
 
 impl AssemblyStatementStruct {
@@ -777,8 +777,8 @@ pub type PathImport = Rc<PathImportStruct>;
 
 #[derive(Debug)]
 pub struct PathImportStruct {
-    pub alias: Option<Identifier>,
     pub path: StringLiteral,
+    pub alias: Option<Identifier>,
 }
 
 impl PathImportStruct {
@@ -1613,9 +1613,9 @@ pub enum StorageLocation {
 
 #[derive(Clone, Debug)]
 pub enum StringExpression {
-    Strings(Strings),
-    HexStrings(HexStrings),
-    UnicodeStrings(UnicodeStrings),
+    StringLiterals(StringLiterals),
+    HexStringLiterals(HexStringLiterals),
+    UnicodeStringLiterals(UnicodeStringLiterals),
 }
 
 #[derive(Clone, Debug)]
@@ -1739,7 +1739,7 @@ pub type ContractMembers = Vec<ContractMember>;
 
 pub type EnumMembers = Vec<Identifier>;
 
-pub type HexStrings = Vec<HexStringLiteral>;
+pub type HexStringLiterals = Vec<HexStringLiteral>;
 
 pub type IdentifierPath = Vec<Identifier>;
 
@@ -1769,13 +1769,13 @@ pub type SourceUnitMembers = Vec<SourceUnitMember>;
 
 pub type Statements = Vec<Statement>;
 
-pub type Strings = Vec<StringLiteral>;
+pub type StringLiterals = Vec<StringLiteral>;
 
 pub type StructMembers = Vec<StructMember>;
 
 pub type TupleValues = Vec<TupleValue>;
 
-pub type UnicodeStrings = Vec<UnicodeStringLiteral>;
+pub type UnicodeStringLiterals = Vec<UnicodeStringLiteral>;
 
 pub type UsingDeconstructionSymbols = Vec<UsingDeconstructionSymbol>;
 

@@ -77,6 +77,8 @@ pub struct CollapsedChoice {
     pub variants: Vec<MutatedVariant>,
     // The target type that replaces the collapsed choice everywhere.
     pub target: NodeType,
+    // Whether the target type is an identifier (needed for builder generation).
+    pub target_is_identifier: bool,
 }
 
 #[derive(Clone, Serialize)]
@@ -516,7 +518,8 @@ impl IrModelMutator {
     }
 
     // Removes a choice type whose variants are all terminals, replacing all
-    // references with a single target type.
+    // references with a single target type. Supports same-name targets (where
+    // the choice is transmuted into a non-unique terminal with the same name).
     pub fn collapse_choice(&mut self, choice_id: &str, target: &str) {
         let identifier: model::Identifier = choice_id.into();
         let Some(choice) = self.choices.remove(&identifier) else {
@@ -532,8 +535,30 @@ impl IrModelMutator {
             );
         }
 
-        let target_type = self.find_node_type(&target.into());
-        let collapsed_type = self.find_node_type(&identifier);
+        // The old type is always Nonterminal (choices are nonterminals)
+        let collapsed_type = NodeType::Nonterminal(identifier.clone());
+
+        // Ensure the target exists as a non-unique terminal
+        let target_id: model::Identifier = target.into();
+        if let Some(terminal) = self.terminals.get(&target_id) {
+            assert!(
+                !terminal.is_unique,
+                "Cannot collapse choice {choice_id} to unique terminal {target}",
+            );
+        } else {
+            // Target doesn't exist yet as a terminal
+            self.terminals.insert(
+                target_id.clone(),
+                MutatedTerminal {
+                    is_unique: false,
+                    is_identifier: false,
+                    is_new: true,
+                },
+            );
+        }
+
+        let target_is_identifier = self.terminals[&target_id].is_identifier;
+        let target_type = self.find_node_type(&target_id);
 
         self.replace_type_references(&collapsed_type, &target_type);
 
@@ -543,6 +568,7 @@ impl IrModelMutator {
             CollapsedChoice {
                 variants: choice.variants,
                 target: target_type,
+                target_is_identifier,
             },
         );
     }

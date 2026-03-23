@@ -780,10 +780,10 @@ pub trait Visitor {
     }
     fn leave_enum_members(&mut self, _items: &EnumMembers) {}
 
-    fn enter_hex_strings(&mut self, _items: &HexStrings) -> bool {
+    fn enter_hex_string_literals(&mut self, _items: &HexStringLiterals) -> bool {
         true
     }
-    fn leave_hex_strings(&mut self, _items: &HexStrings) {}
+    fn leave_hex_string_literals(&mut self, _items: &HexStringLiterals) {}
 
     fn enter_identifier_path(&mut self, _items: &IdentifierPath) -> bool {
         true
@@ -861,10 +861,10 @@ pub trait Visitor {
     }
     fn leave_statements(&mut self, _items: &Statements) {}
 
-    fn enter_strings(&mut self, _items: &Strings) -> bool {
+    fn enter_string_literals(&mut self, _items: &StringLiterals) -> bool {
         true
     }
-    fn leave_strings(&mut self, _items: &Strings) {}
+    fn leave_string_literals(&mut self, _items: &StringLiterals) {}
 
     fn enter_struct_members(&mut self, _items: &StructMembers) -> bool {
         true
@@ -876,10 +876,10 @@ pub trait Visitor {
     }
     fn leave_tuple_values(&mut self, _items: &TupleValues) {}
 
-    fn enter_unicode_strings(&mut self, _items: &UnicodeStrings) -> bool {
+    fn enter_unicode_string_literals(&mut self, _items: &UnicodeStringLiterals) -> bool {
         true
     }
-    fn leave_unicode_strings(&mut self, _items: &UnicodeStrings) {}
+    fn leave_unicode_string_literals(&mut self, _items: &UnicodeStringLiterals) {}
 
     fn enter_using_deconstruction_symbols(&mut self, _items: &UsingDeconstructionSymbols) -> bool {
         true
@@ -1001,8 +1001,10 @@ pub fn accept_assembly_statement(node: &AssemblyStatement, visitor: &mut impl Vi
     if !visitor.enter_assembly_statement(node) {
         return;
     }
+    if let Some(ref flags) = node.flags {
+        accept_yul_flags(flags, visitor);
+    }
     accept_yul_block(&node.body, visitor);
-    accept_yul_flags(&node.flags, visitor);
     visitor.leave_assembly_statement(node);
 }
 
@@ -2308,14 +2310,14 @@ pub fn accept_string_expression(node: &StringExpression, visitor: &mut impl Visi
         return;
     }
     match node {
-        StringExpression::Strings(ref strings) => {
-            accept_strings(strings, visitor);
+        StringExpression::StringLiterals(ref string_literals) => {
+            accept_string_literals(string_literals, visitor);
         }
-        StringExpression::HexStrings(ref hex_strings) => {
-            accept_hex_strings(hex_strings, visitor);
+        StringExpression::HexStringLiterals(ref hex_string_literals) => {
+            accept_hex_string_literals(hex_string_literals, visitor);
         }
-        StringExpression::UnicodeStrings(ref unicode_strings) => {
-            accept_unicode_strings(unicode_strings, visitor);
+        StringExpression::UnicodeStringLiterals(ref unicode_string_literals) => {
+            accept_unicode_string_literals(unicode_string_literals, visitor);
         }
     }
     visitor.leave_string_expression(node);
@@ -2552,11 +2554,11 @@ fn accept_enum_members(items: &Vec<Identifier>, visitor: &mut impl Visitor) {
     visitor.leave_enum_members(items);
 }
 #[inline]
-fn accept_hex_strings(items: &Vec<HexStringLiteral>, visitor: &mut impl Visitor) {
-    if !visitor.enter_hex_strings(items) {
+fn accept_hex_string_literals(items: &Vec<HexStringLiteral>, visitor: &mut impl Visitor) {
+    if !visitor.enter_hex_string_literals(items) {
         return;
     }
-    visitor.leave_hex_strings(items);
+    visitor.leave_hex_string_literals(items);
 }
 #[inline]
 fn accept_identifier_path(items: &Vec<Identifier>, visitor: &mut impl Visitor) {
@@ -2699,11 +2701,11 @@ fn accept_statements(items: &Vec<Statement>, visitor: &mut impl Visitor) {
     visitor.leave_statements(items);
 }
 #[inline]
-fn accept_strings(items: &Vec<StringLiteral>, visitor: &mut impl Visitor) {
-    if !visitor.enter_strings(items) {
+fn accept_string_literals(items: &Vec<StringLiteral>, visitor: &mut impl Visitor) {
+    if !visitor.enter_string_literals(items) {
         return;
     }
-    visitor.leave_strings(items);
+    visitor.leave_string_literals(items);
 }
 #[inline]
 fn accept_struct_members(items: &Vec<StructMember>, visitor: &mut impl Visitor) {
@@ -2726,11 +2728,11 @@ fn accept_tuple_values(items: &Vec<TupleValue>, visitor: &mut impl Visitor) {
     visitor.leave_tuple_values(items);
 }
 #[inline]
-fn accept_unicode_strings(items: &Vec<UnicodeStringLiteral>, visitor: &mut impl Visitor) {
-    if !visitor.enter_unicode_strings(items) {
+fn accept_unicode_string_literals(items: &Vec<UnicodeStringLiteral>, visitor: &mut impl Visitor) {
+    if !visitor.enter_unicode_string_literals(items) {
         return;
     }
-    visitor.leave_unicode_strings(items);
+    visitor.leave_unicode_string_literals(items);
 }
 #[inline]
 fn accept_using_deconstruction_symbols(
