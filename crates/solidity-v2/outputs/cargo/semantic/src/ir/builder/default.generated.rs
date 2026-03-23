@@ -1164,7 +1164,6 @@ pub trait Builder {
         self.default_build_elementary_type(source)
     }
 
-    #[allow(dead_code)]
     fn default_build_experimental_feature(
         &mut self,
         source: &input::ExperimentalFeature,
@@ -1178,13 +1177,19 @@ pub trait Builder {
             input::ExperimentalFeature::SMTCheckerKeyword(_) => {
                 output::ExperimentalFeature::SMTCheckerKeyword
             }
-            _ => panic!("Unexpected variant {source:?}"),
+            input::ExperimentalFeature::PragmaStringLiteral(ref pragma_string_literal) => {
+                output::ExperimentalFeature::StringLiteral(
+                    self.build_pragma_string_literal(pragma_string_literal),
+                )
+            }
         }
     }
     fn build_experimental_feature(
         &mut self,
         source: &input::ExperimentalFeature,
-    ) -> output::ExperimentalFeature;
+    ) -> output::ExperimentalFeature {
+        self.default_build_experimental_feature(source)
+    }
 
     fn default_build_expression(&mut self, source: &input::Expression) -> output::Expression {
         #[allow(clippy::match_wildcard_for_single_variants)]
@@ -2047,7 +2052,6 @@ pub trait Builder {
         self.default_build_yul_expression(source)
     }
 
-    #[allow(dead_code)]
     fn default_build_yul_literal(&mut self, source: &input::YulLiteral) -> output::YulLiteral {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
@@ -2062,10 +2066,19 @@ pub trait Builder {
             input::YulLiteral::YulHexLiteral(ref yul_hex_literal) => {
                 output::YulLiteral::HexLiteral(self.build_yul_hex_literal(yul_hex_literal))
             }
-            _ => panic!("Unexpected variant {source:?}"),
+            input::YulLiteral::YulHexStringLiteral(ref yul_hex_string_literal) => {
+                output::YulLiteral::HexStringLiteral(
+                    self.build_yul_hex_string_literal(yul_hex_string_literal),
+                )
+            }
+            input::YulLiteral::YulStringLiteral(ref yul_string_literal) => {
+                output::YulLiteral::StringLiteral(self.build_yul_string_literal(yul_string_literal))
+            }
         }
     }
-    fn build_yul_literal(&mut self, source: &input::YulLiteral) -> output::YulLiteral;
+    fn build_yul_literal(&mut self, source: &input::YulLiteral) -> output::YulLiteral {
+        self.default_build_yul_literal(source)
+    }
 
     fn default_build_yul_statement(
         &mut self,
@@ -2156,6 +2169,21 @@ pub trait Builder {
         &mut self,
         source: &input::IdentifierPathElement,
     ) -> output::Identifier;
+
+    fn build_pragma_string_literal(
+        &mut self,
+        source: &input::PragmaStringLiteral,
+    ) -> output::StringLiteral;
+
+    fn build_yul_hex_string_literal(
+        &mut self,
+        source: &input::YulHexStringLiteral,
+    ) -> output::HexStringLiteral;
+
+    fn build_yul_string_literal(
+        &mut self,
+        source: &input::YulStringLiteral,
+    ) -> output::StringLiteral;
 
     //
     // Repeated & Separated

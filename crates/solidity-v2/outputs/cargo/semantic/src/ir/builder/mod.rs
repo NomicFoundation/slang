@@ -30,10 +30,13 @@ impl Builder for CstToIrBuilder {
                 .flags
                 .elements
                 .iter()
-                .map(Self::yul_string_literal_to_ir)
+                .map(|literal| self.build_yul_string_literal(literal))
                 .collect()
         });
-        let label = source.label.as_ref().map(Self::yul_string_literal_to_ir);
+        let label = source
+            .label
+            .as_ref()
+            .map(|literal| self.build_yul_string_literal(literal));
 
         Rc::new(output::AssemblyStatementStruct { body, flags, label })
     }
@@ -365,49 +368,21 @@ impl Builder for CstToIrBuilder {
         }
     }
 
-    fn build_experimental_feature(
-        &mut self,
-        source: &input::ExperimentalFeature,
-    ) -> output::ExperimentalFeature {
-        match source {
-            input::ExperimentalFeature::PragmaStringLiteral(string_literal) => {
-                output::ExperimentalFeature::StringLiteral(Self::pragma_string_literal_to_ir(
-                    string_literal,
-                ))
-            }
-            _ => self.default_build_experimental_feature(source),
-        }
-    }
-
     fn build_version_literal(&mut self, source: &input::VersionLiteral) -> output::VersionLiteral {
         match source {
             input::VersionLiteral::PragmaSingleQuotedStringLiteral(string_literal) => {
-                output::VersionLiteral::StringLiteral(
-                    Self::pragma_single_quoted_string_literal_to_ir(string_literal),
-                )
+                output::VersionLiteral::StringLiteral(output::StringLiteral {
+                    range: string_literal.range.clone(),
+                })
             }
             input::VersionLiteral::PragmaDoubleQuotedStringLiteral(string_literal) => {
-                output::VersionLiteral::StringLiteral(
-                    Self::pragma_double_quoted_string_literal_to_ir(string_literal),
-                )
+                output::VersionLiteral::StringLiteral(output::StringLiteral {
+                    range: string_literal.range.clone(),
+                })
             }
             input::VersionLiteral::SimpleVersionLiteral(_) => {
                 self.default_build_version_literal(source)
             }
-        }
-    }
-
-    fn build_yul_literal(&mut self, source: &input::YulLiteral) -> output::YulLiteral {
-        match source {
-            input::YulLiteral::YulStringLiteral(string_literal) => {
-                output::YulLiteral::StringLiteral(Self::yul_string_literal_to_ir(string_literal))
-            }
-            input::YulLiteral::YulHexStringLiteral(hex_string_literal) => {
-                output::YulLiteral::HexStringLiteral(Self::yul_hex_string_literal_to_ir(
-                    hex_string_literal,
-                ))
-            }
-            _ => self.default_build_yul_literal(source),
         }
     }
 
@@ -445,6 +420,60 @@ impl Builder for CstToIrBuilder {
                 Rc::new(output::IdentifierStruct {
                     range: address_keyword.range.clone(),
                 })
+            }
+        }
+    }
+
+    fn build_yul_string_literal(
+        &mut self,
+        source: &input::YulStringLiteral,
+    ) -> output::StringLiteral {
+        match source {
+            input::YulStringLiteral::YulSingleQuotedStringLiteral(literal) => {
+                output::StringLiteral {
+                    range: literal.range.clone(),
+                }
+            }
+            input::YulStringLiteral::YulDoubleQuotedStringLiteral(literal) => {
+                output::StringLiteral {
+                    range: literal.range.clone(),
+                }
+            }
+        }
+    }
+
+    fn build_yul_hex_string_literal(
+        &mut self,
+        source: &input::YulHexStringLiteral,
+    ) -> output::HexStringLiteral {
+        match source {
+            input::YulHexStringLiteral::YulSingleQuotedHexStringLiteral(literal) => {
+                output::HexStringLiteral {
+                    range: literal.range.clone(),
+                }
+            }
+            input::YulHexStringLiteral::YulDoubleQuotedHexStringLiteral(literal) => {
+                output::HexStringLiteral {
+                    range: literal.range.clone(),
+                }
+            }
+        }
+    }
+
+    fn build_pragma_string_literal(
+        &mut self,
+        source: &input::PragmaStringLiteral,
+    ) -> output::StringLiteral {
+        match source {
+            input::PragmaStringLiteral::PragmaSingleQuotedStringLiteral(literal) => {
+                output::StringLiteral {
+                    range: literal.range.clone(),
+                }
+            }
+            input::PragmaStringLiteral::PragmaDoubleQuotedStringLiteral(literal) => {
+                output::StringLiteral {
+                    range: literal.range.clone(),
+                }
             }
         }
     }
@@ -1056,52 +1085,4 @@ impl CstToIrBuilder {
         output::UnicodeStringLiteral { range }
     }
 
-    fn yul_string_literal_to_ir(source: &input::YulStringLiteral) -> output::StringLiteral {
-        let range = match source {
-            input::YulStringLiteral::YulSingleQuotedStringLiteral(literal) => literal.range.clone(),
-            input::YulStringLiteral::YulDoubleQuotedStringLiteral(literal) => literal.range.clone(),
-        };
-        output::StringLiteral { range }
-    }
-
-    fn yul_hex_string_literal_to_ir(
-        source: &input::YulHexStringLiteral,
-    ) -> output::HexStringLiteral {
-        let range = match source {
-            input::YulHexStringLiteral::YulSingleQuotedHexStringLiteral(literal) => {
-                literal.range.clone()
-            }
-            input::YulHexStringLiteral::YulDoubleQuotedHexStringLiteral(literal) => {
-                literal.range.clone()
-            }
-        };
-        output::HexStringLiteral { range }
-    }
-
-    fn pragma_single_quoted_string_literal_to_ir(
-        source: &input::PragmaSingleQuotedStringLiteral,
-    ) -> output::StringLiteral {
-        output::StringLiteral {
-            range: source.range.clone(),
-        }
-    }
-
-    fn pragma_double_quoted_string_literal_to_ir(
-        source: &input::PragmaDoubleQuotedStringLiteral,
-    ) -> output::StringLiteral {
-        output::StringLiteral {
-            range: source.range.clone(),
-        }
-    }
-
-    fn pragma_string_literal_to_ir(source: &input::PragmaStringLiteral) -> output::StringLiteral {
-        match source {
-            input::PragmaStringLiteral::PragmaSingleQuotedStringLiteral(string_literal) => {
-                Self::pragma_single_quoted_string_literal_to_ir(string_literal)
-            }
-            input::PragmaStringLiteral::PragmaDoubleQuotedStringLiteral(string_literal) => {
-                Self::pragma_double_quoted_string_literal_to_ir(string_literal)
-            }
-        }
-    }
 }

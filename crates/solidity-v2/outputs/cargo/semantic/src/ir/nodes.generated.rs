@@ -102,9 +102,9 @@ pub type AssemblyStatement = Rc<AssemblyStatementStruct>;
 
 #[derive(Debug)]
 pub struct AssemblyStatementStruct {
+    pub label: Option<StringLiteral>,
     pub body: YulBlock,
     pub flags: YulFlags,
-    pub label: Option<StringLiteral>,
 }
 
 impl AssemblyStatementStruct {
@@ -1698,8 +1698,8 @@ pub enum YulExpression {
 pub enum YulLiteral {
     DecimalLiteral(DecimalLiteral),
     HexLiteral(HexLiteral),
-    StringLiteral(StringLiteral),
     HexStringLiteral(HexStringLiteral),
+    StringLiteral(StringLiteral),
     TrueKeyword,
     FalseKeyword,
 }

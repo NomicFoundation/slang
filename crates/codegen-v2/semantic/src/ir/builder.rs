@@ -274,13 +274,6 @@ fn simplify_string_literals(mutator: &mut IrModelMutator) {
     mutator.remove_type("UnicodeStringLiteral");
     mutator.remove_type("SingleQuotedUnicodeStringLiteral");
     mutator.remove_type("DoubleQuotedUnicodeStringLiteral");
-    mutator.remove_type("YulStringLiteral");
-    mutator.remove_type("YulSingleQuotedStringLiteral");
-    mutator.remove_type("YulDoubleQuotedStringLiteral");
-    mutator.remove_type("YulHexStringLiteral");
-    mutator.remove_type("YulSingleQuotedHexStringLiteral");
-    mutator.remove_type("YulDoubleQuotedHexStringLiteral");
-    mutator.remove_type("PragmaStringLiteral");
     mutator.remove_type("PragmaSingleQuotedStringLiteral");
     mutator.remove_type("PragmaDoubleQuotedStringLiteral");
 
@@ -306,16 +299,27 @@ fn simplify_string_literals(mutator: &mut IrModelMutator) {
     mutator.add_sequence_field("PathImport", "path", "StringLiteral", false);
     mutator.add_sequence_field("NamedImport", "path", "StringLiteral", false);
     mutator.add_sequence_field("ImportDeconstruction", "path", "StringLiteral", false);
-    mutator.add_choice_variant("ExperimentalFeature", "StringLiteral");
     mutator.add_choice_variant("VersionLiteral", "StringLiteral");
-    mutator.add_choice_variant("YulLiteral", "StringLiteral");
-    mutator.add_choice_variant("YulLiteral", "HexStringLiteral");
 
     // For `YulFlags`, also remove the enclosing declaration structure
     mutator.remove_type("YulFlagsDeclaration");
     mutator.add_collection_type("YulFlags", "StringLiteral");
     mutator.add_sequence_field("AssemblyStatement", "flags", "YulFlags", false);
-    mutator.add_sequence_field("AssemblyStatement", "label", "StringLiteral", true);
+
+    // Collapse Yul and Pragma string literal choices to their IR equivalents.
+    // This makes the default builders for YulLiteral and ExperimentalFeature
+    // auto-dispatch to these collapsed choice builders.
+    mutator.collapse_choice("YulStringLiteral", "StringLiteral");
+    mutator.remove_type("YulSingleQuotedStringLiteral");
+    mutator.remove_type("YulDoubleQuotedStringLiteral");
+
+    mutator.collapse_choice("YulHexStringLiteral", "HexStringLiteral");
+    mutator.remove_type("YulSingleQuotedHexStringLiteral");
+    mutator.remove_type("YulDoubleQuotedHexStringLiteral");
+
+    // PragmaStringLiteral sub-terminals were already removed above (for
+    // VersionLiteral). Collapse the now-empty choice to StringLiteral.
+    mutator.collapse_choice("PragmaStringLiteral", "StringLiteral");
 }
 
 fn normalize_yul_terminals(mutator: &mut IrModelMutator) {
