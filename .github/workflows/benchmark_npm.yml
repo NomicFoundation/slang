@@ -20,6 +20,9 @@ on:
     branches:
       - "main"
 
+permissions:
+  contents: "read"
+
 # Queue up benchmark workflows for the same branch, so that results are reported in order:
 concurrency:
   group: "${{ github.workflow }}-${{ github.ref_name }}"

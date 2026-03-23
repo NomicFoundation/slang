@@ -42,6 +42,10 @@ on:
         type: "string"
         required: false
         default: null
+
+permissions:
+  contents: "read"
+
 jobs:
   buildSlang:
     runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)

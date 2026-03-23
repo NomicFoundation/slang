@@ -16,6 +16,9 @@ on:
     branches:
       - "main"
 
+permissions:
+  contents: "read"
+
 # In the event that there is a new push to the ref, cancel any running jobs because they are now obsolete, wasting resources.
 concurrency:
   group: "${{ github.workflow }}-${{ github.ref_name }}"
