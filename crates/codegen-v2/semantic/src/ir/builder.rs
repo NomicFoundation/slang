@@ -6,6 +6,12 @@ pub fn build_v2_ir_model(language: &Language) -> ModelWithBuilder {
     let cst_model = IrModel::from_language(language);
     let mut mutator = IrModelMutator::create_from(&cst_model);
 
+    // TODO(v2): consider modifying the parser to generate its output with:
+    // - redundant unique terminals already elided
+    // - optional unique terminals converted to boolean values instead
+    // This would reduce the amount of work and allocations the parser needs to
+    // do, since we're dropping them in the IR model anyways.
+
     remove_redundant_terminal_nodes(&cst_model, &mut mutator);
     flatten_contract_specifiers(&mut mutator);
     unify_function_types(&mut mutator);
