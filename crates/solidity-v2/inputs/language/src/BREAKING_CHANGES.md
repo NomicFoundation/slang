@@ -16,6 +16,10 @@
 - Promoted `TokenDefinition::enabled` to `TokenItem::enabled`, as the new lexer doesn't version individual definitions (all of them are matched in all versions). We can decide on whether to keep or remove the additional `TokenDefinition` structure after we consider how to handle post-lexing processing (e.g. `DecimalLiteral` and `YulIdentifier` version breaks).
 - Removed `KeywordDefinition` and inlined its `reserved` and `value` fields into `KeywordItem`. Since no keyword had multiple definitions with different `reserved` status, the extra indirection was unnecessary.
 
+## Nonterminals
+
+- Removed `FieldsErrorRecovery` and `FieldDelimiters` types, since they are an artifact of the old v1 parser.
+
 ## Grammar
 
 The following changes modify the language definition to support the new parser and resolve grammar ambiguities.
