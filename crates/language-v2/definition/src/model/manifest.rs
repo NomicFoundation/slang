@@ -101,9 +101,7 @@ impl Language {
                 }
                 Item::Keyword { item } => {
                     add_spec(&item.enabled);
-                    for definition in &item.definitions {
-                        add_spec(&definition.reserved);
-                    }
+                    add_spec(&item.reserved);
                 }
                 Item::Token { item } => {
                     add_spec(&item.enabled);
