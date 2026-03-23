@@ -12,5 +12,5 @@ runs:
           cooldown-check-v1-${{ runner.os }}-
 
     - name: "Cargo cooldown check"
-      run: "./scripts/bin/with-hermit cargo-cooldown-check"
+      run: "./scripts/bin/with-hermit cargo cooldown-check"
       shell: "bash"
