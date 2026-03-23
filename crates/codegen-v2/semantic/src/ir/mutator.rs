@@ -14,6 +14,9 @@ pub struct IrModelMutator {
     // Single field sequences that should be collapsed to their content.
     pub collapsed_sequences: BTreeMap<model::Identifier, CollapsedSequence>,
 
+    // Choice types with all terminal variants collapsed to a single target type.
+    pub collapsed_choices: BTreeMap<model::Identifier, CollapsedChoice>,
+
     // Terminal nodes and whether they are unique or their value depends on the
     // content.
     pub terminals: BTreeMap<model::Identifier, MutatedTerminal>,
@@ -66,6 +69,14 @@ pub struct CollapsedSequence {
     // Target type of the collapsed sequence. This should usually be `r#type`,
     // unless that it collapsed as well.
     pub target_type: NodeType,
+}
+
+#[derive(Clone, Serialize)]
+pub struct CollapsedChoice {
+    // The variants of the original choice type. All must be terminals.
+    pub variants: Vec<MutatedVariant>,
+    // The target type that replaces the collapsed choice everywhere.
+    pub target: NodeType,
 }
 
 #[derive(Clone, Serialize)]
@@ -237,6 +248,7 @@ impl IrModelMutator {
             choices,
             collections,
             collapsed_sequences: BTreeMap::new(),
+            collapsed_choices: BTreeMap::new(),
             terminals,
             normalized_terminals: BTreeMap::new(),
         }
@@ -388,6 +400,38 @@ impl IrModelMutator {
         );
     }
 
+    fn replace_type_references(&mut self, old: &NodeType, new: &NodeType) {
+        for sequence in self.sequences.values_mut() {
+            for field in &mut sequence.fields {
+                if field.target_type == *old {
+                    field.target_type = new.clone();
+                }
+            }
+        }
+        for choice in self.choices.values_mut() {
+            for variant in &mut choice.variants {
+                if variant.target == *old {
+                    variant.target = new.clone();
+                }
+            }
+        }
+        for collection in self.collections.values_mut() {
+            if collection.target_item_type == *old {
+                collection.target_item_type = new.clone();
+            }
+        }
+        for collapsed in self.collapsed_sequences.values_mut() {
+            if collapsed.target_type == *old {
+                collapsed.target_type = new.clone();
+            }
+        }
+        for collapsed in self.collapsed_choices.values_mut() {
+            if collapsed.target == *old {
+                collapsed.target = new.clone();
+            }
+        }
+    }
+
     fn find_node_type(&self, identifier: &model::Identifier) -> NodeType {
         match self.terminals.get(identifier) {
             None => NodeType::Nonterminal(identifier.clone()),
@@ -447,31 +491,7 @@ impl IrModelMutator {
         );
         let replaced_type = self.find_node_type(&sequence_id.into());
 
-        // Iterate remaining sequences and replace any fields referencing the
-        // removed type by the target type
-        for sequence in self.sequences.values_mut() {
-            for field in &mut sequence.fields {
-                if field.target_type == identifier {
-                    field.target_type = replace_field.target_type.clone();
-                }
-            }
-        }
-
-        // Iterate choice types, update target of matching variants in place
-        for choice in self.choices.values_mut() {
-            for variant in &mut choice.variants {
-                if variant.target == replaced_type {
-                    variant.target = replace_field.target_type.clone();
-                }
-            }
-        }
-
-        // Update collections whose target_item_type matches the collapsed type
-        for collection in self.collections.values_mut() {
-            if collection.target_item_type == replaced_type {
-                collection.target_item_type = replace_field.target_type.clone();
-            }
-        }
+        self.replace_type_references(&replaced_type, &replace_field.target_type);
 
         // Determine the target type; the type of the single field may be
         // already collapsed, so we need to use it in that case
@@ -493,14 +513,38 @@ impl IrModelMutator {
                 target_type,
             },
         );
+    }
 
-        // Conversely, check if we need to update any other previously collapsed
-        // sequences
-        for collapsed in self.collapsed_sequences.values_mut() {
-            if collapsed.target_type == identifier {
-                collapsed.target_type = replace_field.r#type.clone();
-            }
+    // Removes a choice type whose variants are all terminals, replacing all
+    // references with a single target type.
+    pub fn collapse_choice(&mut self, choice_id: &str, target: &str) {
+        let identifier: model::Identifier = choice_id.into();
+        let Some(choice) = self.choices.remove(&identifier) else {
+            panic!("Choice {choice_id} not found in IR model");
+        };
+
+        // Assert all variants are terminals
+        for variant in &choice.variants {
+            assert!(
+                variant.target.is_terminal(),
+                "Cannot collapse choice {choice_id}: variant {} is not a terminal",
+                variant.target.as_identifier()
+            );
         }
+
+        let target_type = self.find_node_type(&target.into());
+        let collapsed_type = self.find_node_type(&identifier);
+
+        self.replace_type_references(&collapsed_type, &target_type);
+
+        // Record the collapsed choice
+        self.collapsed_choices.insert(
+            identifier,
+            CollapsedChoice {
+                variants: choice.variants,
+                target: target_type,
+            },
+        );
     }
 
     pub fn add_collection_type(&mut self, name: &str, item_type: &str) {
@@ -541,30 +585,7 @@ impl IrModelMutator {
         // Remove source from terminals
         self.terminals.remove(&source_id);
 
-        // Update sequence fields
-        for sequence in self.sequences.values_mut() {
-            for field in &mut sequence.fields {
-                if field.target_type == source_type {
-                    field.target_type = target_type.clone();
-                }
-            }
-        }
-
-        // Update choice variants
-        for choice in self.choices.values_mut() {
-            for variant in &mut choice.variants {
-                if variant.target == source_type {
-                    variant.target = target_type.clone();
-                }
-            }
-        }
-
-        // Update collection target_item_types
-        for collection in self.collections.values_mut() {
-            if collection.target_item_type == source_type {
-                collection.target_item_type = target_type.clone();
-            }
-        }
+        self.replace_type_references(&source_type, &target_type);
 
         // Record the normalization
         self.normalized_terminals.insert(

@@ -2171,6 +2171,10 @@ pub trait Builder {
     }
 
     //
+    // Collapsed choices
+    //
+
+    //
     // Repeated & Separated
     //
 

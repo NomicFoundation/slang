@@ -99,6 +99,13 @@ pub trait Builder {
   {% endfor %}
 
   //
+  // Collapsed choices
+  //
+  {% for parent_type, collapsed in builder.collapsed_choices %}
+    fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ collapsed.target.name }};
+  {% endfor %}
+
+  //
   // Repeated & Separated
   //
 
