@@ -300,6 +300,7 @@ fn simplify_string_literals(mutator: &mut IrModelMutator) {
     mutator.add_sequence_field("NamedImport", "path", "StringLiteral", false);
     mutator.add_sequence_field("ImportDeconstruction", "path", "StringLiteral", false);
     mutator.add_choice_variant("ExperimentalFeature", "StringLiteral");
+    mutator.add_choice_variant("VersionLiteral", "StringLiteral");
     mutator.add_choice_variant("YulLiteral", "StringLiteral");
     mutator.add_choice_variant("YulLiteral", "HexStringLiteral");
 

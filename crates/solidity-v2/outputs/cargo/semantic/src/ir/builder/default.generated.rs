@@ -1958,6 +1958,7 @@ pub trait Builder {
         self.default_build_version_expression(source)
     }
 
+    #[allow(dead_code)]
     fn default_build_version_literal(
         &mut self,
         source: &input::VersionLiteral,
@@ -1970,21 +1971,10 @@ pub trait Builder {
                     self.build_simple_version_literal(simple_version_literal),
                 )
             }
-            input::VersionLiteral::SingleQuotedVersionLiteral(
-                ref single_quoted_version_literal,
-            ) => output::VersionLiteral::SingleQuotedVersionLiteral(
-                self.build_single_quoted_version_literal(single_quoted_version_literal),
-            ),
-            input::VersionLiteral::DoubleQuotedVersionLiteral(
-                ref double_quoted_version_literal,
-            ) => output::VersionLiteral::DoubleQuotedVersionLiteral(
-                self.build_double_quoted_version_literal(double_quoted_version_literal),
-            ),
+            _ => panic!("Unexpected variant {source:?}"),
         }
     }
-    fn build_version_literal(&mut self, source: &input::VersionLiteral) -> output::VersionLiteral {
-        self.default_build_version_literal(source)
-    }
+    fn build_version_literal(&mut self, source: &input::VersionLiteral) -> output::VersionLiteral;
 
     fn default_build_version_operator(
         &mut self,
@@ -2436,15 +2426,6 @@ pub trait Builder {
         }
     }
 
-    fn build_double_quoted_version_literal(
-        &mut self,
-        source: &input::DoubleQuotedVersionLiteral,
-    ) -> output::DoubleQuotedVersionLiteral {
-        output::DoubleQuotedVersionLiteral {
-            range: source.range.clone(),
-        }
-    }
-
     fn build_fixed_keyword(&mut self, source: &input::FixedKeyword) -> output::FixedKeyword {
         output::FixedKeyword {
             range: source.range.clone(),
@@ -2465,15 +2446,6 @@ pub trait Builder {
 
     fn build_int_keyword(&mut self, source: &input::IntKeyword) -> output::IntKeyword {
         output::IntKeyword {
-            range: source.range.clone(),
-        }
-    }
-
-    fn build_single_quoted_version_literal(
-        &mut self,
-        source: &input::SingleQuotedVersionLiteral,
-    ) -> output::SingleQuotedVersionLiteral {
-        output::SingleQuotedVersionLiteral {
             range: source.range.clone(),
         }
     }

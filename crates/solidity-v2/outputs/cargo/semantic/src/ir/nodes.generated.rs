@@ -1679,8 +1679,7 @@ pub enum VersionExpression {
 #[derive(Clone, Debug)]
 pub enum VersionLiteral {
     SimpleVersionLiteral(SimpleVersionLiteral),
-    SingleQuotedVersionLiteral(SingleQuotedVersionLiteral),
-    DoubleQuotedVersionLiteral(DoubleQuotedVersionLiteral),
+    StringLiteral(StringLiteral),
 }
 
 #[derive(Clone, Debug)]
@@ -1833,17 +1832,6 @@ impl DecimalLiteral {
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct DoubleQuotedVersionLiteral {
-    pub range: Range<usize>,
-}
-
-impl DoubleQuotedVersionLiteral {
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
-    }
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub struct FixedKeyword {
     pub range: Range<usize>,
 }
@@ -1899,17 +1887,6 @@ pub struct IntKeyword {
 }
 
 impl IntKeyword {
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
-    }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct SingleQuotedVersionLiteral {
-    pub range: Range<usize>,
-}
-
-impl SingleQuotedVersionLiteral {
     pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
         source.text(self.range.clone())
     }

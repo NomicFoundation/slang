@@ -2424,8 +2424,7 @@ pub fn accept_version_literal(node: &VersionLiteral, visitor: &mut impl Visitor)
         VersionLiteral::SimpleVersionLiteral(ref simple_version_literal) => {
             accept_simple_version_literal(simple_version_literal, visitor);
         }
-        VersionLiteral::SingleQuotedVersionLiteral(_)
-        | VersionLiteral::DoubleQuotedVersionLiteral(_) => {}
+        VersionLiteral::StringLiteral(_) => {}
     }
     visitor.leave_version_literal(node);
 }
