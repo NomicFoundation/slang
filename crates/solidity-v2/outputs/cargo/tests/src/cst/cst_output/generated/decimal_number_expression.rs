@@ -7,6 +7,11 @@ use crate::cst::cst_output::runner::run;
 const T: &str = "DecimalNumberExpression";
 
 #[test]
+fn bare_period() -> Result<()> {
+    run(T, "bare_period")
+}
+
+#[test]
 fn days_unit() -> Result<()> {
     run(T, "days_unit")
 }
@@ -47,6 +52,16 @@ fn float_no_mantissa() -> Result<()> {
 }
 
 #[test]
+fn float_with_exponent() -> Result<()> {
+    run(T, "float_with_exponent")
+}
+
+#[test]
+fn float_with_negative_exponent() -> Result<()> {
+    run(T, "float_with_negative_exponent")
+}
+
+#[test]
 fn integer() -> Result<()> {
     run(T, "integer")
 }
@@ -57,8 +72,23 @@ fn integer_ident_after_period() -> Result<()> {
 }
 
 #[test]
+fn integer_period_ident_exponent_like() -> Result<()> {
+    run(T, "integer_period_ident_exponent_like")
+}
+
+#[test]
+fn integer_period_ident_negative_exponent_like() -> Result<()> {
+    run(T, "integer_period_ident_negative_exponent_like")
+}
+
+#[test]
 fn integer_with_exponent() -> Result<()> {
     run(T, "integer_with_exponent")
+}
+
+#[test]
+fn integer_with_negative_exponent() -> Result<()> {
+    run(T, "integer_with_negative_exponent")
 }
 
 #[test]
@@ -74,6 +104,26 @@ fn leading_period_ident_after_decimal() -> Result<()> {
 #[test]
 fn leading_period_ident_after_period() -> Result<()> {
     run(T, "leading_period_ident_after_period")
+}
+
+#[test]
+fn leading_period_ident_exponent_like() -> Result<()> {
+    run(T, "leading_period_ident_exponent_like")
+}
+
+#[test]
+fn leading_period_ident_negative_exponent_like() -> Result<()> {
+    run(T, "leading_period_ident_negative_exponent_like")
+}
+
+#[test]
+fn leading_period_with_exponent() -> Result<()> {
+    run(T, "leading_period_with_exponent")
+}
+
+#[test]
+fn leading_period_with_negative_exponent() -> Result<()> {
+    run(T, "leading_period_with_negative_exponent")
 }
 
 #[test]

@@ -12,3 +12,6 @@ runs:
           ~/.cache/hermit/
           ~/.local/share/virtualenvs/
           .hermit/
+          ~/.cargo/registry/
+          ~/.cargo/git/
+          ~/.local/share/pnpm/store/

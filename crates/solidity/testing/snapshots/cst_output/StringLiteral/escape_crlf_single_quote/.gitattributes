@@ -1,1 +1,2 @@
-*.sol text eol=crlf
+# Keep CRLF line endings intact (stored as binary to work with both git and jj)
+*.sol binary

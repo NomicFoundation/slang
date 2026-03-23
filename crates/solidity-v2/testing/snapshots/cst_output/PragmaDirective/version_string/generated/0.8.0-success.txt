@@ -1,0 +1,43 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            PragmaDirective(
+                PragmaDirectiveStruct {
+                    pragma_keyword: PragmaKeyword {
+                        range: 105..111,
+                    },
+                    pragma: VersionPragma(
+                        VersionPragmaStruct {
+                            solidity_keyword: SolidityKeyword {
+                                range: 112..120,
+                            },
+                            sets: VersionExpressionSets {
+                                elements: [
+                                    VersionExpressionSet {
+                                        elements: [
+                                            VersionTerm(
+                                                VersionTermStruct {
+                                                    operator: None,
+                                                    literal: PragmaDoubleQuotedStringLiteral(
+                                                        PragmaDoubleQuotedStringLiteral {
+                                                            range: 121..124,
+                                                        },
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                ],
+                            },
+                        },
+                    ),
+                    semicolon: PragmaSemicolon {
+                        range: 124..125,
+                    },
+                },
+            ),
+        ],
+    },
+}

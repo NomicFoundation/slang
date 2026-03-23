@@ -1,0 +1,1 @@
+pragma solidity "Y";

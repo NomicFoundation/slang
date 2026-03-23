@@ -1,0 +1,44 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ConstantDefinition(
+                ConstantDefinitionStruct {
+                    type_name: ElementaryType(
+                        StringKeyword(
+                            StringKeyword {
+                                range: 0..6,
+                            },
+                        ),
+                    ),
+                    constant_keyword: ConstantKeyword {
+                        range: 7..15,
+                    },
+                    name: Identifier {
+                        range: 16..17,
+                    },
+                    equal: Equal {
+                        range: 18..19,
+                    },
+                    value: StringExpression(
+                        StringLiterals(
+                            StringLiterals {
+                                elements: [
+                                    SingleQuotedStringLiteral(
+                                        SingleQuotedStringLiteral {
+                                            range: 20..22,
+                                        },
+                                    ),
+                                ],
+                            },
+                        ),
+                    ),
+                    semicolon: Semicolon {
+                        range: 22..23,
+                    },
+                },
+            ),
+        ],
+    },
+}

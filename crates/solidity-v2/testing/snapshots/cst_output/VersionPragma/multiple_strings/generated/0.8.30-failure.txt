@@ -1,9 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-Error: Unexpected PragmaDoubleQuotedStringLiteral. One of DoubleQuotedVersionLiteral, SingleQuotedVersionLiteral, VersionSpecifier was expected
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/VersionPragma/multiple_strings/input.sol:3:11]
-   │
- 3 │ solidity ^"1.2.3" || "4.5.6"-'7.8.9'
-   │           ───┬───  
-   │              ╰───── Error occurred here.
-───╯

@@ -2,7 +2,7 @@ use lalrpop_util::lalrpop_mod;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit;
 
-use crate::lexer::{ContextKind, LexemeKind, Lexer};
+use crate::lexer::{LexemeKind, Lexer};
 use crate::parser::parser_error::ParserError;
 
 mod parser_helpers;
@@ -28,26 +28,15 @@ pub mod parser_error;
 /// A Parser for Solidity Source Units
 ///
 /// TODO(v2): Error recovery, for now we just fail
-/// TODO(v2): Support multiple versions, for now only 0.8.30 is supported
+/// TODO(v2): Make the parser skip unique tokens, performance improvement
 #[derive(Default)]
 pub struct Parser;
 
 impl Parser {
     pub fn parse(input: &str, version: LanguageVersion) -> Result<SourceUnit, ParserError> {
-        Self::check_version(version);
-
-        let lexer = Lexer::new(ContextKind::Solidity, input, version);
+        let lexer = Lexer::new(input, version);
         let parser = grammar::SourceUnitParser::new();
         parser.parse(input, lexer).map_err(|e| e.into())
-    }
-
-    // TODO(v2): This is temporary, once the language definition is restricted to only supported versions
-    // it won't be needed
-    fn check_version(version: LanguageVersion) {
-        assert!(
-            version == LanguageVersion::V0_8_30,
-            "Only version 0.8.30 is currently supported by the V2 parser"
-        );
     }
 }
 

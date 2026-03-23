@@ -15024,13 +15024,12 @@ impl NodeChecker for VersionExpression {
     }
 }
 
-/// Generic `NodeChecker` for choices
+/// Custom `NodeChecker` for `VersionLiteral` — remaps pragma string literal variants to V1 version literal terminals
 impl NodeChecker for VersionLiteral {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
 
         if node.kind() != NodeKind::Nonterminal(NonterminalKind::VersionLiteral) {
-            // Don't even check the rest
             return vec![NodeCheckerError::new(
                 format!(
                     "Expected node kind to be {}, but it was {}",
@@ -15066,23 +15065,49 @@ impl NodeChecker for VersionLiteral {
             )];
         }
 
-        let mut errors = vec![];
-
         match self {
             Self::SimpleVersionLiteral(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
+                element.check_node_with_offset(&child.node, *child_offset)
             }
-
-            Self::SingleQuotedVersionLiteral(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
+            Self::PragmaSingleQuotedStringLiteral(_) => {
+                // V2 pragma string literals map to V1's version literal terminals
+                let child_range = *child_offset..(*child_offset + child.node.text_len());
+                if let NodeKind::Terminal(terminal_kind) = child.node.kind() {
+                    if terminal_kind.as_ref() == "SingleQuotedVersionLiteral" {
+                        vec![]
+                    } else {
+                        vec![NodeCheckerError::new(format!("Expected node kind to be SingleQuotedVersionLiteral, but it was {}", terminal_kind.as_ref()), child_range)]
+                    }
+                } else {
+                    vec![NodeCheckerError::new(
+                        format!(
+                            "Expected node kind to be a terminal, but it was {}",
+                            child.node.kind()
+                        ),
+                        child_range,
+                    )]
+                }
             }
-
-            Self::DoubleQuotedVersionLiteral(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
+            Self::PragmaDoubleQuotedStringLiteral(_) => {
+                // V2 pragma string literals map to V1's version literal terminals
+                let child_range = *child_offset..(*child_offset + child.node.text_len());
+                if let NodeKind::Terminal(terminal_kind) = child.node.kind() {
+                    if terminal_kind.as_ref() == "DoubleQuotedVersionLiteral" {
+                        vec![]
+                    } else {
+                        vec![NodeCheckerError::new(format!("Expected node kind to be DoubleQuotedVersionLiteral, but it was {}", terminal_kind.as_ref()), child_range)]
+                    }
+                } else {
+                    vec![NodeCheckerError::new(
+                        format!(
+                            "Expected node kind to be a terminal, but it was {}",
+                            child.node.kind()
+                        ),
+                        child_range,
+                    )]
+                }
             }
         }
-
-        errors
     }
 }
 
@@ -18817,34 +18842,6 @@ impl NodeChecker for DoubleQuotedUnicodeStringLiteral {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for DoubleQuotedVersionLiteral {
-    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
-        let node_range = text_offset..(text_offset + node.text_len());
-        let mut errors = vec![];
-        if let NodeKind::Terminal(terminal_kind) = node.kind() {
-            let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "DoubleQuotedVersionLiteral";
-
-            if v1_kind != v2_kind {
-                errors.push(NodeCheckerError::new(
-                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
-                    node_range,
-                ));
-            }
-        } else {
-            errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected node kind to be a terminal, but it was {}",
-                    node.kind()
-                ),
-                node_range,
-            ));
-        }
-        errors
-    }
-}
-
-/// Generic `NodeChecker` for terminals
 impl NodeChecker for ElseKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
@@ -21904,34 +21901,6 @@ impl NodeChecker for SingleQuotedUnicodeStringLiteral {
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
             let v2_kind = "SingleQuotedUnicodeStringLiteral";
-
-            if v1_kind != v2_kind {
-                errors.push(NodeCheckerError::new(
-                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
-                    node_range,
-                ));
-            }
-        } else {
-            errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected node kind to be a terminal, but it was {}",
-                    node.kind()
-                ),
-                node_range,
-            ));
-        }
-        errors
-    }
-}
-
-/// Generic `NodeChecker` for terminals
-impl NodeChecker for SingleQuotedVersionLiteral {
-    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
-        let node_range = text_offset..(text_offset + node.text_len());
-        let mut errors = vec![];
-        if let NodeKind::Terminal(terminal_kind) = node.kind() {
-            let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "SingleQuotedVersionLiteral";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(

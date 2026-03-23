@@ -7,6 +7,16 @@ use crate::cst::cst_output::runner::run;
 const T: &str = "SourceUnit";
 
 #[test]
+fn adjacent_multiline_comments() -> Result<()> {
+    run(T, "adjacent_multiline_comments")
+}
+
+#[test]
+fn adjacent_natspec_comments() -> Result<()> {
+    run(T, "adjacent_natspec_comments")
+}
+
+#[test]
 fn braces_inside_assembly() -> Result<()> {
     run(T, "braces_inside_assembly")
 }
@@ -49,6 +59,11 @@ fn end_of_file_trivia() -> Result<()> {
 #[test]
 fn end_of_file_trivia_incomplete() -> Result<()> {
     run(T, "end_of_file_trivia_incomplete")
+}
+
+#[test]
+fn end_of_file_trivia_incomplete_natspec() -> Result<()> {
+    run(T, "end_of_file_trivia_incomplete_natspec")
 }
 
 #[test]
@@ -97,8 +112,18 @@ fn leading_trivia_single_line_comment() -> Result<()> {
 }
 
 #[test]
+fn leading_trivia_single_line_comment_empty() -> Result<()> {
+    run(T, "leading_trivia_single_line_comment_empty")
+}
+
+#[test]
 fn leading_trivia_single_line_natspec_comment() -> Result<()> {
     run(T, "leading_trivia_single_line_natspec_comment")
+}
+
+#[test]
+fn leading_trivia_single_line_natspec_comment_empty() -> Result<()> {
+    run(T, "leading_trivia_single_line_natspec_comment_empty")
 }
 
 #[test]
@@ -194,6 +219,16 @@ fn unrecognized_lexeme_after_contract() -> Result<()> {
 #[test]
 fn unreserved_keywords() -> Result<()> {
     run(T, "unreserved_keywords")
+}
+
+#[test]
+fn unterminated_double_quote_string() -> Result<()> {
+    run(T, "unterminated_double_quote_string")
+}
+
+#[test]
+fn unterminated_single_quote_string() -> Result<()> {
+    run(T, "unterminated_single_quote_string")
 }
 
 #[test]

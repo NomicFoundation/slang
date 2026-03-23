@@ -1,0 +1,32 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            PragmaDirective(
+                PragmaDirectiveStruct {
+                    pragma_keyword: PragmaKeyword {
+                        range: 118..124,
+                    },
+                    pragma: ExperimentalPragma(
+                        ExperimentalPragmaStruct {
+                            experimental_keyword: ExperimentalKeyword {
+                                range: 125..137,
+                            },
+                            feature: PragmaStringLiteral(
+                                PragmaDoubleQuotedStringLiteral(
+                                    PragmaDoubleQuotedStringLiteral {
+                                        range: 138..145,
+                                    },
+                                ),
+                            ),
+                        },
+                    ),
+                    semicolon: PragmaSemicolon {
+                        range: 145..146,
+                    },
+                },
+            ),
+        ],
+    },
+}

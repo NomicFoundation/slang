@@ -2,24 +2,40 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::mem::discriminant;
 use std::rc::Rc;
 
+use indexmap::IndexMap;
 use language_v2_definition::model::{
-    FragmentItem, Identifier, Item, KeywordItem, KeywordValue, Language, Scanner, TokenItem,
-    TriviaItem, VersionSpecifier,
+    Identifier, Item, KeywordItem, KeywordValue, Language, LexicalContext as LanguageContext,
+    Scanner, TokenItem, TriviaItem, VersionSpecifier,
 };
 
 use crate::lexer::{Lexeme, LexerModel, LexicalContext};
 
-pub struct LexerModelBuilder {
-    fragments: BTreeMap<Identifier, Rc<FragmentItem>>,
-}
+pub struct LexerModelBuilder;
 
 impl LexerModelBuilder {
     pub fn build(language: &Language) -> LexerModel {
-        let instance = Self {
-            fragments: Self::collect_fragments(language),
-        };
+        // TODO(v2):
+        // The existing v1 grammar had an inconsistency where it defined all trivia in the 'Default' context,
+        // and the v1 parser dealt with it by parsing trivia using that context (regardless of the current one).
+        // We should instead remove `Item::trivia` from individual topics, and move it to a separate `Language` field,
+        // along with the existing `leading_trivia` and `trailing_trivia` fields.
+        // For now, we just collect trivia and duplicate them into all contexts:
+        let mut common_trivia = Vec::<Rc<TriviaItem>>::new();
 
-        let contexts = instance.collect_contexts(language);
+        for item in language.items() {
+            if let Item::Trivia { item } = item {
+                common_trivia.push(Rc::clone(item));
+            }
+        }
+
+        let contexts: Vec<LexicalContext> = language
+            .contexts
+            .iter()
+            .map(|language_context| {
+                LexicalContextBuilder::build(common_trivia.clone(), language_context)
+            })
+            .collect();
+
         let lexeme_kinds = Self::collect_lexeme_kinds(&contexts);
 
         LexerModel {
@@ -28,62 +44,7 @@ impl LexerModelBuilder {
         }
     }
 
-    fn collect_fragments(language: &Language) -> BTreeMap<Identifier, Rc<FragmentItem>> {
-        language
-            .items()
-            .filter_map(|item| match item {
-                Item::Fragment { item } => Some((item.name.clone(), Rc::clone(item))),
-                _ => None,
-            })
-            .collect()
-    }
-
-    fn collect_contexts(&self, language: &Language) -> Vec<LexicalContext> {
-        let mut non_trivia = BTreeMap::<String, Vec<Lexeme>>::new();
-
-        // TODO(v2):
-        // The existing v1 grammar had an inconsistency where it defined all trivia in the 'Default' context,
-        // and the v1 parser dealt with it by parsing trivia using that context (regardless of the current one).
-        // We should instead remove `Item::trivia` from individual topics, and move it to a separate `Language` field,
-        // along with the existing `leading_trivia` and `trailing_trivia` fields.
-        // For now, we just collect trivia and duplicate them into all contexts:
-        let mut common_trivia = Vec::<Lexeme>::new();
-
-        for context in &language.contexts {
-            let context_name = context.name.to_string();
-            let entry = non_trivia.entry(context_name).or_default();
-
-            for item in context.items() {
-                match item {
-                    Item::Struct { .. } => {}
-                    Item::Enum { .. } => {}
-                    Item::Repeated { .. } => {}
-                    Item::Separated { .. } => {}
-                    Item::Precedence { .. } => {}
-
-                    Item::Trivia { item } => common_trivia.push(self.convert_trivia(item)),
-                    Item::Keyword { item } => {
-                        entry.extend(self.convert_keyword(item, context.identifier_token.as_ref()));
-                    }
-                    Item::Token { item } => entry.extend(self.convert_token(item)),
-
-                    Item::Fragment { .. } => {}
-                }
-            }
-        }
-
-        non_trivia
-            .into_iter()
-            .map(|(name, mut lexemes)| {
-                // Insert common trivia into each context:
-                lexemes.extend(common_trivia.iter().cloned());
-
-                LexicalContext { name, lexemes }
-            })
-            .collect()
-    }
-
-    fn collect_lexeme_kinds(contexts: &Vec<LexicalContext>) -> BTreeSet<String> {
+    fn collect_lexeme_kinds(contexts: &[LexicalContext]) -> BTreeSet<String> {
         let mut kinds = BTreeSet::new();
 
         for context in contexts {
@@ -122,62 +83,153 @@ impl LexerModelBuilder {
 
         kinds
     }
+}
 
-    fn convert_trivia(&self, item: &TriviaItem) -> Lexeme {
+struct LexicalContextBuilder {
+    common_trivia: Vec<Rc<TriviaItem>>,
+    fragments: BTreeMap<Identifier, Scanner>,
+
+    lexemes: Vec<Lexeme>,
+    subpatterns: IndexMap<Identifier, String>,
+}
+
+impl LexicalContextBuilder {
+    fn build(
+        common_trivia: Vec<Rc<TriviaItem>>,
+        language_context: &LanguageContext,
+    ) -> LexicalContext {
+        let fragments = language_context
+            .items()
+            .filter_map(|item| {
+                if let Item::Fragment { item } = item {
+                    Some((item.name.clone(), item.scanner.clone()))
+                } else {
+                    None
+                }
+            })
+            .collect();
+
+        let mut instance = Self {
+            common_trivia,
+            fragments,
+            lexemes: Vec::new(),
+            subpatterns: IndexMap::new(),
+        };
+
+        for item in language_context.items() {
+            match item {
+                Item::Struct { .. }
+                | Item::Enum { .. }
+                | Item::Repeated { .. }
+                | Item::Separated { .. }
+                | Item::Precedence { .. }
+                | Item::Trivia { .. }
+                | Item::Fragment { .. } => {}
+
+                Item::Keyword { item } => {
+                    let lexemes =
+                        Self::convert_keyword(item, language_context.identifier_token.as_ref());
+                    instance.lexemes.extend(lexemes);
+                }
+                Item::Token { item } => {
+                    let lexemes = instance.convert_token(item);
+                    instance.lexemes.extend(lexemes);
+                }
+            }
+        }
+
+        for i in 0..instance.common_trivia.len() {
+            let item = Rc::clone(&instance.common_trivia[i]);
+            let lexeme = instance.convert_trivia(&item);
+            instance.lexemes.push(lexeme);
+        }
+
+        let Self {
+            lexemes,
+            subpatterns,
+            ..
+        } = instance;
+
+        LexicalContext {
+            name: language_context.name.to_string(),
+            lexemes,
+            subpatterns,
+        }
+    }
+
+    fn add_subpattern(&mut self, name: &Identifier) {
+        if self.subpatterns.contains_key(name) {
+            return; // Already added before.
+        }
+
+        let scanner = self.fragments[name].clone();
+        let regex = self.convert_scanner(&scanner);
+        self.subpatterns.insert(name.clone(), regex);
+    }
+
+    fn convert_trivia(&mut self, item: &TriviaItem) -> Lexeme {
         Lexeme::Trivia {
             kind: item.name.to_string(),
             regex: self.convert_scanner(&item.scanner),
         }
     }
 
-    fn convert_keyword<'a>(
-        &'a self,
-        item: &'a KeywordItem,
-        identifier: Option<&'a Identifier>,
-    ) -> impl Iterator<Item = Lexeme> + 'a {
-        item.definitions.iter().map(move |def| Lexeme::Keyword {
-            kind: item.name.to_string(),
-            identifier: identifier.map(|id| id.to_string()),
-            regex: self.convert_keyword_value(&def.value),
-            reserved: def.reserved.clone().unwrap_or_default(),
-        })
+    fn convert_keyword(item: &KeywordItem, identifier: Option<&Identifier>) -> Vec<Lexeme> {
+        let mut result = Vec::new();
+
+        for definition in &item.definitions {
+            result.push(Lexeme::Keyword {
+                kind: item.name.to_string(),
+                identifier: identifier.map(|id| id.to_string()),
+                regex: Self::convert_keyword_value(&definition.value),
+                reserved: definition.reserved.clone().unwrap_or_default(),
+            });
+        }
+
+        result
     }
 
-    fn convert_token<'a>(&'a self, item: &'a TokenItem) -> impl Iterator<Item = Lexeme> + 'a {
-        item.definitions.iter().map(|def| Lexeme::Token {
-            kind: item.name.to_string(),
-            regex: self.convert_scanner(&def.scanner),
-        })
+    fn convert_token(&mut self, item: &TokenItem) -> Vec<Lexeme> {
+        let mut result = Vec::new();
+
+        for definition in &item.definitions {
+            result.push(Lexeme::Token {
+                kind: item.name.to_string(),
+                regex: self.convert_scanner(&definition.scanner),
+            });
+        }
+
+        result
     }
 
-    fn convert_keyword_value(&self, parent: &KeywordValue) -> String {
+    fn convert_keyword_value(parent: &KeywordValue) -> String {
         match parent {
             KeywordValue::Sequence { values } => values
                 .iter()
-                .map(|value| self.convert_child_keyword_value(parent, value))
+                .map(|value| Self::convert_child_keyword_value(parent, value))
                 .collect(),
 
             KeywordValue::Choice { values } => values
                 .iter()
-                .map(|value| self.convert_child_keyword_value(parent, value))
+                .map(|value| Self::convert_child_keyword_value(parent, value))
                 .collect::<Vec<_>>()
                 .join("|"),
 
             KeywordValue::Optional { value } => {
-                format!("{}?", self.convert_child_keyword_value(parent, value))
+                format!("{}?", Self::convert_child_keyword_value(parent, value))
             }
 
             KeywordValue::Atom { atom } => Self::convert_atom(atom),
         }
     }
 
-    fn convert_child_keyword_value(&self, parent: &KeywordValue, child: &KeywordValue) -> String {
+    fn convert_child_keyword_value(parent: &KeywordValue, child: &KeywordValue) -> String {
         if discriminant(parent) != discriminant(child)
             && Self::keyword_value_precedence(child) <= Self::keyword_value_precedence(parent)
         {
-            format!("({})", self.convert_keyword_value(child))
+            format!("({})", Self::convert_keyword_value(child))
         } else {
-            self.convert_keyword_value(child)
+            Self::convert_keyword_value(child)
         }
     }
 
@@ -192,18 +244,23 @@ impl LexerModelBuilder {
         }
     }
 
-    fn convert_scanner(&self, parent: &Scanner) -> String {
+    fn convert_scanner(&mut self, parent: &Scanner) -> String {
         match parent {
-            Scanner::Sequence { scanners } => scanners
-                .iter()
-                .map(|scanner| self.convert_child_scanner(parent, scanner))
-                .collect(),
+            Scanner::Sequence { scanners } => {
+                let mut result = String::new();
+                for scanner in scanners {
+                    result.push_str(&self.convert_child_scanner(parent, scanner));
+                }
+                result
+            }
 
-            Scanner::Choice { scanners } => scanners
-                .iter()
-                .map(|scanner| self.convert_child_scanner(parent, scanner))
-                .collect::<Vec<_>>()
-                .join("|"),
+            Scanner::Choice { scanners } => {
+                let mut parts = Vec::new();
+                for scanner in scanners {
+                    parts.push(self.convert_child_scanner(parent, scanner));
+                }
+                parts.join("|")
+            }
 
             Scanner::Optional { scanner } => {
                 format!("{}?", self.convert_child_scanner(parent, scanner))
@@ -239,33 +296,34 @@ impl LexerModelBuilder {
             Scanner::Atom { atom } => Self::convert_atom(atom),
 
             Scanner::Fragment { reference } => {
-                self.convert_child_scanner(parent, &self.fragments[reference].scanner)
+                self.add_subpattern(reference);
+                format!("(?&{reference})")
             }
         }
     }
 
-    fn convert_child_scanner(&self, parent: &Scanner, child: &Scanner) -> String {
-        if discriminant(parent) != discriminant(child)
-            && self.scanner_precedence(child) <= self.scanner_precedence(parent)
-        {
-            format!("({})", self.convert_scanner(child))
+    fn convert_child_scanner(&mut self, parent: &Scanner, child: &Scanner) -> String {
+        let needs_parens = discriminant(parent) != discriminant(child)
+            && Self::scanner_precedence(child) <= Self::scanner_precedence(parent);
+        if needs_parens {
+            let inner = self.convert_scanner(child);
+            format!("({inner})")
         } else {
             self.convert_scanner(child)
         }
     }
 
-    fn scanner_precedence(&self, scanner: &Scanner) -> u8 {
+    fn scanner_precedence(scanner: &Scanner) -> u8 {
         match scanner {
             // Binary:
             Scanner::Sequence { .. } | Scanner::Choice { .. } => 1,
             // Postfix:
             Scanner::Optional { .. } | Scanner::ZeroOrMore { .. } | Scanner::OneOrMore { .. } => 2,
             // Primary:
-            Scanner::Not { .. } | Scanner::Range { .. } | Scanner::Atom { .. } => 3,
-            // Other:
-            Scanner::Fragment { reference } => {
-                self.scanner_precedence(&self.fragments[reference].scanner)
-            }
+            Scanner::Not { .. }
+            | Scanner::Range { .. }
+            | Scanner::Atom { .. }
+            | Scanner::Fragment { .. } => 3,
         }
     }
 

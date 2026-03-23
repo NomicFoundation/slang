@@ -22,14 +22,15 @@ pub(super) fn run(contract: &Contract, unit: &CompilationUnit, events: &Events) 
             continue;
         }
 
-        let source = contract.read_file(file.id()).unwrap();
+        // The V2 language only supports 0.8.0 and above
+        if contract.version >= Version::new(0, 8, 0) {
+            let source = contract.read_file(file.id()).unwrap();
 
-        // _SLANG_V2_PARSER_VERSION_ (keep in sync)
-        if contract.version == Version::new(0, 8, 30) {
             let v2_errors =
                 solidity_v2_testing_utils::v1_comparison::parser::compare_with_v1_cursor(
                     &source,
                     &file.create_tree_cursor(),
+                    &contract.version,
                 );
             if !v2_errors.is_empty() {
                 print_errors(

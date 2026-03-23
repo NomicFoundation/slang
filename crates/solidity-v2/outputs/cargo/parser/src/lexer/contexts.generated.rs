@@ -5,13 +5,6 @@ use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::lexer::lexemes::{Lexeme, LexemeKind};
 
-#[derive(Clone, Copy, Debug)]
-pub enum ContextKind {
-    Pragma,
-    Solidity,
-    Yul,
-}
-
 #[derive(Clone)]
 pub struct ContextExtras {
     // Since we restricted Slang v2 lexer to only support Solidity 0.8.0+, all the remaining keywords
@@ -30,34 +23,32 @@ pub enum ContextWrapper<'source> {
 }
 
 impl<'source> ContextWrapper<'source> {
-    pub fn new(kind: ContextKind, source: &'source str, extras: ContextExtras) -> Self {
-        match kind {
-            ContextKind::Pragma => Self::Pragma(PragmaContext::lexer_with_extras(source, extras)),
-            ContextKind::Solidity => {
-                Self::Solidity(SolidityContext::lexer_with_extras(source, extras))
-            }
-            ContextKind::Yul => Self::Yul(YulContext::lexer_with_extras(source, extras)),
-        }
+    pub fn new(source: &'source str, extras: ContextExtras) -> Self {
+        Self::Solidity(SolidityContext::lexer_with_extras(source, extras))
     }
 
     #[must_use]
-    pub fn morph(self, kind: ContextKind) -> Self {
+    pub fn morph_to_pragma(self) -> Self {
         match self {
-            Self::Pragma(lexer) => match kind {
-                ContextKind::Pragma => Self::Pragma(lexer),
-                ContextKind::Solidity => Self::Solidity(lexer.morph()),
-                ContextKind::Yul => Self::Yul(lexer.morph()),
-            },
-            Self::Solidity(lexer) => match kind {
-                ContextKind::Pragma => Self::Pragma(lexer.morph()),
-                ContextKind::Solidity => Self::Solidity(lexer),
-                ContextKind::Yul => Self::Yul(lexer.morph()),
-            },
-            Self::Yul(lexer) => match kind {
-                ContextKind::Pragma => Self::Pragma(lexer.morph()),
-                ContextKind::Solidity => Self::Solidity(lexer.morph()),
-                ContextKind::Yul => Self::Yul(lexer),
-            },
+            Self::Pragma(lexer) => Self::Pragma(lexer),
+            Self::Solidity(lexer) => Self::Pragma(lexer.morph()),
+            Self::Yul(lexer) => Self::Pragma(lexer.morph()),
+        }
+    }
+    #[must_use]
+    pub fn morph_to_solidity(self) -> Self {
+        match self {
+            Self::Pragma(lexer) => Self::Solidity(lexer.morph()),
+            Self::Solidity(lexer) => Self::Solidity(lexer),
+            Self::Yul(lexer) => Self::Solidity(lexer.morph()),
+        }
+    }
+    #[must_use]
+    pub fn morph_to_yul(self) -> Self {
+        match self {
+            Self::Pragma(lexer) => Self::Yul(lexer.morph()),
+            Self::Solidity(lexer) => Self::Yul(lexer.morph()),
+            Self::Yul(lexer) => Self::Yul(lexer),
         }
     }
 
@@ -86,41 +77,56 @@ impl<'source> ContextWrapper<'source> {
 
 #[derive(Clone, Debug, Logos)]
 #[logos(extras = ContextExtras)]
+#[logos(subpattern VersionSpecifierFragment = r#"([0-9]|x|X|\*)+"#)]
+#[logos(subpattern PragmaAsciiEscape = r#"n|r|t|'|"|\\|\r\n|\r|\n"#)]
+#[logos(subpattern PragmaHexCharacter = r#"[0-9]|[a-f]|[A-F]"#)]
+#[logos(subpattern PragmaHexByteEscape = r#"x(?&PragmaHexCharacter)(?&PragmaHexCharacter)"#)]
+#[logos(subpattern PragmaUnicodeEscape = r#"u(?&PragmaHexCharacter)(?&PragmaHexCharacter)(?&PragmaHexCharacter)(?&PragmaHexCharacter)"#)]
+#[logos(subpattern PragmaEscapeSequence = r#"\\((?&PragmaAsciiEscape)|(?&PragmaHexByteEscape)|(?&PragmaUnicodeEscape))"#)]
 pub enum PragmaContext {
-    #[regex(r#"(([0-9]|x|X|\*)+)"#, |_| { LexemeKind::VersionSpecifier }, priority = 2000001)]
-    #[regex(r#"'(([0-9]|x|X|\*)+)(\.(([0-9]|x|X|\*)+))*'"#, |_| { LexemeKind::SingleQuotedVersionLiteral }, priority = 2000002)]
-    #[regex(r#""(([0-9]|x|X|\*)+)(\.(([0-9]|x|X|\*)+))*""#, |_| { LexemeKind::DoubleQuotedVersionLiteral }, priority = 2000003)]
-    #[regex(r#"abicoder"#, |_| { LexemeKind::AbicoderKeyword_Reserved }, priority = 3000004)]
-    #[regex(r#"experimental"#, |_| { LexemeKind::ExperimentalKeyword_Reserved }, priority = 3000005)]
-    #[regex(r#"v1"#, |_| { LexemeKind::AbicoderV1Keyword_Reserved }, priority = 3000006)]
-    #[regex(r#"v2"#, |_| { LexemeKind::AbicoderV2Keyword_Reserved }, priority = 3000007)]
-    #[regex(r#"ABIEncoderV2"#, |_| { LexemeKind::ABIEncoderV2Keyword_Reserved }, priority = 3000008)]
-    #[regex(r#"SMTChecker"#, |_| { LexemeKind::SMTCheckerKeyword_Reserved }, priority = 3000009)]
-    #[regex(r#"solidity"#, |_| { LexemeKind::SolidityKeyword_Reserved }, priority = 3000010)]
-    #[regex(r#"\|\|"#, |_| { LexemeKind::PragmaBarBar }, priority = 2000011)]
-    #[regex(r#"\^"#, |_| { LexemeKind::PragmaCaret }, priority = 2000012)]
-    #[regex(r#"="#, |_| { LexemeKind::PragmaEqual }, priority = 2000013)]
-    #[regex(r#">"#, |_| { LexemeKind::PragmaGreaterThan }, priority = 2000014)]
-    #[regex(r#">="#, |_| { LexemeKind::PragmaGreaterThanEqual }, priority = 2000015)]
-    #[regex(r#"<"#, |_| { LexemeKind::PragmaLessThan }, priority = 2000016)]
-    #[regex(r#"<="#, |_| { LexemeKind::PragmaLessThanEqual }, priority = 2000017)]
-    #[regex(r#"-"#, |_| { LexemeKind::PragmaMinus }, priority = 2000018)]
-    #[regex(r#"\."#, |_| { LexemeKind::PragmaPeriod }, priority = 2000019)]
-    #[regex(r#";"#, |_| { LexemeKind::PragmaSemicolon }, priority = 2000020)]
-    #[regex(r#"~"#, |_| { LexemeKind::PragmaTilde }, priority = 2000021)]
-    #[regex(r#"'(((\\(((n|r|t|'|"|\\|\r\n|\r|\n))|((x(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))))|((u(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))))))|[ -&]|[\(-\[]|[\]-~])*'"#, |_| { LexemeKind::PragmaSingleQuotedStringLiteral }, priority = 2000022)]
-    #[regex(r#""(((\\(((n|r|t|'|"|\\|\r\n|\r|\n))|((x(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))))|((u(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))))))|[ -!]|[#-\[]|[\]-~])*""#, |_| { LexemeKind::PragmaDoubleQuotedStringLiteral }, priority = 2000023)]
-    #[regex(r#"( |\t)+"#, |_| { LexemeKind::Whitespace }, priority = 1000024, allow_greedy = true)]
-    #[regex(r#"\n|(\r\n?)"#, |_| { LexemeKind::EndOfLine }, priority = 1000025, allow_greedy = true)]
-    #[regex(r#"//[^\r\n]*"#, |_| { LexemeKind::SingleLineComment }, priority = 1000026, allow_greedy = true)]
-    #[regex(r#"/\*[^\*]*\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineComment }, priority = 1000027, allow_greedy = true)]
-    #[regex(r#"///[^\r\n]*"#, |_| { LexemeKind::SingleLineNatSpecComment }, priority = 1000028, allow_greedy = true)]
-    #[regex(r#"/\*\*([^/\*][^\*]*)?\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineNatSpecComment }, priority = 1000029, allow_greedy = true)]
+    #[regex(r#"(?&VersionSpecifierFragment)"#, |_| { LexemeKind::VersionSpecifier }, priority = 2000001)]
+    #[regex(r#"abicoder"#, |_| { LexemeKind::AbicoderKeyword_Reserved }, priority = 3000002)]
+    #[regex(r#"experimental"#, |_| { LexemeKind::ExperimentalKeyword_Reserved }, priority = 3000003)]
+    #[regex(r#"v1"#, |_| { LexemeKind::AbicoderV1Keyword_Reserved }, priority = 3000004)]
+    #[regex(r#"v2"#, |_| { LexemeKind::AbicoderV2Keyword_Reserved }, priority = 3000005)]
+    #[regex(r#"ABIEncoderV2"#, |_| { LexemeKind::ABIEncoderV2Keyword_Reserved }, priority = 3000006)]
+    #[regex(r#"SMTChecker"#, |_| { LexemeKind::SMTCheckerKeyword_Reserved }, priority = 3000007)]
+    #[regex(r#"solidity"#, |_| { LexemeKind::SolidityKeyword_Reserved }, priority = 3000008)]
+    #[regex(r#"\|\|"#, |_| { LexemeKind::PragmaBarBar }, priority = 2000009)]
+    #[regex(r#"\^"#, |_| { LexemeKind::PragmaCaret }, priority = 2000010)]
+    #[regex(r#"="#, |_| { LexemeKind::PragmaEqual }, priority = 2000011)]
+    #[regex(r#">"#, |_| { LexemeKind::PragmaGreaterThan }, priority = 2000012)]
+    #[regex(r#">="#, |_| { LexemeKind::PragmaGreaterThanEqual }, priority = 2000013)]
+    #[regex(r#"<"#, |_| { LexemeKind::PragmaLessThan }, priority = 2000014)]
+    #[regex(r#"<="#, |_| { LexemeKind::PragmaLessThanEqual }, priority = 2000015)]
+    #[regex(r#"-"#, |_| { LexemeKind::PragmaMinus }, priority = 2000016)]
+    #[regex(r#"\."#, |_| { LexemeKind::PragmaPeriod }, priority = 2000017)]
+    #[regex(r#";"#, |_| { LexemeKind::PragmaSemicolon }, priority = 2000018)]
+    #[regex(r#"~"#, |_| { LexemeKind::PragmaTilde }, priority = 2000019)]
+    #[regex(r#"'((?&PragmaEscapeSequence)|[ -&]|[\(-\[]|[\]-~])*'"#, |_| { LexemeKind::PragmaSingleQuotedStringLiteral }, priority = 2000020)]
+    #[regex(r#""((?&PragmaEscapeSequence)|[ -!]|[#-\[]|[\]-~])*""#, |_| { LexemeKind::PragmaDoubleQuotedStringLiteral }, priority = 2000021)]
+    #[regex(r#"( |\t)+"#, |_| { LexemeKind::Whitespace }, priority = 1000022, allow_greedy = true)]
+    #[regex(r#"\n|(\r\n?)"#, |_| { LexemeKind::EndOfLine }, priority = 1000023, allow_greedy = true)]
+    #[regex(r#"//[^\r\n]*"#, |_| { LexemeKind::SingleLineComment }, priority = 1000024, allow_greedy = true)]
+    #[regex(r#"/\*[^\*]*\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineComment }, priority = 1000025, allow_greedy = true)]
+    #[regex(r#"///[^\r\n]*"#, |_| { LexemeKind::SingleLineNatSpecComment }, priority = 1000026, allow_greedy = true)]
+    #[regex(r#"/\*\*([^/\*][^\*]*)?\*+([^/\*][^\*]*\*+)*/"#, |_| { LexemeKind::MultiLineNatSpecComment }, priority = 1000027, allow_greedy = true)]
     Lexeme(LexemeKind),
 }
 
 #[derive(Clone, Debug, Logos)]
 #[logos(extras = ContextExtras)]
+#[logos(subpattern HexCharacter = r#"[0-9]|[a-f]|[A-F]"#)]
+#[logos(subpattern DecimalDigits = r#"[0-9]+(_[0-9]+)*"#)]
+#[logos(subpattern DecimalExponent = r#"(e|E)-?(?&DecimalDigits)"#)]
+#[logos(subpattern AsciiEscape = r#"n|r|t|'|"|\\|\r\n|\r|\n"#)]
+#[logos(subpattern HexByteEscape = r#"x(?&HexCharacter)(?&HexCharacter)"#)]
+#[logos(subpattern UnicodeEscape = r#"u(?&HexCharacter)(?&HexCharacter)(?&HexCharacter)(?&HexCharacter)"#)]
+#[logos(subpattern EscapeSequence = r#"\\((?&AsciiEscape)|(?&HexByteEscape)|(?&UnicodeEscape))"#)]
+#[logos(subpattern HexStringContents = r#"(?&HexCharacter)(?&HexCharacter)(_?(?&HexCharacter)(?&HexCharacter))*"#)]
+#[logos(subpattern UnicodeEscapeSequence = r#"\\((?&AsciiEscape)|(?&HexByteEscape)|(?&UnicodeEscape))"#)]
+#[logos(subpattern IdentifierStart = r#"_|\$|[a-z]|[A-Z]"#)]
+#[logos(subpattern IdentifierPart = r#"(?&IdentifierStart)|[0-9]"#)]
 pub enum SolidityContext {
     #[regex(r#"abstract"#, |_| { LexemeKind::AbstractKeyword_Reserved }, priority = 3000001)]
     #[regex(r#"address"#, |_| { LexemeKind::AddressKeyword_Reserved }, priority = 3000002)]
@@ -290,16 +296,16 @@ pub enum SolidityContext {
     #[regex(r#"\^"#, |_| { LexemeKind::Caret }, priority = 2000166)]
     #[regex(r#"\^="#, |_| { LexemeKind::CaretEqual }, priority = 2000167)]
     #[regex(r#"~"#, |_| { LexemeKind::Tilde }, priority = 2000168)]
-    #[regex(r#"0x(([0-9]|[a-f]|[A-F]))+(_(([0-9]|[a-f]|[A-F]))+)*"#, |_| { LexemeKind::HexLiteral }, priority = 2000169)]
-    #[regex(r#"(([0-9]+(_[0-9]+)*))(\.(([0-9]+(_[0-9]+)*)))?(((e|E)-?(([0-9]+(_[0-9]+)*))))?"#, |_| { LexemeKind::DecimalLiteral }, priority = 2000170)]
-    #[regex(r#"\.(([0-9]+(_[0-9]+)*))(((e|E)-?(([0-9]+(_[0-9]+)*))))?"#, |_| { LexemeKind::DecimalLiteral }, priority = 2000171)]
-    #[regex(r#"'(((\\(((n|r|t|'|"|\\|\r\n|\r|\n))|((x(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))))|((u(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))))))|[ -&]|[\(-\[]|[\]-~])*'"#, |_| { LexemeKind::SingleQuotedStringLiteral }, priority = 2000172)]
-    #[regex(r#""(((\\(((n|r|t|'|"|\\|\r\n|\r|\n))|((x(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))))|((u(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))))))|[ -!]|[#-\[]|[\]-~])*""#, |_| { LexemeKind::DoubleQuotedStringLiteral }, priority = 2000173)]
-    #[regex(r#"hex'(((([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(_?(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))*))?'"#, |_| { LexemeKind::SingleQuotedHexStringLiteral }, priority = 2000174)]
-    #[regex(r#"hex"(((([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(_?(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))*))?""#, |_| { LexemeKind::DoubleQuotedHexStringLiteral }, priority = 2000175)]
-    #[regex(r#"unicode'(((\\(((n|r|t|'|"|\\|\r\n|\r|\n))|((x(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))))|((u(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))))))|[^'\\\r\n])*'"#, |_| { LexemeKind::SingleQuotedUnicodeStringLiteral }, priority = 2000176)]
-    #[regex(r#"unicode"(((\\(((n|r|t|'|"|\\|\r\n|\r|\n))|((x(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))))|((u(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))))))|[^"\\\r\n])*""#, |_| { LexemeKind::DoubleQuotedUnicodeStringLiteral }, priority = 2000177)]
-    #[regex(r#"((_|\$|[a-z]|[A-Z]))((((_|\$|[a-z]|[A-Z]))|[0-9]))*"#, |_| { LexemeKind::Identifier }, priority = 2000178)]
+    #[regex(r#"0x(?&HexCharacter)+(_(?&HexCharacter)+)*"#, |_| { LexemeKind::HexLiteral }, priority = 2000169)]
+    #[regex(r#"(?&DecimalDigits)(\.(?&DecimalDigits))?(?&DecimalExponent)?"#, |_| { LexemeKind::DecimalLiteral }, priority = 2000170)]
+    #[regex(r#"\.(?&DecimalDigits)(?&DecimalExponent)?"#, |_| { LexemeKind::DecimalLiteral }, priority = 2000171)]
+    #[regex(r#"'((?&EscapeSequence)|[ -&]|[\(-\[]|[\]-~])*'"#, |_| { LexemeKind::SingleQuotedStringLiteral }, priority = 2000172)]
+    #[regex(r#""((?&EscapeSequence)|[ -!]|[#-\[]|[\]-~])*""#, |_| { LexemeKind::DoubleQuotedStringLiteral }, priority = 2000173)]
+    #[regex(r#"hex'(?&HexStringContents)?'"#, |_| { LexemeKind::SingleQuotedHexStringLiteral }, priority = 2000174)]
+    #[regex(r#"hex"(?&HexStringContents)?""#, |_| { LexemeKind::DoubleQuotedHexStringLiteral }, priority = 2000175)]
+    #[regex(r#"unicode'((?&UnicodeEscapeSequence)|[^'\\\r\n])*'"#, |_| { LexemeKind::SingleQuotedUnicodeStringLiteral }, priority = 2000176)]
+    #[regex(r#"unicode"((?&UnicodeEscapeSequence)|[^"\\\r\n])*""#, |_| { LexemeKind::DoubleQuotedUnicodeStringLiteral }, priority = 2000177)]
+    #[regex(r#"(?&IdentifierStart)(?&IdentifierPart)*"#, |_| { LexemeKind::Identifier }, priority = 2000178)]
     #[regex(r#"( |\t)+"#, |_| { LexemeKind::Whitespace }, priority = 1000179, allow_greedy = true)]
     #[regex(r#"\n|(\r\n?)"#, |_| { LexemeKind::EndOfLine }, priority = 1000180, allow_greedy = true)]
     #[regex(r#"//[^\r\n]*"#, |_| { LexemeKind::SingleLineComment }, priority = 1000181, allow_greedy = true)]
@@ -311,14 +317,22 @@ pub enum SolidityContext {
 
 #[derive(Clone, Debug, Logos)]
 #[logos(extras = ContextExtras)]
+#[logos(subpattern YulIdentifierStart = r#"_|\$|[a-z]|[A-Z]"#)]
+#[logos(subpattern YulIdentifierPart = r#"(?&YulIdentifierStart)|[0-9]"#)]
+#[logos(subpattern YulHexCharacter = r#"[0-9]|[a-f]|[A-F]"#)]
+#[logos(subpattern YulHexStringContents = r#"(?&YulHexCharacter)(?&YulHexCharacter)(_?(?&YulHexCharacter)(?&YulHexCharacter))*"#)]
+#[logos(subpattern YulAsciiEscape = r#"n|r|t|'|"|\\|\r\n|\r|\n"#)]
+#[logos(subpattern YulHexByteEscape = r#"x(?&YulHexCharacter)(?&YulHexCharacter)"#)]
+#[logos(subpattern YulUnicodeEscape = r#"u(?&YulHexCharacter)(?&YulHexCharacter)(?&YulHexCharacter)(?&YulHexCharacter)"#)]
+#[logos(subpattern YulEscapeSequence = r#"\\((?&YulAsciiEscape)|(?&YulHexByteEscape)|(?&YulUnicodeEscape))"#)]
 pub enum YulContext {
-    #[regex(r#"((_|\$|[a-z]|[A-Z]))((((_|\$|[a-z]|[A-Z]))|[0-9]))*"#, |_| { LexemeKind::YulIdentifier }, priority = 2000001)]
+    #[regex(r#"(?&YulIdentifierStart)(?&YulIdentifierPart)*"#, |_| { LexemeKind::YulIdentifier }, priority = 2000001)]
     #[regex(r#"0|([1-9][0-9]*)"#, |_| { LexemeKind::YulDecimalLiteral }, priority = 2000002)]
-    #[regex(r#"0x(([0-9]|[a-f]|[A-F]))+"#, |_| { LexemeKind::YulHexLiteral }, priority = 2000003)]
-    #[regex(r#"hex'(((([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(_?(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))*))?'"#, |_| { LexemeKind::YulSingleQuotedHexStringLiteral }, priority = 2000004)]
-    #[regex(r#"hex"(((([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(_?(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))*))?""#, |_| { LexemeKind::YulDoubleQuotedHexStringLiteral }, priority = 2000005)]
-    #[regex(r#"'(((\\(((n|r|t|'|"|\\|\r\n|\r|\n))|((x(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))))|((u(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))))))|[ -&]|[\(-\[]|[\]-~])*'"#, |_| { LexemeKind::YulSingleQuotedStringLiteral }, priority = 2000006)]
-    #[regex(r#""(((\\(((n|r|t|'|"|\\|\r\n|\r|\n))|((x(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))))|((u(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F]))(([0-9]|[a-f]|[A-F])))))))|[ -!]|[#-\[]|[\]-~])*""#, |_| { LexemeKind::YulDoubleQuotedStringLiteral }, priority = 2000007)]
+    #[regex(r#"0x(?&YulHexCharacter)+"#, |_| { LexemeKind::YulHexLiteral }, priority = 2000003)]
+    #[regex(r#"hex'(?&YulHexStringContents)?'"#, |_| { LexemeKind::YulSingleQuotedHexStringLiteral }, priority = 2000004)]
+    #[regex(r#"hex"(?&YulHexStringContents)?""#, |_| { LexemeKind::YulDoubleQuotedHexStringLiteral }, priority = 2000005)]
+    #[regex(r#"'((?&YulEscapeSequence)|[ -&]|[\(-\[]|[\]-~])*'"#, |_| { LexemeKind::YulSingleQuotedStringLiteral }, priority = 2000006)]
+    #[regex(r#""((?&YulEscapeSequence)|[ -!]|[#-\[]|[\]-~])*""#, |_| { LexemeKind::YulDoubleQuotedStringLiteral }, priority = 2000007)]
     #[regex(r#"break"#, |_| { LexemeKind::YulBreakKeyword_Reserved }, priority = 3000008)]
     #[regex(r#"case"#, |_| { LexemeKind::YulCaseKeyword_Reserved }, priority = 3000009)]
     #[regex(r#"continue"#, |_| { LexemeKind::YulContinueKeyword_Reserved }, priority = 3000010)]
