@@ -7,11 +7,23 @@ name: "publish"
 #                             and publish to npm/crates.io/GitHub Releases.
 #                             Requires manual approval via the slang-release environment.
 #
-#   workflow_dispatch       — Same as push-to-main publish path. Requires manual approval.
+#   workflow_dispatch       — Replays the push-to-main path (e.g. to retry a
+#                             flaky publish). Requires manual approval.
 #
 #   pull_request (ci:release label) — Dry-run: exercises the full build and validation
 #                             pipeline (WASM build, cargo/npm dry-run) but skips actual
 #                             publishing. No approval needed.
+#
+# Job graph:
+#
+#   label-check ─→ changesets ─→ build-and-validate ─┬→ publish          (push/dispatch)
+#                                                     └→ dry-run-summary (PR only)
+#
+#   - changesets only runs for push/dispatch; skipped for PRs.
+#   - build-and-validate runs when changesets is skipped (PR) or has no pending changesets.
+#   - publish explicitly requires changesets to have run with no pending changesets,
+#     so it never runs for PRs (changesets is skipped → publish is auto-skipped).
+#   - dry-run-summary only runs for PRs.
 
 on:
   # Run using manual triggers from GitHub UI:
@@ -25,7 +37,10 @@ on:
 
   # Run on PRs labeled 'ci:release' for dry-run validation:
   pull_request:
-    types: [opened, labeled, synchronize]
+    types:
+      - "opened"
+      - "labeled"
+      - "synchronize"
 
 permissions: {}
 
@@ -36,13 +51,15 @@ concurrency:
 
 jobs:
   # ───────────────────────────────────────────────
-  # Gate: skip the entire workflow for unlabeled PRs and forks
+  # Gate: allow push, dispatch, and labeled non-fork PRs
   # ───────────────────────────────────────────────
 
   label-check:
     if: >-
-      github.event_name != 'pull_request'
-      || (contains(github.event.pull_request.labels.*.name, 'ci:release')
+      github.event_name == 'push'
+      || github.event_name == 'workflow_dispatch'
+      || (github.event_name == 'pull_request'
+          && contains(github.event.pull_request.labels.*.name, 'ci:release')
           && !github.event.pull_request.head.repo.fork)
     runs-on: "ubuntu-22.04"
     permissions:
@@ -52,13 +69,14 @@ jobs:
 
   # ───────────────────────────────────────────────
   # Changesets: process version bumps and publish docs
-  # Only runs on push to main (not PRs or dispatch)
+  # Runs on push to main and dispatch (not PRs)
   # ───────────────────────────────────────────────
 
   changesets:
-    needs: [label-check]
+    needs:
+      - "label-check"
     if: >-
-      github.event_name == 'push'
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
       && github.repository == 'NomicFoundation/slang'
       && github.ref_name == 'main'
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
@@ -112,16 +130,17 @@ jobs:
 
   # ───────────────────────────────────────────────
   # Build & Validate: build WASM and dry-run publish
-  # Runs for PR dry-runs (always) and push-to-main
-  # when a version-bump PR just merged.
+  # Runs for PR dry-runs, and for push/dispatch when
+  # a version-bump PR just merged (no pending changesets).
   # ───────────────────────────────────────────────
 
   build-and-validate:
-    needs: [label-check, changesets]
+    needs:
+      - "label-check"
+      - "changesets"
     # Run when:
-    # - PR dry-run (changesets job is skipped, so we can't check its output)
-    # - Push to main when version-bump PR just merged (no pending changesets)
-    # - Manual dispatch (changesets job is skipped)
+    # - PR dry-run (changesets job is skipped)
+    # - Push to main or dispatch when no pending changesets (version-bump PR just merged)
     if: >-
       always()
       && needs.label-check.result == 'success'
@@ -149,56 +168,18 @@ jobs:
         run: "./scripts/bin/infra publish cargo --dry-run"
 
   # ───────────────────────────────────────────────
-  # Publish: actual publishing with environment gate
-  # PRs get a dry-run summary; non-PRs require approval.
+  # Dry-run summary: PR-only, reports what was validated
   # ───────────────────────────────────────────────
 
-  publish:
-    needs: [build-and-validate]
-    if: "!cancelled() && needs.build-and-validate.result == 'success'"
-    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
-    # PR dry-runs skip the manual approval gate; push/dispatch runs require it.
-    environment: "${{ github.event_name != 'pull_request' && 'slang-release' || '' }}"
-    permissions:
-      contents: "write" # to create new releases
-      id-token: "write" # OIDC token (needed for trusted publishing)
+  dry-run-summary:
+    needs:
+      - "build-and-validate"
+    if: >-
+      github.event_name == 'pull_request'
+      && needs.build-and-validate.result == 'success'
+    runs-on: "ubuntu-22.04"
     steps:
-      - name: "Checkout Repository"
-        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
-        with:
-          persist-credentials: false
-
-      - name: "Restore Cache"
-        if: "${{ github.event_name != 'pull_request' }}"
-        uses: "./.github/actions/cache/restore"
-
-      - name: "infra setup"
-        if: "${{ github.event_name != 'pull_request' }}"
-        run: "./scripts/bin/infra setup"
-
-      - name: "infra publish npm"
-        if: "${{ github.event_name != 'pull_request' }}"
-        run: "./scripts/bin/infra publish npm"
-
-      - name: "Exchange Cargo Token"
-        if: "${{ github.event_name != 'pull_request' }}"
-        id: "exchangeCargoToken"
-        uses: "rust-lang/crates-io-auth-action@b7e9a28eded4986ec6b1fa40eeee8f8f165559ec"
-
-      - name: "infra publish cargo"
-        if: "${{ github.event_name != 'pull_request' }}"
-        run: "./scripts/bin/infra publish cargo"
-        env:
-          CARGO_REGISTRY_TOKEN: "${{ steps.exchangeCargoToken.outputs.token }}"
-
-      - name: "infra publish github-release"
-        if: "${{ github.event_name != 'pull_request' }}"
-        run: "./scripts/bin/infra publish github-release"
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-
       - name: "DRY-RUN: publish summary"
-        if: "${{ github.event_name == 'pull_request' }}"
         run: |
           echo "## Publish Dry-Run Summary" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
@@ -213,3 +194,50 @@ jobs:
           echo "- \`infra publish npm\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`infra publish cargo\` (via OIDC trusted publishing)" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`infra publish github-release\`" >> "$GITHUB_STEP_SUMMARY"
+
+  # ───────────────────────────────────────────────
+  # Publish: actual publishing with environment gate
+  # Only runs on push to main or dispatch (never PRs).
+  # ───────────────────────────────────────────────
+
+  publish:
+    needs:
+      - "changesets"
+      - "build-and-validate"
+    if: >-
+      github.event_name != 'pull_request'
+      && needs.changesets.outputs.hasChangesets == 'false'
+      && needs.build-and-validate.result == 'success'
+    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    environment: "slang-release"
+    permissions:
+      contents: "write" # to create new releases
+      id-token: "write" # OIDC token (needed for trusted publishing)
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+        with:
+          persist-credentials: false
+
+      - name: "Restore Cache"
+        uses: "./.github/actions/cache/restore"
+
+      - name: "infra setup"
+        run: "./scripts/bin/infra setup"
+
+      - name: "infra publish npm"
+        run: "./scripts/bin/infra publish npm"
+
+      - name: "Exchange Cargo Token"
+        id: "exchangeCargoToken"
+        uses: "rust-lang/crates-io-auth-action@b7e9a28eded4986ec6b1fa40eeee8f8f165559ec"
+
+      - name: "infra publish cargo"
+        run: "./scripts/bin/infra publish cargo"
+        env:
+          CARGO_REGISTRY_TOKEN: "${{ steps.exchangeCargoToken.outputs.token }}"
+
+      - name: "infra publish github-release"
+        run: "./scripts/bin/infra publish github-release"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
