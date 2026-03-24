@@ -15,6 +15,7 @@ members = [
 
     "crates/codegen-v2/cst",
     "crates/codegen-v2/parser",
+    "crates/codegen-v2/semantic",
 
     "crates/infra/cli",
     "crates/infra/utils",
