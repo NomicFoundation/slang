@@ -14,9 +14,15 @@ pub struct IrModelMutator {
     // Single field sequences that should be collapsed to their content.
     pub collapsed_sequences: BTreeMap<model::Identifier, CollapsedSequence>,
 
+    // Choice types with all terminal variants collapsed to a single target type.
+    pub collapsed_choices: BTreeMap<model::Identifier, CollapsedChoice>,
+
     // Terminal nodes and whether they are unique or their value depends on the
     // content.
     pub terminals: BTreeMap<model::Identifier, MutatedTerminal>,
+
+    // Terminals that have been normalized (renamed) to a canonical equivalent.
+    pub normalized_terminals: BTreeMap<model::Identifier, NormalizedTerminal>,
 }
 
 #[derive(Clone, Serialize)]
@@ -66,6 +72,16 @@ pub struct CollapsedSequence {
 }
 
 #[derive(Clone, Serialize)]
+pub struct CollapsedChoice {
+    // The variants of the original choice type. All must be terminals.
+    pub variants: Vec<MutatedVariant>,
+    // The target type that replaces the collapsed choice everywhere.
+    pub target: NodeType,
+    // Whether the target type is an identifier (needed for builder generation).
+    pub target_is_identifier: bool,
+}
+
+#[derive(Clone, Serialize)]
 pub struct MutatedField {
     pub label: model::Identifier,
     pub r#type: NodeType,
@@ -98,9 +114,15 @@ impl From<&MutatedField> for Field {
 }
 
 #[derive(Clone, Serialize)]
+pub struct MutatedVariant {
+    pub source: NodeType,
+    pub target: NodeType,
+    pub is_new: bool,
+}
+
+#[derive(Clone, Serialize)]
 pub struct MutatedChoice {
-    pub variants: Vec<NodeType>,
-    pub added_variants: Vec<NodeType>,
+    pub variants: Vec<MutatedVariant>,
 
     // Indicates some variants have been removed so the transformer
     // generator can handle them.
@@ -113,8 +135,15 @@ pub struct MutatedChoice {
 impl From<&Choice> for MutatedChoice {
     fn from(value: &Choice) -> Self {
         Self {
-            variants: value.variants.clone(),
-            added_variants: Vec::new(),
+            variants: value
+                .variants
+                .iter()
+                .map(|v| MutatedVariant {
+                    source: v.clone(),
+                    target: v.clone(),
+                    is_new: false,
+                })
+                .collect(),
             has_removed_variants: false,
             is_new: false,
         }
@@ -123,8 +152,7 @@ impl From<&Choice> for MutatedChoice {
 
 impl From<&MutatedChoice> for Choice {
     fn from(value: &MutatedChoice) -> Self {
-        let mut variants = value.variants.clone();
-        variants.extend_from_slice(&value.added_variants);
+        let variants = value.variants.iter().map(|v| v.target.clone()).collect();
         Self { variants }
     }
 }
@@ -132,6 +160,7 @@ impl From<&MutatedChoice> for Choice {
 #[derive(Clone, Serialize)]
 pub struct MutatedCollection {
     pub item_type: NodeType,
+    pub target_item_type: NodeType,
 
     // Indicates this is a new collection type, created in this language.
     pub is_new: bool,
@@ -141,6 +170,7 @@ impl From<&Collection> for MutatedCollection {
     fn from(value: &Collection) -> Self {
         Self {
             item_type: value.item_type.clone(),
+            target_item_type: value.item_type.clone(),
             is_new: false,
         }
     }
@@ -149,7 +179,7 @@ impl From<&Collection> for MutatedCollection {
 impl From<&MutatedCollection> for Collection {
     fn from(value: &MutatedCollection) -> Self {
         Self {
-            item_type: value.item_type.clone(),
+            item_type: value.target_item_type.clone(),
         }
     }
 }
@@ -180,6 +210,13 @@ impl From<&MutatedTerminal> for Terminal {
             is_identifier: value.is_identifier,
         }
     }
+}
+
+#[derive(Clone, Serialize)]
+pub struct NormalizedTerminal {
+    pub target: model::Identifier,
+    pub target_is_identifier: bool,
+    pub is_unique: bool,
 }
 
 impl IrModelMutator {
@@ -213,7 +250,9 @@ impl IrModelMutator {
             choices,
             collections,
             collapsed_sequences: BTreeMap::new(),
+            collapsed_choices: BTreeMap::new(),
             terminals,
+            normalized_terminals: BTreeMap::new(),
         }
     }
 
@@ -255,7 +294,6 @@ impl IrModelMutator {
             name.into(),
             MutatedChoice {
                 variants: Vec::new(),
-                added_variants: Vec::new(),
                 is_new: true,
                 has_removed_variants: false,
             },
@@ -268,13 +306,17 @@ impl IrModelMutator {
         let Some(choice) = self.choices.get_mut(&identifier) else {
             panic!("Choice {choice_id} not found in IR model");
         };
-        choice.added_variants.push(variant_type);
+        choice.variants.push(MutatedVariant {
+            source: variant_type.clone(),
+            target: variant_type,
+            is_new: true,
+        });
     }
 
     // Adds a synthetic (ie. not referencing any CST nodes) choice type by adding
     // unique terminal types as the variants
     pub fn add_enum_type(&mut self, name: &str, variants: &[&str]) {
-        let mut added_variants = Vec::new();
+        let mut mutated_variants = Vec::new();
         for variant in variants {
             let identifier: model::Identifier = (*variant).into();
             if let Some(existing) = self.terminals.get(&identifier) {
@@ -292,13 +334,17 @@ impl IrModelMutator {
                     },
                 );
             }
-            added_variants.push(NodeType::UniqueTerminal((*variant).into()));
+            let node_type = NodeType::UniqueTerminal((*variant).into());
+            mutated_variants.push(MutatedVariant {
+                source: node_type.clone(),
+                target: node_type,
+                is_new: true,
+            });
         }
         self.choices.insert(
             name.into(),
             MutatedChoice {
-                variants: Vec::new(),
-                added_variants,
+                variants: mutated_variants,
                 is_new: true,
                 has_removed_variants: false,
             },
@@ -324,14 +370,15 @@ impl IrModelMutator {
         }
 
         for choice in self.choices.values_mut() {
-            if choice.variants.contains(&removed_type) {
+            let before_len = choice.variants.len();
+            choice.variants.retain(|v| v.target != removed_type);
+            if choice.variants.len() < before_len {
                 choice.has_removed_variants = true;
             }
-            choice.variants.retain(|item| *item != identifier);
         }
 
         self.collections
-            .retain(|_, repeated| repeated.item_type != identifier);
+            .retain(|_, repeated| repeated.target_item_type != identifier);
     }
 
     pub fn remove_sequence_field(&mut self, sequence_id: &str, field_label: &str) {
@@ -353,6 +400,38 @@ impl IrModelMutator {
             removed,
             "Could not find field {field_label} to remove in {sequence_id}"
         );
+    }
+
+    fn replace_type_references(&mut self, old: &NodeType, new: &NodeType) {
+        for sequence in self.sequences.values_mut() {
+            for field in &mut sequence.fields {
+                if field.target_type == *old {
+                    field.target_type = new.clone();
+                }
+            }
+        }
+        for choice in self.choices.values_mut() {
+            for variant in &mut choice.variants {
+                if variant.target == *old {
+                    variant.target = new.clone();
+                }
+            }
+        }
+        for collection in self.collections.values_mut() {
+            if collection.target_item_type == *old {
+                collection.target_item_type = new.clone();
+            }
+        }
+        for collapsed in self.collapsed_sequences.values_mut() {
+            if collapsed.target_type == *old {
+                collapsed.target_type = new.clone();
+            }
+        }
+        for collapsed in self.collapsed_choices.values_mut() {
+            if collapsed.target == *old {
+                collapsed.target = new.clone();
+            }
+        }
     }
 
     fn find_node_type(&self, identifier: &model::Identifier) -> NodeType {
@@ -414,37 +493,7 @@ impl IrModelMutator {
         );
         let replaced_type = self.find_node_type(&sequence_id.into());
 
-        // Iterate remaining sequences and replace any fields referencing the
-        // removed type by the target type
-        for sequence in self.sequences.values_mut() {
-            for field in &mut sequence.fields {
-                if field.target_type == identifier {
-                    field.target_type = replace_field.target_type.clone();
-                }
-            }
-        }
-
-        // Iterate choice types, remove type to be collapsed and add the
-        // replacement variant instead
-        // TODO: the transformer for this case is not generated automatically,
-        // but if we change the structure of `MutatedChoice` we could accomodate it
-        for choice in self.choices.values_mut() {
-            if choice.variants.contains(&replaced_type) {
-                choice.has_removed_variants = true;
-                choice.variants.retain(|item| *item != identifier);
-                choice
-                    .added_variants
-                    .push(replace_field.target_type.clone());
-            }
-        }
-
-        // Check that no collection type has the collapsed sequence as its item
-        // type because we cannot handle that case yet
-        for (collection_id, collection) in &self.collections {
-            if collection.item_type == replaced_type {
-                unreachable!("Cannot collapse {sequence_id} because it's the item type of collection {collection_id}");
-            }
-        }
+        self.replace_type_references(&replaced_type, &replace_field.target_type);
 
         // Determine the target type; the type of the single field may be
         // already collapsed, so we need to use it in that case
@@ -466,14 +515,62 @@ impl IrModelMutator {
                 target_type,
             },
         );
+    }
 
-        // Conversely, check if we need to update any other previously collapsed
-        // sequences
-        for collapsed in self.collapsed_sequences.values_mut() {
-            if collapsed.target_type == identifier {
-                collapsed.target_type = replace_field.r#type.clone();
-            }
+    // Removes a choice type whose variants are all terminals, replacing all
+    // references with a single target type. Supports same-name targets (where
+    // the choice is transmuted into a non-unique terminal with the same name).
+    pub fn collapse_choice(&mut self, choice_id: &str, target: &str) {
+        let identifier: model::Identifier = choice_id.into();
+        let Some(choice) = self.choices.remove(&identifier) else {
+            panic!("Choice {choice_id} not found in IR model");
+        };
+
+        // Assert all variants are terminals
+        for variant in &choice.variants {
+            assert!(
+                variant.target.is_terminal(),
+                "Cannot collapse choice {choice_id}: variant {} is not a terminal",
+                variant.target.as_identifier()
+            );
         }
+
+        // The old type is always Nonterminal (choices are nonterminals)
+        let collapsed_type = NodeType::Nonterminal(identifier.clone());
+
+        // Ensure the target exists as a non-unique terminal
+        let target_id: model::Identifier = target.into();
+        if let Some(terminal) = self.terminals.get(&target_id) {
+            assert!(
+                !terminal.is_unique,
+                "Cannot collapse choice {choice_id} to unique terminal {target}",
+            );
+        } else {
+            // Target doesn't exist yet as a terminal
+            self.terminals.insert(
+                target_id.clone(),
+                MutatedTerminal {
+                    is_unique: false,
+                    is_identifier: false,
+                    is_new: true,
+                },
+            );
+        }
+
+        let target_is_identifier = self.terminals[&target_id].is_identifier;
+        let target_type = self.find_node_type(&target_id);
+
+        self.replace_type_references(&collapsed_type, &target_type);
+
+        // Record the collapsed choice
+        self.collapsed_choices.insert(
+            identifier,
+            CollapsedChoice {
+                variants: choice.variants,
+                target: target_type,
+                target_is_identifier,
+            },
+        );
     }
 
     pub fn add_collection_type(&mut self, name: &str, item_type: &str) {
@@ -481,8 +578,48 @@ impl IrModelMutator {
         self.collections.insert(
             name.into(),
             MutatedCollection {
-                item_type,
+                item_type: item_type.clone(),
+                target_item_type: item_type,
                 is_new: true,
+            },
+        );
+    }
+
+    pub fn normalize_terminal(&mut self, source: &str, target: &str) {
+        let source_id: model::Identifier = source.into();
+        let target_id: model::Identifier = target.into();
+
+        let source_terminal = self
+            .terminals
+            .get(&source_id)
+            .unwrap_or_else(|| panic!("Source terminal {source} not found"));
+        let target_terminal = self
+            .terminals
+            .get(&target_id)
+            .unwrap_or_else(|| panic!("Target terminal {target} not found"));
+
+        assert_eq!(
+            source_terminal.is_unique, target_terminal.is_unique,
+            "Source and target terminals must have the same uniqueness"
+        );
+
+        let is_unique = source_terminal.is_unique;
+        let target_is_identifier = target_terminal.is_identifier;
+        let source_type = self.find_node_type(&source_id);
+        let target_type = self.find_node_type(&target_id);
+
+        // Remove source from terminals
+        self.terminals.remove(&source_id);
+
+        self.replace_type_references(&source_type, &target_type);
+
+        // Record the normalization
+        self.normalized_terminals.insert(
+            source_id,
+            NormalizedTerminal {
+                target: target_id,
+                target_is_identifier,
+                is_unique,
             },
         );
     }

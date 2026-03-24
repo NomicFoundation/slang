@@ -51,7 +51,17 @@ pub struct NodeId(usize);
 //
 
 {% for parent_type, choice in target.choices %}
-  #[derive(Clone, Debug)]
+  {% set_global all_unique_terminals = true %}
+  {% for variant in choice.variants %}
+    {% if not variant.is_unique %}
+      {% set_global all_unique_terminals = false %}
+    {% endif %}
+  {% endfor %}
+  {% if all_unique_terminals -%}
+    #[derive(Clone, Debug, Eq, PartialEq)]
+  {%- else -%}
+    #[derive(Clone, Debug)]
+  {%- endif %}
   pub enum {{ parent_type }} {
     {% for nonterminal in choice.variants | filter(attribute="kind", value="Nonterminal") -%}
       {{ nonterminal.name }}({{ nonterminal.name }}),
@@ -84,7 +94,7 @@ pub struct NodeId(usize);
     {% if terminal.is_identifier %}
       pub type {{ terminal_type }} = Rc<{{ terminal_type }}Struct>;
 
-      #[derive(Clone, Debug, PartialEq)]
+      #[derive(Clone, Debug, Eq, PartialEq)]
       pub struct {{ terminal_type }}Struct {
         pub range: Range<usize>,
       }
@@ -99,7 +109,7 @@ pub struct NodeId(usize);
         }
       }
     {% else %}
-      #[derive(Clone, Debug, PartialEq)]
+      #[derive(Clone, Debug, Eq, PartialEq)]
       pub struct {{ terminal_type }} {
         pub range: Range<usize>,
       }

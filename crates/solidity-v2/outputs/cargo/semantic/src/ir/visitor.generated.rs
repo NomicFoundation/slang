@@ -650,11 +650,6 @@ pub trait Visitor {
     }
     fn leave_function_visibility(&mut self, _node: &FunctionVisibility) {}
 
-    fn enter_identifier_path_element(&mut self, _node: &IdentifierPathElement) -> bool {
-        true
-    }
-    fn leave_identifier_path_element(&mut self, _node: &IdentifierPathElement) {}
-
     fn enter_import_clause(&mut self, _node: &ImportClause) -> bool {
         true
     }
@@ -785,10 +780,10 @@ pub trait Visitor {
     }
     fn leave_enum_members(&mut self, _items: &EnumMembers) {}
 
-    fn enter_hex_strings(&mut self, _items: &HexStrings) -> bool {
+    fn enter_hex_string_literals(&mut self, _items: &HexStringLiterals) -> bool {
         true
     }
-    fn leave_hex_strings(&mut self, _items: &HexStrings) {}
+    fn leave_hex_string_literals(&mut self, _items: &HexStringLiterals) {}
 
     fn enter_identifier_path(&mut self, _items: &IdentifierPath) -> bool {
         true
@@ -866,10 +861,10 @@ pub trait Visitor {
     }
     fn leave_statements(&mut self, _items: &Statements) {}
 
-    fn enter_strings(&mut self, _items: &Strings) -> bool {
+    fn enter_string_literals(&mut self, _items: &StringLiterals) -> bool {
         true
     }
-    fn leave_strings(&mut self, _items: &Strings) {}
+    fn leave_string_literals(&mut self, _items: &StringLiterals) {}
 
     fn enter_struct_members(&mut self, _items: &StructMembers) -> bool {
         true
@@ -881,10 +876,10 @@ pub trait Visitor {
     }
     fn leave_tuple_values(&mut self, _items: &TupleValues) {}
 
-    fn enter_unicode_strings(&mut self, _items: &UnicodeStrings) -> bool {
+    fn enter_unicode_string_literals(&mut self, _items: &UnicodeStringLiterals) -> bool {
         true
     }
-    fn leave_unicode_strings(&mut self, _items: &UnicodeStrings) {}
+    fn leave_unicode_string_literals(&mut self, _items: &UnicodeStringLiterals) {}
 
     fn enter_using_deconstruction_symbols(&mut self, _items: &UsingDeconstructionSymbols) -> bool {
         true
@@ -1006,8 +1001,10 @@ pub fn accept_assembly_statement(node: &AssemblyStatement, visitor: &mut impl Vi
     if !visitor.enter_assembly_statement(node) {
         return;
     }
+    if let Some(ref flags) = node.flags {
+        accept_yul_flags(flags, visitor);
+    }
     accept_yul_block(&node.body, visitor);
-    accept_yul_flags(&node.flags, visitor);
     visitor.leave_assembly_statement(node);
 }
 
@@ -1397,7 +1394,6 @@ pub fn accept_member_access_expression(node: &MemberAccessExpression, visitor: &
         return;
     }
     accept_expression(&node.operand, visitor);
-    accept_identifier_path_element(&node.member, visitor);
     visitor.leave_member_access_expression(node);
 }
 
@@ -2156,8 +2152,6 @@ pub fn accept_function_mutability(_node: &FunctionMutability, _visitor: &mut imp
 
 pub fn accept_function_visibility(_node: &FunctionVisibility, _visitor: &mut impl Visitor) {}
 
-pub fn accept_identifier_path_element(_node: &IdentifierPathElement, _visitor: &mut impl Visitor) {}
-
 pub fn accept_import_clause(node: &ImportClause, visitor: &mut impl Visitor) {
     if !visitor.enter_import_clause(node) {
         return;
@@ -2201,6 +2195,9 @@ pub fn accept_source_unit_member(node: &SourceUnitMember, visitor: &mut impl Vis
         SourceUnitMember::PragmaDirective(ref pragma_directive) => {
             accept_pragma_directive(pragma_directive, visitor);
         }
+        SourceUnitMember::ImportClause(ref import_clause) => {
+            accept_import_clause(import_clause, visitor);
+        }
         SourceUnitMember::ContractDefinition(ref contract_definition) => {
             accept_contract_definition(contract_definition, visitor);
         }
@@ -2235,9 +2232,6 @@ pub fn accept_source_unit_member(node: &SourceUnitMember, visitor: &mut impl Vis
         }
         SourceUnitMember::ConstantDefinition(ref constant_definition) => {
             accept_constant_definition(constant_definition, visitor);
-        }
-        SourceUnitMember::ImportClause(ref import_clause) => {
-            accept_import_clause(import_clause, visitor);
         }
     }
     visitor.leave_source_unit_member(node);
@@ -2316,14 +2310,14 @@ pub fn accept_string_expression(node: &StringExpression, visitor: &mut impl Visi
         return;
     }
     match node {
-        StringExpression::Strings(ref strings) => {
-            accept_strings(strings, visitor);
+        StringExpression::StringLiterals(ref string_literals) => {
+            accept_string_literals(string_literals, visitor);
         }
-        StringExpression::HexStrings(ref hex_strings) => {
-            accept_hex_strings(hex_strings, visitor);
+        StringExpression::HexStringLiterals(ref hex_string_literals) => {
+            accept_hex_string_literals(hex_string_literals, visitor);
         }
-        StringExpression::UnicodeStrings(ref unicode_strings) => {
-            accept_unicode_strings(unicode_strings, visitor);
+        StringExpression::UnicodeStringLiterals(ref unicode_string_literals) => {
+            accept_unicode_string_literals(unicode_string_literals, visitor);
         }
     }
     visitor.leave_string_expression(node);
@@ -2560,19 +2554,16 @@ fn accept_enum_members(items: &Vec<Identifier>, visitor: &mut impl Visitor) {
     visitor.leave_enum_members(items);
 }
 #[inline]
-fn accept_hex_strings(items: &Vec<HexStringLiteral>, visitor: &mut impl Visitor) {
-    if !visitor.enter_hex_strings(items) {
+fn accept_hex_string_literals(items: &Vec<HexStringLiteral>, visitor: &mut impl Visitor) {
+    if !visitor.enter_hex_string_literals(items) {
         return;
     }
-    visitor.leave_hex_strings(items);
+    visitor.leave_hex_string_literals(items);
 }
 #[inline]
-fn accept_identifier_path(items: &Vec<IdentifierPathElement>, visitor: &mut impl Visitor) {
+fn accept_identifier_path(items: &Vec<Identifier>, visitor: &mut impl Visitor) {
     if !visitor.enter_identifier_path(items) {
         return;
-    }
-    for item in items {
-        accept_identifier_path_element(item, visitor);
     }
     visitor.leave_identifier_path(items);
 }
@@ -2710,11 +2701,11 @@ fn accept_statements(items: &Vec<Statement>, visitor: &mut impl Visitor) {
     visitor.leave_statements(items);
 }
 #[inline]
-fn accept_strings(items: &Vec<StringLiteral>, visitor: &mut impl Visitor) {
-    if !visitor.enter_strings(items) {
+fn accept_string_literals(items: &Vec<StringLiteral>, visitor: &mut impl Visitor) {
+    if !visitor.enter_string_literals(items) {
         return;
     }
-    visitor.leave_strings(items);
+    visitor.leave_string_literals(items);
 }
 #[inline]
 fn accept_struct_members(items: &Vec<StructMember>, visitor: &mut impl Visitor) {
@@ -2737,11 +2728,11 @@ fn accept_tuple_values(items: &Vec<TupleValue>, visitor: &mut impl Visitor) {
     visitor.leave_tuple_values(items);
 }
 #[inline]
-fn accept_unicode_strings(items: &Vec<UnicodeStringLiteral>, visitor: &mut impl Visitor) {
-    if !visitor.enter_unicode_strings(items) {
+fn accept_unicode_string_literals(items: &Vec<UnicodeStringLiteral>, visitor: &mut impl Visitor) {
+    if !visitor.enter_unicode_string_literals(items) {
         return;
     }
-    visitor.leave_unicode_strings(items);
+    visitor.leave_unicode_string_literals(items);
 }
 #[inline]
 fn accept_using_deconstruction_symbols(
@@ -2794,14 +2785,14 @@ fn accept_yul_flags(items: &Vec<StringLiteral>, visitor: &mut impl Visitor) {
     visitor.leave_yul_flags(items);
 }
 #[inline]
-fn accept_yul_parameters(items: &Vec<YulIdentifier>, visitor: &mut impl Visitor) {
+fn accept_yul_parameters(items: &Vec<Identifier>, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_parameters(items) {
         return;
     }
     visitor.leave_yul_parameters(items);
 }
 #[inline]
-fn accept_yul_path(items: &Vec<YulIdentifier>, visitor: &mut impl Visitor) {
+fn accept_yul_path(items: &Vec<Identifier>, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_path(items) {
         return;
     }
@@ -2838,7 +2829,7 @@ fn accept_yul_switch_cases(items: &Vec<YulSwitchCase>, visitor: &mut impl Visito
     visitor.leave_yul_switch_cases(items);
 }
 #[inline]
-fn accept_yul_variable_names(items: &Vec<YulIdentifier>, visitor: &mut impl Visitor) {
+fn accept_yul_variable_names(items: &Vec<Identifier>, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_variable_names(items) {
         return;
     }

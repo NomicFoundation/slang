@@ -20,24 +20,6 @@ impl Builder for CstToIrBuilder {
     // Abstract sequence methods
     //
 
-    fn build_assembly_statement(
-        &mut self,
-        source: &input::AssemblyStatement,
-    ) -> output::AssemblyStatement {
-        let body = self.build_yul_block(&source.body);
-        let flags = source.flags.as_ref().map_or(Vec::new(), |declaration| {
-            declaration
-                .flags
-                .elements
-                .iter()
-                .map(Self::yul_string_literal_to_ir)
-                .collect()
-        });
-        let label = source.label.as_ref().map(Self::yul_string_literal_to_ir);
-
-        Rc::new(output::AssemblyStatementStruct { body, flags, label })
-    }
-
     fn build_constant_definition(
         &mut self,
         source: &input::ConstantDefinition,
@@ -188,16 +170,6 @@ impl Builder for CstToIrBuilder {
         })
     }
 
-    fn build_import_deconstruction(
-        &mut self,
-        source: &input::ImportDeconstruction,
-    ) -> output::ImportDeconstruction {
-        let symbols = self.build_import_deconstruction_symbols(&source.symbols);
-        let path = Self::string_literal_to_ir(&source.path);
-
-        Rc::new(output::ImportDeconstructionStruct { symbols, path })
-    }
-
     fn build_index_access_expression(
         &mut self,
         source: &input::IndexAccessExpression,
@@ -245,16 +217,6 @@ impl Builder for CstToIrBuilder {
         })
     }
 
-    fn build_path_import(&mut self, source: &input::PathImport) -> output::PathImport {
-        let alias = source
-            .alias
-            .as_ref()
-            .map(|alias| self.build_import_alias(alias));
-        let path = Self::string_literal_to_ir(&source.path);
-
-        Rc::new(output::PathImportStruct { alias, path })
-    }
-
     fn build_state_variable_definition(
         &mut self,
         source: &input::StateVariableDefinition,
@@ -282,22 +244,6 @@ impl Builder for CstToIrBuilder {
     //
     // Choice dispatch overrides
     //
-
-    // TODO: this would not be necessary if we can automatically generate code
-    // for choices when some variants are collapsed
-    fn build_source_unit_member(
-        &mut self,
-        source: &input::SourceUnitMember,
-    ) -> output::SourceUnitMember {
-        match source {
-            input::SourceUnitMember::ImportDirective(import_directive) => {
-                output::SourceUnitMember::ImportClause(
-                    self.build_import_directive(import_directive),
-                )
-            }
-            _ => self.default_build_source_unit_member(source),
-        }
-    }
 
     fn build_import_clause(&mut self, source: &input::ImportClause) -> output::ImportClause {
         match source {
@@ -346,84 +292,21 @@ impl Builder for CstToIrBuilder {
         }
     }
 
-    fn build_string_expression(
-        &mut self,
-        source: &input::StringExpression,
-    ) -> output::StringExpression {
-        match source {
-            input::StringExpression::StringLiterals(string_literals) => {
-                output::StringExpression::Strings(
-                    string_literals
-                        .elements
-                        .iter()
-                        .map(Self::string_literal_to_ir)
-                        .collect(),
-                )
-            }
-            input::StringExpression::HexStringLiterals(hex_string_literals) => {
-                output::StringExpression::HexStrings(
-                    hex_string_literals
-                        .elements
-                        .iter()
-                        .map(Self::hex_string_literal_to_ir)
-                        .collect(),
-                )
-            }
-            input::StringExpression::UnicodeStringLiterals(unicode_string_literals) => {
-                output::StringExpression::UnicodeStrings(
-                    unicode_string_literals
-                        .elements
-                        .iter()
-                        .map(Self::unicode_string_literal_to_ir)
-                        .collect(),
-                )
-            }
-        }
-    }
-
-    fn build_experimental_feature(
-        &mut self,
-        source: &input::ExperimentalFeature,
-    ) -> output::ExperimentalFeature {
-        match source {
-            input::ExperimentalFeature::PragmaStringLiteral(string_literal) => {
-                output::ExperimentalFeature::StringLiteral(Self::pragma_string_literal_to_ir(
-                    string_literal,
-                ))
-            }
-            _ => self.default_build_experimental_feature(source),
-        }
-    }
-
     fn build_version_literal(&mut self, source: &input::VersionLiteral) -> output::VersionLiteral {
         match source {
             input::VersionLiteral::PragmaSingleQuotedStringLiteral(string_literal) => {
-                output::VersionLiteral::StringLiteral(
-                    Self::pragma_single_quoted_string_literal_to_ir(string_literal),
-                )
+                output::VersionLiteral::StringLiteral(output::StringLiteral {
+                    range: string_literal.range.clone(),
+                })
             }
             input::VersionLiteral::PragmaDoubleQuotedStringLiteral(string_literal) => {
-                output::VersionLiteral::StringLiteral(
-                    Self::pragma_double_quoted_string_literal_to_ir(string_literal),
-                )
+                output::VersionLiteral::StringLiteral(output::StringLiteral {
+                    range: string_literal.range.clone(),
+                })
             }
             input::VersionLiteral::SimpleVersionLiteral(_) => {
                 self.default_build_version_literal(source)
             }
-        }
-    }
-
-    fn build_yul_literal(&mut self, source: &input::YulLiteral) -> output::YulLiteral {
-        match source {
-            input::YulLiteral::YulStringLiteral(string_literal) => {
-                output::YulLiteral::StringLiteral(Self::yul_string_literal_to_ir(string_literal))
-            }
-            input::YulLiteral::YulHexStringLiteral(hex_string_literal) => {
-                output::YulLiteral::HexStringLiteral(Self::yul_hex_string_literal_to_ir(
-                    hex_string_literal,
-                ))
-            }
-            _ => self.default_build_yul_literal(source),
         }
     }
 
@@ -983,10 +866,10 @@ impl CstToIrBuilder {
         &mut self,
         source: &input::NamedImport,
     ) -> output::PathImport {
+        let path = self.build_string_literal(&source.path);
         let alias = Some(self.build_import_alias(&source.alias));
-        let path = Self::string_literal_to_ir(&source.path);
 
-        Rc::new(output::PathImportStruct { alias, path })
+        Rc::new(output::PathImportStruct { path, alias })
     }
 
     //
@@ -1016,88 +899,5 @@ impl CstToIrBuilder {
             name,
             indexed: false,
         })
-    }
-
-    //
-    // String literal conversion helpers
-    //
-
-    fn string_literal_to_ir(source: &input::StringLiteral) -> output::StringLiteral {
-        let range = match source {
-            input::StringLiteral::SingleQuotedStringLiteral(literal) => literal.range.clone(),
-            input::StringLiteral::DoubleQuotedStringLiteral(literal) => literal.range.clone(),
-        };
-        output::StringLiteral { range }
-    }
-
-    fn hex_string_literal_to_ir(source: &input::HexStringLiteral) -> output::HexStringLiteral {
-        let range = match source {
-            input::HexStringLiteral::SingleQuotedHexStringLiteral(literal) => literal.range.clone(),
-            input::HexStringLiteral::DoubleQuotedHexStringLiteral(literal) => literal.range.clone(),
-        };
-        output::HexStringLiteral { range }
-    }
-
-    fn unicode_string_literal_to_ir(
-        source: &input::UnicodeStringLiteral,
-    ) -> output::UnicodeStringLiteral {
-        let range = match source {
-            input::UnicodeStringLiteral::SingleQuotedUnicodeStringLiteral(literal) => {
-                literal.range.clone()
-            }
-            input::UnicodeStringLiteral::DoubleQuotedUnicodeStringLiteral(literal) => {
-                literal.range.clone()
-            }
-        };
-        output::UnicodeStringLiteral { range }
-    }
-
-    fn yul_string_literal_to_ir(source: &input::YulStringLiteral) -> output::StringLiteral {
-        let range = match source {
-            input::YulStringLiteral::YulSingleQuotedStringLiteral(literal) => literal.range.clone(),
-            input::YulStringLiteral::YulDoubleQuotedStringLiteral(literal) => literal.range.clone(),
-        };
-        output::StringLiteral { range }
-    }
-
-    fn yul_hex_string_literal_to_ir(
-        source: &input::YulHexStringLiteral,
-    ) -> output::HexStringLiteral {
-        let range = match source {
-            input::YulHexStringLiteral::YulSingleQuotedHexStringLiteral(literal) => {
-                literal.range.clone()
-            }
-            input::YulHexStringLiteral::YulDoubleQuotedHexStringLiteral(literal) => {
-                literal.range.clone()
-            }
-        };
-        output::HexStringLiteral { range }
-    }
-
-    fn pragma_single_quoted_string_literal_to_ir(
-        source: &input::PragmaSingleQuotedStringLiteral,
-    ) -> output::StringLiteral {
-        output::StringLiteral {
-            range: source.range.clone(),
-        }
-    }
-
-    fn pragma_double_quoted_string_literal_to_ir(
-        source: &input::PragmaDoubleQuotedStringLiteral,
-    ) -> output::StringLiteral {
-        output::StringLiteral {
-            range: source.range.clone(),
-        }
-    }
-
-    fn pragma_string_literal_to_ir(source: &input::PragmaStringLiteral) -> output::StringLiteral {
-        match source {
-            input::PragmaStringLiteral::PragmaSingleQuotedStringLiteral(string_literal) => {
-                Self::pragma_single_quoted_string_literal_to_ir(string_literal)
-            }
-            input::PragmaStringLiteral::PragmaDoubleQuotedStringLiteral(string_literal) => {
-                Self::pragma_double_quoted_string_literal_to_ir(string_literal)
-            }
-        }
     }
 }

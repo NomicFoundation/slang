@@ -14,12 +14,14 @@ pub fn build_v2_ir_model(language: &Language) -> ModelWithBuilder {
 
     remove_redundant_terminal_nodes(&cst_model, &mut mutator);
     flatten_contract_specifiers(&mut mutator);
+    simplify_identifier_path_element(&mut mutator);
     unify_function_types(&mut mutator);
     flatten_function_attributes(&mut mutator);
     flatten_state_variable_attributes(&mut mutator);
     transmute_constant_state_variables(&mut mutator);
     collapse_redundant_node_types(&mut mutator);
     simplify_string_literals(&mut mutator);
+    normalize_yul_terminals(&mut mutator);
     simplify_imports(&mut mutator);
     simplify_parameters(&mut mutator);
     simplify_mapping_type_parameters(&mut mutator);
@@ -56,6 +58,11 @@ fn flatten_contract_specifiers(mutator: &mut IrModelMutator) {
         false,
     );
     mutator.add_sequence_field("ContractDefinition", "storage_layout", "Expression", true);
+}
+
+fn simplify_identifier_path_element(mutator: &mut IrModelMutator) {
+    // Collapse `IdentifierPathElement` by expanding the `AddressKeyword` variant
+    mutator.collapse_choice("IdentifierPathElement", "Identifier");
 }
 
 fn unify_function_types(mutator: &mut IrModelMutator) {
@@ -254,61 +261,51 @@ fn collapse_redundant_node_types(mutator: &mut IrModelMutator) {
 }
 
 fn simplify_string_literals(mutator: &mut IrModelMutator) {
-    // Remove all existing types, as we will simplify them to 3 variants
-    mutator.remove_type("StringLiterals");
-    mutator.remove_type("StringLiteral");
+    // Collapse base string literal choices to non-unique terminals.
+    // This transmutes each choice type into a terminal with the same name,
+    // updating all references (in collection item types, sequence fields, choice
+    // variants) in-place. Auto-generates builders that extract range from each variant.
+    mutator.collapse_choice("StringLiteral", "StringLiteral");
     mutator.remove_type("SingleQuotedStringLiteral");
     mutator.remove_type("DoubleQuotedStringLiteral");
-    mutator.remove_type("HexStringLiterals");
-    mutator.remove_type("HexStringLiteral");
+
+    mutator.collapse_choice("HexStringLiteral", "HexStringLiteral");
     mutator.remove_type("SingleQuotedHexStringLiteral");
     mutator.remove_type("DoubleQuotedHexStringLiteral");
-    mutator.remove_type("UnicodeStringLiterals");
-    mutator.remove_type("UnicodeStringLiteral");
+
+    mutator.collapse_choice("UnicodeStringLiteral", "UnicodeStringLiteral");
     mutator.remove_type("SingleQuotedUnicodeStringLiteral");
     mutator.remove_type("DoubleQuotedUnicodeStringLiteral");
-    mutator.remove_type("YulStringLiteral");
+
+    // Collapse Yul string literal choices (targets already exist from above)
+    mutator.collapse_choice("YulStringLiteral", "StringLiteral");
     mutator.remove_type("YulSingleQuotedStringLiteral");
     mutator.remove_type("YulDoubleQuotedStringLiteral");
-    mutator.remove_type("YulHexStringLiteral");
+
+    mutator.collapse_choice("YulHexStringLiteral", "HexStringLiteral");
     mutator.remove_type("YulSingleQuotedHexStringLiteral");
     mutator.remove_type("YulDoubleQuotedHexStringLiteral");
-    mutator.remove_type("PragmaStringLiteral");
+
+    // Collapse PragmaStringLiteral BEFORE removing sub-terminals
+    // (the auto-generated builder needs the variant list)
+    mutator.collapse_choice("PragmaStringLiteral", "StringLiteral");
     mutator.remove_type("PragmaSingleQuotedStringLiteral");
     mutator.remove_type("PragmaDoubleQuotedStringLiteral");
 
-    // Re-declare `StringLiteral`, `HexStringLiteral` and `UnicodeStringLiteral`
-    // as non-unique terminals
-    mutator.add_non_unique_terminal("StringLiteral");
-    mutator.add_non_unique_terminal("HexStringLiteral");
-    mutator.add_non_unique_terminal("UnicodeStringLiteral");
-
-    // Create the collection types using the double-quoted variants.
-    // The choice is irrelevant because we only care that it's a non-unique
-    // terminal, which is represented by an `Rc<TerminalNode>` anyway.
-    mutator.add_collection_type("Strings", "StringLiteral");
-    mutator.add_collection_type("HexStrings", "HexStringLiteral");
-    mutator.add_collection_type("UnicodeStrings", "UnicodeStringLiteral");
-
-    // Now we add the variants to the expression type
-    mutator.add_choice_variant("StringExpression", "Strings");
-    mutator.add_choice_variant("StringExpression", "HexStrings");
-    mutator.add_choice_variant("StringExpression", "UnicodeStrings");
-
-    // Update other uses of StringLiteral
-    mutator.add_sequence_field("PathImport", "path", "StringLiteral", false);
-    mutator.add_sequence_field("NamedImport", "path", "StringLiteral", false);
-    mutator.add_sequence_field("ImportDeconstruction", "path", "StringLiteral", false);
-    mutator.add_choice_variant("ExperimentalFeature", "StringLiteral");
+    // Add StringLiteral variant to VersionLiteral (replacing removed Pragma variants)
     mutator.add_choice_variant("VersionLiteral", "StringLiteral");
-    mutator.add_choice_variant("YulLiteral", "StringLiteral");
-    mutator.add_choice_variant("YulLiteral", "HexStringLiteral");
 
-    // For `YulFlags`, also remove the enclosing declaration structure
-    mutator.remove_type("YulFlagsDeclaration");
-    mutator.add_collection_type("YulFlags", "StringLiteral");
-    mutator.add_sequence_field("AssemblyStatement", "flags", "YulFlags", false);
-    mutator.add_sequence_field("AssemblyStatement", "label", "StringLiteral", true);
+    // Collapse YulFlagsDeclaration to its inner YulFlags collection.
+    // This preserves AssemblyStatement.flags as optional.
+    mutator.collapse_sequence("YulFlagsDeclaration");
+}
+
+fn normalize_yul_terminals(mutator: &mut IrModelMutator) {
+    mutator.normalize_terminal("YulIdentifier", "Identifier");
+    mutator.normalize_terminal("YulDecimalLiteral", "DecimalLiteral");
+    mutator.normalize_terminal("YulHexLiteral", "HexLiteral");
+    mutator.normalize_terminal("YulTrueKeyword", "TrueKeyword");
+    mutator.normalize_terminal("YulFalseKeyword", "FalseKeyword");
 }
 
 fn simplify_imports(mutator: &mut IrModelMutator) {

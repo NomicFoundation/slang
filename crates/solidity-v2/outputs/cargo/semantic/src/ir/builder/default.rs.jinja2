@@ -69,22 +69,22 @@ pub trait Builder {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-          {% for nonterminal in choice.variants | filter(attribute="kind", value="Nonterminal") -%}
-            input::{{ parent_type }}::{{ nonterminal.name }}(ref {{ nonterminal.name | snake_case }}) => {
-              output::{{ parent_type }}::{{ nonterminal.name }}(self.build_{{ nonterminal.name | snake_case }}({{ nonterminal.name | snake_case }}))
-            }
+          {% for variant in choice.variants -%}
+            {% if not variant.is_new -%}
+              {%- if variant.source.is_unique -%}
+                input::{{ parent_type }}::{{ variant.source.name }}(_) => {
+                  output::{{ parent_type }}::{{ variant.target.name }}
+                }
+              {% else -%}
+                input::{{ parent_type }}::{{ variant.source.name }}(ref {{ variant.source.name | snake_case }}) => {
+                  output::{{ parent_type }}::{{ variant.target.name }}(self.build_{{ variant.source.name | snake_case }}({{ variant.source.name | snake_case }}))
+                }
+              {% endif -%}
+            {%- endif -%}
           {%- endfor -%}
-          {% for terminal in choice.variants | filter(attribute="kind", value="Terminal") -%}
-            input::{{ parent_type }}::{{ terminal.name }}(ref {{ terminal.name | snake_case }}) => {
-              output::{{ parent_type }}::{{ terminal.name }}(self.build_{{ terminal.name | snake_case }}({{ terminal.name | snake_case }}))
-            }
-          {%- endfor -%}
-          {% for terminal in choice.variants | filter(attribute="kind", value="UniqueTerminal") -%}
-            input::{{ parent_type }}::{{ terminal.name }}(_) => output::{{ parent_type }}::{{ terminal.name }},
-          {%- endfor -%}
-          {% if choice.has_removed_variants %}
+          {%- if choice.has_removed_variants -%}
             _ => panic!("Unexpected variant {source:?}"),
-          {% endif %}
+          {% endif -%}
         }
       }
       fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }}
@@ -96,6 +96,29 @@ pub trait Builder {
         }
       {%- endif %}
     {%- endif %}
+  {% endfor %}
+
+  //
+  // Collapsed choices
+  //
+  {% for parent_type, collapsed in builder.collapsed_choices %}
+    fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ collapsed.target.name }} {
+      match source {
+        {% for variant in collapsed.variants -%}
+          input::{{ parent_type }}::{{ variant.source.name }}(terminal) => {
+            {% if collapsed.target_is_identifier -%}
+              Rc::new(output::{{ collapsed.target.name }}Struct {
+                range: terminal.range.clone(),
+              })
+            {%- else -%}
+              output::{{ collapsed.target.name }} {
+                range: terminal.range.clone(),
+              }
+            {%- endif %}
+          }
+        {% endfor -%}
+      }
+    }
   {% endfor %}
 
   //
@@ -127,6 +150,25 @@ pub trait Builder {
           })
         {% else %}
           output::{{ terminal_type }} {
+            range: source.range.clone(),
+          }
+        {% endif %}
+      }
+    {% endif %}
+  {% endfor %}
+
+  //
+  // Normalized Terminals
+  //
+  {% for source_type, normalized in builder.normalized_terminals %}
+    {% if not normalized.is_unique %}
+      fn build_{{ source_type | snake_case }}(&mut self, source: &input::{{ source_type }}) -> output::{{ normalized.target }} {
+        {% if normalized.target_is_identifier %}
+          Rc::new(output::{{ normalized.target }}Struct {
+            range: source.range.clone(),
+          })
+        {% else %}
+          output::{{ normalized.target }} {
             range: source.range.clone(),
           }
         {% endif %}
