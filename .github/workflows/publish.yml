@@ -58,10 +58,9 @@ jobs:
   label-check:
     if: >-
       github.repository == 'NomicFoundation/slang'
-      && (github.event_name == 'push'
-          || github.event_name == 'workflow_dispatch'
-          || (github.event_name == 'pull_request'
-              && contains(github.event.pull_request.labels.*.name, 'ci:release')))
+      && ((github.event_name == 'pull_request'
+           && contains(github.event.pull_request.labels.*.name, 'ci:release'))
+          || github.ref_name == 'main')
     runs-on: "ubuntu-22.04"
     steps:
       - run: "true"
@@ -75,8 +74,8 @@ jobs:
     needs:
       - "label-check"
     if: >-
-      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-      && github.ref_name == 'main'
+      github.event_name == 'push'
+      || github.event_name == 'workflow_dispatch'
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
     permissions:
       contents: "write" # to create new branches
@@ -181,17 +180,16 @@ jobs:
         run: |
           echo "## Publish Dry-Run Summary" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "The full build-and-validate pipeline completed successfully." >> "$GITHUB_STEP_SUMMARY"
+          echo "The build-and-validate pipeline completed successfully." >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "### What was validated" >> "$GITHUB_STEP_SUMMARY"
           echo "- WASM package build" >> "$GITHUB_STEP_SUMMARY"
-          echo "- \`cargo publish --dry-run\` for all published crates" >> "$GITHUB_STEP_SUMMARY"
-          echo "- \`pnpm publish --dry-run\` for npm package" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`cargo publish --dry-run\` (skips crates whose version is already published)" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`pnpm publish --dry-run\` (skips if version is already published)" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "### Skipped (non-PR only)" >> "$GITHUB_STEP_SUMMARY"
-          echo "- \`infra publish npm\`" >> "$GITHUB_STEP_SUMMARY"
-          echo "- \`infra publish cargo\` (via OIDC trusted publishing)" >> "$GITHUB_STEP_SUMMARY"
-          echo "- \`infra publish github-release\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Actual npm/cargo publishing" >> "$GITHUB_STEP_SUMMARY"
+          echo "- GitHub release creation" >> "$GITHUB_STEP_SUMMARY"
 
   # ───────────────────────────────────────────────
   # Publish: actual publishing with environment gate
