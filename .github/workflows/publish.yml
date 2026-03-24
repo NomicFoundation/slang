@@ -51,19 +51,18 @@ concurrency:
 
 jobs:
   # ───────────────────────────────────────────────
-  # Gate: allow push, dispatch, and labeled non-fork PRs
+  # Gate: only run on the main repo (not forks).
+  # Allow push, dispatch, and labeled PRs.
   # ───────────────────────────────────────────────
 
   label-check:
     if: >-
-      github.event_name == 'push'
-      || github.event_name == 'workflow_dispatch'
-      || (github.event_name == 'pull_request'
-          && contains(github.event.pull_request.labels.*.name, 'ci:release')
-          && !github.event.pull_request.head.repo.fork)
+      github.repository == 'NomicFoundation/slang'
+      && (github.event_name == 'push'
+          || github.event_name == 'workflow_dispatch'
+          || (github.event_name == 'pull_request'
+              && contains(github.event.pull_request.labels.*.name, 'ci:release')))
     runs-on: "ubuntu-22.04"
-    permissions:
-      contents: "read"
     steps:
       - run: "true"
 
@@ -77,7 +76,6 @@ jobs:
       - "label-check"
     if: >-
       (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-      && github.repository == 'NomicFoundation/slang'
       && github.ref_name == 'main'
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
     permissions:
