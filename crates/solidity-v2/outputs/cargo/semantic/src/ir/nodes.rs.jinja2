@@ -1,0 +1,114 @@
+{%- set target = model.ir_language_model.target -%}
+#![allow(non_camel_case_types)]
+
+use std::rc::Rc;
+use std::ops::Range;
+use std::vec::Vec;
+
+use super::source::Source;
+
+#[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[repr(transparent)]
+pub struct NodeId(usize);
+
+//
+// Sequences
+//
+
+{% for parent_type, sequence in target.sequences %}
+  pub type {{ parent_type }} = Rc<{{ parent_type }}Struct>;
+
+  #[derive(Debug)]
+  pub struct {{ parent_type }}Struct {
+    {%- for field in sequence.fields %}
+      pub {{ field.label | snake_case }}:
+      {%- if field.type.kind == "UniqueTerminal" -%}
+        {%- if field.is_optional -%}
+          bool,
+        {%- else -%}
+          {{ throw(message="Cannot generate sequence field for non-optional unique terminal") }},
+        {%- endif -%}
+      {%- else -%}
+        {%- if field.is_optional -%}
+          Option<{{ field.type.name }}>,
+        {%- else -%}
+          {{ field.type.name }},
+        {%- endif -%}
+      {%- endif -%}
+    {% endfor -%}
+  }
+
+  impl {{ parent_type }}Struct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+      NodeId(Rc::as_ptr(self) as usize)
+    }
+  }
+
+{% endfor %}
+
+//
+// Choices
+//
+
+{% for parent_type, choice in target.choices %}
+  #[derive(Clone, Debug)]
+  pub enum {{ parent_type }} {
+    {% for nonterminal in choice.variants | filter(attribute="kind", value="Nonterminal") -%}
+      {{ nonterminal.name }}({{ nonterminal.name }}),
+    {%- endfor -%}
+    {% for terminal in choice.variants | filter(attribute="kind", value="Terminal") -%}
+      {{ terminal.name }}({{ terminal.name }}),
+    {%- endfor -%}
+    {% for terminal in choice.variants | filter(attribute="kind", value="UniqueTerminal") -%}
+      {{ terminal.name }},
+    {%- endfor -%}
+  }
+{% endfor %}
+
+//
+// Repeated & Separated
+//
+
+{% for parent_type, collection in target.collections %}
+  pub type {{ parent_type }} = Vec<
+    {{ collection.item_type.name }}
+  >;
+{% endfor %}
+
+//
+// Non-unique Terminals
+//
+
+{% for terminal_type, terminal in target.terminals %}
+  {% if not terminal.is_unique %}
+    {% if terminal.is_identifier %}
+      pub type {{ terminal_type }} = Rc<{{ terminal_type }}Struct>;
+
+      #[derive(Clone, Debug, PartialEq)]
+      pub struct {{ terminal_type }}Struct {
+        pub range: Range<usize>,
+      }
+
+      impl {{ terminal_type }}Struct {
+        pub fn id(self: &Rc<Self>) -> NodeId {
+          NodeId(Rc::as_ptr(self) as usize)
+        }
+
+        pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
+          source.text(self.range.clone())
+        }
+      }
+    {% else %}
+      #[derive(Clone, Debug, PartialEq)]
+      pub struct {{ terminal_type }} {
+        pub range: Range<usize>,
+      }
+
+      impl {{ terminal_type }} {
+        pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
+          source.text(self.range.clone())
+        }
+      }
+    {% endif %}
+  {% endif %}
+{% endfor %}

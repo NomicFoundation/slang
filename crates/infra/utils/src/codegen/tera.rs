@@ -92,14 +92,15 @@ impl TeraWrapper {
         let template_path = self.input_dir.join(template);
         let source = template_path.read_to_string()?;
 
-        let variable_location = Regex::new(&format!(
+        let Some(variable_location) = Regex::new(&format!(
             "\\{{.*[^a-zA-Z0-9_\\.](?<variable>{variable}).*\\}}"
         ))?
-        .captures(&source)
-        .unwrap()
-        .name("variable")
-        .unwrap()
-        .start();
+        .captures(&source) else {
+            // The variable cannot be found as a direct interpolation in the
+            // source: propagate the error as-is
+            bail!(error);
+        };
+        let variable_location = variable_location.name("variable").unwrap().start();
 
         let start = source[..variable_location].chars().count();
         let end = start + variable.chars().count();
