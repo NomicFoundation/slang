@@ -171,7 +171,9 @@ jobs:
   dry-run-summary:
     needs:
       - "build-and-validate"
-    # !cancelled() breaks the skip-propagation from the skipped changesets ancestor.
+    # !cancelled() prevents GitHub from auto-skipping this job when the
+    # changesets ancestor is skipped (PRs). Unlike always(), it still
+    # respects workflow cancellation.
     if: >-
       !cancelled()
       && github.event_name == 'pull_request'
@@ -200,7 +202,7 @@ jobs:
           echo "- \`cargo publish --dry-run\` (skips crates whose version is already published)" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`pnpm publish --dry-run\` (skips if version is already published)" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "### Skipped (non-PR only)" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Skipped in PR dry-run (only on push/dispatch)" >> "$GITHUB_STEP_SUMMARY"
           echo "- Actual npm/cargo publishing" >> "$GITHUB_STEP_SUMMARY"
           echo "- GitHub release creation" >> "$GITHUB_STEP_SUMMARY"
 
