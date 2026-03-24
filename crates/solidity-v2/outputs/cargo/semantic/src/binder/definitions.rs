@@ -70,19 +70,11 @@ pub struct EventDefinition {
     pub parameters_scope_id: ScopeId,
 }
 
-#[derive(Debug, Eq, PartialEq)]
-pub enum FunctionVisibility {
-    External,
-    Internal,
-    Private,
-    Public,
-}
-
 #[derive(Debug)]
 pub struct FunctionDefinition {
     pub(crate) ir_node: ir::FunctionDefinition,
     pub parameters_scope_id: ScopeId,
-    pub visibility: FunctionVisibility,
+    pub visibility: ir::FunctionVisibility,
 }
 
 #[derive(Debug)]
@@ -119,18 +111,11 @@ pub struct ParameterDefinition {
     pub(crate) ir_node: ir::Parameter,
 }
 
-#[derive(Debug, Eq, PartialEq)]
-pub enum StateVariableVisibility {
-    Internal,
-    Private,
-    Public,
-}
-
 #[derive(Debug)]
 pub struct StateVariableDefinition {
     pub(crate) ir_node: ir::StateVariableDefinition,
     pub getter_type_id: Option<TypeId>,
-    pub visibility: StateVariableVisibility,
+    pub visibility: ir::StateVariableVisibility,
 }
 
 #[derive(Debug)]
@@ -260,7 +245,7 @@ impl Definition {
 
     pub(crate) fn is_private_or_internally_visible(&self) -> bool {
         if let Self::Function(function_definition) = self {
-            function_definition.visibility != FunctionVisibility::External
+            function_definition.visibility != ir::FunctionVisibility::External
         } else {
             true
         }
@@ -269,11 +254,11 @@ impl Definition {
     pub(crate) fn is_internally_visible(&self) -> bool {
         match self {
             Self::Function(function_definition) => {
-                function_definition.visibility == FunctionVisibility::Internal
-                    || function_definition.visibility == FunctionVisibility::Public
+                function_definition.visibility == ir::FunctionVisibility::Internal
+                    || function_definition.visibility == ir::FunctionVisibility::Public
             }
             Self::StateVariable(variable_definition) => {
-                variable_definition.visibility != StateVariableVisibility::Private
+                variable_definition.visibility != ir::StateVariableVisibility::Private
             }
             _ => true,
         }
@@ -282,11 +267,11 @@ impl Definition {
     pub(crate) fn is_externally_visible(&self) -> bool {
         match self {
             Self::Function(function_definition) => {
-                function_definition.visibility == FunctionVisibility::Public
-                    || function_definition.visibility == FunctionVisibility::External
+                function_definition.visibility == ir::FunctionVisibility::Public
+                    || function_definition.visibility == ir::FunctionVisibility::External
             }
             Self::StateVariable(variable_definition) => {
-                variable_definition.visibility == StateVariableVisibility::Public
+                variable_definition.visibility == ir::StateVariableVisibility::Public
             }
             _ => true,
         }
@@ -339,7 +324,7 @@ impl Definition {
     pub(crate) fn new_function(
         ir_node: &ir::FunctionDefinition,
         parameters_scope_id: ScopeId,
-        visibility: FunctionVisibility,
+        visibility: ir::FunctionVisibility,
     ) -> Self {
         assert!(
             ir_node.name.is_some(),
@@ -419,7 +404,7 @@ impl Definition {
 
     pub(crate) fn new_state_variable(
         ir_node: &ir::StateVariableDefinition,
-        visibility: StateVariableVisibility,
+        visibility: ir::StateVariableVisibility,
     ) -> Self {
         Self::StateVariable(StateVariableDefinition {
             ir_node: Rc::clone(ir_node),
