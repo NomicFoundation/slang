@@ -118,28 +118,36 @@ pub enum PragmaContext {
 fn not_followed_by__HexLiteral(
     lex: &mut Lexer<'_, SolidityContext>,
 ) -> FilterResult<LexemeKind, ()> {
-    static PATTERN: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
-        regex::Regex::new(r#"^(_|\$|[a-z]|[A-Z])"#).expect("valid not_followed_by pattern")
-    });
-    if PATTERN.is_match(lex.remainder()) {
-        FilterResult::Error(())
-    } else {
-        FilterResult::Emit(LexemeKind::HexLiteral)
+    thread_local! {
+        static PATTERN: regex::Regex =
+            regex::Regex::new(r#"^(((_|\$|[a-z]|[A-Z])((_|\$|[a-z]|[A-Z])|[0-9])*))"#).expect("valid not_followed_by pattern");
     }
+    PATTERN.with(|pattern| {
+        if let Some(m) = pattern.find(lex.remainder()) {
+            lex.bump(m.end());
+            FilterResult::Error(())
+        } else {
+            FilterResult::Emit(LexemeKind::HexLiteral)
+        }
+    })
 }
 
 #[allow(non_snake_case)]
 fn not_followed_by__DecimalLiteral(
     lex: &mut Lexer<'_, SolidityContext>,
 ) -> FilterResult<LexemeKind, ()> {
-    static PATTERN: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
-        regex::Regex::new(r#"^(_|\$|[a-z]|[A-Z])"#).expect("valid not_followed_by pattern")
-    });
-    if PATTERN.is_match(lex.remainder()) {
-        FilterResult::Error(())
-    } else {
-        FilterResult::Emit(LexemeKind::DecimalLiteral)
+    thread_local! {
+        static PATTERN: regex::Regex =
+            regex::Regex::new(r#"^(((_|\$|[a-z]|[A-Z])((_|\$|[a-z]|[A-Z])|[0-9])*))"#).expect("valid not_followed_by pattern");
     }
+    PATTERN.with(|pattern| {
+        if let Some(m) = pattern.find(lex.remainder()) {
+            lex.bump(m.end());
+            FilterResult::Error(())
+        } else {
+            FilterResult::Emit(LexemeKind::DecimalLiteral)
+        }
+    })
 }
 
 #[derive(Clone, Debug, Logos)]
@@ -155,6 +163,7 @@ fn not_followed_by__DecimalLiteral(
 #[logos(subpattern UnicodeEscapeSequence = r#"\\((?&AsciiEscape)|(?&HexByteEscape)|(?&UnicodeEscape))"#)]
 #[logos(subpattern IdentifierStart = r#"_|\$|[a-z]|[A-Z]"#)]
 #[logos(subpattern IdentifierPart = r#"(?&IdentifierStart)|[0-9]"#)]
+#[logos(subpattern IdentifierScanner = r#"(?&IdentifierStart)(?&IdentifierPart)*"#)]
 pub enum SolidityContext {
     #[regex(r#"abstract"#, |_| { LexemeKind::AbstractKeyword_Reserved }, priority = 3000001)]
     #[regex(r#"address"#, |_| { LexemeKind::AddressKeyword_Reserved }, priority = 3000002)]
@@ -328,7 +337,7 @@ pub enum SolidityContext {
     #[regex(r#"hex"(?&HexStringContents)?""#, |_| { LexemeKind::DoubleQuotedHexStringLiteral }, priority = 2000166)]
     #[regex(r#"unicode'((?&UnicodeEscapeSequence)|[^'\\\r\n])*'"#, |_| { LexemeKind::SingleQuotedUnicodeStringLiteral }, priority = 2000167)]
     #[regex(r#"unicode"((?&UnicodeEscapeSequence)|[^"\\\r\n])*""#, |_| { LexemeKind::DoubleQuotedUnicodeStringLiteral }, priority = 2000168)]
-    #[regex(r#"(?&IdentifierStart)(?&IdentifierPart)*"#, |_| { LexemeKind::Identifier }, priority = 2000169)]
+    #[regex(r#"(?&IdentifierScanner)"#, |_| { LexemeKind::Identifier }, priority = 2000169)]
     #[regex(r#"( |\t)+"#, |_| { LexemeKind::Whitespace }, priority = 1000170, allow_greedy = true)]
     #[regex(r#"\n|(\r\n?)"#, |_| { LexemeKind::EndOfLine }, priority = 1000171, allow_greedy = true)]
     #[regex(r#"//[^\r\n]*"#, |_| { LexemeKind::SingleLineComment }, priority = 1000172, allow_greedy = true)]
@@ -342,32 +351,41 @@ pub enum SolidityContext {
 fn not_followed_by__YulDecimalLiteral(
     lex: &mut Lexer<'_, YulContext>,
 ) -> FilterResult<LexemeKind, ()> {
-    static PATTERN: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
-        regex::Regex::new(r#"^(_|\$|[a-z]|[A-Z])"#).expect("valid not_followed_by pattern")
-    });
-    if PATTERN.is_match(lex.remainder()) {
-        FilterResult::Error(())
-    } else {
-        FilterResult::Emit(LexemeKind::YulDecimalLiteral)
+    thread_local! {
+        static PATTERN: regex::Regex =
+            regex::Regex::new(r#"^(((_|\$|[a-z]|[A-Z])((_|\$|[a-z]|[A-Z])|[0-9])*))"#).expect("valid not_followed_by pattern");
     }
+    PATTERN.with(|pattern| {
+        if let Some(m) = pattern.find(lex.remainder()) {
+            lex.bump(m.end());
+            FilterResult::Error(())
+        } else {
+            FilterResult::Emit(LexemeKind::YulDecimalLiteral)
+        }
+    })
 }
 
 #[allow(non_snake_case)]
 fn not_followed_by__YulHexLiteral(lex: &mut Lexer<'_, YulContext>) -> FilterResult<LexemeKind, ()> {
-    static PATTERN: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
-        regex::Regex::new(r#"^(_|\$|[a-z]|[A-Z])"#).expect("valid not_followed_by pattern")
-    });
-    if PATTERN.is_match(lex.remainder()) {
-        FilterResult::Error(())
-    } else {
-        FilterResult::Emit(LexemeKind::YulHexLiteral)
+    thread_local! {
+        static PATTERN: regex::Regex =
+            regex::Regex::new(r#"^(((_|\$|[a-z]|[A-Z])((_|\$|[a-z]|[A-Z])|[0-9])*))"#).expect("valid not_followed_by pattern");
     }
+    PATTERN.with(|pattern| {
+        if let Some(m) = pattern.find(lex.remainder()) {
+            lex.bump(m.end());
+            FilterResult::Error(())
+        } else {
+            FilterResult::Emit(LexemeKind::YulHexLiteral)
+        }
+    })
 }
 
 #[derive(Clone, Debug, Logos)]
 #[logos(extras = ContextExtras)]
 #[logos(subpattern YulIdentifierStart = r#"_|\$|[a-z]|[A-Z]"#)]
 #[logos(subpattern YulIdentifierPart = r#"(?&YulIdentifierStart)|[0-9]"#)]
+#[logos(subpattern YulIdentifierScanner = r#"(?&YulIdentifierStart)(?&YulIdentifierPart)*"#)]
 #[logos(subpattern YulHexCharacter = r#"[0-9]|[a-f]|[A-F]"#)]
 #[logos(subpattern YulHexStringContents = r#"(?&YulHexCharacter)(?&YulHexCharacter)(_?(?&YulHexCharacter)(?&YulHexCharacter))*"#)]
 #[logos(subpattern YulAsciiEscape = r#"n|r|t|'|"|\\|\r\n|\r|\n"#)]
@@ -375,7 +393,7 @@ fn not_followed_by__YulHexLiteral(lex: &mut Lexer<'_, YulContext>) -> FilterResu
 #[logos(subpattern YulUnicodeEscape = r#"u(?&YulHexCharacter)(?&YulHexCharacter)(?&YulHexCharacter)(?&YulHexCharacter)"#)]
 #[logos(subpattern YulEscapeSequence = r#"\\((?&YulAsciiEscape)|(?&YulHexByteEscape)|(?&YulUnicodeEscape))"#)]
 pub enum YulContext {
-    #[regex(r#"(?&YulIdentifierStart)(?&YulIdentifierPart)*"#, |_| { LexemeKind::YulIdentifier }, priority = 2000001)]
+    #[regex(r#"(?&YulIdentifierScanner)"#, |_| { LexemeKind::YulIdentifier }, priority = 2000001)]
     #[regex(
         r#"0|([1-9][0-9]*)"#,
         not_followed_by__YulDecimalLiteral,

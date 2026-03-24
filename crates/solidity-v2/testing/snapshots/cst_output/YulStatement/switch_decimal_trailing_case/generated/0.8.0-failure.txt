@@ -4,6 +4,6 @@ Error: Unexpected UNRECOGNIZED. One of YulDecimalLiteral, YulDoubleQuotedHexStri
    ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulStatement/switch_decimal_trailing_case/input.sol:5:8]
    │
  5 │ switch 1case 0 {} default {}
-   │        ┬  
-   │        ╰── Error occurred here.
+   │        ──┬──  
+   │          ╰──── Error occurred here.
 ───╯

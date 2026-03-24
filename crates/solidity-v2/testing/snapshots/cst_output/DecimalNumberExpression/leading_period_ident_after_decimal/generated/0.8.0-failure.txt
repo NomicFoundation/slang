@@ -4,6 +4,6 @@ Error: Unexpected UNRECOGNIZED. One of AddressKeyword_Reserved, AssemblyKeyword_
    ╭─[crates/solidity-v2/testing/snapshots/cst_output/DecimalNumberExpression/leading_period_ident_after_decimal/input.sol:4:1]
    │
  4 │ .1a
-   │ ─┬  
-   │  ╰── Error occurred here.
+   │ ─┬─  
+   │  ╰─── Error occurred here.
 ───╯

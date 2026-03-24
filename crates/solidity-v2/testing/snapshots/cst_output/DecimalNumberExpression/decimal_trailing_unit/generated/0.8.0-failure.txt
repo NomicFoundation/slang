@@ -4,6 +4,6 @@ Error: Unexpected UNRECOGNIZED. One of AddressKeyword_Reserved, AssemblyKeyword_
    ╭─[crates/solidity-v2/testing/snapshots/cst_output/DecimalNumberExpression/decimal_trailing_unit/input.sol:4:1]
    │
  4 │ 1wei
-   │ ┬  
-   │ ╰── Error occurred here.
+   │ ──┬─  
+   │   ╰─── Error occurred here.
 ───╯

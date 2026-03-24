@@ -4,6 +4,6 @@ Error: Unexpected UNRECOGNIZED. One of YulBreakKeyword_Reserved, YulCloseBrace, 
    ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulExpression/hex_trailing_ident_start/input.sol:5:1]
    │
  5 │ 0x1$
-   │ ─┬─  
-   │  ╰─── Error occurred here.
+   │ ──┬─  
+   │   ╰─── Error occurred here.
 ───╯

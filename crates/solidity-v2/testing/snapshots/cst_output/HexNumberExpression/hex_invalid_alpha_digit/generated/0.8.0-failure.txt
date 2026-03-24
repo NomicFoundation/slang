@@ -4,6 +4,6 @@ Error: Unexpected UNRECOGNIZED. One of AddressKeyword_Reserved, AssemblyKeyword_
    ╭─[crates/solidity-v2/testing/snapshots/cst_output/HexNumberExpression/hex_invalid_alpha_digit/input.sol:4:1]
    │
  4 │ 0xabzz
-   │ ──┬─  
-   │   ╰─── Error occurred here.
+   │ ───┬──  
+   │    ╰──── Error occurred here.
 ───╯

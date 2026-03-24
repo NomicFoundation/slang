@@ -12,7 +12,7 @@ pub struct TokenItem {
     pub enabled: Option<VersionSpecifier>,
 
     /// Optional negative lookahead: rejects the token match if the remainder
-    /// starts with this scanner pattern (e.g., identifier-start characters).
+    /// matches the given scanner.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub not_followed_by: Option<Scanner>,
 

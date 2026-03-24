@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap, BTreeSet, HashSet};
+use std::collections::{BTreeMap, BTreeSet};
 use std::mem::discriminant;
 use std::rc::Rc;
 
@@ -8,7 +8,7 @@ use language_v2_definition::model::{
     Scanner, TokenItem, TriviaItem, VersionSpecifier,
 };
 
-use crate::lexer::{CallbackDef, Lexeme, LexerModel, LexicalContext};
+use crate::lexer::{Lexeme, LexerModel, LexicalContext};
 
 pub struct LexerModelBuilder;
 
@@ -150,39 +150,11 @@ impl LexicalContextBuilder {
             ..
         } = instance;
 
-        let callbacks = Self::collect_callbacks(&lexemes);
-
         LexicalContext {
             name: language_context.name.to_string(),
             lexemes,
             subpatterns,
-            callbacks,
         }
-    }
-
-    fn collect_callbacks(lexemes: &[Lexeme]) -> Vec<CallbackDef> {
-        let mut seen = HashSet::new();
-        let mut callbacks = Vec::new();
-
-        for lexeme in lexemes {
-            if let Lexeme::Token {
-                kind,
-                not_followed_by: Some(pattern),
-                ..
-            } = lexeme
-            {
-                if seen.insert(kind.clone()) {
-                    let name = format!("not_followed_by__{kind}");
-                    callbacks.push(CallbackDef {
-                        name,
-                        kind: kind.clone(),
-                        pattern: pattern.clone(),
-                    });
-                }
-            }
-        }
-
-        callbacks
     }
 
     fn add_subpattern(&mut self, name: &Identifier) {
@@ -220,7 +192,7 @@ impl LexicalContextBuilder {
         Lexeme::Token {
             kind: item.name.to_string(),
             regex: self.convert_scanner(&item.scanner, false),
-            not_followed_by: not_followed_by,
+            not_followed_by,
         }
     }
 
@@ -329,7 +301,7 @@ impl LexicalContextBuilder {
             Scanner::Fragment { reference } => {
                 if inline_fragment {
                     let scanner = self.fragments[reference].clone();
-                    self.convert_scanner(&scanner, true)
+                    self.convert_child_scanner(parent, &scanner, inline_fragment)
                 } else {
                     self.add_subpattern(reference);
                     format!("(?&{reference})")
