@@ -171,8 +171,10 @@ jobs:
   dry-run-summary:
     needs:
       - "build-and-validate"
+    # !cancelled() breaks the skip-propagation from the skipped changesets ancestor.
     if: >-
-      github.event_name == 'pull_request'
+      !cancelled()
+      && github.event_name == 'pull_request'
       && needs.build-and-validate.result == 'success'
     runs-on: "ubuntu-22.04"
     steps:
