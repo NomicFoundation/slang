@@ -6,8 +6,6 @@ use std::ops::Range;
 use std::rc::Rc;
 use std::vec::Vec;
 
-use super::source::Source;
-
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(transparent)]
 pub struct NodeId(usize);
@@ -1806,55 +1804,60 @@ pub type YulVariableNames = Vec<Identifier>;
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct BytesKeyword {
     pub range: Range<usize>,
+    pub text: String,
 }
 
 impl BytesKeyword {
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
+    pub fn unparse(&self) -> &str {
+        &self.text
     }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct DecimalLiteral {
     pub range: Range<usize>,
+    pub text: String,
 }
 
 impl DecimalLiteral {
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
+    pub fn unparse(&self) -> &str {
+        &self.text
     }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct FixedKeyword {
     pub range: Range<usize>,
+    pub text: String,
 }
 
 impl FixedKeyword {
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
+    pub fn unparse(&self) -> &str {
+        &self.text
     }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct HexLiteral {
     pub range: Range<usize>,
+    pub text: String,
 }
 
 impl HexLiteral {
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
+    pub fn unparse(&self) -> &str {
+        &self.text
     }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct HexStringLiteral {
     pub range: Range<usize>,
+    pub text: String,
 }
 
 impl HexStringLiteral {
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
+    pub fn unparse(&self) -> &str {
+        &self.text
     }
 }
 
@@ -1863,6 +1866,7 @@ pub type Identifier = Rc<IdentifierStruct>;
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct IdentifierStruct {
     pub range: Range<usize>,
+    pub text: String,
 }
 
 impl IdentifierStruct {
@@ -1870,73 +1874,79 @@ impl IdentifierStruct {
         NodeId(Rc::as_ptr(self) as usize)
     }
 
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
+    pub fn unparse(&self) -> &str {
+        &self.text
     }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct IntKeyword {
     pub range: Range<usize>,
+    pub text: String,
 }
 
 impl IntKeyword {
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
+    pub fn unparse(&self) -> &str {
+        &self.text
     }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct StringLiteral {
     pub range: Range<usize>,
+    pub text: String,
 }
 
 impl StringLiteral {
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
+    pub fn unparse(&self) -> &str {
+        &self.text
     }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct UfixedKeyword {
     pub range: Range<usize>,
+    pub text: String,
 }
 
 impl UfixedKeyword {
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
+    pub fn unparse(&self) -> &str {
+        &self.text
     }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct UintKeyword {
     pub range: Range<usize>,
+    pub text: String,
 }
 
 impl UintKeyword {
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
+    pub fn unparse(&self) -> &str {
+        &self.text
     }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct UnicodeStringLiteral {
     pub range: Range<usize>,
+    pub text: String,
 }
 
 impl UnicodeStringLiteral {
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
+    pub fn unparse(&self) -> &str {
+        &self.text
     }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct VersionSpecifier {
     pub range: Range<usize>,
+    pub text: String,
 }
 
 impl VersionSpecifier {
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
+    pub fn unparse(&self) -> &str {
+        &self.text
     }
 }
