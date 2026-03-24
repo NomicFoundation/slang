@@ -55,7 +55,8 @@ mod unit_tests {
         #[test]
         fn parser() {
             let payload = crate::tests::setup::setup(super::PROJECT_TO_TEST);
-            let contract_count = crate::tests::slang_v2_parser::test(payload);
+            let source_units = crate::tests::slang_v2_parser::test(payload);
+            let contract_count = crate::tests::slang_v2_parser::count_contracts(&source_units);
             assert_eq!(contract_count, super::CONTRACT_COUNT);
         }
     }
