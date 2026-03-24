@@ -23,7 +23,7 @@ concurrency:
 
 jobs:
   ci:
-    runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
 
     steps:
       - name: "Checkout Repository"
@@ -89,7 +89,7 @@ jobs:
   # We cannot run the full CI in devcontainers, as we will run out of disk space in GitHub Actions.
   # Instead, we just validate the devcontainer is built correctly by running a minimal check below.
   validate-devcontainer:
-    runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
 
     steps:
       - name: "Checkout Repository"
