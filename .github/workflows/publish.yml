@@ -16,8 +16,8 @@ name: "publish"
 #
 # Job graph:
 #
-#   label-check ─→ changesets ─→ build-and-validate ─┬→ publish          (push/dispatch)
-#                                                     └→ dry-run-summary (PR only)
+#   label-check ─→ changesets ─→ build-and-validate ─┬→ notify-deploy → publish  (push/dispatch)
+#                                                     └→ dry-run-summary          (PR only)
 #
 #   - changesets only runs for push/dispatch; skipped for PRs.
 #   - build-and-validate runs when changesets is skipped (PR) or has no pending changesets.
@@ -194,11 +194,10 @@ jobs:
           echo "- GitHub release creation" >> "$GITHUB_STEP_SUMMARY"
 
   # ───────────────────────────────────────────────
-  # Publish: actual publishing with environment gate
-  # Only runs on push to main or dispatch (never PRs).
+  # Notify: Slack notification that review is requested
   # ───────────────────────────────────────────────
 
-  publish:
+  notify-deploy:
     needs:
       - "changesets"
       - "build-and-validate"
@@ -206,12 +205,94 @@ jobs:
       github.event_name != 'pull_request'
       && needs.changesets.outputs.hasChangesets == 'false'
       && needs.build-and-validate.result == 'success'
+    runs-on: "ubuntu-22.04"
+    steps:
+      - name: "Notify review requested"
+        continue-on-error: true
+        uses: "slackapi/slack-github-action@af78098f536edbc4de71162a307590698245be95" # v3.0.1
+        with:
+          webhook: "${{ secrets.PUBLISHING_NOTIFICATIONS_SLACK_WEBHOOK_URL }}"
+          webhook-type: "incoming-webhook"
+          payload: |
+            {
+              "text": "Slang release — Review requested",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Slang release — Review requested"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Commit:* <${{ github.event.head_commit.url || format('{0}/{1}/commit/{2}', github.server_url, github.repository, github.sha) }}|View commit>\n*Approve:* <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Open workflow run>"
+                  }
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "Triggered by *${{ github.actor }}* via `${{ github.event_name }}`"
+                    }
+                  ]
+                }
+              ]
+            }
+
+  # ───────────────────────────────────────────────
+  # Publish: actual publishing with environment gate
+  # Only runs on push to main or dispatch (never PRs).
+  # ───────────────────────────────────────────────
+
+  publish:
+    needs:
+      - "notify-deploy"
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
     environment: "slang-release"
     permissions:
       contents: "write" # to create new releases
       id-token: "write" # OIDC token (needed for trusted publishing)
     steps:
+      - name: "Notify deployment starting"
+        continue-on-error: true
+        uses: "slackapi/slack-github-action@af78098f536edbc4de71162a307590698245be95" # v3.0.1
+        with:
+          webhook: "${{ secrets.PUBLISHING_NOTIFICATIONS_SLACK_WEBHOOK_URL }}"
+          webhook-type: "incoming-webhook"
+          payload: |
+            {
+              "text": "Slang release — Deployment starting",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Slang release — Deployment starting"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Run:* <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Open workflow run>"
+                  }
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "Triggered by *${{ github.actor }}*"
+                    }
+                  ]
+                }
+              ]
+            }
+
       - name: "Checkout Repository"
         uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
         with:
