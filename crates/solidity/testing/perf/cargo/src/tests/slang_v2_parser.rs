@@ -6,10 +6,7 @@ use slang_solidity_v2_parser::Parser;
 use crate::dataset::SolidityProject;
 
 pub fn run(project: &SolidityProject) {
-    let lang_version = parse_version(project);
-    for source in project.sources.values() {
-        let _result = Parser::parse(source, lang_version).unwrap();
-    }
+    test(project);
 }
 
 pub fn test(project: &SolidityProject) -> usize {
