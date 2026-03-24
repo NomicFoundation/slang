@@ -6,16 +6,26 @@ use slang_solidity_v2_cst::structured_cst::nodes as input;
 mod default;
 use default::Builder;
 
+use super::Source;
 use crate::ir::nodes as output;
 
-pub fn build_source_unit(source_unit: &input::SourceUnit) -> output::SourceUnit {
-    let mut builder = CstToIrBuilder {};
+pub fn build_source_unit(
+    source_unit: &input::SourceUnit,
+    source: &impl Source,
+) -> output::SourceUnit {
+    let mut builder = CstToIrBuilder { source };
     builder.build_source_unit(source_unit)
 }
 
-struct CstToIrBuilder {}
+struct CstToIrBuilder<'a, S: Source> {
+    pub source: &'a S,
+}
 
-impl Builder for CstToIrBuilder {
+impl<S: Source> Builder for CstToIrBuilder<'_, S> {
+    fn unparse_range(&self, range: std::ops::Range<usize>) -> String {
+        self.source.text(range).to_owned()
+    }
+
     //
     // Abstract sequence methods
     //
@@ -295,13 +305,17 @@ impl Builder for CstToIrBuilder {
     fn build_version_literal(&mut self, source: &input::VersionLiteral) -> output::VersionLiteral {
         match source {
             input::VersionLiteral::PragmaSingleQuotedStringLiteral(string_literal) => {
+                let text = self.unparse_range(string_literal.range.clone());
                 output::VersionLiteral::StringLiteral(output::StringLiteral {
                     range: string_literal.range.clone(),
+                    text,
                 })
             }
             input::VersionLiteral::PragmaDoubleQuotedStringLiteral(string_literal) => {
+                let text = self.unparse_range(string_literal.range.clone());
                 output::VersionLiteral::StringLiteral(output::StringLiteral {
                     range: string_literal.range.clone(),
+                    text,
                 })
             }
             input::VersionLiteral::SimpleVersionLiteral(_) => {
@@ -333,7 +347,7 @@ impl Builder for CstToIrBuilder {
 // Private helper methods
 //
 
-impl CstToIrBuilder {
+impl<S: Source> CstToIrBuilder<'_, S> {
     fn build_function_body(&mut self, source: &input::FunctionBody) -> Option<output::Block> {
         match source {
             input::FunctionBody::Block(block) => Some(self.build_block(block)),
