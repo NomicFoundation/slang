@@ -5,13 +5,14 @@ use slang_solidity::cst::{Cursor, TextRange};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
 
 use crate::command::{CheckBinderMode, TestOptions};
-use crate::events::{Events, TestOutcome};
+use crate::events::{Events, SingleTestOutcome, TestCaseOutcome};
 use crate::sourcify::{Contract, ContractArchive, Manifest};
 
 mod binder_v1_check;
 mod binder_v2_check;
 mod compare_binders;
-mod parser_check;
+mod parser_v1_check;
+mod parser_v2_check;
 mod version_inference_check;
 
 pub fn test_single_contract(
@@ -58,7 +59,7 @@ pub fn run_in_parallel(archive: &ContractArchive, events: &Events, opts: &TestOp
 
 fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
     if uses_exotic_parser_bug(contract) {
-        events.test(TestOutcome::Incompatible);
+        events.test(TestCaseOutcome::Incompatible);
         return;
     }
 
@@ -67,34 +68,41 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
 
     let test_outcome = match contract.create_compilation_unit() {
         Ok(unit) => {
-            let mut test_outcome = parser_check::run(contract, &unit, events);
+            let mut v1_test_outcome = parser_v1_check::run(contract, &unit, events);
 
-            if opts.check_infer_version && test_outcome == TestOutcome::Passed {
-                test_outcome = version_inference_check::run(contract, &unit, events);
+            if opts.check_infer_version && v1_test_outcome == SingleTestOutcome::Passed {
+                v1_test_outcome = version_inference_check::run(contract, &unit, events);
             }
 
-            if test_outcome == TestOutcome::Passed {
+            if v1_test_outcome == SingleTestOutcome::Passed {
                 match opts.check_binder {
                     Some(CheckBinderMode::V1) => {
-                        test_outcome = binder_v1_check::run(contract, &unit, events);
+                        v1_test_outcome = binder_v1_check::run(contract, &unit, events);
                     }
                     Some(CheckBinderMode::V2) => {
-                        test_outcome = binder_v2_check::run(contract, &unit, events);
+                        v1_test_outcome = binder_v2_check::run(contract, &unit, events);
                     }
                     Some(CheckBinderMode::Compare) => {
-                        test_outcome = compare_binders::run(contract, &unit, events);
+                        v1_test_outcome = compare_binders::run(contract, &unit, events);
                     }
                     _ => {}
                 }
             }
 
-            test_outcome
+            // TODO(v2): For now we only check V2 if V1 compiles, since V2 doesn't have a compilation unit.
+            // Once it does the whole sourcify check should be independent one from another.
+            let v2_test_outcome = parser_v2_check::run(contract, &unit, events);
+
+            TestCaseOutcome::Tested {
+                v1: v1_test_outcome,
+                v2: v2_test_outcome,
+            }
         }
         Err(e) => {
             if let Some(CompilationInitializationError::UnsupportedLanguageVersion(_)) =
                 e.downcast_ref::<CompilationInitializationError>()
             {
-                TestOutcome::Incompatible
+                TestCaseOutcome::Incompatible
             } else {
                 events.trace(format!(
                     "Failed to compile contract {}: {e}\n{}",
@@ -102,7 +110,10 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
                     e.backtrace()
                 ));
 
-                TestOutcome::Failed
+                TestCaseOutcome::Tested {
+                    v1: SingleTestOutcome::Failed,
+                    v2: None,
+                }
             }
         }
     };
@@ -188,5 +199,32 @@ impl Diagnostic for BindingError {
                 )
             }
         }
+    }
+}
+
+/// Given a vector of errors, and a function that can render them,
+/// render them together and pass them as events
+fn print_errors<T, F>(
+    contract: &Contract,
+    events: &Events,
+    file_id: &str,
+    errors: &Vec<T>,
+    render_fn: F,
+) where
+    F: Fn(&T, &str, &str, bool) -> String,
+{
+    let source = contract.read_file(file_id).unwrap();
+    let source_name = contract
+        .import_resolver
+        .get_virtual_path(file_id)
+        .unwrap_or(file_id.into());
+
+    for error in errors {
+        let msg = render_fn(error, &source_name, &source, true);
+        events.parse_error(format!(
+            "[{contract_name} {version}] Parse error\n{msg}",
+            contract_name = contract.name,
+            version = contract.version
+        ));
     }
 }
