@@ -5,6 +5,10 @@ use slang_solidity_v2_parser::Parser;
 
 use crate::dataset::SolidityProject;
 
+pub fn setup(project: &str) -> &'static SolidityProject {
+    super::setup::setup(project)
+}
+
 pub fn run(project: &SolidityProject) {
     test(project);
 }
@@ -16,6 +20,8 @@ pub fn test(project: &SolidityProject) -> Vec<SourceUnit> {
         let source_unit = Parser::parse(source, lang_version).unwrap();
         source_units.push(source_unit);
     }
+    assert!(!source_units.is_empty());
+
     source_units
 }
 

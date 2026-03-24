@@ -4,9 +4,9 @@ pub mod dataset;
 pub mod tests;
 
 mod __dependencies_used_in_benches__ {
-    use iai_callgrind as _;
-    use infra_utils as _;
-    use paste as _;
+     use iai_callgrind as _;
+     use infra_utils as _;
+     use paste as _;
 }
 
 #[cfg(test)]
