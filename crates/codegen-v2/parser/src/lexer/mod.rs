@@ -37,6 +37,7 @@ pub enum Lexeme {
     Token {
         kind: String,
         regex: String,
+        not_followed_by: Option<String>,
     },
     Keyword {
         kind: String,

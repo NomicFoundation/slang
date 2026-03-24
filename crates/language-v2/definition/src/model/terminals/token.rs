@@ -11,6 +11,11 @@ pub struct TokenItem {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub enabled: Option<VersionSpecifier>,
 
+    /// Optional negative lookahead: rejects the token match if the remainder
+    /// matches the given scanner.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub not_followed_by: Option<Scanner>,
+
     pub scanner: Scanner,
 }
 

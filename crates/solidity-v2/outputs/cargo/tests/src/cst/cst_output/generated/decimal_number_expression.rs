@@ -17,8 +17,18 @@ fn days_unit() -> Result<()> {
 }
 
 #[test]
+fn decimal_eof() -> Result<()> {
+    run(T, "decimal_eof")
+}
+
+#[test]
 fn decimal_no_unit() -> Result<()> {
     run(T, "decimal_no_unit")
+}
+
+#[test]
+fn decimal_trailing_dollar() -> Result<()> {
+    run(T, "decimal_trailing_dollar")
 }
 
 #[test]
@@ -27,8 +37,18 @@ fn decimal_trailing_ident_start() -> Result<()> {
 }
 
 #[test]
+fn decimal_trailing_unit() -> Result<()> {
+    run(T, "decimal_trailing_unit")
+}
+
+#[test]
 fn ether_unit() -> Result<()> {
     run(T, "ether_unit")
+}
+
+#[test]
+fn exponent_trailing_ident_start() -> Result<()> {
+    run(T, "exponent_trailing_ident_start")
 }
 
 #[test]

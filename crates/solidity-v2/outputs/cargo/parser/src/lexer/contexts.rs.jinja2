@@ -1,4 +1,4 @@
-use logos::{Lexer, Logos};
+use logos::{FilterResult, Lexer, Logos};
 use slang_solidity_v2_common::versions::LanguageVersion;
 
 use crate::lexer::lexemes::{Lexeme, LexemeKind};
@@ -58,6 +58,29 @@ impl<'source> ContextWrapper<'source> {
 }
 
 {% for context in model.parser.lexer.contexts %}
+    {%- for lexeme in context.lexemes %}
+    {%- if lexeme.type == "Token" and lexeme.not_followed_by %}
+
+    #[allow(non_snake_case)]
+    fn not_followed_by__{{ lexeme.kind }}(
+        lex: &mut Lexer<'_, {{ context.name }}Context>,
+    ) -> FilterResult<LexemeKind, ()> {
+        thread_local! {
+            static PATTERN: regex::Regex =
+                regex::Regex::new(r#"^({{ lexeme.not_followed_by }})"#).expect("valid not_followed_by pattern");
+        }
+        PATTERN.with(|pattern| {
+            if let Some(m) = pattern.find(lex.remainder()) {
+                lex.bump(m.end());
+                FilterResult::Error(())
+            } else {
+                FilterResult::Emit(LexemeKind::{{ lexeme.kind }})
+            }
+        })
+    }
+    {%- endif %}
+    {%- endfor %}
+
     #[derive(Clone, Debug, Logos)]
     #[logos(extras = ContextExtras)]
     {%- for name, regex in context.subpatterns %}
@@ -69,7 +92,11 @@ impl<'source> ContextWrapper<'source> {
                 {# use 'allow_greedy' on trivia: https://github.com/maciejhirsz/logos/issues/520 #}
                 #[regex(r#"{{ lexeme.regex }}"#, |_| { LexemeKind::{{ lexeme.kind }} }, priority = {{ 1000000 + loop.index }}, allow_greedy = true)]
             {%- elif lexeme.type == "Token" -%}
+                {%- if lexeme.not_followed_by -%}
+                #[regex(r#"{{ lexeme.regex }}"#, not_followed_by__{{ lexeme.kind }}, priority = {{ 2000000 + loop.index }})]
+                {%- else -%}
                 #[regex(r#"{{ lexeme.regex }}"#, |_| { LexemeKind::{{ lexeme.kind }} }, priority = {{ 2000000 + loop.index }})]
+                {%- endif -%}
             {%- elif lexeme.type == "Keyword" -%}
                 #[regex(r#"{{ lexeme.regex }}"#,
                     {{- " " -}}

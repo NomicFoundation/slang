@@ -91,6 +91,7 @@ fn definition() {
                                 item: TokenItem {
                                     name: "Bar".into(),
                                     enabled: None,
+                                    not_followed_by: None,
                                     scanner: Scanner::Atom { atom: "bar".into() }
                                 }
                                 .into()
@@ -99,6 +100,7 @@ fn definition() {
                                 item: TokenItem {
                                     name: "Baz".into(),
                                     enabled: None,
+                                    not_followed_by: None,
                                     scanner: Scanner::Atom { atom: "baz".into() }
                                 }
                                 .into()

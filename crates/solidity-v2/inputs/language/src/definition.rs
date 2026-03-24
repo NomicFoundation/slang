@@ -3605,6 +3605,7 @@ TupleValues: TupleValues = {
                                 ),
                                 Token(
                                     name = HexLiteral,
+                                    not_followed_by = Fragment(IdentifierScanner),
                                     scanner = Sequence([
                                         Atom("0x"),
                                         OneOrMore(Fragment(HexCharacter)),
@@ -3616,6 +3617,7 @@ TupleValues: TupleValues = {
                                 ),
                                 Token(
                                     name = DecimalLiteral,
+                                    not_followed_by = Fragment(IdentifierScanner),
                                     scanner = Choice([
                                         Sequence([
                                             Fragment(DecimalDigits),
@@ -3904,6 +3906,10 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                                 ),
                                 Token(
                                     name = Identifier,
+                                    scanner = Fragment(IdentifierScanner)
+                                ),
+                                Fragment(
+                                    name = IdentifierScanner,
                                     scanner = Sequence([
                                         Fragment(IdentifierStart),
                                         ZeroOrMore(Fragment(IdentifierPart))
@@ -4141,6 +4147,10 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                             ),
                             Token(
                                 name = YulIdentifier,
+                                scanner = Fragment(YulIdentifierScanner)
+                            ),
+                            Fragment(
+                                name = YulIdentifierScanner,
                                 scanner = Sequence([
                                     Fragment(YulIdentifierStart),
                                     ZeroOrMore(Fragment(YulIdentifierPart))
@@ -4175,6 +4185,7 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                             ),
                             Token(
                                 name = YulDecimalLiteral,
+                                not_followed_by = Fragment(YulIdentifierScanner),
                                 scanner = Choice([
                                     Atom("0"),
                                     Sequence([
@@ -4188,6 +4199,7 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                             ),
                             Token(
                                 name = YulHexLiteral,
+                                not_followed_by = Fragment(YulIdentifierScanner),
                                 scanner = Sequence([
                                     Atom("0x"),
                                     OneOrMore(Fragment(YulHexCharacter))
