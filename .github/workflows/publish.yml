@@ -177,10 +177,21 @@ jobs:
       && github.event_name == 'pull_request'
       && needs.build-and-validate.result == 'success'
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    permissions:
+      contents: "read"
     steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+        with:
+          persist-credentials: false
+          sparse-checkout: "Cargo.toml"
+
       - name: "DRY-RUN: publish summary"
         run: |
+          VERSION=$(grep '^version = ' Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
           echo "## Publish Dry-Run Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Version:** \`${VERSION}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "The build-and-validate pipeline completed successfully." >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
