@@ -1,32 +1,72 @@
 name: "publish"
 
+# Three trigger flows:
+#
+#   push to main            — Full release flow: process changesets, publish docs,
+#                             and (when a version-bump PR just merged) build, validate,
+#                             and publish to npm/crates.io/GitHub Releases.
+#                             Requires manual approval via the slang-release environment.
+#
+#   workflow_dispatch       — Same as push-to-main publish path. Requires manual approval.
+#
+#   pull_request (ci:release label) — Dry-run: exercises the full build and validation
+#                             pipeline (WASM build, cargo/npm dry-run) but skips actual
+#                             publishing. No approval needed.
+
 on:
   # Run using manual triggers from GitHub UI:
   # https://docs.github.com/en/actions/managing-workflow-runs/manually-running-a-workflow
   workflow_dispatch: {}
 
-  # Run on pushes to 'main' branch':
+  # Run on pushes to 'main' branch:
   push:
     branches:
       - "main"
 
+  # Run on PRs labeled 'ci:release' for dry-run validation:
+  pull_request:
+    types: [opened, labeled, synchronize]
+
+permissions: {}
+
 # Wait for any other publish workflows in-progress to complete, before starting a new one:
 concurrency:
-  group: "${{ github.workflow }}"
+  group: "${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref_name }}"
   cancel-in-progress: false
 
 jobs:
-  publish:
-    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+  # ───────────────────────────────────────────────
+  # Gate: skip the entire workflow for unlabeled PRs and forks
+  # ───────────────────────────────────────────────
 
-    # Only run on the main repo (not forks), and only on the 'main' branch:
-    if: "${{ github.repository == 'NomicFoundation/slang' && github.ref_name == 'main' }}"
-
+  label-check:
+    if: >-
+      github.event_name != 'pull_request'
+      || (contains(github.event.pull_request.labels.*.name, 'ci:release')
+          && !github.event.pull_request.head.repo.fork)
+    runs-on: "ubuntu-22.04"
     permissions:
-      contents: "write" # to create new branches and releases
-      id-token: "write" # OIDC token (needed for trusted publishing)
-      pull-requests: "write" # to create new pull requests for changesets
+      contents: "read"
+    steps:
+      - run: "true"
 
+  # ───────────────────────────────────────────────
+  # Changesets: process version bumps and publish docs
+  # Only runs on push to main (not PRs or dispatch)
+  # ───────────────────────────────────────────────
+
+  changesets:
+    needs: [label-check]
+    if: >-
+      github.event_name == 'push'
+      && github.repository == 'NomicFoundation/slang'
+      && github.ref_name == 'main'
+    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    permissions:
+      contents: "write" # to create new branches
+      pull-requests: "write" # to create new pull requests for changesets
+    outputs:
+      hasChangesets: "${{ steps.runChangesets.outputs.hasChangesets }}"
     steps:
       - name: "Checkout Repository"
         uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
@@ -70,22 +110,106 @@ jobs:
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
+  # ───────────────────────────────────────────────
+  # Build & Validate: build WASM and dry-run publish
+  # Runs for PR dry-runs (always) and push-to-main
+  # when a version-bump PR just merged.
+  # ───────────────────────────────────────────────
+
+  build-and-validate:
+    needs: [label-check, changesets]
+    # Run when:
+    # - PR dry-run (changesets job is skipped, so we can't check its output)
+    # - Push to main when version-bump PR just merged (no pending changesets)
+    # - Manual dispatch (changesets job is skipped)
+    if: >-
+      always()
+      && needs.label-check.result == 'success'
+      && (needs.changesets.result == 'skipped'
+          || needs.changesets.outputs.hasChangesets == 'false')
+    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    permissions:
+      contents: "read"
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+        with:
+          persist-credentials: false
+
+      - name: "Restore Cache"
+        uses: "./.github/actions/cache/restore"
+
+      - name: "infra setup"
+        run: "./scripts/bin/infra setup"
+
+      - name: "infra publish npm --dry-run"
+        run: "./scripts/bin/infra publish npm --dry-run"
+
+      - name: "infra publish cargo --dry-run"
+        run: "./scripts/bin/infra publish cargo --dry-run"
+
+  # ───────────────────────────────────────────────
+  # Publish: actual publishing with environment gate
+  # PRs get a dry-run summary; non-PRs require approval.
+  # ───────────────────────────────────────────────
+
+  publish:
+    needs: [build-and-validate]
+    if: "!cancelled() && needs.build-and-validate.result == 'success'"
+    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    # PR dry-runs skip the manual approval gate; push/dispatch runs require it.
+    environment: "${{ github.event_name != 'pull_request' && 'slang-release' || '' }}"
+    permissions:
+      contents: "write" # to create new releases
+      id-token: "write" # OIDC token (needed for trusted publishing)
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+        with:
+          persist-credentials: false
+
+      - name: "Restore Cache"
+        if: "${{ github.event_name != 'pull_request' }}"
+        uses: "./.github/actions/cache/restore"
+
+      - name: "infra setup"
+        if: "${{ github.event_name != 'pull_request' }}"
+        run: "./scripts/bin/infra setup"
+
       - name: "infra publish npm"
-        if: "${{ steps.runChangesets.outputs.hasChangesets == 'false' }}"
+        if: "${{ github.event_name != 'pull_request' }}"
         run: "./scripts/bin/infra publish npm"
 
       - name: "Exchange Cargo Token"
+        if: "${{ github.event_name != 'pull_request' }}"
         id: "exchangeCargoToken"
         uses: "rust-lang/crates-io-auth-action@b7e9a28eded4986ec6b1fa40eeee8f8f165559ec"
 
       - name: "infra publish cargo"
-        if: "${{ steps.runChangesets.outputs.hasChangesets == 'false' }}"
+        if: "${{ github.event_name != 'pull_request' }}"
         run: "./scripts/bin/infra publish cargo"
         env:
           CARGO_REGISTRY_TOKEN: "${{ steps.exchangeCargoToken.outputs.token }}"
 
       - name: "infra publish github-release"
-        if: "${{ steps.runChangesets.outputs.hasChangesets == 'false' }}"
+        if: "${{ github.event_name != 'pull_request' }}"
         run: "./scripts/bin/infra publish github-release"
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: "DRY-RUN: publish summary"
+        if: "${{ github.event_name == 'pull_request' }}"
+        run: |
+          echo "## Publish Dry-Run Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "The full build-and-validate pipeline completed successfully." >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### What was validated" >> "$GITHUB_STEP_SUMMARY"
+          echo "- WASM package build" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`cargo publish --dry-run\` for all published crates" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`pnpm publish --dry-run\` for npm package" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Skipped (non-PR only)" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`infra publish npm\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`infra publish cargo\` (via OIDC trusted publishing)" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`infra publish github-release\`" >> "$GITHUB_STEP_SUMMARY"
