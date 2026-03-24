@@ -178,43 +178,6 @@ jobs:
       && needs.build-and-validate.result == 'success'
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
     steps:
-      # TODO: Remove this test notification step before merging
-      - name: "TEST: Slack notification"
-        continue-on-error: true
-        uses: "slackapi/slack-github-action@af78098f536edbc4de71162a307590698245be95" # v3.0.1
-        with:
-          webhook: "${{ secrets.PUBLISHING_NOTIFICATIONS_SLACK_WEBHOOK_URL }}"
-          webhook-type: "incoming-webhook"
-          payload: |
-            {
-              "text": "[TEST] Slang publish workflow — Slack integration test",
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "[TEST] Slang publish — Slack integration test"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "This is a test notification from PR #${{ github.event.pull_request.number }}. Please ignore.\n*Run:* <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Open workflow run>"
-                  }
-                },
-                {
-                  "type": "context",
-                  "elements": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "Triggered by *${{ github.actor }}* — this step will be removed before merging"
-                    }
-                  ]
-                }
-              ]
-            }
-
       - name: "DRY-RUN: publish summary"
         run: |
           echo "## Publish Dry-Run Summary" >> "$GITHUB_STEP_SUMMARY"
