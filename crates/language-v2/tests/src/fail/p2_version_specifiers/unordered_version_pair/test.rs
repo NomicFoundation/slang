@@ -23,7 +23,7 @@ language_v2_macros::compile!(Language(
                             field_2 = Optional(reference = Two)
                         )
                     ),
-                    Token(name = Two, definitions = [TokenDefinition(Atom("two"))])
+                    Token(name = Two, scanner = Atom("two"))
                 ]
             )]
         )]

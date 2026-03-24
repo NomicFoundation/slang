@@ -132,8 +132,8 @@ impl LexicalContextBuilder {
                     instance.lexemes.push(lexeme);
                 }
                 Item::Token { item } => {
-                    let lexemes = instance.convert_token(item);
-                    instance.lexemes.extend(lexemes);
+                    let lexeme = instance.convert_token(item);
+                    instance.lexemes.push(lexeme);
                 }
             }
         }
@@ -183,17 +183,11 @@ impl LexicalContextBuilder {
         }
     }
 
-    fn convert_token(&mut self, item: &TokenItem) -> Vec<Lexeme> {
-        let mut result = Vec::new();
-
-        for definition in &item.definitions {
-            result.push(Lexeme::Token {
-                kind: item.name.to_string(),
-                regex: self.convert_scanner(&definition.scanner),
-            });
+    fn convert_token(&mut self, item: &TokenItem) -> Lexeme {
+        Lexeme::Token {
+            kind: item.name.to_string(),
+            regex: self.convert_scanner(&item.scanner),
         }
-
-        result
     }
 
     fn convert_keyword_value(parent: &KeywordValue) -> String {

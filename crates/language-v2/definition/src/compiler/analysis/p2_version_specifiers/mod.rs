@@ -184,7 +184,7 @@ fn check_token(analysis: &mut Analysis, item: &SpannedTokenItem) {
     let SpannedTokenItem {
         name: _,
         enabled,
-        definitions: _,
+        scanner: _,
     } = item;
 
     check_version_specifier(analysis, enabled.as_ref());

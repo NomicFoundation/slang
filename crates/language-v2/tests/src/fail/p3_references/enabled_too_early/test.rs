@@ -28,7 +28,7 @@ language_v2_macros::compile!(Language(
                         enabled = Range(from = "2.0.0", till = "3.0.0"),
                         fields = (field_1 = Optional(reference = Three, enabled = From("1.0.0")))
                     ),
-                    Token(name = Three, definitions = [TokenDefinition(Atom("three"))])
+                    Token(name = Three, scanner = Atom("three"))
                 ]
             )]
         )]
