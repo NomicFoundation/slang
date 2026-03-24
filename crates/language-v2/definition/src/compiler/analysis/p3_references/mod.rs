@@ -12,8 +12,8 @@ use crate::model::{
     SpannedEnumItem, SpannedEnumVariant, SpannedField, SpannedFragmentItem, SpannedItem,
     SpannedKeywordItem, SpannedPrecedenceExpression, SpannedPrecedenceItem,
     SpannedPrecedenceOperator, SpannedPrimaryExpression, SpannedRepeatedItem, SpannedScanner,
-    SpannedSeparatedItem, SpannedStructItem, SpannedTokenDefinition, SpannedTokenItem,
-    SpannedTriviaItem, SpannedTriviaParser, SpannedVersionSpecifier,
+    SpannedSeparatedItem, SpannedStructItem, SpannedTokenItem, SpannedTriviaItem,
+    SpannedTriviaParser, SpannedVersionSpecifier,
 };
 
 pub(crate) fn run(analysis: &mut Analysis) {
@@ -413,16 +413,12 @@ fn check_token(
     let SpannedTokenItem {
         name,
         enabled,
-        definitions,
+        scanner,
     } = item;
 
     let enablement = update_enablement(analysis, enablement, enabled.as_ref());
 
-    for definition in definitions {
-        let SpannedTokenDefinition { scanner } = definition;
-
-        check_scanner(analysis, Some(name), scanner, &enablement, lexical_context);
-    }
+    check_scanner(analysis, Some(name), scanner, &enablement, lexical_context);
 }
 
 fn check_fragment(

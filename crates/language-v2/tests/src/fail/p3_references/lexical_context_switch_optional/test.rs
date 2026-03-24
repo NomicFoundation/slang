@@ -33,10 +33,7 @@ language_v2_macros::compile!(Language(
                 title = "Section Two",
                 topics = [Topic(
                     title = "Topic Two",
-                    items = [Token(
-                        name = Three,
-                        definitions = [TokenDefinition(Atom("three"))]
-                    )]
+                    items = [Token(name = Three, scanner = Atom("three"))]
                 )]
             )]
         )

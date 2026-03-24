@@ -20,7 +20,7 @@ language_v2_macros::compile!(Language(
                             fields = (entry = Required(Two), field_1 = Required(Three))
                         ),
                         Keyword(name = Two, value = Atom("two")),
-                        Token(name = Three, definitions = [TokenDefinition(Atom("three"))])
+                        Token(name = Three, scanner = Atom("three"))
                     ]
                 )]
             )]
@@ -31,10 +31,7 @@ language_v2_macros::compile!(Language(
                 title = "Section Two",
                 topics = [Topic(
                     title = "Topic Two",
-                    items = [Token(
-                        name = Four,
-                        definitions = [TokenDefinition(Atom("four"))]
-                    )]
+                    items = [Token(name = Four, scanner = Atom("four"))]
                 )]
             )]
         )
