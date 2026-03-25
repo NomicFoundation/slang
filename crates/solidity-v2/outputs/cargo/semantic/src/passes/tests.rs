@@ -6,7 +6,7 @@ use crate::binder::{Binder, Resolution};
 use crate::file::File;
 use crate::ir;
 use crate::passes::{
-    p2_collect_definitions, p3_linearise_contracts, p4_type_definitions, p5_resolve_references,
+    p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_resolve_references,
 };
 use crate::types::TypeRegistry;
 
@@ -29,8 +29,8 @@ contract Test is Base layout at 0 {}
 
     let files = [file];
     let mut binder = Binder::new();
-    p2_collect_definitions::run(&files, &mut binder);
-    p3_linearise_contracts::run(&files, &mut binder);
+    p1_collect_definitions::run(&files, &mut binder);
+    p2_linearise_contracts::run(&files, &mut binder);
 
     // Verify definitions were collected
     assert_eq!(2, binder.definitions().len());
@@ -73,11 +73,11 @@ contract Test is Base {
     let mut binder = Binder::new();
     let mut types = TypeRegistry::default();
 
-    p2_collect_definitions::run(&files, &mut binder);
-    p3_linearise_contracts::run(&files, &mut binder);
+    p1_collect_definitions::run(&files, &mut binder);
+    p2_linearise_contracts::run(&files, &mut binder);
 
     let types_before = types.iter_types().count();
-    p4_type_definitions::run(&files, &mut binder, &mut types);
+    p3_type_definitions::run(&files, &mut binder, &mut types);
     let types_after = types.iter_types().count();
 
     // The pass registers new types for: contracts, mappings, structs, enums,
@@ -128,10 +128,10 @@ contract Test is Base {
     let mut types = TypeRegistry::default();
     let language_version = LanguageVersion::V0_8_30;
 
-    p2_collect_definitions::run(&files, &mut binder);
-    p3_linearise_contracts::run(&files, &mut binder);
-    p4_type_definitions::run(&files, &mut binder, &mut types);
-    p5_resolve_references::run(&files, &mut binder, &mut types, language_version);
+    p1_collect_definitions::run(&files, &mut binder);
+    p2_linearise_contracts::run(&files, &mut binder);
+    p3_type_definitions::run(&files, &mut binder, &mut types);
+    p4_resolve_references::run(&files, &mut binder, &mut types, language_version);
 
     // Verify that references were created and most are resolved
     let references = binder.references();
