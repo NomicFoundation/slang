@@ -8,7 +8,7 @@ use iai_callgrind::{
 };
 use paste::paste;
 use solidity_testing_perf_cargo::dataset::SolidityProject;
-use solidity_testing_perf_cargo::tests;
+use solidity_testing_perf_cargo::{tests, tests_v2};
 
 mod __dependencies_used_in_lib__ {
     use anyhow as _;
@@ -69,7 +69,7 @@ macro_rules! slang_v2_test {
             #[library_benchmark(setup = tests::setup::setup)]
             #[bench::test(stringify!($prj))]
             pub fn [<slang_v2_ $prj>](project: &SolidityProject) {
-                black_box(tests::slang_v2_parser::run(project));
+                black_box(tests_v2::parser::run(project));
             }
         }
     };
