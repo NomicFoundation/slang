@@ -238,10 +238,10 @@ impl Pass<'_> {
             let Some(parameters) = self.get_event_definition_parameters(*definition_id) else {
                 continue;
             };
-            if parameters.len() == argument_typings.len() {
-                if self.parameters_match_positional_arguments(parameters, argument_typings, false) {
-                    return Some(*definition_id);
-                }
+            if parameters.len() == argument_typings.len()
+                && self.parameters_match_positional_arguments(parameters, argument_typings, false)
+            {
+                return Some(*definition_id);
             }
         }
         None
@@ -261,10 +261,10 @@ impl Pass<'_> {
                 continue;
             }
 
-            if parameters.len() == argument_typings.len() {
-                if self.parameters_match_named_arguments(parameters, argument_typings, false) {
-                    return Some(*definition_id);
-                }
+            if parameters.len() == argument_typings.len()
+                && self.parameters_match_named_arguments(parameters, argument_typings, false)
+            {
+                return Some(*definition_id);
             }
         }
         None
