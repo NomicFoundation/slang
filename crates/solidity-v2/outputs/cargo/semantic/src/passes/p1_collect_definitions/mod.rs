@@ -1,5 +1,5 @@
 use crate::binder::{Binder, Definition, FileScope, ParametersScope, Scope, ScopeId};
-use crate::file::File;
+use crate::compilation::file::File;
 use crate::ir::visitor::Visitor;
 use crate::ir::{self, NodeId};
 
