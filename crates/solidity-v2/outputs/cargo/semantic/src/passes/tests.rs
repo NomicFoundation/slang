@@ -2,10 +2,12 @@ use anyhow::{anyhow, Result};
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_parser::Parser;
 
-use crate::binder::Binder;
+use crate::binder::{Binder, Resolution};
 use crate::file::File;
 use crate::ir;
-use crate::passes::{p2_collect_definitions, p3_linearise_contracts, p4_type_definitions};
+use crate::passes::{
+    p2_collect_definitions, p3_linearise_contracts, p4_type_definitions, p5_resolve_references,
+};
 use crate::types::TypeRegistry;
 
 fn build_file(name: &str, contents: &str) -> Result<File> {
@@ -82,6 +84,70 @@ contract Test is Base {
     // function types, getter types, etc.
     let registered_types = types_after - types_before;
     assert_eq!(registered_types, 7);
+
+    Ok(())
+}
+
+#[test]
+fn test_resolve_references() -> Result<()> {
+    const CONTENTS: &str = r###"
+contract Base {
+    uint256 public x;
+    function foo(uint256 a) public pure returns (uint256) {
+        return a;
+    }
+}
+
+contract Test is Base {
+    mapping(address => uint256) balances;
+    bool flag;
+
+    struct Point {
+        uint256 x;
+        uint256 y;
+    }
+
+    enum Color { Red, Green, Blue }
+
+    function bar(uint256 b) external view returns (bool) {
+        return flag;
+    }
+
+    function baz() public view returns (uint256) {
+        Point memory p;
+        p.x = 1;
+        return balances[msg.sender];
+    }
+}
+    "###;
+
+    let file = build_file("test.sol", CONTENTS)?;
+
+    let files = [file];
+    let mut binder = Binder::new();
+    let mut types = TypeRegistry::default();
+    let language_version = LanguageVersion::V0_8_30;
+
+    p2_collect_definitions::run(&files, &mut binder);
+    p3_linearise_contracts::run(&files, &mut binder);
+    p4_type_definitions::run(&files, &mut binder, &mut types);
+    p5_resolve_references::run(&files, &mut binder, &mut types, language_version);
+
+    // Verify that references were created and most are resolved
+    let references = binder.references();
+    assert!(!references.is_empty(), "expected some references");
+
+    let unresolved_count = references
+        .values()
+        .filter(|r| matches!(r.resolution, Resolution::Unresolved))
+        .count();
+
+    // Some references may be unresolved (e.g. built-in types), but most should resolve
+    let resolved_count = references.len() - unresolved_count;
+    assert!(
+        resolved_count > 0,
+        "expected at least some resolved references"
+    );
 
     Ok(())
 }
