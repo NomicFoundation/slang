@@ -24,10 +24,11 @@ num-bigint = { workspace = true }
 num-traits = { workspace = true }
 slang_solidity_v2_common = { workspace = true }
 slang_solidity_v2_cst = { workspace = true }
+slang_solidity_v2_parser = { workspace = true }
+thiserror = { workspace = true }
 
 [dev-dependencies]
 anyhow = { workspace = true }
-slang_solidity_v2_parser = { workspace = true }
 
 [lints]
 workspace = true
