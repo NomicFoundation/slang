@@ -5,7 +5,7 @@ use crate::ir::{self, NodeId};
 use crate::types::{DataLocation, FunctionType, LiteralKind, Type, TypeId};
 
 impl Pass<'_> {
-    pub(super) fn typing_of_expression(&mut self, node: &ir::Expression) -> Typing {
+    pub(super) fn typing_of_expression(&self, node: &ir::Expression) -> Typing {
         match node {
             ir::Expression::AssignmentExpression(assignment_expression) => {
                 self.binder.node_typing(assignment_expression.id())
@@ -76,12 +76,9 @@ impl Pass<'_> {
             ir::Expression::DecimalNumberExpression(decimal_number_expression) => {
                 self.binder.node_typing(decimal_number_expression.id())
             }
-            ir::Expression::StringExpression(string_expression) => {
-                let type_id = self
-                    .types
-                    .register_type(Self::type_of_string_expression(string_expression));
-                Typing::Resolved(type_id)
-            }
+            ir::Expression::StringExpression(string_expression) => self
+                .binder
+                .node_typing(Self::string_expression_node_id(string_expression)),
             ir::Expression::ElementaryType(elementary_type) => {
                 Typing::MetaType(Self::type_of_elementary_type(elementary_type))
             }
@@ -143,7 +140,7 @@ impl Pass<'_> {
     }
 
     pub(super) fn type_of_integer_binary_expression(
-        &mut self,
+        &self,
         left_operand: &ir::Expression,
         right_operand: &ir::Expression,
     ) -> Option<TypeId> {
@@ -209,7 +206,7 @@ impl Pass<'_> {
         self.typing_of_resolution(resolution)
     }
 
-    fn type_id_of_receiver(&mut self, operand: &ir::Expression) -> Option<TypeId> {
+    fn type_id_of_receiver(&self, operand: &ir::Expression) -> Option<TypeId> {
         if let ir::Expression::MemberAccessExpression(member_access_expression) = operand {
             self.typing_of_expression(&member_access_expression.operand)
                 .as_type_id()
@@ -243,7 +240,7 @@ impl Pass<'_> {
     }
 
     pub(super) fn collect_positional_argument_typings(
-        &mut self,
+        &self,
         arguments: &[ir::Expression],
     ) -> Vec<Typing> {
         arguments
@@ -354,7 +351,7 @@ impl Pass<'_> {
     }
 
     pub(super) fn collect_named_argument_typings(
-        &mut self,
+        &self,
         arguments: &[ir::NamedArgument],
     ) -> Vec<(String, Typing)> {
         arguments
@@ -455,6 +452,14 @@ fn reference_node_id_for_expression(node: &ir::Expression) -> Option<NodeId> {
 
 /// Typing functions for literals
 impl Pass<'_> {
+    pub(super) fn string_expression_node_id(node: &ir::StringExpression) -> NodeId {
+        match node {
+            ir::StringExpression::StringLiterals(strings) => strings[0].id(),
+            ir::StringExpression::HexStringLiterals(hex_strings) => hex_strings[0].id(),
+            ir::StringExpression::UnicodeStringLiterals(unicode_strings) => unicode_strings[0].id(),
+        }
+    }
+
     pub(super) fn type_of_string_expression(node: &ir::StringExpression) -> Type {
         let kind = match node {
             ir::StringExpression::StringLiterals(strings) => {

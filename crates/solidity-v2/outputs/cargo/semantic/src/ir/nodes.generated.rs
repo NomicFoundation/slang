@@ -1801,61 +1801,91 @@ pub type YulVariableNames = Vec<Identifier>;
 // Non-unique Terminals
 //
 
+pub type BytesKeyword = Rc<BytesKeywordStruct>;
+
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct BytesKeyword {
+pub struct BytesKeywordStruct {
     pub range: Range<usize>,
     pub text: String,
 }
 
-impl BytesKeyword {
+impl BytesKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+
     pub fn unparse(&self) -> &str {
         &self.text
     }
 }
 
+pub type DecimalLiteral = Rc<DecimalLiteralStruct>;
+
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct DecimalLiteral {
+pub struct DecimalLiteralStruct {
     pub range: Range<usize>,
     pub text: String,
 }
 
-impl DecimalLiteral {
+impl DecimalLiteralStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+
     pub fn unparse(&self) -> &str {
         &self.text
     }
 }
 
+pub type FixedKeyword = Rc<FixedKeywordStruct>;
+
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct FixedKeyword {
+pub struct FixedKeywordStruct {
     pub range: Range<usize>,
     pub text: String,
 }
 
-impl FixedKeyword {
+impl FixedKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+
     pub fn unparse(&self) -> &str {
         &self.text
     }
 }
 
+pub type HexLiteral = Rc<HexLiteralStruct>;
+
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct HexLiteral {
+pub struct HexLiteralStruct {
     pub range: Range<usize>,
     pub text: String,
 }
 
-impl HexLiteral {
+impl HexLiteralStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+
     pub fn unparse(&self) -> &str {
         &self.text
     }
 }
 
+pub type HexStringLiteral = Rc<HexStringLiteralStruct>;
+
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct HexStringLiteral {
+pub struct HexStringLiteralStruct {
     pub range: Range<usize>,
     pub text: String,
 }
 
-impl HexStringLiteral {
+impl HexStringLiteralStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+
     pub fn unparse(&self) -> &str {
         &self.text
     }
@@ -1879,73 +1909,109 @@ impl IdentifierStruct {
     }
 }
 
+pub type IntKeyword = Rc<IntKeywordStruct>;
+
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct IntKeyword {
+pub struct IntKeywordStruct {
     pub range: Range<usize>,
     pub text: String,
 }
 
-impl IntKeyword {
+impl IntKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+
     pub fn unparse(&self) -> &str {
         &self.text
     }
 }
 
+pub type StringLiteral = Rc<StringLiteralStruct>;
+
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct StringLiteral {
+pub struct StringLiteralStruct {
     pub range: Range<usize>,
     pub text: String,
 }
 
-impl StringLiteral {
+impl StringLiteralStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+
     pub fn unparse(&self) -> &str {
         &self.text
     }
 }
 
+pub type UfixedKeyword = Rc<UfixedKeywordStruct>;
+
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct UfixedKeyword {
+pub struct UfixedKeywordStruct {
     pub range: Range<usize>,
     pub text: String,
 }
 
-impl UfixedKeyword {
+impl UfixedKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+
     pub fn unparse(&self) -> &str {
         &self.text
     }
 }
 
+pub type UintKeyword = Rc<UintKeywordStruct>;
+
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct UintKeyword {
+pub struct UintKeywordStruct {
     pub range: Range<usize>,
     pub text: String,
 }
 
-impl UintKeyword {
+impl UintKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+
     pub fn unparse(&self) -> &str {
         &self.text
     }
 }
 
+pub type UnicodeStringLiteral = Rc<UnicodeStringLiteralStruct>;
+
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct UnicodeStringLiteral {
+pub struct UnicodeStringLiteralStruct {
     pub range: Range<usize>,
     pub text: String,
 }
 
-impl UnicodeStringLiteral {
+impl UnicodeStringLiteralStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+
     pub fn unparse(&self) -> &str {
         &self.text
     }
 }
 
+pub type VersionSpecifier = Rc<VersionSpecifierStruct>;
+
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct VersionSpecifier {
+pub struct VersionSpecifierStruct {
     pub range: Range<usize>,
     pub text: String,
 }
 
-impl VersionSpecifier {
+impl VersionSpecifierStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+
     pub fn unparse(&self) -> &str {
         &self.text
     }
