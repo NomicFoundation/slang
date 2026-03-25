@@ -1,5 +1,5 @@
 use crate::binder::{Binder, Definition, Scope, ScopeId};
-use crate::file::File;
+use crate::compilation::file::File;
 use crate::ir::{self, NodeId};
 use crate::types::{DataLocation, FunctionTypeKind, Type, TypeId, TypeRegistry};
 

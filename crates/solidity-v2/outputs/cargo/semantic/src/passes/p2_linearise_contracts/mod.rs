@@ -5,7 +5,7 @@ use crate::binder::{
     Binder, ContractDefinition, Definition, ImportDefinition, InterfaceDefinition, Reference,
     Resolution, ScopeId,
 };
-use crate::file::File;
+use crate::compilation::file::File;
 use crate::ir::{self, NodeId};
 
 mod c3;
