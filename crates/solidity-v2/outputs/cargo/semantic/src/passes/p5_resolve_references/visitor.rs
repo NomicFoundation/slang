@@ -2,6 +2,7 @@ use std::rc::Rc;
 
 use super::Pass;
 use crate::binder::{Reference, Resolution, Typing};
+use crate::built_ins::BuiltIn;
 use crate::ir;
 use crate::ir::visitor::Visitor;
 use crate::ir::Expression_PrefixExpression_Operator;
@@ -108,10 +109,15 @@ impl Visitor for Pass<'_> {
 
     fn enter_expression(&mut self, node: &ir::Expression) -> bool {
         if let ir::Expression::Identifier(identifier) = node {
-            let scope_id = self.current_scope_id();
-            let resolution = self.filter_overriden_definitions(
-                self.resolve_symbol_in_scope(scope_id, identifier.unparse()),
-            );
+            let symbol = identifier.unparse();
+            let resolution = if symbol == "_" && self.is_in_modifier_scope() {
+                Resolution::BuiltIn(BuiltIn::ModifierUnderscore)
+            } else {
+                let scope_id = self.current_scope_id();
+                self.filter_overriden_definitions(
+                    self.resolve_symbol_in_scope(scope_id, symbol),
+                )
+            };
             let reference = Reference::new(Rc::clone(identifier), resolution);
             self.binder.insert_reference(reference);
         }
