@@ -114,9 +114,7 @@ impl Visitor for Pass<'_> {
                 Resolution::BuiltIn(BuiltIn::ModifierUnderscore)
             } else {
                 let scope_id = self.current_scope_id();
-                self.filter_overriden_definitions(
-                    self.resolve_symbol_in_scope(scope_id, symbol),
-                )
+                self.filter_overriden_definitions(self.resolve_symbol_in_scope(scope_id, symbol))
             };
             let reference = Reference::new(Rc::clone(identifier), resolution);
             self.binder.insert_reference(reference);
@@ -403,21 +401,19 @@ impl Visitor for Pass<'_> {
     fn leave_array_expression(&mut self, node: &ir::ArrayExpression) {
         let typing = if node.items.is_empty() {
             Typing::Unresolved
+        } else if let Some(element_type) = self
+            .typing_of_expression(node.items.first().unwrap())
+            .as_type_id()
+        {
+            let element_type = self.types.reified_type(element_type);
+            let type_id = self.types.register_type(Type::FixedSizeArray {
+                element_type,
+                size: node.items.len(),
+                location: DataLocation::Memory,
+            });
+            Typing::Resolved(type_id)
         } else {
-            if let Some(element_type) = self
-                .typing_of_expression(node.items.first().unwrap())
-                .as_type_id()
-            {
-                let element_type = self.types.reified_type(element_type);
-                let type_id = self.types.register_type(Type::FixedSizeArray {
-                    element_type,
-                    size: node.items.len(),
-                    location: DataLocation::Memory,
-                });
-                Typing::Resolved(type_id)
-            } else {
-                Typing::Unresolved
-            }
+            Typing::Unresolved
         };
         self.binder.set_node_typing(node.id(), typing);
     }
