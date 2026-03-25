@@ -118,6 +118,15 @@ impl<'a> Pass<'a> {
             .unwrap()
     }
 
+    fn is_in_modifier_scope(&self) -> bool {
+        self.scope_stack.iter().rev().any(|frame| {
+            matches!(
+                self.binder.get_scope_by_id(frame.lexical_scope_id),
+                Scope::Modifier(_)
+            )
+        })
+    }
+
     fn current_contract_scope_id(&self) -> Option<ScopeId> {
         for ScopeFrame {
             lexical_scope_id, ..

@@ -511,14 +511,10 @@ impl Binder {
                 )
                 .or_else(|| self.resolve_in_scope(function_scope.parent_scope_id, symbol)),
             Scope::Modifier(modifier_scope) => {
-                if symbol == "_" {
-                    Resolution::BuiltIn(BuiltIn::ModifierUnderscore)
-                } else {
-                    modifier_scope.definitions.get(symbol).copied().map_or_else(
-                        || self.resolve_in_scope(modifier_scope.parent_scope_id, symbol),
-                        Resolution::Definition,
-                    )
-                }
+                modifier_scope.definitions.get(symbol).copied().map_or_else(
+                    || self.resolve_in_scope(modifier_scope.parent_scope_id, symbol),
+                    Resolution::Definition,
+                )
             }
             Scope::Parameters(parameters_scope) => {
                 parameters_scope.lookup_definition(symbol).into()
