@@ -12,9 +12,7 @@ pub use definitions::Definition;
 pub(crate) use definitions::{ContractDefinition, ImportDefinition, InterfaceDefinition};
 pub use references::{Reference, Resolution};
 use scopes::ContractScope;
-pub(crate) use scopes::{
-    EitherIter, FileScope, ParameterDefinition, ParametersScope, Scope, UsingDirective,
-};
+pub(crate) use scopes::{FileScope, ParameterDefinition, ParametersScope, Scope, UsingDirective};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ScopeId(usize);
@@ -315,24 +313,6 @@ impl Binder {
         self.get_scope_by_id(scope_id).get_using_directives()
     }
 
-    pub(crate) fn get_using_directives_in_scope_including_inherited(
-        &self,
-        scope_id: ScopeId,
-    ) -> impl Iterator<Item = &UsingDirective> {
-        let scope = self.get_scope_by_id(scope_id);
-        if let Scope::Contract(contract_scope) = scope {
-            if let Some(linearisations) = self.linearisations.get(&contract_scope.node_id) {
-                return EitherIter::Left(
-                    linearisations
-                        .iter()
-                        .filter_map(|node_id| self.scope_id_for_node_id(*node_id))
-                        .flat_map(|scope_id| self.get_scope_by_id(scope_id).get_using_directives()),
-                );
-            }
-        }
-        EitherIter::Right(scope.get_using_directives())
-    }
-
     pub fn node_typing(&self, node_id: NodeId) -> Typing {
         self.node_typing
             .get(&node_id)
@@ -359,14 +339,6 @@ impl Binder {
         if previous_typing.is_some() {
             unreachable!("typing information for node {node_id:?} already set");
         }
-    }
-
-    pub(crate) fn fixup_node_typing(&mut self, node_id: NodeId, typing: Typing) {
-        assert!(
-            self.node_typing.contains_key(&node_id),
-            "typing information for node {node_id:?} not set"
-        );
-        self.node_typing.insert(node_id, typing);
     }
 
     // File scope resolution context
