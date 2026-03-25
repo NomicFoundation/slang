@@ -2221,17 +2221,17 @@ pub trait Builder {
         match source {
             input::HexStringLiteral::SingleQuotedHexStringLiteral(terminal) => {
                 let text = self.unparse_range(terminal.range.clone());
-                output::HexStringLiteral {
+                Rc::new(output::HexStringLiteralStruct {
                     range: terminal.range.clone(),
                     text,
-                }
+                })
             }
             input::HexStringLiteral::DoubleQuotedHexStringLiteral(terminal) => {
                 let text = self.unparse_range(terminal.range.clone());
-                output::HexStringLiteral {
+                Rc::new(output::HexStringLiteralStruct {
                     range: terminal.range.clone(),
                     text,
-                }
+                })
             }
         }
     }
@@ -2265,17 +2265,17 @@ pub trait Builder {
         match source {
             input::PragmaStringLiteral::PragmaSingleQuotedStringLiteral(terminal) => {
                 let text = self.unparse_range(terminal.range.clone());
-                output::StringLiteral {
+                Rc::new(output::StringLiteralStruct {
                     range: terminal.range.clone(),
                     text,
-                }
+                })
             }
             input::PragmaStringLiteral::PragmaDoubleQuotedStringLiteral(terminal) => {
                 let text = self.unparse_range(terminal.range.clone());
-                output::StringLiteral {
+                Rc::new(output::StringLiteralStruct {
                     range: terminal.range.clone(),
                     text,
-                }
+                })
             }
         }
     }
@@ -2284,17 +2284,17 @@ pub trait Builder {
         match source {
             input::StringLiteral::SingleQuotedStringLiteral(terminal) => {
                 let text = self.unparse_range(terminal.range.clone());
-                output::StringLiteral {
+                Rc::new(output::StringLiteralStruct {
                     range: terminal.range.clone(),
                     text,
-                }
+                })
             }
             input::StringLiteral::DoubleQuotedStringLiteral(terminal) => {
                 let text = self.unparse_range(terminal.range.clone());
-                output::StringLiteral {
+                Rc::new(output::StringLiteralStruct {
                     range: terminal.range.clone(),
                     text,
-                }
+                })
             }
         }
     }
@@ -2306,17 +2306,17 @@ pub trait Builder {
         match source {
             input::UnicodeStringLiteral::SingleQuotedUnicodeStringLiteral(terminal) => {
                 let text = self.unparse_range(terminal.range.clone());
-                output::UnicodeStringLiteral {
+                Rc::new(output::UnicodeStringLiteralStruct {
                     range: terminal.range.clone(),
                     text,
-                }
+                })
             }
             input::UnicodeStringLiteral::DoubleQuotedUnicodeStringLiteral(terminal) => {
                 let text = self.unparse_range(terminal.range.clone());
-                output::UnicodeStringLiteral {
+                Rc::new(output::UnicodeStringLiteralStruct {
                     range: terminal.range.clone(),
                     text,
-                }
+                })
             }
         }
     }
@@ -2328,17 +2328,17 @@ pub trait Builder {
         match source {
             input::YulHexStringLiteral::YulSingleQuotedHexStringLiteral(terminal) => {
                 let text = self.unparse_range(terminal.range.clone());
-                output::HexStringLiteral {
+                Rc::new(output::HexStringLiteralStruct {
                     range: terminal.range.clone(),
                     text,
-                }
+                })
             }
             input::YulHexStringLiteral::YulDoubleQuotedHexStringLiteral(terminal) => {
                 let text = self.unparse_range(terminal.range.clone());
-                output::HexStringLiteral {
+                Rc::new(output::HexStringLiteralStruct {
                     range: terminal.range.clone(),
                     text,
-                }
+                })
             }
         }
     }
@@ -2350,17 +2350,17 @@ pub trait Builder {
         match source {
             input::YulStringLiteral::YulSingleQuotedStringLiteral(terminal) => {
                 let text = self.unparse_range(terminal.range.clone());
-                output::StringLiteral {
+                Rc::new(output::StringLiteralStruct {
                     range: terminal.range.clone(),
                     text,
-                }
+                })
             }
             input::YulStringLiteral::YulDoubleQuotedStringLiteral(terminal) => {
                 let text = self.unparse_range(terminal.range.clone());
-                output::StringLiteral {
+                Rc::new(output::StringLiteralStruct {
                     range: terminal.range.clone(),
                     text,
-                }
+                })
             }
         }
     }
@@ -2689,43 +2689,38 @@ pub trait Builder {
 
     fn build_bytes_keyword(&mut self, source: &input::BytesKeyword) -> output::BytesKeyword {
         let text = self.unparse_range(source.range.clone());
-
-        output::BytesKeyword {
+        Rc::new(output::BytesKeywordStruct {
             range: source.range.clone(),
             text,
-        }
+        })
     }
 
     fn build_decimal_literal(&mut self, source: &input::DecimalLiteral) -> output::DecimalLiteral {
         let text = self.unparse_range(source.range.clone());
-
-        output::DecimalLiteral {
+        Rc::new(output::DecimalLiteralStruct {
             range: source.range.clone(),
             text,
-        }
+        })
     }
 
     fn build_fixed_keyword(&mut self, source: &input::FixedKeyword) -> output::FixedKeyword {
         let text = self.unparse_range(source.range.clone());
-
-        output::FixedKeyword {
+        Rc::new(output::FixedKeywordStruct {
             range: source.range.clone(),
             text,
-        }
+        })
     }
 
     fn build_hex_literal(&mut self, source: &input::HexLiteral) -> output::HexLiteral {
         let text = self.unparse_range(source.range.clone());
-
-        output::HexLiteral {
+        Rc::new(output::HexLiteralStruct {
             range: source.range.clone(),
             text,
-        }
+        })
     }
 
     fn build_identifier(&mut self, source: &input::Identifier) -> output::Identifier {
         let text = self.unparse_range(source.range.clone());
-
         Rc::new(output::IdentifierStruct {
             range: source.range.clone(),
             text,
@@ -2734,29 +2729,26 @@ pub trait Builder {
 
     fn build_int_keyword(&mut self, source: &input::IntKeyword) -> output::IntKeyword {
         let text = self.unparse_range(source.range.clone());
-
-        output::IntKeyword {
+        Rc::new(output::IntKeywordStruct {
             range: source.range.clone(),
             text,
-        }
+        })
     }
 
     fn build_ufixed_keyword(&mut self, source: &input::UfixedKeyword) -> output::UfixedKeyword {
         let text = self.unparse_range(source.range.clone());
-
-        output::UfixedKeyword {
+        Rc::new(output::UfixedKeywordStruct {
             range: source.range.clone(),
             text,
-        }
+        })
     }
 
     fn build_uint_keyword(&mut self, source: &input::UintKeyword) -> output::UintKeyword {
         let text = self.unparse_range(source.range.clone());
-
-        output::UintKeyword {
+        Rc::new(output::UintKeywordStruct {
             range: source.range.clone(),
             text,
-        }
+        })
     }
 
     fn build_version_specifier(
@@ -2764,11 +2756,10 @@ pub trait Builder {
         source: &input::VersionSpecifier,
     ) -> output::VersionSpecifier {
         let text = self.unparse_range(source.range.clone());
-
-        output::VersionSpecifier {
+        Rc::new(output::VersionSpecifierStruct {
             range: source.range.clone(),
             text,
-        }
+        })
     }
 
     //
@@ -2780,25 +2771,22 @@ pub trait Builder {
         source: &input::YulDecimalLiteral,
     ) -> output::DecimalLiteral {
         let text = self.unparse_range(source.range.clone());
-
-        output::DecimalLiteral {
+        Rc::new(output::DecimalLiteralStruct {
             range: source.range.clone(),
             text,
-        }
+        })
     }
 
     fn build_yul_hex_literal(&mut self, source: &input::YulHexLiteral) -> output::HexLiteral {
         let text = self.unparse_range(source.range.clone());
-
-        output::HexLiteral {
+        Rc::new(output::HexLiteralStruct {
             range: source.range.clone(),
             text,
-        }
+        })
     }
 
     fn build_yul_identifier(&mut self, source: &input::YulIdentifier) -> output::Identifier {
         let text = self.unparse_range(source.range.clone());
-
         Rc::new(output::IdentifierStruct {
             range: source.range.clone(),
             text,

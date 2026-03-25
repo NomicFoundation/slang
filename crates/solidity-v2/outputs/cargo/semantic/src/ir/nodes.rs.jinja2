@@ -89,36 +89,22 @@ pub struct NodeId(usize);
 
 {% for terminal_type, terminal in target.terminals %}
   {% if not terminal.is_unique %}
-    {% if terminal.is_identifier %}
-      pub type {{ terminal_type }} = Rc<{{ terminal_type }}Struct>;
+    pub type {{ terminal_type }} = Rc<{{ terminal_type }}Struct>;
 
-      #[derive(Clone, Debug, Eq, PartialEq)]
-      pub struct {{ terminal_type }}Struct {
-        pub range: Range<usize>,
-        pub text: String,
+    #[derive(Clone, Debug, Eq, PartialEq)]
+    pub struct {{ terminal_type }}Struct {
+      pub range: Range<usize>,
+      pub text: String,
+    }
+
+    impl {{ terminal_type }}Struct {
+      pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
       }
 
-      impl {{ terminal_type }}Struct {
-        pub fn id(self: &Rc<Self>) -> NodeId {
-          NodeId(Rc::as_ptr(self) as usize)
-        }
-
-        pub fn unparse(&self) -> &str {
-          &self.text
-        }
+      pub fn unparse(&self) -> &str {
+        &self.text
       }
-    {% else %}
-      #[derive(Clone, Debug, Eq, PartialEq)]
-      pub struct {{ terminal_type }} {
-        pub range: Range<usize>,
-        pub text: String,
-      }
-
-      impl {{ terminal_type }} {
-        pub fn unparse(&self) -> &str {
-          &self.text
-        }
-      }
-    {% endif %}
+    }
   {% endif %}
 {% endfor %}

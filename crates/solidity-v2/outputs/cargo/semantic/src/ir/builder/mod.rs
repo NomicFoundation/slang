@@ -306,17 +306,17 @@ impl<S: Source> Builder for CstToIrBuilder<'_, S> {
         match source {
             input::VersionLiteral::PragmaSingleQuotedStringLiteral(string_literal) => {
                 let text = self.unparse_range(string_literal.range.clone());
-                output::VersionLiteral::StringLiteral(output::StringLiteral {
+                output::VersionLiteral::StringLiteral(Rc::new(output::StringLiteralStruct {
                     range: string_literal.range.clone(),
                     text,
-                })
+                }))
             }
             input::VersionLiteral::PragmaDoubleQuotedStringLiteral(string_literal) => {
                 let text = self.unparse_range(string_literal.range.clone());
-                output::VersionLiteral::StringLiteral(output::StringLiteral {
+                output::VersionLiteral::StringLiteral(Rc::new(output::StringLiteralStruct {
                     range: string_literal.range.clone(),
                     text,
-                })
+                }))
             }
             input::VersionLiteral::SimpleVersionLiteral(_) => {
                 self.default_build_version_literal(source)

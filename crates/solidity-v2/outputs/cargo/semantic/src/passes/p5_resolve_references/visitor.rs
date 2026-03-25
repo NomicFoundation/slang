@@ -134,9 +134,12 @@ impl Visitor for Pass<'_> {
         self.binder.set_node_type(node.id(), Some(type_id));
     }
 
-    fn leave_string_expression(&mut self, _node: &ir::StringExpression) {
-        // String expression typing is computed inline in typing_of_expression
-        // because string literal nodes are not Rc-wrapped and have no stable NodeId.
+    fn leave_string_expression(&mut self, node: &ir::StringExpression) {
+        let type_id = self
+            .types
+            .register_type(Self::type_of_string_expression(node));
+        let node_id = Self::string_expression_node_id(node);
+        self.binder.set_node_type(node_id, Some(type_id));
     }
 
     fn leave_assignment_expression(&mut self, node: &ir::AssignmentExpression) {
@@ -496,11 +499,11 @@ impl Visitor for Pass<'_> {
         let event_resolution = self
             .binder
             .find_reference_by_identifier_node_id(event_reference_id)
-            .map(|reference| reference.resolution.clone());
+            .map(|reference| &reference.resolution);
         match &node.arguments {
             ir::ArgumentsDeclaration::PositionalArguments(positional_arguments) => {
                 // For positional arguments, resolve ambiguity of overloads only
-                if let Some(Resolution::Ambiguous(definition_ids)) = &event_resolution {
+                if let Some(Resolution::Ambiguous(definition_ids)) = event_resolution {
                     let argument_typings =
                         self.collect_positional_argument_typings(positional_arguments);
                     if let Some(candidate) = self.lookup_event_matching_positional_arguments(
@@ -515,7 +518,7 @@ impl Visitor for Pass<'_> {
             }
             ir::ArgumentsDeclaration::NamedArguments(named_arguments) => {
                 // For named arguments, we need to resolve ambiguity and the named arguments
-                let definition_id = match &event_resolution {
+                let definition_id = match event_resolution {
                     Some(Resolution::Ambiguous(definition_ids)) => {
                         let argument_typings = self.collect_named_argument_typings(named_arguments);
                         let candidate = self.lookup_event_matching_named_arguments(
