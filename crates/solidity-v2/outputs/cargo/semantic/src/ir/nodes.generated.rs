@@ -1340,7 +1340,7 @@ impl YulVariableDeclarationValueStruct {
 // Choices
 //
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum AbicoderVersion {
     AbicoderV1Keyword,
     AbicoderV2Keyword,
@@ -1421,13 +1421,13 @@ pub enum Expression {
     FalseKeyword,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum Expression_AdditiveExpression_Operator {
     Minus,
     Plus,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum Expression_AssignmentExpression_Operator {
     AmpersandEqual,
     AsteriskEqual,
@@ -1443,13 +1443,13 @@ pub enum Expression_AssignmentExpression_Operator {
     SlashEqual,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum Expression_EqualityExpression_Operator {
     BangEqual,
     EqualEqual,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum Expression_InequalityExpression_Operator {
     GreaterThan,
     GreaterThanEqual,
@@ -1457,20 +1457,20 @@ pub enum Expression_InequalityExpression_Operator {
     LessThanEqual,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum Expression_MultiplicativeExpression_Operator {
     Asterisk,
     Percent,
     Slash,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum Expression_PostfixExpression_Operator {
     MinusMinus,
     PlusPlus,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum Expression_PrefixExpression_Operator {
     Bang,
     DeleteKeyword,
@@ -1480,7 +1480,7 @@ pub enum Expression_PrefixExpression_Operator {
     Tilde,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum Expression_ShiftExpression_Operator {
     GreaterThanGreaterThan,
     GreaterThanGreaterThanGreaterThan,
@@ -1500,7 +1500,7 @@ pub enum ForStatementInitialization {
     Semicolon,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum FunctionKind {
     Regular,
     Constructor,
@@ -1510,7 +1510,7 @@ pub enum FunctionKind {
     Modifier,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum FunctionMutability {
     Pure,
     View,
@@ -1518,7 +1518,7 @@ pub enum FunctionMutability {
     Payable,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum FunctionVisibility {
     Public,
     Private,
@@ -1532,7 +1532,7 @@ pub enum ImportClause {
     ImportDeconstruction(ImportDeconstruction),
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum NumberUnit {
     WeiKeyword,
     GweiKeyword,
@@ -1568,7 +1568,7 @@ pub enum SourceUnitMember {
     ConstantDefinition(ConstantDefinition),
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum StateVariableMutability {
     Mutable,
     Constant,
@@ -1576,7 +1576,7 @@ pub enum StateVariableMutability {
     Transient,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum StateVariableVisibility {
     Public,
     Private,
@@ -1602,7 +1602,7 @@ pub enum Statement {
     ExpressionStatement(ExpressionStatement),
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum StorageLocation {
     MemoryKeyword,
     StorageKeyword,
@@ -1631,7 +1631,7 @@ pub enum UsingClause {
     UsingDeconstruction(UsingDeconstruction),
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum UsingOperator {
     Ampersand,
     Asterisk,
@@ -1674,7 +1674,7 @@ pub enum VersionLiteral {
     StringLiteral(StringLiteral),
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum VersionOperator {
     PragmaCaret,
     PragmaTilde,

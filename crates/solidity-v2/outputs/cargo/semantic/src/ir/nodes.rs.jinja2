@@ -56,7 +56,7 @@ pub struct NodeId(usize);
     {% endif %}
   {% endfor %}
   {% if all_unique_terminals -%}
-    #[derive(Clone, Debug, Eq, PartialEq)]
+    #[derive(Clone, Debug, Eq, Hash, PartialEq)]
   {%- else -%}
     #[derive(Clone, Debug)]
   {%- endif %}
