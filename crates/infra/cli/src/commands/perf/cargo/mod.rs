@@ -60,7 +60,7 @@ impl CargoController {
     }
 
     fn install_valgrind() {
-        Self::install_from_apt("valgrind", "1:3.18.1-1ubuntu2");
+        Self::install_from_apt("valgrind", "1:3.22.0-0ubuntu3");
 
         match Command::new("valgrind").flag("--version").evaluate() {
             Ok(output) if output.starts_with("valgrind-") => {
@@ -77,7 +77,7 @@ impl CargoController {
     }
 
     fn install_graphviz() {
-        Self::install_from_apt("graphviz", "2.42.2-6ubuntu0.1");
+        Self::install_from_apt("graphviz", "2.42.2-9ubuntu0.1");
 
         // dot prints its version to stderr, using the help page instead
         match Command::new("dot").flag("-?").evaluate() {
