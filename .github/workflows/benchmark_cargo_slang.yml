@@ -54,17 +54,17 @@ jobs:
           echo "SLANG_BENCHER_PROJECT=${{ inputs.bencherProject }}" >> $GITHUB_ENV
         if: "${{ inputs.bencherProject }}"
 
-      - name: "infra perf cargo --smoke slang"
+      - name: "Smoke Test > infra perf cargo --smoke slang"
         if: "${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
         run: "./scripts/bin/infra perf cargo --smoke slang"
 
-      - name: "infra perf cargo slang"
+      - name: "Benchmark > infra perf cargo slang"
         if: "${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
         run: "./scripts/bin/infra perf cargo ${{ inputs.dryRun == true && '--dry-run' || '' }} slang"
         env:
           BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
 
-      - name: "Upload Benchmarking Data"
+      - name: "Benchmark > Upload Benchmarking Data"
         if: "${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
         uses: "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
         with:

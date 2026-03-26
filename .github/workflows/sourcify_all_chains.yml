@@ -39,7 +39,7 @@ jobs:
       - name: "Restore Cache"
         uses: "./.github/actions/cache/restore"
 
-      - name: "Build sourcify binary"
+      - name: "Smoke Test > Build sourcify binary"
         run: "./scripts/bin/with-hermit cargo build --bin solidity_testing_sourcify"
 
   run_tests:

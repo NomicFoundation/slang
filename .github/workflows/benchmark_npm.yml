@@ -56,11 +56,11 @@ jobs:
       - name: "infra check npm"
         run: "./scripts/bin/infra check npm"
 
-      - name: "infra perf npm --smoke"
+      - name: "Smoke Test > infra perf npm --smoke"
         if: "${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
         run: "./scripts/bin/infra perf npm --smoke"
 
-      - name: "infra perf npm"
+      - name: "Benchmark > infra perf npm"
         if: "${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
         run: "./scripts/bin/infra perf npm ${{ inputs.dryRun == true && '--dry-run' || '' }}"
         env:
