@@ -62,6 +62,6 @@ jobs:
 
       - name: "Benchmark > infra perf npm"
         if: "${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
-        run: "./scripts/bin/infra perf npm ${{ inputs.dryRun == true && '--dry-run' || '' }}"
+        run: "./scripts/bin/infra perf npm ${{ (inputs.dryRun == true || github.event_name == 'pull_request') && '--dry-run' || '' }}"
         env:
           BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"

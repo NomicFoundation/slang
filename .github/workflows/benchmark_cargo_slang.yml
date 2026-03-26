@@ -60,7 +60,7 @@ jobs:
 
       - name: "Benchmark > infra perf cargo slang"
         if: "${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
-        run: "./scripts/bin/infra perf cargo ${{ inputs.dryRun == true && '--dry-run' || '' }} slang"
+        run: "./scripts/bin/infra perf cargo ${{ (inputs.dryRun == true || github.event_name == 'pull_request') && '--dry-run' || '' }} slang"
         env:
           BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
 

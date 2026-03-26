@@ -19,7 +19,7 @@ on:
           - "v2"
           - "compare"
 
-  # Run on pull requests (smoke test always, full run with 'ci:perf' label):
+  # Run on pull requests (smoke test always, full run with 'ci:sourcify' label):
   pull_request:
     types: ["opened", "synchronize", "reopened", "labeled"]
 
@@ -43,10 +43,10 @@ jobs:
         run: "./scripts/bin/with-hermit cargo build --bin solidity_testing_sourcify"
 
   run_tests:
-    # On PRs: only run when 'ci:perf' label is present. On dispatch: always run.
+    # On PRs: only run when 'ci:sourcify' label is present. On dispatch: always run.
     if: >-
       ${{ github.event_name != 'pull_request'
-        || contains(github.event.pull_request.labels.*.name, 'ci:perf') }}
+        || contains(github.event.pull_request.labels.*.name, 'ci:sourcify') }}
     uses: "./.github/workflows/sourcify_single_chain.yml"
     with:
       chain_id: "${{ matrix.chain_id }}"
