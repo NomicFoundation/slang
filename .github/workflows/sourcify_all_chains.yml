@@ -18,39 +18,8 @@ on:
           - "v1"
           - "v2"
           - "compare"
-
-  # Run on pull requests (smoke test always, full run with 'ci:sourcify' label):
-  pull_request:
-    types:
-      - "opened"
-      - "synchronize"
-      - "reopened"
-      - "labeled"
-
 jobs:
-  smoke:
-    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
-
-    # Smoke test on PRs; skip on dispatch (the full test runs there):
-    if: "${{ github.event_name == 'pull_request' }}"
-
-    steps:
-      - name: "Checkout Repository"
-        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
-        with:
-          persist-credentials: false
-
-      - name: "Restore Cache"
-        uses: "./.github/actions/cache/restore"
-
-      - name: "Smoke Test > Build sourcify binary"
-        run: "./scripts/bin/with-hermit cargo build --bin solidity_testing_sourcify"
-
   run_tests:
-    # On PRs: only run when 'ci:sourcify' label is present. On dispatch: always run.
-    if: >-
-      ${{ github.event_name != 'pull_request'
-        || contains(github.event.pull_request.labels.*.name, 'ci:sourcify') }}
     uses: "./.github/workflows/sourcify_single_chain.yml"
     with:
       chain_id: "${{ matrix.chain_id }}"
