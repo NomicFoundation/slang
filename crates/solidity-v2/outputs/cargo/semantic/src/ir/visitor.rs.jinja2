@@ -17,6 +17,11 @@ pub trait Visitor {
     fn enter_{{ parent_type | snake_case }}(&mut self, _items: &{{ parent_type }}) -> bool { true }
     fn leave_{{ parent_type | snake_case }}(&mut self, _items: &{{ parent_type }}) {}
   {% endfor -%}
+  {%- for terminal_type, terminal in target.terminals %}
+    {%- if terminal.is_identifier -%}
+      fn visit_{{ terminal_type | snake_case }}(&mut self, _node: &{{ terminal_type }}) {}
+    {%- endif -%}
+  {% endfor -%}
 }
 
 //
@@ -36,6 +41,14 @@ pub trait Visitor {
           }
         {% else -%}
           accept_{{ field.type.name | snake_case }}(&node.{{ field.label | snake_case }}, visitor);
+        {%- endif -%}
+      {%- elif target.terminals[field.type.name].is_identifier -%}
+        {%- if field.is_optional -%}
+          if let Some({{ field.label | snake_case }}) = &node.{{ field.label | snake_case }} {
+            visitor.visit_{{ field.type.name | snake_case }}({{ field.label | snake_case }});
+          }
+        {% else -%}
+          visitor.visit_{{ field.type.name | snake_case }}(&node.{{ field.label | snake_case }});
         {%- endif -%}
       {%- endif -%}
     {%- endfor -%}
@@ -67,10 +80,14 @@ pub trait Visitor {
         {%- endfor %}
         {%- if non_unique_terminals | length > 0 %}
           {%- for terminal in non_unique_terminals -%}
-            {%- if not loop.first -%} | {%- endif -%}
-            {{ parent_type }}::{{ terminal.name }}(_)
+            {%- if target.terminals[terminal.name].is_identifier -%}
+              {{ parent_type }}::{{ terminal.name }}(ref {{ terminal.name | snake_case }}) => {
+                visitor.visit_{{ terminal.name | snake_case }}({{ terminal.name | snake_case }});
+              }
+            {%- else -%}
+              {{ parent_type }}::{{ terminal.name }}(_) => {}
+            {%- endif -%}
           {%- endfor -%}
-          => {}
         {% endif -%}
         {%- if unique_terminals | length > 0 %}
           {%- for terminal in unique_terminals -%}
@@ -98,6 +115,10 @@ pub trait Visitor {
     {%- if not collection.item_type.is_terminal %}
       for item in items {
         accept_{{ collection.item_type.name | snake_case }}(item, visitor);
+      }
+    {% elif target.terminals[collection.item_type.name].is_identifier %}
+      for item in items {
+        visitor.visit_{{ collection.item_type.name | snake_case }}(item);
       }
     {% endif -%}
     visitor.leave_{{ parent_type | snake_case }}(items);

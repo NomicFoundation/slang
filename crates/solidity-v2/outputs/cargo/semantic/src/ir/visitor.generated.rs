@@ -935,6 +935,7 @@ pub trait Visitor {
         true
     }
     fn leave_yul_variable_names(&mut self, _items: &YulVariableNames) {}
+    fn visit_identifier(&mut self, _node: &Identifier) {}
 }
 
 //
@@ -1087,6 +1088,9 @@ pub fn accept_catch_clause_error(node: &CatchClauseError, visitor: &mut impl Vis
     if !visitor.enter_catch_clause_error(node) {
         return;
     }
+    if let Some(name) = &node.name {
+        visitor.visit_identifier(name);
+    }
     accept_parameters(&node.parameters, visitor);
     visitor.leave_catch_clause_error(node);
 }
@@ -1106,6 +1110,7 @@ pub fn accept_constant_definition(node: &ConstantDefinition, visitor: &mut impl 
         return;
     }
     accept_type_name(&node.type_name, visitor);
+    visitor.visit_identifier(&node.name);
     if let Some(ref visibility) = node.visibility {
         accept_state_variable_visibility(visibility, visitor);
     }
@@ -1126,6 +1131,7 @@ pub fn accept_contract_definition(node: &ContractDefinition, visitor: &mut impl 
     if !visitor.enter_contract_definition(node) {
         return;
     }
+    visitor.visit_identifier(&node.name);
     accept_contract_members(&node.members, visitor);
     accept_inheritance_types(&node.inheritance_types, visitor);
     if let Some(ref storage_layout) = node.storage_layout {
@@ -1169,6 +1175,7 @@ pub fn accept_enum_definition(node: &EnumDefinition, visitor: &mut impl Visitor)
     if !visitor.enter_enum_definition(node) {
         return;
     }
+    visitor.visit_identifier(&node.name);
     accept_enum_members(&node.members, visitor);
     visitor.leave_enum_definition(node);
 }
@@ -1190,6 +1197,7 @@ pub fn accept_error_definition(node: &ErrorDefinition, visitor: &mut impl Visito
     if !visitor.enter_error_definition(node) {
         return;
     }
+    visitor.visit_identifier(&node.name);
     accept_parameters(&node.parameters, visitor);
     visitor.leave_error_definition(node);
 }
@@ -1198,6 +1206,7 @@ pub fn accept_event_definition(node: &EventDefinition, visitor: &mut impl Visito
     if !visitor.enter_event_definition(node) {
         return;
     }
+    visitor.visit_identifier(&node.name);
     accept_parameters(&node.parameters, visitor);
     visitor.leave_event_definition(node);
 }
@@ -1261,6 +1270,9 @@ pub fn accept_function_definition(node: &FunctionDefinition, visitor: &mut impl 
         accept_parameters(returns, visitor);
     }
     accept_function_kind(&node.kind, visitor);
+    if let Some(name) = &node.name {
+        visitor.visit_identifier(name);
+    }
     if let Some(ref body) = node.body {
         accept_block(body, visitor);
     }
@@ -1320,6 +1332,10 @@ pub fn accept_import_deconstruction_symbol(
     if !visitor.enter_import_deconstruction_symbol(node) {
         return;
     }
+    visitor.visit_identifier(&node.name);
+    if let Some(alias) = &node.alias {
+        visitor.visit_identifier(alias);
+    }
     visitor.leave_import_deconstruction_symbol(node);
 }
 
@@ -1365,6 +1381,7 @@ pub fn accept_interface_definition(node: &InterfaceDefinition, visitor: &mut imp
     if !visitor.enter_interface_definition(node) {
         return;
     }
+    visitor.visit_identifier(&node.name);
     if let Some(ref inheritance) = node.inheritance {
         accept_inheritance_types(inheritance, visitor);
     }
@@ -1376,6 +1393,7 @@ pub fn accept_library_definition(node: &LibraryDefinition, visitor: &mut impl Vi
     if !visitor.enter_library_definition(node) {
         return;
     }
+    visitor.visit_identifier(&node.name);
     accept_library_members(&node.members, visitor);
     visitor.leave_library_definition(node);
 }
@@ -1394,6 +1412,7 @@ pub fn accept_member_access_expression(node: &MemberAccessExpression, visitor: &
         return;
     }
     accept_expression(&node.operand, visitor);
+    visitor.visit_identifier(&node.member);
     visitor.leave_member_access_expression(node);
 }
 
@@ -1450,6 +1469,7 @@ pub fn accept_named_argument(node: &NamedArgument, visitor: &mut impl Visitor) {
     if !visitor.enter_named_argument(node) {
         return;
     }
+    visitor.visit_identifier(&node.name);
     accept_expression(&node.value, visitor);
     visitor.leave_named_argument(node);
 }
@@ -1479,12 +1499,18 @@ pub fn accept_parameter(node: &Parameter, visitor: &mut impl Visitor) {
     if let Some(ref storage_location) = node.storage_location {
         accept_storage_location(storage_location, visitor);
     }
+    if let Some(name) = &node.name {
+        visitor.visit_identifier(name);
+    }
     visitor.leave_parameter(node);
 }
 
 pub fn accept_path_import(node: &PathImport, visitor: &mut impl Visitor) {
     if !visitor.enter_path_import(node) {
         return;
+    }
+    if let Some(alias) = &node.alias {
+        visitor.visit_identifier(alias);
     }
     visitor.leave_path_import(node);
 }
@@ -1580,6 +1606,7 @@ pub fn accept_state_variable_definition(
         return;
     }
     accept_type_name(&node.type_name, visitor);
+    visitor.visit_identifier(&node.name);
     if let Some(ref value) = node.value {
         accept_expression(value, visitor);
     }
@@ -1595,6 +1622,7 @@ pub fn accept_struct_definition(node: &StructDefinition, visitor: &mut impl Visi
     if !visitor.enter_struct_definition(node) {
         return;
     }
+    visitor.visit_identifier(&node.name);
     accept_struct_members(&node.members, visitor);
     visitor.leave_struct_definition(node);
 }
@@ -1604,6 +1632,7 @@ pub fn accept_struct_member(node: &StructMember, visitor: &mut impl Visitor) {
         return;
     }
     accept_type_name(&node.type_name, visitor);
+    visitor.visit_identifier(&node.name);
     visitor.leave_struct_member(node);
 }
 
@@ -1661,6 +1690,7 @@ pub fn accept_user_defined_value_type_definition(
     if !visitor.enter_user_defined_value_type_definition(node) {
         return;
     }
+    visitor.visit_identifier(&node.name);
     accept_elementary_type(&node.value_type, visitor);
     visitor.leave_user_defined_value_type_definition(node);
 }
@@ -1704,6 +1734,7 @@ pub fn accept_variable_declaration(node: &VariableDeclaration, visitor: &mut imp
     if let Some(ref storage_location) = node.storage_location {
         accept_storage_location(storage_location, visitor);
     }
+    visitor.visit_identifier(&node.name);
     visitor.leave_variable_declaration(node);
 }
 
@@ -1812,6 +1843,7 @@ pub fn accept_yul_function_definition(node: &YulFunctionDefinition, visitor: &mu
     if !visitor.enter_yul_function_definition(node) {
         return;
     }
+    visitor.visit_identifier(&node.name);
     accept_yul_parameters(&node.parameters, visitor);
     if let Some(ref returns) = node.returns {
         accept_yul_variable_names(returns, visitor);
@@ -1956,11 +1988,11 @@ pub fn accept_elementary_type(node: &ElementaryType, visitor: &mut impl Visitor)
         ElementaryType::AddressType(ref address_type) => {
             accept_address_type(address_type, visitor);
         }
-        ElementaryType::BytesKeyword(_)
-        | ElementaryType::IntKeyword(_)
-        | ElementaryType::UintKeyword(_)
-        | ElementaryType::FixedKeyword(_)
-        | ElementaryType::UfixedKeyword(_) => {}
+        ElementaryType::BytesKeyword(_) => {}
+        ElementaryType::IntKeyword(_) => {}
+        ElementaryType::UintKeyword(_) => {}
+        ElementaryType::FixedKeyword(_) => {}
+        ElementaryType::UfixedKeyword(_) => {}
         ElementaryType::BoolKeyword | ElementaryType::StringKeyword => {}
     }
     visitor.leave_elementary_type(node);
@@ -2054,7 +2086,9 @@ pub fn accept_expression(node: &Expression, visitor: &mut impl Visitor) {
         Expression::ElementaryType(ref elementary_type) => {
             accept_elementary_type(elementary_type, visitor);
         }
-        Expression::Identifier(_) => {}
+        Expression::Identifier(ref identifier) => {
+            visitor.visit_identifier(identifier);
+        }
         Expression::PayableKeyword
         | Expression::ThisKeyword
         | Expression::SuperKeyword
@@ -2551,6 +2585,9 @@ fn accept_enum_members(items: &Vec<Identifier>, visitor: &mut impl Visitor) {
     if !visitor.enter_enum_members(items) {
         return;
     }
+    for item in items {
+        visitor.visit_identifier(item);
+    }
     visitor.leave_enum_members(items);
 }
 #[inline]
@@ -2564,6 +2601,9 @@ fn accept_hex_string_literals(items: &Vec<HexStringLiteral>, visitor: &mut impl 
 fn accept_identifier_path(items: &Vec<Identifier>, visitor: &mut impl Visitor) {
     if !visitor.enter_identifier_path(items) {
         return;
+    }
+    for item in items {
+        visitor.visit_identifier(item);
     }
     visitor.leave_identifier_path(items);
 }
@@ -2789,12 +2829,18 @@ fn accept_yul_parameters(items: &Vec<Identifier>, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_parameters(items) {
         return;
     }
+    for item in items {
+        visitor.visit_identifier(item);
+    }
     visitor.leave_yul_parameters(items);
 }
 #[inline]
 fn accept_yul_path(items: &Vec<Identifier>, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_path(items) {
         return;
+    }
+    for item in items {
+        visitor.visit_identifier(item);
     }
     visitor.leave_yul_path(items);
 }
@@ -2832,6 +2878,9 @@ fn accept_yul_switch_cases(items: &Vec<YulSwitchCase>, visitor: &mut impl Visito
 fn accept_yul_variable_names(items: &Vec<Identifier>, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_variable_names(items) {
         return;
+    }
+    for item in items {
+        visitor.visit_identifier(item);
     }
     visitor.leave_yul_variable_names(items);
 }
