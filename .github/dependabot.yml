@@ -9,6 +9,7 @@ updates:
       interval: "daily"
     commit-message:
       prefix: "build"
+    open-pull-requests-limit: 5
     cooldown:
       default-days: 7
       semver-major-days: 30
@@ -19,6 +20,7 @@ updates:
       interval: "daily"
     commit-message:
       prefix: "build"
+    open-pull-requests-limit: 5
     cooldown:
       default-days: 7
 
@@ -28,6 +30,18 @@ updates:
       interval: "daily"
     commit-message:
       prefix: "build"
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
+      semver-major-days: 30
+
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "build"
+    open-pull-requests-limit: 5
     cooldown:
       default-days: 7
       semver-major-days: 30
