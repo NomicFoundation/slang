@@ -6,17 +6,17 @@ use slang_solidity::compilation::CompilationUnit;
 use slang_solidity::cst::{Cursor, NodeId, TerminalKind, TerminalNode};
 
 use super::BindingError;
-use crate::events::{Events, TestOutcome};
+use crate::events::{Events, SingleTestOutcome};
 use crate::sourcify::Contract;
 
 pub(super) fn run(
     contract: &Contract,
     compilation_unit: &CompilationUnit,
     events: &Events,
-) -> TestOutcome {
+) -> SingleTestOutcome {
     let semantic_analysis = compilation_unit.semantic_analysis();
 
-    let mut test_outcome = TestOutcome::Passed;
+    let mut outcome = SingleTestOutcome::Passed;
     let mut cursor_cache: HashMap<NodeId, (Cursor, String)> = HashMap::new();
 
     events.inc_definitions(semantic_analysis.binder().definitions().len());
@@ -28,7 +28,7 @@ pub(super) fn run(
             continue;
         }
         unresolved += 1;
-        test_outcome = TestOutcome::Failed;
+        outcome = SingleTestOutcome::Failed;
 
         let (cursor, ref_file_id) =
             find_cursor_for_identifier(&mut cursor_cache, compilation_unit, &reference.identifier)
@@ -52,7 +52,7 @@ pub(super) fn run(
     events.inc_references(references);
     events.inc_unresolved_references(unresolved);
 
-    test_outcome
+    outcome
 }
 
 fn find_cursor_for_identifier(
