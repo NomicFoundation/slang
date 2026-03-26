@@ -1,0 +1,64 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["Utils" @ input.sol:1:19] (contract)
+- Def: #2 ["_FOO" @ input.sol:2:31] (constant, type: uint256)
+- Def: #3 ["Test" @ input.sol:5:10] (contract)
+- Def: #4 ["test" @ input.sol:6:14] (function, type: function () returns void)
+- Def: #5 ["x" @ input.sol:8:17] (yul variable)
+- Def: #6 ["foo" @ input.sol:10:22] (yul function)
+- Def: #7 ["x1" @ input.sol:11:21] (yul variable)
+
+------------------------------------------------------------------------
+
+References (5):
+- Ref: ["add" @ input.sol:8:22] -> built-in
+- Ref: ["_FOO" @ input.sol:8:29] -> #2
+- Ref: ["add" @ input.sol:11:27] -> built-in
+- Ref: ["_FOO" @ input.sol:11:34] -> #2
+- Ref: ["Utils" @ input.sol:5:18] -> #1
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ abstract contract Utils {
+    │                   ──┬──  
+    │                     ╰──── name: 1
+  2 │     uint256 internal constant _FOO = 1;
+    │                               ──┬─  
+    │                                 ╰─── name: 2
+    │ 
+  5 │ contract Test is Utils {
+    │          ──┬─    ──┬──  
+    │            ╰──────────── name: 3
+    │                    │    
+    │                    ╰──── ref: 1
+  6 │     function test() public pure {
+    │              ──┬─  
+    │                ╰─── name: 4
+    │ 
+  8 │             let x := add(1, _FOO)
+    │                 ┬    ─┬─    ──┬─  
+    │                 ╰───────────────── name: 5
+    │                       │       │   
+    │                       ╰─────────── built-in
+    │                               │   
+    │                               ╰─── ref: 2
+    │ 
+ 10 │             function foo() {
+    │                      ─┬─  
+    │                       ╰─── name: 6
+ 11 │                 let x1 := add(1, _FOO)
+    │                     ─┬    ─┬─    ──┬─  
+    │                      ╰───────────────── name: 7
+    │                            │       │   
+    │                            ╰─────────── built-in
+    │                                    │   
+    │                                    ╰─── ref: 2
+────╯

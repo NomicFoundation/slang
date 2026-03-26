@@ -1,0 +1,69 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (8):
+- Def: #1 ["Lib" @ input.sol:2:9] (library)
+- Def: #2 ["x" @ input.sol:3:26] (parameter, type: uint256)
+- Def: #3 ["nop" @ input.sol:3:14] (function, type: function (uint256) returns void)
+- Def: #4 ["Base" @ input.sol:5:10] (contract)
+- Def: #5 ["totalSupply" @ input.sol:6:13] (state var, type: uint256)
+- Def: #6 ["Middle" @ input.sol:8:10] (contract)
+- Def: #7 ["Test" @ input.sol:11:10] (contract)
+- Def: #8 ["test" @ input.sol:12:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (5):
+- Ref: ["Lib" @ input.sol:9:11] -> #1
+- Ref: ["Base" @ input.sol:8:20] -> #4
+- Ref: ["totalSupply" @ input.sol:13:9] -> #5
+- Ref: ["nop" @ input.sol:13:21] -> unresolved
+- Ref: ["Middle" @ input.sol:11:18] -> #6
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  2 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 1
+  3 │     function nop(uint256 x) {}
+    │              ─┬─         ┬  
+    │               ╰───────────── name: 3
+    │                          │  
+    │                          ╰── name: 2
+    │ 
+  5 │ contract Base {
+    │          ──┬─  
+    │            ╰─── name: 4
+  6 │     uint256 totalSupply;
+    │             ─────┬─────  
+    │                  ╰─────── name: 5
+    │ 
+  8 │ contract Middle is Base {
+    │          ───┬──    ──┬─  
+    │             ╰──────────── name: 6
+    │                      │   
+    │                      ╰─── ref: 4
+  9 │     using Lib for uint256;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
+ 11 │ contract Test is Middle {
+    │          ──┬─    ───┬──  
+    │            ╰───────────── name: 7
+    │                     │    
+    │                     ╰──── ref: 6
+ 12 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 8
+ 13 │         totalSupply.nop();
+    │         ─────┬───── ─┬─  
+    │              ╰─────────── ref: 5
+    │                      │   
+    │                      ╰─── unresolved
+────╯

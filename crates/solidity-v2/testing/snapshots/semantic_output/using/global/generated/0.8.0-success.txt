@@ -1,0 +1,45 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["Counter" @ counter.sol:1:8] (struct)
+- Def: #2 ["value" @ counter.sol:2:10] (struct member, type: uint256)
+- Def: #3 ["_counter" @ counter.sol:5:35] (parameter, type: Counter memory)
+- Def: #4 ["increment" @ counter.sol:5:10] (function, type: function (Counter memory) returns void)
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["Counter" @ counter.sol:5:20] -> #1
+- Ref: ["increment" @ counter.sol:7:8] -> #4
+- Ref: ["Counter" @ counter.sol:7:23] -> #1
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[counter.sol:1:1]
+   │
+ 1 │ struct Counter {
+   │        ───┬───  
+   │           ╰───── name: 1
+ 2 │     uint value;
+   │          ──┬──  
+   │            ╰──── name: 2
+   │ 
+ 5 │ function increment(Counter memory _counter) public {}
+   │          ────┬──── ───┬───        ────┬───  
+   │              ╰────────────────────────────── name: 4
+   │                       │               │     
+   │                       ╰───────────────────── ref: 1
+   │                                       │     
+   │                                       ╰───── name: 3
+   │ 
+ 7 │ using {increment} for Counter global;
+   │        ────┬────      ───┬───  
+   │            ╰─────────────────── ref: 4
+   │                          │     
+   │                          ╰───── ref: 1
+───╯

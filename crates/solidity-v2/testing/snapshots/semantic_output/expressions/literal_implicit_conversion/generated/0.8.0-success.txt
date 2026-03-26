@@ -1,0 +1,76 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["Lib" @ input.sol:1:9] (library)
+- Def: #2 ["sig" @ input.sol:2:14] (function, type: function (uint256, bytes4) returns uint256)
+- Def: #3 ["sig" @ input.sol:3:14] (function, type: function (uint256, string memory) returns uint256)
+- Def: #4 ["Test" @ input.sol:6:10] (contract)
+- Def: #5 ["x" @ input.sol:8:24] (parameter, type: uint256)
+- Def: #6 ["test" @ input.sol:8:14] (function, type: function (uint256) returns void)
+- Def: #7 ["s" @ input.sol:9:23] (variable, type: string memory)
+
+------------------------------------------------------------------------
+
+References (9):
+- Ref: ["Lib" @ input.sol:7:11] -> #1
+- Ref: ["x" @ input.sol:10:9] -> #5
+- Ref: ["sig" @ input.sol:10:11] -> #2
+- Ref: ["sig" @ input.sol:10:27] -> #3
+- Ref: ["s" @ input.sol:10:31] -> #7
+- Ref: ["x" @ input.sol:11:9] -> #5
+- Ref: ["sig" @ input.sol:11:11] -> #3
+- Ref: ["s" @ input.sol:11:15] -> #7
+- Ref: ["sig" @ input.sol:11:18] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 1
+  2 │     function sig(uint, bytes4) internal returns (uint) {}
+    │              ─┬─  
+    │               ╰─── name: 2
+  3 │     function sig(uint, string memory) internal returns (uint) {}
+    │              ─┬─  
+    │               ╰─── name: 3
+    │ 
+  6 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 4
+  7 │     using Lib for uint;
+    │           ─┬─  
+    │            ╰─── ref: 1
+  8 │     function test(uint x) internal {
+    │              ──┬─      ┬  
+    │                ╰────────── name: 6
+    │                        │  
+    │                        ╰── name: 5
+  9 │         string memory s;
+    │                       ┬  
+    │                       ╰── name: 7
+ 10 │         x.sig(0x10203040).sig(s);
+    │         ┬ ─┬─             ─┬─ ┬  
+    │         ╰──────────────────────── ref: 5
+    │            │               │  │  
+    │            ╰───────────────────── ref: 2
+    │                            │  │  
+    │                            ╰───── ref: 3
+    │                               │  
+    │                               ╰── ref: 7
+ 11 │         x.sig(s).sig(0x10203040);
+    │         ┬ ─┬─ ┬  ─┬─  
+    │         ╰───────────── ref: 5
+    │            │  │   │   
+    │            ╰────────── ref: 3
+    │               │   │   
+    │               ╰─────── ref: 7
+    │                   │   
+    │                   ╰─── ref: 2
+────╯

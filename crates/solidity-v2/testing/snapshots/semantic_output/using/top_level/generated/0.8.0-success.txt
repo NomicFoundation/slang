@@ -1,0 +1,67 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["Counter" @ input.sol:1:8] (struct)
+- Def: #2 ["value" @ input.sol:2:10] (struct member, type: uint256)
+- Def: #3 ["_counter" @ input.sol:5:35] (parameter, type: Counter memory)
+- Def: #4 ["increment" @ input.sol:5:10] (function, type: function (Counter memory) returns void)
+- Def: #5 ["Test" @ input.sol:9:10] (contract)
+- Def: #6 ["c" @ input.sol:10:34] (parameter, type: Counter memory)
+- Def: #7 ["test" @ input.sol:10:14] (function, type: function (Counter memory) returns void)
+
+------------------------------------------------------------------------
+
+References (6):
+- Ref: ["Counter" @ input.sol:5:20] -> #1
+- Ref: ["increment" @ input.sol:7:8] -> #4
+- Ref: ["Counter" @ input.sol:7:23] -> #1
+- Ref: ["Counter" @ input.sol:10:19] -> #1
+- Ref: ["c" @ input.sol:11:9] -> #6
+- Ref: ["increment" @ input.sol:11:11] -> #4
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ struct Counter {
+    │        ───┬───  
+    │           ╰───── name: 1
+  2 │     uint value;
+    │          ──┬──  
+    │            ╰──── name: 2
+    │ 
+  5 │ function increment(Counter memory _counter) public {}
+    │          ────┬──── ───┬───        ────┬───  
+    │              ╰────────────────────────────── name: 4
+    │                       │               │     
+    │                       ╰───────────────────── ref: 1
+    │                                       │     
+    │                                       ╰───── name: 3
+    │ 
+  7 │ using {increment} for Counter;
+    │        ────┬────      ───┬───  
+    │            ╰─────────────────── ref: 4
+    │                          │     
+    │                          ╰───── ref: 1
+    │ 
+  9 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 5
+ 10 │     function test(Counter memory c) public {
+    │              ──┬─ ───┬───        ┬  
+    │                ╰──────────────────── name: 7
+    │                      │           │  
+    │                      ╰────────────── ref: 1
+    │                                  │  
+    │                                  ╰── name: 6
+ 11 │         c.increment();
+    │         ┬ ────┬────  
+    │         ╰──────────── ref: 6
+    │               │      
+    │               ╰────── ref: 4
+────╯

@@ -1,0 +1,69 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["Lib" @ input.sol:1:9] (library)
+- Def: #2 ["x" @ input.sol:2:23] (parameter, type: uint256)
+- Def: #3 ["nop" @ input.sol:2:14] (function, type: function (uint256) returns void)
+- Def: #4 ["Base" @ input.sol:5:10] (contract)
+- Def: #5 ["Test" @ input.sol:9:10] (contract)
+- Def: #6 ["x" @ input.sol:13:24] (parameter, type: uint256)
+- Def: #7 ["test" @ input.sol:13:14] (function, type: function (uint256) returns void)
+
+------------------------------------------------------------------------
+
+References (6):
+- Ref: ["Lib" @ input.sol:6:11] -> #1
+- Ref: ["Lib" @ input.sol:10:11] -> #1
+- Ref: ["Lib" @ input.sol:11:11] -> #1
+- Ref: ["x" @ input.sol:14:9] -> #6
+- Ref: ["nop" @ input.sol:14:11] -> #3
+- Ref: ["Base" @ input.sol:9:18] -> #4
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 1
+  2 │     function nop(uint x) internal {}
+    │              ─┬─      ┬  
+    │               ╰────────── name: 3
+    │                       │  
+    │                       ╰── name: 2
+    │ 
+  5 │ contract Base {
+    │          ──┬─  
+    │            ╰─── name: 4
+  6 │     using Lib for uint;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
+  9 │ contract Test is Base {
+    │          ──┬─    ──┬─  
+    │            ╰─────────── name: 5
+    │                    │   
+    │                    ╰─── ref: 4
+ 10 │     using Lib for uint;
+    │           ─┬─  
+    │            ╰─── ref: 1
+ 11 │     using Lib for uint256;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
+ 13 │     function test(uint x) internal {
+    │              ──┬─      ┬  
+    │                ╰────────── name: 7
+    │                        │  
+    │                        ╰── name: 6
+ 14 │         x.nop();
+    │         ┬ ─┬─  
+    │         ╰────── ref: 6
+    │            │   
+    │            ╰─── ref: 3
+────╯

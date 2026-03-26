@@ -1,0 +1,70 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["Foo" @ input.sol:2:11] (event)
+- Def: #3 ["x" @ input.sol:2:20] (parameter, type: uint256)
+- Def: #4 ["y" @ input.sol:2:28] (parameter, type: uint256)
+- Def: #5 ["Foo" @ input.sol:3:11] (event)
+- Def: #6 ["flag" @ input.sol:3:20] (parameter, type: bool)
+- Def: #7 ["test" @ input.sol:5:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (7):
+- Ref: ["Foo" @ input.sol:6:14] -> #2
+- Ref: ["Foo" @ input.sol:7:14] -> #5
+- Ref: ["Foo" @ input.sol:9:14] -> #2
+- Ref: ["x" @ input.sol:9:20] -> #3
+- Ref: ["y" @ input.sol:9:26] -> #4
+- Ref: ["Foo" @ input.sol:10:14] -> #5
+- Ref: ["flag" @ input.sol:10:20] -> #6
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     event Foo(uint x, uint y);
+    │           ─┬─      ┬       ┬  
+    │            ╰────────────────── name: 2
+    │                    │       │  
+    │                    ╰────────── name: 3
+    │                            │  
+    │                            ╰── name: 4
+  3 │     event Foo(bool flag);
+    │           ─┬─      ──┬─  
+    │            ╰───────────── name: 5
+    │                      │   
+    │                      ╰─── name: 6
+    │ 
+  5 │     function test() internal {
+    │              ──┬─  
+    │                ╰─── name: 7
+  6 │         emit Foo(1, 2);
+    │              ─┬─  
+    │               ╰─── ref: 2
+  7 │         emit Foo(false);
+    │              ─┬─  
+    │               ╰─── ref: 5
+    │ 
+  9 │         emit Foo({ x: 1, y: 2 });
+    │              ─┬─   ┬     ┬  
+    │               ╰───────────── ref: 2
+    │                    │     │  
+    │                    ╰──────── ref: 3
+    │                          │  
+    │                          ╰── ref: 4
+ 10 │         emit Foo({ flag: true });
+    │              ─┬─   ──┬─  
+    │               ╰────────── ref: 5
+    │                      │   
+    │                      ╰─── ref: 6
+────╯

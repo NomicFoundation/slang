@@ -1,0 +1,102 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["rcpt" @ input.sol:2:27] (parameter, type: address)
+- Def: #3 ["data" @ input.sol:2:46] (parameter, type: bytes memory)
+- Def: #4 ["test" @ input.sol:2:14] (function, type: function (address, bytes memory) returns void)
+
+------------------------------------------------------------------------
+
+References (21):
+- Ref: ["rcpt" @ input.sol:4:9] -> #2
+- Ref: ["call" @ input.sol:4:14] -> built-in
+- Ref: ["value" @ input.sol:4:19] -> unresolved
+- Ref: ["data" @ input.sol:4:28] -> #3
+- Ref: ["rcpt" @ input.sol:5:9] -> #2
+- Ref: ["call" @ input.sol:5:14] -> built-in
+- Ref: ["gas" @ input.sol:5:19] -> unresolved
+- Ref: ["data" @ input.sol:5:26] -> #3
+- Ref: ["rcpt" @ input.sol:6:9] -> #2
+- Ref: ["call" @ input.sol:6:14] -> built-in
+- Ref: ["value" @ input.sol:6:19] -> unresolved
+- Ref: ["gas" @ input.sol:6:28] -> unresolved
+- Ref: ["data" @ input.sol:6:35] -> #3
+- Ref: ["rcpt" @ input.sol:8:9] -> #2
+- Ref: ["staticcall" @ input.sol:8:14] -> built-in
+- Ref: ["gas" @ input.sol:8:25] -> unresolved
+- Ref: ["data" @ input.sol:8:32] -> #3
+- Ref: ["rcpt" @ input.sol:9:9] -> #2
+- Ref: ["delegatecall" @ input.sol:9:14] -> built-in
+- Ref: ["gas" @ input.sol:9:27] -> unresolved
+- Ref: ["data" @ input.sol:9:34] -> #3
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test(address rcpt, bytes memory data) public {
+   │              ──┬─         ──┬─               ──┬─  
+   │                ╰─────────────────────────────────── name: 4
+   │                             │                  │   
+   │                             ╰────────────────────── name: 2
+   │                                                │   
+   │                                                ╰─── name: 3
+   │ 
+ 4 │         rcpt.call.value(1)(data);
+   │         ──┬─ ──┬─ ──┬──    ──┬─  
+   │           ╰────────────────────── ref: 2
+   │                │    │        │   
+   │                ╰───────────────── built-in
+   │                     │        │   
+   │                     ╰──────────── unresolved
+   │                              │   
+   │                              ╰─── ref: 3
+ 5 │         rcpt.call.gas(1)(data);
+   │         ──┬─ ──┬─ ─┬─    ──┬─  
+   │           ╰──────────────────── ref: 2
+   │                │   │       │   
+   │                ╰─────────────── built-in
+   │                    │       │   
+   │                    ╰─────────── unresolved
+   │                            │   
+   │                            ╰─── ref: 3
+ 6 │         rcpt.call.value(1).gas(1)(data);
+   │         ──┬─ ──┬─ ──┬──    ─┬─    ──┬─  
+   │           ╰───────────────────────────── ref: 2
+   │                │    │       │       │   
+   │                ╰──────────────────────── built-in
+   │                     │       │       │   
+   │                     ╰─────────────────── unresolved
+   │                             │       │   
+   │                             ╰─────────── unresolved
+   │                                     │   
+   │                                     ╰─── ref: 3
+   │ 
+ 8 │         rcpt.staticcall.gas(1)(data); // staticcall is valid >= 0.5.0
+   │         ──┬─ ─────┬──── ─┬─    ──┬─  
+   │           ╰────────────────────────── ref: 2
+   │                   │      │       │   
+   │                   ╰────────────────── built-in
+   │                          │       │   
+   │                          ╰─────────── unresolved
+   │                                  │   
+   │                                  ╰─── ref: 3
+ 9 │         rcpt.delegatecall.gas(1)(data);
+   │         ──┬─ ──────┬───── ─┬─    ──┬─  
+   │           ╰──────────────────────────── ref: 2
+   │                    │       │       │   
+   │                    ╰─────────────────── built-in
+   │                            │       │   
+   │                            ╰─────────── unresolved
+   │                                    │   
+   │                                    ╰─── ref: 3
+───╯

@@ -1,0 +1,200 @@
+use std::collections::HashMap;
+use std::fmt::Write;
+use std::ops::Range;
+
+use anyhow::Result;
+use ariadne::{Color, Config, Label, Report, ReportBuilder, ReportKind, Source};
+use slang_solidity_v2_semantic::binder::Resolution;
+use slang_solidity_v2_semantic::ir::NodeId;
+
+use super::report_data::{CollectedDefinition, CollectedReference, ReportData, UnboundIdentifier};
+
+const SEPARATOR: &str =
+    "\n------------------------------------------------------------------------\n";
+
+type Span<'a> = (&'a str, Range<usize>);
+type BuilderType<'a> = ReportBuilder<'a, Span<'a>>;
+
+pub(crate) fn binder_report(report_data: &'_ ReportData<'_>) -> Result<String> {
+    let mut report = String::new();
+
+    let ReportData {
+        compilation,
+        file_contents,
+        all_definitions,
+        all_references,
+        unbound_identifiers,
+        definitions_by_id,
+    } = report_data;
+
+    report_all_definitions(&mut report, report_data)?;
+
+    writeln!(report, "{SEPARATOR}")?;
+
+    report_all_references(
+        &mut report,
+        all_references,
+        file_contents,
+        definitions_by_id,
+    )?;
+
+    writeln!(report, "{SEPARATOR}")?;
+
+    report_unbound_identifiers(&mut report, unbound_identifiers, file_contents)?;
+
+    for file in &compilation.files() {
+        writeln!(report, "{SEPARATOR}")?;
+
+        let file_id = file.id();
+        if let Some(contents) = file_contents.get(file_id) {
+            render_bindings_for_file(
+                &mut report,
+                file_id,
+                contents,
+                all_definitions,
+                all_references,
+                unbound_identifiers,
+                definitions_by_id,
+            )?;
+        }
+    }
+
+    Ok(report)
+}
+
+fn report_all_definitions(report: &mut String, report_data: &ReportData<'_>) -> Result<()> {
+    writeln!(
+        report,
+        "Definitions ({definitions_count}):",
+        definitions_count = report_data.all_definitions.len(),
+    )?;
+    for definition in &report_data.all_definitions {
+        writeln!(
+            report,
+            "- {definition}",
+            definition = definition.display(report_data.compilation, report_data.file_contents)
+        )?;
+    }
+    Ok(())
+}
+
+fn report_all_references(
+    report: &mut String,
+    all_references: &[CollectedReference],
+    file_contents: &HashMap<String, String>,
+    definitions_by_id: &HashMap<NodeId, usize>,
+) -> Result<()> {
+    writeln!(
+        report,
+        "References ({references_count}):",
+        references_count = all_references.len()
+    )?;
+    for reference in all_references {
+        writeln!(
+            report,
+            "- {reference}",
+            reference = reference.display(file_contents, definitions_by_id)
+        )?;
+    }
+    Ok(())
+}
+
+fn report_unbound_identifiers(
+    report: &mut String,
+    unbound_identifiers: &[UnboundIdentifier],
+    file_contents: &HashMap<String, String>,
+) -> Result<()> {
+    writeln!(
+        report,
+        "Unbound identifiers ({unbound_identifiers_count}):",
+        unbound_identifiers_count = unbound_identifiers.len()
+    )?;
+    for unbound_identifier in unbound_identifiers {
+        writeln!(
+            report,
+            "- {unbound_identifier}",
+            unbound_identifier = unbound_identifier.display(file_contents)
+        )?;
+    }
+    Ok(())
+}
+
+fn render_bindings_for_file(
+    report: &mut String,
+    file_id: &str,
+    contents: &str,
+    all_definitions: &[CollectedDefinition],
+    all_references: &[CollectedReference],
+    unbound_identifiers: &[UnboundIdentifier],
+    definitions_by_id: &HashMap<NodeId, usize>,
+) -> Result<()> {
+    // ariadne works with character offsets, not byte offsets, so we need to
+    // convert ranges
+    let mut builder: BuilderType<'_> =
+        Report::build(ReportKind::Custom("Bindings", Color::Unset), file_id, 0)
+            .with_config(Config::default().with_color(false));
+
+    let new_label = |range: &Range<usize>, message: &str| -> Label<Span<'_>> {
+        let char_range = {
+            let start = contents[..range.start].chars().count();
+            let end = contents[..range.end].chars().count();
+            start..end
+        };
+        Label::new((file_id, char_range)).with_message(message)
+    };
+
+    for definition in all_definitions {
+        if definition.file_id != file_id {
+            continue;
+        }
+
+        let message = format!(
+            "name: {definition_id}",
+            definition_id = definition.report_id
+        );
+        builder.add_label(new_label(&definition.identifier_range, &message));
+    }
+
+    for reference in all_references {
+        if reference.file_id != file_id {
+            continue;
+        }
+
+        let message = match &reference.resolution {
+            Resolution::Unresolved => "unresolved".to_string(),
+            Resolution::BuiltIn(_) => "built-in".to_string(),
+            Resolution::Definition(definition_id) => {
+                format!(
+                    "ref: {definition_id}",
+                    definition_id = definitions_by_id.get(definition_id).unwrap()
+                )
+            }
+            Resolution::Ambiguous(definitions) => {
+                format!(
+                    "refs: {ids:?}",
+                    ids = definitions
+                        .iter()
+                        .map(|id| definitions_by_id.get(id).unwrap())
+                        .collect::<Vec<_>>()
+                )
+            }
+        };
+        builder.add_label(new_label(&reference.identifier_range, &message));
+    }
+
+    for unbound_identifier in unbound_identifiers {
+        if unbound_identifier.file_id != file_id {
+            continue;
+        }
+
+        builder.add_label(new_label(&unbound_identifier.identifier_range, "???"));
+    }
+
+    let mut buffer = Vec::<u8>::new();
+    builder
+        .finish()
+        .write((file_id, Source::from(contents)), &mut buffer)?;
+    report.extend(String::from_utf8(buffer));
+
+    Ok(())
+}

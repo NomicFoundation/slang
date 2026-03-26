@@ -1,0 +1,46 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["Base" @ input.sol:1:10] (contract)
+- Def: #2 ["foo" @ input.sol:2:14] (function, type: function () returns void)
+- Def: #3 ["bar" @ input.sol:3:14] (function, type: function () returns void)
+- Def: #4 ["Derived" @ input.sol:8:10] (contract)
+- Def: #5 ["foo" @ input.sol:9:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (2):
+- Ref: ["foo" @ input.sol:4:9] -> #2
+- Ref: ["Base" @ input.sol:8:21] -> #1
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Base {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function foo() public {}
+   │              ─┬─  
+   │               ╰─── name: 2
+ 3 │     function bar() public {
+   │              ─┬─  
+   │               ╰─── name: 3
+ 4 │         foo();
+   │         ─┬─  
+   │          ╰─── ref: 2
+   │ 
+ 8 │ contract Derived is Base {
+   │          ───┬───    ──┬─  
+   │             ╰───────────── name: 4
+   │                       │   
+   │                       ╰─── ref: 1
+ 9 │     function foo() public {}
+   │              ─┬─  
+   │               ╰─── name: 5
+───╯

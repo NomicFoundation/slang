@@ -1,0 +1,60 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["rcpt" @ input.sol:2:42] (parameter, type: address payable)
+- Def: #3 ["testPayable" @ input.sol:2:14] (function, type: function (address payable) returns void)
+- Def: #4 ["rcpt" @ input.sol:5:37] (parameter, type: address)
+- Def: #5 ["testNonPayable" @ input.sol:5:14] (function, type: function (address) returns void)
+
+------------------------------------------------------------------------
+
+References (6):
+- Ref: ["rcpt" @ input.sol:3:9] -> #2
+- Ref: ["transfer" @ input.sol:3:14] -> built-in
+- Ref: ["rcpt" @ input.sol:7:9] -> #4
+- Ref: ["transfer" @ input.sol:7:14] -> unresolved
+- Ref: ["rcpt" @ input.sol:9:25] -> #4
+- Ref: ["transfer" @ input.sol:9:32] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function testPayable(address payable rcpt) public {
+   │              ─────┬─────                 ──┬─  
+   │                   ╰──────────────────────────── name: 3
+   │                                            │   
+   │                                            ╰─── name: 2
+ 3 │         rcpt.transfer(1);
+   │         ──┬─ ────┬───  
+   │           ╰──────────── ref: 2
+   │                  │     
+   │                  ╰───── built-in
+   │ 
+ 5 │     function testNonPayable(address rcpt) public {
+   │              ───────┬──────         ──┬─  
+   │                     ╰───────────────────── name: 5
+   │                                       │   
+   │                                       ╰─── name: 4
+   │ 
+ 7 │         rcpt.transfer(1);
+   │         ──┬─ ────┬───  
+   │           ╰──────────── ref: 4
+   │                  │     
+   │                  ╰───── unresolved
+   │ 
+ 9 │         address(uint160(rcpt)).transfer(1);
+   │                         ──┬─   ────┬───  
+   │                           ╰────────────── ref: 4
+   │                                    │     
+   │                                    ╰───── unresolved
+───╯
