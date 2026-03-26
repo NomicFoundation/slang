@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use std::fmt::Display;
 use std::ops::Range;
 
+use slang_solidity_v2_parser::ParserError;
 use slang_solidity_v2_semantic::binder::{Definition, Resolution, Typing};
 use slang_solidity_v2_semantic::compilation::unit::CompilationUnit;
 use slang_solidity_v2_semantic::ir::visitor::{accept_source_unit, Visitor};
@@ -13,6 +14,7 @@ use slang_solidity_v2_semantic::types::{DataLocation, FunctionType, LiteralKind,
 pub(crate) struct ReportData<'a> {
     pub(crate) compilation: &'a CompilationUnit,
     pub(crate) file_contents: &'a HashMap<String, String>,
+    pub(crate) parse_errors: &'a [(String, ParserError)],
     pub(crate) all_definitions: Vec<CollectedDefinition>,
     pub(crate) all_references: Vec<CollectedReference>,
     pub(crate) unbound_identifiers: Vec<UnboundIdentifier>,
@@ -86,6 +88,7 @@ impl<'a> ReportData<'a> {
     pub(crate) fn prepare(
         compilation: &'a CompilationUnit,
         file_contents: &'a HashMap<String, String>,
+        parse_errors: &'a [(String, ParserError)],
     ) -> Self {
         let all_identifiers = collect_all_identifiers(compilation);
         let (all_definitions, all_references, unbound_identifiers) =
@@ -98,6 +101,7 @@ impl<'a> ReportData<'a> {
         Self {
             compilation,
             file_contents,
+            parse_errors,
             all_definitions,
             all_references,
             unbound_identifiers,
@@ -107,6 +111,7 @@ impl<'a> ReportData<'a> {
 
     pub(crate) fn all_resolved(&self) -> bool {
         self.unbound_identifiers.is_empty()
+            && self.parse_errors.is_empty()
             && self
                 .all_references
                 .iter()

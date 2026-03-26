@@ -1,5 +1,15 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Parse errors:
+Error: Unexpected UNRECOGNIZED. One of YulBreakKeyword_Reserved, YulCloseBrace, YulContinueKeyword_Reserved, YulDecimalLiteral, YulDoubleQuotedHexStringLiteral, YulDoubleQuotedStringLiteral, YulFalseKeyword_Reserved, YulForKeyword_Reserved, YulFunctionKeyword_Reserved, YulHexLiteral, YulIdentifier, YulIfKeyword_Reserved, YulLeaveKeyword_Reserved, YulLetKeyword_Reserved, YulOpenBrace, YulOpenParen, YulSingleQuotedHexStringLiteral, YulSingleQuotedStringLiteral, YulSwitchKeyword_Reserved, YulTrueKeyword_Reserved was expected
+   ╭─[input.sol:6:13]
+   │
+ 6 │             =: x
+   │             ┬  
+   │             ╰── Error occurred here.
+───╯
+------------------------------------------------------------------------
+
 Definitions (0):
 
 ------------------------------------------------------------------------
