@@ -50,9 +50,6 @@ jobs:
         uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
         with:
           persist-credentials: false
-
-      - name: "Cargo cooldown check"
-        uses: "./.github/actions/cooldown-check"
       - name: "Restore Cache"
         uses: "./.github/actions/cache/restore"
       - name: "Build Test Binary"
