@@ -16,7 +16,7 @@ name: "publish"
 #
 # Job graph:
 #
-#   label-check ─→ changesets ─→ build-and-validate ─┬→ notify-deploy → publish  (push/dispatch)
+#   repo-check ─→ changesets ─→ build-and-validate ─┬→ notify-deploy → publish  (push/dispatch)
 #                                                     └→ dry-run-summary          (PR only)
 #
 #   - changesets only runs for push/dispatch; skipped for PRs.
@@ -55,7 +55,7 @@ jobs:
   # Allow push, dispatch, and labeled PRs.
   # ───────────────────────────────────────────────
 
-  label-check:
+  repo-check:
     if: >-
       github.repository == 'NomicFoundation/slang'
       && ((github.event_name == 'pull_request'
@@ -72,7 +72,7 @@ jobs:
 
   changesets:
     needs:
-      - "label-check"
+      - "repo-check"
     if: >-
       github.event_name == 'push'
       || github.event_name == 'workflow_dispatch'
@@ -133,14 +133,14 @@ jobs:
 
   build-and-validate:
     needs:
-      - "label-check"
+      - "repo-check"
       - "changesets"
     # Run when:
     # - PR dry-run (changesets job is skipped)
     # - Push to main or dispatch when no pending changesets (version-bump PR just merged)
     if: >-
       always()
-      && needs.label-check.result == 'success'
+      && needs.repo-check.result == 'success'
       && (needs.changesets.result == 'skipped'
           || needs.changesets.outputs.hasChangesets == 'false')
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
