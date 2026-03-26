@@ -1,0 +1,66 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (9):
+- Def: #1 ["IERC1155Receiver" @ input.sol:1:11] (interface)
+- Def: #2 ["operator" @ input.sol:3:40] (parameter, type: address)
+- Def: #3 ["from" @ input.sol:4:40] (parameter, type: address)
+- Def: #4 ["id" @ input.sol:5:40] (parameter, type: uint256)
+- Def: #5 ["value" @ input.sol:6:40] (parameter, type: uint256)
+- Def: #6 ["data" @ input.sol:7:47] (parameter, type: bytes calldata)
+- Def: #7 ["onERC1155Received" @ input.sol:2:14] (function, type: function (address, address, uint256, uint256, bytes calldata) returns bytes4)
+- Def: #8 ["ERC1155Holder" @ input.sol:11:19] (contract)
+- Def: #9 ["onERC1155Received" @ input.sol:12:14] (function, type: function (address, address, uint256, uint256, bytes memory) returns bytes4)
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["onERC1155Received" @ input.sol:19:21] -> #9
+- Ref: ["selector" @ input.sol:19:39] -> built-in
+- Ref: ["IERC1155Receiver" @ input.sol:11:36] -> #1
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ interface IERC1155Receiver {
+    │           ────────┬───────  
+    │                   ╰───────── name: 1
+  2 │     function onERC1155Received(
+    │              ────────┬────────  
+    │                      ╰────────── name: 7
+  3 │                                address operator,
+    │                                        ────┬───  
+    │                                            ╰───── name: 2
+  4 │                                address from,
+    │                                        ──┬─  
+    │                                          ╰─── name: 3
+  5 │                                uint256 id,
+    │                                        ─┬  
+    │                                         ╰── name: 4
+  6 │                                uint256 value,
+    │                                        ──┬──  
+    │                                          ╰──── name: 5
+  7 │                                bytes calldata data
+    │                                               ──┬─  
+    │                                                 ╰─── name: 6
+    │ 
+ 11 │ abstract contract ERC1155Holder is IERC1155Receiver {
+    │                   ──────┬──────    ────────┬───────  
+    │                         ╰──────────────────────────── name: 8
+    │                                            │         
+    │                                            ╰───────── ref: 1
+ 12 │     function onERC1155Received(
+    │              ────────┬────────  
+    │                      ╰────────── name: 9
+    │ 
+ 19 │         return this.onERC1155Received.selector;
+    │                     ────────┬──────── ────┬───  
+    │                             ╰─────────────────── ref: 9
+    │                                           │     
+    │                                           ╰───── built-in
+────╯

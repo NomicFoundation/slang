@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (3):
+- Def: #1 ["Lib" @ input.sol:1:9] (library)
+- Def: #2 ["IndexOutOfBounds" @ input.sol:2:9] (error)
+- Def: #3 ["test" @ input.sol:4:12] (modifier)
+
+------------------------------------------------------------------------
+
+References (1):
+- Ref: ["IndexOutOfBounds" @ input.sol:5:12] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ library Lib {
+   │         ─┬─  
+   │          ╰─── name: 1
+ 2 │   error IndexOutOfBounds();
+   │         ────────┬───────  
+   │                 ╰───────── name: 2
+   │ 
+ 4 │   modifier test() {
+   │            ──┬─  
+   │              ╰─── name: 3
+ 5 │     revert IndexOutOfBounds();
+   │            ────────┬───────  
+   │                    ╰───────── ref: 2
+───╯

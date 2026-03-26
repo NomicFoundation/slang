@@ -1,0 +1,51 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["data" @ input.sol:2:11] (state var, type: bytes storage)
+- Def: #3 ["test" @ input.sol:3:14] (function, type: function () returns void)
+- Def: #4 ["s" @ input.sol:5:17] (yul variable)
+- Def: #5 ["o" @ input.sol:6:17] (yul variable)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["sload" @ input.sol:5:22] -> built-in
+- Ref: ["data_slot" @ input.sol:5:28] -> unresolved
+- Ref: ["sload" @ input.sol:6:22] -> built-in
+- Ref: ["data_offset" @ input.sol:6:28] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     bytes data;
+   │           ──┬─  
+   │             ╰─── name: 2
+ 3 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 3
+   │ 
+ 5 │             let s := sload(data_slot)
+   │                 ┬    ──┬── ────┬────  
+   │                 ╰───────────────────── name: 4
+   │                        │       │      
+   │                        ╰────────────── built-in
+   │                                │      
+   │                                ╰────── unresolved
+ 6 │             let o := sload(data_offset)
+   │                 ┬    ──┬── ─────┬─────  
+   │                 ╰─────────────────────── name: 5
+   │                        │        │       
+   │                        ╰──────────────── built-in
+   │                                 │       
+   │                                 ╰─────── unresolved
+───╯

@@ -1,0 +1,44 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["A" @ input.sol:2:12] (struct)
+- Def: #3 ["value" @ input.sol:3:25] (type param)
+- Def: #4 ["positions" @ input.sol:3:43] (struct member, type: bytes32 => uint256)
+- Def: #5 ["asset0" @ input.sol:6:21] (type param)
+- Def: #6 ["asset1" @ input.sol:6:47] (type param)
+- Def: #7 ["map" @ input.sol:6:67] (state var, type: address => address => address)
+
+------------------------------------------------------------------------
+
+References (0):
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     struct A {
+   │            ┬  
+   │            ╰── name: 2
+ 3 │         mapping(bytes32 value => uint256) positions;
+   │                         ──┬──             ────┬────  
+   │                           ╰────────────────────────── name: 3
+   │                                               │      
+   │                                               ╰────── name: 4
+   │ 
+ 6 │     mapping(address asset0 => mapping(address asset1 => address)) map;
+   │                     ───┬──                    ───┬──              ─┬─  
+   │                        ╰─────────────────────────────────────────────── name: 5
+   │                                                  │                 │   
+   │                                                  ╰───────────────────── name: 6
+   │                                                                    │   
+   │                                                                    ╰─── name: 7
+───╯

@@ -1,0 +1,29 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (2):
+- Def: #1 ["X" @ input.sol:1:8] (struct)
+- Def: #2 ["x" @ input.sol:2:7] (struct member, type: X (inherited))
+
+------------------------------------------------------------------------
+
+References (1):
+- Ref: ["X" @ input.sol:2:5] -> #1
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ struct X {
+   │        ┬  
+   │        ╰── name: 1
+ 2 │     X x; // this should bind even though recursive structs are disallowed in Solidity
+   │     ┬ ┬  
+   │     ╰──── ref: 1
+   │       │  
+   │       ╰── name: 2
+───╯

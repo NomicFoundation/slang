@@ -1,0 +1,79 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["x" @ input.sol:4:24] (parameter, type: uint256)
+- Def: #3 ["test" @ input.sol:4:14] (function, type: function (uint256) returns void)
+- Def: #4 ["Utils" @ input.sol:10:9] (library)
+- Def: #5 ["x" @ input.sol:11:27] (parameter, type: uint256)
+- Def: #6 ["a" @ input.sol:11:35] (parameter, type: uint256)
+- Def: #7 ["operate" @ input.sol:11:14] (function, type: function (uint256, uint256) returns uint256)
+
+------------------------------------------------------------------------
+
+References (10):
+- Ref: ["Utils" @ input.sol:2:11] -> #4
+- Ref: ["x" @ input.sol:5:9] -> #2
+- Ref: ["operate" @ input.sol:5:11] -> #7
+- Ref: ["a" @ input.sol:5:20] -> #6
+- Ref: ["Utils" @ input.sol:6:9] -> #4
+- Ref: ["operate" @ input.sol:6:15] -> #7
+- Ref: ["x" @ input.sol:6:24] -> #5
+- Ref: ["x" @ input.sol:6:27] -> #2
+- Ref: ["a" @ input.sol:6:30] -> #6
+- Ref: ["x" @ input.sol:12:16] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     using Utils for uint;
+    │           ──┬──  
+    │             ╰──── ref: 4
+    │ 
+  4 │     function test(uint x) public {
+    │              ──┬─      ┬  
+    │                ╰────────── name: 3
+    │                        │  
+    │                        ╰── name: 2
+  5 │         x.operate({a: 1});
+    │         ┬ ───┬───  ┬  
+    │         ╰───────────── ref: 2
+    │              │     │  
+    │              ╰──────── ref: 7
+    │                    │  
+    │                    ╰── ref: 6
+  6 │         Utils.operate({x: x, a: 1});
+    │         ──┬── ───┬───  ┬  ┬  ┬  
+    │           ╰───────────────────── ref: 4
+    │                  │     │  │  │  
+    │                  ╰────────────── ref: 7
+    │                        │  │  │  
+    │                        ╰──────── ref: 5
+    │                           │  │  
+    │                           ╰───── ref: 2
+    │                              │  
+    │                              ╰── ref: 6
+    │ 
+ 10 │ library Utils {
+    │         ──┬──  
+    │           ╰──── name: 4
+ 11 │     function operate(uint x, uint a) public returns (uint) {
+    │              ───┬───      ┬       ┬  
+    │                 ╰──────────────────── name: 7
+    │                           │       │  
+    │                           ╰────────── name: 5
+    │                                   │  
+    │                                   ╰── name: 6
+ 12 │         return x;
+    │                ┬  
+    │                ╰── ref: 5
+────╯

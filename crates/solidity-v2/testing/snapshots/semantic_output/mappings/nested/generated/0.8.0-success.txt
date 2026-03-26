@@ -1,0 +1,95 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (12):
+- Def: #1 ["NestedMapping" @ input.sol:1:10] (contract)
+- Def: #2 ["nested" @ input.sol:2:57] (state var, type: address => uint256 => bool)
+- Def: #3 ["_addr1" @ input.sol:4:26] (parameter, type: address)
+- Def: #4 ["_i" @ input.sol:4:42] (parameter, type: uint256)
+- Def: #5 ["get" @ input.sol:4:14] (function, type: function (address, uint256) returns bool)
+- Def: #6 ["_addr1" @ input.sol:8:26] (parameter, type: address)
+- Def: #7 ["_i" @ input.sol:8:42] (parameter, type: uint256)
+- Def: #8 ["_boo" @ input.sol:8:51] (parameter, type: bool)
+- Def: #9 ["set" @ input.sol:8:14] (function, type: function (address, uint256, bool) returns void)
+- Def: #10 ["_addr1" @ input.sol:12:29] (parameter, type: address)
+- Def: #11 ["_i" @ input.sol:12:45] (parameter, type: uint256)
+- Def: #12 ["remove" @ input.sol:12:14] (function, type: function (address, uint256) returns void)
+
+------------------------------------------------------------------------
+
+References (10):
+- Ref: ["nested" @ input.sol:5:16] -> #2
+- Ref: ["_addr1" @ input.sol:5:23] -> #3
+- Ref: ["_i" @ input.sol:5:31] -> #4
+- Ref: ["nested" @ input.sol:9:9] -> #2
+- Ref: ["_addr1" @ input.sol:9:16] -> #6
+- Ref: ["_i" @ input.sol:9:24] -> #7
+- Ref: ["_boo" @ input.sol:9:30] -> #8
+- Ref: ["nested" @ input.sol:13:16] -> #2
+- Ref: ["_addr1" @ input.sol:13:23] -> #10
+- Ref: ["_i" @ input.sol:13:31] -> #11
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract NestedMapping {
+    │          ──────┬──────  
+    │                ╰──────── name: 1
+  2 │     mapping(address => mapping(uint256 => bool)) public nested;
+    │                                                         ───┬──  
+    │                                                            ╰──── name: 2
+    │ 
+  4 │     function get(address _addr1, uint256 _i) public view returns (bool) {
+    │              ─┬─         ───┬──          ─┬  
+    │               ╰────────────────────────────── name: 5
+    │                             │             │  
+    │                             ╰──────────────── name: 3
+    │                                           │  
+    │                                           ╰── name: 4
+  5 │         return nested[_addr1][_i];
+    │                ───┬── ───┬──  ─┬  
+    │                   ╰─────────────── ref: 2
+    │                          │     │  
+    │                          ╰──────── ref: 3
+    │                                │  
+    │                                ╰── ref: 4
+    │ 
+  8 │     function set(address _addr1, uint256 _i, bool _boo) public {
+    │              ─┬─         ───┬──          ─┬       ──┬─  
+    │               ╰───────────────────────────────────────── name: 9
+    │                             │             │         │   
+    │                             ╰─────────────────────────── name: 6
+    │                                           │         │   
+    │                                           ╰───────────── name: 7
+    │                                                     │   
+    │                                                     ╰─── name: 8
+  9 │         nested[_addr1][_i] = _boo;
+    │         ───┬── ───┬──  ─┬    ──┬─  
+    │            ╰─────────────────────── ref: 2
+    │                   │     │      │   
+    │                   ╰──────────────── ref: 6
+    │                         │      │   
+    │                         ╰────────── ref: 7
+    │                                │   
+    │                                ╰─── ref: 8
+    │ 
+ 12 │     function remove(address _addr1, uint256 _i) public {
+    │              ───┬──         ───┬──          ─┬  
+    │                 ╰─────────────────────────────── name: 12
+    │                                │             │  
+    │                                ╰──────────────── name: 10
+    │                                              │  
+    │                                              ╰── name: 11
+ 13 │         delete nested[_addr1][_i];
+    │                ───┬── ───┬──  ─┬  
+    │                   ╰─────────────── ref: 2
+    │                          │     │  
+    │                          ╰──────── ref: 10
+    │                                │  
+    │                                ╰── ref: 11
+────╯

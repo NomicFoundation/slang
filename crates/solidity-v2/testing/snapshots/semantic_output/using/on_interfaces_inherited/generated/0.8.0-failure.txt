@@ -1,0 +1,75 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (8):
+- Def: #1 ["LibFoo" @ input.sol:1:9] (library)
+- Def: #2 ["x" @ input.sol:2:27] (parameter, type: IFoo)
+- Def: #3 ["use_foo" @ input.sol:2:14] (function, type: function (IFoo) returns int256)
+- Def: #4 ["IFoo" @ input.sol:4:11] (interface)
+- Def: #5 ["Base" @ input.sol:6:10] (contract)
+- Def: #6 ["Test" @ input.sol:9:10] (contract)
+- Def: #7 ["x" @ input.sol:10:27] (parameter, type: address)
+- Def: #8 ["test" @ input.sol:10:14] (function, type: function (address) returns void)
+
+------------------------------------------------------------------------
+
+References (7):
+- Ref: ["IFoo" @ input.sol:2:22] -> #4
+- Ref: ["LibFoo" @ input.sol:7:11] -> #1
+- Ref: ["IFoo" @ input.sol:7:22] -> #4
+- Ref: ["IFoo" @ input.sol:12:9] -> #4
+- Ref: ["x" @ input.sol:12:14] -> #7
+- Ref: ["use_foo" @ input.sol:12:17] -> unresolved
+- Ref: ["Base" @ input.sol:9:18] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library LibFoo {
+    │         ───┬──  
+    │            ╰──── name: 1
+  2 │     function use_foo(IFoo x) public returns (int) {}
+    │              ───┬─── ──┬─ ┬  
+    │                 ╰──────────── name: 3
+    │                        │  │  
+    │                        ╰───── ref: 4
+    │                           │  
+    │                           ╰── name: 2
+    │ 
+  4 │ interface IFoo {
+    │           ──┬─  
+    │             ╰─── name: 4
+    │ 
+  6 │ contract Base {
+    │          ──┬─  
+    │            ╰─── name: 5
+  7 │     using LibFoo for IFoo;
+    │           ───┬──     ──┬─  
+    │              ╰───────────── ref: 1
+    │                        │   
+    │                        ╰─── ref: 4
+    │ 
+  9 │ contract Test is Base {
+    │          ──┬─    ──┬─  
+    │            ╰─────────── name: 6
+    │                    │   
+    │                    ╰─── ref: 5
+ 10 │     function test(address x) public {
+    │              ──┬─         ┬  
+    │                ╰───────────── name: 8
+    │                           │  
+    │                           ╰── name: 7
+    │ 
+ 12 │         IFoo(x).use_foo();
+    │         ──┬─ ┬  ───┬───  
+    │           ╰────────────── ref: 4
+    │              │     │     
+    │              ╰─────────── ref: 7
+    │                    │     
+    │                    ╰───── unresolved
+────╯

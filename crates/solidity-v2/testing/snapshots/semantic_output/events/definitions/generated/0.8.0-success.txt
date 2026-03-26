@@ -1,0 +1,43 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["TopLevelEvent" @ input.sol:1:7] (event)
+- Def: #2 ["x" @ input.sol:1:33] (parameter, type: int256)
+- Def: #3 ["y" @ input.sol:1:40] (parameter, type: int256)
+- Def: #4 ["Test" @ input.sol:3:10] (contract)
+- Def: #5 ["ContractEvent" @ input.sol:4:11] (event)
+- Def: #6 ["x" @ input.sol:4:37] (parameter, type: int256)
+- Def: #7 ["y" @ input.sol:4:44] (parameter, type: int256)
+
+------------------------------------------------------------------------
+
+References (0):
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ event TopLevelEvent(int indexed x, int y);
+   │       ──────┬──────             ┬      ┬  
+   │             ╰───────────────────────────── name: 1
+   │                                 │      │  
+   │                                 ╰───────── name: 2
+   │                                        │  
+   │                                        ╰── name: 3
+   │ 
+ 3 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 4
+ 4 │     event ContractEvent(int indexed x, int y);
+   │           ──────┬──────             ┬      ┬  
+   │                 ╰───────────────────────────── name: 5
+   │                                     │      │  
+   │                                     ╰───────── name: 6
+   │                                            │  
+   │                                            ╰── name: 7
+───╯
