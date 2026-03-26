@@ -89,7 +89,7 @@ impl<'a> ReportData<'a> {
     ) -> Self {
         let all_identifiers = collect_all_identifiers(compilation);
         let (all_definitions, all_references, unbound_identifiers) =
-            collect_all_definitions_references_and_unbound(compilation, all_identifiers);
+            collect_all_definitions_references_and_unbound(compilation, &all_identifiers);
         let definitions_by_id = all_definitions
             .iter()
             .map(|definition| (definition.definition_node_id, definition.report_id))
@@ -116,7 +116,7 @@ impl<'a> ReportData<'a> {
 
 fn collect_all_definitions_references_and_unbound(
     compilation: &CompilationUnit,
-    all_identifiers: Vec<VisitedIdentifier>,
+    all_identifiers: &[VisitedIdentifier],
 ) -> (
     Vec<CollectedDefinition>,
     Vec<CollectedReference>,
@@ -129,7 +129,7 @@ fn collect_all_definitions_references_and_unbound(
     let binder = compilation.binder();
 
     // Walk all identifiers in file/source order and classify each one
-    for visited in &all_identifiers {
+    for visited in all_identifiers {
         let mut bound = false;
 
         if let Some(definition) = binder.find_definition_by_identifier_node_id(visited.node_id) {
