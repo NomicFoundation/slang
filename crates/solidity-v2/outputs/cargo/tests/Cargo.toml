@@ -7,12 +7,14 @@ publish = false
 
 [dev-dependencies]
 anyhow = { workspace = true }
+indoc = { workspace = true }
 infra_utils = { workspace = true }
-solidity_v2_language = { workspace = true }
+regex = { workspace = true }
 slang_solidity = { workspace = true, features = ["__private_testing_utils"] }
 slang_solidity_v2_common = { workspace = true }
 slang_solidity_v2_cst = { workspace = true }
 slang_solidity_v2_parser = { workspace = true }
+solidity_v2_language = { workspace = true }
 solidity_v2_testing_utils = { workspace = true }
 
 [lints]
