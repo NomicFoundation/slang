@@ -1,6 +1,8 @@
 use infra_utils::commands::Command;
 use infra_utils::github::GitHub;
 
+// Dry-run mode runs the full benchmark but skips uploading to the bencher dashboard.
+// PR benchmark runs always use dry-run to avoid polluting the dashboard.
 // Use a dummy test token for dry runs:
 // https://github.com/bencherdev/bencher/issues/468
 // Source: https://github.com/bencherdev/bencher/blob/aa31a002842cfb0da9d6c60569396fc5261f5111/tasks/test_api/src/task/test/smoke_test.rs#L20

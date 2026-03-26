@@ -62,6 +62,7 @@ jobs:
         if: "${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
         run: "./scripts/bin/infra perf cargo --smoke comparison"
 
+      # PRs always use --dry-run (run benchmarks locally but don't upload to bencher dashboard):
       - name: "Benchmark > infra perf cargo comparison"
         if: "${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
         run: "./scripts/bin/infra perf cargo ${{ (inputs.dryRun == true || github.event_name == 'pull_request') && '--dry-run' || '' }} comparison"

@@ -64,6 +64,7 @@ jobs:
         if: "${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
         run: "./scripts/bin/infra perf npm --smoke"
 
+      # PRs always use --dry-run (run benchmarks locally but don't upload to bencher dashboard):
       - name: "Benchmark > infra perf npm"
         if: "${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
         run: "./scripts/bin/infra perf npm ${{ (inputs.dryRun == true || github.event_name == 'pull_request') && '--dry-run' || '' }}"
