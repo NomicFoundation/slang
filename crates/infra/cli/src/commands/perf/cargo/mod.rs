@@ -22,6 +22,9 @@ pub struct CargoController {
     dry_run: DryRun,
     #[arg(long)]
     no_deps: bool,
+    /// Install deps and build bench binaries, but skip running benchmarks.
+    #[arg(long)]
+    smoke: bool,
 }
 
 #[derive(Clone, Debug, Subcommand)]
@@ -40,6 +43,17 @@ impl CargoController {
             CargoWorkspace::install_binary("bencher_cli")?;
 
             Self::install_graphviz();
+        }
+
+        if self.smoke {
+            let (package, bench_name) = match self.bench {
+                Benches::Slang => ("solidity_testing_perf_cargo", "slang"),
+                Benches::Comparison => ("solidity_testing_perf_cargo", "comparison"),
+            };
+            Command::new("cargo")
+                .args(["build", "--benches", "--package", package, "--bench", bench_name])
+                .run();
+            return Ok(());
         }
 
         // Bencher supports multiple languages/frameworks: https://bencher.dev/docs/explanation/adapters/
