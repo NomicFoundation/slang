@@ -21,7 +21,11 @@ on:
 
   # Run on pull requests (smoke test always, full run with 'ci:sourcify' label):
   pull_request:
-    types: ["opened", "synchronize", "reopened", "labeled"]
+    types:
+      - "opened"
+      - "synchronize"
+      - "reopened"
+      - "labeled"
 
 jobs:
   smoke:

@@ -22,7 +22,11 @@ on:
 
   # Run on pull requests (smoke test always, full benchmark with 'ci:perf' label):
   pull_request:
-    types: ["opened", "synchronize", "reopened", "labeled"]
+    types:
+      - "opened"
+      - "synchronize"
+      - "reopened"
+      - "labeled"
 
 # Queue up benchmark workflows for the same branch, so that results are reported in order:
 concurrency:
