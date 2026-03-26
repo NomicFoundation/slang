@@ -51,7 +51,14 @@ impl CargoController {
                 Benches::Comparison => ("solidity_testing_perf_cargo", "comparison"),
             };
             Command::new("cargo")
-                .args(["build", "--benches", "--package", package, "--bench", bench_name])
+                .args([
+                    "build",
+                    "--benches",
+                    "--package",
+                    package,
+                    "--bench",
+                    bench_name,
+                ])
                 .run();
             return Ok(());
         }
