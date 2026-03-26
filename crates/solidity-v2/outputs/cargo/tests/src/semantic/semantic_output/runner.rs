@@ -47,7 +47,6 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
     let contents = input_path.read_to_string()?;
 
     let multi_part = split_multi_file(&contents);
-    let root_file = multi_part.parts[0].name;
 
     let files: HashMap<String, String> = multi_part
         .parts
@@ -69,11 +68,18 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         };
         let mut builder = CompilationBuilder::create(version, config);
 
-        let has_parser_error = match builder.add_file(root_file) {
-            Ok(()) => false,
-            Err(CompilationBuilderError::ParserError(_)) => true,
-            Err(CompilationBuilderError::UserError(infallible)) => match infallible {},
-        };
+        let mut has_parser_error = false;
+        // `builder.add_file` recursively adds dependencies, but we don't want to
+        // depend on the order of the parts in the `input.sol` file, and calling
+        // `add_file` on files already added is idempotent.
+        for part in &multi_part.parts {
+            has_parser_error = has_parser_error
+                || match builder.add_file(part.name) {
+                    Ok(()) => false,
+                    Err(CompilationBuilderError::ParserError(_)) => true,
+                    Err(CompilationBuilderError::UserError(infallible)) => match infallible {},
+                };
+        }
 
         let compilation = builder.build();
         let report_data = ReportData::prepare(&compilation, &files);
