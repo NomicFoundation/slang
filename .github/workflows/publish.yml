@@ -33,6 +33,9 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: "Cargo cooldown check"
+        uses: "./.github/actions/cooldown-check"
+
       - name: "Restore Cache"
         uses: "./.github/actions/cache/restore"
 

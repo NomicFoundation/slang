@@ -57,6 +57,9 @@ jobs:
           restore-keys: |
             cargo-target-${{ runner.os }}-
 
+      - name: "Cargo cooldown check"
+        uses: "./.github/actions/cooldown-check"
+
       #
       # Run all CI steps in order: _SLANG_INFRA_CI_STEPS_ORDERED_ (keep in sync)
       #
