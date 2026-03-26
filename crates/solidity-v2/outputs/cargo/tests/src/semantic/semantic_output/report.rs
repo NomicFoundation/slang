@@ -4,8 +4,10 @@ use std::ops::Range;
 
 use anyhow::Result;
 use ariadne::{Color, Config, Label, Report, ReportBuilder, ReportKind, Source};
+use slang_solidity_v2_parser::ParserError;
 use slang_solidity_v2_semantic::binder::Resolution;
 use slang_solidity_v2_semantic::ir::NodeId;
+use solidity_v2_testing_utils::reporting::diagnostic;
 
 use super::report_data::{CollectedDefinition, CollectedReference, ReportData, UnboundIdentifier};
 
@@ -21,11 +23,17 @@ pub(crate) fn binder_report(report_data: &'_ ReportData<'_>) -> Result<String> {
     let ReportData {
         compilation,
         file_contents,
+        parse_errors,
         all_definitions,
         all_references,
         unbound_identifiers,
         definitions_by_id,
     } = report_data;
+
+    if !parse_errors.is_empty() {
+        report_parse_errors(&mut report, parse_errors, file_contents)?;
+        writeln!(report, "{SEPARATOR}")?;
+    }
 
     report_all_definitions(&mut report, report_data)?;
 
@@ -115,6 +123,20 @@ fn report_unbound_identifiers(
             "- {unbound_identifier}",
             unbound_identifier = unbound_identifier.display(file_contents)
         )?;
+    }
+    Ok(())
+}
+
+fn report_parse_errors(
+    report: &mut String,
+    parse_errors: &[(String, ParserError)],
+    file_contents: &HashMap<String, String>,
+) -> Result<()> {
+    writeln!(report, "Parse errors:")?;
+    for (file_id, error) in parse_errors {
+        let source = file_contents.get(file_id).cloned().unwrap_or_default();
+        let rendered = diagnostic::render(error, file_id, &source, false);
+        write!(report, "{rendered}")?;
     }
     Ok(())
 }

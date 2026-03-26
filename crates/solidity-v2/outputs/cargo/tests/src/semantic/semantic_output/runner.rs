@@ -6,6 +6,7 @@ use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
 use slang_solidity_v2_common::versions::LanguageVersion;
+use slang_solidity_v2_parser::ParserError;
 use slang_solidity_v2_semantic::compilation::builder::{
     CompilationBuilder, CompilationBuilderConfig, CompilationBuilderError,
 };
@@ -68,27 +69,27 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         };
         let mut builder = CompilationBuilder::create(version, config);
 
-        let mut has_parser_error = false;
+        let mut parse_errors: Vec<(String, ParserError)> = Vec::new();
         // `builder.add_file` recursively adds dependencies, but we don't want to
         // depend on the order of the parts in the `input.sol` file, and calling
         // `add_file` on files already added is idempotent.
         for part in &multi_part.parts {
-            has_parser_error = has_parser_error
-                || match builder.add_file(part.name) {
-                    Ok(()) => false,
-                    Err(CompilationBuilderError::ParserError(_)) => true,
-                    Err(CompilationBuilderError::UserError(infallible)) => match infallible {},
-                };
+            match builder.add_file(part.name) {
+                Ok(()) => {}
+                Err(CompilationBuilderError::ParserError(error)) => {
+                    parse_errors.push((part.name.to_string(), error));
+                }
+                Err(CompilationBuilderError::UserError(infallible)) => match infallible {},
+            }
         }
 
         let compilation = builder.build();
-        let report_data = ReportData::prepare(&compilation, &files);
-        let all_resolved = report_data.all_resolved();
+        let report_data = ReportData::prepare(&compilation, &files, &parse_errors);
 
-        let status = if has_parser_error || !all_resolved {
-            "failure"
-        } else {
+        let status = if report_data.all_resolved() {
             "success"
+        } else {
+            "failure"
         };
 
         let report = binder_report(&report_data)?;
