@@ -1,14 +1,30 @@
 use infra_utils::commands::Command;
 use infra_utils::github::GitHub;
 
-// Dry-run mode runs the full benchmark but skips uploading to the bencher dashboard.
-// PR benchmark runs always use dry-run to avoid polluting the dashboard.
+// Three modes:
+// 1. dry-run: runs benchmarks locally, uploads to bencher with a dummy token (no dashboard update).
+// 2. pr-benchmark: uploads to a temporary PR branch in bencher, compares against the base branch
+//    with start-point thresholds, and posts results as a PR comment. Mutually exclusive with dry-run.
+// 3. normal (neither flag): uploads results to the main branch on the bencher dashboard.
+//
 // Use a dummy test token for dry runs:
 // https://github.com/bencherdev/bencher/issues/468
 // Source: https://github.com/bencherdev/bencher/blob/aa31a002842cfb0da9d6c60569396fc5261f5111/tasks/test_api/src/task/test/smoke_test.rs#L20
 const BENCHER_TEST_TOKEN: &str = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhcGlfa2V5IiwiZXhwIjo1OTkzNjQyMTU2LCJpYXQiOjE2OTg2NzQ4NjEsImlzcyI6Imh0dHBzOi8vZGV2ZWwtLWJlbmNoZXIubmV0bGlmeS5hcHAvIiwic3ViIjoibXVyaWVsLmJhZ2dlQG5vd2hlcmUuY29tIiwib3JnIjpudWxsfQ.9z7jmM53TcVzc1inDxTeX9_OR0PQPpZAsKsCE7lWHfo";
 
-pub(crate) fn run_bench(dry_run: bool, project: &str, adapter: &str, test_runner: &str) {
+pub(crate) fn run_bench(
+    dry_run: bool,
+    pr_benchmark: bool,
+    project: &str,
+    adapter: &str,
+    test_runner: &str,
+) {
+    assert!(
+        !(dry_run && pr_benchmark),
+        "--dry-run and --pr-benchmark are mutually exclusive. \
+         PR benchmarks must upload to bencher for comparison."
+    );
+
     let token = if dry_run {
         BENCHER_TEST_TOKEN.to_string()
     } else {
@@ -34,6 +50,29 @@ pub(crate) fn run_bench(dry_run: bool, project: &str, adapter: &str, test_runner
 
     if dry_run {
         command = command.flag("--dry-run");
+    }
+
+    if pr_benchmark {
+        let head_ref = std::env::var("GITHUB_HEAD_REF")
+            .expect("GITHUB_HEAD_REF must be set for --pr-benchmark (are you running in a PR?)");
+        let base_ref = std::env::var("GITHUB_BASE_REF")
+            .expect("GITHUB_BASE_REF must be set for --pr-benchmark (are you running in a PR?)");
+        let start_point_hash = std::env::var("BENCHER_PR_START_POINT_HASH")
+            .expect("BENCHER_PR_START_POINT_HASH must be set for --pr-benchmark");
+        let head_hash = std::env::var("BENCHER_PR_HEAD_HASH")
+            .expect("BENCHER_PR_HEAD_HASH must be set for --pr-benchmark");
+        let github_token = std::env::var("GITHUB_TOKEN")
+            .expect("GITHUB_TOKEN must be set for --pr-benchmark");
+
+        command = command
+            .property("--branch", &head_ref)
+            .property("--start-point", &base_ref)
+            .property("--start-point-hash", &start_point_hash)
+            .flag("--start-point-clone-thresholds")
+            .flag("--start-point-reset")
+            .property("--hash", &head_hash)
+            .property("--github-actions", &github_token)
+            .flag("--error-on-alert");
     }
 
     // Has to be the last argument:

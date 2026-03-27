@@ -20,10 +20,13 @@ pub struct CargoController {
     bench: Benches,
     #[command(flatten)]
     dry_run: DryRun,
+    /// Run as a PR benchmark with regression detection via bencher start points.
+    #[arg(long)]
+    pr_benchmark: bool,
     #[arg(long)]
     no_deps: bool,
     /// Install deps and build bench binaries, but skip running benchmarks.
-    #[arg(long)]
+    #[arg(long, conflicts_with = "pr_benchmark")]
     smoke: bool,
 }
 
@@ -139,6 +142,7 @@ impl CargoController {
 
         run_bench(
             self.dry_run.get(),
+            self.pr_benchmark,
             bencher_project,
             "rust_iai_callgrind",
             &test_runner,

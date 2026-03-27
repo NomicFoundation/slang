@@ -16,6 +16,9 @@ pub struct NpmController {
 
     #[command(flatten)]
     dry_run: DryRun,
+    /// Run as a PR benchmark with regression detection via bencher start points.
+    #[arg(long)]
+    pr_benchmark: bool,
 
     #[arg(long, default_value_t = 2)]
     /// The number of cold runs
@@ -26,7 +29,7 @@ pub struct NpmController {
     hot: usize,
 
     /// Install deps and build the perf binary, but skip running benchmarks.
-    #[arg(long)]
+    #[arg(long, conflicts_with = "pr_benchmark")]
     smoke: bool,
 }
 
@@ -47,6 +50,7 @@ impl NpmController {
 
         run_bench(
             self.dry_run.get(),
+            self.pr_benchmark,
             DEFAULT_BENCHER_PROJECT,
             "json",
             &test_runner,
