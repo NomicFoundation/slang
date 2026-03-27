@@ -11,26 +11,26 @@ Definitions (12):
 - Def: #8 ["c" @ input.sol:13:32] (variable, type: uint256[4] memory)
 - Def: #9 ["d" @ input.sol:14:50] (variable, type: uint256[4] memory)
 - Def: #10 ["Lib" @ input.sol:22:9] (library)
-- Def: #11 ["self" @ input.sol:23:33] (parameter, type: uint256[4] memory)
-- Def: #12 ["nop" @ input.sol:23:14] (function, type: function (uint256[4] memory) returns void)
+- Def: #11 ["nop" @ input.sol:23:14] (function, type: function (uint256[4] memory) returns void)
+- Def: #12 ["self" @ input.sol:23:33] (parameter, type: uint256[4] memory)
 
 ------------------------------------------------------------------------
 
 References (14):
+- Ref: ["Base" @ input.sol:5:18] -> #1
 - Ref: ["Lib" @ input.sol:8:11] -> #10
 - Ref: ["TEST_SIZE" @ input.sol:12:14] -> #4
 - Ref: ["BASE_SIZE" @ input.sol:13:14] -> #2
 - Ref: ["BASE_SIZE" @ input.sol:14:15] -> #2
 - Ref: ["TEST_SIZE" @ input.sol:14:27] -> #4
 - Ref: ["a" @ input.sol:15:9] -> #6
-- Ref: ["nop" @ input.sol:15:11] -> #12
+- Ref: ["nop" @ input.sol:15:11] -> #11
 - Ref: ["b" @ input.sol:16:9] -> #7
-- Ref: ["nop" @ input.sol:16:11] -> #12
+- Ref: ["nop" @ input.sol:16:11] -> #11
 - Ref: ["c" @ input.sol:17:9] -> #8
-- Ref: ["nop" @ input.sol:17:11] -> #12
+- Ref: ["nop" @ input.sol:17:11] -> #11
 - Ref: ["d" @ input.sol:18:9] -> #9
-- Ref: ["nop" @ input.sol:18:11] -> #12
-- Ref: ["Base" @ input.sol:5:18] -> #1
+- Ref: ["nop" @ input.sol:18:11] -> #11
 
 ------------------------------------------------------------------------
 
@@ -88,29 +88,29 @@ Bindings:
     │         ┬ ─┬─  
     │         ╰────── ref: 6
     │            │   
-    │            ╰─── ref: 12
+    │            ╰─── ref: 11
  16 │         b.nop();
     │         ┬ ─┬─  
     │         ╰────── ref: 7
     │            │   
-    │            ╰─── ref: 12
+    │            ╰─── ref: 11
  17 │         c.nop();
     │         ┬ ─┬─  
     │         ╰────── ref: 8
     │            │   
-    │            ╰─── ref: 12
+    │            ╰─── ref: 11
  18 │         d.nop();
     │         ┬ ─┬─  
     │         ╰────── ref: 9
     │            │   
-    │            ╰─── ref: 12
+    │            ╰─── ref: 11
     │ 
  22 │ library Lib {
     │         ─┬─  
     │          ╰─── name: 10
  23 │     function nop(uint[4] memory self) internal {}
     │              ─┬─                ──┬─  
-    │               ╰─────────────────────── name: 12
+    │               ╰─────────────────────── name: 11
     │                                   │   
-    │                                   ╰─── name: 11
+    │                                   ╰─── name: 12
 ────╯

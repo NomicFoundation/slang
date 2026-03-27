@@ -3,11 +3,11 @@
 Definitions (7):
 - Def: #1 ["IERC20" @ input.sol:1:11] (interface)
 - Def: #2 ["SafeERC20" @ input.sol:3:9] (library)
-- Def: #3 ["token" @ input.sol:4:33] (parameter, type: IERC20)
-- Def: #4 ["safeApprove" @ input.sol:4:14] (function, type: function (IERC20) returns void)
+- Def: #3 ["safeApprove" @ input.sol:4:14] (function, type: function (IERC20) returns void)
+- Def: #4 ["token" @ input.sol:4:33] (parameter, type: IERC20)
 - Def: #5 ["Test" @ input.sol:6:10] (contract)
-- Def: #6 ["token" @ input.sol:8:27] (parameter, type: address)
-- Def: #7 ["test" @ input.sol:8:14] (function, type: function (address) returns void)
+- Def: #6 ["test" @ input.sol:8:14] (function, type: function (address) returns void)
+- Def: #7 ["token" @ input.sol:8:27] (parameter, type: address)
 
 ------------------------------------------------------------------------
 
@@ -16,8 +16,8 @@ References (6):
 - Ref: ["SafeERC20" @ input.sol:7:11] -> #2
 - Ref: ["IERC20" @ input.sol:7:25] -> #1
 - Ref: ["IERC20" @ input.sol:9:9] -> #1
-- Ref: ["token" @ input.sol:9:16] -> #6
-- Ref: ["safeApprove" @ input.sol:9:23] -> #4
+- Ref: ["token" @ input.sol:9:16] -> #7
+- Ref: ["safeApprove" @ input.sol:9:23] -> #3
 
 ------------------------------------------------------------------------
 
@@ -37,11 +37,11 @@ Bindings:
    │             ╰────── name: 2
  4 │     function safeApprove(IERC20 token) internal {}
    │              ─────┬───── ───┬── ──┬──  
-   │                   ╰──────────────────── name: 4
+   │                   ╰──────────────────── name: 3
    │                             │     │    
    │                             ╰────────── ref: 1
    │                                   │    
-   │                                   ╰──── name: 3
+   │                                   ╰──── name: 4
    │ 
  6 │ contract Test {
    │          ──┬─  
@@ -53,14 +53,14 @@ Bindings:
    │                            ╰──── ref: 1
  8 │     function test(address token) public {
    │              ──┬─         ──┬──  
-   │                ╰───────────────── name: 7
+   │                ╰───────────────── name: 6
    │                             │    
-   │                             ╰──── name: 6
+   │                             ╰──── name: 7
  9 │         IERC20(token).safeApprove();
    │         ───┬── ──┬──  ─────┬─────  
    │            ╰─────────────────────── ref: 1
    │                  │         │       
-   │                  ╰───────────────── ref: 6
+   │                  ╰───────────────── ref: 7
    │                            │       
-   │                            ╰─────── ref: 4
+   │                            ╰─────── ref: 3
 ───╯

@@ -2,8 +2,8 @@
 
 Definitions (3):
 - Def: #1 ["Test" @ input.sol:1:10] (contract)
-- Def: #2 ["amount" @ input.sol:2:24] (parameter, type: uint256)
-- Def: #3 ["test" @ input.sol:2:14] (function, type: function (uint256) returns void)
+- Def: #2 ["test" @ input.sol:2:14] (function, type: function (uint256) returns void)
+- Def: #3 ["amount" @ input.sol:2:24] (parameter, type: uint256)
 
 ------------------------------------------------------------------------
 
@@ -11,12 +11,12 @@ References (9):
 - Ref: ["msg" @ input.sol:4:9] -> built-in
 - Ref: ["sender" @ input.sol:4:13] -> built-in
 - Ref: ["transfer" @ input.sol:4:20] -> unresolved
-- Ref: ["amount" @ input.sol:4:29] -> #2
+- Ref: ["amount" @ input.sol:4:29] -> #3
 - Ref: ["require" @ input.sol:5:9] -> built-in
 - Ref: ["msg" @ input.sol:5:17] -> built-in
 - Ref: ["sender" @ input.sol:5:21] -> built-in
 - Ref: ["send" @ input.sol:5:28] -> unresolved
-- Ref: ["amount" @ input.sol:5:33] -> #2
+- Ref: ["amount" @ input.sol:5:33] -> #3
 
 ------------------------------------------------------------------------
 
@@ -32,9 +32,9 @@ Bindings:
    │            ╰─── name: 1
  2 │     function test(uint amount) public {
    │              ──┬─      ───┬──  
-   │                ╰─────────────── name: 3
+   │                ╰─────────────── name: 2
    │                           │    
-   │                           ╰──── name: 2
+   │                           ╰──── name: 3
    │ 
  4 │         msg.sender.transfer(amount);
    │         ─┬─ ───┬── ────┬─── ───┬──  
@@ -44,7 +44,7 @@ Bindings:
    │                        │       │    
    │                        ╰──────────── unresolved
    │                                │    
-   │                                ╰──── ref: 2
+   │                                ╰──── ref: 3
  5 │         require(msg.sender.send(amount));
    │         ───┬─── ─┬─ ───┬── ──┬─ ───┬──  
    │            ╰──────────────────────────── built-in
@@ -55,5 +55,5 @@ Bindings:
    │                              │     │    
    │                              ╰────────── unresolved
    │                                    │    
-   │                                    ╰──── ref: 2
+   │                                    ╰──── ref: 3
 ───╯

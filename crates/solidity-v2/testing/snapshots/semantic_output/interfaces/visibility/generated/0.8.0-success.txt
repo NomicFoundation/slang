@@ -12,8 +12,8 @@ Definitions (13):
 - Def: #9 ["Test" @ input.sol:8:10] (contract)
 - Def: #10 ["choice" @ input.sol:9:20] (state var, type: Choice)
 - Def: #11 ["book" @ input.sol:10:18] (state var, type: Book storage)
-- Def: #12 ["e" @ input.sol:12:27] (parameter, type: Example)
-- Def: #13 ["test" @ input.sol:12:14] (function, type: function (Example) returns int256)
+- Def: #12 ["test" @ input.sol:12:14] (function, type: function (Example) returns int256)
+- Def: #13 ["e" @ input.sol:12:27] (parameter, type: Example)
 
 ------------------------------------------------------------------------
 
@@ -27,7 +27,7 @@ References (11):
 - Ref: ["Example" @ input.sol:10:5] -> #1
 - Ref: ["Book" @ input.sol:10:13] -> #5
 - Ref: ["Example" @ input.sol:12:19] -> #1
-- Ref: ["e" @ input.sol:13:16] -> #12
+- Ref: ["e" @ input.sol:13:16] -> #13
 - Ref: ["calculate" @ input.sol:13:18] -> #7
 
 ------------------------------------------------------------------------
@@ -89,14 +89,14 @@ Bindings:
     │ 
  12 │     function test(Example e) public returns (int) {
     │              ──┬─ ───┬─── ┬  
-    │                ╰───────────── name: 13
+    │                ╰───────────── name: 12
     │                      │    │  
     │                      ╰─────── ref: 1
     │                           │  
-    │                           ╰── name: 12
+    │                           ╰── name: 13
  13 │         return e.calculate();
     │                ┬ ────┬────  
-    │                ╰──────────── ref: 12
+    │                ╰──────────── ref: 13
     │                      │      
     │                      ╰────── ref: 7
 ────╯

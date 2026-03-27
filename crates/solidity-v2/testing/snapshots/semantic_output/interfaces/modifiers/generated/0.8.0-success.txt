@@ -15,8 +15,8 @@ References (7):
 - Ref: ["msg" @ input.sol:6:33] -> built-in
 - Ref: ["sender" @ input.sol:6:37] -> built-in
 - Ref: ["_" @ input.sol:7:9] -> built-in
-- Ref: ["onlyOwner" @ input.sol:12:28] -> #3
 - Ref: ["IOwnable" @ input.sol:11:18] -> #1
+- Ref: ["onlyOwner" @ input.sol:12:28] -> #3
 
 ------------------------------------------------------------------------
 

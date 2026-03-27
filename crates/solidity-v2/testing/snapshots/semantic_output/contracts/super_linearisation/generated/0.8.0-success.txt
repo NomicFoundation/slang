@@ -13,13 +13,13 @@ Definitions (8):
 ------------------------------------------------------------------------
 
 References (7):
-- Ref: ["foo" @ input.sol:6:15] -> #2
 - Ref: ["A" @ input.sol:4:15] -> #1
-- Ref: ["foo" @ input.sol:11:15] -> #2
+- Ref: ["foo" @ input.sol:6:15] -> #2
 - Ref: ["A" @ input.sol:9:15] -> #1
-- Ref: ["foo" @ input.sol:16:15] -> #6
+- Ref: ["foo" @ input.sol:11:15] -> #2
 - Ref: ["B" @ input.sol:14:15] -> #3
 - Ref: ["C" @ input.sol:14:18] -> #5
+- Ref: ["foo" @ input.sol:16:15] -> #6
 
 ------------------------------------------------------------------------
 

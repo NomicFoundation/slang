@@ -4,14 +4,14 @@ Definitions (5):
 - Def: #1 ["Base" @ input.sol:1:10] (contract)
 - Def: #2 ["owner" @ input.sol:2:20] (state var, type: address)
 - Def: #3 ["Test" @ input.sol:4:10] (contract)
-- Def: #4 ["base" @ input.sol:5:24] (parameter, type: Base)
-- Def: #5 ["test" @ input.sol:5:14] (function, type: function (Base) returns void)
+- Def: #4 ["test" @ input.sol:5:14] (function, type: function (Base) returns void)
+- Def: #5 ["base" @ input.sol:5:24] (parameter, type: Base)
 
 ------------------------------------------------------------------------
 
 References (4):
 - Ref: ["Base" @ input.sol:5:19] -> #1
-- Ref: ["base" @ input.sol:6:9] -> #4
+- Ref: ["base" @ input.sol:6:9] -> #5
 - Ref: ["owner" @ input.sol:6:14] -> #2
 - Ref: ["balance" @ input.sol:6:22] -> built-in
 
@@ -36,14 +36,14 @@ Bindings:
    │            ╰─── name: 3
  5 │     function test(Base base) public {
    │              ──┬─ ──┬─ ──┬─  
-   │                ╰───────────── name: 5
+   │                ╰───────────── name: 4
    │                     │    │   
    │                     ╰──────── ref: 1
    │                          │   
-   │                          ╰─── name: 4
+   │                          ╰─── name: 5
  6 │         base.owner().balance;
    │         ──┬─ ──┬──   ───┬───  
-   │           ╰─────────────────── ref: 4
+   │           ╰─────────────────── ref: 5
    │                │        │     
    │                ╰────────────── ref: 2
    │                         │     

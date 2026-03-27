@@ -2,17 +2,17 @@
 
 Definitions (5):
 - Def: #1 ["Test" @ input.sol:1:10] (contract)
-- Def: #2 ["a" @ input.sol:2:23] (parameter, type: uint256)
-- Def: #3 ["b" @ input.sol:2:31] (parameter, type: uint256)
-- Def: #4 ["sub" @ input.sol:2:14] (function, type: function (uint256, uint256) returns uint256)
+- Def: #2 ["sub" @ input.sol:2:14] (function, type: function (uint256, uint256) returns uint256)
+- Def: #3 ["a" @ input.sol:2:23] (parameter, type: uint256)
+- Def: #4 ["b" @ input.sol:2:31] (parameter, type: uint256)
 - Def: #5 ["c" @ input.sol:3:14] (variable, type: uint256)
 
 ------------------------------------------------------------------------
 
 References (3):
-- Ref: ["a" @ input.sol:3:18] -> #2
+- Ref: ["a" @ input.sol:3:18] -> #3
 - Ref: ["c" @ input.sol:4:28] -> #5
-- Ref: ["b" @ input.sol:4:32] -> #3
+- Ref: ["b" @ input.sol:4:32] -> #4
 
 ------------------------------------------------------------------------
 
@@ -28,19 +28,19 @@ Bindings:
    │            ╰─── name: 1
  2 │     function sub(uint a, uint b) public returns (uint) {
    │              ─┬─      ┬       ┬  
-   │               ╰────────────────── name: 4
+   │               ╰────────────────── name: 2
    │                       │       │  
-   │                       ╰────────── name: 2
+   │                       ╰────────── name: 3
    │                               │  
-   │                               ╰── name: 3
+   │                               ╰── name: 4
  3 │         uint c = a;
    │              ┬   ┬  
    │              ╰────── name: 5
    │                  │  
-   │                  ╰── ref: 2
+   │                  ╰── ref: 3
  4 │         unchecked { return c - b; }
    │                            ┬   ┬  
    │                            ╰────── ref: 5
    │                                │  
-   │                                ╰── ref: 3
+   │                                ╰── ref: 4
 ───╯

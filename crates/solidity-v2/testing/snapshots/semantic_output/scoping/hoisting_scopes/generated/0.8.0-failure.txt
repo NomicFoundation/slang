@@ -2,15 +2,15 @@
 
 Definitions (5):
 - Def: #1 ["Foo" @ input.sol:1:10] (contract)
-- Def: #2 ["x" @ input.sol:3:31] (parameter, type: int256)
-- Def: #3 ["bar" @ input.sol:3:12] (function, type: function () returns int256)
+- Def: #2 ["bar" @ input.sol:3:12] (function, type: function () returns int256)
+- Def: #3 ["x" @ input.sol:3:31] (parameter, type: int256)
 - Def: #4 ["y" @ input.sol:5:9] (variable, type: int256)
 - Def: #5 ["z" @ input.sol:7:11] (variable, type: int256)
 
 ------------------------------------------------------------------------
 
 References (3):
-- Ref: ["x" @ input.sol:4:5] -> #2
+- Ref: ["x" @ input.sol:4:5] -> #3
 - Ref: ["y" @ input.sol:4:9] -> unresolved
 - Ref: ["z" @ input.sol:4:13] -> unresolved
 
@@ -29,12 +29,12 @@ Bindings:
    │ 
  3 │   function bar() returns (int x) {
    │            ─┬─                ┬  
-   │             ╰──────────────────── name: 3
+   │             ╰──────────────────── name: 2
    │                               │  
-   │                               ╰── name: 2
+   │                               ╰── name: 3
  4 │     x = y + z;
    │     ┬   ┬   ┬  
-   │     ╰────────── ref: 2
+   │     ╰────────── ref: 3
    │         │   │  
    │         ╰────── unresolved
    │             │  

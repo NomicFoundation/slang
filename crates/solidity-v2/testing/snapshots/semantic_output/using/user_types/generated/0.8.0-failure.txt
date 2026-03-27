@@ -3,15 +3,15 @@
 Definitions (11):
 - Def: #1 ["ShortString" @ input.sol:1:6] (udvt, type: meta-type)
 - Def: #2 ["Test" @ input.sol:3:10] (contract)
-- Def: #3 ["data" @ input.sol:7:27] (parameter, type: bytes32)
-- Def: #4 ["test" @ input.sol:7:14] (function, type: function (bytes32) returns void)
+- Def: #3 ["test" @ input.sol:7:14] (function, type: function (bytes32) returns void)
+- Def: #4 ["data" @ input.sol:7:27] (parameter, type: bytes32)
 - Def: #5 ["s" @ input.sol:8:21] (variable, type: ShortString)
 - Def: #6 ["ShortStringLib" @ input.sol:15:9] (library)
-- Def: #7 ["x" @ input.sol:16:30] (parameter, type: ShortString)
-- Def: #8 ["nop" @ input.sol:16:14] (function, type: function (ShortString) returns void)
+- Def: #7 ["nop" @ input.sol:16:14] (function, type: function (ShortString) returns void)
+- Def: #8 ["x" @ input.sol:16:30] (parameter, type: ShortString)
 - Def: #9 ["BytesLib" @ input.sol:19:9] (library)
-- Def: #10 ["x" @ input.sol:20:26] (parameter, type: bytes32)
-- Def: #11 ["pon" @ input.sol:20:14] (function, type: function (bytes32) returns void)
+- Def: #10 ["pon" @ input.sol:20:14] (function, type: function (bytes32) returns void)
+- Def: #11 ["x" @ input.sol:20:26] (parameter, type: bytes32)
 
 ------------------------------------------------------------------------
 
@@ -22,7 +22,7 @@ References (13):
 - Ref: ["ShortString" @ input.sol:8:9] -> #1
 - Ref: ["ShortString" @ input.sol:10:9] -> #1
 - Ref: ["wrap" @ input.sol:10:21] -> unresolved
-- Ref: ["data" @ input.sol:10:26] -> #3
+- Ref: ["data" @ input.sol:10:26] -> #4
 - Ref: ["nop" @ input.sol:10:32] -> unresolved
 - Ref: ["ShortString" @ input.sol:11:9] -> #1
 - Ref: ["unwrap" @ input.sol:11:21] -> unresolved
@@ -57,9 +57,9 @@ Bindings:
     │ 
   7 │     function test(bytes32 data) public {
     │              ──┬─         ──┬─  
-    │                ╰──────────────── name: 4
+    │                ╰──────────────── name: 3
     │                             │   
-    │                             ╰─── name: 3
+    │                             ╰─── name: 4
   8 │         ShortString s;
     │         ─────┬───── ┬  
     │              ╰───────── ref: 1
@@ -72,7 +72,7 @@ Bindings:
     │                       │    │    │   
     │                       ╰───────────── unresolved
     │                            │    │   
-    │                            ╰──────── ref: 3
+    │                            ╰──────── ref: 4
     │                                 │   
     │                                 ╰─── unresolved
  11 │         ShortString.unwrap(s).pon();
@@ -90,18 +90,18 @@ Bindings:
     │                ╰──────── name: 6
  16 │     function nop(ShortString x) internal {}
     │              ─┬─ ─────┬───── ┬  
-    │               ╰───────────────── name: 8
+    │               ╰───────────────── name: 7
     │                       │      │  
     │                       ╰───────── ref: 1
     │                              │  
-    │                              ╰── name: 7
+    │                              ╰── name: 8
     │ 
  19 │ library BytesLib {
     │         ────┬───  
     │             ╰───── name: 9
  20 │     function pon(bytes32 x) internal {}
     │              ─┬─         ┬  
-    │               ╰───────────── name: 11
+    │               ╰───────────── name: 10
     │                          │  
-    │                          ╰── name: 10
+    │                          ╰── name: 11
 ────╯

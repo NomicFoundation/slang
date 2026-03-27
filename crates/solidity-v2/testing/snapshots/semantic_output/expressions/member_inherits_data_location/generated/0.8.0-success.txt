@@ -14,8 +14,8 @@ Definitions (15):
 - Def: #11 ["_value" @ input.sol:17:17] (struct member, type: uint160)
 - Def: #12 ["_unsafeAccess" @ input.sol:20:14] (function, type: function (Checkpoint224 storage[] storage) returns Checkpoint224 storage)
 - Def: #13 ["_unsafeAccess" @ input.sol:21:14] (function, type: function (Checkpoint160 storage[] storage) returns Checkpoint160 storage)
-- Def: #14 ["self" @ input.sol:23:36] (parameter, type: Trace224 storage)
-- Def: #15 ["test" @ input.sol:23:14] (function, type: function (Trace224 storage) returns uint224)
+- Def: #14 ["test" @ input.sol:23:14] (function, type: function (Trace224 storage) returns uint224)
+- Def: #15 ["self" @ input.sol:23:36] (parameter, type: Trace224 storage)
 
 ------------------------------------------------------------------------
 
@@ -28,7 +28,7 @@ References (11):
 - Ref: ["Checkpoint160" @ input.sol:21:70] -> #9
 - Ref: ["Trace224" @ input.sol:23:19] -> #2
 - Ref: ["_unsafeAccess" @ input.sol:24:9] -> #12
-- Ref: ["self" @ input.sol:24:23] -> #14
+- Ref: ["self" @ input.sol:24:23] -> #15
 - Ref: ["_checkpoints" @ input.sol:24:28] -> #3
 - Ref: ["_value" @ input.sol:24:42] -> #6
 
@@ -99,16 +99,16 @@ Bindings:
     │ 
  23 │     function test(Trace224 storage self) internal returns (uint224) {
     │              ──┬─ ────┬───         ──┬─  
-    │                ╰───────────────────────── name: 15
+    │                ╰───────────────────────── name: 14
     │                       │              │   
     │                       ╰────────────────── ref: 2
     │                                      │   
-    │                                      ╰─── name: 14
+    │                                      ╰─── name: 15
  24 │         _unsafeAccess(self._checkpoints)._value;
     │         ──────┬────── ──┬─ ──────┬─────  ───┬──  
     │               ╰────────────────────────────────── ref: 12
     │                         │        │          │    
-    │                         ╰──────────────────────── ref: 14
+    │                         ╰──────────────────────── ref: 15
     │                                  │          │    
     │                                  ╰─────────────── ref: 3
     │                                             │    

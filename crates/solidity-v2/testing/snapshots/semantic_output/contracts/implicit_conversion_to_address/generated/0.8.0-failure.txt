@@ -5,8 +5,8 @@ Definitions (6):
 - Def: #2 ["nop" @ input.sol:2:14] (function, type: function (address) returns void)
 - Def: #3 ["Foo" @ input.sol:5:10] (contract)
 - Def: #4 ["Test" @ input.sol:7:10] (contract)
-- Def: #5 ["f" @ input.sol:10:23] (parameter, type: Foo)
-- Def: #6 ["test" @ input.sol:10:14] (function, type: function (Foo) returns void)
+- Def: #5 ["test" @ input.sol:10:14] (function, type: function (Foo) returns void)
+- Def: #6 ["f" @ input.sol:10:23] (parameter, type: Foo)
 
 ------------------------------------------------------------------------
 
@@ -14,7 +14,7 @@ References (5):
 - Ref: ["FooUtils" @ input.sol:8:11] -> #1
 - Ref: ["Foo" @ input.sol:8:24] -> #3
 - Ref: ["Foo" @ input.sol:10:19] -> #3
-- Ref: ["f" @ input.sol:11:9] -> #5
+- Ref: ["f" @ input.sol:11:9] -> #6
 - Ref: ["nop" @ input.sol:11:11] -> unresolved
 
 ------------------------------------------------------------------------
@@ -48,14 +48,14 @@ Bindings:
     │ 
  10 │     function test(Foo f) internal {
     │              ──┬─ ─┬─ ┬  
-    │                ╰───────── name: 6
+    │                ╰───────── name: 5
     │                    │  │  
     │                    ╰───── ref: 3
     │                       │  
-    │                       ╰── name: 5
+    │                       ╰── name: 6
  11 │         f.nop(); // in Solidity <0.5.0 contract references are convertible to address
     │         ┬ ─┬─  
-    │         ╰────── ref: 5
+    │         ╰────── ref: 6
     │            │   
     │            ╰─── unresolved
 ────╯

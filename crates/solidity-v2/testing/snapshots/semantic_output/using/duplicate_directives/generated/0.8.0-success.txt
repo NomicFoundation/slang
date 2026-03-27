@@ -2,22 +2,22 @@
 
 Definitions (7):
 - Def: #1 ["Lib" @ input.sol:1:9] (library)
-- Def: #2 ["x" @ input.sol:2:23] (parameter, type: uint256)
-- Def: #3 ["nop" @ input.sol:2:14] (function, type: function (uint256) returns void)
+- Def: #2 ["nop" @ input.sol:2:14] (function, type: function (uint256) returns void)
+- Def: #3 ["x" @ input.sol:2:23] (parameter, type: uint256)
 - Def: #4 ["Base" @ input.sol:5:10] (contract)
 - Def: #5 ["Test" @ input.sol:9:10] (contract)
-- Def: #6 ["x" @ input.sol:13:24] (parameter, type: uint256)
-- Def: #7 ["test" @ input.sol:13:14] (function, type: function (uint256) returns void)
+- Def: #6 ["test" @ input.sol:13:14] (function, type: function (uint256) returns void)
+- Def: #7 ["x" @ input.sol:13:24] (parameter, type: uint256)
 
 ------------------------------------------------------------------------
 
 References (6):
 - Ref: ["Lib" @ input.sol:6:11] -> #1
+- Ref: ["Base" @ input.sol:9:18] -> #4
 - Ref: ["Lib" @ input.sol:10:11] -> #1
 - Ref: ["Lib" @ input.sol:11:11] -> #1
-- Ref: ["x" @ input.sol:14:9] -> #6
-- Ref: ["nop" @ input.sol:14:11] -> #3
-- Ref: ["Base" @ input.sol:9:18] -> #4
+- Ref: ["x" @ input.sol:14:9] -> #7
+- Ref: ["nop" @ input.sol:14:11] -> #2
 
 ------------------------------------------------------------------------
 
@@ -33,9 +33,9 @@ Bindings:
     │          ╰─── name: 1
   2 │     function nop(uint x) internal {}
     │              ─┬─      ┬  
-    │               ╰────────── name: 3
+    │               ╰────────── name: 2
     │                       │  
-    │                       ╰── name: 2
+    │                       ╰── name: 3
     │ 
   5 │ contract Base {
     │          ──┬─  
@@ -58,12 +58,12 @@ Bindings:
     │ 
  13 │     function test(uint x) internal {
     │              ──┬─      ┬  
-    │                ╰────────── name: 7
+    │                ╰────────── name: 6
     │                        │  
-    │                        ╰── name: 6
+    │                        ╰── name: 7
  14 │         x.nop();
     │         ┬ ─┬─  
-    │         ╰────── ref: 6
+    │         ╰────── ref: 7
     │            │   
-    │            ╰─── ref: 3
+    │            ╰─── ref: 2
 ────╯

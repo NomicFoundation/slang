@@ -2,8 +2,8 @@
 
 Definitions (7):
 - Def: #1 ["Utils" @ input.sol:1:9] (library)
-- Def: #2 ["subject" @ input.sol:2:24] (parameter, type: ITest)
-- Def: #3 ["foo" @ input.sol:2:14] (function, type: function (ITest) returns void)
+- Def: #2 ["foo" @ input.sol:2:14] (function, type: function (ITest) returns void)
+- Def: #3 ["subject" @ input.sol:2:24] (parameter, type: ITest)
 - Def: #4 ["ITest" @ input.sol:5:11] (interface)
 - Def: #5 ["Test" @ input.sol:7:10] (contract)
 - Def: #6 ["bar" @ input.sol:10:14] (function, type: function () returns void)
@@ -13,9 +13,9 @@ Definitions (7):
 
 References (4):
 - Ref: ["ITest" @ input.sol:2:18] -> #4
-- Ref: ["Utils" @ input.sol:8:11] -> #1
-- Ref: ["foo" @ input.sol:13:14] -> #3
 - Ref: ["ITest" @ input.sol:7:18] -> #4
+- Ref: ["Utils" @ input.sol:8:11] -> #1
+- Ref: ["foo" @ input.sol:13:14] -> #2
 
 ------------------------------------------------------------------------
 
@@ -31,11 +31,11 @@ Bindings:
     │           ╰──── name: 1
   2 │     function foo(ITest subject) internal {}
     │              ─┬─ ──┬── ───┬───  
-    │               ╰───────────────── name: 3
+    │               ╰───────────────── name: 2
     │                    │      │     
     │                    ╰──────────── ref: 4
     │                           │     
-    │                           ╰───── name: 2
+    │                           ╰───── name: 3
     │ 
   5 │ interface ITest {}
     │           ──┬──  
@@ -59,5 +59,5 @@ Bindings:
     │                ╰─── name: 7
  13 │         this.foo();
     │              ─┬─  
-    │               ╰─── ref: 3
+    │               ╰─── ref: 2
 ────╯

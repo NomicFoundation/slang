@@ -4,14 +4,14 @@ Definitions (5):
 - Def: #1 ["Lib" @ input.sol:1:9] (library)
 - Def: #2 ["nop" @ input.sol:2:14] (function, type: function (uint256) returns void)
 - Def: #3 ["Test" @ input.sol:5:10] (contract)
-- Def: #4 ["x" @ input.sol:7:24] (parameter, type: uint256)
-- Def: #5 ["test" @ input.sol:7:14] (function, type: function (uint256) returns void)
+- Def: #4 ["test" @ input.sol:7:14] (function, type: function (uint256) returns void)
+- Def: #5 ["x" @ input.sol:7:24] (parameter, type: uint256)
 
 ------------------------------------------------------------------------
 
 References (3):
 - Ref: ["Lib" @ input.sol:6:11] -> #1
-- Ref: ["x" @ input.sol:8:21] -> #4
+- Ref: ["x" @ input.sol:8:21] -> #5
 - Ref: ["nop" @ input.sol:8:24] -> #2
 
 ------------------------------------------------------------------------
@@ -38,12 +38,12 @@ Bindings:
    │            ╰─── ref: 1
  7 │     function test(uint x) internal {
    │              ──┬─      ┬  
-   │                ╰────────── name: 5
+   │                ╰────────── name: 4
    │                        │  
-   │                        ╰── name: 4
+   │                        ╰── name: 5
  8 │         (true ? 0 : x).nop();
    │                     ┬  ─┬─  
-   │                     ╰─────── ref: 4
+   │                     ╰─────── ref: 5
    │                         │   
    │                         ╰─── ref: 2
 ───╯

@@ -8,10 +8,10 @@ Definitions (11):
 - Def: #5 ["test" @ input.sol:10:14] (function, type: function () returns void)
 - Def: #6 ["x" @ input.sol:11:24] (variable, type: uint256[4] memory)
 - Def: #7 ["Lib" @ input.sol:16:9] (library)
-- Def: #8 ["self" @ input.sol:17:33] (parameter, type: uint256[4] memory)
-- Def: #9 ["nop" @ input.sol:17:14] (function, type: function (uint256[4] memory) returns void)
-- Def: #10 ["self" @ input.sol:18:33] (parameter, type: uint256[5] memory)
-- Def: #11 ["nop" @ input.sol:18:14] (function, type: function (uint256[5] memory) returns void)
+- Def: #8 ["nop" @ input.sol:17:14] (function, type: function (uint256[4] memory) returns void)
+- Def: #9 ["self" @ input.sol:17:33] (parameter, type: uint256[4] memory)
+- Def: #10 ["nop" @ input.sol:18:14] (function, type: function (uint256[5] memory) returns void)
+- Def: #11 ["self" @ input.sol:18:33] (parameter, type: uint256[5] memory)
 
 ------------------------------------------------------------------------
 
@@ -21,7 +21,7 @@ References (6):
 - Ref: ["Lib" @ input.sol:8:11] -> #7
 - Ref: ["Y" @ input.sol:11:14] -> #2
 - Ref: ["x" @ input.sol:12:9] -> #6
-- Ref: ["nop" @ input.sol:12:11] -> #9
+- Ref: ["nop" @ input.sol:12:11] -> #8
 
 ------------------------------------------------------------------------
 
@@ -67,19 +67,19 @@ Bindings:
     │         ┬ ─┬─  
     │         ╰────── ref: 6
     │            │   
-    │            ╰─── ref: 9
+    │            ╰─── ref: 8
     │ 
  16 │ library Lib {
     │         ─┬─  
     │          ╰─── name: 7
  17 │     function nop(uint[4] memory self) internal {}
     │              ─┬─                ──┬─  
-    │               ╰─────────────────────── name: 9
+    │               ╰─────────────────────── name: 8
     │                                   │   
-    │                                   ╰─── name: 8
+    │                                   ╰─── name: 9
  18 │     function nop(uint[5] memory self) internal {}
     │              ─┬─                ──┬─  
-    │               ╰─────────────────────── name: 11
+    │               ╰─────────────────────── name: 10
     │                                   │   
-    │                                   ╰─── name: 10
+    │                                   ╰─── name: 11
 ────╯
