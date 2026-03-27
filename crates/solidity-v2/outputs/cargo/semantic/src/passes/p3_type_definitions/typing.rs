@@ -248,19 +248,11 @@ impl Pass<'_> {
         Some(self.types.register_type(getter_type))
     }
 
-    pub(super) fn visit_parameters(
-        &mut self,
-        parameters: &ir::Parameters,
-        default_location: Option<DataLocation>,
-    ) {
+    pub(super) fn visit_parameters(&mut self, parameters: &ir::Parameters) {
         for parameter in parameters {
             let type_id = self.resolve_type_name(
                 &parameter.type_name,
-                parameter
-                    .storage_location
-                    .as_ref()
-                    .map(Into::into)
-                    .or(default_location),
+                parameter.storage_location.as_ref().map(Into::into),
             );
             self.binder.set_node_type(parameter.id(), type_id);
         }

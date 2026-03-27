@@ -680,6 +680,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let kind = output::FunctionKind::Modifier;
         let name = Some(self.build_identifier(&source.name));
         let visibility = output::FunctionVisibility::Internal;
+        // mutability is irrelevant for modifiers
         let mutability = output::FunctionMutability::NonPayable;
         let virtual_keyword = source
             .attributes

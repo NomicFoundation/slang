@@ -128,13 +128,10 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_function_definition(&mut self, node: &ir::FunctionDefinition) {
-        // v2 only supports >= 0.8.0, so parameters must have explicit locations
-        let default_location = None;
-
         // type parameters and return variables
-        self.visit_parameters(&node.parameters, default_location);
+        self.visit_parameters(&node.parameters);
         if let Some(returns) = &node.returns {
-            self.visit_parameters(returns, default_location);
+            self.visit_parameters(returns);
         }
 
         // now we can compute the function type
@@ -165,20 +162,20 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_function_type(&mut self, node: &ir::FunctionType) {
-        self.visit_parameters(&node.parameters, None);
+        self.visit_parameters(&node.parameters);
         if let Some(returns) = &node.returns {
-            self.visit_parameters(returns, None);
+            self.visit_parameters(returns);
         }
     }
 
     fn leave_try_statement(&mut self, node: &ir::TryStatement) {
         if let Some(returns) = &node.returns {
-            self.visit_parameters(returns, None);
+            self.visit_parameters(returns);
         }
     }
 
     fn leave_catch_clause_error(&mut self, node: &ir::CatchClauseError) {
-        self.visit_parameters(&node.parameters, None);
+        self.visit_parameters(&node.parameters);
     }
 
     fn enter_type_name(&mut self, node: &ir::TypeName) -> bool {
