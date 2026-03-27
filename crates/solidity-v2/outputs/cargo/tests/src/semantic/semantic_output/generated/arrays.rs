@@ -12,11 +12,6 @@ fn byte_array_indexing() -> Result<()> {
 }
 
 #[test]
-fn byte_length() -> Result<()> {
-    run(T, "byte_length")
-}
-
-#[test]
 fn bytes_as_arrays() -> Result<()> {
     run(T, "bytes_as_arrays")
 }

@@ -17,11 +17,6 @@ fn functions() -> Result<()> {
 }
 
 #[test]
-fn hoisting_scopes() -> Result<()> {
-    run(T, "hoisting_scopes")
-}
-
-#[test]
 fn private_variables() -> Result<()> {
     run(T, "private_variables")
 }

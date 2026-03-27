@@ -112,11 +112,6 @@ fn in_library() -> Result<()> {
 }
 
 #[test]
-fn inherit_extension() -> Result<()> {
-    run(T, "inherit_extension")
-}
-
-#[test]
 fn inherited_types() -> Result<()> {
     run(T, "inherited_types")
 }
