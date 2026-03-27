@@ -33,7 +33,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
         match last_output {
             // Skip this version if it produces the same output.
             // Note: comparing objects cheaply before expensive serialization.
-            Some(ref last) if last == &v2_output => last,
+            Some(ref last) if last == &v2_output => continue,
             _ => {
                 let (status, content) = match &v2_output {
                     Ok(parsed_cst) => {
@@ -52,9 +52,9 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
                     .join(format!("{lang_version}-{status}.txt"));
 
                 fs.write_file_raw(&snapshot_path, content)?;
-                last_output.insert(v2_output)
+                last_output = Some(v2_output);
             }
-        };
+        }
     }
 
     Ok(())
