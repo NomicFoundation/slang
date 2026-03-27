@@ -1132,11 +1132,11 @@ pub fn accept_contract_definition(node: &ContractDefinition, visitor: &mut impl 
         return;
     }
     visitor.visit_identifier(&node.name);
-    accept_contract_members(&node.members, visitor);
     accept_inheritance_types(&node.inheritance_types, visitor);
     if let Some(ref storage_layout) = node.storage_layout {
         accept_expression(storage_layout, visitor);
     }
+    accept_contract_members(&node.members, visitor);
     visitor.leave_contract_definition(node);
 }
 
@@ -1265,23 +1265,23 @@ pub fn accept_function_definition(node: &FunctionDefinition, visitor: &mut impl 
     if !visitor.enter_function_definition(node) {
         return;
     }
-    accept_parameters(&node.parameters, visitor);
-    if let Some(ref returns) = node.returns {
-        accept_parameters(returns, visitor);
-    }
     accept_function_kind(&node.kind, visitor);
     if let Some(name) = &node.name {
         visitor.visit_identifier(name);
     }
-    if let Some(ref body) = node.body {
-        accept_block(body, visitor);
-    }
+    accept_parameters(&node.parameters, visitor);
     accept_function_visibility(&node.visibility, visitor);
     accept_function_mutability(&node.mutability, visitor);
     if let Some(ref override_specifier) = node.override_specifier {
         accept_override_paths(override_specifier, visitor);
     }
     accept_modifier_invocations(&node.modifier_invocations, visitor);
+    if let Some(ref returns) = node.returns {
+        accept_parameters(returns, visitor);
+    }
+    if let Some(ref body) = node.body {
+        accept_block(body, visitor);
+    }
     visitor.leave_function_definition(node);
 }
 
@@ -1290,11 +1290,11 @@ pub fn accept_function_type(node: &FunctionType, visitor: &mut impl Visitor) {
         return;
     }
     accept_parameters(&node.parameters, visitor);
+    accept_function_visibility(&node.visibility, visitor);
+    accept_function_mutability(&node.mutability, visitor);
     if let Some(ref returns) = node.returns {
         accept_parameters(returns, visitor);
     }
-    accept_function_visibility(&node.visibility, visitor);
-    accept_function_mutability(&node.mutability, visitor);
     visitor.leave_function_type(node);
 }
 

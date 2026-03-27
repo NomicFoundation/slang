@@ -448,6 +448,39 @@ impl IrModelMutator {
         sequence.has_added_fields = true;
     }
 
+    pub fn insert_sequence_field_before(
+        &mut self,
+        sequence_id: &str,
+        field_label: &str,
+        field_type: &str,
+        is_optional: bool,
+        before_label: &str,
+    ) {
+        let target_type = self.find_node_type(&field_type.into());
+        let identifier: model::Identifier = sequence_id.into();
+        let Some(sequence) = self.sequences.get_mut(&identifier) else {
+            panic!("Sequence {sequence_id} not found in IR model");
+        };
+        let before_label = before_label.into();
+        let Some(insertion_index) = sequence
+            .fields
+            .iter()
+            .position(|field| field.label == before_label)
+        else {
+            panic!("Could not find {before_label} in sequence {sequence_id}");
+        };
+        sequence.fields.insert(
+            insertion_index,
+            MutatedField {
+                label: field_label.into(),
+                r#type: target_type.clone(),
+                is_optional,
+                target_type,
+            },
+        );
+        sequence.has_added_fields = true;
+    }
+
     // Removes a sequence type with a single field from the target language,
     // replacing all instances with the contents of such field.
     pub fn collapse_sequence(&mut self, sequence_id: &str) {
