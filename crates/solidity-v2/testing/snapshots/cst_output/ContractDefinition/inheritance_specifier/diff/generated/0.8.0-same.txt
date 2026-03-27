@@ -1,3 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-V2 parser produced the same output as V1 output.
