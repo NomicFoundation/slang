@@ -5,8 +5,7 @@ use language_v2_internal_macros::{derive_spanned_type, ParseInputTokens, WriteOu
 use semver::Version;
 use serde::{Deserialize, Serialize};
 
-use super::BuiltIn;
-use crate::model::{BuiltInContext, Field, Identifier, Item, TriviaParser, VersionSpecifier};
+use crate::model::{Field, Identifier, Item, TriviaParser, VersionSpecifier};
 
 /// A representation of a Language definition
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -29,9 +28,6 @@ pub struct Language {
 
     /// The lexical contexts of the language, splitting grammar elements based on which lexer can recognize their terminals.
     pub contexts: Vec<LexicalContext>,
-
-    /// The built-in contexts
-    pub built_ins: Vec<BuiltInContext>,
 }
 
 impl Language {
@@ -43,17 +39,7 @@ impl Language {
     /// Collects all versions that change the language in a breaking way.
     ///
     /// Includes the first supported version.
-    pub fn collect_all_breaking_versions(&self) -> BTreeSet<Version> {
-        let mut ans = self.collect_grammar_breaking_versions();
-        ans.append(&mut self.collect_built_ins_versions());
-
-        ans
-    }
-
-    /// Collects all versions that change the language grammar in a breaking way.
-    ///
-    /// Note: this does not include built-ins related breaks, consider using `collect_all_breaking_versions` instead.
-    pub fn collect_grammar_breaking_versions(&self) -> BTreeSet<Version> {
+    pub fn collect_breaking_versions(&self) -> BTreeSet<Version> {
         let first = self.versions.first().unwrap().clone();
         let mut res = BTreeSet::from_iter([first]);
 
@@ -108,51 +94,6 @@ impl Language {
                 }
                 Item::Fragment { item } => add_spec(&item.enabled),
                 Item::Trivia { .. } => {}
-            }
-        }
-
-        res
-    }
-
-    /// Collects all versions that change the language built-ins.
-    ///
-    /// Includes the first supported version. Returns an empty set if there are
-    /// no built-ins defined.
-    ///
-    /// Note: this does not include grammar related breaks, consider using `collect_all_breaking_versions` instead.
-    pub fn collect_built_ins_versions(&self) -> BTreeSet<Version> {
-        if self.built_ins.is_empty() {
-            return BTreeSet::new();
-        }
-
-        let first = self.versions.first().unwrap().clone();
-        let mut res = BTreeSet::from_iter([first]);
-
-        let mut add_spec = |spec: &Option<VersionSpecifier>| {
-            if let Some(spec) = spec {
-                res.extend(spec.breaking_versions().cloned());
-            }
-        };
-
-        for context in &self.built_ins {
-            for item in &context.definitions {
-                match item {
-                    BuiltIn::BuiltInFunction { item } => {
-                        add_spec(&item.enabled);
-                    }
-                    BuiltIn::BuiltInType { item } => {
-                        add_spec(&item.enabled);
-                        for field in &item.fields {
-                            add_spec(&field.enabled);
-                        }
-                        for function in &item.functions {
-                            add_spec(&function.enabled);
-                        }
-                    }
-                    BuiltIn::BuiltInVariable { item } => {
-                        add_spec(&item.enabled);
-                    }
-                }
             }
         }
 

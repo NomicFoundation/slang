@@ -30,7 +30,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
     let mut last_diff = None;
 
     let tested_versions: Vec<LanguageVersion> = SolidityDefinition::create()
-        .collect_all_breaking_versions()
+        .collect_breaking_versions()
         .into_iter()
         .map(|v| LanguageVersion::try_from(v).unwrap())
         .collect();
