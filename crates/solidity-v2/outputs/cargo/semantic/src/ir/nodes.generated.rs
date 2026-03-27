@@ -1504,7 +1504,6 @@ pub enum ForStatementInitialization {
 pub enum FunctionKind {
     Regular,
     Constructor,
-    Unnamed,
     Fallback,
     Receive,
     Modifier,

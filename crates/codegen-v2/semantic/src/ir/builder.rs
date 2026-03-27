@@ -69,14 +69,7 @@ fn unify_function_types(mutator: &mut IrModelMutator) {
     // Unifiy function definition types
     mutator.add_enum_type(
         "FunctionKind",
-        &[
-            "Regular",
-            "Constructor",
-            "Unnamed",
-            "Fallback",
-            "Receive",
-            "Modifier",
-        ],
+        &["Regular", "Constructor", "Fallback", "Receive", "Modifier"],
     );
 
     // Add the kind to the FunctionDefinition type, which will now hold all kinds
