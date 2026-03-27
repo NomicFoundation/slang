@@ -4,7 +4,7 @@ use infra_utils::github::GitHub;
 // Three modes:
 // 1. dry-run: runs benchmarks locally, uploads to bencher with a dummy token (no dashboard update).
 // 2. pr-benchmark: uploads to a temporary PR branch in bencher, compares against the base branch
-//    with start-point thresholds, and posts results as a PR comment. Mutually exclusive with dry-run.
+//    with inline thresholds (percentage), and posts results as a PR comment. Mutually exclusive with dry-run.
 // 3. normal (neither flag): uploads results to the main branch on the bencher dashboard.
 //
 // Use a dummy test token for dry runs:
@@ -17,6 +17,8 @@ pub(crate) fn run_bench(
     pr_benchmark: bool,
     project: &str,
     adapter: &str,
+    threshold_measure: &str,
+    threshold_upper_boundary: &str,
     test_runner: &str,
 ) {
     assert!(
@@ -68,11 +70,12 @@ pub(crate) fn run_bench(
             .property("--branch", &head_ref)
             .property("--start-point", &base_ref)
             .property("--start-point-hash", &start_point_hash)
-            .flag("--start-point-clone-thresholds")
             .flag("--start-point-reset")
             .property("--hash", &head_hash)
-            .property("--github-actions", &github_token)
-            .flag("--err");
+            .property("--threshold-measure", threshold_measure)
+            .property("--threshold-test", "percentage")
+            .property("--threshold-upper-boundary", threshold_upper_boundary)
+            .property("--github-actions", &github_token);
     }
 
     // Has to be the last argument:

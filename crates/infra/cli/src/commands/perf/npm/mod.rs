@@ -48,11 +48,15 @@ impl NpmController {
             hot = &self.hot,
         );
 
+        // 10% threshold: npm benchmarks use wall-clock duration which has natural variance,
+        // so a tighter threshold would produce noisy alerts.
         run_bench(
             self.dry_run.get(),
             self.pr_benchmark,
             DEFAULT_BENCHER_PROJECT,
             "json",
+            "duration",
+            "0.10",
             &test_runner,
         );
     }

@@ -140,11 +140,15 @@ impl CargoController {
             "cargo bench --package {package_name} --bench {bench_name} --message-format json"
         );
 
+        // 1% threshold: iai-callgrind uses deterministic hardware counters (not wall clock),
+        // so any change in estimated-cycles reflects a real code change, not noise.
         run_bench(
             self.dry_run.get(),
             self.pr_benchmark,
             bencher_project,
             "rust_iai_callgrind",
+            "estimated-cycles",
+            "0.01",
             &test_runner,
         );
 
