@@ -270,8 +270,7 @@ impl Visitor for Pass<'_> {
             ir::FunctionKind::Regular
             | ir::FunctionKind::Constructor
             | ir::FunctionKind::Fallback
-            | ir::FunctionKind::Receive
-            | ir::FunctionKind::Unnamed => {
+            | ir::FunctionKind::Receive => {
                 let parameters_scope_id = self.collect_parameters(&node.parameters);
 
                 if let Some(name) = &node.name {
