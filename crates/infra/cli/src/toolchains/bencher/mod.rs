@@ -61,8 +61,8 @@ pub(crate) fn run_bench(
             .expect("BENCHER_PR_START_POINT_HASH must be set for --pr-benchmark");
         let head_hash = std::env::var("BENCHER_PR_HEAD_HASH")
             .expect("BENCHER_PR_HEAD_HASH must be set for --pr-benchmark");
-        let github_token = std::env::var("GITHUB_TOKEN")
-            .expect("GITHUB_TOKEN must be set for --pr-benchmark");
+        let github_token =
+            std::env::var("GITHUB_TOKEN").expect("GITHUB_TOKEN must be set for --pr-benchmark");
 
         command = command
             .property("--branch", &head_ref)
