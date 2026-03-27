@@ -8,7 +8,7 @@ updates:
     schedule:
       interval: "daily"
     commit-message:
-      prefix: "build"
+      prefix: "cargo"
     open-pull-requests-limit: 5
     cooldown:
       default-days: 7
@@ -19,7 +19,7 @@ updates:
     schedule:
       interval: "daily"
     commit-message:
-      prefix: "build"
+      prefix: "github-actions"
     open-pull-requests-limit: 5
     cooldown:
       default-days: 7
@@ -29,7 +29,7 @@ updates:
     schedule:
       interval: "daily"
     commit-message:
-      prefix: "build"
+      prefix: "npm"
     open-pull-requests-limit: 5
     cooldown:
       default-days: 7
@@ -40,7 +40,7 @@ updates:
     schedule:
       interval: "daily"
     commit-message:
-      prefix: "build"
+      prefix: "pip"
     open-pull-requests-limit: 5
     cooldown:
       default-days: 7
