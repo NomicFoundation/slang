@@ -28,7 +28,7 @@ on:
       - "reopened"
       - "labeled"
 
-# Queue up benchmark workflows for the same branch, so that results are reported in order:
+# Queue benchmark workflows for the same branch (main pushes queue for ordered results; PR runs cancel stale ones):
 concurrency:
   group: "${{ github.workflow }}-${{ github.ref_name }}"
   cancel-in-progress: "${{ github.event_name == 'pull_request' }}"
@@ -40,13 +40,11 @@ jobs:
     permissions:
       pull-requests: "write"
 
-    # Only run on the main repo (not forks), unless it is a dry run.
-    # For PRs, only run if the PR is from the same repo (fork PRs can't access BENCHER_API_TOKEN).
+    # Skip fork PRs (can't access BENCHER_API_TOKEN). For non-PR events, only run on the main repo.
     if: >-
       ${{
         (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)
-        || github.repository == 'NomicFoundation/slang'
-        || inputs.dryRun == true
+        || (github.event_name != 'pull_request' && (github.repository == 'NomicFoundation/slang' || inputs.dryRun == true))
       }}
 
     steps:
