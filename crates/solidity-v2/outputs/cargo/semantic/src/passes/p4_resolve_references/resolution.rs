@@ -21,9 +21,25 @@ impl Pass<'_> {
                 let first_definition = self.binder.find_definition_by_id(first_id).unwrap();
 
                 match first_definition {
-                    Definition::StateVariable(_) => Resolution::Definition(first_id),
-                    Definition::Constant(_) => Resolution::Definition(first_id),
-                    _ => resolution,
+                    Definition::StateVariable(_) => {
+                        // TODO(validation): the state variable should have the
+                        // `override` attribute and the rest of the definitions
+                        // should be either functions with the correct
+                        // signature, state variables or private variables or
+                        // constants
+                        Resolution::Definition(first_id)
+                    }
+                    Definition::Constant(_) => {
+                        // TODO(validation): if there are other definitions in
+                        // base contracts, they should be marked private and
+                        // they should be constants or state variables
+                        Resolution::Definition(first_id)
+                    }
+                    _ => {
+                        // TODO(validation): check that the returned definitions are
+                        // all functions (or maybe modifiers?)
+                        resolution
+                    }
                 }
             }
             Resolution::Definition(_) | Resolution::BuiltIn(_) => resolution,
@@ -34,6 +50,15 @@ impl Pass<'_> {
         &self,
         type_id: TypeId,
     ) -> impl Iterator<Item = &UsingDirective> {
+        // Compute the canonical type: this handles cases where the given type
+        // is context dependent:
+        // - If the type is a reference type, we need to compute the id of the
+        // location independent type (using DataLocation::Inherited). If it
+        // doesn't exist, proceed with the given value, but we won't find any
+        // type-specific directives, only those applicable to all types (ie.
+        // `using L for *`)
+        // - If the type is a function type, it may have an associated
+        // definition ID from the function definition where it is derived from.
         let type_id = self
             .types
             .find_canonical_type_id(type_id)
@@ -73,12 +98,15 @@ impl Pass<'_> {
                             self.types
                                 .function_type_overrides(seen_function_type, function_type)
                         }) {
+                            // the function type is overriden by some other previously seen definition
                             continue;
                         }
                         seen_function_types.push(function_type);
                     }
                 }
                 Definition::StateVariable(state_variable) => {
+                    // remember the getter type if present to override functions
+                    // in bases
                     if let Some(getter_type_id) = state_variable.getter_type_id {
                         let Type::Function(getter_type) = self.types.get_type_by_id(getter_type_id)
                         else {
@@ -97,9 +125,23 @@ impl Pass<'_> {
     pub(super) fn resolve_symbol_in_typing(&self, typing: &Typing, symbol: &str) -> Resolution {
         match typing {
             Typing::Unresolved => Resolution::Unresolved,
-            Typing::Undetermined(type_ids) => self.resolve_symbol_in_type(type_ids[0], symbol),
+            Typing::Undetermined(type_ids) => {
+                // We cannot use argument-type disambiguation here, so we will
+                // use the first result
+                // TODO(validation): check that the types are consistent (eg.
+                // they are all function types) and that it makes sense to use
+                // the first one
+                self.resolve_symbol_in_type(type_ids[0], symbol)
+            }
             Typing::Resolved(type_id) => self.resolve_symbol_in_type(*type_id, symbol),
             Typing::This | Typing::Super => {
+                // TODO: the contract scope here is not necessarily the current
+                // lexical scope; for compilation we should set it to the scope
+                // of the contract being compiled, as this will affect the
+                // linearisation and hence the result of this `super`
+                // resolution. This affects the first parameter to
+                // `resolve_in_contract_scope`, not the `node_id` of the
+                // resolution option which is always lexical.
                 if let Some(scope_id) = self.current_contract_scope_id() {
                     let node_id = self.binder.get_scope_by_id(scope_id).node_id();
                     let options = if matches!(typing, Typing::This) {
@@ -107,6 +149,9 @@ impl Pass<'_> {
                     } else {
                         ResolveOptions::Super(node_id)
                     };
+                    // TODO(validation): for `this` resolutions we need to check
+                    // that the returned definitions are externally available
+                    // (ie. either `external` or `public`)
                     let mut definition_ids = self
                         .binder
                         .resolve_in_contract_scope(scope_id, symbol, options)
@@ -145,6 +190,8 @@ impl Pass<'_> {
                 }
             }
             Typing::UserMetaType(node_id) => {
+                // We're trying to resolve a member access expression into a
+                // type name, ie. this is a meta-type member access
                 let Some(definition) = self.binder.find_definition_by_id(*node_id) else {
                     return Resolution::Unresolved;
                 };
@@ -164,6 +211,7 @@ impl Pass<'_> {
                     | Definition::Enum(_)
                     | Definition::Interface(_)
                     | Definition::Library(_) => {
+                        // this is a "namespace" lookup
                         if let Some(scope_id) = self.binder.scope_id_for_node_id(*node_id) {
                             self.binder.resolve_in_scope_as_namespace(scope_id, symbol)
                         } else {
@@ -210,6 +258,7 @@ impl Pass<'_> {
         self.add_attached_functions_for_type(type_id, symbol, &mut definition_ids);
 
         Resolution::from(definition_ids).or_else(|| {
+            // If still unresolved, try with a built-in
             self.built_ins_resolver()
                 .lookup_member_of_type_id(type_id, symbol)
                 .into()
@@ -231,6 +280,12 @@ impl Pass<'_> {
                 .resolve_in_scope_as_namespace(scope_id, symbol)
                 .get_definition_ids();
             for id in &ids {
+                // Avoid returning duplicate definition IDs. That may happen
+                // if equivalent `using` directives are active at some point
+                // (eg. inherited through a base in older Solidity)
+                // Filter the resolved definitions to only include
+                // functions whose first parameter is of our type (or
+                // implicitly convertible to it)
                 if seen_ids.insert(*id)
                     && self.is_function_with_receiver_type(*id, receiver_type_id)
                 {
@@ -250,15 +305,20 @@ impl Pass<'_> {
             .find_definition_by_id(definition_id)
             .is_some_and(|definition| matches!(definition, Definition::Function(_)))
         {
+            // definition is not a function
             return false;
         }
 
         let Typing::Resolved(definition_type_id) = self.binder.node_typing(definition_id) else {
+            // definition type cannot be resolved
             return false;
         };
         let Type::Function(function_type) = self.types.get_type_by_id(definition_type_id) else {
             unreachable!("type of function definition is not a function");
         };
+        // receiver needs to be convertible to the first parameter type; we use
+        // the external call rules because the conversion rules with different
+        // locations are more relaxed
         function_type
             .parameter_types
             .first()
@@ -273,6 +333,8 @@ impl Pass<'_> {
         if definition_ids.is_empty() {
             return Resolution::Unresolved;
         }
+        // Find the first definition that is either a modifier or a contract
+        // type, as that's how bases in constructors are parsed
         definition_ids
             .into_iter()
             .find(|definition_id| {
@@ -304,12 +366,20 @@ impl Pass<'_> {
                 Resolution::Unresolved
             };
 
+            // TODO(validation): the found definition(s) must be modifiers
+            // and be in the current contract hierarchy. We could potentially
+            // verify that the initial symbol lookup is reachable from the
+            // contract only (ie. it's a contract modifier, a modifier in a
+            // base, or it's the identifier of a base of the current contract)
             let resolution = if index == identifier_path.len() - 1 {
+                // The last element should be a modifier and for valid Solidity
+                // it overrides all previous definitions in the hierarchy
                 self.resolve_first_modifier(&resolution)
             } else {
                 resolution
             };
 
+            // NOTE: we need to follow symbol aliases to resolve the next scope to use
             scope_id = self
                 .binder
                 .follow_symbol_aliases(&resolution)

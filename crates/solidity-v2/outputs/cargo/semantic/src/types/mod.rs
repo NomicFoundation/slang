@@ -1,4 +1,4 @@
-use crate::ir::NodeId;
+use crate::ir::{self, NodeId};
 
 mod parsing;
 mod registry;
@@ -120,6 +120,16 @@ impl DataLocation {
     }
 }
 
+impl From<&ir::StorageLocation> for DataLocation {
+    fn from(value: &ir::StorageLocation) -> Self {
+        match value {
+            ir::StorageLocation::MemoryKeyword => Self::Memory,
+            ir::StorageLocation::StorageKeyword => Self::Storage,
+            ir::StorageLocation::CallDataKeyword => Self::Calldata,
+        }
+    }
+}
+
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub enum FunctionTypeKind {
     Pure,
@@ -150,6 +160,17 @@ impl FunctionTypeKind {
                     FunctionTypeKind::Payable | FunctionTypeKind::NonPayable,
                 )
         )
+    }
+}
+
+impl From<&ir::FunctionMutability> for FunctionTypeKind {
+    fn from(value: &ir::FunctionMutability) -> Self {
+        match value {
+            ir::FunctionMutability::Pure => Self::Pure,
+            ir::FunctionMutability::View => Self::View,
+            ir::FunctionMutability::NonPayable => Self::NonPayable,
+            ir::FunctionMutability::Payable => Self::Payable,
+        }
     }
 }
 

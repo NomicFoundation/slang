@@ -32,6 +32,8 @@ impl Visitor for Pass<'_> {
             ir::visitor::accept_inheritance_type(inheritance_type, self);
         }
         if let Some(ref storage_layout) = node.storage_layout {
+            // TODO(validation): check that the expression is not binding constant variables up until 0.8.31
+            // https://www.soliditylang.org/blog/2025/12/03/solidity-0.8.31-release-announcement
             ir::visitor::accept_expression(storage_layout, self);
         }
 
@@ -59,6 +61,9 @@ impl Visitor for Pass<'_> {
     }
 
     fn enter_function_definition(&mut self, node: &ir::FunctionDefinition) -> bool {
+        // TODO(validation): for modifier kind, they are not allowed inside
+        // interfaces since 0.8.8
+
         for modifier_invocation in &node.modifier_invocations {
             self.resolve_modifier_invocation(modifier_invocation);
         }
@@ -148,6 +153,8 @@ impl Visitor for Pass<'_> {
 
     fn leave_assignment_expression(&mut self, node: &ir::AssignmentExpression) {
         let type_id = self.typing_of_expression(&node.left_operand).as_type_id();
+        // TODO(validation): check that the type of right_operand can be applied
+        // to the left by means of the operator
         self.binder.set_node_type(node.id(), type_id);
     }
 
@@ -159,6 +166,8 @@ impl Visitor for Pass<'_> {
             .typing_of_expression(&node.false_expression)
             .as_type_id();
 
+        // TODO(validation): both true_expression and false_expression should
+        // have the compatible types
         let type_id = match (true_type_id, false_type_id) {
             (Some(true_type_id), Some(false_type_id)) => {
                 if self
@@ -216,6 +225,8 @@ impl Visitor for Pass<'_> {
 
     fn leave_shift_expression(&mut self, node: &ir::ShiftExpression) {
         let type_id = self.typing_of_expression(&node.left_operand).as_type_id();
+        // TODO(validation): check that the left operand is an integer and the
+        // right operand is an _unsigned_ integer
         self.binder.set_node_type(node.id(), type_id);
     }
 
@@ -233,6 +244,8 @@ impl Visitor for Pass<'_> {
 
     fn leave_exponentiation_expression(&mut self, node: &ir::ExponentiationExpression) {
         let mut type_id = self.typing_of_expression(&node.left_operand).as_type_id();
+        // TODO(validation): check that the left operand is an integer and the
+        // right operand is an _unsigned_ integer
         if type_id.is_some_and(|type_id| self.types.get_type_by_id(type_id).is_literal_number()) {
             // if the base is a rational but the exponent is not, then the result is uint256
             if self
@@ -249,6 +262,7 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_postfix_expression(&mut self, node: &ir::PostfixExpression) {
+        // TODO(validation): check that the operand is an integer
         let type_id = self.typing_of_expression(&node.operand).as_type_id();
         self.binder.set_node_type(node.id(), type_id);
     }
@@ -345,6 +359,13 @@ impl Visitor for Pass<'_> {
                 match operand_type {
                     Type::Array { element_type, .. }
                     | Type::FixedSizeArray { element_type, .. } => {
+                        // TODO(validation): for fixed-size arrays, if the range
+                        // is resolvable at compile time we should check for out
+                        // of bounds accesses.
+                        // TODO(validation): array slices should only be
+                        // implemented for calldata arrays (as of 0.8.33).
+                        // TODO(validation): we should return a new
+                        // (intermediate) type for array slices.
                         if range_access {
                             Typing::Resolved(operand_type_id)
                         } else {
@@ -372,10 +393,14 @@ impl Visitor for Pass<'_> {
                             Typing::Resolved(*value_type_id)
                         }
                     }
-                    _ => Typing::Unresolved,
+                    _ => {
+                        // TODO(validation): the operand is not indexable
+                        Typing::Unresolved
+                    }
                 }
             }
             Typing::MetaType(operand_type) => {
+                // indexing a meta-type creates a new meta-type of the array
                 let operand_type_id = self.types.register_type(operand_type);
                 Typing::MetaType(Type::Array {
                     element_type: operand_type_id,
@@ -383,6 +408,7 @@ impl Visitor for Pass<'_> {
                 })
             }
             Typing::UserMetaType(definition_id) => {
+                // indexing a user meta-type creates a new meta-type of the array
                 if let Some(operand_type) = self.type_of_definition(definition_id) {
                     let operand_type_id = self.types.register_type(operand_type);
                     Typing::MetaType(Type::Array {
@@ -413,7 +439,22 @@ impl Visitor for Pass<'_> {
             });
             Typing::Resolved(type_id)
         } else {
-            Typing::Unresolved
+            // TODO(validation): all expressions in the array should have the
+            // same (or implicitly convertible) types
+            if let Some(element_type) = self
+                .typing_of_expression(node.items.first().unwrap())
+                .as_type_id()
+            {
+                let element_type = self.types.reified_type(element_type);
+                let type_id = self.types.register_type(Type::FixedSizeArray {
+                    element_type,
+                    size: node.items.len(),
+                    location: DataLocation::Memory,
+                });
+                Typing::Resolved(type_id)
+            } else {
+                Typing::Unresolved
+            }
         };
         self.binder.set_node_typing(node.id(), typing);
     }

@@ -1,7 +1,7 @@
 use crate::binder::{Binder, Definition, Scope, ScopeId};
 use crate::compilation::file::File;
 use crate::ir::{self, NodeId};
-use crate::types::{DataLocation, FunctionTypeKind, Type, TypeId, TypeRegistry};
+use crate::types::{Type, TypeId, TypeRegistry};
 
 mod evaluator;
 mod resolution;
@@ -121,26 +121,5 @@ impl<'a> Pass<'a> {
             }
         }
         unreachable!("attempt to get the current contract scope without a contract or file scope in the stack");
-    }
-}
-
-impl From<&ir::StorageLocation> for DataLocation {
-    fn from(value: &ir::StorageLocation) -> Self {
-        match value {
-            ir::StorageLocation::MemoryKeyword => Self::Memory,
-            ir::StorageLocation::StorageKeyword => Self::Storage,
-            ir::StorageLocation::CallDataKeyword => Self::Calldata,
-        }
-    }
-}
-
-impl From<&ir::FunctionMutability> for FunctionTypeKind {
-    fn from(value: &ir::FunctionMutability) -> Self {
-        match value {
-            ir::FunctionMutability::Pure => Self::Pure,
-            ir::FunctionMutability::View => Self::View,
-            ir::FunctionMutability::NonPayable => Self::NonPayable,
-            ir::FunctionMutability::Payable => Self::Payable,
-        }
     }
 }

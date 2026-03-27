@@ -30,6 +30,7 @@ impl Pass<'_> {
         argument_typings: &[Typing],
         receiver_type_id: Option<TypeId>,
     ) -> Option<&'a FunctionType> {
+        // get types and filter non-function types
         let mut function_types = type_ids.iter().filter_map(|type_id| {
             if let Type::Function(function_type) = self.types.get_type_by_id(*type_id) {
                 Some(function_type)
@@ -44,6 +45,9 @@ impl Pass<'_> {
                 return false;
             };
             if let Some(receiver_type_id) = receiver_type_id {
+                // we have a receiver type, so either check for an implicit
+                // receiver type, or the first parameter type
+                // against it and then the rest, if the counts match
                 if parameters.len() == argument_typings.len()
                     && function_type.implicit_receiver_type.is_some_and(
                         |implicit_receiver_type_id| {
@@ -54,6 +58,7 @@ impl Pass<'_> {
                         },
                     )
                 {
+                    // matches "method" functions of a compatible receiver type
                     self.parameters_match_positional_arguments(
                         parameters,
                         argument_typings,
@@ -68,6 +73,9 @@ impl Pass<'_> {
                         })
                     })
                 {
+                    // matches attached functions (these can only be
+                    // free-functions or library functions) with a compatible
+                    // first argument
                     self.parameters_match_positional_arguments(
                         &parameters[1..],
                         argument_typings,
@@ -77,6 +85,7 @@ impl Pass<'_> {
                     false
                 }
             } else if parameters.len() == argument_typings.len() {
+                // argument count matches, check that all types are implicitly convertible
                 self.parameters_match_positional_arguments(
                     parameters,
                     argument_typings,
@@ -137,6 +146,7 @@ impl Pass<'_> {
         argument_typings: &[(String, Typing)],
         receiver_type_id: Option<TypeId>,
     ) -> Option<&'a FunctionType> {
+        // get types and filter non-function types
         let mut function_types = type_ids.iter().filter_map(|type_id| {
             if let Type::Function(function_type) = self.types.get_type_by_id(*type_id) {
                 Some(function_type)
@@ -151,16 +161,21 @@ impl Pass<'_> {
                 return false;
             };
             if parameters.iter().any(|parameter| parameter.name.is_none()) {
+                // function has an unnamed parameter and we cannot use it for
+                // matching named arguments
                 return false;
             }
 
             if parameters.len() == argument_typings.len() {
+                // argument count matches, check that all types are implicitly convertible
                 self.parameters_match_named_arguments(
                     parameters,
                     argument_typings,
                     function_type.external,
                 )
             } else if let Some(receiver_type_id) = receiver_type_id {
+                // we have a receiver type, so check the first parameter type
+                // against it and then the rest, if the counts match
                 if parameters.len() == argument_typings.len() + 1
                     && parameters.first().is_some_and(|parameter| {
                         parameter.type_id.is_some_and(|type_id| {
@@ -238,10 +253,11 @@ impl Pass<'_> {
             let Some(parameters) = self.get_event_definition_parameters(*definition_id) else {
                 continue;
             };
-            if parameters.len() == argument_typings.len()
-                && self.parameters_match_positional_arguments(parameters, argument_typings, false)
-            {
-                return Some(*definition_id);
+            if parameters.len() == argument_typings.len() {
+                // argument count matches, check that all types are implicitly convertible
+                if self.parameters_match_positional_arguments(parameters, argument_typings, false) {
+                    return Some(*definition_id);
+                }
             }
         }
         None
@@ -258,13 +274,15 @@ impl Pass<'_> {
             };
 
             if parameters.iter().any(|parameter| parameter.name.is_none()) {
+                // cannot match if any parameter is unnamed
                 continue;
             }
 
-            if parameters.len() == argument_typings.len()
-                && self.parameters_match_named_arguments(parameters, argument_typings, false)
-            {
-                return Some(*definition_id);
+            if parameters.len() == argument_typings.len() {
+                // argument count matches, check that all types are implicitly convertible
+                if self.parameters_match_named_arguments(parameters, argument_typings, false) {
+                    return Some(*definition_id);
+                }
             }
         }
         None

@@ -549,6 +549,12 @@ impl Visitor for Pass<'_> {
             self.insert_definition_in_current_scope(definition);
         }
 
+        // TODO: we maybe want to enter a new scope here, but that should be
+        // only relevant for validation (ie. to avoid referencing a variable
+        // before declaring it). If we do that, we need to take special care of
+        // where we insert label and function definitions, since those are
+        // hoisted in the block.
+
         false
     }
 

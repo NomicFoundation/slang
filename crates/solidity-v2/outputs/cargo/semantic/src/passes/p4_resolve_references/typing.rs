@@ -135,6 +135,8 @@ impl Pass<'_> {
             .find_reference_by_identifier_node_id(identifier.id())
             .unwrap()
             .resolution;
+        // The resolution may point to an imported symbol, so we need to follow
+        // through in order to get to the actual typing
         let resolution = self.binder.follow_symbol_aliases(resolution);
         self.typing_of_resolution(&resolution)
     }
@@ -146,6 +148,7 @@ impl Pass<'_> {
     ) -> Option<TypeId> {
         let left_type_id = self.typing_of_expression(left_operand).as_type_id();
         let right_type_id = self.typing_of_expression(right_operand).as_type_id();
+        // TODO(validation): check that both operands are indeed integers
         if let (Some(left_type_id), Some(right_type_id)) = (left_type_id, right_type_id) {
             if self
                 .types
@@ -158,6 +161,8 @@ impl Pass<'_> {
             {
                 Some(right_type_id)
             } else {
+                // TODO(validation): the types are not compatible, we should
+                // emit an error, or signal our caller
                 None
             }
         } else {
@@ -216,8 +221,11 @@ impl Pass<'_> {
     }
 
     fn typing_of_cast(&mut self, argument_typing: &Typing, target_type: Type) -> Typing {
+        // TODO(validation): this is a cast to the given type, but we
+        // need to verify that the (single) argument is convertible
         match argument_typing {
             Typing::Resolved(argument_type_id) => {
+                // the resulting cast type inherits the data location of the argument
                 let argument_type = self.types.get_type_by_id(*argument_type_id);
                 let type_id = if let Some(data_location) = argument_type.data_location() {
                     self.types
@@ -258,13 +266,17 @@ impl Pass<'_> {
         let argument_typings = self.collect_positional_argument_typings(arguments);
 
         match operand_typing {
-            Typing::Unresolved | Typing::This | Typing::Super => Typing::Unresolved,
+            Typing::Unresolved | Typing::This | Typing::Super => {
+                // `this` and `super` are not callable
+                Typing::Unresolved
+            }
             Typing::Resolved(type_id) => {
                 if let Type::Function(FunctionType { return_type, .. }) =
                     self.types.get_type_by_id(type_id)
                 {
                     Typing::Resolved(*return_type)
                 } else {
+                    // TODO(validation): the operand did not resolve to a function
                     Typing::Unresolved
                 }
             }
@@ -283,6 +295,7 @@ impl Pass<'_> {
                     let definition_id = candidate.definition_id;
                     if let (Some(node_id), Some(definition_id)) = (reference_node_id, definition_id)
                     {
+                        // TODO: maybe update the typing of the operand as well?
                         self.binder
                             .fixup_reference(node_id, Resolution::Definition(definition_id));
                     }
@@ -299,32 +312,48 @@ impl Pass<'_> {
                     Typing::Unresolved
                 }
             }
-            Typing::NewExpression(type_id) => match self.types.get_type_by_id(type_id) {
-                Type::Array { .. } | Type::Contract { .. } => Typing::Resolved(type_id),
-                _ => Typing::Unresolved,
-            },
-            Typing::UserMetaType(node_id) => match self.binder.find_definition_by_id(node_id) {
-                Some(Definition::Contract(_)) => {
-                    let type_id = self.types.register_type(Type::Contract {
-                        definition_id: node_id,
-                    });
-                    Typing::Resolved(type_id)
+            Typing::NewExpression(type_id) => {
+                match self.types.get_type_by_id(type_id) {
+                    Type::Array { .. } | Type::Contract { .. } => Typing::Resolved(type_id),
+                    _ => {
+                        // only contracts can be created with `new`
+                        Typing::Unresolved
+                    }
                 }
-                Some(Definition::Interface(_)) => {
-                    let type_id = self.types.register_type(Type::Interface {
-                        definition_id: node_id,
-                    });
-                    Typing::Resolved(type_id)
+            }
+            Typing::UserMetaType(node_id) => {
+                // Generally this is a cast to the underlying type of the given
+                // definition, except for structs for which we need to construct
+                // the value in memory
+                match self.binder.find_definition_by_id(node_id) {
+                    Some(Definition::Contract(_)) => {
+                        // TODO(validation): the type of the first argument should be an address
+                        let type_id = self.types.register_type(Type::Contract {
+                            definition_id: node_id,
+                        });
+                        Typing::Resolved(type_id)
+                    }
+                    Some(Definition::Interface(_)) => {
+                        // TODO(validation): the type of the first argument should be an address
+                        let type_id = self.types.register_type(Type::Interface {
+                            definition_id: node_id,
+                        });
+                        Typing::Resolved(type_id)
+                    }
+                    Some(Definition::Struct(_)) => {
+                        // struct construction
+                        let type_id = self.types.register_type(Type::Struct {
+                            definition_id: node_id,
+                            location: DataLocation::Memory,
+                        });
+                        Typing::Resolved(type_id)
+                    }
+                    _ => Typing::Unresolved,
                 }
-                Some(Definition::Struct(_)) => {
-                    let type_id = self.types.register_type(Type::Struct {
-                        definition_id: node_id,
-                        location: DataLocation::Memory,
-                    });
-                    Typing::Resolved(type_id)
-                }
-                _ => Typing::Unresolved,
-            },
+            }
+            // Special case: for `abi.decode` we need to register the types
+            // given as the second argument and we need a mutable `TypeRegistry`
+            // for that.
             Typing::BuiltIn(BuiltIn::AbiDecode) => self.typing_of_abi_decode(&argument_typings),
             Typing::BuiltIn(built_in) => self
                 .built_ins_resolver()
@@ -337,7 +366,10 @@ impl Pass<'_> {
             return Typing::Unresolved;
         }
         match &argument_typings[1] {
-            Typing::Resolved(type_id) => Typing::Resolved(*type_id),
+            Typing::Resolved(type_id) => {
+                // TODO(validation): this only makes sense if type_id is a tuple
+                Typing::Resolved(*type_id)
+            }
             Typing::UserMetaType(definition_id) => {
                 if let Some(type_) = self.type_of_definition(*definition_id) {
                     Typing::Resolved(self.types.register_type(type_))
@@ -373,7 +405,10 @@ impl Pass<'_> {
         let operand_typing = self.typing_of_expression(&node.operand);
 
         let (typing, definition_id) = match operand_typing {
-            Typing::Unresolved | Typing::This | Typing::Super => (Typing::Unresolved, None),
+            Typing::Unresolved | Typing::This | Typing::Super => {
+                // `this` and `super` are not callable
+                (Typing::Unresolved, None)
+            }
             Typing::Resolved(type_id) => {
                 if let Type::Function(FunctionType {
                     definition_id,
@@ -383,6 +418,7 @@ impl Pass<'_> {
                 {
                     (Typing::Resolved(*return_type), *definition_id)
                 } else {
+                    // TODO(validation): the operand did not resolve to a function
                     (Typing::Unresolved, None)
                 }
             }
@@ -402,6 +438,7 @@ impl Pass<'_> {
                     let definition_id = candidate.definition_id;
                     if let (Some(node_id), Some(definition_id)) = (reference_node_id, definition_id)
                     {
+                        // TODO: maybe update the typing of the operand as well?
                         self.binder
                             .fixup_reference(node_id, Resolution::Definition(definition_id));
                     }
@@ -411,25 +448,42 @@ impl Pass<'_> {
                     (Typing::Unresolved, None)
                 }
             }
-            Typing::MetaType(_) => (Typing::Unresolved, None),
+            Typing::MetaType(_) => {
+                // This is a cast to the given type and is not valid with named arguments
+                (Typing::Unresolved, None)
+            }
             Typing::NewExpression(type_id) => {
                 if let Type::Contract { definition_id } = self.types.get_type_by_id(type_id) {
                     (Typing::Resolved(type_id), Some(*definition_id))
                 } else {
+                    // only contracts can be created with `new`
                     (Typing::Unresolved, None)
                 }
             }
-            Typing::UserMetaType(node_id) => match self.binder.find_definition_by_id(node_id) {
-                Some(Definition::Struct(_)) => {
-                    let type_id = self.types.register_type(Type::Struct {
-                        definition_id: node_id,
-                        location: DataLocation::Memory,
-                    });
-                    (Typing::Resolved(type_id), Some(node_id))
+            Typing::UserMetaType(node_id) => {
+                // Function call with named arguments are only valid in user
+                // types of the struct kind, which results in the construction
+                // of such struct in memory
+                match self.binder.find_definition_by_id(node_id) {
+                    Some(Definition::Struct(_)) => {
+                        // struct construction
+                        let type_id = self.types.register_type(Type::Struct {
+                            definition_id: node_id,
+                            location: DataLocation::Memory,
+                        });
+                        (Typing::Resolved(type_id), Some(node_id))
+                    }
+                    Some(Definition::Event(_)) => {
+                        // this is an event called as a function, which is valid in <0.5.0
+                        (Typing::Resolved(self.types.void()), Some(node_id))
+                    }
+                    _ => (Typing::Unresolved, None),
                 }
-                _ => (Typing::Unresolved, None),
-            },
-            Typing::BuiltIn(_) => (Typing::Unresolved, None),
+            }
+            Typing::BuiltIn(_) => {
+                // built-ins cannot be called with named arguments
+                (Typing::Unresolved, None)
+            }
         };
 
         // Reference and resolve named arguments
@@ -440,7 +494,8 @@ impl Pass<'_> {
 }
 
 // Given an expression node that resolves to a reference, return the node ID of
-// the identifier of the reference.
+// the identifier of the reference. If the expression cannot be traced back to a
+// single reference, return `None`.
 fn reference_node_id_for_expression(node: &ir::Expression) -> Option<NodeId> {
     match &node {
         ir::Expression::MemberAccessExpression(f) => Some(f.member.id()),
@@ -499,6 +554,8 @@ impl Pass<'_> {
     ) -> LiteralKind {
         let hex_number = hex_number_expression.literal.unparse();
         if hex_number.len() == 42 {
+            // TODO(validation): verify the address is valid (ie. has a valid checksum)
+            // We need at least an implementation of SHA3 to compute the checksum
             LiteralKind::Address
         } else if hex_number == "0x0" {
             LiteralKind::Zero
