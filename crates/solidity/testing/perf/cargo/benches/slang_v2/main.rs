@@ -8,6 +8,7 @@ use iai_callgrind::{
 };
 use paste::paste;
 use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit;
+use slang_solidity_v2_ir::ir;
 use solidity_testing_perf_cargo::dataset::SolidityProject;
 use solidity_testing_perf_cargo::tests;
 
@@ -42,16 +43,14 @@ macro_rules! slang_v2_define_tests {
         paste! {
             #[library_benchmark(setup = tests::slang_v2::parser::setup)]
             #[bench::test(stringify!($prj))]
-            pub fn [< $prj _parser >](project: &SolidityProject) {
-                black_box(tests::slang_v2::parser::run(project))
+            pub fn [< $prj _parser >](project: &SolidityProject) -> Vec<(String, SourceUnit)> {
+                black_box(tests::slang_v2::parser::run(black_box(project)))
             }
 
             #[library_benchmark(setup = tests::slang_v2::ir_builder::setup)]
             #[bench::test(stringify!($prj))]
-            pub fn [< $prj _ir_builder >](
-                (project, source_units): (&'static SolidityProject, Vec<(String, SourceUnit)>),
-            ) {
-                black_box(tests::slang_v2::ir_builder::run(project, source_units))
+            pub fn [< $prj _ir_builder >]((project, source_units): (&'static SolidityProject, Vec<(String, SourceUnit)>)) -> Vec<ir::SourceUnit> {
+                black_box(tests::slang_v2::ir_builder::run(black_box(project), black_box(source_units)))
             }
 
             #[library_benchmark(setup = tests::slang_v2::semantic::setup)]

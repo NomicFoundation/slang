@@ -1,3 +1,4 @@
+use std::hint::black_box;
 use std::path::PathBuf;
 
 use solar::ast::{self};
@@ -35,14 +36,26 @@ fn go(project: &SolidityProject, count: bool) -> usize {
         // Use one arena for the entire parsing
         let arena = ast::Arena::new();
 
+        // For benchmarking, we keep all parsed units alive until the end so that memory
+        // footprint measurements are consistent across different parsers.
+        let mut units = vec![];
+
         for fname in project.sources.keys() {
             let mut parser = Parser::from_file(&sess, &arena, &PathBuf::from(fname))?;
 
             let unit = parser.parse_file().map_err(|e| e.emit())?;
 
-            if count {
+            units.push(unit);
+        }
+
+        if count {
+            for unit in units {
                 result += unit.count_contracts();
             }
+        } else {
+            // Since it's more annoying to recover the parsed tree from the session
+            // we black box it here to prevent the compiler from optimizing it away.
+            black_box(&units);
         }
 
         Ok(())

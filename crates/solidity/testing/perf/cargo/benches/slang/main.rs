@@ -47,31 +47,31 @@ macro_rules! slang_define_full_tests {
             #[library_benchmark(setup = tests::slang::parser::setup)]
             #[bench::test(stringify!($prj))]
             pub fn [< $prj _parser >](project: &SolidityProject) -> Rc<CompilationUnit> {
-                black_box(tests::slang::parser::run(project))
+                black_box(tests::slang::parser::run(black_box(project)))
             }
 
             #[library_benchmark(setup = tests::slang::cursor::setup)]
             #[bench::test(stringify!($prj))]
             pub fn [< $prj _cursor >](unit: Rc<CompilationUnit>) -> Rc<CompilationUnit> {
-                black_box(tests::slang::cursor::run(unit))
+                black_box(tests::slang::cursor::run(black_box(unit)))
             }
 
             #[library_benchmark(setup = tests::slang::query::setup)]
             #[bench::test(stringify!($prj))]
             pub fn [< $prj _query >](unit: Rc<CompilationUnit>) -> Rc<CompilationUnit> {
-                black_box(tests::slang::query::run(unit))
+                black_box(tests::slang::query::run(black_box(unit)))
             }
 
             #[library_benchmark(setup = tests::slang::bindings_build::setup)]
             #[bench::test(stringify!($prj))]
             pub fn [< $prj _bindings_build >](unit: Rc<CompilationUnit>) -> BuiltBindingGraph {
-                black_box(tests::slang::bindings_build::run(unit))
+                black_box(tests::slang::bindings_build::run(black_box(unit)))
             }
 
             #[library_benchmark(setup = tests::slang::bindings_resolve::setup)]
             #[bench::test(stringify!($prj))]
             pub fn [< $prj _bindings_resolve >](unit: BuiltBindingGraph) -> BuiltBindingGraph {
-                black_box(tests::slang::bindings_resolve::run(unit))
+                black_box(tests::slang::bindings_resolve::run(black_box(unit)))
             }
 
             // We add a cleanup phase to measure the destruction of the AST and the binding structures
@@ -84,7 +84,7 @@ macro_rules! slang_define_full_tests {
             #[library_benchmark(setup = tests::slang::binder_v2_run::setup)]
             #[bench::test(stringify!($prj))]
             fn [< $prj _binder_v2_run >](unit: Rc<CompilationUnit>) -> BuiltSemanticAnalysis {
-                black_box(tests::slang::binder_v2_run::run(unit))
+                black_box(tests::slang::binder_v2_run::run(black_box(unit)))
             }
 
             #[library_benchmark(setup = tests::slang::binder_v2_cleanup::setup)]

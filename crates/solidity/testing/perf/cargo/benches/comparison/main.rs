@@ -1,12 +1,15 @@
 #![allow(clippy::exit)]
 
 use std::hint::black_box;
+use std::rc::Rc;
 
 use iai_callgrind::{
     library_benchmark, library_benchmark_group, main, Direction, FlamegraphConfig,
     LibraryBenchmarkConfig, Tool, ValgrindTool,
 };
 use paste::paste;
+use slang_solidity::compilation::CompilationUnit;
+use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit;
 use solidity_testing_perf_cargo::dataset::SolidityProject;
 use solidity_testing_perf_cargo::tests;
 
@@ -34,8 +37,8 @@ macro_rules! slang_test {
         paste! {
             #[library_benchmark(setup = tests::setup::setup)]
             #[bench::test(stringify!($prj))]
-            pub fn [<slang_ $prj>](project: &SolidityProject) {
-                black_box(tests::slang::parser::run(project));
+            pub fn [<slang_ $prj>](project: &SolidityProject) -> Rc<CompilationUnit> {
+                black_box(tests::slang::parser::run(black_box(project)))
             }
         }
     };
@@ -47,7 +50,7 @@ macro_rules! solar_test {
             #[library_benchmark(setup = tests::setup::setup)]
             #[bench::test(stringify!($prj))]
             pub fn [<solar_ $prj>](project: &SolidityProject) {
-                black_box(tests::solar::parser::run(project));
+                black_box(tests::solar::parser::run(black_box(project)));
             }
         }
     };
@@ -58,8 +61,8 @@ macro_rules! tree_sitter_test {
         paste! {
             #[library_benchmark(setup = tests::setup::setup)]
             #[bench::test(stringify!($prj))]
-            pub fn [<tree_sitter_ $prj>](project: &SolidityProject) {
-                black_box(tests::tree_sitter::parser::run(project));
+            pub fn [<tree_sitter_ $prj>](project: &SolidityProject) -> Vec<tree_sitter::Tree> {
+                black_box(tests::tree_sitter::parser::run(black_box(project)))
             }
         }
     };
@@ -70,8 +73,8 @@ macro_rules! slang_v2_test {
         paste! {
             #[library_benchmark(setup = tests::setup::setup)]
             #[bench::test(stringify!($prj))]
-            pub fn [<slang_v2_ $prj>](project: &SolidityProject) {
-                black_box(tests::slang_v2::parser::run(project));
+            pub fn [<slang_v2_ $prj>](project: &SolidityProject) -> Vec<(String, SourceUnit)> {
+                black_box(tests::slang_v2::parser::run(black_box(project)))
             }
         }
     };

@@ -9,11 +9,7 @@ pub fn setup(project: &str) -> &'static SolidityProject {
     crate::tests::setup::setup(project)
 }
 
-pub fn run(project: &SolidityProject) {
-    test(project);
-}
-
-pub fn test(project: &SolidityProject) -> Vec<(String, SourceUnit)> {
+pub fn run(project: &SolidityProject) -> Vec<(String, SourceUnit)> {
     let lang_version = parse_version(project);
     let mut source_units = Vec::new();
     for (key, source) in &project.sources {
@@ -23,6 +19,10 @@ pub fn test(project: &SolidityProject) -> Vec<(String, SourceUnit)> {
     assert!(!source_units.is_empty());
 
     source_units
+}
+
+pub fn test(project: &SolidityProject) -> Vec<(String, SourceUnit)> {
+    run(project)
 }
 
 pub fn count_contracts(source_units: &Vec<(String, SourceUnit)>) -> usize {
