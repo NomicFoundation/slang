@@ -6,10 +6,13 @@ use anyhow::Result;
 use ariadne::{Color, Config, Label, Report, ReportBuilder, ReportKind, Source};
 use slang_solidity_v2_parser::ParserError;
 use slang_solidity_v2_semantic::binder::Resolution;
+use slang_solidity_v2_semantic::compilation::unit::CompilationUnit;
 use slang_solidity_v2_semantic::ir::NodeId;
 use solidity_v2_testing_utils::reporting::diagnostic;
 
-use super::report_data::{CollectedDefinition, CollectedReference, ReportData, UnboundIdentifier};
+use super::report_data::{
+    CollectedDefinition, CollectedIdentifier, CollectedReference, ReportData,
+};
 
 const SEPARATOR: &str =
     "\n------------------------------------------------------------------------\n";
@@ -35,20 +38,15 @@ pub(crate) fn binder_report(report_data: &'_ ReportData<'_>) -> Result<String> {
         writeln!(report, "{SEPARATOR}")?;
     }
 
-    report_all_definitions(&mut report, report_data)?;
+    report_all_definitions(&mut report, all_definitions, compilation)?;
 
     writeln!(report, "{SEPARATOR}")?;
 
-    report_all_references(
-        &mut report,
-        all_references,
-        file_contents,
-        definitions_by_id,
-    )?;
+    report_all_references(&mut report, all_references, definitions_by_id)?;
 
     writeln!(report, "{SEPARATOR}")?;
 
-    report_unbound_identifiers(&mut report, unbound_identifiers, file_contents)?;
+    report_unbound_identifiers(&mut report, unbound_identifiers)?;
 
     for file in &compilation.files() {
         writeln!(report, "{SEPARATOR}")?;
@@ -70,17 +68,21 @@ pub(crate) fn binder_report(report_data: &'_ ReportData<'_>) -> Result<String> {
     Ok(report)
 }
 
-fn report_all_definitions(report: &mut String, report_data: &ReportData<'_>) -> Result<()> {
+fn report_all_definitions(
+    report: &mut String,
+    all_definitions: &[CollectedDefinition],
+    compilation: &CompilationUnit,
+) -> Result<()> {
     writeln!(
         report,
         "Definitions ({definitions_count}):",
-        definitions_count = report_data.all_definitions.len(),
+        definitions_count = all_definitions.len(),
     )?;
-    for definition in &report_data.all_definitions {
+    for definition in all_definitions {
         writeln!(
             report,
             "- {definition}",
-            definition = definition.display(report_data.compilation, report_data.file_contents)
+            definition = definition.display(compilation)
         )?;
     }
     Ok(())
@@ -89,7 +91,6 @@ fn report_all_definitions(report: &mut String, report_data: &ReportData<'_>) -> 
 fn report_all_references(
     report: &mut String,
     all_references: &[CollectedReference],
-    file_contents: &HashMap<String, String>,
     definitions_by_id: &HashMap<NodeId, usize>,
 ) -> Result<()> {
     writeln!(
@@ -101,7 +102,7 @@ fn report_all_references(
         writeln!(
             report,
             "- {reference}",
-            reference = reference.display(file_contents, definitions_by_id)
+            reference = reference.display(definitions_by_id)
         )?;
     }
     Ok(())
@@ -109,8 +110,7 @@ fn report_all_references(
 
 fn report_unbound_identifiers(
     report: &mut String,
-    unbound_identifiers: &[UnboundIdentifier],
-    file_contents: &HashMap<String, String>,
+    unbound_identifiers: &[CollectedIdentifier],
 ) -> Result<()> {
     writeln!(
         report,
@@ -121,7 +121,7 @@ fn report_unbound_identifiers(
         writeln!(
             report,
             "- {unbound_identifier}",
-            unbound_identifier = unbound_identifier.display(file_contents)
+            unbound_identifier = unbound_identifier.display_unbound(),
         )?;
     }
     Ok(())
@@ -147,7 +147,7 @@ fn render_bindings_for_file(
     contents: &str,
     all_definitions: &[CollectedDefinition],
     all_references: &[CollectedReference],
-    unbound_identifiers: &[UnboundIdentifier],
+    unbound_identifiers: &[CollectedIdentifier],
     definitions_by_id: &HashMap<NodeId, usize>,
 ) -> Result<()> {
     // ariadne works with character offsets, not byte offsets, so we need to
@@ -166,7 +166,7 @@ fn render_bindings_for_file(
     };
 
     for definition in all_definitions {
-        if definition.file_id != file_id {
+        if definition.identifier.file_id != file_id {
             continue;
         }
 
@@ -174,11 +174,11 @@ fn render_bindings_for_file(
             "name: {definition_id}",
             definition_id = definition.report_id
         );
-        builder.add_label(new_label(&definition.identifier_range, &message));
+        builder.add_label(new_label(&definition.identifier.range, &message));
     }
 
     for reference in all_references {
-        if reference.file_id != file_id {
+        if reference.identifier.file_id != file_id {
             continue;
         }
 
@@ -201,7 +201,7 @@ fn render_bindings_for_file(
                 )
             }
         };
-        builder.add_label(new_label(&reference.identifier_range, &message));
+        builder.add_label(new_label(&reference.identifier.range, &message));
     }
 
     for unbound_identifier in unbound_identifiers {
@@ -209,7 +209,7 @@ fn render_bindings_for_file(
             continue;
         }
 
-        builder.add_label(new_label(&unbound_identifier.identifier_range, "???"));
+        builder.add_label(new_label(&unbound_identifier.range, "???"));
     }
 
     let mut buffer = Vec::<u8>::new();

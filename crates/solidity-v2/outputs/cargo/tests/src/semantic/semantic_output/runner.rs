@@ -70,9 +70,10 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         let mut builder = CompilationBuilder::create(version, config);
 
         let mut parse_errors: Vec<(String, ParserError)> = Vec::new();
-        // `builder.add_file` recursively adds dependencies, but we don't want to
-        // depend on the order of the parts in the `input.sol` file, and calling
-        // `add_file` on files already added is idempotent.
+        // While `builder.add_file()` recursively adds dependencies, so adding
+        // the root file would be enough, we don't want to depend on the
+        // ordering of the parts in `input.sol`. Calling `add_file()` on files
+        // already added is idempotent, so to be sure we add all parts.
         for part in &multi_part.parts {
             match builder.add_file(part.name) {
                 Ok(()) => {}
@@ -84,7 +85,7 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         }
 
         let compilation = builder.build();
-        let report_data = ReportData::prepare(&compilation, &files, &parse_errors);
+        let report_data = ReportData::prepare(&compilation, &files, parse_errors);
 
         let status = if report_data.all_resolved() {
             "success"
