@@ -82,16 +82,6 @@ fn internal_visibility() -> Result<()> {
 }
 
 #[test]
-fn legacy_constructors() -> Result<()> {
-    run(T, "legacy_constructors")
-}
-
-#[test]
-fn legacy_function_options() -> Result<()> {
-    run(T, "legacy_function_options")
-}
-
-#[test]
 fn multi_inheritance() -> Result<()> {
     run(T, "multi_inheritance")
 }
@@ -204,11 +194,6 @@ fn super_scope() -> Result<()> {
 #[test]
 fn this_scope() -> Result<()> {
     run(T, "this_scope")
-}
-
-#[test]
-fn unnamed_function() -> Result<()> {
-    run(T, "unnamed_function")
 }
 
 #[test]

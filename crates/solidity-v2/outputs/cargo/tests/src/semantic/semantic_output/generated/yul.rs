@@ -87,16 +87,6 @@ fn inherited_constant() -> Result<()> {
 }
 
 #[test]
-fn labels() -> Result<()> {
-    run(T, "labels")
-}
-
-#[test]
-fn legacy_built_ins() -> Result<()> {
-    run(T, "legacy_built_ins")
-}
-
-#[test]
 fn loops() -> Result<()> {
     run(T, "loops")
 }
@@ -132,18 +122,8 @@ fn slot_offset_members() -> Result<()> {
 }
 
 #[test]
-fn slot_suffix() -> Result<()> {
-    run(T, "slot_suffix")
-}
-
-#[test]
 fn solidity_built_in_doesn_t_bind() -> Result<()> {
     run(T, "solidity_built_in_doesn_t_bind")
-}
-
-#[test]
-fn stack_assign() -> Result<()> {
-    run(T, "stack_assign")
 }
 
 #[test]

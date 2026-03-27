@@ -102,11 +102,6 @@ fn incomplete_member_access() -> Result<()> {
 }
 
 #[test]
-fn legacy_call_options() -> Result<()> {
-    run(T, "legacy_call_options")
-}
-
-#[test]
 fn literal_address() -> Result<()> {
     run(T, "literal_address")
 }
@@ -144,11 +139,6 @@ fn new_array() -> Result<()> {
 #[test]
 fn new_output() -> Result<()> {
     run(T, "new_output")
-}
-
-#[test]
-fn new_with_legacy_call_options() -> Result<()> {
-    run(T, "new_with_legacy_call_options")
 }
 
 #[test]
