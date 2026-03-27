@@ -1,3 +1,4 @@
+use std::hint::black_box;
 use std::path::PathBuf;
 
 use solar::ast::{self};
@@ -42,6 +43,10 @@ fn go(project: &SolidityProject, count: bool) -> usize {
 
             if count {
                 result += unit.count_contracts();
+            } else {
+                // Since it's more annoying to recover the parsed tree from the session
+                // we black box it here to prevent the compiler from optimizing it away.
+                black_box(&unit);
             }
         }
 
