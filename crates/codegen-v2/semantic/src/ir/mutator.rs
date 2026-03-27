@@ -44,17 +44,7 @@ impl From<&Sequence> for MutatedSequence {
 
 impl From<&MutatedSequence> for Sequence {
     fn from(value: &MutatedSequence) -> Self {
-        let fields = value
-            .fields
-            .iter()
-            .filter_map(|field| {
-                if field.is_removed {
-                    None
-                } else {
-                    Some(field.into())
-                }
-            })
-            .collect();
+        let fields = value.fields.iter().map(|field| field.into()).collect();
         Self { fields }
     }
 }
@@ -87,8 +77,6 @@ pub struct MutatedField {
     pub r#type: NodeType,
     pub is_optional: bool,
     pub target_type: NodeType,
-
-    pub is_removed: bool,
 }
 
 impl From<&Field> for MutatedField {
@@ -98,7 +86,6 @@ impl From<&Field> for MutatedField {
             r#type: value.r#type.clone(),
             is_optional: value.is_optional,
             target_type: value.r#type.clone(),
-            is_removed: false,
         }
     }
 }
@@ -362,11 +349,9 @@ impl IrModelMutator {
         assert!(removed, "Could not find type {name} to remove");
 
         for sequence in self.sequences.values_mut() {
-            for field in &mut sequence.fields {
-                if field.target_type == identifier {
-                    field.is_removed = true;
-                }
-            }
+            sequence
+                .fields
+                .retain(|field| field.target_type != identifier);
         }
 
         for choice in self.choices.values_mut() {
@@ -388,16 +373,11 @@ impl IrModelMutator {
         };
         let field_label: model::Identifier = field_label.into();
 
-        let mut removed = false;
-        for field in &mut sequence.fields {
-            if field.label == field_label {
-                field.is_removed = true;
-                removed = true;
-            }
-        }
+        let before_len = sequence.fields.len();
+        sequence.fields.retain(|field| field.label != field_label);
 
         assert!(
-            removed,
+            before_len > sequence.fields.len(),
             "Could not find field {field_label} to remove in {sequence_id}"
         );
     }
@@ -464,7 +444,6 @@ impl IrModelMutator {
             r#type: target_type.clone(),
             is_optional,
             target_type,
-            is_removed: false,
         });
         sequence.has_added_fields = true;
     }
@@ -476,10 +455,7 @@ impl IrModelMutator {
         let Some(sequence) = self.sequences.remove(&identifier) else {
             panic!("Sequence {sequence_id} not found in IR model");
         };
-        let mut fields_iter = sequence
-            .fields
-            .into_iter()
-            .filter(|field| !field.is_removed);
+        let mut fields_iter = sequence.fields.into_iter();
         let replace_field = fields_iter
             .next()
             .expect("Sequence to collapse {sequence_id} contains at least one field");
