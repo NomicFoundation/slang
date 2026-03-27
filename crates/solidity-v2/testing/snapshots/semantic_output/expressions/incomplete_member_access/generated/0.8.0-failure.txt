@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Unexpected CloseBrace. One of AddressKeyword_Reserved, AtKeyword_Unreserved, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, LayoutKeyword_Unreserved, RevertKeyword_Unreserved, TransientKeyword_Unreserved was expected
+    ╭─[input.sol:14:5]
+    │
+ 14 │     }
+    │     ┬  
+    │     ╰── Error occurred here.
+────╯
+------------------------------------------------------------------------
+
+Definitions (0):
+
+------------------------------------------------------------------------
+
+References (0):
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):

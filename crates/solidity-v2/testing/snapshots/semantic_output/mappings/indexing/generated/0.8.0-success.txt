@@ -1,0 +1,56 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (6):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["Value" @ input.sol:2:12] (struct)
+- Def: #3 ["value" @ input.sol:3:14] (struct member, type: uint256)
+- Def: #4 ["values" @ input.sol:5:28] (state var, type: uint256 => Value storage)
+- Def: #5 ["test" @ input.sol:7:14] (function, type: function (uint256) returns uint256)
+- Def: #6 ["_id" @ input.sol:7:24] (parameter, type: uint256)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["Value" @ input.sol:5:21] -> #2
+- Ref: ["values" @ input.sol:8:16] -> #4
+- Ref: ["_id" @ input.sol:8:23] -> #6
+- Ref: ["value" @ input.sol:8:28] -> #3
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     struct Value {
+   │            ──┬──  
+   │              ╰──── name: 2
+ 3 │         uint value;
+   │              ──┬──  
+   │                ╰──── name: 3
+   │ 
+ 5 │     mapping(uint => Value) values;
+   │                     ──┬──  ───┬──  
+   │                       ╰──────────── ref: 2
+   │                               │    
+   │                               ╰──── name: 4
+   │ 
+ 7 │     function test(uint _id) public returns (uint) {
+   │              ──┬─      ─┬─  
+   │                ╰──────────── name: 5
+   │                         │   
+   │                         ╰─── name: 6
+ 8 │         return values[_id].value;
+   │                ───┬── ─┬─  ──┬──  
+   │                   ╰─────────────── ref: 4
+   │                        │     │    
+   │                        ╰────────── ref: 6
+   │                              │    
+   │                              ╰──── ref: 3
+───╯

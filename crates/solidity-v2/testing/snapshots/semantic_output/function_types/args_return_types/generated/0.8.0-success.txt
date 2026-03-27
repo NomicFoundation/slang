@@ -1,0 +1,95 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (12):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["Coords" @ input.sol:2:12] (struct)
+- Def: #3 ["x" @ input.sol:3:13] (struct member, type: int256)
+- Def: #4 ["y" @ input.sol:4:13] (struct member, type: int256)
+- Def: #5 ["HitTest" @ input.sol:6:10] (enum)
+- Def: #6 ["Inside" @ input.sol:7:9] (enum member of HitTest)
+- Def: #7 ["Outside" @ input.sol:8:9] (enum member of HitTest)
+- Def: #8 ["Box" @ input.sol:10:12] (struct)
+- Def: #9 ["hitTest" @ input.sol:11:61] (struct member, type: function (Coords memory) returns HitTest)
+- Def: #10 ["insideBox" @ input.sol:14:14] (function, type: function (Box memory, Coords memory) returns bool)
+- Def: #11 ["b" @ input.sol:14:35] (parameter, type: Box memory)
+- Def: #12 ["p" @ input.sol:14:52] (parameter, type: Coords memory)
+
+------------------------------------------------------------------------
+
+References (9):
+- Ref: ["Coords" @ input.sol:11:19] -> #2
+- Ref: ["HitTest" @ input.sol:11:52] -> #5
+- Ref: ["Box" @ input.sol:14:24] -> #8
+- Ref: ["Coords" @ input.sol:14:38] -> #2
+- Ref: ["b" @ input.sol:15:16] -> #11
+- Ref: ["hitTest" @ input.sol:15:18] -> #9
+- Ref: ["p" @ input.sol:15:26] -> #12
+- Ref: ["HitTest" @ input.sol:15:32] -> #5
+- Ref: ["Inside" @ input.sol:15:40] -> #6
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     struct Coords {
+    │            ───┬──  
+    │               ╰──── name: 2
+  3 │         int x;
+    │             ┬  
+    │             ╰── name: 3
+  4 │         int y;
+    │             ┬  
+    │             ╰── name: 4
+    │ 
+  6 │     enum HitTest {
+    │          ───┬───  
+    │             ╰───── name: 5
+  7 │         Inside,
+    │         ───┬──  
+    │            ╰──── name: 6
+  8 │         Outside
+    │         ───┬───  
+    │            ╰───── name: 7
+    │ 
+ 10 │     struct Box {
+    │            ─┬─  
+    │             ╰─── name: 8
+ 11 │         function (Coords memory) external returns (HitTest) hitTest;
+    │                   ───┬──                           ───┬───  ───┬───  
+    │                      ╰─────────────────────────────────────────────── ref: 2
+    │                                                       │        │     
+    │                                                       ╰────────────── ref: 5
+    │                                                                │     
+    │                                                                ╰───── name: 9
+    │ 
+ 14 │     function insideBox(Box memory b, Coords memory p) public returns (bool) {
+    │              ────┬──── ─┬─        ┬  ───┬──        ┬  
+    │                  ╰──────────────────────────────────── name: 10
+    │                         │         │     │          │  
+    │                         ╰───────────────────────────── ref: 8
+    │                                   │     │          │  
+    │                                   ╰─────────────────── name: 11
+    │                                         │          │  
+    │                                         ╰───────────── ref: 2
+    │                                                    │  
+    │                                                    ╰── name: 12
+ 15 │         return b.hitTest(p) == HitTest.Inside;
+    │                ┬ ───┬─── ┬     ───┬─── ───┬──  
+    │                ╰─────────────────────────────── ref: 11
+    │                     │    │        │       │    
+    │                     ╰────────────────────────── ref: 9
+    │                          │        │       │    
+    │                          ╰───────────────────── ref: 12
+    │                                   │       │    
+    │                                   ╰──────────── ref: 5
+    │                                           │    
+    │                                           ╰──── ref: 6
+────╯

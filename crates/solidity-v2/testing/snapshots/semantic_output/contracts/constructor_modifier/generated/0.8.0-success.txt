@@ -1,0 +1,51 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["validAddress" @ input.sol:2:14] (modifier)
+- Def: #3 ["_addr" @ input.sol:2:35] (parameter, type: address)
+- Def: #4 ["_addr" @ input.sol:7:26] (parameter, type: address)
+
+------------------------------------------------------------------------
+
+References (5):
+- Ref: ["assert" @ input.sol:3:9] -> built-in
+- Ref: ["_addr" @ input.sol:3:16] -> #3
+- Ref: ["_" @ input.sol:4:9] -> built-in
+- Ref: ["validAddress" @ input.sol:7:33] -> #2
+- Ref: ["_addr" @ input.sol:7:46] -> #4
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     modifier validAddress(address _addr) {
+   │              ──────┬─────         ──┬──  
+   │                    ╰───────────────────── name: 2
+   │                                     │    
+   │                                     ╰──── name: 3
+ 3 │         assert(_addr != address(0));
+   │         ───┬── ──┬──  
+   │            ╰────────── built-in
+   │                  │    
+   │                  ╰──── ref: 3
+ 4 │         _;
+   │         ┬  
+   │         ╰── built-in
+   │ 
+ 7 │     constructor (address _addr) validAddress(_addr) {}
+   │                          ──┬──  ──────┬───── ──┬──  
+   │                            ╰──────────────────────── name: 4
+   │                                       │        │    
+   │                                       ╰───────────── ref: 2
+   │                                                │    
+   │                                                ╰──── ref: 4
+───╯

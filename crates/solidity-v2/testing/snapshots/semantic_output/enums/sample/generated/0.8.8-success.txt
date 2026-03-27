@@ -1,0 +1,125 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (13):
+- Def: #1 ["Test" @ input.sol:4:10] (contract)
+- Def: #2 ["ActionChoices" @ input.sol:5:10] (enum)
+- Def: #3 ["GoLeft" @ input.sol:5:26] (enum member of ActionChoices)
+- Def: #4 ["GoRight" @ input.sol:5:34] (enum member of ActionChoices)
+- Def: #5 ["GoStraight" @ input.sol:5:43] (enum member of ActionChoices)
+- Def: #6 ["SitStill" @ input.sol:5:55] (enum member of ActionChoices)
+- Def: #7 ["choice" @ input.sol:7:19] (state var, type: ActionChoices)
+- Def: #8 ["defaultChoice" @ input.sol:8:28] (constant, type: ActionChoices)
+- Def: #9 ["setGoStraight" @ input.sol:10:14] (function, type: function () returns void)
+- Def: #10 ["getChoice" @ input.sol:17:14] (function, type: function () returns ActionChoices)
+- Def: #11 ["getDefaultChoice" @ input.sol:21:14] (function, type: function () returns uint256)
+- Def: #12 ["getLargestValue" @ input.sol:25:14] (function, type: function () returns ActionChoices)
+- Def: #13 ["getSmallestValue" @ input.sol:29:14] (function, type: function () returns ActionChoices)
+
+------------------------------------------------------------------------
+
+References (16):
+- Ref: ["ActionChoices" @ input.sol:7:5] -> #2
+- Ref: ["ActionChoices" @ input.sol:8:5] -> #2
+- Ref: ["ActionChoices" @ input.sol:8:44] -> #2
+- Ref: ["GoStraight" @ input.sol:8:58] -> #5
+- Ref: ["choice" @ input.sol:11:9] -> #7
+- Ref: ["ActionChoices" @ input.sol:11:18] -> #2
+- Ref: ["GoStraight" @ input.sol:11:32] -> #5
+- Ref: ["ActionChoices" @ input.sol:17:47] -> #2
+- Ref: ["choice" @ input.sol:18:16] -> #7
+- Ref: ["defaultChoice" @ input.sol:22:21] -> #8
+- Ref: ["ActionChoices" @ input.sol:25:53] -> #2
+- Ref: ["ActionChoices" @ input.sol:26:21] -> #2
+- Ref: ["max" @ input.sol:26:36] -> built-in
+- Ref: ["ActionChoices" @ input.sol:29:54] -> #2
+- Ref: ["ActionChoices" @ input.sol:30:21] -> #2
+- Ref: ["min" @ input.sol:30:36] -> built-in
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  4 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  5 │     enum ActionChoices { GoLeft, GoRight, GoStraight, SitStill }
+    │          ──────┬──────   ───┬──  ───┬───  ─────┬────  ────┬───  
+    │                ╰──────────────────────────────────────────────── name: 2
+    │                             │       │          │          │     
+    │                             ╰─────────────────────────────────── name: 3
+    │                                     │          │          │     
+    │                                     ╰─────────────────────────── name: 4
+    │                                                │          │     
+    │                                                ╰──────────────── name: 5
+    │                                                           │     
+    │                                                           ╰───── name: 6
+    │ 
+  7 │     ActionChoices choice;
+    │     ──────┬────── ───┬──  
+    │           ╰─────────────── ref: 2
+    │                      │    
+    │                      ╰──── name: 7
+  8 │     ActionChoices constant defaultChoice = ActionChoices.GoStraight;
+    │     ──────┬──────          ──────┬──────   ──────┬────── ─────┬────  
+    │           ╰────────────────────────────────────────────────────────── ref: 2
+    │                                  │               │            │      
+    │                                  ╰─────────────────────────────────── name: 8
+    │                                                  │            │      
+    │                                                  ╰─────────────────── ref: 2
+    │                                                               │      
+    │                                                               ╰────── ref: 5
+    │ 
+ 10 │     function setGoStraight() public {
+    │              ──────┬──────  
+    │                    ╰──────── name: 9
+ 11 │         choice = ActionChoices.GoStraight;
+    │         ───┬──   ──────┬────── ─────┬────  
+    │            ╰─────────────────────────────── ref: 7
+    │                        │            │      
+    │                        ╰─────────────────── ref: 2
+    │                                     │      
+    │                                     ╰────── ref: 5
+    │ 
+ 17 │     function getChoice() public view returns (ActionChoices) {
+    │              ────┬────                        ──────┬──────  
+    │                  ╰─────────────────────────────────────────── name: 10
+    │                                                     │        
+    │                                                     ╰──────── ref: 2
+ 18 │         return choice;
+    │                ───┬──  
+    │                   ╰──── ref: 7
+    │ 
+ 21 │     function getDefaultChoice() public pure returns (uint) {
+    │              ────────┬───────  
+    │                      ╰───────── name: 11
+ 22 │         return uint(defaultChoice);
+    │                     ──────┬──────  
+    │                           ╰──────── ref: 8
+    │ 
+ 25 │     function getLargestValue() public pure returns (ActionChoices) {
+    │              ───────┬───────                        ──────┬──────  
+    │                     ╰────────────────────────────────────────────── name: 12
+    │                                                           │        
+    │                                                           ╰──────── ref: 2
+ 26 │         return type(ActionChoices).max;
+    │                     ──────┬──────  ─┬─  
+    │                           ╰───────────── ref: 2
+    │                                     │   
+    │                                     ╰─── built-in
+    │ 
+ 29 │     function getSmallestValue() public pure returns (ActionChoices) {
+    │              ────────┬───────                        ──────┬──────  
+    │                      ╰────────────────────────────────────────────── name: 13
+    │                                                            │        
+    │                                                            ╰──────── ref: 2
+ 30 │         return type(ActionChoices).min;
+    │                     ──────┬──────  ─┬─  
+    │                           ╰───────────── ref: 2
+    │                                     │   
+    │                                     ╰─── built-in
+────╯

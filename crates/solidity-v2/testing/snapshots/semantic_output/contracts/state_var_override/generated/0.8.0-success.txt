@@ -1,0 +1,74 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (8):
+- Def: #1 ["IFoo" @ input.sol:1:11] (interface)
+- Def: #2 ["foo" @ input.sol:2:14] (function, type: function () returns (uint256, uint256))
+- Def: #3 ["Test" @ input.sol:5:10] (contract)
+- Def: #4 ["Bar" @ input.sol:6:12] (struct)
+- Def: #5 ["x" @ input.sol:7:14] (struct member, type: uint256)
+- Def: #6 ["y" @ input.sol:8:14] (struct member, type: uint256)
+- Def: #7 ["foo" @ input.sol:10:25] (state var, type: Bar storage)
+- Def: #8 ["test" @ input.sol:12:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (6):
+- Ref: ["IFoo" @ input.sol:5:18] -> #1
+- Ref: ["Bar" @ input.sol:10:5] -> #4
+- Ref: ["foo" @ input.sol:13:9] -> #7
+- Ref: ["x" @ input.sol:13:13] -> #5
+- Ref: ["foo" @ input.sol:14:14] -> #7
+- Ref: ["foo" @ input.sol:15:14] -> #7
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ interface IFoo {
+    │           ──┬─  
+    │             ╰─── name: 1
+  2 │     function foo() external returns (uint, uint);
+    │              ─┬─  
+    │               ╰─── name: 2
+    │ 
+  5 │ contract Test is IFoo {
+    │          ──┬─    ──┬─  
+    │            ╰─────────── name: 3
+    │                    │   
+    │                    ╰─── ref: 1
+  6 │     struct Bar {
+    │            ─┬─  
+    │             ╰─── name: 4
+  7 │         uint x;
+    │              ┬  
+    │              ╰── name: 5
+  8 │         uint y;
+    │              ┬  
+    │              ╰── name: 6
+    │ 
+ 10 │     Bar public override foo;
+    │     ─┬─                 ─┬─  
+    │      ╰─────────────────────── ref: 4
+    │                          │   
+    │                          ╰─── name: 7
+    │ 
+ 12 │     function test() internal view {
+    │              ──┬─  
+    │                ╰─── name: 8
+ 13 │         foo.x;
+    │         ─┬─ ┬  
+    │          ╰───── ref: 7
+    │             │  
+    │             ╰── ref: 5
+ 14 │         this.foo;
+    │              ─┬─  
+    │               ╰─── ref: 7
+ 15 │         this.foo();
+    │              ─┬─  
+    │               ╰─── ref: 7
+────╯

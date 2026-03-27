@@ -1,0 +1,63 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["Utils" @ input.sol:1:9] (library)
+- Def: #2 ["foo" @ input.sol:2:14] (function, type: function (ITest) returns void)
+- Def: #3 ["subject" @ input.sol:2:24] (parameter, type: ITest)
+- Def: #4 ["ITest" @ input.sol:5:11] (interface)
+- Def: #5 ["Test" @ input.sol:7:10] (contract)
+- Def: #6 ["bar" @ input.sol:10:14] (function, type: function () returns void)
+- Def: #7 ["test" @ input.sol:12:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["ITest" @ input.sol:2:18] -> #4
+- Ref: ["ITest" @ input.sol:7:18] -> #4
+- Ref: ["Utils" @ input.sol:8:11] -> #1
+- Ref: ["foo" @ input.sol:13:14] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Utils {
+    │         ──┬──  
+    │           ╰──── name: 1
+  2 │     function foo(ITest subject) internal {}
+    │              ─┬─ ──┬── ───┬───  
+    │               ╰───────────────── name: 2
+    │                    │      │     
+    │                    ╰──────────── ref: 4
+    │                           │     
+    │                           ╰───── name: 3
+    │ 
+  5 │ interface ITest {}
+    │           ──┬──  
+    │             ╰──── name: 4
+    │ 
+  7 │ contract Test is ITest {
+    │          ──┬─    ──┬──  
+    │            ╰──────────── name: 5
+    │                    │    
+    │                    ╰──── ref: 4
+  8 │     using Utils for *;
+    │           ──┬──  
+    │             ╰──── ref: 1
+    │ 
+ 10 │     function bar() internal {}
+    │              ─┬─  
+    │               ╰─── name: 6
+    │ 
+ 12 │     function test() internal {
+    │              ──┬─  
+    │                ╰─── name: 7
+ 13 │         this.foo();
+    │              ─┬─  
+    │               ╰─── ref: 2
+────╯

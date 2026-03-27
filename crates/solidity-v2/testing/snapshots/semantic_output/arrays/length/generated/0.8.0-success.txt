@@ -1,0 +1,55 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (6):
+- Def: #1 ["Lib" @ input.sol:1:9] (library)
+- Def: #2 ["nop" @ input.sol:2:14] (function, type: function (uint256) returns void)
+- Def: #3 ["x" @ input.sol:2:23] (parameter, type: uint256)
+- Def: #4 ["Test" @ input.sol:4:10] (contract)
+- Def: #5 ["test" @ input.sol:6:14] (function, type: function (uint256[] memory) returns void)
+- Def: #6 ["data" @ input.sol:6:36] (parameter, type: uint256[] memory)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["Lib" @ input.sol:5:11] -> #1
+- Ref: ["data" @ input.sol:7:9] -> #6
+- Ref: ["length" @ input.sol:7:14] -> built-in
+- Ref: ["nop" @ input.sol:7:21] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ library Lib {
+   │         ─┬─  
+   │          ╰─── name: 1
+ 2 │     function nop(uint x) internal {}
+   │              ─┬─      ┬  
+   │               ╰────────── name: 2
+   │                       │  
+   │                       ╰── name: 3
+   │ 
+ 4 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 4
+ 5 │     using Lib for uint;
+   │           ─┬─  
+   │            ╰─── ref: 1
+ 6 │     function test(uint256[] memory data) public {
+   │              ──┬─                  ──┬─  
+   │                ╰───────────────────────── name: 5
+   │                                      │   
+   │                                      ╰─── name: 6
+ 7 │         data.length.nop();
+   │         ──┬─ ───┬── ─┬─  
+   │           ╰────────────── ref: 6
+   │                 │    │   
+   │                 ╰──────── built-in
+   │                      │   
+   │                      ╰─── ref: 2
+───╯

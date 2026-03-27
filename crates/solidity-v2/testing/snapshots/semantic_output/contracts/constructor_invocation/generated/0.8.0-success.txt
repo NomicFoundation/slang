@@ -1,0 +1,50 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (6):
+- Def: #1 ["A" @ input.sol:1:10] (contract)
+- Def: #2 ["A" @ input.sol:2:14] (function, type: function (int256) returns void)
+- Def: #3 ["_x" @ input.sol:2:20] (parameter, type: int256)
+- Def: #4 ["_x" @ input.sol:4:21] (parameter, type: int256)
+- Def: #5 ["Test" @ input.sol:7:10] (contract)
+- Def: #6 ["foo" @ input.sol:8:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (2):
+- Ref: ["A" @ input.sol:9:13] -> #1
+- Ref: ["_x" @ input.sol:9:16] -> #4
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract A {
+   │          ┬  
+   │          ╰── name: 1
+ 2 │     function A(int _x) {}
+   │              ┬     ─┬  
+   │              ╰───────── name: 2
+   │                     │  
+   │                     ╰── name: 3
+   │ 
+ 4 │     constructor(int _x) {}
+   │                     ─┬  
+   │                      ╰── name: 4
+   │ 
+ 7 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 5
+ 8 │     function foo() public {
+   │              ─┬─  
+   │               ╰─── name: 6
+ 9 │         new A({_x: 2});
+   │             ┬  ─┬  
+   │             ╰────── ref: 1
+   │                 │  
+   │                 ╰── ref: 4
+───╯

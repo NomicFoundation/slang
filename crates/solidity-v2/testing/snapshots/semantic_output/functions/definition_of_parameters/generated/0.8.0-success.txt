@@ -1,0 +1,49 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (9):
+- Def: #1 ["top_level" @ input.sol:1:10] (function, type: function (int256, int256) returns int256)
+- Def: #2 ["x" @ input.sol:1:24] (parameter, type: int256)
+- Def: #3 ["y" @ input.sol:1:31] (parameter, type: int256)
+- Def: #4 ["z" @ input.sol:1:53] (parameter, type: int256)
+- Def: #5 ["Test" @ input.sol:3:10] (contract)
+- Def: #6 ["in_contract" @ input.sol:4:14] (function, type: function (int256, int256) returns int256)
+- Def: #7 ["x" @ input.sol:4:30] (parameter, type: int256)
+- Def: #8 ["y" @ input.sol:4:37] (parameter, type: int256)
+- Def: #9 ["z" @ input.sol:4:59] (parameter, type: int256)
+
+------------------------------------------------------------------------
+
+References (0):
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ function top_level(int x, int y) public returns(int z) {}
+   │          ────┬────     ┬      ┬                     ┬  
+   │              ╰───────────────────────────────────────── name: 1
+   │                        │      │                     │  
+   │                        ╰─────────────────────────────── name: 2
+   │                               │                     │  
+   │                               ╰──────────────────────── name: 3
+   │                                                     │  
+   │                                                     ╰── name: 4
+   │ 
+ 3 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 5
+ 4 │     function in_contract(int x, int y) public returns(int z) {}
+   │              ─────┬─────     ┬      ┬                     ┬  
+   │                   ╰────────────────────────────────────────── name: 6
+   │                              │      │                     │  
+   │                              ╰─────────────────────────────── name: 7
+   │                                     │                     │  
+   │                                     ╰──────────────────────── name: 8
+   │                                                           │  
+   │                                                           ╰── name: 9
+───╯

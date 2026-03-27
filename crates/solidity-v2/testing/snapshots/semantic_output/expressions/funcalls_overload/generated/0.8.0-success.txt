@@ -1,0 +1,81 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (10):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["y" @ input.sol:2:7] (state var, type: int256)
+- Def: #3 ["someFunc" @ input.sol:4:12] (function, type: function (int256) returns int256)
+- Def: #4 ["x" @ input.sol:4:25] (parameter, type: int256)
+- Def: #5 ["farg" @ input.sol:5:9] (variable, type: int256)
+- Def: #6 ["literal" @ input.sol:6:9] (variable, type: int256)
+- Def: #7 ["farg_2" @ input.sol:7:9] (variable, type: int256)
+- Def: #8 ["literal_2" @ input.sol:8:9] (variable, type: int256)
+- Def: #9 ["add" @ input.sol:11:12] (function, type: function (int256, int256) returns int256)
+- Def: #10 ["add" @ input.sol:13:12] (function, type: function (int256) returns int256)
+
+------------------------------------------------------------------------
+
+References (7):
+- Ref: ["add" @ input.sol:5:16] -> #10
+- Ref: ["x" @ input.sol:5:20] -> #4
+- Ref: ["add" @ input.sol:6:19] -> #10
+- Ref: ["add" @ input.sol:7:18] -> #9
+- Ref: ["x" @ input.sol:7:22] -> #4
+- Ref: ["y" @ input.sol:7:25] -> #2
+- Ref: ["add" @ input.sol:8:21] -> #9
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │   int y;
+    │       ┬  
+    │       ╰── name: 2
+    │ 
+  4 │   function someFunc(int x) returns (int) {
+    │            ────┬───     ┬  
+    │                ╰─────────── name: 3
+    │                         │  
+    │                         ╰── name: 4
+  5 │     int farg = add(x);
+    │         ──┬─   ─┬─ ┬  
+    │           ╰─────────── name: 5
+    │                 │  │  
+    │                 ╰───── ref: 10
+    │                    │  
+    │                    ╰── ref: 4
+  6 │     int literal = add(3);
+    │         ───┬───   ─┬─  
+    │            ╰─────────── name: 6
+    │                    │   
+    │                    ╰─── ref: 10
+  7 │     int farg_2 = add(x, y);
+    │         ───┬──   ─┬─ ┬  ┬  
+    │            ╰─────────────── name: 7
+    │                   │  │  │  
+    │                   ╰──────── ref: 9
+    │                      │  │  
+    │                      ╰───── ref: 4
+    │                         │  
+    │                         ╰── ref: 2
+  8 │     int literal_2 = add(3, 1);
+    │         ────┬────   ─┬─  
+    │             ╰──────────── name: 8
+    │                      │   
+    │                      ╰─── ref: 9
+    │ 
+ 11 │   function add(int, int) returns (int);
+    │            ─┬─  
+    │             ╰─── name: 9
+    │ 
+ 13 │   function add(int) returns (int);
+    │            ─┬─  
+    │             ╰─── name: 10
+────╯

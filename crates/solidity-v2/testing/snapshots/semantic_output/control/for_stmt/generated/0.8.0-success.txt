@@ -1,0 +1,67 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns void)
+- Def: #3 ["x" @ input.sol:3:13] (variable, type: int256)
+- Def: #4 ["y" @ input.sol:4:13] (variable, type: int256)
+- Def: #5 ["i" @ input.sol:5:18] (variable, type: int256)
+
+------------------------------------------------------------------------
+
+References (9):
+- Ref: ["x" @ input.sol:5:22] -> #3
+- Ref: ["i" @ input.sol:5:29] -> #5
+- Ref: ["x" @ input.sol:5:39] -> #3
+- Ref: ["i" @ input.sol:5:48] -> #5
+- Ref: ["x" @ input.sol:6:13] -> #3
+- Ref: ["x" @ input.sol:6:17] -> #3
+- Ref: ["y" @ input.sol:7:13] -> #4
+- Ref: ["y" @ input.sol:7:17] -> #4
+- Ref: ["i" @ input.sol:7:21] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 2
+ 3 │         int x = 1;
+   │             ┬  
+   │             ╰── name: 3
+ 4 │         int y = 0;
+   │             ┬  
+   │             ╰── name: 4
+ 5 │         for (int i = x - 1; i < 10 && x < 500; i++) {
+   │                  ┬   ┬      ┬         ┬        ┬  
+   │                  ╰──────────────────────────────── name: 5
+   │                      │      │         │        │  
+   │                      ╰──────────────────────────── ref: 3
+   │                             │         │        │  
+   │                             ╰───────────────────── ref: 5
+   │                                       │        │  
+   │                                       ╰─────────── ref: 3
+   │                                                │  
+   │                                                ╰── ref: 5
+ 6 │             x = x * 2;
+   │             ┬   ┬  
+   │             ╰────── ref: 3
+   │                 │  
+   │                 ╰── ref: 3
+ 7 │             y = y + i;
+   │             ┬   ┬   ┬  
+   │             ╰────────── ref: 4
+   │                 │   │  
+   │                 ╰────── ref: 4
+   │                     │  
+   │                     ╰── ref: 5
+───╯

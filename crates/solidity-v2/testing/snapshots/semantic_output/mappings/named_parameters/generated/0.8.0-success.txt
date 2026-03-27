@@ -1,0 +1,48 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (8):
+- Def: #1 ["NamedMapping" @ input.sol:1:10] (contract)
+- Def: #2 ["name" @ input.sol:2:19] (type param)
+- Def: #3 ["justNameInKey" @ input.sol:2:43] (state var, type: address => uint256)
+- Def: #4 ["amount" @ input.sol:4:30] (type param)
+- Def: #5 ["justNameInValue" @ input.sol:4:45] (state var, type: address => uint256)
+- Def: #6 ["name" @ input.sol:6:19] (type param)
+- Def: #7 ["amount" @ input.sol:6:35] (type param)
+- Def: #8 ["nameInBoth" @ input.sol:6:50] (state var, type: address => uint256)
+
+------------------------------------------------------------------------
+
+References (0):
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract NamedMapping {
+   │          ──────┬─────  
+   │                ╰─────── name: 1
+ 2 │   mapping(address name => uint256) public justNameInKey;
+   │                   ──┬─                    ──────┬──────  
+   │                     ╰──────────────────────────────────── name: 2
+   │                                                 │        
+   │                                                 ╰──────── name: 3
+   │ 
+ 4 │   mapping(address => uint256 amount) public justNameInValue;
+   │                              ───┬──         ───────┬───────  
+   │                                 ╰──────────────────────────── name: 4
+   │                                                    │         
+   │                                                    ╰───────── name: 5
+   │ 
+ 6 │   mapping(address name => uint256 amount) public nameInBoth;
+   │                   ──┬─            ───┬──         ─────┬────  
+   │                     ╰──────────────────────────────────────── name: 6
+   │                                      │                │      
+   │                                      ╰─────────────────────── name: 7
+   │                                                       │      
+   │                                                       ╰────── name: 8
+───╯

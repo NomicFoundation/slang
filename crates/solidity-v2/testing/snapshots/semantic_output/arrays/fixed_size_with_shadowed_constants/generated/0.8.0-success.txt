@@ -1,0 +1,85 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (11):
+- Def: #1 ["X" @ input.sol:1:15] (constant, type: uint256)
+- Def: #2 ["Y" @ input.sol:2:15] (constant, type: uint256)
+- Def: #3 ["Test" @ input.sol:4:10] (contract)
+- Def: #4 ["X" @ input.sol:5:19] (constant, type: uint256)
+- Def: #5 ["test" @ input.sol:10:14] (function, type: function () returns void)
+- Def: #6 ["x" @ input.sol:11:24] (variable, type: uint256[4] memory)
+- Def: #7 ["Lib" @ input.sol:16:9] (library)
+- Def: #8 ["nop" @ input.sol:17:14] (function, type: function (uint256[4] memory) returns void)
+- Def: #9 ["self" @ input.sol:17:33] (parameter, type: uint256[4] memory)
+- Def: #10 ["nop" @ input.sol:18:14] (function, type: function (uint256[5] memory) returns void)
+- Def: #11 ["self" @ input.sol:18:33] (parameter, type: uint256[5] memory)
+
+------------------------------------------------------------------------
+
+References (6):
+- Ref: ["X" @ input.sol:2:19] -> #1
+- Ref: ["Lib" @ input.sol:7:11] -> #7
+- Ref: ["Lib" @ input.sol:8:11] -> #7
+- Ref: ["Y" @ input.sol:11:14] -> #2
+- Ref: ["x" @ input.sol:12:9] -> #6
+- Ref: ["nop" @ input.sol:12:11] -> #8
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ uint constant X = 1;
+    │               ┬  
+    │               ╰── name: 1
+  2 │ uint constant Y = X + 3;
+    │               ┬   ┬  
+    │               ╰────── name: 2
+    │                   │  
+    │                   ╰── ref: 1
+    │ 
+  4 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 3
+  5 │     uint constant X = 2; // shadows the global constant
+    │                   ┬  
+    │                   ╰── name: 4
+    │ 
+  7 │     using Lib for uint[4];
+    │           ─┬─  
+    │            ╰─── ref: 7
+  8 │     using Lib for uint[5];
+    │           ─┬─  
+    │            ╰─── ref: 7
+    │ 
+ 10 │     function test() internal {
+    │              ──┬─  
+    │                ╰─── name: 5
+ 11 │         uint[Y] memory x;
+    │              ┬         ┬  
+    │              ╰──────────── ref: 2
+    │                        │  
+    │                        ╰── name: 6
+ 12 │         x.nop(); // should bind to the first definition of nop() only
+    │         ┬ ─┬─  
+    │         ╰────── ref: 6
+    │            │   
+    │            ╰─── ref: 8
+    │ 
+ 16 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 7
+ 17 │     function nop(uint[4] memory self) internal {}
+    │              ─┬─                ──┬─  
+    │               ╰─────────────────────── name: 8
+    │                                   │   
+    │                                   ╰─── name: 9
+ 18 │     function nop(uint[5] memory self) internal {}
+    │              ─┬─                ──┬─  
+    │               ╰─────────────────────── name: 10
+    │                                   │   
+    │                                   ╰─── name: 11
+────╯

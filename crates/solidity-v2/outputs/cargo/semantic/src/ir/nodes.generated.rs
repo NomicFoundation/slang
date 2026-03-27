@@ -282,9 +282,9 @@ pub type ContractDefinition = Rc<ContractDefinitionStruct>;
 pub struct ContractDefinitionStruct {
     pub abstract_keyword: bool,
     pub name: Identifier,
-    pub members: ContractMembers,
     pub inheritance_types: InheritanceTypes,
     pub storage_layout: Option<Expression>,
+    pub members: ContractMembers,
 }
 
 impl ContractDefinitionStruct {
@@ -467,16 +467,16 @@ pub type FunctionDefinition = Rc<FunctionDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct FunctionDefinitionStruct {
-    pub parameters: Parameters,
-    pub returns: Option<Parameters>,
     pub kind: FunctionKind,
     pub name: Option<Identifier>,
-    pub body: Option<Block>,
+    pub parameters: Parameters,
     pub visibility: FunctionVisibility,
     pub mutability: FunctionMutability,
     pub virtual_keyword: bool,
     pub override_specifier: Option<OverridePaths>,
     pub modifier_invocations: ModifierInvocations,
+    pub returns: Option<Parameters>,
+    pub body: Option<Block>,
 }
 
 impl FunctionDefinitionStruct {
@@ -490,9 +490,9 @@ pub type FunctionType = Rc<FunctionTypeStruct>;
 #[derive(Debug)]
 pub struct FunctionTypeStruct {
     pub parameters: Parameters,
-    pub returns: Option<Parameters>,
     pub visibility: FunctionVisibility,
     pub mutability: FunctionMutability,
+    pub returns: Option<Parameters>,
 }
 
 impl FunctionTypeStruct {

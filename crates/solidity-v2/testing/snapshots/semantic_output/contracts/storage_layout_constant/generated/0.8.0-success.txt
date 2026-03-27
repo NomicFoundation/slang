@@ -1,0 +1,30 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (2):
+- Def: #1 ["C1" @ input.sol:1:18] (constant, type: uint256)
+- Def: #2 ["X1" @ input.sol:3:10] (contract)
+
+------------------------------------------------------------------------
+
+References (1):
+- Ref: ["C1" @ input.sol:3:23] -> #1
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ uint256 constant C1 = 0;
+   │                  ─┬  
+   │                   ╰── name: 1
+   │ 
+ 3 │ contract X1 layout at C1 {
+   │          ─┬           ─┬  
+   │           ╰─────────────── name: 2
+   │                        │  
+   │                        ╰── ref: 1
+───╯
