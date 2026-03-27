@@ -5,19 +5,19 @@ Definitions (7):
 - Def: #2 ["sig" @ input.sol:2:14] (function, type: function (uint256, bytes4) returns uint256)
 - Def: #3 ["sig" @ input.sol:3:14] (function, type: function (uint256, string memory) returns uint256)
 - Def: #4 ["Test" @ input.sol:6:10] (contract)
-- Def: #5 ["x" @ input.sol:8:24] (parameter, type: uint256)
-- Def: #6 ["test" @ input.sol:8:14] (function, type: function (uint256) returns void)
+- Def: #5 ["test" @ input.sol:8:14] (function, type: function (uint256) returns void)
+- Def: #6 ["x" @ input.sol:8:24] (parameter, type: uint256)
 - Def: #7 ["s" @ input.sol:9:23] (variable, type: string memory)
 
 ------------------------------------------------------------------------
 
 References (9):
 - Ref: ["Lib" @ input.sol:7:11] -> #1
-- Ref: ["x" @ input.sol:10:9] -> #5
+- Ref: ["x" @ input.sol:10:9] -> #6
 - Ref: ["sig" @ input.sol:10:11] -> #2
 - Ref: ["sig" @ input.sol:10:27] -> #3
 - Ref: ["s" @ input.sol:10:31] -> #7
-- Ref: ["x" @ input.sol:11:9] -> #5
+- Ref: ["x" @ input.sol:11:9] -> #6
 - Ref: ["sig" @ input.sol:11:11] -> #3
 - Ref: ["s" @ input.sol:11:15] -> #7
 - Ref: ["sig" @ input.sol:11:18] -> #2
@@ -49,15 +49,15 @@ Bindings:
     │            ╰─── ref: 1
   8 │     function test(uint x) internal {
     │              ──┬─      ┬  
-    │                ╰────────── name: 6
+    │                ╰────────── name: 5
     │                        │  
-    │                        ╰── name: 5
+    │                        ╰── name: 6
   9 │         string memory s;
     │                       ┬  
     │                       ╰── name: 7
  10 │         x.sig(0x10203040).sig(s);
     │         ┬ ─┬─             ─┬─ ┬  
-    │         ╰──────────────────────── ref: 5
+    │         ╰──────────────────────── ref: 6
     │            │               │  │  
     │            ╰───────────────────── ref: 2
     │                            │  │  
@@ -66,7 +66,7 @@ Bindings:
     │                               ╰── ref: 7
  11 │         x.sig(s).sig(0x10203040);
     │         ┬ ─┬─ ┬  ─┬─  
-    │         ╰───────────── ref: 5
+    │         ╰───────────── ref: 6
     │            │  │   │   
     │            ╰────────── ref: 3
     │               │   │   

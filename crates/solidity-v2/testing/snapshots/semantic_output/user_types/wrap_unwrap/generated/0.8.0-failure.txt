@@ -3,8 +3,8 @@
 Definitions (5):
 - Def: #1 ["ShortString" @ input.sol:1:6] (udvt, type: meta-type)
 - Def: #2 ["Test" @ input.sol:3:10] (contract)
-- Def: #3 ["data" @ input.sol:4:27] (parameter, type: bytes32)
-- Def: #4 ["test" @ input.sol:4:14] (function, type: function (bytes32) returns void)
+- Def: #3 ["test" @ input.sol:4:14] (function, type: function (bytes32) returns void)
+- Def: #4 ["data" @ input.sol:4:27] (parameter, type: bytes32)
 - Def: #5 ["s" @ input.sol:5:21] (variable, type: ShortString)
 
 ------------------------------------------------------------------------
@@ -13,7 +13,7 @@ References (7):
 - Ref: ["ShortString" @ input.sol:5:9] -> #1
 - Ref: ["ShortString" @ input.sol:5:25] -> #1
 - Ref: ["wrap" @ input.sol:5:37] -> unresolved
-- Ref: ["data" @ input.sol:5:42] -> #3
+- Ref: ["data" @ input.sol:5:42] -> #4
 - Ref: ["ShortString" @ input.sol:6:9] -> #1
 - Ref: ["unwrap" @ input.sol:6:21] -> unresolved
 - Ref: ["s" @ input.sol:6:28] -> #5
@@ -36,9 +36,9 @@ Bindings:
    │            ╰─── name: 2
  4 │     function test(bytes32 data) public {
    │              ──┬─         ──┬─  
-   │                ╰──────────────── name: 4
+   │                ╰──────────────── name: 3
    │                             │   
-   │                             ╰─── name: 3
+   │                             ╰─── name: 4
  5 │         ShortString s = ShortString.wrap(data);
    │         ─────┬───── ┬   ─────┬───── ──┬─ ──┬─  
    │              ╰───────────────────────────────── ref: 1
@@ -49,7 +49,7 @@ Bindings:
    │                                       │    │   
    │                                       ╰──────── unresolved
    │                                            │   
-   │                                            ╰─── ref: 3
+   │                                            ╰─── ref: 4
  6 │         ShortString.unwrap(s);
    │         ─────┬───── ───┬── ┬  
    │              ╰──────────────── ref: 1

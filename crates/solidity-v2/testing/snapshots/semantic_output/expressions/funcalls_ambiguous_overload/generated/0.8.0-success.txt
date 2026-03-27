@@ -3,8 +3,8 @@
 Definitions (8):
 - Def: #1 ["Test" @ input.sol:1:10] (contract)
 - Def: #2 ["y" @ input.sol:2:7] (state var, type: int256)
-- Def: #3 ["x" @ input.sol:4:25] (parameter, type: int256)
-- Def: #4 ["someFunc" @ input.sol:4:12] (function, type: function (int256) returns int256)
+- Def: #3 ["someFunc" @ input.sol:4:12] (function, type: function (int256) returns int256)
+- Def: #4 ["x" @ input.sol:4:25] (parameter, type: int256)
 - Def: #5 ["farg" @ input.sol:5:9] (variable, type: int256)
 - Def: #6 ["literal" @ input.sol:6:9] (variable, type: int256)
 - Def: #7 ["add" @ input.sol:9:12] (function, type: function (int256) returns int256)
@@ -14,7 +14,7 @@ Definitions (8):
 
 References (3):
 - Ref: ["add" @ input.sol:5:16] -> #7
-- Ref: ["x" @ input.sol:5:20] -> #3
+- Ref: ["x" @ input.sol:5:20] -> #4
 - Ref: ["add" @ input.sol:6:19] -> #7
 
 ------------------------------------------------------------------------
@@ -35,16 +35,16 @@ Bindings:
     │ 
   4 │   function someFunc(int x) returns (int) {
     │            ────┬───     ┬  
-    │                ╰─────────── name: 4
+    │                ╰─────────── name: 3
     │                         │  
-    │                         ╰── name: 3
+    │                         ╰── name: 4
   5 │     int farg = add(x);
     │         ──┬─   ─┬─ ┬  
     │           ╰─────────── name: 5
     │                 │  │  
     │                 ╰───── ref: 7
     │                    │  
-    │                    ╰── ref: 3
+    │                    ╰── ref: 4
   6 │     int literal = add(3);
     │         ───┬───   ─┬─  
     │            ╰─────────── name: 6

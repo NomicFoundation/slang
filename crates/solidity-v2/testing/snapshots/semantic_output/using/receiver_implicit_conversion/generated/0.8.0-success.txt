@@ -6,8 +6,8 @@ Definitions (8):
 - Def: #3 ["nopMemory" @ input.sol:3:14] (function, type: function (bytes memory) returns void)
 - Def: #4 ["Test" @ input.sol:6:10] (contract)
 - Def: #5 ["s" @ input.sol:8:11] (state var, type: bytes storage)
-- Def: #6 ["c" @ input.sol:9:34] (parameter, type: bytes calldata)
-- Def: #7 ["test" @ input.sol:9:14] (function, type: function (bytes calldata) returns void)
+- Def: #6 ["test" @ input.sol:9:14] (function, type: function (bytes calldata) returns void)
+- Def: #7 ["c" @ input.sol:9:34] (parameter, type: bytes calldata)
 - Def: #8 ["m" @ input.sol:10:22] (variable, type: bytes memory)
 
 ------------------------------------------------------------------------
@@ -18,9 +18,9 @@ References (13):
 - Ref: ["nopCalldata" @ input.sol:11:11] -> #2
 - Ref: ["m" @ input.sol:12:9] -> #8
 - Ref: ["nopMemory" @ input.sol:12:11] -> #3
-- Ref: ["c" @ input.sol:13:9] -> #6
+- Ref: ["c" @ input.sol:13:9] -> #7
 - Ref: ["nopCalldata" @ input.sol:13:11] -> #2
-- Ref: ["c" @ input.sol:14:9] -> #6
+- Ref: ["c" @ input.sol:14:9] -> #7
 - Ref: ["nopMemory" @ input.sol:14:11] -> #3
 - Ref: ["s" @ input.sol:15:9] -> #5
 - Ref: ["nopCalldata" @ input.sol:15:11] -> #2
@@ -57,9 +57,9 @@ Bindings:
     │           ╰── name: 5
   9 │     function test(bytes calldata c) public {
     │              ──┬─                ┬  
-    │                ╰──────────────────── name: 7
+    │                ╰──────────────────── name: 6
     │                                  │  
-    │                                  ╰── name: 6
+    │                                  ╰── name: 7
  10 │         bytes memory m;
     │                      ┬  
     │                      ╰── name: 8
@@ -75,12 +75,12 @@ Bindings:
     │               ╰────── ref: 3
  13 │         c.nopCalldata();
     │         ┬ ─────┬─────  
-    │         ╰────────────── ref: 6
+    │         ╰────────────── ref: 7
     │                │       
     │                ╰─────── ref: 2
  14 │         c.nopMemory();
     │         ┬ ────┬────  
-    │         ╰──────────── ref: 6
+    │         ╰──────────── ref: 7
     │               │      
     │               ╰────── ref: 3
  15 │         s.nopCalldata();

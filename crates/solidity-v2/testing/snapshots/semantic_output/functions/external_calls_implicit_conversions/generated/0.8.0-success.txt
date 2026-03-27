@@ -4,12 +4,12 @@ Definitions (14):
 - Def: #1 ["IFoo" @ input.sol:1:11] (interface)
 - Def: #2 ["AStruct" @ input.sol:2:12] (struct)
 - Def: #3 ["token" @ input.sol:3:17] (struct member, type: address)
-- Def: #4 ["aStruct" @ input.sol:6:35] (parameter, type: AStruct memory)
-- Def: #5 ["witnessString" @ input.sol:6:60] (parameter, type: string calldata)
-- Def: #6 ["doFoo" @ input.sol:6:14] (function, type: function (AStruct memory, string calldata) returns void)
-- Def: #7 ["someStructs" @ input.sol:7:37] (parameter, type: AStruct memory[] memory)
-- Def: #8 ["witnessString" @ input.sol:7:66] (parameter, type: string calldata)
-- Def: #9 ["doFoo" @ input.sol:7:14] (function, type: function (AStruct memory[] memory, string calldata) returns void)
+- Def: #4 ["doFoo" @ input.sol:6:14] (function, type: function (AStruct memory, string calldata) returns void)
+- Def: #5 ["aStruct" @ input.sol:6:35] (parameter, type: AStruct memory)
+- Def: #6 ["witnessString" @ input.sol:6:60] (parameter, type: string calldata)
+- Def: #7 ["doFoo" @ input.sol:7:14] (function, type: function (AStruct memory[] memory, string calldata) returns void)
+- Def: #8 ["someStructs" @ input.sol:7:37] (parameter, type: AStruct memory[] memory)
+- Def: #9 ["witnessString" @ input.sol:7:66] (parameter, type: string calldata)
 - Def: #10 ["Test" @ input.sol:10:10] (contract)
 - Def: #11 ["myFoo" @ input.sol:11:10] (state var, type: IFoo)
 - Def: #12 ["myWitness" @ input.sol:12:12] (state var, type: string storage)
@@ -25,10 +25,10 @@ References (11):
 - Ref: ["IFoo" @ input.sol:16:9] -> #1
 - Ref: ["AStruct" @ input.sol:16:14] -> #2
 - Ref: ["myFoo" @ input.sol:18:9] -> #11
-- Ref: ["doFoo" @ input.sol:18:15] -> #9
-- Ref: ["someStructs" @ input.sol:19:13] -> #7
+- Ref: ["doFoo" @ input.sol:18:15] -> #7
+- Ref: ["someStructs" @ input.sol:19:13] -> #8
 - Ref: ["someStructs" @ input.sol:19:26] -> #14
-- Ref: ["witnessString" @ input.sol:20:13] -> #8
+- Ref: ["witnessString" @ input.sol:20:13] -> #9
 - Ref: ["myWitness" @ input.sol:20:28] -> #12
 
 ------------------------------------------------------------------------
@@ -52,22 +52,22 @@ Bindings:
     │ 
   6 │     function doFoo(AStruct memory aStruct, string calldata witnessString) external;
     │              ──┬── ───┬───        ───┬───                  ──────┬──────  
-    │                ╰────────────────────────────────────────────────────────── name: 6
+    │                ╰────────────────────────────────────────────────────────── name: 4
     │                       │              │                           │        
     │                       ╰─────────────────────────────────────────────────── ref: 2
     │                                      │                           │        
-    │                                      ╰──────────────────────────────────── name: 4
+    │                                      ╰──────────────────────────────────── name: 5
     │                                                                  │        
-    │                                                                  ╰──────── name: 5
+    │                                                                  ╰──────── name: 6
   7 │     function doFoo(AStruct[] memory someStructs, string calldata witnessString) external;
     │              ──┬── ───┬───          ─────┬─────                  ──────┬──────  
-    │                ╰──────────────────────────────────────────────────────────────── name: 9
+    │                ╰──────────────────────────────────────────────────────────────── name: 7
     │                       │                  │                             │        
     │                       ╰───────────────────────────────────────────────────────── ref: 2
     │                                          │                             │        
-    │                                          ╰────────────────────────────────────── name: 7
+    │                                          ╰────────────────────────────────────── name: 8
     │                                                                        │        
-    │                                                                        ╰──────── name: 8
+    │                                                                        ╰──────── name: 9
     │ 
  10 │ contract Test {
     │          ──┬─  
@@ -97,15 +97,15 @@ Bindings:
     │         ──┬── ──┬──  
     │           ╰────────── ref: 11
     │                 │    
-    │                 ╰──── ref: 9
+    │                 ╰──── ref: 7
  19 │             someStructs: someStructs,
     │             ─────┬─────  ─────┬─────  
-    │                  ╰──────────────────── ref: 7
+    │                  ╰──────────────────── ref: 8
     │                               │       
     │                               ╰─────── ref: 14
  20 │             witnessString: myWitness
     │             ──────┬──────  ────┬────  
-    │                   ╰─────────────────── ref: 8
+    │                   ╰─────────────────── ref: 9
     │                                │      
     │                                ╰────── ref: 12
 ────╯

@@ -2,9 +2,9 @@
 
 Definitions (7):
 - Def: #1 ["AssemblyBlocks" @ input.sol:1:10] (contract)
-- Def: #2 ["x" @ input.sol:2:30] (parameter, type: uint256)
-- Def: #3 ["z" @ input.sol:2:57] (parameter, type: uint256)
-- Def: #4 ["yul_let" @ input.sol:2:14] (function, type: function (uint256) returns uint256)
+- Def: #2 ["yul_let" @ input.sol:2:14] (function, type: function (uint256) returns uint256)
+- Def: #3 ["x" @ input.sol:2:30] (parameter, type: uint256)
+- Def: #4 ["z" @ input.sol:2:57] (parameter, type: uint256)
 - Def: #5 ["zero" @ input.sol:4:17] (yul variable)
 - Def: #6 ["v" @ input.sol:5:17] (yul variable)
 - Def: #7 ["y" @ input.sol:7:21] (yul variable)
@@ -13,8 +13,8 @@ Definitions (7):
 
 References (8):
 - Ref: ["zero" @ input.sol:5:22] -> #5
-- Ref: ["x" @ input.sol:7:26] -> #2
-- Ref: ["z" @ input.sol:8:17] -> #3
+- Ref: ["x" @ input.sol:7:26] -> #3
+- Ref: ["z" @ input.sol:8:17] -> #4
 - Ref: ["v" @ input.sol:8:22] -> #6
 - Ref: ["v" @ input.sol:9:17] -> #6
 - Ref: ["y" @ input.sol:9:22] -> #7
@@ -35,11 +35,11 @@ Bindings:
     │                 ╰──────── name: 1
   2 │     function yul_let(uint256 x) public returns (uint256 z) {
     │              ───┬───         ┬                          ┬  
-    │                 ╰────────────────────────────────────────── name: 4
+    │                 ╰────────────────────────────────────────── name: 2
     │                              │                          │  
-    │                              ╰───────────────────────────── name: 2
+    │                              ╰───────────────────────────── name: 3
     │                                                         │  
-    │                                                         ╰── name: 3
+    │                                                         ╰── name: 4
     │ 
   4 │             let zero := 0
     │                 ──┬─  
@@ -54,10 +54,10 @@ Bindings:
     │                     ┬    ┬  
     │                     ╰─────── name: 7
     │                          │  
-    │                          ╰── ref: 2
+    │                          ╰── ref: 3
   8 │                 z := v
     │                 ┬    ┬  
-    │                 ╰─────── ref: 3
+    │                 ╰─────── ref: 4
     │                      │  
     │                      ╰── ref: 6
   9 │                 v := y

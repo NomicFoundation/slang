@@ -5,9 +5,9 @@ Definitions (8):
 - Def: #2 ["Campaign" @ input.sol:2:12] (struct)
 - Def: #3 ["beneficiary" @ input.sol:3:25] (struct member, type: address payable)
 - Def: #4 ["fundingGoal" @ input.sol:4:14] (struct member, type: uint256)
-- Def: #5 ["beneficiary" @ input.sol:7:42] (parameter, type: address payable)
-- Def: #6 ["goal" @ input.sol:7:60] (parameter, type: uint256)
-- Def: #7 ["newCampaign" @ input.sol:7:14] (function, type: function (address payable, uint256) returns void)
+- Def: #5 ["newCampaign" @ input.sol:7:14] (function, type: function (address payable, uint256) returns void)
+- Def: #6 ["beneficiary" @ input.sol:7:42] (parameter, type: address payable)
+- Def: #7 ["goal" @ input.sol:7:60] (parameter, type: uint256)
 - Def: #8 ["c" @ input.sol:8:26] (variable, type: Campaign storage)
 
 ------------------------------------------------------------------------
@@ -16,10 +16,10 @@ References (7):
 - Ref: ["Campaign" @ input.sol:8:9] -> #2
 - Ref: ["c" @ input.sol:9:9] -> #8
 - Ref: ["beneficiary" @ input.sol:9:11] -> #3
-- Ref: ["beneficiary" @ input.sol:9:25] -> #5
+- Ref: ["beneficiary" @ input.sol:9:25] -> #6
 - Ref: ["c" @ input.sol:10:9] -> #8
 - Ref: ["fundingGoal" @ input.sol:10:11] -> #4
-- Ref: ["goal" @ input.sol:10:25] -> #6
+- Ref: ["goal" @ input.sol:10:25] -> #7
 
 ------------------------------------------------------------------------
 
@@ -45,11 +45,11 @@ Bindings:
     │ 
   7 │     function newCampaign(address payable beneficiary, uint goal) public {
     │              ─────┬─────                 ─────┬─────       ──┬─  
-    │                   ╰────────────────────────────────────────────── name: 7
+    │                   ╰────────────────────────────────────────────── name: 5
     │                                               │              │   
-    │                                               ╰────────────────── name: 5
+    │                                               ╰────────────────── name: 6
     │                                                              │   
-    │                                                              ╰─── name: 6
+    │                                                              ╰─── name: 7
   8 │         Campaign storage c;
     │         ────┬───         ┬  
     │             ╰─────────────── ref: 2
@@ -61,12 +61,12 @@ Bindings:
     │                │             │       
     │                ╰───────────────────── ref: 3
     │                              │       
-    │                              ╰─────── ref: 5
+    │                              ╰─────── ref: 6
  10 │         c.fundingGoal = goal;
     │         ┬ ─────┬─────   ──┬─  
     │         ╰───────────────────── ref: 8
     │                │          │   
     │                ╰────────────── ref: 4
     │                           │   
-    │                           ╰─── ref: 6
+    │                           ╰─── ref: 7
 ────╯

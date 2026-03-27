@@ -11,9 +11,9 @@ Definitions (5):
 
 References (4):
 - Ref: ["Base" @ input.sol:4:20] -> #1
+- Ref: ["Middle" @ input.sol:5:18] -> #3
 - Ref: ["Base" @ input.sol:7:9] -> #1
 - Ref: ["in_base" @ input.sol:7:14] -> #2
-- Ref: ["Middle" @ input.sol:5:18] -> #3
 
 ------------------------------------------------------------------------
 

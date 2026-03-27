@@ -10,9 +10,9 @@ Definitions (12):
 - Def: #7 ["Outside" @ input.sol:8:9] (enum member of HitTest)
 - Def: #8 ["Box" @ input.sol:10:12] (struct)
 - Def: #9 ["hitTest" @ input.sol:11:61] (struct member, type: function (Coords memory) returns HitTest)
-- Def: #10 ["b" @ input.sol:14:35] (parameter, type: Box memory)
-- Def: #11 ["p" @ input.sol:14:52] (parameter, type: Coords memory)
-- Def: #12 ["insideBox" @ input.sol:14:14] (function, type: function (Box memory, Coords memory) returns bool)
+- Def: #10 ["insideBox" @ input.sol:14:14] (function, type: function (Box memory, Coords memory) returns bool)
+- Def: #11 ["b" @ input.sol:14:35] (parameter, type: Box memory)
+- Def: #12 ["p" @ input.sol:14:52] (parameter, type: Coords memory)
 
 ------------------------------------------------------------------------
 
@@ -21,9 +21,9 @@ References (9):
 - Ref: ["HitTest" @ input.sol:11:52] -> #5
 - Ref: ["Box" @ input.sol:14:24] -> #8
 - Ref: ["Coords" @ input.sol:14:38] -> #2
-- Ref: ["b" @ input.sol:15:16] -> #10
+- Ref: ["b" @ input.sol:15:16] -> #11
 - Ref: ["hitTest" @ input.sol:15:18] -> #9
-- Ref: ["p" @ input.sol:15:26] -> #11
+- Ref: ["p" @ input.sol:15:26] -> #12
 - Ref: ["HitTest" @ input.sol:15:32] -> #5
 - Ref: ["Inside" @ input.sol:15:40] -> #6
 
@@ -72,22 +72,22 @@ Bindings:
     │ 
  14 │     function insideBox(Box memory b, Coords memory p) public returns (bool) {
     │              ────┬──── ─┬─        ┬  ───┬──        ┬  
-    │                  ╰──────────────────────────────────── name: 12
+    │                  ╰──────────────────────────────────── name: 10
     │                         │         │     │          │  
     │                         ╰───────────────────────────── ref: 8
     │                                   │     │          │  
-    │                                   ╰─────────────────── name: 10
+    │                                   ╰─────────────────── name: 11
     │                                         │          │  
     │                                         ╰───────────── ref: 2
     │                                                    │  
-    │                                                    ╰── name: 11
+    │                                                    ╰── name: 12
  15 │         return b.hitTest(p) == HitTest.Inside;
     │                ┬ ───┬─── ┬     ───┬─── ───┬──  
-    │                ╰─────────────────────────────── ref: 10
+    │                ╰─────────────────────────────── ref: 11
     │                     │    │        │       │    
     │                     ╰────────────────────────── ref: 9
     │                          │        │       │    
-    │                          ╰───────────────────── ref: 11
+    │                          ╰───────────────────── ref: 12
     │                                   │       │    
     │                                   ╰──────────── ref: 5
     │                                           │    

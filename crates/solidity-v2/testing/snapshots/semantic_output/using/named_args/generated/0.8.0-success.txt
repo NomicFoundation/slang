@@ -2,26 +2,26 @@
 
 Definitions (7):
 - Def: #1 ["Test" @ input.sol:1:10] (contract)
-- Def: #2 ["x" @ input.sol:4:24] (parameter, type: uint256)
-- Def: #3 ["test" @ input.sol:4:14] (function, type: function (uint256) returns void)
+- Def: #2 ["test" @ input.sol:4:14] (function, type: function (uint256) returns void)
+- Def: #3 ["x" @ input.sol:4:24] (parameter, type: uint256)
 - Def: #4 ["Utils" @ input.sol:10:9] (library)
-- Def: #5 ["x" @ input.sol:11:27] (parameter, type: uint256)
-- Def: #6 ["a" @ input.sol:11:35] (parameter, type: uint256)
-- Def: #7 ["operate" @ input.sol:11:14] (function, type: function (uint256, uint256) returns uint256)
+- Def: #5 ["operate" @ input.sol:11:14] (function, type: function (uint256, uint256) returns uint256)
+- Def: #6 ["x" @ input.sol:11:27] (parameter, type: uint256)
+- Def: #7 ["a" @ input.sol:11:35] (parameter, type: uint256)
 
 ------------------------------------------------------------------------
 
 References (10):
 - Ref: ["Utils" @ input.sol:2:11] -> #4
-- Ref: ["x" @ input.sol:5:9] -> #2
-- Ref: ["operate" @ input.sol:5:11] -> #7
-- Ref: ["a" @ input.sol:5:20] -> #6
+- Ref: ["x" @ input.sol:5:9] -> #3
+- Ref: ["operate" @ input.sol:5:11] -> #5
+- Ref: ["a" @ input.sol:5:20] -> #7
 - Ref: ["Utils" @ input.sol:6:9] -> #4
-- Ref: ["operate" @ input.sol:6:15] -> #7
-- Ref: ["x" @ input.sol:6:24] -> #5
-- Ref: ["x" @ input.sol:6:27] -> #2
-- Ref: ["a" @ input.sol:6:30] -> #6
-- Ref: ["x" @ input.sol:12:16] -> #5
+- Ref: ["operate" @ input.sol:6:15] -> #5
+- Ref: ["x" @ input.sol:6:24] -> #6
+- Ref: ["x" @ input.sol:6:27] -> #3
+- Ref: ["a" @ input.sol:6:30] -> #7
+- Ref: ["x" @ input.sol:12:16] -> #6
 
 ------------------------------------------------------------------------
 
@@ -41,39 +41,39 @@ Bindings:
     │ 
   4 │     function test(uint x) public {
     │              ──┬─      ┬  
-    │                ╰────────── name: 3
+    │                ╰────────── name: 2
     │                        │  
-    │                        ╰── name: 2
+    │                        ╰── name: 3
   5 │         x.operate({a: 1});
     │         ┬ ───┬───  ┬  
-    │         ╰───────────── ref: 2
+    │         ╰───────────── ref: 3
     │              │     │  
-    │              ╰──────── ref: 7
+    │              ╰──────── ref: 5
     │                    │  
-    │                    ╰── ref: 6
+    │                    ╰── ref: 7
   6 │         Utils.operate({x: x, a: 1});
     │         ──┬── ───┬───  ┬  ┬  ┬  
     │           ╰───────────────────── ref: 4
     │                  │     │  │  │  
-    │                  ╰────────────── ref: 7
+    │                  ╰────────────── ref: 5
     │                        │  │  │  
-    │                        ╰──────── ref: 5
+    │                        ╰──────── ref: 6
     │                           │  │  
-    │                           ╰───── ref: 2
+    │                           ╰───── ref: 3
     │                              │  
-    │                              ╰── ref: 6
+    │                              ╰── ref: 7
     │ 
  10 │ library Utils {
     │         ──┬──  
     │           ╰──── name: 4
  11 │     function operate(uint x, uint a) public returns (uint) {
     │              ───┬───      ┬       ┬  
-    │                 ╰──────────────────── name: 7
+    │                 ╰──────────────────── name: 5
     │                           │       │  
-    │                           ╰────────── name: 5
+    │                           ╰────────── name: 6
     │                                   │  
-    │                                   ╰── name: 6
+    │                                   ╰── name: 7
  12 │         return x;
     │                ┬  
-    │                ╰── ref: 5
+    │                ╰── ref: 6
 ────╯

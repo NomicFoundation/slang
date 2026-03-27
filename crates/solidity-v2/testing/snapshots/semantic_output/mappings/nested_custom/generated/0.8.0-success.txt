@@ -8,13 +8,13 @@ Definitions (14):
 - Def: #5 ["Values" @ input.sol:3:12] (struct)
 - Def: #6 ["balance" @ input.sol:4:14] (struct member, type: uint256)
 - Def: #7 ["vaults" @ input.sol:6:49] (state var, type: address => Kind => Values storage)
-- Def: #8 ["_addr" @ input.sol:8:28] (parameter, type: address)
-- Def: #9 ["_kind" @ input.sol:8:40] (parameter, type: Kind)
-- Def: #10 ["_amount" @ input.sol:8:52] (parameter, type: uint256)
-- Def: #11 ["store" @ input.sol:8:14] (function, type: function (address, Kind, uint256) returns void)
-- Def: #12 ["_addr" @ input.sol:12:30] (parameter, type: address)
-- Def: #13 ["_kind" @ input.sol:12:42] (parameter, type: Kind)
-- Def: #14 ["balance" @ input.sol:12:14] (function, type: function (address, Kind) returns uint256)
+- Def: #8 ["store" @ input.sol:8:14] (function, type: function (address, Kind, uint256) returns void)
+- Def: #9 ["_addr" @ input.sol:8:28] (parameter, type: address)
+- Def: #10 ["_kind" @ input.sol:8:40] (parameter, type: Kind)
+- Def: #11 ["_amount" @ input.sol:8:52] (parameter, type: uint256)
+- Def: #12 ["balance" @ input.sol:12:14] (function, type: function (address, Kind) returns uint256)
+- Def: #13 ["_addr" @ input.sol:12:30] (parameter, type: address)
+- Def: #14 ["_kind" @ input.sol:12:42] (parameter, type: Kind)
 
 ------------------------------------------------------------------------
 
@@ -23,14 +23,14 @@ References (13):
 - Ref: ["Values" @ input.sol:6:40] -> #5
 - Ref: ["Kind" @ input.sol:8:35] -> #2
 - Ref: ["vaults" @ input.sol:9:9] -> #7
-- Ref: ["_addr" @ input.sol:9:16] -> #8
-- Ref: ["_kind" @ input.sol:9:23] -> #9
+- Ref: ["_addr" @ input.sol:9:16] -> #9
+- Ref: ["_kind" @ input.sol:9:23] -> #10
 - Ref: ["balance" @ input.sol:9:30] -> #6
-- Ref: ["_amount" @ input.sol:9:41] -> #10
+- Ref: ["_amount" @ input.sol:9:41] -> #11
 - Ref: ["Kind" @ input.sol:12:37] -> #2
 - Ref: ["vaults" @ input.sol:13:16] -> #7
-- Ref: ["_addr" @ input.sol:13:23] -> #12
-- Ref: ["_kind" @ input.sol:13:30] -> #13
+- Ref: ["_addr" @ input.sol:13:23] -> #13
+- Ref: ["_kind" @ input.sol:13:30] -> #14
 - Ref: ["balance" @ input.sol:13:37] -> #6
 
 ------------------------------------------------------------------------
@@ -69,43 +69,43 @@ Bindings:
     │ 
   8 │     function store(address _addr, Kind _kind, uint _amount) public {
     │              ──┬──         ──┬──  ──┬─ ──┬──       ───┬───  
-    │                ╰──────────────────────────────────────────── name: 11
+    │                ╰──────────────────────────────────────────── name: 8
     │                              │      │    │            │     
-    │                              ╰────────────────────────────── name: 8
+    │                              ╰────────────────────────────── name: 9
     │                                     │    │            │     
     │                                     ╰─────────────────────── ref: 2
     │                                          │            │     
-    │                                          ╰────────────────── name: 9
+    │                                          ╰────────────────── name: 10
     │                                                       │     
-    │                                                       ╰───── name: 10
+    │                                                       ╰───── name: 11
   9 │         vaults[_addr][_kind].balance += _amount;
     │         ───┬── ──┬──  ──┬──  ───┬───    ───┬───  
     │            ╰───────────────────────────────────── ref: 7
     │                  │      │       │          │     
-    │                  ╰─────────────────────────────── ref: 8
+    │                  ╰─────────────────────────────── ref: 9
     │                         │       │          │     
-    │                         ╰──────────────────────── ref: 9
+    │                         ╰──────────────────────── ref: 10
     │                                 │          │     
     │                                 ╰──────────────── ref: 6
     │                                            │     
-    │                                            ╰───── ref: 10
+    │                                            ╰───── ref: 11
     │ 
  12 │     function balance(address _addr, Kind _kind) public returns (uint) {
     │              ───┬───         ──┬──  ──┬─ ──┬──  
-    │                 ╰─────────────────────────────── name: 14
+    │                 ╰─────────────────────────────── name: 12
     │                                │      │    │    
-    │                                ╰──────────────── name: 12
+    │                                ╰──────────────── name: 13
     │                                       │    │    
     │                                       ╰───────── ref: 2
     │                                            │    
-    │                                            ╰──── name: 13
+    │                                            ╰──── name: 14
  13 │         return vaults[_addr][_kind].balance;
     │                ───┬── ──┬──  ──┬──  ───┬───  
     │                   ╰────────────────────────── ref: 7
     │                         │      │       │     
-    │                         ╰──────────────────── ref: 12
+    │                         ╰──────────────────── ref: 13
     │                                │       │     
-    │                                ╰───────────── ref: 13
+    │                                ╰───────────── ref: 14
     │                                        │     
     │                                        ╰───── ref: 6
 ────╯

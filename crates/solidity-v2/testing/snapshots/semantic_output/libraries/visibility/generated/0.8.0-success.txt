@@ -7,8 +7,8 @@ Definitions (13):
 - Def: #4 ["Two" @ input.sol:2:24] (enum member of Choice)
 - Def: #5 ["Book" @ input.sol:3:12] (struct)
 - Def: #6 ["author" @ input.sol:3:26] (struct member, type: string (inherited))
-- Def: #7 ["author" @ input.sol:5:39] (parameter, type: string memory)
-- Def: #8 ["build_book" @ input.sol:5:14] (function, type: function (string memory) returns Book memory)
+- Def: #7 ["build_book" @ input.sol:5:14] (function, type: function (string memory) returns Book memory)
+- Def: #8 ["author" @ input.sol:5:39] (parameter, type: string memory)
 - Def: #9 ["favorite_choice" @ input.sol:9:14] (function, type: function () returns Choice)
 - Def: #10 ["UsingLib" @ input.sol:14:10] (contract)
 - Def: #11 ["choice" @ input.sol:15:18] (state var, type: Choice)
@@ -20,7 +20,7 @@ Definitions (13):
 References (16):
 - Ref: ["Book" @ input.sol:5:63] -> #5
 - Ref: ["Book" @ input.sol:6:16] -> #5
-- Ref: ["author" @ input.sol:6:21] -> #7
+- Ref: ["author" @ input.sol:6:21] -> #8
 - Ref: ["Choice" @ input.sol:9:48] -> #2
 - Ref: ["Choice" @ input.sol:10:16] -> #2
 - Ref: ["One" @ input.sol:10:23] -> #3
@@ -30,7 +30,7 @@ References (16):
 - Ref: ["Book" @ input.sol:16:11] -> #5
 - Ref: ["book" @ input.sol:19:9] -> #12
 - Ref: ["MyLib" @ input.sol:19:16] -> #1
-- Ref: ["build_book" @ input.sol:19:22] -> #8
+- Ref: ["build_book" @ input.sol:19:22] -> #7
 - Ref: ["choice" @ input.sol:20:9] -> #11
 - Ref: ["MyLib" @ input.sol:20:18] -> #1
 - Ref: ["favorite_choice" @ input.sol:20:24] -> #9
@@ -62,16 +62,16 @@ Bindings:
     │ 
   5 │     function build_book(string memory author) public returns (Book memory) {
     │              ─────┬────               ───┬──                  ──┬─  
-    │                   ╰───────────────────────────────────────────────── name: 8
+    │                   ╰───────────────────────────────────────────────── name: 7
     │                                          │                      │   
-    │                                          ╰────────────────────────── name: 7
+    │                                          ╰────────────────────────── name: 8
     │                                                                 │   
     │                                                                 ╰─── ref: 5
   6 │         return Book(author);
     │                ──┬─ ───┬──  
     │                  ╰────────── ref: 5
     │                        │    
-    │                        ╰──── ref: 7
+    │                        ╰──── ref: 8
     │ 
   9 │     function favorite_choice() public returns (Choice) {
     │              ───────┬───────                   ───┬──  
@@ -111,7 +111,7 @@ Bindings:
     │                  │        │      
     │                  ╰─────────────── ref: 1
     │                           │      
-    │                           ╰────── ref: 8
+    │                           ╰────── ref: 7
  20 │         choice = MyLib.favorite_choice();
     │         ───┬──   ──┬── ───────┬───────  
     │            ╰──────────────────────────── ref: 11

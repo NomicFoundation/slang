@@ -10,8 +10,8 @@ Definitions (4):
 
 References (3):
 - Ref: ["_" @ input.sol:3:9] -> built-in
-- Ref: ["_" @ input.sol:9:9] -> #3
 - Ref: ["aModifier" @ input.sol:8:20] -> #2
+- Ref: ["_" @ input.sol:9:9] -> #3
 
 ------------------------------------------------------------------------
 

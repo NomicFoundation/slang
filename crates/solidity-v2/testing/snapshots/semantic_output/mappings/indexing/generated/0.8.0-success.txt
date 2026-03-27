@@ -5,15 +5,15 @@ Definitions (6):
 - Def: #2 ["Value" @ input.sol:2:12] (struct)
 - Def: #3 ["value" @ input.sol:3:14] (struct member, type: uint256)
 - Def: #4 ["values" @ input.sol:5:28] (state var, type: uint256 => Value storage)
-- Def: #5 ["_id" @ input.sol:7:24] (parameter, type: uint256)
-- Def: #6 ["test" @ input.sol:7:14] (function, type: function (uint256) returns uint256)
+- Def: #5 ["test" @ input.sol:7:14] (function, type: function (uint256) returns uint256)
+- Def: #6 ["_id" @ input.sol:7:24] (parameter, type: uint256)
 
 ------------------------------------------------------------------------
 
 References (4):
 - Ref: ["Value" @ input.sol:5:21] -> #2
 - Ref: ["values" @ input.sol:8:16] -> #4
-- Ref: ["_id" @ input.sol:8:23] -> #5
+- Ref: ["_id" @ input.sol:8:23] -> #6
 - Ref: ["value" @ input.sol:8:28] -> #3
 
 ------------------------------------------------------------------------
@@ -43,14 +43,14 @@ Bindings:
    │ 
  7 │     function test(uint _id) public returns (uint) {
    │              ──┬─      ─┬─  
-   │                ╰──────────── name: 6
+   │                ╰──────────── name: 5
    │                         │   
-   │                         ╰─── name: 5
+   │                         ╰─── name: 6
  8 │         return values[_id].value;
    │                ───┬── ─┬─  ──┬──  
    │                   ╰─────────────── ref: 4
    │                        │     │    
-   │                        ╰────────── ref: 5
+   │                        ╰────────── ref: 6
    │                              │    
    │                              ╰──── ref: 3
 ───╯

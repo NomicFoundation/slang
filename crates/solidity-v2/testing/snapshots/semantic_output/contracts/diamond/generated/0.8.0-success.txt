@@ -14,9 +14,9 @@ Definitions (7):
 References (5):
 - Ref: ["A" @ input.sol:6:15] -> #1
 - Ref: ["A" @ input.sol:11:15] -> #1
-- Ref: ["foo" @ input.sol:16:15] -> #4
 - Ref: ["B" @ input.sol:14:15] -> #3
 - Ref: ["C" @ input.sol:14:18] -> #5
+- Ref: ["foo" @ input.sol:16:15] -> #4
 
 ------------------------------------------------------------------------
 

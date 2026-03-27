@@ -4,8 +4,8 @@ Definitions (5):
 - Def: #1 ["IFoo" @ input.sol:1:11] (interface)
 - Def: #2 ["Bar" @ input.sol:2:12] (struct)
 - Def: #3 ["value" @ input.sol:3:13] (struct member, type: int256)
-- Def: #4 ["bar" @ input.sol:5:30] (parameter, type: Bar memory)
-- Def: #5 ["test" @ input.sol:5:14] (function, type: function (Bar memory) returns void)
+- Def: #4 ["test" @ input.sol:5:14] (function, type: function (Bar memory) returns void)
+- Def: #5 ["bar" @ input.sol:5:30] (parameter, type: Bar memory)
 
 ------------------------------------------------------------------------
 
@@ -33,9 +33,9 @@ Bindings:
    │ 
  5 │     function test(Bar memory bar);
    │              ──┬─ ─┬─        ─┬─  
-   │                ╰────────────────── name: 5
+   │                ╰────────────────── name: 4
    │                    │          │   
    │                    ╰────────────── ref: 2
    │                               │   
-   │                               ╰─── name: 4
+   │                               ╰─── name: 5
 ───╯

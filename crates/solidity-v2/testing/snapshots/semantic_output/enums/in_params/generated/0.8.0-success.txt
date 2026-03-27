@@ -5,10 +5,10 @@ Definitions (9):
 - Def: #2 ["Answer" @ input.sol:2:10] (enum)
 - Def: #3 ["Yes" @ input.sol:2:19] (enum member of Answer)
 - Def: #4 ["No" @ input.sol:2:24] (enum member of Answer)
-- Def: #5 ["ans" @ input.sol:4:31] (parameter, type: Answer)
-- Def: #6 ["setAnswer" @ input.sol:4:14] (function, type: function (Answer) returns void)
-- Def: #7 ["ans" @ input.sol:7:42] (parameter, type: Answer)
-- Def: #8 ["getAnswer" @ input.sol:7:14] (function, type: function () returns Answer)
+- Def: #5 ["setAnswer" @ input.sol:4:14] (function, type: function (Answer) returns void)
+- Def: #6 ["ans" @ input.sol:4:31] (parameter, type: Answer)
+- Def: #7 ["getAnswer" @ input.sol:7:14] (function, type: function () returns Answer)
+- Def: #8 ["ans" @ input.sol:7:42] (parameter, type: Answer)
 - Def: #9 ["getOtherAnswer" @ input.sol:11:14] (function, type: function () returns Answer)
 
 ------------------------------------------------------------------------
@@ -16,7 +16,7 @@ Definitions (9):
 References (8):
 - Ref: ["Answer" @ input.sol:4:24] -> #2
 - Ref: ["Answer" @ input.sol:7:35] -> #2
-- Ref: ["ans" @ input.sol:8:9] -> #7
+- Ref: ["ans" @ input.sol:8:9] -> #8
 - Ref: ["Answer" @ input.sol:8:15] -> #2
 - Ref: ["Yes" @ input.sol:8:22] -> #3
 - Ref: ["Answer" @ input.sol:11:40] -> #2
@@ -45,22 +45,22 @@ Bindings:
     │ 
   4 │     function setAnswer(Answer ans) {
     │              ────┬──── ───┬── ─┬─  
-    │                  ╰───────────────── name: 6
+    │                  ╰───────────────── name: 5
     │                           │    │   
     │                           ╰──────── ref: 2
     │                                │   
-    │                                ╰─── name: 5
+    │                                ╰─── name: 6
     │ 
   7 │     function getAnswer() returns (Answer ans) {
     │              ────┬────            ───┬── ─┬─  
-    │                  ╰──────────────────────────── name: 8
+    │                  ╰──────────────────────────── name: 7
     │                                      │    │   
     │                                      ╰──────── ref: 2
     │                                           │   
-    │                                           ╰─── name: 7
+    │                                           ╰─── name: 8
   8 │         ans = Answer.Yes;
     │         ─┬─   ───┬── ─┬─  
-    │          ╰──────────────── ref: 7
+    │          ╰──────────────── ref: 8
     │                  │    │   
     │                  ╰──────── ref: 2
     │                       │   

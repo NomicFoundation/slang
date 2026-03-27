@@ -4,18 +4,18 @@ Definitions (5):
 - Def: #1 ["Test" @ input.sol:1:10] (contract)
 - Def: #2 ["test" @ input.sol:4:14] (function, type: function () returns void)
 - Def: #3 ["Utils" @ input.sol:10:9] (library)
-- Def: #4 ["x" @ input.sol:11:23] (parameter, type: uint256)
-- Def: #5 ["nop" @ input.sol:11:14] (function, type: function (uint256) returns void)
+- Def: #4 ["nop" @ input.sol:11:14] (function, type: function (uint256) returns void)
+- Def: #5 ["x" @ input.sol:11:23] (parameter, type: uint256)
 
 ------------------------------------------------------------------------
 
 References (6):
 - Ref: ["Utils" @ input.sol:2:11] -> #3
 - Ref: ["min" @ input.sol:5:20] -> built-in
-- Ref: ["nop" @ input.sol:5:24] -> #5
+- Ref: ["nop" @ input.sol:5:24] -> #4
 - Ref: ["max" @ input.sol:6:20] -> built-in
-- Ref: ["nop" @ input.sol:6:24] -> #5
-- Ref: ["x" @ input.sol:12:16] -> #4
+- Ref: ["nop" @ input.sol:6:24] -> #4
+- Ref: ["x" @ input.sol:12:16] -> #5
 
 ------------------------------------------------------------------------
 
@@ -40,22 +40,22 @@ Bindings:
     │                    ─┬─ ─┬─  
     │                     ╰─────── built-in
     │                         │   
-    │                         ╰─── ref: 5
+    │                         ╰─── ref: 4
   6 │         type(uint).max.nop();
     │                    ─┬─ ─┬─  
     │                     ╰─────── built-in
     │                         │   
-    │                         ╰─── ref: 5
+    │                         ╰─── ref: 4
     │ 
  10 │ library Utils {
     │         ──┬──  
     │           ╰──── name: 3
  11 │     function nop(uint x) internal {
     │              ─┬─      ┬  
-    │               ╰────────── name: 5
+    │               ╰────────── name: 4
     │                       │  
-    │                       ╰── name: 4
+    │                       ╰── name: 5
  12 │         return x;
     │                ┬  
-    │                ╰── ref: 4
+    │                ╰── ref: 5
 ────╯

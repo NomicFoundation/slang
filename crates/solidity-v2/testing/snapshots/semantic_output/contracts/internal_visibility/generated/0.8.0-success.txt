@@ -11,12 +11,12 @@ Definitions (6):
 ------------------------------------------------------------------------
 
 References (6):
+- Ref: ["Ownable" @ input.sol:6:18] -> #1
 - Ref: ["owner" @ input.sol:8:9] -> #2
 - Ref: ["default_visibility" @ input.sol:9:9] -> #3
 - Ref: ["_internal_only" @ input.sol:10:9] -> #4
 - Ref: ["Ownable" @ input.sol:11:9] -> #1
 - Ref: ["_internal_only" @ input.sol:11:17] -> #4
-- Ref: ["Ownable" @ input.sol:6:18] -> #1
 
 ------------------------------------------------------------------------
 

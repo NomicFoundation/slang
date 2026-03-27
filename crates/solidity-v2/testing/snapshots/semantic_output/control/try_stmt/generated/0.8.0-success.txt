@@ -2,17 +2,17 @@
 
 Definitions (15):
 - Def: #1 ["DataFeed" @ input.sol:1:11] (interface)
-- Def: #2 ["token" @ input.sol:1:47] (parameter, type: address)
-- Def: #3 ["value" @ input.sol:1:77] (parameter, type: uint256)
-- Def: #4 ["getData" @ input.sol:1:31] (function, type: function (address) returns uint256)
+- Def: #2 ["getData" @ input.sol:1:31] (function, type: function (address) returns uint256)
+- Def: #3 ["token" @ input.sol:1:47] (parameter, type: address)
+- Def: #4 ["value" @ input.sol:1:77] (parameter, type: uint256)
 - Def: #5 ["FeedConsumer" @ input.sol:3:10] (contract)
 - Def: #6 ["feed" @ input.sol:4:14] (state var, type: DataFeed)
 - Def: #7 ["errorCount" @ input.sol:5:10] (state var, type: uint256)
 - Def: #8 ["lastValue" @ input.sol:6:10] (state var, type: uint256)
-- Def: #9 ["token" @ input.sol:7:27] (parameter, type: address)
-- Def: #10 ["value" @ input.sol:7:55] (parameter, type: uint256)
-- Def: #11 ["success" @ input.sol:7:67] (parameter, type: bool)
-- Def: #12 ["rate" @ input.sol:7:14] (function, type: function (address) returns (uint256, bool))
+- Def: #9 ["rate" @ input.sol:7:14] (function, type: function (address) returns (uint256, bool))
+- Def: #10 ["token" @ input.sol:7:27] (parameter, type: address)
+- Def: #11 ["value" @ input.sol:7:55] (parameter, type: uint256)
+- Def: #12 ["success" @ input.sol:7:67] (parameter, type: bool)
 - Def: #13 ["last_reason" @ input.sol:8:23] (variable, type: string memory)
 - Def: #14 ["v" @ input.sol:9:47] (parameter, type: uint256)
 - Def: #15 ["reason" @ input.sol:12:37] (parameter, type: string memory)
@@ -22,8 +22,8 @@ Definitions (15):
 References (12):
 - Ref: ["DataFeed" @ input.sol:4:5] -> #1
 - Ref: ["feed" @ input.sol:9:13] -> #6
-- Ref: ["getData" @ input.sol:9:18] -> #4
-- Ref: ["token" @ input.sol:9:26] -> #9
+- Ref: ["getData" @ input.sol:9:18] -> #2
+- Ref: ["token" @ input.sol:9:26] -> #10
 - Ref: ["lastValue" @ input.sol:10:13] -> #8
 - Ref: ["v" @ input.sol:10:25] -> #14
 - Ref: ["v" @ input.sol:11:21] -> #14
@@ -46,11 +46,11 @@ Bindings:
     │           ────┬───            ───┬───         ──┬──                         ──┬──  
     │               ╰──────────────────────────────────────────────────────────────────── name: 1
     │                                  │              │                             │    
-    │                                  ╰───────────────────────────────────────────────── name: 4
+    │                                  ╰───────────────────────────────────────────────── name: 2
     │                                                 │                             │    
-    │                                                 ╰────────────────────────────────── name: 2
+    │                                                 ╰────────────────────────────────── name: 3
     │                                                                               │    
-    │                                                                               ╰──── name: 3
+    │                                                                               ╰──── name: 4
     │ 
   3 │ contract FeedConsumer {
     │          ──────┬─────  
@@ -68,13 +68,13 @@ Bindings:
     │              ╰────── name: 8
   7 │     function rate(address token) public returns (uint value, bool success) {
     │              ──┬─         ──┬──                       ──┬──       ───┬───  
-    │                ╰─────────────────────────────────────────────────────────── name: 12
+    │                ╰─────────────────────────────────────────────────────────── name: 9
     │                             │                           │            │     
-    │                             ╰────────────────────────────────────────────── name: 9
+    │                             ╰────────────────────────────────────────────── name: 10
     │                                                         │            │     
-    │                                                         ╰────────────────── name: 10
+    │                                                         ╰────────────────── name: 11
     │                                                                      │     
-    │                                                                      ╰───── name: 11
+    │                                                                      ╰───── name: 12
   8 │         string memory last_reason;
     │                       ─────┬─────  
     │                            ╰─────── name: 13
@@ -82,9 +82,9 @@ Bindings:
     │             ──┬─ ───┬─── ──┬──                ┬  
     │               ╰────────────────────────────────── ref: 6
     │                     │      │                  │  
-    │                     ╰──────────────────────────── ref: 4
+    │                     ╰──────────────────────────── ref: 2
     │                            │                  │  
-    │                            ╰───────────────────── ref: 9
+    │                            ╰───────────────────── ref: 10
     │                                               │  
     │                                               ╰── name: 14
  10 │             lastValue = v;

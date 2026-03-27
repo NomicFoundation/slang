@@ -2,21 +2,21 @@
 
 Definitions (7):
 - Def: #1 ["Lib" @ input.sol:1:9] (library)
-- Def: #2 ["x" @ input.sol:2:26] (parameter, type: uint256)
-- Def: #3 ["nop" @ input.sol:2:14] (function, type: function (uint256) returns void)
+- Def: #2 ["nop" @ input.sol:2:14] (function, type: function (uint256) returns void)
+- Def: #3 ["x" @ input.sol:2:26] (parameter, type: uint256)
 - Def: #4 ["Test" @ input.sol:4:10] (contract)
-- Def: #5 ["x" @ input.sol:6:27] (parameter, type: uint256)
-- Def: #6 ["y" @ input.sol:6:54] (parameter, type: uint256)
-- Def: #7 ["test" @ input.sol:6:14] (function, type: function (uint256) returns uint256)
+- Def: #5 ["test" @ input.sol:6:14] (function, type: function (uint256) returns uint256)
+- Def: #6 ["x" @ input.sol:6:27] (parameter, type: uint256)
+- Def: #7 ["y" @ input.sol:6:54] (parameter, type: uint256)
 
 ------------------------------------------------------------------------
 
 References (5):
 - Ref: ["Lib" @ input.sol:5:11] -> #1
-- Ref: ["x" @ input.sol:7:9] -> #5
-- Ref: ["nop" @ input.sol:7:11] -> #3
-- Ref: ["y" @ input.sol:8:9] -> #6
-- Ref: ["nop" @ input.sol:8:11] -> #3
+- Ref: ["x" @ input.sol:7:9] -> #6
+- Ref: ["nop" @ input.sol:7:11] -> #2
+- Ref: ["y" @ input.sol:8:9] -> #7
+- Ref: ["nop" @ input.sol:8:11] -> #2
 
 ------------------------------------------------------------------------
 
@@ -32,9 +32,9 @@ Bindings:
    │          ╰─── name: 1
  2 │     function nop(uint256 x) internal {}
    │              ─┬─         ┬  
-   │               ╰───────────── name: 3
+   │               ╰───────────── name: 2
    │                          │  
-   │                          ╰── name: 2
+   │                          ╰── name: 3
    │ 
  4 │ contract Test {
    │          ──┬─  
@@ -44,19 +44,19 @@ Bindings:
    │            ╰─── ref: 1
  6 │     function test(uint256 x) public returns (uint256 y) {
    │              ──┬─         ┬                          ┬  
-   │                ╰──────────────────────────────────────── name: 7
+   │                ╰──────────────────────────────────────── name: 5
    │                           │                          │  
-   │                           ╰───────────────────────────── name: 5
+   │                           ╰───────────────────────────── name: 6
    │                                                      │  
-   │                                                      ╰── name: 6
+   │                                                      ╰── name: 7
  7 │         x.nop();
-   │         ┬ ─┬─  
-   │         ╰────── ref: 5
-   │            │   
-   │            ╰─── ref: 3
- 8 │         y.nop();
    │         ┬ ─┬─  
    │         ╰────── ref: 6
    │            │   
-   │            ╰─── ref: 3
+   │            ╰─── ref: 2
+ 8 │         y.nop();
+   │         ┬ ─┬─  
+   │         ╰────── ref: 7
+   │            │   
+   │            ╰─── ref: 2
 ───╯

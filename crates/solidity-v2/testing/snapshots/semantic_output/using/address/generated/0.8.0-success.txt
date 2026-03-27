@@ -2,18 +2,18 @@
 
 Definitions (6):
 - Def: #1 ["Address" @ input.sol:1:9] (library)
-- Def: #2 ["recipient" @ input.sol:2:40] (parameter, type: address payable)
-- Def: #3 ["sendValue" @ input.sol:2:14] (function, type: function (address payable) returns void)
+- Def: #2 ["sendValue" @ input.sol:2:14] (function, type: function (address payable) returns void)
+- Def: #3 ["recipient" @ input.sol:2:40] (parameter, type: address payable)
 - Def: #4 ["Test" @ input.sol:4:10] (contract)
-- Def: #5 ["_rcpt" @ input.sol:6:27] (parameter, type: address)
-- Def: #6 ["test" @ input.sol:6:14] (function, type: function (address) returns void)
+- Def: #5 ["test" @ input.sol:6:14] (function, type: function (address) returns void)
+- Def: #6 ["_rcpt" @ input.sol:6:27] (parameter, type: address)
 
 ------------------------------------------------------------------------
 
 References (3):
 - Ref: ["Address" @ input.sol:5:11] -> #1
-- Ref: ["_rcpt" @ input.sol:7:17] -> #5
-- Ref: ["sendValue" @ input.sol:7:24] -> #3
+- Ref: ["_rcpt" @ input.sol:7:17] -> #6
+- Ref: ["sendValue" @ input.sol:7:24] -> #2
 
 ------------------------------------------------------------------------
 
@@ -29,9 +29,9 @@ Bindings:
    │            ╰───── name: 1
  2 │     function sendValue(address payable recipient) internal {}
    │              ────┬────                 ────┬────  
-   │                  ╰──────────────────────────────── name: 3
+   │                  ╰──────────────────────────────── name: 2
    │                                            │      
-   │                                            ╰────── name: 2
+   │                                            ╰────── name: 3
    │ 
  4 │ contract Test {
    │          ──┬─  
@@ -41,12 +41,12 @@ Bindings:
    │              ╰───── ref: 1
  6 │     function test(address _rcpt) public {
    │              ──┬─         ──┬──  
-   │                ╰───────────────── name: 6
+   │                ╰───────────────── name: 5
    │                             │    
-   │                             ╰──── name: 5
+   │                             ╰──── name: 6
  7 │         payable(_rcpt).sendValue();
    │                 ──┬──  ────┬────  
-   │                   ╰─────────────── ref: 5
+   │                   ╰─────────────── ref: 6
    │                            │      
-   │                            ╰────── ref: 3
+   │                            ╰────── ref: 2
 ───╯

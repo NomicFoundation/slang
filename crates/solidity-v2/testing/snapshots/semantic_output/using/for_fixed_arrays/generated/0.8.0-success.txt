@@ -2,15 +2,15 @@
 
 Definitions (4):
 - Def: #1 ["ArrayHelper" @ input.sol:1:9] (library)
-- Def: #2 ["items" @ input.sol:2:39] (parameter, type: string memory[1] memory)
-- Def: #3 ["asArray" @ input.sol:2:14] (function, type: function (string memory[1] memory) returns void)
+- Def: #2 ["asArray" @ input.sol:2:14] (function, type: function (string memory[1] memory) returns void)
+- Def: #3 ["items" @ input.sol:2:39] (parameter, type: string memory[1] memory)
 - Def: #4 ["test" @ input.sol:7:10] (function, type: function () returns void)
 
 ------------------------------------------------------------------------
 
 References (2):
 - Ref: ["ArrayHelper" @ input.sol:5:7] -> #1
-- Ref: ["asArray" @ input.sol:8:13] -> #3
+- Ref: ["asArray" @ input.sol:8:13] -> #2
 
 ------------------------------------------------------------------------
 
@@ -26,9 +26,9 @@ Bindings:
    │              ╰─────── name: 1
  2 │     function asArray(string[1] memory items) internal {}
    │              ───┬───                  ──┬──  
-   │                 ╰──────────────────────────── name: 3
+   │                 ╰──────────────────────────── name: 2
    │                                         │    
-   │                                         ╰──── name: 2
+   │                                         ╰──── name: 3
    │ 
  5 │ using ArrayHelper for string[1];
    │       ─────┬─────  
@@ -39,5 +39,5 @@ Bindings:
    │            ╰─── name: 4
  8 │     ["foo"].asArray();
    │             ───┬───  
-   │                ╰───── ref: 3
+   │                ╰───── ref: 2
 ───╯

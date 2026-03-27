@@ -4,8 +4,8 @@ Definitions (7):
 - Def: #1 ["Id" @ input.sol:1:9] (library)
 - Def: #2 ["Answer" @ input.sol:2:8] (enum)
 - Def: #3 ["Yes" @ input.sol:3:5] (enum member of Answer)
-- Def: #4 ["ans" @ input.sol:6:22] (parameter, type: Answer)
-- Def: #5 ["id" @ input.sol:6:12] (function, type: function (Answer) returns Answer)
+- Def: #4 ["id" @ input.sol:6:12] (function, type: function (Answer) returns Answer)
+- Def: #5 ["ans" @ input.sol:6:22] (parameter, type: Answer)
 - Def: #6 ["Test" @ input.sol:11:10] (contract)
 - Def: #7 ["testFunc" @ input.sol:14:12] (function, type: function () returns Answer)
 
@@ -14,7 +14,7 @@ Definitions (7):
 References (12):
 - Ref: ["Answer" @ input.sol:6:15] -> #2
 - Ref: ["Answer" @ input.sol:6:36] -> #2
-- Ref: ["ans" @ input.sol:7:12] -> #4
+- Ref: ["ans" @ input.sol:7:12] -> #5
 - Ref: ["Id" @ input.sol:12:9] -> #1
 - Ref: ["Id" @ input.sol:12:16] -> #1
 - Ref: ["Answer" @ input.sol:12:19] -> #2
@@ -23,7 +23,7 @@ References (12):
 - Ref: ["Id" @ input.sol:15:5] -> #1
 - Ref: ["Answer" @ input.sol:15:8] -> #2
 - Ref: ["Yes" @ input.sol:15:15] -> #3
-- Ref: ["id" @ input.sol:15:19] -> #5
+- Ref: ["id" @ input.sol:15:19] -> #4
 
 ------------------------------------------------------------------------
 
@@ -46,16 +46,16 @@ Bindings:
     │ 
   6 │   function id(Answer ans) returns (Answer) {
     │            ─┬ ───┬── ─┬─           ───┬──  
-    │             ╰────────────────────────────── name: 5
+    │             ╰────────────────────────────── name: 4
     │                  │    │               │    
     │                  ╰───────────────────────── ref: 2
     │                       │               │    
-    │                       ╰──────────────────── name: 4
+    │                       ╰──────────────────── name: 5
     │                                       │    
     │                                       ╰──── ref: 2
   7 │     return ans;
     │            ─┬─  
-    │             ╰─── ref: 4
+    │             ╰─── ref: 5
     │ 
  11 │ contract Test {
     │          ──┬─  
@@ -83,5 +83,5 @@ Bindings:
     │                │   │  
     │                ╰────── ref: 3
     │                    │  
-    │                    ╰── ref: 5
+    │                    ╰── ref: 4
 ────╯
