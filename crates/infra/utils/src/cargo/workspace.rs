@@ -17,9 +17,14 @@ impl CargoWorkspace {
 
         let manifest = WorkspaceManifest::load()?;
 
-        let mut command = Command::new("cargo")
-            .args(["install", crate_name])
-            .flag("--locked");
+        let mut command = Command::new("cargo").args(["install", crate_name]);
+
+        // TODO(#1586): bencher_cli v0.5.10 depends on regress 0.10.5 (edition 2024),
+        // which fails to compile with --locked on Rust 1.87. Drop --locked for bencher
+        // until #1561 bumps the toolchain to 1.94+, then restore --locked.
+        if crate_name != "bencher_cli" {
+            command = command.flag("--locked");
+        }
 
         let dependency = manifest.dependency(crate_name)?;
 
