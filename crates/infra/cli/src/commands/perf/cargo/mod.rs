@@ -141,14 +141,29 @@ impl CargoController {
         );
 
         // 1% threshold: iai-callgrind uses deterministic hardware counters (not wall clock),
-        // so any change in estimated-cycles reflects a real code change, not noise.
+        // so any change reflects a real code change, not noise.
+        // Covers callgrind measures and DHAT heap profiling measures.
         run_bench(
             self.dry_run.get(),
             self.pr_benchmark,
             bencher_project,
             "rust_iai_callgrind",
-            "estimated-cycles",
-            "0.01",
+            &[
+                ("estimated-cycles", "0.01"),
+                ("instructions", "0.01"),
+                ("l1-hits", "0.01"),
+                ("l2-hits", "0.01"),
+                ("ram-hits", "0.01"),
+                ("total-read-write", "0.01"),
+                ("total-bytes", "0.01"),
+                ("total-blocks", "0.01"),
+                ("at-t-gmax-bytes", "0.01"),
+                ("at-t-gmax-blocks", "0.01"),
+                ("at-t-end-bytes", "0.01"),
+                ("at-t-end-blocks", "0.01"),
+                ("reads-bytes", "0.01"),
+                ("writes-bytes", "0.01"),
+            ],
             &test_runner,
         );
 

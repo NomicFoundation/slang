@@ -17,8 +17,7 @@ pub(crate) fn run_bench(
     pr_benchmark: bool,
     project: &str,
     adapter: &str,
-    threshold_measure: &str,
-    threshold_upper_boundary: &str,
+    thresholds: &[(&str, &str)],
     test_runner: &str,
 ) {
     assert!(
@@ -71,11 +70,16 @@ pub(crate) fn run_bench(
             .property("--start-point", &base_ref)
             .property("--start-point-hash", &start_point_hash)
             .flag("--start-point-reset")
-            .property("--hash", &head_hash)
-            .property("--threshold-measure", threshold_measure)
-            .property("--threshold-test", "percentage")
-            .property("--threshold-upper-boundary", threshold_upper_boundary)
-            .property("--github-actions", &github_token);
+            .property("--hash", &head_hash);
+
+        for &(measure, upper_boundary) in thresholds {
+            command = command
+                .property("--threshold-measure", measure)
+                .property("--threshold-test", "percentage")
+                .property("--threshold-upper-boundary", upper_boundary);
+        }
+
+        command = command.property("--github-actions", &github_token);
     }
 
     // Has to be the last argument:
