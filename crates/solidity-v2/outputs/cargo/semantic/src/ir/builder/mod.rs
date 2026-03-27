@@ -77,9 +77,9 @@ impl<S: Source> Builder for CstToIrBuilder<'_, S> {
         Rc::new(output::ContractDefinitionStruct {
             abstract_keyword,
             name,
-            members,
             inheritance_types,
             storage_layout,
+            members,
         })
     }
 
@@ -132,6 +132,7 @@ impl<S: Source> Builder for CstToIrBuilder<'_, S> {
             input::FunctionName::FallbackKeyword(_) => (output::FunctionKind::Fallback, None),
             input::FunctionName::ReceiveKeyword(_) => (output::FunctionKind::Receive, None),
         };
+        let parameters = self.build_parameters_declaration(&source.parameters);
         let visibility = Self::function_visibility(&source.attributes);
         let mutability = Self::function_mutability(&source.attributes);
         let virtual_keyword = source
@@ -142,41 +143,40 @@ impl<S: Source> Builder for CstToIrBuilder<'_, S> {
         // TODO(validation): function definitions can have only a single override specifier
         let override_specifier = self.function_override_specifier(&source.attributes);
         let modifier_invocations = self.function_modifier_invocations(&source.attributes);
-        let body = self.build_function_body(&source.body);
-        let parameters = self.build_parameters_declaration(&source.parameters);
         let returns = source
             .returns
             .as_ref()
             .map(|returns| self.build_returns_declaration(returns));
+        let body = self.build_function_body(&source.body);
 
         Rc::new(output::FunctionDefinitionStruct {
-            parameters,
-            returns,
             kind,
             name,
-            body,
+            parameters,
             visibility,
             mutability,
             virtual_keyword,
             override_specifier,
             modifier_invocations,
+            returns,
+            body,
         })
     }
 
     fn build_function_type(&mut self, source: &input::FunctionType) -> output::FunctionType {
         let parameters = self.build_parameters_declaration(&source.parameters);
+        let visibility = Self::function_type_visibility(&source.attributes);
+        let mutability = Self::function_type_mutability(&source.attributes);
         let returns = source
             .returns
             .as_ref()
             .map(|returns| self.build_returns_declaration(returns));
-        let visibility = Self::function_type_visibility(&source.attributes);
-        let mutability = Self::function_type_mutability(&source.attributes);
 
         Rc::new(output::FunctionTypeStruct {
             parameters,
-            returns,
             visibility,
             mutability,
+            returns,
         })
     }
 
@@ -470,6 +470,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     ) -> output::FunctionDefinition {
         let kind = output::FunctionKind::Constructor;
         let name = None;
+        let parameters = self.build_parameters_declaration(&source.parameters);
         let visibility = Self::constructor_visibility(&source.attributes);
         let mutability = Self::constructor_mutability(&source.attributes);
         // v2 ConstructorAttribute has no VirtualKeyword
@@ -477,21 +478,20 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         // v2 ConstructorAttribute has no OverrideSpecifier
         let override_specifier = None;
         let modifier_invocations = self.constructor_modifier_invocations(&source.attributes);
-        let body = Some(self.build_block(&source.body));
-        let parameters = self.build_parameters_declaration(&source.parameters);
         let returns = None;
+        let body = Some(self.build_block(&source.body));
 
         Rc::new(output::FunctionDefinitionStruct {
-            parameters,
-            returns,
             kind,
             name,
-            body,
+            parameters,
             visibility,
             mutability,
             virtual_keyword,
             override_specifier,
             modifier_invocations,
+            returns,
+            body,
         })
     }
 
@@ -547,6 +547,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     ) -> output::FunctionDefinition {
         let kind = output::FunctionKind::Fallback;
         let name = None;
+        let parameters = self.build_parameters_declaration(&source.parameters);
         // TODO(validation): fallback functions *must* have external visibility
         let visibility = output::FunctionVisibility::External;
         let mutability = Self::fallback_function_mutability(&source.attributes);
@@ -558,24 +559,23 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         });
         let override_specifier = self.fallback_function_override_specifier(&source.attributes);
         let modifier_invocations = self.fallback_function_modifier_invocations(&source.attributes);
-        let body = self.build_function_body(&source.body);
-        let parameters = self.build_parameters_declaration(&source.parameters);
         let returns = source
             .returns
             .as_ref()
             .map(|returns| self.build_returns_declaration(returns));
+        let body = self.build_function_body(&source.body);
 
         Rc::new(output::FunctionDefinitionStruct {
-            parameters,
-            returns,
             kind,
             name,
-            body,
+            parameters,
             visibility,
             mutability,
             virtual_keyword,
             override_specifier,
             modifier_invocations,
+            returns,
+            body,
         })
     }
 
@@ -635,6 +635,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     ) -> output::FunctionDefinition {
         let kind = output::FunctionKind::Receive;
         let name = None;
+        let parameters = self.build_parameters_declaration(&source.parameters);
         // TODO(validation): receive functions *must* have external visibility
         let visibility = output::FunctionVisibility::External;
         // TODO(validation): receive functions *must* be payable
@@ -647,21 +648,20 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         });
         let override_specifier = self.receive_function_override_specifier(&source.attributes);
         let modifier_invocations = self.receive_function_modifier_invocations(&source.attributes);
-        let body = self.build_function_body(&source.body);
-        let parameters = self.build_parameters_declaration(&source.parameters);
         let returns = None;
+        let body = self.build_function_body(&source.body);
 
         Rc::new(output::FunctionDefinitionStruct {
-            parameters,
-            returns,
             kind,
             name,
-            body,
+            parameters,
             visibility,
             mutability,
             virtual_keyword,
             override_specifier,
             modifier_invocations,
+            returns,
+            body,
         })
     }
 
@@ -701,6 +701,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     ) -> output::FunctionDefinition {
         let kind = output::FunctionKind::Modifier;
         let name = Some(self.build_identifier(&source.name));
+        let parameters = source.parameters.as_ref().map_or(Vec::new(), |parameter| {
+            self.build_parameters_declaration(parameter)
+        });
         let visibility = output::FunctionVisibility::Internal;
         // mutability is irrelevant for modifiers
         let mutability = output::FunctionMutability::NonPayable;
@@ -711,23 +714,20 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .any(|attribute| matches!(attribute, input::ModifierAttribute::VirtualKeyword(_)));
         let override_specifier = self.modifier_override_specifier(&source.attributes);
         let modifier_invocations = Vec::new();
-        let body = self.build_function_body(&source.body);
-        let parameters = source.parameters.as_ref().map_or(Vec::new(), |parameter| {
-            self.build_parameters_declaration(parameter)
-        });
         let returns = None;
+        let body = self.build_function_body(&source.body);
 
         Rc::new(output::FunctionDefinitionStruct {
-            parameters,
-            returns,
             kind,
             name,
-            body,
+            parameters,
             visibility,
             mutability,
             virtual_keyword,
             override_specifier,
             modifier_invocations,
+            returns,
+            body,
         })
     }
 
