@@ -72,7 +72,7 @@ pub(crate) fn run_bench(
             .flag("--start-point-reset")
             .property("--hash", &head_hash)
             .property("--github-actions", &github_token)
-            .flag("--error-on-alert");
+            .flag("--err");
     }
 
     // Has to be the last argument:
