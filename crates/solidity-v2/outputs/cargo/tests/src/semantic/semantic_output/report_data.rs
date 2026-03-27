@@ -14,72 +14,32 @@ use slang_solidity_v2_semantic::types::{DataLocation, FunctionType, LiteralKind,
 pub(crate) struct ReportData<'a> {
     pub(crate) compilation: &'a CompilationUnit,
     pub(crate) file_contents: &'a HashMap<String, String>,
-    pub(crate) parse_errors: &'a [(String, ParserError)],
+    pub(crate) parse_errors: Vec<(String, ParserError)>,
     pub(crate) all_definitions: Vec<CollectedDefinition>,
     pub(crate) all_references: Vec<CollectedReference>,
-    pub(crate) unbound_identifiers: Vec<UnboundIdentifier>,
+    pub(crate) unbound_identifiers: Vec<CollectedIdentifier>,
     pub(crate) definitions_by_id: HashMap<NodeId, usize>,
+}
+
+#[derive(Clone)]
+pub(crate) struct CollectedIdentifier {
+    pub(crate) file_id: String,
+    pub(crate) node_id: NodeId,
+    pub(crate) range: Range<usize>,
+    pub(crate) text: String,
+    pub(crate) line: usize,
+    pub(crate) column: usize,
 }
 
 pub(crate) struct CollectedDefinition {
     pub(crate) report_id: usize,
-    pub(crate) file_id: String,
     pub(crate) definition_node_id: NodeId,
-    pub(crate) identifier_range: Range<usize>,
-    pub(crate) identifier_text: String,
+    pub(crate) identifier: CollectedIdentifier,
 }
 
 pub(crate) struct CollectedReference {
-    pub(crate) file_id: String,
+    pub(crate) identifier: CollectedIdentifier,
     pub(crate) resolution: Resolution,
-    pub(crate) identifier_range: Range<usize>,
-    pub(crate) identifier_text: String,
-}
-
-pub(crate) struct UnboundIdentifier {
-    pub(crate) file_id: String,
-    pub(crate) identifier_range: Range<usize>,
-    pub(crate) identifier_text: String,
-}
-
-// Visitor to collect all identifiers per file
-
-struct VisitedIdentifier {
-    file_id: String,
-    node_id: NodeId,
-    range: Range<usize>,
-    text: String,
-}
-
-struct IdentifierCollector {
-    identifiers: Vec<VisitedIdentifier>,
-    current_file_id: String,
-}
-
-impl Visitor for IdentifierCollector {
-    fn visit_identifier(&mut self, node: &Identifier) {
-        self.identifiers.push(VisitedIdentifier {
-            file_id: self.current_file_id.clone(),
-            node_id: node.id(),
-            range: node.range.clone(),
-            text: node.text.clone(),
-        });
-    }
-}
-
-/// Walk all files in the compilation and collect every identifier with its file.
-fn collect_all_identifiers(compilation: &CompilationUnit) -> Vec<VisitedIdentifier> {
-    let mut collector = IdentifierCollector {
-        identifiers: Vec::new(),
-        current_file_id: String::new(),
-    };
-
-    for file in &compilation.files() {
-        collector.current_file_id = file.id().to_string();
-        accept_source_unit(file.ir_root(), &mut collector);
-    }
-
-    collector.identifiers
 }
 
 // Implementation
@@ -88,11 +48,11 @@ impl<'a> ReportData<'a> {
     pub(crate) fn prepare(
         compilation: &'a CompilationUnit,
         file_contents: &'a HashMap<String, String>,
-        parse_errors: &'a [(String, ParserError)],
+        parse_errors: Vec<(String, ParserError)>,
     ) -> Self {
-        let all_identifiers = collect_all_identifiers(compilation);
+        let all_identifiers = collect_all_identifiers(compilation, file_contents);
         let (all_definitions, all_references, unbound_identifiers) =
-            collect_all_definitions_references_and_unbound(compilation, &all_identifiers);
+            classify_identifiers(compilation, all_identifiers);
         let definitions_by_id = all_definitions
             .iter()
             .map(|definition| (definition.definition_node_id, definition.report_id))
@@ -110,8 +70,8 @@ impl<'a> ReportData<'a> {
     }
 
     pub(crate) fn all_resolved(&self) -> bool {
-        self.unbound_identifiers.is_empty()
-            && self.parse_errors.is_empty()
+        self.parse_errors.is_empty()
+            && self.unbound_identifiers.is_empty()
             && self
                 .all_references
                 .iter()
@@ -119,13 +79,88 @@ impl<'a> ReportData<'a> {
     }
 }
 
-fn collect_all_definitions_references_and_unbound(
+// Identifiers collection
+
+struct IdentifierCollector<'a> {
+    identifiers: Vec<CollectedIdentifier>,
+    current_file: Option<(&'a String, &'a String)>,
+}
+
+impl Visitor for IdentifierCollector<'_> {
+    fn visit_identifier(&mut self, node: &Identifier) {
+        let (line, column) = self.byte_offset_to_line_column(node.range.start);
+        self.identifiers.push(CollectedIdentifier {
+            file_id: self.current_file_id(),
+            node_id: node.id(),
+            range: node.range.clone(),
+            text: node.text.clone(),
+            line,
+            column,
+        });
+    }
+}
+
+impl IdentifierCollector<'_> {
+    fn current_file_id(&self) -> String {
+        let Some((file_id, _)) = self.current_file else {
+            unreachable!("file is not set for collecting identifiers");
+        };
+        file_id.clone()
+    }
+
+    fn current_file_contents(&self) -> &String {
+        let Some((_, contents)) = self.current_file else {
+            unreachable!("file is not set for collecting identifiers");
+        };
+        contents
+    }
+
+    fn byte_offset_to_line_column(&self, byte_offset: usize) -> (usize, usize) {
+        let mut line = 1;
+        let mut column = 1;
+        for (index, ch) in self.current_file_contents().char_indices() {
+            if index >= byte_offset {
+                break;
+            }
+            if ch == '\n' {
+                line += 1;
+                column = 1;
+            } else {
+                column += 1;
+            }
+        }
+        (line, column)
+    }
+}
+
+fn collect_all_identifiers(
     compilation: &CompilationUnit,
-    all_identifiers: &[VisitedIdentifier],
+    file_contents: &HashMap<String, String>,
+) -> Vec<CollectedIdentifier> {
+    let mut collector = IdentifierCollector {
+        identifiers: Vec::new(),
+        current_file: None,
+    };
+
+    for file in &compilation.files() {
+        collector.current_file = file_contents.get_key_value(file.id());
+        accept_source_unit(file.ir_root(), &mut collector);
+    }
+
+    collector.identifiers
+}
+
+// Disable this clippy linting rule which fails to properly identify the data
+// flow for setting `bound`.
+// See https://github.com/rust-lang/rust-clippy/issues/2918#issuecomment-793146825
+#[allow(clippy::useless_let_if_seq)]
+fn classify_identifiers(
+    compilation: &CompilationUnit,
+    all_identifiers: Vec<CollectedIdentifier>,
 ) -> (
     Vec<CollectedDefinition>,
     Vec<CollectedReference>,
-    Vec<UnboundIdentifier>,
+    Vec<CollectedIdentifier>,
 ) {
     let mut all_definitions = Vec::new();
     let mut all_references = Vec::new();
@@ -134,58 +169,32 @@ fn collect_all_definitions_references_and_unbound(
     let binder = compilation.binder();
 
     // Walk all identifiers in file/source order and classify each one
-    for visited in all_identifiers {
+    for identifier in all_identifiers {
         let mut bound = false;
 
-        if let Some(definition) = binder.find_definition_by_identifier_node_id(visited.node_id) {
+        if let Some(definition) = binder.find_definition_by_identifier_node_id(identifier.node_id) {
             all_definitions.push(CollectedDefinition {
                 report_id: all_definitions.len() + 1,
-                file_id: visited.file_id.clone(),
                 definition_node_id: definition.node_id(),
-                identifier_range: visited.range.clone(),
-                identifier_text: visited.text.clone(),
+                identifier: identifier.clone(),
             });
             bound = true;
         }
 
-        if let Some(reference) = binder.find_reference_by_identifier_node_id(visited.node_id) {
+        if let Some(reference) = binder.find_reference_by_identifier_node_id(identifier.node_id) {
             all_references.push(CollectedReference {
-                file_id: visited.file_id.clone(),
+                identifier: identifier.clone(),
                 resolution: reference.resolution.clone(),
-                identifier_range: visited.range.clone(),
-                identifier_text: visited.text.clone(),
             });
             bound = true;
         }
 
         if !bound {
-            unbound_identifiers.push(UnboundIdentifier {
-                file_id: visited.file_id.clone(),
-                identifier_range: visited.range.clone(),
-                identifier_text: visited.text.clone(),
-            });
+            unbound_identifiers.push(identifier);
         }
     }
 
     (all_definitions, all_references, unbound_identifiers)
-}
-
-/// Compute 1-based line and column from a byte offset within file contents.
-pub(crate) fn byte_offset_to_line_column(contents: &str, byte_offset: usize) -> (usize, usize) {
-    let mut line = 1;
-    let mut column = 1;
-    for (index, ch) in contents.char_indices() {
-        if index >= byte_offset {
-            break;
-        }
-        if ch == '\n' {
-            line += 1;
-            column = 1;
-        } else {
-            column += 1;
-        }
-    }
-    (line, column)
 }
 
 // Display helpers
@@ -194,12 +203,10 @@ impl CollectedDefinition {
     pub(crate) fn display<'a>(
         &'a self,
         compilation: &'a CompilationUnit,
-        file_contents: &'a HashMap<String, String>,
     ) -> CollectedDefinitionDisplay<'a> {
         CollectedDefinitionDisplay {
             definition: self,
             compilation,
-            file_contents,
         }
     }
 }
@@ -207,33 +214,25 @@ impl CollectedDefinition {
 pub(crate) struct CollectedDefinitionDisplay<'a> {
     definition: &'a CollectedDefinition,
     compilation: &'a CompilationUnit,
-    file_contents: &'a HashMap<String, String>,
 }
 
 impl Display for CollectedDefinitionDisplay<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let contents = self.get_file_contents();
-        let (line, column) =
-            byte_offset_to_line_column(&contents, self.definition.identifier_range.start);
+        let identifier = &self.definition.identifier;
         write!(
             f,
             "Def: #{id} [\"{identifier}\" @ {file_id}:{line}:{column}] ({def_type})",
             id = self.definition.report_id,
-            identifier = self.definition.identifier_text,
-            file_id = self.definition.file_id,
+            identifier = identifier.text,
+            file_id = identifier.file_id,
             def_type = self.definition_type(),
+            line = identifier.line,
+            column = identifier.column,
         )
     }
 }
 
 impl CollectedDefinitionDisplay<'_> {
-    fn get_file_contents(&self) -> String {
-        self.file_contents
-            .get(&self.definition.file_id)
-            .cloned()
-            .unwrap_or_default()
-    }
-
     fn definition_type(&self) -> String {
         if let Some(definition) = self
             .compilation
@@ -433,12 +432,10 @@ impl CollectedDefinitionDisplay<'_> {
 impl CollectedReference {
     pub(crate) fn display<'a>(
         &'a self,
-        file_contents: &'a HashMap<String, String>,
         definitions_by_id: &'a HashMap<NodeId, usize>,
     ) -> CollectedReferenceDisplay<'a> {
         CollectedReferenceDisplay {
             reference: self,
-            file_contents,
             definitions_by_id,
         }
     }
@@ -446,24 +443,17 @@ impl CollectedReference {
 
 pub(crate) struct CollectedReferenceDisplay<'a> {
     reference: &'a CollectedReference,
-    file_contents: &'a HashMap<String, String>,
     definitions_by_id: &'a HashMap<NodeId, usize>,
 }
 
 impl Display for CollectedReferenceDisplay<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let contents = self
-            .file_contents
-            .get(&self.reference.file_id)
-            .cloned()
-            .unwrap_or_default();
-        let (line, column) =
-            byte_offset_to_line_column(&contents, self.reference.identifier_range.start);
+        let identifier = &self.reference.identifier;
         write!(
             f,
             "Ref: [\"{identifier}\" @ {file_id}:{line}:{column}] -> {definition}",
-            identifier = self.reference.identifier_text,
-            file_id = self.reference.file_id,
+            identifier = identifier.text,
+            file_id = identifier.file_id,
             definition = match &self.reference.resolution {
                 Resolution::Unresolved => "unresolved".to_string(),
                 Resolution::BuiltIn(_) => "built-in".to_string(),
@@ -482,42 +472,32 @@ impl Display for CollectedReferenceDisplay<'_> {
                             .collect::<Vec<_>>(),
                     )
                 }
-            }
+            },
+            line = identifier.line,
+            column = identifier.column,
         )
     }
 }
 
-impl UnboundIdentifier {
-    pub(crate) fn display<'a>(
-        &'a self,
-        file_contents: &'a HashMap<String, String>,
-    ) -> UnboundIdentifierDisplay<'a> {
-        UnboundIdentifierDisplay {
-            unbound: self,
-            file_contents,
-        }
+impl CollectedIdentifier {
+    pub(crate) fn display_unbound(&self) -> UnboundIdentifierDisplay<'_> {
+        UnboundIdentifierDisplay { identifier: self }
     }
 }
 
 pub(crate) struct UnboundIdentifierDisplay<'a> {
-    unbound: &'a UnboundIdentifier,
-    file_contents: &'a HashMap<String, String>,
+    identifier: &'a CollectedIdentifier,
 }
 
 impl Display for UnboundIdentifierDisplay<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let contents = self
-            .file_contents
-            .get(&self.unbound.file_id)
-            .cloned()
-            .unwrap_or_default();
-        let (line, column) =
-            byte_offset_to_line_column(&contents, self.unbound.identifier_range.start);
         write!(
             f,
             "???: [\"{identifier}\" @ {file_id}:{line}:{column}]",
-            identifier = self.unbound.identifier_text,
-            file_id = self.unbound.file_id,
+            identifier = self.identifier.text,
+            file_id = self.identifier.file_id,
+            line = self.identifier.line,
+            column = self.identifier.column,
         )
     }
 }
