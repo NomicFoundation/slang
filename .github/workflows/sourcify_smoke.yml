@@ -10,7 +10,6 @@ on:
 concurrency:
   group: "${{ github.workflow }}-${{ github.ref_name }}"
 
-
 jobs:
   smoke:
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
