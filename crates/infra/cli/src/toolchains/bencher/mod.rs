@@ -18,6 +18,7 @@ pub(crate) fn run_bench(
     project: &str,
     adapter: &str,
     thresholds: &[(&str, &str)],
+    github_pr_comment: bool,
     test_runner: &str,
 ) {
     assert!(
@@ -62,8 +63,6 @@ pub(crate) fn run_bench(
             .expect("BENCHER_PR_START_POINT_HASH must be set for --pr-benchmark");
         let head_hash = std::env::var("BENCHER_PR_HEAD_HASH")
             .expect("BENCHER_PR_HEAD_HASH must be set for --pr-benchmark");
-        let github_token =
-            std::env::var("GITHUB_TOKEN").expect("GITHUB_TOKEN must be set for --pr-benchmark");
 
         command = command
             .property("--branch", &head_ref)
@@ -79,9 +78,11 @@ pub(crate) fn run_bench(
                 .property("--threshold-upper-boundary", upper_boundary);
         }
 
-        command = command
-            .property("--github-actions", &github_token)
-            .flag("--ci-only-on-alert");
+        if github_pr_comment {
+            let github_token = std::env::var("GITHUB_TOKEN")
+                .expect("GITHUB_TOKEN must be set for --pr-benchmark with github_pr_comment");
+            command = command.property("--github-actions", &github_token);
+        }
     }
 
     // Has to be the last argument:

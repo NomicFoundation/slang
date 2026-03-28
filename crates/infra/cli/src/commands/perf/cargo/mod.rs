@@ -140,16 +140,33 @@ impl CargoController {
             "cargo bench --package {package_name} --bench {bench_name} --message-format json"
         );
 
-        // 1% threshold on estimated-cycles: iai-callgrind uses deterministic hardware counters
-        // (not wall clock), so any change reflects a real code change, not noise.
-        // PR comments are only posted on alert (--ci-only-on-alert) to stay under GitHub's
-        // 65K char limit. TODO(#1586): add more measures once bencher v0.5.10 is available.
+        // 1% threshold: iai-callgrind uses deterministic hardware counters (not wall clock),
+        // so any change reflects a real code change, not noise.
+        // PR comments disabled for cargo (exceeds GitHub's 65K char limit with bencher v0.5.8).
+        // Results are still uploaded to the bencher dashboard. TODO(#1586): re-enable once
+        // bencher v0.5.10 (auto-truncation) is available.
         run_bench(
             self.dry_run.get(),
             self.pr_benchmark,
             bencher_project,
             "rust_iai_callgrind",
-            &[("estimated-cycles", "0.01")],
+            &[
+                ("estimated-cycles", "0.01"),
+                ("instructions", "0.01"),
+                ("l1-hits", "0.01"),
+                ("l2-hits", "0.01"),
+                ("ram-hits", "0.01"),
+                ("total-read-write", "0.01"),
+                ("total-bytes", "0.01"),
+                ("total-blocks", "0.01"),
+                ("at-t-gmax-bytes", "0.01"),
+                ("at-t-gmax-blocks", "0.01"),
+                ("at-t-end-bytes", "0.01"),
+                ("at-t-end-blocks", "0.01"),
+                ("reads-bytes", "0.01"),
+                ("writes-bytes", "0.01"),
+            ],
+            false,
             &test_runner,
         );
 
