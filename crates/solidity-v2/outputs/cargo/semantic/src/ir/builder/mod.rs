@@ -294,12 +294,7 @@ impl Builder for CstToIrBuilder {
 
     fn build_version_literal(&mut self, source: &input::VersionLiteral) -> output::VersionLiteral {
         match source {
-            input::VersionLiteral::PragmaSingleQuotedStringLiteral(string_literal) => {
-                output::VersionLiteral::StringLiteral(output::StringLiteral {
-                    range: string_literal.range.clone(),
-                })
-            }
-            input::VersionLiteral::PragmaDoubleQuotedStringLiteral(string_literal) => {
+            input::VersionLiteral::PragmaStringLiteral(string_literal) => {
                 output::VersionLiteral::StringLiteral(output::StringLiteral {
                     range: string_literal.range.clone(),
                 })

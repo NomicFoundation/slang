@@ -26,8 +26,8 @@ SourceUnitStruct {
                                                             },
                                                         ),
                                                     ),
-                                                    literal: PragmaDoubleQuotedStringLiteral(
-                                                        PragmaDoubleQuotedStringLiteral {
+                                                    literal: PragmaStringLiteral(
+                                                        PragmaStringLiteral {
                                                             range: 122..129,
                                                         },
                                                     ),
@@ -39,16 +39,16 @@ SourceUnitStruct {
                                         elements: [
                                             VersionRange(
                                                 VersionRangeStruct {
-                                                    start: PragmaDoubleQuotedStringLiteral(
-                                                        PragmaDoubleQuotedStringLiteral {
+                                                    start: PragmaStringLiteral(
+                                                        PragmaStringLiteral {
                                                             range: 133..140,
                                                         },
                                                     ),
                                                     minus: PragmaMinus {
                                                         range: 140..141,
                                                     },
-                                                    end: PragmaSingleQuotedStringLiteral(
-                                                        PragmaSingleQuotedStringLiteral {
+                                                    end: PragmaStringLiteral(
+                                                        PragmaStringLiteral {
                                                             range: 141..148,
                                                         },
                                                     ),

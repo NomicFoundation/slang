@@ -10,11 +10,9 @@ SourceUnitStruct {
                     },
                     clause: PathImport(
                         PathImportStruct {
-                            path: DoubleQuotedStringLiteral(
-                                DoubleQuotedStringLiteral {
-                                    range: 109..114,
-                                },
-                            ),
+                            path: StringLiteral {
+                                range: 109..114,
+                            },
                             alias: None,
                         },
                     ),

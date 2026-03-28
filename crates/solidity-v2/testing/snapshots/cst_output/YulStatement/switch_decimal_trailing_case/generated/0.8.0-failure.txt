@@ -1,6 +1,6 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Error: Unexpected UNRECOGNIZED. One of YulDecimalLiteral, YulDoubleQuotedHexStringLiteral, YulDoubleQuotedStringLiteral, YulFalseKeyword_Reserved, YulHexLiteral, YulIdentifier, YulSingleQuotedHexStringLiteral, YulSingleQuotedStringLiteral, YulTrueKeyword_Reserved was expected
+Error: Unexpected UNRECOGNIZED. One of YulDecimalLiteral, YulFalseKeyword_Reserved, YulHexLiteral, YulHexStringLiteral, YulIdentifier, YulStringLiteral, YulTrueKeyword_Reserved was expected
    ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulStatement/switch_decimal_trailing_case/input.sol:5:8]
    │
  5 │ switch 1case 0 {} default {}

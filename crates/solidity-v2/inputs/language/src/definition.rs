@@ -119,8 +119,7 @@ language_v2_macros::compile!(Language(
                                 name = VersionLiteral,
                                 variants = [
                                     EnumVariant(reference = SimpleVersionLiteral),
-                                    EnumVariant(reference = PragmaSingleQuotedStringLiteral),
-                                    EnumVariant(reference = PragmaDoubleQuotedStringLiteral)
+                                    EnumVariant(reference = PragmaStringLiteral)
                                 ]
                             ),
                             Separated(
@@ -174,37 +173,29 @@ language_v2_macros::compile!(Language(
                     Topic(
                         title = "Pragma String Literals",
                         items = [
-                            Enum(
+                            Token(
                                 name = PragmaStringLiteral,
-                                variants = [
-                                    EnumVariant(reference = PragmaSingleQuotedStringLiteral),
-                                    EnumVariant(reference = PragmaDoubleQuotedStringLiteral)
-                                ]
-                            ),
-                            Token(
-                                name = PragmaSingleQuotedStringLiteral,
-                                scanner = Sequence([
-                                    Atom("'"),
-                                    ZeroOrMore(Choice([
-                                        Fragment(PragmaEscapeSequence),
-                                        Range(inclusive_start = ' ', inclusive_end = '&'),
-                                        Range(inclusive_start = '(', inclusive_end = '['),
-                                        Range(inclusive_start = ']', inclusive_end = '~')
-                                    ])),
-                                    Atom("'")
-                                ])
-                            ),
-                            Token(
-                                name = PragmaDoubleQuotedStringLiteral,
-                                scanner = Sequence([
-                                    Atom("\""),
-                                    ZeroOrMore(Choice([
-                                        Fragment(PragmaEscapeSequence),
-                                        Range(inclusive_start = ' ', inclusive_end = '!'),
-                                        Range(inclusive_start = '#', inclusive_end = '['),
-                                        Range(inclusive_start = ']', inclusive_end = '~')
-                                    ])),
-                                    Atom("\"")
+                                scanner = Choice([
+                                    Sequence([
+                                        Atom("'"),
+                                        ZeroOrMore(Choice([
+                                            Fragment(PragmaEscapeSequence),
+                                            Range(inclusive_start = ' ', inclusive_end = '&'),
+                                            Range(inclusive_start = '(', inclusive_end = '['),
+                                            Range(inclusive_start = ']', inclusive_end = '~')
+                                        ])),
+                                        Atom("'")
+                                    ]),
+                                    Sequence([
+                                        Atom("\""),
+                                        ZeroOrMore(Choice([
+                                            Fragment(PragmaEscapeSequence),
+                                            Range(inclusive_start = ' ', inclusive_end = '!'),
+                                            Range(inclusive_start = '#', inclusive_end = '['),
+                                            Range(inclusive_start = ']', inclusive_end = '~')
+                                        ])),
+                                        Atom("\"")
+                                    ])
                                 ])
                             ),
                             Fragment(
@@ -3691,37 +3682,29 @@ TupleValues: TupleValues = {
                                     name = StringLiterals,
                                     reference = StringLiteral
                                 ),
-                                Enum(
+                                Token(
                                     name = StringLiteral,
-                                    variants = [
-                                        EnumVariant(reference = SingleQuotedStringLiteral),
-                                        EnumVariant(reference = DoubleQuotedStringLiteral)
-                                    ]
-                                ),
-                                Token(
-                                    name = SingleQuotedStringLiteral,
-                                    scanner = Sequence([
-                                        Atom("'"),
-                                        ZeroOrMore(Choice([
-                                            Fragment(EscapeSequence),
-                                            Range(inclusive_start = ' ', inclusive_end = '&'),
-                                            Range(inclusive_start = '(', inclusive_end = '['),
-                                            Range(inclusive_start = ']', inclusive_end = '~')
-                                        ])),
-                                        Atom("'")
-                                    ])
-                                ),
-                                Token(
-                                    name = DoubleQuotedStringLiteral,
-                                    scanner = Sequence([
-                                        Atom("\""),
-                                        ZeroOrMore(Choice([
-                                            Fragment(EscapeSequence),
-                                            Range(inclusive_start = ' ', inclusive_end = '!'),
-                                            Range(inclusive_start = '#', inclusive_end = '['),
-                                            Range(inclusive_start = ']', inclusive_end = '~')
-                                        ])),
-                                        Atom("\"")
+                                    scanner = Choice([
+                                        Sequence([
+                                            Atom("'"),
+                                            ZeroOrMore(Choice([
+                                                Fragment(EscapeSequence),
+                                                Range(inclusive_start = ' ', inclusive_end = '&'),
+                                                Range(inclusive_start = '(', inclusive_end = '['),
+                                                Range(inclusive_start = ']', inclusive_end = '~')
+                                            ])),
+                                            Atom("'")
+                                        ]),
+                                        Sequence([
+                                            Atom("\""),
+                                            ZeroOrMore(Choice([
+                                                Fragment(EscapeSequence),
+                                                Range(inclusive_start = ' ', inclusive_end = '!'),
+                                                Range(inclusive_start = '#', inclusive_end = '['),
+                                                Range(inclusive_start = ']', inclusive_end = '~')
+                                            ])),
+                                            Atom("\"")
+                                        ])
                                     ])
                                 ),
                                 Fragment(
@@ -3739,27 +3722,19 @@ TupleValues: TupleValues = {
                                     name = HexStringLiterals,
                                     reference = HexStringLiteral
                                 ),
-                                Enum(
+                                Token(
                                     name = HexStringLiteral,
-                                    variants = [
-                                        EnumVariant(reference = SingleQuotedHexStringLiteral),
-                                        EnumVariant(reference = DoubleQuotedHexStringLiteral)
-                                    ]
-                                ),
-                                Token(
-                                    name = SingleQuotedHexStringLiteral,
-                                    scanner = Sequence([
-                                        Atom("hex'"),
-                                        Optional(Fragment(HexStringContents)),
-                                        Atom("'")
-                                    ])
-                                ),
-                                Token(
-                                    name = DoubleQuotedHexStringLiteral,
-                                    scanner = Sequence([
-                                        Atom("hex\""),
-                                        Optional(Fragment(HexStringContents)),
-                                        Atom("\"")
+                                    scanner = Choice([
+                                        Sequence([
+                                            Atom("hex'"),
+                                            Optional(Fragment(HexStringContents)),
+                                            Atom("'")
+                                        ]),
+                                        Sequence([
+                                            Atom("hex\""),
+                                            Optional(Fragment(HexStringContents)),
+                                            Atom("\"")
+                                        ])
                                     ])
                                 ),
                                 Fragment(
@@ -3778,33 +3753,25 @@ TupleValues: TupleValues = {
                                     name = UnicodeStringLiterals,
                                     reference = UnicodeStringLiteral
                                 ),
-                                Enum(
+                                Token(
                                     name = UnicodeStringLiteral,
-                                    variants = [
-                                        EnumVariant(reference = SingleQuotedUnicodeStringLiteral),
-                                        EnumVariant(reference = DoubleQuotedUnicodeStringLiteral)
-                                    ]
-                                ),
-                                Token(
-                                    name = SingleQuotedUnicodeStringLiteral,
-                                    scanner = Sequence([
-                                        Atom("unicode'"),
-                                        ZeroOrMore(Choice([
-                                            Fragment(UnicodeEscapeSequence),
-                                            Not(['\'', '\\', '\r', '\n'])
-                                        ])),
-                                        Atom("'")
-                                    ])
-                                ),
-                                Token(
-                                    name = DoubleQuotedUnicodeStringLiteral,
-                                    scanner = Sequence([
-                                        Atom("unicode\""),
-                                        ZeroOrMore(Choice([
-                                            Fragment(UnicodeEscapeSequence),
-                                            Not(['"', '\\', '\r', '\n'])
-                                        ])),
-                                        Atom("\"")
+                                    scanner = Choice([
+                                        Sequence([
+                                            Atom("unicode'"),
+                                            ZeroOrMore(Choice([
+                                                Fragment(UnicodeEscapeSequence),
+                                                Not(['\'', '\\', '\r', '\n'])
+                                            ])),
+                                            Atom("'")
+                                        ]),
+                                        Sequence([
+                                            Atom("unicode\""),
+                                            ZeroOrMore(Choice([
+                                                Fragment(UnicodeEscapeSequence),
+                                                Not(['"', '\\', '\r', '\n'])
+                                            ])),
+                                            Atom("\"")
+                                        ])
                                     ])
                                 ),
                                 Fragment(
@@ -4205,27 +4172,19 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                                     OneOrMore(Fragment(YulHexCharacter))
                                 ])
                             ),
-                            Enum(
+                            Token(
                                 name = YulHexStringLiteral,
-                                variants = [
-                                    EnumVariant(reference = YulSingleQuotedHexStringLiteral),
-                                    EnumVariant(reference = YulDoubleQuotedHexStringLiteral)
-                                ]
-                            ),
-                            Token(
-                                name = YulSingleQuotedHexStringLiteral,
-                                scanner = Sequence([
-                                    Atom("hex'"),
-                                    Optional(Fragment(YulHexStringContents)),
-                                    Atom("'")
-                                ])
-                            ),
-                            Token(
-                                name = YulDoubleQuotedHexStringLiteral,
-                                scanner = Sequence([
-                                    Atom("hex\""),
-                                    Optional(Fragment(YulHexStringContents)),
-                                    Atom("\"")
+                                scanner = Choice([
+                                    Sequence([
+                                        Atom("hex'"),
+                                        Optional(Fragment(YulHexStringContents)),
+                                        Atom("'")
+                                    ]),
+                                    Sequence([
+                                        Atom("hex\""),
+                                        Optional(Fragment(YulHexStringContents)),
+                                        Atom("\"")
+                                    ])
                                 ])
                             ),
                             Fragment(
@@ -4240,37 +4199,29 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                                     ]))
                                 ])
                             ),
-                            Enum(
+                            Token(
                                 name = YulStringLiteral,
-                                variants = [
-                                    EnumVariant(reference = YulSingleQuotedStringLiteral),
-                                    EnumVariant(reference = YulDoubleQuotedStringLiteral)
-                                ]
-                            ),
-                            Token(
-                                name = YulSingleQuotedStringLiteral,
-                                scanner = Sequence([
-                                    Atom("'"),
-                                    ZeroOrMore(Choice([
-                                        Fragment(YulEscapeSequence),
-                                        Range(inclusive_start = ' ', inclusive_end = '&'),
-                                        Range(inclusive_start = '(', inclusive_end = '['),
-                                        Range(inclusive_start = ']', inclusive_end = '~')
-                                    ])),
-                                    Atom("'")
-                                ])
-                            ),
-                            Token(
-                                name = YulDoubleQuotedStringLiteral,
-                                scanner = Sequence([
-                                    Atom("\""),
-                                    ZeroOrMore(Choice([
-                                        Fragment(YulEscapeSequence),
-                                        Range(inclusive_start = ' ', inclusive_end = '!'),
-                                        Range(inclusive_start = '#', inclusive_end = '['),
-                                        Range(inclusive_start = ']', inclusive_end = '~')
-                                    ])),
-                                    Atom("\"")
+                                scanner = Choice([
+                                    Sequence([
+                                        Atom("'"),
+                                        ZeroOrMore(Choice([
+                                            Fragment(YulEscapeSequence),
+                                            Range(inclusive_start = ' ', inclusive_end = '&'),
+                                            Range(inclusive_start = '(', inclusive_end = '['),
+                                            Range(inclusive_start = ']', inclusive_end = '~')
+                                        ])),
+                                        Atom("'")
+                                    ]),
+                                    Sequence([
+                                        Atom("\""),
+                                        ZeroOrMore(Choice([
+                                            Fragment(YulEscapeSequence),
+                                            Range(inclusive_start = ' ', inclusive_end = '!'),
+                                            Range(inclusive_start = '#', inclusive_end = '['),
+                                            Range(inclusive_start = ']', inclusive_end = '~')
+                                        ])),
+                                        Atom("\"")
+                                    ])
                                 ])
                             ),
                             Fragment(

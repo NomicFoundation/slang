@@ -175,11 +175,9 @@ SourceUnitStruct {
                                                                                         StringLiterals(
                                                                                             StringLiterals {
                                                                                                 elements: [
-                                                                                                    DoubleQuotedStringLiteral(
-                                                                                                        DoubleQuotedStringLiteral {
-                                                                                                            range: 289..320,
-                                                                                                        },
-                                                                                                    ),
+                                                                                                    StringLiteral {
+                                                                                                        range: 289..320,
+                                                                                                    },
                                                                                                 ],
                                                                                             },
                                                                                         ),
@@ -293,11 +291,9 @@ SourceUnitStruct {
                                                                                                     StringLiterals(
                                                                                                         StringLiterals {
                                                                                                             elements: [
-                                                                                                                DoubleQuotedStringLiteral(
-                                                                                                                    DoubleQuotedStringLiteral {
-                                                                                                                        range: 379..381,
-                                                                                                                    },
-                                                                                                                ),
+                                                                                                                StringLiteral {
+                                                                                                                    range: 379..381,
+                                                                                                                },
                                                                                                             ],
                                                                                                         },
                                                                                                     ),
@@ -344,11 +340,9 @@ SourceUnitStruct {
                                                                                         StringLiterals(
                                                                                             StringLiterals {
                                                                                                 elements: [
-                                                                                                    DoubleQuotedStringLiteral(
-                                                                                                        DoubleQuotedStringLiteral {
-                                                                                                            range: 405..465,
-                                                                                                        },
-                                                                                                    ),
+                                                                                                    StringLiteral {
+                                                                                                        range: 405..465,
+                                                                                                    },
                                                                                                 ],
                                                                                             },
                                                                                         ),

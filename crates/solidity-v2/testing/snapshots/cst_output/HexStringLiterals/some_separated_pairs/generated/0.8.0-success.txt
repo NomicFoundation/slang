@@ -58,11 +58,9 @@ SourceUnitStruct {
                                                                 HexStringLiterals(
                                                                     HexStringLiterals {
                                                                         elements: [
-                                                                            DoubleQuotedHexStringLiteral(
-                                                                                DoubleQuotedHexStringLiteral {
-                                                                                    range: 145..169,
-                                                                                },
-                                                                            ),
+                                                                            HexStringLiteral {
+                                                                                range: 145..169,
+                                                                            },
                                                                         ],
                                                                     },
                                                                 ),

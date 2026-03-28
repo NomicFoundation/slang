@@ -20,8 +20,8 @@ SourceUnitStruct {
                                             VersionTerm(
                                                 VersionTermStruct {
                                                     operator: None,
-                                                    literal: PragmaSingleQuotedStringLiteral(
-                                                        PragmaSingleQuotedStringLiteral {
+                                                    literal: PragmaStringLiteral(
+                                                        PragmaStringLiteral {
                                                             range: 124..131,
                                                         },
                                                     ),

@@ -102,8 +102,7 @@ Repeated<T>: Vec<T> = {
     };
     VersionLiteral: VersionLiteral = {
         <simple_version_literal: SimpleVersionLiteral>  => new_version_literal_simple_version_literal(<>),
-        <pragma_single_quoted_string_literal: PragmaSingleQuotedStringLiteral>  => new_version_literal_pragma_single_quoted_string_literal(<>),
-        <pragma_double_quoted_string_literal: PragmaDoubleQuotedStringLiteral>  => new_version_literal_pragma_double_quoted_string_literal(<>),
+        <pragma_string_literal: PragmaStringLiteral>  => new_version_literal_pragma_string_literal(<>),
         
     };
     SimpleVersionLiteral: SimpleVersionLiteral = {
@@ -119,11 +118,6 @@ Repeated<T>: Vec<T> = {
     
 
 // Rules for topic Pragma String Literals
-    PragmaStringLiteral: PragmaStringLiteral = {
-        <pragma_single_quoted_string_literal: PragmaSingleQuotedStringLiteral>  => new_pragma_string_literal_pragma_single_quoted_string_literal(<>),
-        <pragma_double_quoted_string_literal: PragmaDoubleQuotedStringLiteral>  => new_pragma_string_literal_pragma_double_quoted_string_literal(<>),
-        
-    };
     
 
 
@@ -1528,27 +1522,12 @@ TupleValues: TupleValues = {
         <string_literal: Repeated<<StringLiteral>>>  => new_string_literals(<>),
         
     };
-    StringLiteral: StringLiteral = {
-        <single_quoted_string_literal: SingleQuotedStringLiteral>  => new_string_literal_single_quoted_string_literal(<>),
-        <double_quoted_string_literal: DoubleQuotedStringLiteral>  => new_string_literal_double_quoted_string_literal(<>),
-        
-    };
     HexStringLiterals: HexStringLiterals = {
         <hex_string_literal: Repeated<<HexStringLiteral>>>  => new_hex_string_literals(<>),
         
     };
-    HexStringLiteral: HexStringLiteral = {
-        <single_quoted_hex_string_literal: SingleQuotedHexStringLiteral>  => new_hex_string_literal_single_quoted_hex_string_literal(<>),
-        <double_quoted_hex_string_literal: DoubleQuotedHexStringLiteral>  => new_hex_string_literal_double_quoted_hex_string_literal(<>),
-        
-    };
     UnicodeStringLiterals: UnicodeStringLiterals = {
         <unicode_string_literal: Repeated<<UnicodeStringLiteral>>>  => new_unicode_string_literals(<>),
-        
-    };
-    UnicodeStringLiteral: UnicodeStringLiteral = {
-        <single_quoted_unicode_string_literal: SingleQuotedUnicodeStringLiteral>  => new_unicode_string_literal_single_quoted_unicode_string_literal(<>),
-        <double_quoted_unicode_string_literal: DoubleQuotedUnicodeStringLiteral>  => new_unicode_string_literal_double_quoted_unicode_string_literal(<>),
         
     };
     
@@ -1736,16 +1715,6 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
         <yul_hex_literal: YulHexLiteral>  => new_yul_literal_yul_hex_literal(<>),
         <yul_hex_string_literal: YulHexStringLiteral>  => new_yul_literal_yul_hex_string_literal(<>),
         <yul_string_literal: YulStringLiteral>  => new_yul_literal_yul_string_literal(<>),
-        
-    };
-    YulHexStringLiteral: YulHexStringLiteral = {
-        <yul_single_quoted_hex_string_literal: YulSingleQuotedHexStringLiteral>  => new_yul_hex_string_literal_yul_single_quoted_hex_string_literal(<>),
-        <yul_double_quoted_hex_string_literal: YulDoubleQuotedHexStringLiteral>  => new_yul_hex_string_literal_yul_double_quoted_hex_string_literal(<>),
-        
-    };
-    YulStringLiteral: YulStringLiteral = {
-        <yul_single_quoted_string_literal: YulSingleQuotedStringLiteral>  => new_yul_string_literal_yul_single_quoted_string_literal(<>),
-        <yul_double_quoted_string_literal: YulDoubleQuotedStringLiteral>  => new_yul_string_literal_yul_double_quoted_string_literal(<>),
         
     };
     
@@ -2069,24 +2038,6 @@ DoKeyword: DoKeyword = {
 
 };
 #[inline]
-DoubleQuotedHexStringLiteral: DoubleQuotedHexStringLiteral = {
-
-        <l:@L> L_DoubleQuotedHexStringLiteral <r:@L> => new_double_quoted_hex_string_literal(l..r, source),
-
-};
-#[inline]
-DoubleQuotedStringLiteral: DoubleQuotedStringLiteral = {
-
-        <l:@L> L_DoubleQuotedStringLiteral <r:@L> => new_double_quoted_string_literal(l..r, source),
-
-};
-#[inline]
-DoubleQuotedUnicodeStringLiteral: DoubleQuotedUnicodeStringLiteral = {
-
-        <l:@L> L_DoubleQuotedUnicodeStringLiteral <r:@L> => new_double_quoted_unicode_string_literal(l..r, source),
-
-};
-#[inline]
 ElseKeyword: ElseKeyword = {
 
         <l:@L> L_ElseKeyword_Reserved <r:@L> => new_else_keyword(l..r, source),
@@ -2258,6 +2209,12 @@ HexKeyword: HexKeyword = {
 HexLiteral: HexLiteral = {
 
         <l:@L> L_HexLiteral <r:@L> => new_hex_literal(l..r, source),
+
+};
+#[inline]
+HexStringLiteral: HexStringLiteral = {
+
+        <l:@L> L_HexStringLiteral <r:@L> => new_hex_string_literal(l..r, source),
 
 };
 #[inline]
@@ -2577,12 +2534,6 @@ PragmaCaret: PragmaCaret = {
 
 };
 #[inline]
-PragmaDoubleQuotedStringLiteral: PragmaDoubleQuotedStringLiteral = {
-
-        <l:@L> L_PragmaDoubleQuotedStringLiteral <r:@L> => new_pragma_double_quoted_string_literal(l..r, source),
-
-};
-#[inline]
 PragmaEqual: PragmaEqual = {
 
         <l:@L> L_PragmaEqual <r:@L> => new_pragma_equal(l..r, source),
@@ -2637,9 +2588,9 @@ PragmaSemicolon: PragmaSemicolon = {
 
 };
 #[inline]
-PragmaSingleQuotedStringLiteral: PragmaSingleQuotedStringLiteral = {
+PragmaStringLiteral: PragmaStringLiteral = {
 
-        <l:@L> L_PragmaSingleQuotedStringLiteral <r:@L> => new_pragma_single_quoted_string_literal(l..r, source),
+        <l:@L> L_PragmaStringLiteral <r:@L> => new_pragma_string_literal(l..r, source),
 
 };
 #[inline]
@@ -2751,24 +2702,6 @@ SingleLineNatSpecComment: SingleLineNatSpecComment = {
 
 };
 #[inline]
-SingleQuotedHexStringLiteral: SingleQuotedHexStringLiteral = {
-
-        <l:@L> L_SingleQuotedHexStringLiteral <r:@L> => new_single_quoted_hex_string_literal(l..r, source),
-
-};
-#[inline]
-SingleQuotedStringLiteral: SingleQuotedStringLiteral = {
-
-        <l:@L> L_SingleQuotedStringLiteral <r:@L> => new_single_quoted_string_literal(l..r, source),
-
-};
-#[inline]
-SingleQuotedUnicodeStringLiteral: SingleQuotedUnicodeStringLiteral = {
-
-        <l:@L> L_SingleQuotedUnicodeStringLiteral <r:@L> => new_single_quoted_unicode_string_literal(l..r, source),
-
-};
-#[inline]
 SizeOfKeyword: SizeOfKeyword = {
 
         <l:@L> L_SizeOfKeyword_Reserved <r:@L> => new_size_of_keyword(l..r, source),
@@ -2808,6 +2741,12 @@ StorageKeyword: StorageKeyword = {
 StringKeyword: StringKeyword = {
 
         <l:@L> L_StringKeyword_Reserved <r:@L> => new_string_keyword(l..r, source),
+
+};
+#[inline]
+StringLiteral: StringLiteral = {
+
+        <l:@L> L_StringLiteral <r:@L> => new_string_literal(l..r, source),
 
 };
 #[inline]
@@ -2904,6 +2843,12 @@ UintKeyword: UintKeyword = {
 UncheckedKeyword: UncheckedKeyword = {
 
         <l:@L> L_UncheckedKeyword_Reserved <r:@L> => new_unchecked_keyword(l..r, source),
+
+};
+#[inline]
+UnicodeStringLiteral: UnicodeStringLiteral = {
+
+        <l:@L> L_UnicodeStringLiteral <r:@L> => new_unicode_string_literal(l..r, source),
 
 };
 #[inline]
@@ -3021,18 +2966,6 @@ YulDefaultKeyword: YulDefaultKeyword = {
 
 };
 #[inline]
-YulDoubleQuotedHexStringLiteral: YulDoubleQuotedHexStringLiteral = {
-
-        <l:@L> L_YulDoubleQuotedHexStringLiteral <r:@L> => new_yul_double_quoted_hex_string_literal(l..r, source),
-
-};
-#[inline]
-YulDoubleQuotedStringLiteral: YulDoubleQuotedStringLiteral = {
-
-        <l:@L> L_YulDoubleQuotedStringLiteral <r:@L> => new_yul_double_quoted_string_literal(l..r, source),
-
-};
-#[inline]
 YulFalseKeyword: YulFalseKeyword = {
 
         <l:@L> L_YulFalseKeyword_Reserved <r:@L> => new_yul_false_keyword(l..r, source),
@@ -3060,6 +2993,12 @@ YulHexKeyword: YulHexKeyword = {
 YulHexLiteral: YulHexLiteral = {
 
         <l:@L> L_YulHexLiteral <r:@L> => new_yul_hex_literal(l..r, source),
+
+};
+#[inline]
+YulHexStringLiteral: YulHexStringLiteral = {
+
+        <l:@L> L_YulHexStringLiteral <r:@L> => new_yul_hex_string_literal(l..r, source),
 
 };
 #[inline]
@@ -3111,15 +3050,9 @@ YulPeriod: YulPeriod = {
 
 };
 #[inline]
-YulSingleQuotedHexStringLiteral: YulSingleQuotedHexStringLiteral = {
+YulStringLiteral: YulStringLiteral = {
 
-        <l:@L> L_YulSingleQuotedHexStringLiteral <r:@L> => new_yul_single_quoted_hex_string_literal(l..r, source),
-
-};
-#[inline]
-YulSingleQuotedStringLiteral: YulSingleQuotedStringLiteral = {
-
-        <l:@L> L_YulSingleQuotedStringLiteral <r:@L> => new_yul_single_quoted_string_literal(l..r, source),
+        <l:@L> L_YulStringLiteral <r:@L> => new_yul_string_literal(l..r, source),
 
 };
 #[inline]
@@ -3205,9 +3138,6 @@ extern {
         L_DefineKeyword_Reserved => LexemeKind::DefineKeyword_Reserved,
         L_DeleteKeyword_Reserved => LexemeKind::DeleteKeyword_Reserved,
         L_DoKeyword_Reserved => LexemeKind::DoKeyword_Reserved,
-        L_DoubleQuotedHexStringLiteral => LexemeKind::DoubleQuotedHexStringLiteral,
-        L_DoubleQuotedStringLiteral => LexemeKind::DoubleQuotedStringLiteral,
-        L_DoubleQuotedUnicodeStringLiteral => LexemeKind::DoubleQuotedUnicodeStringLiteral,
         L_ElseKeyword_Reserved => LexemeKind::ElseKeyword_Reserved,
         L_EmitKeyword_Reserved => LexemeKind::EmitKeyword_Reserved,
         L_EndOfLine => LexemeKind::EndOfLine,
@@ -3237,6 +3167,7 @@ extern {
         L_GweiKeyword_Reserved => LexemeKind::GweiKeyword_Reserved,
         L_HexKeyword_Reserved => LexemeKind::HexKeyword_Reserved,
         L_HexLiteral => LexemeKind::HexLiteral,
+        L_HexStringLiteral => LexemeKind::HexStringLiteral,
         L_HoursKeyword_Reserved => LexemeKind::HoursKeyword_Reserved,
         L_Identifier => LexemeKind::Identifier,
         L_IfKeyword_Reserved => LexemeKind::IfKeyword_Reserved,
@@ -3286,7 +3217,6 @@ extern {
         L_PlusPlus => LexemeKind::PlusPlus,
         L_PragmaBarBar => LexemeKind::PragmaBarBar,
         L_PragmaCaret => LexemeKind::PragmaCaret,
-        L_PragmaDoubleQuotedStringLiteral => LexemeKind::PragmaDoubleQuotedStringLiteral,
         L_PragmaEqual => LexemeKind::PragmaEqual,
         L_PragmaGreaterThan => LexemeKind::PragmaGreaterThan,
         L_PragmaGreaterThanEqual => LexemeKind::PragmaGreaterThanEqual,
@@ -3296,7 +3226,7 @@ extern {
         L_PragmaMinus => LexemeKind::PragmaMinus,
         L_PragmaPeriod => LexemeKind::PragmaPeriod,
         L_PragmaSemicolon => LexemeKind::PragmaSemicolon,
-        L_PragmaSingleQuotedStringLiteral => LexemeKind::PragmaSingleQuotedStringLiteral,
+        L_PragmaStringLiteral => LexemeKind::PragmaStringLiteral,
         L_PragmaTilde => LexemeKind::PragmaTilde,
         L_PrivateKeyword_Reserved => LexemeKind::PrivateKeyword_Reserved,
         L_PromiseKeyword_Reserved => LexemeKind::PromiseKeyword_Reserved,
@@ -3315,9 +3245,6 @@ extern {
         L_Semicolon => LexemeKind::Semicolon,
         L_SingleLineComment => LexemeKind::SingleLineComment,
         L_SingleLineNatSpecComment => LexemeKind::SingleLineNatSpecComment,
-        L_SingleQuotedHexStringLiteral => LexemeKind::SingleQuotedHexStringLiteral,
-        L_SingleQuotedStringLiteral => LexemeKind::SingleQuotedStringLiteral,
-        L_SingleQuotedUnicodeStringLiteral => LexemeKind::SingleQuotedUnicodeStringLiteral,
         L_SizeOfKeyword_Reserved => LexemeKind::SizeOfKeyword_Reserved,
         L_Slash => LexemeKind::Slash,
         L_SlashEqual => LexemeKind::SlashEqual,
@@ -3325,6 +3252,7 @@ extern {
         L_StaticKeyword_Reserved => LexemeKind::StaticKeyword_Reserved,
         L_StorageKeyword_Reserved => LexemeKind::StorageKeyword_Reserved,
         L_StringKeyword_Reserved => LexemeKind::StringKeyword_Reserved,
+        L_StringLiteral => LexemeKind::StringLiteral,
         L_StructKeyword_Reserved => LexemeKind::StructKeyword_Reserved,
         L_SuperKeyword_Reserved => LexemeKind::SuperKeyword_Reserved,
         L_SupportsKeyword_Reserved => LexemeKind::SupportsKeyword_Reserved,
@@ -3341,6 +3269,7 @@ extern {
         L_UfixedKeyword_Reserved => LexemeKind::UfixedKeyword_Reserved,
         L_UintKeyword_Reserved => LexemeKind::UintKeyword_Reserved,
         L_UncheckedKeyword_Reserved => LexemeKind::UncheckedKeyword_Reserved,
+        L_UnicodeStringLiteral => LexemeKind::UnicodeStringLiteral,
         L_UsingKeyword_Reserved => LexemeKind::UsingKeyword_Reserved,
         L_VarKeyword_Reserved => LexemeKind::VarKeyword_Reserved,
         L_VersionSpecifier => LexemeKind::VersionSpecifier,
@@ -3360,13 +3289,12 @@ extern {
         L_YulContinueKeyword_Reserved => LexemeKind::YulContinueKeyword_Reserved,
         L_YulDecimalLiteral => LexemeKind::YulDecimalLiteral,
         L_YulDefaultKeyword_Reserved => LexemeKind::YulDefaultKeyword_Reserved,
-        L_YulDoubleQuotedHexStringLiteral => LexemeKind::YulDoubleQuotedHexStringLiteral,
-        L_YulDoubleQuotedStringLiteral => LexemeKind::YulDoubleQuotedStringLiteral,
         L_YulFalseKeyword_Reserved => LexemeKind::YulFalseKeyword_Reserved,
         L_YulForKeyword_Reserved => LexemeKind::YulForKeyword_Reserved,
         L_YulFunctionKeyword_Reserved => LexemeKind::YulFunctionKeyword_Reserved,
         L_YulHexKeyword_Reserved => LexemeKind::YulHexKeyword_Reserved,
         L_YulHexLiteral => LexemeKind::YulHexLiteral,
+        L_YulHexStringLiteral => LexemeKind::YulHexStringLiteral,
         L_YulIdentifier => LexemeKind::YulIdentifier,
         L_YulIfKeyword_Reserved => LexemeKind::YulIfKeyword_Reserved,
         L_YulLeaveKeyword_Reserved => LexemeKind::YulLeaveKeyword_Reserved,
@@ -3375,8 +3303,7 @@ extern {
         L_YulOpenBrace => LexemeKind::YulOpenBrace,
         L_YulOpenParen => LexemeKind::YulOpenParen,
         L_YulPeriod => LexemeKind::YulPeriod,
-        L_YulSingleQuotedHexStringLiteral => LexemeKind::YulSingleQuotedHexStringLiteral,
-        L_YulSingleQuotedStringLiteral => LexemeKind::YulSingleQuotedStringLiteral,
+        L_YulStringLiteral => LexemeKind::YulStringLiteral,
         L_YulSuperKeyword_Reserved => LexemeKind::YulSuperKeyword_Reserved,
         L_YulSwitchKeyword_Reserved => LexemeKind::YulSwitchKeyword_Reserved,
         L_YulThisKeyword_Reserved => LexemeKind::YulThisKeyword_Reserved,

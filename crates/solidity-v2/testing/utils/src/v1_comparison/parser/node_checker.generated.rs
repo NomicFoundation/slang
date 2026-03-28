@@ -13601,64 +13601,6 @@ impl NodeChecker for FunctionTypeAttribute {
     }
 }
 
-/// Generic `NodeChecker` for choices
-impl NodeChecker for HexStringLiteral {
-    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
-        let node_range = text_offset..(text_offset + node.text_len());
-
-        if node.kind() != NodeKind::Nonterminal(NonterminalKind::HexStringLiteral) {
-            // Don't even check the rest
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected node kind to be {}, but it was {}",
-                    NonterminalKind::HexStringLiteral,
-                    node.kind()
-                ),
-                node_range,
-            )];
-        }
-
-        let children = children_with_offsets(node, text_offset);
-
-        if children.len() != 1 {
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected exactly one child for {}, but got: {children:#?}",
-                    NonterminalKind::HexStringLiteral
-                ),
-                node_range,
-            )];
-        }
-
-        let (child, child_offset) = &children[0];
-
-        if child.label != EdgeLabel::Variant {
-            let child_range = *child_offset..(*child_offset + child.node.text_len());
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected child to be of variant type, but it was {}",
-                    child.label
-                ),
-                child_range,
-            )];
-        }
-
-        let mut errors = vec![];
-
-        match self {
-            Self::SingleQuotedHexStringLiteral(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-
-            Self::DoubleQuotedHexStringLiteral(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-        }
-
-        errors
-    }
-}
-
 /// `NodeChecker` for `IdentifierPathElement` is done by hand since it's not present in V1
 impl NodeChecker for IdentifierPathElement {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
@@ -13988,64 +13930,6 @@ impl NodeChecker for Pragma {
             }
 
             Self::ExperimentalPragma(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-        }
-
-        errors
-    }
-}
-
-/// Generic `NodeChecker` for choices
-impl NodeChecker for PragmaStringLiteral {
-    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
-        let node_range = text_offset..(text_offset + node.text_len());
-
-        if node.kind() != NodeKind::Nonterminal(NonterminalKind::StringLiteral) {
-            // Don't even check the rest
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected node kind to be {}, but it was {}",
-                    NonterminalKind::StringLiteral,
-                    node.kind()
-                ),
-                node_range,
-            )];
-        }
-
-        let children = children_with_offsets(node, text_offset);
-
-        if children.len() != 1 {
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected exactly one child for {}, but got: {children:#?}",
-                    NonterminalKind::StringLiteral
-                ),
-                node_range,
-            )];
-        }
-
-        let (child, child_offset) = &children[0];
-
-        if child.label != EdgeLabel::Variant {
-            let child_range = *child_offset..(*child_offset + child.node.text_len());
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected child to be of variant type, but it was {}",
-                    child.label
-                ),
-                child_range,
-            )];
-        }
-
-        let mut errors = vec![];
-
-        match self {
-            Self::PragmaSingleQuotedStringLiteral(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-
-            Self::PragmaDoubleQuotedStringLiteral(element) => {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             }
         }
@@ -14539,64 +14423,6 @@ impl NodeChecker for StringExpression {
 }
 
 /// Generic `NodeChecker` for choices
-impl NodeChecker for StringLiteral {
-    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
-        let node_range = text_offset..(text_offset + node.text_len());
-
-        if node.kind() != NodeKind::Nonterminal(NonterminalKind::StringLiteral) {
-            // Don't even check the rest
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected node kind to be {}, but it was {}",
-                    NonterminalKind::StringLiteral,
-                    node.kind()
-                ),
-                node_range,
-            )];
-        }
-
-        let children = children_with_offsets(node, text_offset);
-
-        if children.len() != 1 {
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected exactly one child for {}, but got: {children:#?}",
-                    NonterminalKind::StringLiteral
-                ),
-                node_range,
-            )];
-        }
-
-        let (child, child_offset) = &children[0];
-
-        if child.label != EdgeLabel::Variant {
-            let child_range = *child_offset..(*child_offset + child.node.text_len());
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected child to be of variant type, but it was {}",
-                    child.label
-                ),
-                child_range,
-            )];
-        }
-
-        let mut errors = vec![];
-
-        match self {
-            Self::SingleQuotedStringLiteral(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-
-            Self::DoubleQuotedStringLiteral(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-        }
-
-        errors
-    }
-}
-
-/// Generic `NodeChecker` for choices
 impl NodeChecker for TypeName {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
@@ -14658,64 +14484,6 @@ impl NodeChecker for TypeName {
             }
 
             Self::IdentifierPath(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-        }
-
-        errors
-    }
-}
-
-/// Generic `NodeChecker` for choices
-impl NodeChecker for UnicodeStringLiteral {
-    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
-        let node_range = text_offset..(text_offset + node.text_len());
-
-        if node.kind() != NodeKind::Nonterminal(NonterminalKind::UnicodeStringLiteral) {
-            // Don't even check the rest
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected node kind to be {}, but it was {}",
-                    NonterminalKind::UnicodeStringLiteral,
-                    node.kind()
-                ),
-                node_range,
-            )];
-        }
-
-        let children = children_with_offsets(node, text_offset);
-
-        if children.len() != 1 {
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected exactly one child for {}, but got: {children:#?}",
-                    NonterminalKind::UnicodeStringLiteral
-                ),
-                node_range,
-            )];
-        }
-
-        let (child, child_offset) = &children[0];
-
-        if child.label != EdgeLabel::Variant {
-            let child_range = *child_offset..(*child_offset + child.node.text_len());
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected child to be of variant type, but it was {}",
-                    child.label
-                ),
-                child_range,
-            )];
-        }
-
-        let mut errors = vec![];
-
-        match self {
-            Self::SingleQuotedUnicodeStringLiteral(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-
-            Self::DoubleQuotedUnicodeStringLiteral(element) => {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             }
         }
@@ -15024,7 +14792,7 @@ impl NodeChecker for VersionExpression {
     }
 }
 
-/// Custom `NodeChecker` for `VersionLiteral` — remaps pragma string literal variants to V1 version literal terminals
+/// Custom `NodeChecker` for `VersionLiteral` — remaps `PragmaStringLiteral` variant to V1 version literal terminals
 impl NodeChecker for VersionLiteral {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
@@ -15069,33 +14837,13 @@ impl NodeChecker for VersionLiteral {
             Self::SimpleVersionLiteral(element) => {
                 element.check_node_with_offset(&child.node, *child_offset)
             }
-            Self::PragmaSingleQuotedStringLiteral(_) => {
-                // V2 pragma string literals map to V1's version literal terminals
+            Self::PragmaStringLiteral(_) => {
+                // V2 PragmaStringLiteral maps to V1's SingleQuotedVersionLiteral or DoubleQuotedVersionLiteral
                 let child_range = *child_offset..(*child_offset + child.node.text_len());
                 if let NodeKind::Terminal(terminal_kind) = child.node.kind() {
-                    if terminal_kind.as_ref() == "SingleQuotedVersionLiteral" {
-                        vec![]
-                    } else {
-                        vec![NodeCheckerError::new(format!("Expected node kind to be SingleQuotedVersionLiteral, but it was {}", terminal_kind.as_ref()), child_range)]
-                    }
-                } else {
-                    vec![NodeCheckerError::new(
-                        format!(
-                            "Expected node kind to be a terminal, but it was {}",
-                            child.node.kind()
-                        ),
-                        child_range,
-                    )]
-                }
-            }
-            Self::PragmaDoubleQuotedStringLiteral(_) => {
-                // V2 pragma string literals map to V1's version literal terminals
-                let child_range = *child_offset..(*child_offset + child.node.text_len());
-                if let NodeKind::Terminal(terminal_kind) = child.node.kind() {
-                    if terminal_kind.as_ref() == "DoubleQuotedVersionLiteral" {
-                        vec![]
-                    } else {
-                        vec![NodeCheckerError::new(format!("Expected node kind to be DoubleQuotedVersionLiteral, but it was {}", terminal_kind.as_ref()), child_range)]
+                    match terminal_kind.as_ref() {
+                        "SingleQuotedVersionLiteral" | "DoubleQuotedVersionLiteral" => vec![],
+                        _ => vec![NodeCheckerError::new(format!("Expected node kind to be SingleQuotedVersionLiteral or DoubleQuotedVersionLiteral, but it was {}", terminal_kind.as_ref()), child_range)],
                     }
                 } else {
                     vec![NodeCheckerError::new(
@@ -15243,64 +14991,6 @@ impl NodeChecker for YulExpression {
             }
 
             Self::YulPath(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-        }
-
-        errors
-    }
-}
-
-/// Generic `NodeChecker` for choices
-impl NodeChecker for YulHexStringLiteral {
-    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
-        let node_range = text_offset..(text_offset + node.text_len());
-
-        if node.kind() != NodeKind::Nonterminal(NonterminalKind::HexStringLiteral) {
-            // Don't even check the rest
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected node kind to be {}, but it was {}",
-                    NonterminalKind::HexStringLiteral,
-                    node.kind()
-                ),
-                node_range,
-            )];
-        }
-
-        let children = children_with_offsets(node, text_offset);
-
-        if children.len() != 1 {
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected exactly one child for {}, but got: {children:#?}",
-                    NonterminalKind::HexStringLiteral
-                ),
-                node_range,
-            )];
-        }
-
-        let (child, child_offset) = &children[0];
-
-        if child.label != EdgeLabel::Variant {
-            let child_range = *child_offset..(*child_offset + child.node.text_len());
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected child to be of variant type, but it was {}",
-                    child.label
-                ),
-                child_range,
-            )];
-        }
-
-        let mut errors = vec![];
-
-        match self {
-            Self::YulSingleQuotedHexStringLiteral(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-
-            Self::YulDoubleQuotedHexStringLiteral(element) => {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             }
         }
@@ -15469,64 +15159,6 @@ impl NodeChecker for YulStatement {
             }
 
             Self::YulExpression(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-        }
-
-        errors
-    }
-}
-
-/// Generic `NodeChecker` for choices
-impl NodeChecker for YulStringLiteral {
-    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
-        let node_range = text_offset..(text_offset + node.text_len());
-
-        if node.kind() != NodeKind::Nonterminal(NonterminalKind::StringLiteral) {
-            // Don't even check the rest
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected node kind to be {}, but it was {}",
-                    NonterminalKind::StringLiteral,
-                    node.kind()
-                ),
-                node_range,
-            )];
-        }
-
-        let children = children_with_offsets(node, text_offset);
-
-        if children.len() != 1 {
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected exactly one child for {}, but got: {children:#?}",
-                    NonterminalKind::StringLiteral
-                ),
-                node_range,
-            )];
-        }
-
-        let (child, child_offset) = &children[0];
-
-        if child.label != EdgeLabel::Variant {
-            let child_range = *child_offset..(*child_offset + child.node.text_len());
-            return vec![NodeCheckerError::new(
-                format!(
-                    "Expected child to be of variant type, but it was {}",
-                    child.label
-                ),
-                child_range,
-            )];
-        }
-
-        let mut errors = vec![];
-
-        match self {
-            Self::YulSingleQuotedStringLiteral(element) => {
-                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-            }
-
-            Self::YulDoubleQuotedStringLiteral(element) => {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             }
         }
@@ -18758,90 +18390,6 @@ impl NodeChecker for DoKeyword {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for DoubleQuotedHexStringLiteral {
-    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
-        let node_range = text_offset..(text_offset + node.text_len());
-        let mut errors = vec![];
-        if let NodeKind::Terminal(terminal_kind) = node.kind() {
-            let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "DoubleQuotedHexStringLiteral";
-
-            if v1_kind != v2_kind {
-                errors.push(NodeCheckerError::new(
-                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
-                    node_range,
-                ));
-            }
-        } else {
-            errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected node kind to be a terminal, but it was {}",
-                    node.kind()
-                ),
-                node_range,
-            ));
-        }
-        errors
-    }
-}
-
-/// Generic `NodeChecker` for terminals
-impl NodeChecker for DoubleQuotedStringLiteral {
-    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
-        let node_range = text_offset..(text_offset + node.text_len());
-        let mut errors = vec![];
-        if let NodeKind::Terminal(terminal_kind) = node.kind() {
-            let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "DoubleQuotedStringLiteral";
-
-            if v1_kind != v2_kind {
-                errors.push(NodeCheckerError::new(
-                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
-                    node_range,
-                ));
-            }
-        } else {
-            errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected node kind to be a terminal, but it was {}",
-                    node.kind()
-                ),
-                node_range,
-            ));
-        }
-        errors
-    }
-}
-
-/// Generic `NodeChecker` for terminals
-impl NodeChecker for DoubleQuotedUnicodeStringLiteral {
-    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
-        let node_range = text_offset..(text_offset + node.text_len());
-        let mut errors = vec![];
-        if let NodeKind::Terminal(terminal_kind) = node.kind() {
-            let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "DoubleQuotedUnicodeStringLiteral";
-
-            if v1_kind != v2_kind {
-                errors.push(NodeCheckerError::new(
-                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
-                    node_range,
-                ));
-            }
-        } else {
-            errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected node kind to be a terminal, but it was {}",
-                    node.kind()
-                ),
-                node_range,
-            ));
-        }
-        errors
-    }
-}
-
-/// Generic `NodeChecker` for terminals
 impl NodeChecker for ElseKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
@@ -19650,6 +19198,56 @@ impl NodeChecker for HexLiteral {
             ));
         }
         errors
+    }
+}
+
+// In V2, `HexStringLiteral` is a single terminal combining single/double quoted variants.
+// In V1, `HexStringLiteral` is a nonterminal wrapping a `SingleQuotedHexStringLiteral` or `DoubleQuotedHexStringLiteral` terminal.
+// This custom impl unwraps the V1 nonterminal.
+impl NodeChecker for HexStringLiteral {
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
+        let node_range = text_offset..(text_offset + node.text_len());
+
+        if node.kind() != NodeKind::Nonterminal(NonterminalKind::HexStringLiteral) {
+            return vec![NodeCheckerError::new(
+                format!(
+                    "Expected node kind to be HexStringLiteral, but it was {}",
+                    node.kind()
+                ),
+                node_range,
+            )];
+        }
+
+        let children = children_with_offsets(node, text_offset);
+
+        if children.len() != 1 {
+            return vec![NodeCheckerError::new(
+                format!("Expected exactly one child for HexStringLiteral, but got: {children:#?}"),
+                node_range,
+            )];
+        }
+
+        let (child, child_offset) = &children[0];
+        let child_node = &child.node;
+        let child_range = *child_offset..(*child_offset + child_node.text_len());
+
+        if let NodeKind::Terminal(terminal_kind) = child_node.kind() {
+            match terminal_kind.as_ref() {
+                "SingleQuotedHexStringLiteral" | "DoubleQuotedHexStringLiteral" => vec![],
+                _ => vec![NodeCheckerError::new(
+                    format!("Expected SingleQuotedHexStringLiteral or DoubleQuotedHexStringLiteral, but it was {}", terminal_kind.as_ref()),
+                    child_range,
+                )],
+            }
+        } else {
+            vec![NodeCheckerError::new(
+                format!(
+                    "Expected terminal inside HexStringLiteral, but got {}",
+                    child_node.kind()
+                ),
+                child_range,
+            )]
+        }
     }
 }
 
@@ -21026,34 +20624,6 @@ impl NodeChecker for PragmaCaret {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for PragmaDoubleQuotedStringLiteral {
-    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
-        let node_range = text_offset..(text_offset + node.text_len());
-        let mut errors = vec![];
-        if let NodeKind::Terminal(terminal_kind) = node.kind() {
-            let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "DoubleQuotedStringLiteral";
-
-            if v1_kind != v2_kind {
-                errors.push(NodeCheckerError::new(
-                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
-                    node_range,
-                ));
-            }
-        } else {
-            errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected node kind to be a terminal, but it was {}",
-                    node.kind()
-                ),
-                node_range,
-            ));
-        }
-        errors
-    }
-}
-
-/// Generic `NodeChecker` for terminals
 impl NodeChecker for PragmaEqual {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
@@ -21305,31 +20875,53 @@ impl NodeChecker for PragmaSemicolon {
     }
 }
 
-/// Generic `NodeChecker` for terminals
-impl NodeChecker for PragmaSingleQuotedStringLiteral {
+// In V2, `PragmaStringLiteral` is a single terminal.
+// In V1, it maps to the `StringLiteral` nonterminal wrapping a `SingleQuotedStringLiteral` or `DoubleQuotedStringLiteral` terminal.
+// This custom impl unwraps the V1 nonterminal.
+impl NodeChecker for PragmaStringLiteral {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
-        let mut errors = vec![];
-        if let NodeKind::Terminal(terminal_kind) = node.kind() {
-            let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "SingleQuotedStringLiteral";
 
-            if v1_kind != v2_kind {
-                errors.push(NodeCheckerError::new(
-                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
-                    node_range,
-                ));
-            }
-        } else {
-            errors.push(NodeCheckerError::new(
+        if node.kind() != NodeKind::Nonterminal(NonterminalKind::StringLiteral) {
+            return vec![NodeCheckerError::new(
                 format!(
-                    "Expected node kind to be a terminal, but it was {}",
+                    "Expected node kind to be StringLiteral, but it was {}",
                     node.kind()
                 ),
                 node_range,
-            ));
+            )];
         }
-        errors
+
+        let children = children_with_offsets(node, text_offset);
+
+        if children.len() != 1 {
+            return vec![NodeCheckerError::new(
+                format!("Expected exactly one child for StringLiteral, but got: {children:#?}"),
+                node_range,
+            )];
+        }
+
+        let (child, child_offset) = &children[0];
+        let child_node = &child.node;
+        let child_range = *child_offset..(*child_offset + child_node.text_len());
+
+        if let NodeKind::Terminal(terminal_kind) = child_node.kind() {
+            match terminal_kind.as_ref() {
+                "SingleQuotedStringLiteral" | "DoubleQuotedStringLiteral" => vec![],
+                _ => vec![NodeCheckerError::new(
+                    format!("Expected SingleQuotedStringLiteral or DoubleQuotedStringLiteral, but it was {}", terminal_kind.as_ref()),
+                    child_range,
+                )],
+            }
+        } else {
+            vec![NodeCheckerError::new(
+                format!(
+                    "Expected terminal inside StringLiteral, but got {}",
+                    child_node.kind()
+                ),
+                child_range,
+            )]
+        }
     }
 }
 
@@ -21838,90 +21430,6 @@ impl NodeChecker for SingleLineNatSpecComment {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for SingleQuotedHexStringLiteral {
-    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
-        let node_range = text_offset..(text_offset + node.text_len());
-        let mut errors = vec![];
-        if let NodeKind::Terminal(terminal_kind) = node.kind() {
-            let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "SingleQuotedHexStringLiteral";
-
-            if v1_kind != v2_kind {
-                errors.push(NodeCheckerError::new(
-                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
-                    node_range,
-                ));
-            }
-        } else {
-            errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected node kind to be a terminal, but it was {}",
-                    node.kind()
-                ),
-                node_range,
-            ));
-        }
-        errors
-    }
-}
-
-/// Generic `NodeChecker` for terminals
-impl NodeChecker for SingleQuotedStringLiteral {
-    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
-        let node_range = text_offset..(text_offset + node.text_len());
-        let mut errors = vec![];
-        if let NodeKind::Terminal(terminal_kind) = node.kind() {
-            let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "SingleQuotedStringLiteral";
-
-            if v1_kind != v2_kind {
-                errors.push(NodeCheckerError::new(
-                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
-                    node_range,
-                ));
-            }
-        } else {
-            errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected node kind to be a terminal, but it was {}",
-                    node.kind()
-                ),
-                node_range,
-            ));
-        }
-        errors
-    }
-}
-
-/// Generic `NodeChecker` for terminals
-impl NodeChecker for SingleQuotedUnicodeStringLiteral {
-    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
-        let node_range = text_offset..(text_offset + node.text_len());
-        let mut errors = vec![];
-        if let NodeKind::Terminal(terminal_kind) = node.kind() {
-            let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "SingleQuotedUnicodeStringLiteral";
-
-            if v1_kind != v2_kind {
-                errors.push(NodeCheckerError::new(
-                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
-                    node_range,
-                ));
-            }
-        } else {
-            errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected node kind to be a terminal, but it was {}",
-                    node.kind()
-                ),
-                node_range,
-            ));
-        }
-        errors
-    }
-}
-
-/// Generic `NodeChecker` for terminals
 impl NodeChecker for SizeOfKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
@@ -22114,6 +21622,56 @@ impl NodeChecker for StringKeyword {
             ));
         }
         errors
+    }
+}
+
+// In V2, `StringLiteral` is a single terminal combining single/double quoted variants.
+// In V1, `StringLiteral` is a nonterminal wrapping a `SingleQuotedStringLiteral` or `DoubleQuotedStringLiteral` terminal.
+// This custom impl unwraps the V1 nonterminal.
+impl NodeChecker for StringLiteral {
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
+        let node_range = text_offset..(text_offset + node.text_len());
+
+        if node.kind() != NodeKind::Nonterminal(NonterminalKind::StringLiteral) {
+            return vec![NodeCheckerError::new(
+                format!(
+                    "Expected node kind to be StringLiteral, but it was {}",
+                    node.kind()
+                ),
+                node_range,
+            )];
+        }
+
+        let children = children_with_offsets(node, text_offset);
+
+        if children.len() != 1 {
+            return vec![NodeCheckerError::new(
+                format!("Expected exactly one child for StringLiteral, but got: {children:#?}"),
+                node_range,
+            )];
+        }
+
+        let (child, child_offset) = &children[0];
+        let child_node = &child.node;
+        let child_range = *child_offset..(*child_offset + child_node.text_len());
+
+        if let NodeKind::Terminal(terminal_kind) = child_node.kind() {
+            match terminal_kind.as_ref() {
+                "SingleQuotedStringLiteral" | "DoubleQuotedStringLiteral" => vec![],
+                _ => vec![NodeCheckerError::new(
+                    format!("Expected SingleQuotedStringLiteral or DoubleQuotedStringLiteral, but it was {}", terminal_kind.as_ref()),
+                    child_range,
+                )],
+            }
+        } else {
+            vec![NodeCheckerError::new(
+                format!(
+                    "Expected terminal inside StringLiteral, but got {}",
+                    child_node.kind()
+                ),
+                child_range,
+            )]
+        }
     }
 }
 
@@ -22562,6 +22120,58 @@ impl NodeChecker for UncheckedKeyword {
             ));
         }
         errors
+    }
+}
+
+// In V2, `UnicodeStringLiteral` is a single terminal combining single/double quoted variants.
+// In V1, `UnicodeStringLiteral` is a nonterminal wrapping a `SingleQuotedUnicodeStringLiteral` or `DoubleQuotedUnicodeStringLiteral` terminal.
+// This custom impl unwraps the V1 nonterminal.
+impl NodeChecker for UnicodeStringLiteral {
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
+        let node_range = text_offset..(text_offset + node.text_len());
+
+        if node.kind() != NodeKind::Nonterminal(NonterminalKind::UnicodeStringLiteral) {
+            return vec![NodeCheckerError::new(
+                format!(
+                    "Expected node kind to be UnicodeStringLiteral, but it was {}",
+                    node.kind()
+                ),
+                node_range,
+            )];
+        }
+
+        let children = children_with_offsets(node, text_offset);
+
+        if children.len() != 1 {
+            return vec![NodeCheckerError::new(
+                format!(
+                    "Expected exactly one child for UnicodeStringLiteral, but got: {children:#?}"
+                ),
+                node_range,
+            )];
+        }
+
+        let (child, child_offset) = &children[0];
+        let child_node = &child.node;
+        let child_range = *child_offset..(*child_offset + child_node.text_len());
+
+        if let NodeKind::Terminal(terminal_kind) = child_node.kind() {
+            match terminal_kind.as_ref() {
+                "SingleQuotedUnicodeStringLiteral" | "DoubleQuotedUnicodeStringLiteral" => vec![],
+                _ => vec![NodeCheckerError::new(
+                    format!("Expected SingleQuotedUnicodeStringLiteral or DoubleQuotedUnicodeStringLiteral, but it was {}", terminal_kind.as_ref()),
+                    child_range,
+                )],
+            }
+        } else {
+            vec![NodeCheckerError::new(
+                format!(
+                    "Expected terminal inside UnicodeStringLiteral, but got {}",
+                    child_node.kind()
+                ),
+                child_range,
+            )]
+        }
     }
 }
 
@@ -23124,62 +22734,6 @@ impl NodeChecker for YulDefaultKeyword {
 }
 
 /// Generic `NodeChecker` for terminals
-impl NodeChecker for YulDoubleQuotedHexStringLiteral {
-    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
-        let node_range = text_offset..(text_offset + node.text_len());
-        let mut errors = vec![];
-        if let NodeKind::Terminal(terminal_kind) = node.kind() {
-            let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "DoubleQuotedHexStringLiteral";
-
-            if v1_kind != v2_kind {
-                errors.push(NodeCheckerError::new(
-                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
-                    node_range,
-                ));
-            }
-        } else {
-            errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected node kind to be a terminal, but it was {}",
-                    node.kind()
-                ),
-                node_range,
-            ));
-        }
-        errors
-    }
-}
-
-/// Generic `NodeChecker` for terminals
-impl NodeChecker for YulDoubleQuotedStringLiteral {
-    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
-        let node_range = text_offset..(text_offset + node.text_len());
-        let mut errors = vec![];
-        if let NodeKind::Terminal(terminal_kind) = node.kind() {
-            let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "DoubleQuotedStringLiteral";
-
-            if v1_kind != v2_kind {
-                errors.push(NodeCheckerError::new(
-                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
-                    node_range,
-                ));
-            }
-        } else {
-            errors.push(NodeCheckerError::new(
-                format!(
-                    "Expected node kind to be a terminal, but it was {}",
-                    node.kind()
-                ),
-                node_range,
-            ));
-        }
-        errors
-    }
-}
-
-/// Generic `NodeChecker` for terminals
 impl NodeChecker for YulFalseKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
@@ -23316,6 +22870,56 @@ impl NodeChecker for YulHexLiteral {
             ));
         }
         errors
+    }
+}
+
+// In V2, `YulHexStringLiteral` is a single terminal.
+// In V1, it maps to the `HexStringLiteral` nonterminal wrapping a `SingleQuotedHexStringLiteral` or `DoubleQuotedHexStringLiteral` terminal.
+// This custom impl unwraps the V1 nonterminal.
+impl NodeChecker for YulHexStringLiteral {
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
+        let node_range = text_offset..(text_offset + node.text_len());
+
+        if node.kind() != NodeKind::Nonterminal(NonterminalKind::HexStringLiteral) {
+            return vec![NodeCheckerError::new(
+                format!(
+                    "Expected node kind to be HexStringLiteral, but it was {}",
+                    node.kind()
+                ),
+                node_range,
+            )];
+        }
+
+        let children = children_with_offsets(node, text_offset);
+
+        if children.len() != 1 {
+            return vec![NodeCheckerError::new(
+                format!("Expected exactly one child for HexStringLiteral, but got: {children:#?}"),
+                node_range,
+            )];
+        }
+
+        let (child, child_offset) = &children[0];
+        let child_node = &child.node;
+        let child_range = *child_offset..(*child_offset + child_node.text_len());
+
+        if let NodeKind::Terminal(terminal_kind) = child_node.kind() {
+            match terminal_kind.as_ref() {
+                "SingleQuotedHexStringLiteral" | "DoubleQuotedHexStringLiteral" => vec![],
+                _ => vec![NodeCheckerError::new(
+                    format!("Expected SingleQuotedHexStringLiteral or DoubleQuotedHexStringLiteral, but it was {}", terminal_kind.as_ref()),
+                    child_range,
+                )],
+            }
+        } else {
+            vec![NodeCheckerError::new(
+                format!(
+                    "Expected terminal inside HexStringLiteral, but got {}",
+                    child_node.kind()
+                ),
+                child_range,
+            )]
+        }
     }
 }
 
@@ -23543,59 +23147,53 @@ impl NodeChecker for YulPeriod {
     }
 }
 
-/// Generic `NodeChecker` for terminals
-impl NodeChecker for YulSingleQuotedHexStringLiteral {
+// In V2, `YulStringLiteral` is a single terminal.
+// In V1, it maps to the `StringLiteral` nonterminal wrapping a `SingleQuotedStringLiteral` or `DoubleQuotedStringLiteral` terminal.
+// This custom impl unwraps the V1 nonterminal.
+impl NodeChecker for YulStringLiteral {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
-        let mut errors = vec![];
-        if let NodeKind::Terminal(terminal_kind) = node.kind() {
-            let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "SingleQuotedHexStringLiteral";
 
-            if v1_kind != v2_kind {
-                errors.push(NodeCheckerError::new(
-                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
-                    node_range,
-                ));
-            }
-        } else {
-            errors.push(NodeCheckerError::new(
+        if node.kind() != NodeKind::Nonterminal(NonterminalKind::StringLiteral) {
+            return vec![NodeCheckerError::new(
                 format!(
-                    "Expected node kind to be a terminal, but it was {}",
+                    "Expected node kind to be StringLiteral, but it was {}",
                     node.kind()
                 ),
                 node_range,
-            ));
+            )];
         }
-        errors
-    }
-}
 
-/// Generic `NodeChecker` for terminals
-impl NodeChecker for YulSingleQuotedStringLiteral {
-    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
-        let node_range = text_offset..(text_offset + node.text_len());
-        let mut errors = vec![];
-        if let NodeKind::Terminal(terminal_kind) = node.kind() {
-            let v1_kind = terminal_kind.as_ref();
-            let v2_kind = "SingleQuotedStringLiteral";
+        let children = children_with_offsets(node, text_offset);
 
-            if v1_kind != v2_kind {
-                errors.push(NodeCheckerError::new(
-                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
-                    node_range,
-                ));
+        if children.len() != 1 {
+            return vec![NodeCheckerError::new(
+                format!("Expected exactly one child for StringLiteral, but got: {children:#?}"),
+                node_range,
+            )];
+        }
+
+        let (child, child_offset) = &children[0];
+        let child_node = &child.node;
+        let child_range = *child_offset..(*child_offset + child_node.text_len());
+
+        if let NodeKind::Terminal(terminal_kind) = child_node.kind() {
+            match terminal_kind.as_ref() {
+                "SingleQuotedStringLiteral" | "DoubleQuotedStringLiteral" => vec![],
+                _ => vec![NodeCheckerError::new(
+                    format!("Expected SingleQuotedStringLiteral or DoubleQuotedStringLiteral, but it was {}", terminal_kind.as_ref()),
+                    child_range,
+                )],
             }
         } else {
-            errors.push(NodeCheckerError::new(
+            vec![NodeCheckerError::new(
                 format!(
-                    "Expected node kind to be a terminal, but it was {}",
-                    node.kind()
+                    "Expected terminal inside StringLiteral, but got {}",
+                    child_node.kind()
                 ),
-                node_range,
-            ));
+                child_range,
+            )]
         }
-        errors
     }
 }
 
