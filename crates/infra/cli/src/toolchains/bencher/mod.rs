@@ -81,7 +81,7 @@ pub(crate) fn run_bench(
 
         command = command
             .property("--github-actions", &github_token)
-            .flag("--ci-only-thresholds");
+            .flag("--ci-only-on-alert");
     }
 
     // Has to be the last argument:

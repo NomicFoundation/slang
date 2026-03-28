@@ -142,9 +142,8 @@ impl CargoController {
 
         // 1% threshold on estimated-cycles: iai-callgrind uses deterministic hardware counters
         // (not wall clock), so any change reflects a real code change, not noise.
-        // Only estimated-cycles is thresholded; --ci-only-thresholds in run_bench suppresses
-        // the other ~13 unthresholded measures from the PR comment to stay under GitHub's 65K
-        // char limit. TODO(#1586): add more measures once bencher v0.5.10 is available.
+        // PR comments are only posted on alert (--ci-only-on-alert) to stay under GitHub's
+        // 65K char limit. TODO(#1586): add more measures once bencher v0.5.10 is available.
         run_bench(
             self.dry_run.get(),
             self.pr_benchmark,
