@@ -142,8 +142,10 @@ impl CargoController {
 
         // 1% threshold: iai-callgrind uses deterministic hardware counters (not wall clock),
         // so any change reflects a real code change, not noise.
-        // Limited to 3 measures to keep bencher's PR comment under GitHub's 65K char limit.
-        // TODO(#1586): restore all 14 measures once bencher is bumped to v0.5.10 (auto-truncation).
+        // Limited to 3 key measures to keep bencher's PR comment under GitHub's 65K char limit
+        // while still showing full comparison data. These cover CPU perf (cycles), code complexity
+        // (instructions), and memory allocation (heap bytes). Other measures (cache hits, DHAT
+        // details) are correlated with these three.
         run_bench(
             self.dry_run.get(),
             self.pr_benchmark,
