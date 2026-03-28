@@ -140,16 +140,17 @@ impl CargoController {
             "cargo bench --package {package_name} --bench {bench_name} --message-format json"
         );
 
-        // TODO(#1586): add inline thresholds for PR benchmark regression detection.
-        // iai-callgrind measures (estimated-cycles, instructions, etc.) are deterministic hardware
-        // counters, so a 1% threshold is appropriate. Currently disabled because bencher v0.5.8's
-        // PR comments exceed GitHub's 65K char limit with any thresholded measures.
+        // 1% threshold on estimated-cycles: iai-callgrind uses deterministic hardware counters
+        // (not wall clock), so any change reflects a real code change, not noise.
+        // Only estimated-cycles is thresholded; --ci-only-thresholds in run_bench suppresses
+        // the other ~13 unthresholded measures from the PR comment to stay under GitHub's 65K
+        // char limit. TODO(#1586): add more measures once bencher v0.5.10 is available.
         run_bench(
             self.dry_run.get(),
             self.pr_benchmark,
             bencher_project,
             "rust_iai_callgrind",
-            &[],
+            &[("estimated-cycles", "0.01")],
             &test_runner,
         );
 

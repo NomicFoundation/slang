@@ -79,7 +79,9 @@ pub(crate) fn run_bench(
                 .property("--threshold-upper-boundary", upper_boundary);
         }
 
-        command = command.property("--github-actions", &github_token);
+        command = command
+            .property("--github-actions", &github_token)
+            .flag("--ci-only-thresholds");
     }
 
     // Has to be the last argument:
