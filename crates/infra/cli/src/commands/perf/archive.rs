@@ -27,7 +27,7 @@ pub struct UnarchiveController {
 
 fn resolve_branch(branch: &Option<String>) -> Result<String> {
     let branch = match branch {
-        Some(branch) => branch.clone(),
+        Some(branch) => branch.trim_matches('"').trim().to_owned(),
         None => Command::new("git")
             .args(["branch", "--show-current"])
             .evaluate()?
