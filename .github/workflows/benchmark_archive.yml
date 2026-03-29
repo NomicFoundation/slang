@@ -29,12 +29,12 @@ jobs:
         env:
           BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
         run: |
-          bencher archive \
+          ./scripts/bin/with-hermit bencher archive \
             --project slang-dashboard-cargo-slang \
             --branch "$GITHUB_HEAD_REF"
-          bencher archive \
+          ./scripts/bin/with-hermit bencher archive \
             --project slang-dashboard-cargo-cmp \
             --branch "$GITHUB_HEAD_REF"
-          bencher archive \
+          ./scripts/bin/with-hermit bencher archive \
             --project slang-dashboard-npm \
             --branch "$GITHUB_HEAD_REF"
