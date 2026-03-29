@@ -26,25 +26,23 @@ pub struct UnarchiveController {
 }
 
 fn resolve_branch(branch: &Option<String>) -> Result<String> {
-    match branch {
-        Some(branch) => Ok(branch.clone()),
-        None => {
-            let branch = Command::new("git")
-                .args(["branch", "--show-current"])
-                .evaluate()?
-                .trim()
-                .to_owned();
+    let branch = match branch {
+        Some(branch) => branch.clone(),
+        None => Command::new("git")
+            .args(["branch", "--show-current"])
+            .evaluate()?
+            .trim()
+            .to_owned(),
+    };
 
-            if branch.is_empty() || branch == "main" || branch == "master" {
-                bail!(
-                    "Cannot archive/unarchive the main branch. \
-                     Switch to a feature branch or use --branch <name>."
-                );
-            }
-
-            Ok(branch)
-        }
+    if branch.is_empty() || branch == "main" || branch == "master" {
+        bail!(
+            "Cannot archive/unarchive the main branch. \
+             Switch to a feature branch or use --branch <name>."
+        );
     }
+
+    Ok(branch)
 }
 
 impl ArchiveController {
