@@ -5,7 +5,7 @@ mod npm;
 use anyhow::Result;
 use clap::{Parser, Subcommand};
 
-use crate::commands::perf::archive::ArchiveController;
+use crate::commands::perf::archive::{ArchiveController, UnarchiveController};
 use crate::commands::perf::cargo::CargoController;
 use crate::commands::perf::npm::NpmController;
 
@@ -23,6 +23,8 @@ enum PerfCommand {
     Npm(NpmController),
     /// Archive bencher PR branches (cleanup after PR close)
     Archive(ArchiveController),
+    /// Restore archived bencher PR branches
+    Unarchive(UnarchiveController),
 }
 
 impl PerfController {
@@ -31,6 +33,7 @@ impl PerfController {
             PerfCommand::Cargo(controller) => controller.execute(),
             PerfCommand::Npm(controller) => controller.execute(),
             PerfCommand::Archive(controller) => controller.execute(),
+            PerfCommand::Unarchive(controller) => controller.execute(),
         }
     }
 }

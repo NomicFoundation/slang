@@ -98,12 +98,20 @@ Test Results: [https://bencher.dev/console/projects/{project}/reports]
 }
 
 pub(crate) fn archive_branch(project: &str, branch: &str) {
+    bencher_archive_command("archive", project, branch);
+}
+
+pub(crate) fn unarchive_branch(project: &str, branch: &str) {
+    bencher_archive_command("unarchive", project, branch);
+}
+
+fn bencher_archive_command(action: &str, project: &str, branch: &str) {
     let token = std::env::var("BENCHER_API_TOKEN").expect(
         "BENCHER_API_TOKEN is not set. Set it to your Bencher API token: https://bencher.dev/console",
     );
 
     Command::new("bencher")
-        .arg("archive")
+        .arg(action)
         .property("--project", project)
         .property("--branch", branch)
         .secret("BENCHER_API_TOKEN", token)
