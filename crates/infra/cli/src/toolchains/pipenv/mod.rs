@@ -39,6 +39,13 @@ impl PipEnv {
         Ok(())
     }
 
+    pub fn verify() {
+        Command::new("python3")
+            .property("-m", "pipenv")
+            .arg("verify")
+            .run();
+    }
+
     #[must_use]
     pub fn run(name: impl Into<String>) -> Command {
         Command::new("python3")

@@ -4,6 +4,7 @@ use infra_utils::cargo::CargoWorkspaceCommands;
 use infra_utils::commands::Command;
 use infra_utils::terminal::Terminal;
 
+use crate::toolchains::pipenv::PipEnv;
 use crate::toolchains::wasm::WasmPackage;
 use crate::utils::{ClapExtensions, OrderedCommand};
 
@@ -27,6 +28,8 @@ enum CheckCommand {
     Cargo,
     /// Check NPM packages for any outdated codegen steps.
     Npm,
+    /// Verify that Pipfile.lock is in sync with Pipfile.
+    Pipenv,
     /// Use `rustdoc` JSON output to generate a snapshot of public api members.
     PublicApi,
 }
@@ -39,6 +42,7 @@ impl OrderedCommand for CheckCommand {
             CheckCommand::Codegen => check_codegen(),
             CheckCommand::Cargo => check_cargo(),
             CheckCommand::Npm => check_npm(),
+            CheckCommand::Pipenv => check_pipenv(),
             CheckCommand::PublicApi => check_public_api(),
         }
 
@@ -65,6 +69,10 @@ fn check_cargo() {
 
 fn check_npm() {
     WasmPackage::build().unwrap();
+}
+
+fn check_pipenv() {
+    PipEnv::verify();
 }
 
 fn check_public_api() {
