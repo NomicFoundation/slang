@@ -25,7 +25,7 @@ pub struct UnarchiveController {
     branch: Option<String>,
 }
 
-fn resolve_branch(branch: &Option<String>) -> Result<String> {
+fn resolve_branch(branch: Option<&str>) -> Result<String> {
     let branch = match branch {
         Some(branch) => branch.trim_matches('"').trim().to_owned(),
         None => Command::new("git")
@@ -47,7 +47,7 @@ fn resolve_branch(branch: &Option<String>) -> Result<String> {
 
 impl ArchiveController {
     pub fn execute(&self) -> Result<()> {
-        let branch = resolve_branch(&self.branch)?;
+        let branch = resolve_branch(self.branch.as_deref())?;
         CargoWorkspace::install_binary("bencher_cli")?;
 
         for project in BENCHER_PROJECTS {
@@ -60,7 +60,7 @@ impl ArchiveController {
 
 impl UnarchiveController {
     pub fn execute(&self) -> Result<()> {
-        let branch = resolve_branch(&self.branch)?;
+        let branch = resolve_branch(self.branch.as_deref())?;
         CargoWorkspace::install_binary("bencher_cli")?;
 
         for project in BENCHER_PROJECTS {
