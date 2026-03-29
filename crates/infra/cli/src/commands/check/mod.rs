@@ -73,6 +73,7 @@ fn check_npm() {
 
 fn check_pipenv() {
     PipEnv::verify();
+    PipEnv::python_smoke_test_tools();
 }
 
 fn check_public_api() {
