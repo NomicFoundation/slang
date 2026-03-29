@@ -1,0 +1,35 @@
+name: "benchmark_archive_test"
+
+on:
+  pull_request:
+    types:
+      - "opened"
+      - "synchronize"
+      - "reopened"
+
+jobs:
+  archive:
+    runs-on: "ubuntu-24.04"
+
+    if: "${{ github.event.pull_request.number == 1583 }}"
+
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+        with:
+          persist-credentials: false
+
+      - name: "Restore Cache"
+        uses: "./.github/actions/cache/restore"
+
+      - name: "Install bencher CLI"
+        run: "./scripts/bin/infra setup cargo"
+
+      - name: "Archive cargo-cmp PR branch in bencher"
+        continue-on-error: true
+        env:
+          BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
+        run: |
+          bencher archive \
+            --project slang-dashboard-cargo-cmp \
+            --branch "$GITHUB_HEAD_REF"
