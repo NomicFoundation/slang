@@ -1,9 +1,11 @@
+mod archive;
 mod cargo;
 mod npm;
 
 use anyhow::Result;
 use clap::{Parser, Subcommand};
 
+use crate::commands::perf::archive::ArchiveController;
 use crate::commands::perf::cargo::CargoController;
 use crate::commands::perf::npm::NpmController;
 
@@ -19,6 +21,8 @@ enum PerfCommand {
     Cargo(CargoController),
     /// Run benchmark tests for the typescript api, and report the results to <https://bencher.dev/console>
     Npm(NpmController),
+    /// Archive bencher PR branches (cleanup after PR close)
+    Archive(ArchiveController),
 }
 
 impl PerfController {
@@ -26,6 +30,7 @@ impl PerfController {
         match &self.command {
             PerfCommand::Cargo(controller) => controller.execute(),
             PerfCommand::Npm(controller) => controller.execute(),
+            PerfCommand::Archive(controller) => controller.execute(),
         }
     }
 }

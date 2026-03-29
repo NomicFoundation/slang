@@ -22,14 +22,11 @@ jobs:
       - name: "Restore Cache"
         uses: "./.github/actions/cache/restore"
 
-      - name: "Install bencher CLI"
+      - name: "infra setup cargo"
         run: "./scripts/bin/infra setup cargo"
 
-      - name: "Archive cargo-cmp PR branch in bencher"
+      - name: "infra perf archive"
         continue-on-error: true
         env:
           BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
-        run: |
-          ./scripts/bin/with-hermit bencher archive \
-            --project slang-dashboard-cargo-cmp \
-            --branch "$GITHUB_HEAD_REF"
+        run: "./scripts/bin/infra perf archive --branch ${{ github.head_ref }}"
