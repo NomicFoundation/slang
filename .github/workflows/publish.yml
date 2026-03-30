@@ -42,7 +42,7 @@ on:
 
 permissions: {}
 
-# Wait for any other publish workflows in-progress to complete, before starting a new one:
+# Serialize runs for the same PR or branch. Different PRs/branches can run concurrently.
 concurrency:
   group: "${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref_name }}"
   cancel-in-progress: false
@@ -132,10 +132,11 @@ jobs:
       - "changesets"
     # !cancelled() overrides GitHub's default skip-propagation (needed because
     # changesets is skipped on PRs). It also overrides failure-propagation,
-    # so repo-check must be re-asserted explicitly.
+    # so repo-check and changesets must be re-asserted explicitly.
     if: >-
       !cancelled()
       && needs.repo-check.result == 'success'
+      && needs.changesets.result != 'failure'
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
     permissions:
       contents: "read"
