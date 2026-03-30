@@ -56,6 +56,8 @@ impl CargoController {
             Command::new("cargo")
                 .args(["build", "--package", package, "--bench", bench_name])
                 .run();
+            // Verify gprof2dot is installed (used by generate_callgraph after full benchmarks).
+            PipEnv::run("gprof2dot").arg("--version").run();
             return Ok(());
         }
 
