@@ -158,6 +158,9 @@ jobs:
       - name: "infra publish cargo --dry-run"
         run: "./scripts/bin/infra publish cargo --dry-run"
 
+      - name: "Verify mike"
+        run: "python3 -m pipenv run mike --version"
+
       - name: "PR: publish summary"
         if: "github.event_name == 'pull_request'"
         run: |
