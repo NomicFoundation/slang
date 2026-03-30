@@ -38,7 +38,7 @@ on:
       - "main"
 
   # Run on PRs for build and validation:
-  pull_request:
+  pull_request: {}
 
 permissions: {}
 
