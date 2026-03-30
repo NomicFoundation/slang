@@ -136,7 +136,7 @@ jobs:
     if: >-
       !cancelled()
       && needs.repo-check.result == 'success'
-      && needs.changesets.result != 'failure'
+      && (needs.changesets.result == 'success' || needs.changesets.result == 'skipped')
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
     permissions:
       contents: "read"
