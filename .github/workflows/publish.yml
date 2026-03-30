@@ -10,20 +10,19 @@ name: "publish"
 #   workflow_dispatch       — Replays the push-to-main path (e.g. to retry a
 #                             flaky publish). Requires manual approval.
 #
-#   pull_request (ci:release label) — Dry-run: exercises the full build and validation
+#   pull_request             — Dry-run: exercises the full build and validation
 #                             pipeline (WASM build, cargo/npm dry-run) but skips actual
 #                             publishing. No approval needed.
 #
 # Job graph:
 #
-#   repo-check ─→ changesets ─→ build-and-validate ─┬→ notify-deploy → publish  (push/dispatch)
-#                                                     └→ dry-run-summary          (PR only)
+#   repo-check ─→ changesets ─→ build-and-validate ─→ notify-deploy → publish  (push/dispatch)
+#                                (+ dry-run summary for PRs)
 #
 #   - changesets only runs for push/dispatch; skipped for PRs.
 #   - build-and-validate runs when changesets is skipped (PR) or has no pending changesets.
 #   - publish explicitly requires changesets to have run with no pending changesets,
 #     so it never runs for PRs (changesets is skipped → publish is auto-skipped).
-#   - dry-run-summary only runs for PRs.
 
 on:
   # Run using manual triggers from GitHub UI:
@@ -35,12 +34,8 @@ on:
     branches:
       - "main"
 
-  # Run on PRs labeled 'ci:release' for dry-run validation:
+  # Run on PRs for dry-run validation:
   pull_request:
-    types:
-      - "opened"
-      - "labeled"
-      - "synchronize"
 
 permissions: {}
 
@@ -52,15 +47,13 @@ concurrency:
 jobs:
   # ───────────────────────────────────────────────
   # Gate: only run on the main repo (not forks).
-  # Allow push, dispatch, and labeled PRs.
   # ───────────────────────────────────────────────
 
   repo-check:
     if: >-
-      github.repository == 'NomicFoundation/slang'
-      && ((github.event_name == 'pull_request'
-           && contains(github.event.pull_request.labels.*.name, 'ci:release'))
-          || github.ref_name == 'main')
+      (github.event_name == 'pull_request'
+       && github.event.pull_request.head.repo.full_name == github.repository)
+      || github.ref_name == 'main'
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
     steps:
       - run: "true"
@@ -73,6 +66,8 @@ jobs:
   changesets:
     needs:
       - "repo-check"
+    # repo-check success is enforced implicitly via needs (no always() here).
+    # Only runs on push/dispatch — skipped for PRs.
     if: >-
       github.event_name == 'push'
       || github.event_name == 'workflow_dispatch'
@@ -164,31 +159,8 @@ jobs:
       - name: "infra publish cargo --dry-run"
         run: "./scripts/bin/infra publish cargo --dry-run"
 
-  # ───────────────────────────────────────────────
-  # Dry-run summary: PR-only, reports what was validated
-  # ───────────────────────────────────────────────
-
-  dry-run-summary:
-    needs:
-      - "build-and-validate"
-    # !cancelled() prevents GitHub from auto-skipping this job when the
-    # changesets ancestor is skipped (PRs). Unlike always(), it still
-    # respects workflow cancellation.
-    if: >-
-      !cancelled()
-      && github.event_name == 'pull_request'
-      && needs.build-and-validate.result == 'success'
-    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
-    permissions:
-      contents: "read"
-    steps:
-      - name: "Checkout Repository"
-        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
-        with:
-          persist-credentials: false
-          sparse-checkout: "Cargo.toml"
-
       - name: "DRY-RUN: publish summary"
+        if: "github.event_name == 'pull_request'"
         run: |
           VERSION=$(grep '^version = ' Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
           echo "## Publish Dry-Run Summary" >> "$GITHUB_STEP_SUMMARY"
