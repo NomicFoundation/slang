@@ -69,8 +69,6 @@ jobs:
   changesets:
     needs:
       - "repo-check"
-    # repo-check success is enforced implicitly via needs (no always() here).
-    # Only runs on push/dispatch — skipped for PRs.
     if: >-
       github.event_name == 'push'
       || github.event_name == 'workflow_dispatch'
