@@ -14,15 +14,18 @@ name: "publish"
 #                             pipeline (WASM build, cargo/npm dry-run) but skips actual
 #                             publishing. No approval needed.
 #
-# Job graph:
+# Execution paths:
 #
-#   repo-check ─→ changesets ─→ build-and-validate ─→ notify-deploy → publish  (push/dispatch)
-#                                (+ dry-run summary for PRs)
+#   Trigger          repo-check  changesets        build-and-validate  notify-deploy  publish
+#   ───────────────  ──────────  ────────────────  ──────────────────  ─────────────  ───────
+#   PR               ✓ gate      ⊘ skip (no push)  ✓ dry-run           ⊘ skip          ⊘ skip
+#   push (pending)   ✓ gate      ✓ has changesets   ✓ validate          ⊘ skip          ⊘ skip
+#   push (release)   ✓ gate      ✓ no changesets    ✓ validate          ✓ notify        ✓ publish
 #
-#   - changesets only runs for push/dispatch; skipped for PRs.
-#   - build-and-validate runs when changesets is skipped (PR) or has no pending changesets.
-#   - publish explicitly requires changesets to have run with no pending changesets,
-#     so it never runs for PRs (changesets is skipped → publish is auto-skipped).
+# Every job has an explicit 'if' condition — no job relies on implicit skip
+# propagation from needs. The one exception is build-and-validate, which uses
+# !cancelled() to override skip propagation from the changesets job (skipped
+# on PRs).
 
 on:
   # Run using manual triggers from GitHub UI:
@@ -122,22 +125,19 @@ jobs:
 
   # ───────────────────────────────────────────────
   # Build & Validate: build WASM and dry-run publish
-  # Runs for PR dry-runs, and for push/dispatch when
-  # a version-bump PR just merged (no pending changesets).
+  # Runs on every trigger (PRs and pushes alike).
   # ───────────────────────────────────────────────
 
   build-and-validate:
     needs:
       - "repo-check"
       - "changesets"
-    # Run when:
-    # - PR dry-run (changesets job is skipped)
-    # - Push to main or dispatch when no pending changesets (version-bump PR just merged)
+    # !cancelled() overrides GitHub's default skip-propagation (needed because
+    # changesets is skipped on PRs). It also overrides failure-propagation,
+    # so repo-check must be re-asserted explicitly.
     if: >-
-      always()
+      !cancelled()
       && needs.repo-check.result == 'success'
-      && (needs.changesets.result == 'skipped'
-          || needs.changesets.outputs.hasChangesets == 'false')
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
     permissions:
       contents: "read"
@@ -189,7 +189,6 @@ jobs:
     if: >-
       github.event_name != 'pull_request'
       && needs.changesets.outputs.hasChangesets == 'false'
-      && needs.build-and-validate.result == 'success'
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
     steps:
       - name: "Notify review requested"
@@ -235,7 +234,13 @@ jobs:
 
   publish:
     needs:
+      - "changesets"
       - "notify-deploy"
+    # Redundant with needs chain, but explicit for safety: never publish
+    # from PRs or when there are pending changesets.
+    if: >-
+      github.event_name != 'pull_request'
+      && needs.changesets.outputs.hasChangesets == 'false'
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
     environment: "slang-release"
     permissions:
