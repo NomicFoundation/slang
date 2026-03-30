@@ -10,15 +10,15 @@ name: "publish"
 #   workflow_dispatch       — Replays the push-to-main path (e.g. to retry a
 #                             flaky publish). Requires manual approval.
 #
-#   pull_request             — Dry-run: exercises the full build and validation
-#                             pipeline (WASM build, cargo/npm dry-run) but skips actual
-#                             publishing. No approval needed.
+#   pull_request             — Build and validate only: exercises the full
+#                             build-and-validate pipeline (WASM build, cargo/npm
+#                             dry-run) but skips actual publishing. No approval needed.
 #
 # Execution paths:
 #
 #   Trigger          repo-check  changesets        build-and-validate  notify-deploy  publish
 #   ───────────────  ──────────  ────────────────  ──────────────────  ─────────────  ───────
-#   PR               ✓ gate      ⊘ skip (no push)  ✓ dry-run           ⊘ skip          ⊘ skip
+#   PR               ✓ gate      ⊘ skip (no push)  ✓ validate          ⊘ skip          ⊘ skip
 #   push (pending)   ✓ gate      ✓ has changesets   ✓ validate          ⊘ skip          ⊘ skip
 #   push (release)   ✓ gate      ✓ no changesets    ✓ validate          ✓ notify        ✓ publish
 #
@@ -37,7 +37,7 @@ on:
     branches:
       - "main"
 
-  # Run on PRs for dry-run validation:
+  # Run on PRs for build and validation:
   pull_request:
 
 permissions: {}
@@ -159,11 +159,11 @@ jobs:
       - name: "infra publish cargo --dry-run"
         run: "./scripts/bin/infra publish cargo --dry-run"
 
-      - name: "DRY-RUN: publish summary"
+      - name: "PR: publish summary"
         if: "github.event_name == 'pull_request'"
         run: |
           VERSION=$(grep '^version = ' Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
-          echo "## Publish Dry-Run Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "## Publish Validation Summary" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "**Version:** \`${VERSION}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
@@ -174,7 +174,7 @@ jobs:
           echo "- \`cargo publish --dry-run\` (skips crates whose version is already published)" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`pnpm publish --dry-run\` (skips if version is already published)" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "### Skipped in PR dry-run (only on push/dispatch)" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Skipped (only on push/dispatch)" >> "$GITHUB_STEP_SUMMARY"
           echo "- Actual npm/cargo publishing" >> "$GITHUB_STEP_SUMMARY"
           echo "- GitHub release creation" >> "$GITHUB_STEP_SUMMARY"
 
