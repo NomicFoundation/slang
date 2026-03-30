@@ -39,20 +39,6 @@ impl PipEnv {
         Ok(())
     }
 
-    pub fn verify() {
-        Command::new("python3")
-            .property("-m", "pipenv")
-            .arg("verify")
-            .run();
-    }
-
-    pub fn python_smoke_test_tools() {
-        PipEnv::run("mkdocs").arg("--version").run();
-        PipEnv::run("mike").arg("--version").run();
-        PipEnv::run("yamllint").arg("--version").run();
-        PipEnv::run("gprof2dot").arg("--help").run();
-    }
-
     #[must_use]
     pub fn run(name: impl Into<String>) -> Command {
         Command::new("python3")
