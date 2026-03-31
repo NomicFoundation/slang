@@ -12,8 +12,7 @@ language_v2_macros::compile!(Language(
             // title = "Section One"
             topics = []
         )]
-    )],
-    built_ins = []
+    )]
 ));
 
 fn main() {}

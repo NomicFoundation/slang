@@ -7,9 +7,8 @@ use semver::Version;
 use crate::compiler::analysis::Analysis;
 use crate::internals::Spanned;
 use crate::model::{
-    Identifier, SpannedBuiltIn, SpannedBuiltInField, SpannedBuiltInFunction, SpannedBuiltInType,
-    SpannedEnumItem, SpannedEnumVariant, SpannedField, SpannedFragmentItem, SpannedItem,
-    SpannedKeywordItem, SpannedPrecedenceExpression, SpannedPrecedenceItem,
+    Identifier, SpannedEnumItem, SpannedEnumVariant, SpannedField, SpannedFragmentItem,
+    SpannedItem, SpannedKeywordItem, SpannedPrecedenceExpression, SpannedPrecedenceItem,
     SpannedPrecedenceOperator, SpannedPrimaryExpression, SpannedRepeatedItem, SpannedSeparatedItem,
     SpannedStructItem, SpannedTokenItem, SpannedVersionSpecifier,
 };
@@ -19,12 +18,6 @@ pub(crate) fn run(analysis: &mut Analysis) {
 
     for item in language.items() {
         check_item(analysis, item);
-    }
-
-    for built_in_context in &language.built_ins {
-        for built_in in &built_in_context.definitions {
-            check_built_in(analysis, built_in);
-        }
     }
 }
 
@@ -197,58 +190,6 @@ fn check_fragment(analysis: &mut Analysis, item: &SpannedFragmentItem) {
         enabled,
         scanner: _,
     } = item;
-
-    check_version_specifier(analysis, enabled.as_ref());
-}
-
-fn check_built_in(analysis: &mut Analysis, built_in: &SpannedBuiltIn) {
-    match built_in {
-        SpannedBuiltIn::BuiltInFunction { item } => {
-            check_built_in_function(analysis, item);
-        }
-        SpannedBuiltIn::BuiltInType { item } => {
-            check_built_in_type(analysis, item);
-        }
-        SpannedBuiltIn::BuiltInVariable { item } => {
-            check_built_in_field(analysis, item);
-        }
-    }
-}
-
-fn check_built_in_function(analysis: &mut Analysis, built_in: &SpannedBuiltInFunction) {
-    let SpannedBuiltInFunction {
-        name: _,
-        return_type: _,
-        parameters: _,
-        enabled,
-    } = built_in;
-
-    check_version_specifier(analysis, enabled.as_ref());
-}
-
-fn check_built_in_type(analysis: &mut Analysis, built_in: &SpannedBuiltInType) {
-    let SpannedBuiltInType {
-        name: _,
-        fields,
-        functions,
-        enabled,
-    } = built_in;
-
-    check_version_specifier(analysis, enabled.as_ref());
-
-    for field in fields {
-        check_built_in_field(analysis, field);
-    }
-    for function in functions {
-        check_built_in_function(analysis, function);
-    }
-}
-
-fn check_built_in_field(analysis: &mut Analysis, built_in: &SpannedBuiltInField) {
-    let SpannedBuiltInField {
-        definition: _,
-        enabled,
-    } = built_in;
 
     check_version_specifier(analysis, enabled.as_ref());
 }

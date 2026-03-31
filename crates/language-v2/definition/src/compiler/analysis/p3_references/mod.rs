@@ -8,9 +8,8 @@ use crate::model::SpannedItemDiscriminants::{
     self, Enum, Fragment, Keyword, Precedence, Repeated, Separated, Struct, Token, Trivia,
 };
 use crate::model::{
-    Identifier, SpannedBuiltIn, SpannedBuiltInField, SpannedBuiltInFunction, SpannedBuiltInType,
-    SpannedEnumItem, SpannedEnumVariant, SpannedField, SpannedFragmentItem, SpannedItem,
-    SpannedKeywordItem, SpannedPrecedenceExpression, SpannedPrecedenceItem,
+    Identifier, SpannedEnumItem, SpannedEnumVariant, SpannedField, SpannedFragmentItem,
+    SpannedItem, SpannedKeywordItem, SpannedPrecedenceExpression, SpannedPrecedenceItem,
     SpannedPrecedenceOperator, SpannedPrimaryExpression, SpannedRepeatedItem, SpannedScanner,
     SpannedSeparatedItem, SpannedStructItem, SpannedTokenItem, SpannedTriviaItem,
     SpannedTriviaParser, SpannedVersionSpecifier,
@@ -41,12 +40,6 @@ pub(crate) fn run(analysis: &mut Analysis) {
                     check_item(analysis, item, &enablement, &lexical_context.name);
                 }
             }
-        }
-    }
-
-    for built_in_context in &language.built_ins {
-        for built_in in &built_in_context.definitions {
-            check_built_in(analysis, built_in, &enablement);
         }
     }
 }
@@ -531,70 +524,6 @@ fn check_reference(
             .referenced_items
             .push((**reference).clone());
     }
-}
-
-fn check_built_in(analysis: &mut Analysis, built_in: &SpannedBuiltIn, enablement: &VersionSet) {
-    match built_in {
-        SpannedBuiltIn::BuiltInFunction { item } => {
-            check_built_in_function(analysis, item, enablement);
-        }
-        SpannedBuiltIn::BuiltInType { item } => {
-            check_built_in_type(analysis, item, enablement);
-        }
-        SpannedBuiltIn::BuiltInVariable { item } => {
-            check_built_in_field(analysis, item, enablement);
-        }
-    }
-}
-
-fn check_built_in_function(
-    analysis: &mut Analysis,
-    built_in: &SpannedBuiltInFunction,
-    enablement: &VersionSet,
-) {
-    let SpannedBuiltInFunction {
-        name: _,
-        return_type: _,
-        parameters: _,
-        enabled,
-    } = built_in;
-
-    let _ = update_enablement(analysis, enablement, enabled.as_ref());
-}
-
-fn check_built_in_type(
-    analysis: &mut Analysis,
-    built_in: &SpannedBuiltInType,
-    enablement: &VersionSet,
-) {
-    let SpannedBuiltInType {
-        name: _,
-        fields,
-        functions,
-        enabled,
-    } = built_in;
-
-    let enablement = update_enablement(analysis, enablement, enabled.as_ref());
-
-    for field in fields {
-        check_built_in_field(analysis, field, &enablement);
-    }
-    for function in functions {
-        check_built_in_function(analysis, function, &enablement);
-    }
-}
-
-fn check_built_in_field(
-    analysis: &mut Analysis,
-    built_in: &SpannedBuiltInField,
-    enablement: &VersionSet,
-) {
-    let SpannedBuiltInField {
-        definition: _,
-        enabled,
-    } = built_in;
-
-    let _ = update_enablement(analysis, enablement, enabled.as_ref());
 }
 
 fn update_enablement(

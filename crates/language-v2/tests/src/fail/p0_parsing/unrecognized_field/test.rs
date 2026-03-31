@@ -16,8 +16,7 @@ language_v2_macros::compile!(Language(
                 unrecognized_field = true
             )]
         )]
-    )],
-    built_ins = []
+    )]
 ));
 
 fn main() {}
