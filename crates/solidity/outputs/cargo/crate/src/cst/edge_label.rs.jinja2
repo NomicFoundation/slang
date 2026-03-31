@@ -2,6 +2,7 @@
 {%- if model.kinds.labels|length <= 256 %} #[repr(u8)] {% else %} #[repr(u16)] {% endif %}
 #[derive(
     Debug,
+    Default,
     Eq,
     Hash,
     Ord,
@@ -21,6 +22,7 @@ pub enum EdgeLabel {
 
     {% for label in model.kinds.predefined_labels -%}
         /// Represents a child node with the label `{{ label | snake_case }}`.
+        {% if label == "root" %}#[default]{% endif %}
         {{ label | pascal_case }},
     {%- endfor %}
 
@@ -33,8 +35,3 @@ pub enum EdgeLabel {
 
 impl crate::cst::EdgeLabelExtensions for EdgeLabel {}
 
-impl Default for EdgeLabel {
-    fn default() -> Self {
-        Self::Root
-    }
-}

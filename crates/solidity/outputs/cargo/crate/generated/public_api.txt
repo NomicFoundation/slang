@@ -201,7 +201,7 @@ impl core::convert::TryFrom<&str> for slang_solidity::cst::EdgeLabel
 pub type slang_solidity::cst::EdgeLabel::Error = strum::ParseError
 pub fn slang_solidity::cst::EdgeLabel::try_from(s: &str) -> core::result::Result<slang_solidity::cst::EdgeLabel, <Self as core::convert::TryFrom<&str>>::Error>
 impl core::default::Default for slang_solidity::cst::EdgeLabel
-pub fn slang_solidity::cst::EdgeLabel::default() -> Self
+pub fn slang_solidity::cst::EdgeLabel::default() -> slang_solidity::cst::EdgeLabel
 impl core::fmt::Debug for slang_solidity::cst::EdgeLabel
 pub fn slang_solidity::cst::EdgeLabel::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::fmt::Display for slang_solidity::cst::EdgeLabel

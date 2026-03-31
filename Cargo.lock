@@ -1521,9 +1521,9 @@ dependencies = [
 
 [[package]]
 name = "hashbag"
-version = "0.1.12"
+version = "0.1.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "98f494b2060b2a8f5e63379e1e487258e014cee1b1725a735816c0107a2e9d93"
+checksum = "7040a10f52cba493ddb09926e15d10a9d8a28043708a405931fe4c6f19fac064"
 
 [[package]]
 name = "hashbrown"
@@ -3040,14 +3040,15 @@ dependencies = [
 
 [[package]]
 name = "public-api"
-version = "0.47.1"
+version = "0.51.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d5644f0a5bad87f0f850822e274c8a1178aea25117ca2562bc8c0d95f9f76251"
+checksum = "b4597eaaa646a5df48e5f37924b58bd4b2e2a3746d4665195d03538846784858"
 dependencies = [
  "hashbag",
  "rustdoc-types",
  "serde",
  "serde_json",
+ "snapshot-testing",
  "thiserror 2.0.12",
 ]
 
@@ -3391,11 +3392,12 @@ dependencies = [
 
 [[package]]
 name = "rustdoc-types"
-version = "0.39.0"
+version = "0.56.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e3b61d5673c3f4b49d35be6a58c49210596f61b8db580bc3b6d9dee5e9dc5458"
+checksum = "27bf787c529efe523ed9eb6dcdbaa5954d34329f08d5c243fce928441826ca90"
 dependencies = [
  "serde",
+ "serde_derive",
 ]
 
 [[package]]
@@ -3784,6 +3786,16 @@ name = "smallvec"
 version = "1.15.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "67b1b7a3b5fe4f1376887184045fcf45c69e92af734b7aaddc05fb777b6fbd03"
+
+[[package]]
+name = "snapshot-testing"
+version = "0.1.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bebf2194b9611339d00b28260cf6bd640073c60179ce7dd1e47badef1eb606e7"
+dependencies = [
+ "console 0.15.11",
+ "similar-asserts",
+]
 
 [[package]]
 name = "socket2"

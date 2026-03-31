@@ -3,6 +3,7 @@
 #[repr(u8)]
 #[derive(
     Debug,
+    Default,
     Eq,
     Hash,
     Ord,
@@ -19,6 +20,7 @@
 /// Represents the different types of relationships between nodes in the syntax tree.
 pub enum EdgeLabel {
     /// Represents a child node with the label `root`.
+    #[default]
     Root,
     /// Represents a child node with the label `unrecognized`.
     Unrecognized,
@@ -298,9 +300,3 @@ pub enum EdgeLabel {
 }
 
 impl crate::cst::EdgeLabelExtensions for EdgeLabel {}
-
-impl Default for EdgeLabel {
-    fn default() -> Self {
-        Self::Root
-    }
-}
