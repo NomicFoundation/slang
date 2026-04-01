@@ -1,0 +1,50 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                │ 0..12
+  2  │     function f() {                                                                                          │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ConditionalExpression/nested_base/input.sol │ 32..139
+  4  │ (foo == bar) ? true : false                                                                                 │ 140..167
+  5  │ // <<<                                                                                                      │ 168..174
+  6  │ ;                                                                                                           │ 175..176
+  7  │     }                                                                                                       │ 177..182
+  8  │ }                                                                                                           │ 183..184
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
+                      - (function_keyword: FunctionKeyword): "function" # (17..25)
+                      - (name: FunctionName) ► (identifier: Identifier): "f" # (26..27)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (27..28)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (28..29)
+                      - (attributes: FunctionAttributes): []
+                      - (body: FunctionBody) ► (block: Block):
+                          - (open_brace: OpenBrace): "{" # (30..31)
+                          - (statements: Statements):
+                              - (item: Statement) ► (expression_statement: ExpressionStatement):
+                                  - (expression: Expression) ► (conditional_expression: ConditionalExpression):
+                                      - (operand: Expression) ► (tuple_expression: TupleExpression):
+                                          - (open_paren: OpenParen): "(" # (140..141)
+                                          - (items: TupleValues):
+                                              - (item: TupleValue):
+                                                  - (expression: Expression) ► (equality_expression: EqualityExpression):
+                                                      - (left_operand: Expression) ► (identifier: Identifier): "foo" # (141..144)
+                                                      - (expression_equality_expression_operator: Expression_EqualityExpression_Operator) ► (equal_equal: EqualEqual): "==" # (145..147)
+                                                      - (right_operand: Expression) ► (identifier: Identifier): "bar" # (148..151)
+                                          - (close_paren: CloseParen): ")" # (151..152)
+                                      - (question_mark: QuestionMark): "?" # (153..154)
+                                      - (true_expression: Expression) ► (true_keyword: TrueKeyword): "true" # (155..159)
+                                      - (colon: Colon): ":" # (160..161)
+                                      - (false_expression: Expression) ► (false_keyword: FalseKeyword): "false" # (162..167)
+                                  - (semicolon: Semicolon): ";" # (175..176)
+                          - (close_brace: CloseBrace): "}" # (181..182)
+              - (close_brace: CloseBrace): "}" # (183..184)

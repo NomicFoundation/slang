@@ -1,0 +1,46 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                       │ 0..12
+  2  │     function f() {                                                                                 │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/function_call/input.sol │ 32..130
+  4  │ x(1, 2)                                                                                            │ 131..138
+  5  │ // <<<                                                                                             │ 139..145
+  6  │ ;                                                                                                  │ 146..147
+  7  │     }                                                                                              │ 148..153
+  8  │ }                                                                                                  │ 154..155
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
+                      - (function_keyword: FunctionKeyword): "function" # (17..25)
+                      - (name: FunctionName) ► (identifier: Identifier): "f" # (26..27)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (27..28)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (28..29)
+                      - (attributes: FunctionAttributes): []
+                      - (body: FunctionBody) ► (block: Block):
+                          - (open_brace: OpenBrace): "{" # (30..31)
+                          - (statements: Statements):
+                              - (item: Statement) ► (expression_statement: ExpressionStatement):
+                                  - (expression: Expression) ► (function_call_expression: FunctionCallExpression):
+                                      - (operand: Expression) ► (identifier: Identifier): "x" # (131..132)
+                                      - (arguments: ArgumentsDeclaration) ► (positional_arguments_declaration: PositionalArgumentsDeclaration):
+                                          - (open_paren: OpenParen): "(" # (132..133)
+                                          - (arguments: PositionalArguments):
+                                              - (item: Expression) ► (decimal_number_expression: DecimalNumberExpression):
+                                                  - (literal: DecimalLiteral): "1" # (133..134)
+                                              - (item: Expression) ► (decimal_number_expression: DecimalNumberExpression):
+                                                  - (literal: DecimalLiteral): "2" # (136..137)
+                                          - (close_paren: CloseParen): ")" # (137..138)
+                                  - (semicolon: Semicolon): ";" # (146..147)
+                          - (close_brace: CloseBrace): "}" # (152..153)
+              - (close_brace: CloseBrace): "}" # (154..155)

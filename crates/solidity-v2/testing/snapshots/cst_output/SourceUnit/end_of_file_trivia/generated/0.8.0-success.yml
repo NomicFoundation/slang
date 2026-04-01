@@ -1,0 +1,23 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/end_of_file_trivia/input.sol │ 0..103
+  2  │ contract X { }                                                                                          │ 104..118
+  3  │                                                                                                         │ 119..123
+  4  │ // spaces before this                                                                                   │ 124..145
+  5  │                                                                                                         │ 146..146
+  6  │ /* new lines after this */                                                                              │ 147..173
+  7  │                                                                                                         │ 174..174
+  8  │                                                                                                         │ 175..175
+  9  │ // <<<                                                                                                  │ 176..182
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (104..112)
+              - (name: Identifier): "X" # (113..114)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (115..116)
+              - (members: ContractMembers): []
+              - (close_brace: CloseBrace): "}" # (117..118)

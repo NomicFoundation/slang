@@ -1,0 +1,32 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                           │ 0..12
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractMembers/state_variable_pure_function/input.sol │ 13..131
+  3  │ function() pure foo;                                                                                                   │ 132..152
+  4  │                                                                                                                        │ 153..153
+  5  │ // <<<                                                                                                                 │ 154..160
+  6  │ }                                                                                                                      │ 161..162
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (state_variable_definition: StateVariableDefinition):
+                      - (type_name: TypeName) ► (function_type: FunctionType):
+                          - (function_keyword: FunctionKeyword): "function" # (132..140)
+                          - (parameters: ParametersDeclaration):
+                              - (open_paren: OpenParen): "(" # (140..141)
+                              - (parameters: Parameters): []
+                              - (close_paren: CloseParen): ")" # (141..142)
+                          - (attributes: FunctionTypeAttributes):
+                              - (item: FunctionTypeAttribute) ► (pure_keyword: PureKeyword): "pure" # (143..147)
+                      - (attributes: StateVariableAttributes): []
+                      - (name: Identifier): "foo" # (148..151)
+                      - (semicolon: Semicolon): ";" # (151..152)
+              - (close_brace: CloseBrace): "}" # (161..162)

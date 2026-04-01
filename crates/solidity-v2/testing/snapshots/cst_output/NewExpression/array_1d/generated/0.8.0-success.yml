@@ -1,0 +1,43 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                     │ 0..12
+  2  │     function f() {                                                                               │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/NewExpression/array_1d/input.sol │ 32..128
+  4  │ new Foo[]                                                                                        │ 129..138
+  5  │ // <<<                                                                                           │ 139..145
+  6  │ ;                                                                                                │ 146..147
+  7  │     }                                                                                            │ 148..153
+  8  │ }                                                                                                │ 154..155
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
+                      - (function_keyword: FunctionKeyword): "function" # (17..25)
+                      - (name: FunctionName) ► (identifier: Identifier): "f" # (26..27)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (27..28)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (28..29)
+                      - (attributes: FunctionAttributes): []
+                      - (body: FunctionBody) ► (block: Block):
+                          - (open_brace: OpenBrace): "{" # (30..31)
+                          - (statements: Statements):
+                              - (item: Statement) ► (expression_statement: ExpressionStatement):
+                                  - (expression: Expression) ► (new_expression: NewExpression):
+                                      - (new_keyword: NewKeyword): "new" # (129..132)
+                                      - (type_name: TypeName) ► (array_type_name: ArrayTypeName):
+                                          - (operand: TypeName) ► (identifier_path: IdentifierPath):
+                                              - (item: IdentifierPathElement) ► (identifier: Identifier): "Foo" # (133..136)
+                                          - (open_bracket: OpenBracket): "[" # (136..137)
+                                          - (close_bracket: CloseBracket): "]" # (137..138)
+                                  - (semicolon: Semicolon): ";" # (146..147)
+                          - (close_brace: CloseBrace): "}" # (152..153)
+              - (close_brace: CloseBrace): "}" # (154..155)

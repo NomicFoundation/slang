@@ -1,0 +1,58 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                      │ 0..12
+  2  │     function f() {                                                                                                │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ConditionalExpression/nested_conditions/input.sol │ 32..145
+  4  │ foo ? (a + b) : (c + d)                                                                                           │ 146..169
+  5  │ // <<<                                                                                                            │ 170..176
+  6  │ ;                                                                                                                 │ 177..178
+  7  │     }                                                                                                             │ 179..184
+  8  │ }                                                                                                                 │ 185..186
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
+                      - (function_keyword: FunctionKeyword): "function" # (17..25)
+                      - (name: FunctionName) ► (identifier: Identifier): "f" # (26..27)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (27..28)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (28..29)
+                      - (attributes: FunctionAttributes): []
+                      - (body: FunctionBody) ► (block: Block):
+                          - (open_brace: OpenBrace): "{" # (30..31)
+                          - (statements: Statements):
+                              - (item: Statement) ► (expression_statement: ExpressionStatement):
+                                  - (expression: Expression) ► (conditional_expression: ConditionalExpression):
+                                      - (operand: Expression) ► (identifier: Identifier): "foo" # (146..149)
+                                      - (question_mark: QuestionMark): "?" # (150..151)
+                                      - (true_expression: Expression) ► (tuple_expression: TupleExpression):
+                                          - (open_paren: OpenParen): "(" # (152..153)
+                                          - (items: TupleValues):
+                                              - (item: TupleValue):
+                                                  - (expression: Expression) ► (additive_expression: AdditiveExpression):
+                                                      - (left_operand: Expression) ► (identifier: Identifier): "a" # (153..154)
+                                                      - (expression_additive_expression_operator: Expression_AdditiveExpression_Operator) ► (plus: Plus): "+" # (155..156)
+                                                      - (right_operand: Expression) ► (identifier: Identifier): "b" # (157..158)
+                                          - (close_paren: CloseParen): ")" # (158..159)
+                                      - (colon: Colon): ":" # (160..161)
+                                      - (false_expression: Expression) ► (tuple_expression: TupleExpression):
+                                          - (open_paren: OpenParen): "(" # (162..163)
+                                          - (items: TupleValues):
+                                              - (item: TupleValue):
+                                                  - (expression: Expression) ► (additive_expression: AdditiveExpression):
+                                                      - (left_operand: Expression) ► (identifier: Identifier): "c" # (163..164)
+                                                      - (expression_additive_expression_operator: Expression_AdditiveExpression_Operator) ► (plus: Plus): "+" # (165..166)
+                                                      - (right_operand: Expression) ► (identifier: Identifier): "d" # (167..168)
+                                          - (close_paren: CloseParen): ")" # (168..169)
+                                  - (semicolon: Semicolon): ";" # (177..178)
+                          - (close_brace: CloseBrace): "}" # (183..184)
+              - (close_brace: CloseBrace): "}" # (185..186)

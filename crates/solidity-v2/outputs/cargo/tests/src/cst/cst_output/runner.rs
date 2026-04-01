@@ -36,10 +36,10 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             Some(ref last) if last == &v2_output => continue,
             _ => {
                 let (status, content) = match &v2_output {
-                    Ok(parsed_cst) => {
-                        // Print structured CST
-                        ("success", format!("{parsed_cst:#?}\n"))
-                    }
+                    Ok(parsed_cst) => (
+                        "success",
+                        solidity_v2_testing_utils::cst_renderer::render(&source, parsed_cst),
+                    ),
                     Err(err) => {
                         // We don't care about the errors for now, we just write them
                         let e = diagnostic::render(err, &source_id, &source, false);
@@ -49,7 +49,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
 
                 let snapshot_path = test_dir
                     .join("generated")
-                    .join(format!("{lang_version}-{status}.txt"));
+                    .join(format!("{lang_version}-{status}.yml"));
 
                 fs.write_file_raw(&snapshot_path, content)?;
                 last_output = Some(v2_output);

@@ -1,0 +1,24 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ImportDirective/destructure_import_single/input.sol │ 0..115
+  2  │ import { x as y } from "foo";                                                                                       │ 116..145
+  3  │ // <<<                                                                                                              │ 146..152
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (import_directive: ImportDirective):
+              - (import_keyword: ImportKeyword): "import" # (116..122)
+              - (clause: ImportClause) ► (import_deconstruction: ImportDeconstruction):
+                  - (open_brace: OpenBrace): "{" # (123..124)
+                  - (symbols: ImportDeconstructionSymbols):
+                      - (item: ImportDeconstructionSymbol):
+                          - (name: Identifier): "x" # (125..126)
+                          - (alias: ImportAlias):
+                              - (as_keyword: AsKeyword): "as" # (127..129)
+                              - (identifier: Identifier): "y" # (130..131)
+                  - (close_brace: CloseBrace): "}" # (132..133)
+                  - (from_keyword: FromKeyword): "from" # (134..138)
+                  - (path: StringLiteral): '"foo"' # (139..144)
+              - (semicolon: Semicolon): ";" # (144..145)

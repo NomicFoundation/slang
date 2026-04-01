@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ConstantDefinition/int/input.sol │ 0..96
+  2  │ int constant foo = 0;                                                                            │ 97..118
+  3  │ // <<<                                                                                           │ 119..125
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (constant_definition: ConstantDefinition):
+              - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (int_keyword: IntKeyword): "int" # (97..100)
+              - (constant_keyword: ConstantKeyword): "constant" # (101..109)
+              - (name: Identifier): "foo" # (110..113)
+              - (equal: Equal): "=" # (114..115)
+              - (value: Expression) ► (decimal_number_expression: DecimalNumberExpression):
+                  - (literal: DecimalLiteral): "0" # (116..117)
+              - (semicolon: Semicolon): ";" # (117..118)

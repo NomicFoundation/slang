@@ -1,0 +1,30 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/storage_specifier_after_inheritance/input.sol │ 0..128
+  2  │ contract Foo is Bar layout at 0 {                                                                                                │ 129..162
+  3  │ }                                                                                                                                │ 163..164
+  4  │                                                                                                                                  │ 165..165
+  5  │ // <<<                                                                                                                           │ 166..172
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (129..137)
+              - (name: Identifier): "Foo" # (138..141)
+              - (specifiers: ContractSpecifiers):
+                  - (item: ContractSpecifier) ► (inheritance_specifier: InheritanceSpecifier):
+                      - (is_keyword: IsKeyword): "is" # (142..144)
+                      - (types: InheritanceTypes):
+                          - (item: InheritanceType):
+                              - (type_name: IdentifierPath):
+                                  - (item: IdentifierPathElement) ► (identifier: Identifier): "Bar" # (145..148)
+                  - (item: ContractSpecifier) ► (storage_layout_specifier: StorageLayoutSpecifier):
+                      - (layout_keyword: LayoutKeyword): "layout" # (149..155)
+                      - (at_keyword: AtKeyword): "at" # (156..158)
+                      - (expression: Expression) ► (decimal_number_expression: DecimalNumberExpression):
+                          - (literal: DecimalLiteral): "0" # (159..160)
+              - (open_brace: OpenBrace): "{" # (161..162)
+              - (members: ContractMembers): []
+              - (close_brace: CloseBrace): "}" # (163..164)

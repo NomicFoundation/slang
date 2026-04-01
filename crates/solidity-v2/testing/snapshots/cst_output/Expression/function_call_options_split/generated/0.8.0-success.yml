@@ -1,0 +1,65 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                     │ 0..12
+  2  │     function f() {                                                                                               │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/function_call_options_split/input.sol │ 32..144
+  4  │ a.b{value: 0}{gas: 1}("")                                                                                        │ 145..170
+  5  │ // <<<                                                                                                           │ 171..177
+  6  │ ;                                                                                                                │ 178..179
+  7  │     }                                                                                                            │ 180..185
+  8  │ }                                                                                                                │ 186..187
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
+                      - (function_keyword: FunctionKeyword): "function" # (17..25)
+                      - (name: FunctionName) ► (identifier: Identifier): "f" # (26..27)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (27..28)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (28..29)
+                      - (attributes: FunctionAttributes): []
+                      - (body: FunctionBody) ► (block: Block):
+                          - (open_brace: OpenBrace): "{" # (30..31)
+                          - (statements: Statements):
+                              - (item: Statement) ► (expression_statement: ExpressionStatement):
+                                  - (expression: Expression) ► (function_call_expression: FunctionCallExpression):
+                                      - (operand: Expression) ► (call_options_expression: CallOptionsExpression):
+                                          - (operand: Expression) ► (call_options_expression: CallOptionsExpression):
+                                              - (operand: Expression) ► (member_access_expression: MemberAccessExpression):
+                                                  - (operand: Expression) ► (identifier: Identifier): "a" # (145..146)
+                                                  - (period: Period): "" # (0..0)
+                                                  - (member: IdentifierPathElement) ► (identifier: Identifier): "b" # (147..148)
+                                              - (open_brace: OpenBrace): "{" # (148..149)
+                                              - (options: CallOptions):
+                                                  - (item: NamedArgument):
+                                                      - (name: Identifier): "value" # (149..154)
+                                                      - (colon: Colon): ":" # (154..155)
+                                                      - (value: Expression) ► (decimal_number_expression: DecimalNumberExpression):
+                                                          - (literal: DecimalLiteral): "0" # (156..157)
+                                              - (close_brace: CloseBrace): "}" # (157..158)
+                                          - (open_brace: OpenBrace): "{" # (158..159)
+                                          - (options: CallOptions):
+                                              - (item: NamedArgument):
+                                                  - (name: Identifier): "gas" # (159..162)
+                                                  - (colon: Colon): ":" # (162..163)
+                                                  - (value: Expression) ► (decimal_number_expression: DecimalNumberExpression):
+                                                      - (literal: DecimalLiteral): "1" # (164..165)
+                                          - (close_brace: CloseBrace): "}" # (165..166)
+                                      - (arguments: ArgumentsDeclaration) ► (positional_arguments_declaration: PositionalArgumentsDeclaration):
+                                          - (open_paren: OpenParen): "(" # (166..167)
+                                          - (arguments: PositionalArguments):
+                                              - (item: Expression) ► (string_expression: StringExpression) ► (string_literals: StringLiterals):
+                                                  - (item: StringLiteral): '""' # (167..169)
+                                          - (close_paren: CloseParen): ")" # (169..170)
+                                  - (semicolon: Semicolon): ";" # (178..179)
+                          - (close_brace: CloseBrace): "}" # (184..185)
+              - (close_brace: CloseBrace): "}" # (186..187)

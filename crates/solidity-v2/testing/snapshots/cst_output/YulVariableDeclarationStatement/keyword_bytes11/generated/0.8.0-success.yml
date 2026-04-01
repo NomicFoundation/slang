@@ -1,0 +1,47 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                              │ 0..12
+  2  │     function f() {                                                                                                        │ 13..31
+  3  │         assembly {                                                                                                        │ 32..50
+  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulVariableDeclarationStatement/keyword_bytes11/input.sol │ 51..172
+  5  │ // Unreserved in Yul specifically since 0.7.1:                                                                            │ 173..219
+  6  │ let bytes11                                                                                                               │ 220..231
+  7  │                                                                                                                           │ 232..232
+  8  │ // <<<                                                                                                                    │ 233..239
+  9  │         }                                                                                                                 │ 240..249
+  10 │     }                                                                                                                     │ 250..255
+  11 │ }                                                                                                                         │ 256..257
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
+                      - (function_keyword: FunctionKeyword): "function" # (17..25)
+                      - (name: FunctionName) ► (identifier: Identifier): "f" # (26..27)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (27..28)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (28..29)
+                      - (attributes: FunctionAttributes): []
+                      - (body: FunctionBody) ► (block: Block):
+                          - (open_brace: OpenBrace): "{" # (30..31)
+                          - (statements: Statements):
+                              - (item: Statement) ► (assembly_statement: AssemblyStatement):
+                                  - (assembly_keyword: AssemblyKeyword): "assembly" # (40..48)
+                                  - (body: YulBlock):
+                                      - (open_brace: YulOpenBrace): "{" # (49..50)
+                                      - (statements: YulStatements):
+                                          - (item: YulStatement) ► (yul_variable_declaration_statement: YulVariableDeclarationStatement):
+                                              - (let_keyword: YulLetKeyword): "let" # (220..223)
+                                              - (variables: YulVariableNames):
+                                                  - (item: YulIdentifier): "bytes11" # (224..231)
+                                      - (close_brace: YulCloseBrace): "}" # (248..249)
+                          - (close_brace: CloseBrace): "}" # (254..255)
+              - (close_brace: CloseBrace): "}" # (256..257)

@@ -1,0 +1,42 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                 │ 0..12
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/FunctionType/pure_state_mutability/input.sol │ 13..121
+  3  │ function () internal pure returns (uint)                                                                     │ 122..162
+  4  │                                                                                                              │ 163..163
+  5  │ // <<<                                                                                                       │ 164..170
+  6  │ x;                                                                                                           │ 171..173
+  7  │ }                                                                                                            │ 174..175
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (state_variable_definition: StateVariableDefinition):
+                      - (type_name: TypeName) ► (function_type: FunctionType):
+                          - (function_keyword: FunctionKeyword): "function" # (122..130)
+                          - (parameters: ParametersDeclaration):
+                              - (open_paren: OpenParen): "(" # (131..132)
+                              - (parameters: Parameters): []
+                              - (close_paren: CloseParen): ")" # (132..133)
+                          - (attributes: FunctionTypeAttributes):
+                              - (item: FunctionTypeAttribute) ► (internal_keyword: InternalKeyword): "internal" # (134..142)
+                              - (item: FunctionTypeAttribute) ► (pure_keyword: PureKeyword): "pure" # (143..147)
+                          - (returns: ReturnsDeclaration):
+                              - (returns_keyword: ReturnsKeyword): "returns" # (148..155)
+                              - (variables: ParametersDeclaration):
+                                  - (open_paren: OpenParen): "(" # (156..157)
+                                  - (parameters: Parameters):
+                                      - (item: Parameter):
+                                          - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint" # (157..161)
+                                  - (close_paren: CloseParen): ")" # (161..162)
+                      - (attributes: StateVariableAttributes): []
+                      - (name: Identifier): "x" # (171..172)
+                      - (semicolon: Semicolon): ";" # (172..173)
+              - (close_brace: CloseBrace): "}" # (174..175)

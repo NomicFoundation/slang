@@ -1,0 +1,40 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                     │ 0..12
+  2  │     function f() {                                                                                               │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/StringLiteral/escape_crlf_single_quote/input.sol │ 32..144
+  4  │ 'foo\                                                                                                            │ 145..150
+  5  │ bar'                                                                                                             │ 151..155
+  6  │                                                                                                                  │ 156..156
+  7  │ // <<<                                                                                                           │ 157..163
+  8  │ ;                                                                                                                │ 164..165
+  9  │     }                                                                                                            │ 166..171
+  10 │ }                                                                                                                │ 172..173
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
+                      - (function_keyword: FunctionKeyword): "function" # (18..26)
+                      - (name: FunctionName) ► (identifier: Identifier): "f" # (27..28)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (28..29)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (29..30)
+                      - (attributes: FunctionAttributes): []
+                      - (body: FunctionBody) ► (block: Block):
+                          - (open_brace: OpenBrace): "{" # (31..32)
+                          - (statements: Statements):
+                              - (item: Statement) ► (expression_statement: ExpressionStatement):
+                                  - (expression: Expression) ► (string_expression: StringExpression) ► (string_literals: StringLiterals):
+                                      - (item: StringLiteral): "'foo\\r\nbar'" # (148..159)
+                                  - (semicolon: Semicolon): ";" # (171..172)
+                          - (close_brace: CloseBrace): "}" # (178..179)
+              - (close_brace: CloseBrace): "}" # (181..182)

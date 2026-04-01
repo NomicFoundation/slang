@@ -1,0 +1,99 @@
+{%- set target = model.structured_cst_model -%}
+#![allow(clippy::too_many_lines)]
+#![allow(unused_variables)]
+
+#[allow(clippy::wildcard_imports)]
+use slang_solidity_v2_cst::structured_cst::nodes::*;
+
+use crate::cst_renderer::RenderContext;
+
+//
+// Sequences:
+//
+
+{% for parent_type, sequence in target.sequences %}
+pub fn render_{{ parent_type | snake_case }}(ctx: &mut RenderContext<'_>, node: &{{ parent_type }}Struct) {
+  ctx.write_nonterminal_start();
+  let parent_depth = ctx.depth;
+  ctx.depth += 1;
+  {% for field in sequence.fields %}
+    {% if field.is_optional %}
+      if let Some(ref {{ field.label | snake_case }}) = node.{{ field.label | snake_case }} {
+        ctx.write_indent();
+        ctx.write_key("{{ field.label | snake_case }}", "{{ field.type.name }}");
+        {% if field.type.is_terminal %}
+          ctx.write_terminal_value(&{{ field.label | snake_case }}.range);
+        {% else %}
+          render_{{ field.type.name | snake_case }}(ctx, {{ field.label | snake_case }});
+        {% endif %}
+      }
+    {% else %}
+      {
+        ctx.write_indent();
+        ctx.write_key("{{ field.label | snake_case }}", "{{ field.type.name }}");
+        {% if field.type.is_terminal %}
+          ctx.write_terminal_value(&node.{{ field.label | snake_case }}.range);
+        {% else %}
+          render_{{ field.type.name | snake_case }}(ctx, &node.{{ field.label | snake_case }});
+        {% endif %}
+      }
+    {% endif %}
+  {% endfor %}
+  ctx.depth = parent_depth;
+}
+
+{% endfor %}
+
+//
+// Choices:
+//
+
+{% for parent_type, choice in target.choices %}
+pub fn render_{{ parent_type | snake_case }}(ctx: &mut RenderContext<'_>, node: &{{ parent_type }}) {
+  match node {
+    {% for variant in choice.variants %}
+      {% if variant.is_terminal %}
+        {{ parent_type }}::{{ variant.name }}(ref element) => {
+          ctx.write_connector();
+          ctx.write_key("{{ variant.name | snake_case }}", "{{ variant.name }}");
+          ctx.write_terminal_value(&element.range);
+        }
+      {% else %}
+        {{ parent_type }}::{{ variant.name }}(ref element) => {
+          ctx.write_connector();
+          ctx.write_key("{{ variant.name | snake_case }}", "{{ variant.name }}");
+          render_{{ variant.name | snake_case }}(ctx, element);
+        }
+      {% endif %}
+    {% endfor %}
+  }
+}
+
+{% endfor %}
+
+//
+// Repeated & Separated
+//
+
+{% for parent_type, collection in target.collections %}
+pub fn render_{{ parent_type | snake_case }}(ctx: &mut RenderContext<'_>, node: &{{ parent_type }}) {
+  if node.elements.is_empty() {
+    ctx.write_empty_collection();
+  } else {
+    ctx.write_nonterminal_start();
+    let parent_depth = ctx.depth;
+    ctx.depth += 1;
+    for element in &node.elements {
+      ctx.write_indent();
+      ctx.write_key("item", "{{ collection.item_type.name }}");
+      {% if collection.item_type.is_terminal %}
+        ctx.write_terminal_value(&element.range);
+      {% else %}
+        render_{{ collection.item_type.name | snake_case }}(ctx, element);
+      {% endif %}
+    }
+    ctx.depth = parent_depth;
+  }
+}
+
+{% endfor %}

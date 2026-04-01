@@ -1,0 +1,42 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                            │ 0..12
+  2  │     function f() {                                                                                      │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/NewExpression/identifier_path/input.sol │ 32..135
+  4  │ new Foo.Bar.Baz                                                                                         │ 136..151
+  5  │ // <<<                                                                                                  │ 152..158
+  6  │ ;                                                                                                       │ 159..160
+  7  │     }                                                                                                   │ 161..166
+  8  │ }                                                                                                       │ 167..168
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
+                      - (function_keyword: FunctionKeyword): "function" # (17..25)
+                      - (name: FunctionName) ► (identifier: Identifier): "f" # (26..27)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (27..28)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (28..29)
+                      - (attributes: FunctionAttributes): []
+                      - (body: FunctionBody) ► (block: Block):
+                          - (open_brace: OpenBrace): "{" # (30..31)
+                          - (statements: Statements):
+                              - (item: Statement) ► (expression_statement: ExpressionStatement):
+                                  - (expression: Expression) ► (new_expression: NewExpression):
+                                      - (new_keyword: NewKeyword): "new" # (136..139)
+                                      - (type_name: TypeName) ► (identifier_path: IdentifierPath):
+                                          - (item: IdentifierPathElement) ► (identifier: Identifier): "Foo" # (140..143)
+                                          - (item: IdentifierPathElement) ► (identifier: Identifier): "Bar" # (144..147)
+                                          - (item: IdentifierPathElement) ► (identifier: Identifier): "Baz" # (148..151)
+                                  - (semicolon: Semicolon): ";" # (159..160)
+                          - (close_brace: CloseBrace): "}" # (165..166)
+              - (close_brace: CloseBrace): "}" # (167..168)

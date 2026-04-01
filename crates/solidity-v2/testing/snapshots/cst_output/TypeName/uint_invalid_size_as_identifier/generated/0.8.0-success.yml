@@ -1,0 +1,26 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                       │ 0..12
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/TypeName/uint_invalid_size_as_identifier/input.sol │ 13..127
+  3  │ uint320                                                                                                            │ 128..135
+  4  │ // <<<                                                                                                             │ 136..142
+  5  │ x;                                                                                                                 │ 143..145
+  6  │ }                                                                                                                  │ 146..147
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (state_variable_definition: StateVariableDefinition):
+                      - (type_name: TypeName) ► (identifier_path: IdentifierPath):
+                          - (item: IdentifierPathElement) ► (identifier: Identifier): "uint320" # (128..135)
+                      - (attributes: StateVariableAttributes): []
+                      - (name: Identifier): "x" # (143..144)
+                      - (semicolon: Semicolon): ";" # (144..145)
+              - (close_brace: CloseBrace): "}" # (146..147)

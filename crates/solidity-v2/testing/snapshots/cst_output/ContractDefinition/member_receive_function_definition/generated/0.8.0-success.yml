@@ -1,0 +1,31 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_receive_function_definition/input.sol │ 0..127
+  2  │ contract Sample {                                                                                                               │ 128..145
+  3  │   receive() {                                                                                                                   │ 146..159
+  4  │   }                                                                                                                             │ 160..163
+  5  │ }                                                                                                                               │ 164..165
+  6  │ // <<<                                                                                                                          │ 166..172
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (128..136)
+              - (name: Identifier): "Sample" # (137..143)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (144..145)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (receive_function_definition: ReceiveFunctionDefinition):
+                      - (receive_keyword: ReceiveKeyword): "receive" # (148..155)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (155..156)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (156..157)
+                      - (attributes: ReceiveFunctionAttributes): []
+                      - (body: FunctionBody) ► (block: Block):
+                          - (open_brace: OpenBrace): "{" # (158..159)
+                          - (statements: Statements): []
+                          - (close_brace: CloseBrace): "}" # (162..163)
+              - (close_brace: CloseBrace): "}" # (164..165)

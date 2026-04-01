@@ -1,0 +1,42 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/FunctionDefinition/overridden/input.sol │ 0..103
+  2  │ function some() public virtual override returns (uint256) {                                             │ 104..163
+  3  │ 	return 1;                                                                                              │ 164..174
+  4  │ }                                                                                                       │ 175..176
+  5  │                                                                                                         │ 177..177
+  6  │ // <<<                                                                                                  │ 178..184
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (function_definition: FunctionDefinition):
+              - (function_keyword: FunctionKeyword): "function" # (104..112)
+              - (name: FunctionName) ► (identifier: Identifier): "some" # (113..117)
+              - (parameters: ParametersDeclaration):
+                  - (open_paren: OpenParen): "(" # (117..118)
+                  - (parameters: Parameters): []
+                  - (close_paren: CloseParen): ")" # (118..119)
+              - (attributes: FunctionAttributes):
+                  - (item: FunctionAttribute) ► (public_keyword: PublicKeyword): "public" # (120..126)
+                  - (item: FunctionAttribute) ► (virtual_keyword: VirtualKeyword): "virtual" # (127..134)
+                  - (item: FunctionAttribute) ► (override_specifier: OverrideSpecifier):
+                      - (override_keyword: OverrideKeyword): "override" # (135..143)
+              - (returns: ReturnsDeclaration):
+                  - (returns_keyword: ReturnsKeyword): "returns" # (144..151)
+                  - (variables: ParametersDeclaration):
+                      - (open_paren: OpenParen): "(" # (152..153)
+                      - (parameters: Parameters):
+                          - (item: Parameter):
+                              - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint256" # (153..160)
+                      - (close_paren: CloseParen): ")" # (160..161)
+              - (body: FunctionBody) ► (block: Block):
+                  - (open_brace: OpenBrace): "{" # (162..163)
+                  - (statements: Statements):
+                      - (item: Statement) ► (return_statement: ReturnStatement):
+                          - (return_keyword: ReturnKeyword): "return" # (165..171)
+                          - (expression: Expression) ► (decimal_number_expression: DecimalNumberExpression):
+                              - (literal: DecimalLiteral): "1" # (172..173)
+                          - (semicolon: Semicolon): ";" # (173..174)
+                  - (close_brace: CloseBrace): "}" # (175..176)

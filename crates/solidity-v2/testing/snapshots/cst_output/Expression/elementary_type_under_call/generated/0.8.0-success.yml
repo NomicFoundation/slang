@@ -1,0 +1,47 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                    │ 0..12
+  2  │     function f() {                                                                                              │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/elementary_type_under_call/input.sol │ 32..143
+  4  │ uint[](foo)                                                                                                     │ 144..155
+  5  │                                                                                                                 │ 156..156
+  6  │ // <<<                                                                                                          │ 157..163
+  7  │ ;                                                                                                               │ 164..165
+  8  │     }                                                                                                           │ 166..171
+  9  │ }                                                                                                               │ 172..173
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
+                      - (function_keyword: FunctionKeyword): "function" # (17..25)
+                      - (name: FunctionName) ► (identifier: Identifier): "f" # (26..27)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (27..28)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (28..29)
+                      - (attributes: FunctionAttributes): []
+                      - (body: FunctionBody) ► (block: Block):
+                          - (open_brace: OpenBrace): "{" # (30..31)
+                          - (statements: Statements):
+                              - (item: Statement) ► (expression_statement: ExpressionStatement):
+                                  - (expression: Expression) ► (function_call_expression: FunctionCallExpression):
+                                      - (operand: Expression) ► (index_access_expression: IndexAccessExpression):
+                                          - (operand: Expression) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint" # (144..148)
+                                          - (open_bracket: OpenBracket): "[" # (148..149)
+                                          - (close_bracket: CloseBracket): "]" # (149..150)
+                                      - (arguments: ArgumentsDeclaration) ► (positional_arguments_declaration: PositionalArgumentsDeclaration):
+                                          - (open_paren: OpenParen): "(" # (150..151)
+                                          - (arguments: PositionalArguments):
+                                              - (item: Expression) ► (identifier: Identifier): "foo" # (151..154)
+                                          - (close_paren: CloseParen): ")" # (154..155)
+                                  - (semicolon: Semicolon): ";" # (164..165)
+                          - (close_brace: CloseBrace): "}" # (170..171)
+              - (close_brace: CloseBrace): "}" # (172..173)

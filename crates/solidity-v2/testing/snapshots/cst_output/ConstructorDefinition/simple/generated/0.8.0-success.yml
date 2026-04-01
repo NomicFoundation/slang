@@ -1,0 +1,30 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                           │ 0..12
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ConstructorDefinition/simple/input.sol │ 13..115
+  3  │ constructor () {}                                                                                      │ 116..133
+  4  │ // <<<                                                                                                 │ 134..140
+  5  │ }                                                                                                      │ 141..142
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (constructor_definition: ConstructorDefinition):
+                      - (constructor_keyword: ConstructorKeyword): "constructor" # (116..127)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (128..129)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (129..130)
+                      - (attributes: ConstructorAttributes): []
+                      - (body: Block):
+                          - (open_brace: OpenBrace): "{" # (131..132)
+                          - (statements: Statements): []
+                          - (close_brace: CloseBrace): "}" # (132..133)
+              - (close_brace: CloseBrace): "}" # (141..142)

@@ -1,0 +1,38 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                     │ 0..12
+  2  │     function f() {                                                                                               │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/HexStringLiterals/some_separated_pairs/input.sol │ 32..144
+  4  │ hex"1234_5678_90ab_cdef"                                                                                         │ 145..169
+  5  │ // <<<                                                                                                           │ 170..176
+  6  │ ;                                                                                                                │ 177..178
+  7  │     }                                                                                                            │ 179..184
+  8  │ }                                                                                                                │ 185..186
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
+                      - (function_keyword: FunctionKeyword): "function" # (17..25)
+                      - (name: FunctionName) ► (identifier: Identifier): "f" # (26..27)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (27..28)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (28..29)
+                      - (attributes: FunctionAttributes): []
+                      - (body: FunctionBody) ► (block: Block):
+                          - (open_brace: OpenBrace): "{" # (30..31)
+                          - (statements: Statements):
+                              - (item: Statement) ► (expression_statement: ExpressionStatement):
+                                  - (expression: Expression) ► (string_expression: StringExpression) ► (hex_string_literals: HexStringLiterals):
+                                      - (item: HexStringLiteral): 'hex"1234_5678_90ab_cdef"' # (145..169)
+                                  - (semicolon: Semicolon): ";" # (177..178)
+                          - (close_brace: CloseBrace): "}" # (183..184)
+              - (close_brace: CloseBrace): "}" # (185..186)

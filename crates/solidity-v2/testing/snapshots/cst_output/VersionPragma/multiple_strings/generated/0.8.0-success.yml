@@ -1,0 +1,28 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ pragma                                                                                                   │ 0..6
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/VersionPragma/multiple_strings/input.sol │ 7..111
+  3  │ solidity ^"1.2.3" || "4.5.6"-'7.8.9'                                                                     │ 112..148
+  4  │                                                                                                          │ 149..149
+  5  │ // <<<                                                                                                   │ 150..156
+  6  │ ;                                                                                                        │ 157..158
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (pragma_directive: PragmaDirective):
+              - (pragma_keyword: PragmaKeyword): "pragma" # (0..6)
+              - (pragma: Pragma) ► (version_pragma: VersionPragma):
+                  - (solidity_keyword: SolidityKeyword): "solidity" # (112..120)
+                  - (sets: VersionExpressionSets):
+                      - (item: VersionExpressionSet):
+                          - (item: VersionExpression) ► (version_term: VersionTerm):
+                              - (operator: VersionOperator) ► (pragma_caret: PragmaCaret): "^" # (121..122)
+                              - (literal: VersionLiteral) ► (pragma_string_literal: PragmaStringLiteral): '"1.2.3"' # (122..129)
+                      - (item: VersionExpressionSet):
+                          - (item: VersionExpression) ► (version_range: VersionRange):
+                              - (start: VersionLiteral) ► (pragma_string_literal: PragmaStringLiteral): '"4.5.6"' # (133..140)
+                              - (minus: PragmaMinus): "-" # (140..141)
+                              - (end: VersionLiteral) ► (pragma_string_literal: PragmaStringLiteral): "'7.8.9'" # (141..148)
+              - (semicolon: PragmaSemicolon): ";" # (157..158)

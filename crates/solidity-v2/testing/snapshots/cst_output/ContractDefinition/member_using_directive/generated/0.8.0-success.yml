@@ -1,0 +1,26 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_using_directive/input.sol │ 0..115
+  2  │ contract Sample {                                                                                                   │ 116..133
+  3  │   using x for *;                                                                                                    │ 134..150
+  4  │ }                                                                                                                   │ 151..152
+  5  │ // <<<                                                                                                              │ 153..159
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (116..124)
+              - (name: Identifier): "Sample" # (125..131)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (132..133)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (using_directive: UsingDirective):
+                      - (using_keyword: UsingKeyword): "using" # (136..141)
+                      - (clause: UsingClause) ► (identifier_path: IdentifierPath):
+                          - (item: IdentifierPathElement) ► (identifier: Identifier): "x" # (142..143)
+                      - (for_keyword: ForKeyword): "for" # (144..147)
+                      - (target: UsingTarget) ► (asterisk: Asterisk): "*" # (148..149)
+                      - (semicolon: Semicolon): ";" # (149..150)
+              - (close_brace: CloseBrace): "}" # (151..152)

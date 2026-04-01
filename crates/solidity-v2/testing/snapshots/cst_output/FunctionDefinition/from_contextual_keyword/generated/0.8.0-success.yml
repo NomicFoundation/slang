@@ -1,0 +1,40 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/FunctionDefinition/from_contextual_keyword/input.sol │ 0..116
+  2  │ function transferFrom(address from, address to, uint256 amount) external returns (bool);                             │ 117..205
+  3  │                                                                                                                      │ 206..206
+  4  │ // <<<                                                                                                               │ 207..213
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (function_definition: FunctionDefinition):
+              - (function_keyword: FunctionKeyword): "function" # (117..125)
+              - (name: FunctionName) ► (identifier: Identifier): "transferFrom" # (126..138)
+              - (parameters: ParametersDeclaration):
+                  - (open_paren: OpenParen): "(" # (138..139)
+                  - (parameters: Parameters):
+                      - (item: Parameter):
+                          - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (address_type: AddressType):
+                              - (address_keyword: AddressKeyword): "address" # (139..146)
+                          - (name: Identifier): "from" # (147..151)
+                      - (item: Parameter):
+                          - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (address_type: AddressType):
+                              - (address_keyword: AddressKeyword): "address" # (153..160)
+                          - (name: Identifier): "to" # (161..163)
+                      - (item: Parameter):
+                          - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint256" # (165..172)
+                          - (name: Identifier): "amount" # (173..179)
+                  - (close_paren: CloseParen): ")" # (179..180)
+              - (attributes: FunctionAttributes):
+                  - (item: FunctionAttribute) ► (external_keyword: ExternalKeyword): "external" # (181..189)
+              - (returns: ReturnsDeclaration):
+                  - (returns_keyword: ReturnsKeyword): "returns" # (190..197)
+                  - (variables: ParametersDeclaration):
+                      - (open_paren: OpenParen): "(" # (198..199)
+                      - (parameters: Parameters):
+                          - (item: Parameter):
+                              - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (bool_keyword: BoolKeyword): "bool" # (199..203)
+                      - (close_paren: CloseParen): ")" # (203..204)
+              - (body: FunctionBody) ► (semicolon: Semicolon): ";" # (204..205)

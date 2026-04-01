@@ -1,0 +1,30 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                │ 0..12
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/FallbackFunctionDefinition/simple/input.sol │ 13..120
+  3  │ fallback () {}                                                                                              │ 121..135
+  4  │ // <<<                                                                                                      │ 136..142
+  5  │ }                                                                                                           │ 143..144
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (fallback_function_definition: FallbackFunctionDefinition):
+                      - (fallback_keyword: FallbackKeyword): "fallback" # (121..129)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (130..131)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (131..132)
+                      - (attributes: FallbackFunctionAttributes): []
+                      - (body: FunctionBody) ► (block: Block):
+                          - (open_brace: OpenBrace): "{" # (133..134)
+                          - (statements: Statements): []
+                          - (close_brace: CloseBrace): "}" # (134..135)
+              - (close_brace: CloseBrace): "}" # (143..144)

@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/top_level_function/input.sol │ 0..103
+  2  │ function foo() { }                                                                                      │ 104..122
+  3  │ // <<<                                                                                                  │ 123..129
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (function_definition: FunctionDefinition):
+              - (function_keyword: FunctionKeyword): "function" # (104..112)
+              - (name: FunctionName) ► (identifier: Identifier): "foo" # (113..116)
+              - (parameters: ParametersDeclaration):
+                  - (open_paren: OpenParen): "(" # (116..117)
+                  - (parameters: Parameters): []
+                  - (close_paren: CloseParen): ")" # (117..118)
+              - (attributes: FunctionAttributes): []
+              - (body: FunctionBody) ► (block: Block):
+                  - (open_brace: OpenBrace): "{" # (119..120)
+                  - (statements: Statements): []
+                  - (close_brace: CloseBrace): "}" # (121..122)
