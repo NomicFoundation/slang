@@ -3738,6 +3738,7 @@ name = "slang_solidity_v2_ast"
 version = "1.3.4"
 dependencies = [
  "paste",
+ "sha3",
  "slang_solidity_v2_semantic",
 ]
 
