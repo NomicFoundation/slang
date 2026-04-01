@@ -2,6 +2,8 @@ use std::rc::Rc;
 
 use super::super::IdentifierPathStruct;
 use super::{Definition, Type};
+use crate::backend::binder::Resolution;
+use crate::backend::built_ins::BuiltIn;
 use crate::backend::SemanticAnalysis;
 use crate::cst::{NodeId, TerminalKind, TerminalNode, TextIndex};
 
@@ -90,6 +92,19 @@ impl IdentifierStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         self.semantic.get_type_from_node_id(self.ir_node.id())
+    }
+
+    /// If this identifier resolves to a built-in (e.g. `msg`, `block`,
+    /// `tx`), returns the corresponding [`BuiltIn`] variant.
+    pub fn resolved_built_in(&self) -> Option<BuiltIn> {
+        let reference = self
+            .semantic
+            .binder
+            .find_reference_by_identifier_node_id(self.ir_node.id())?;
+        match &reference.resolution {
+            Resolution::BuiltIn(built_in) => Some(*built_in),
+            _ => None,
+        }
     }
 
     pub fn text_offset(&self) -> TextIndex {
