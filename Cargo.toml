@@ -52,6 +52,7 @@ members = [
 
     "crates/solidity-v2/inputs/language",
 
+    "crates/solidity-v2/outputs/cargo/ast",
     "crates/solidity-v2/outputs/cargo/common",
     "crates/solidity-v2/outputs/cargo/cst",
     "crates/solidity-v2/outputs/cargo/ir",
@@ -113,6 +114,7 @@ solidity_testing_utils = { path = "crates/solidity/testing/utils", version = "1.
 solidity_v2_language = { path = "crates/solidity-v2/inputs/language", version = "1.3.4" }
 
 slang_solidity_v2 = { path = "crates/solidity-v2/outputs/cargo/slang_solidity", version = "1.3.4" }
+slang_solidity_v2_ast = { path = "crates/solidity-v2/outputs/cargo/ast", version = "1.3.4" }
 slang_solidity_v2_cst = { path = "crates/solidity-v2/outputs/cargo/cst", version = "1.3.4" }
 slang_solidity_v2_common = { path = "crates/solidity-v2/outputs/cargo/common", version = "1.3.4" }
 slang_solidity_v2_ir = { path = "crates/solidity-v2/outputs/cargo/ir", version = "1.3.4" }
