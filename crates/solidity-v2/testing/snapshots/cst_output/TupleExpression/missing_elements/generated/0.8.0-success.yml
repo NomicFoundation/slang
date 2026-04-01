@@ -34,10 +34,10 @@ Tree:
                                   - (expression꞉ Expression) ► (tuple_expression꞉ TupleExpression):
                                       - (open_paren꞉ OpenParen): "(" # (139..140)
                                       - (items꞉ TupleValues):
-                                          - (item꞉ TupleValue):
+                                          - (item꞉ TupleValue): []
                                           - (item꞉ TupleValue):
                                               - (expression꞉ Expression) ► (identifier꞉ Identifier): "second" # (142..148)
-                                          - (item꞉ TupleValue):
+                                          - (item꞉ TupleValue): []
                                           - (item꞉ TupleValue):
                                               - (expression꞉ Expression) ► (identifier꞉ Identifier): "fourth" # (152..158)
                                       - (close_paren꞉ CloseParen): ")" # (158..159)

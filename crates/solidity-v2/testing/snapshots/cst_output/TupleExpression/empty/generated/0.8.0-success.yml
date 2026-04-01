@@ -34,7 +34,7 @@ Tree:
                                   - (expression꞉ Expression) ► (tuple_expression꞉ TupleExpression):
                                       - (open_paren꞉ OpenParen): "(" # (128..129)
                                       - (items꞉ TupleValues):
-                                          - (item꞉ TupleValue):
+                                          - (item꞉ TupleValue): []
                                       - (close_paren꞉ CloseParen): ")" # (130..131)
                                   - (semicolon꞉ Semicolon): ";" # (139..140)
                           - (close_brace꞉ CloseBrace): "}" # (145..146)

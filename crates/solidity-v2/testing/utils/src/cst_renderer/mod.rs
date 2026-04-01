@@ -109,6 +109,16 @@ impl RenderContext<'_> {
     pub fn write_empty_collection(&mut self) {
         writeln!(self.w, ": []").unwrap();
     }
+
+    /// Called after rendering a nonterminal's children. If no children were
+    /// rendered, replaces the trailing ":\n" with ": []\n".
+    pub fn finish_nonterminal(&mut self, has_children: bool) {
+        if !has_children {
+            // Remove the ":\n" written by write_nonterminal_start
+            self.w.truncate(self.w.len() - 2);
+            writeln!(self.w, ": []").unwrap();
+        }
+    }
 }
 
 fn write_source(w: &mut String, source: &str) {
