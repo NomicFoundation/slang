@@ -19,6 +19,7 @@ keywords = ["utilities"]
 categories = ["compilers", "utilities"]
 
 [dependencies]
+paste = { workspace = true }
 slang_solidity_v2_ir = { workspace = true }
 slang_solidity_v2_semantic = { workspace = true }
 
