@@ -3457,24 +3457,6 @@ pub fn new_function_type_attribute_payable_keyword(
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub enum HexStringLiteral {
-    SingleQuotedHexStringLiteral(SingleQuotedHexStringLiteral),
-    DoubleQuotedHexStringLiteral(DoubleQuotedHexStringLiteral),
-}
-
-pub fn new_hex_string_literal_single_quoted_hex_string_literal(
-    element: SingleQuotedHexStringLiteral,
-) -> HexStringLiteral {
-    HexStringLiteral::SingleQuotedHexStringLiteral(element)
-}
-
-pub fn new_hex_string_literal_double_quoted_hex_string_literal(
-    element: DoubleQuotedHexStringLiteral,
-) -> HexStringLiteral {
-    HexStringLiteral::DoubleQuotedHexStringLiteral(element)
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub enum IdentifierPathElement {
     Identifier(Identifier),
     AddressKeyword(AddressKeyword),
@@ -3598,24 +3580,6 @@ pub fn new_pragma_abicoder_pragma(element: AbicoderPragma) -> Pragma {
 
 pub fn new_pragma_experimental_pragma(element: ExperimentalPragma) -> Pragma {
     Pragma::ExperimentalPragma(element)
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub enum PragmaStringLiteral {
-    PragmaSingleQuotedStringLiteral(PragmaSingleQuotedStringLiteral),
-    PragmaDoubleQuotedStringLiteral(PragmaDoubleQuotedStringLiteral),
-}
-
-pub fn new_pragma_string_literal_pragma_single_quoted_string_literal(
-    element: PragmaSingleQuotedStringLiteral,
-) -> PragmaStringLiteral {
-    PragmaStringLiteral::PragmaSingleQuotedStringLiteral(element)
-}
-
-pub fn new_pragma_string_literal_pragma_double_quoted_string_literal(
-    element: PragmaDoubleQuotedStringLiteral,
-) -> PragmaStringLiteral {
-    PragmaStringLiteral::PragmaDoubleQuotedStringLiteral(element)
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -3905,24 +3869,6 @@ pub fn new_string_expression_unicode_string_literals(
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub enum StringLiteral {
-    SingleQuotedStringLiteral(SingleQuotedStringLiteral),
-    DoubleQuotedStringLiteral(DoubleQuotedStringLiteral),
-}
-
-pub fn new_string_literal_single_quoted_string_literal(
-    element: SingleQuotedStringLiteral,
-) -> StringLiteral {
-    StringLiteral::SingleQuotedStringLiteral(element)
-}
-
-pub fn new_string_literal_double_quoted_string_literal(
-    element: DoubleQuotedStringLiteral,
-) -> StringLiteral {
-    StringLiteral::DoubleQuotedStringLiteral(element)
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub enum TypeName {
     ArrayTypeName(ArrayTypeName),
     FunctionType(FunctionType),
@@ -3949,24 +3895,6 @@ pub fn new_type_name_elementary_type(element: ElementaryType) -> TypeName {
 
 pub fn new_type_name_identifier_path(element: IdentifierPath) -> TypeName {
     TypeName::IdentifierPath(element)
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub enum UnicodeStringLiteral {
-    SingleQuotedUnicodeStringLiteral(SingleQuotedUnicodeStringLiteral),
-    DoubleQuotedUnicodeStringLiteral(DoubleQuotedUnicodeStringLiteral),
-}
-
-pub fn new_unicode_string_literal_single_quoted_unicode_string_literal(
-    element: SingleQuotedUnicodeStringLiteral,
-) -> UnicodeStringLiteral {
-    UnicodeStringLiteral::SingleQuotedUnicodeStringLiteral(element)
-}
-
-pub fn new_unicode_string_literal_double_quoted_unicode_string_literal(
-    element: DoubleQuotedUnicodeStringLiteral,
-) -> UnicodeStringLiteral {
-    UnicodeStringLiteral::DoubleQuotedUnicodeStringLiteral(element)
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -4111,24 +4039,15 @@ pub fn new_version_expression_version_term(element: VersionTerm) -> VersionExpre
 #[derive(Clone, Debug, PartialEq)]
 pub enum VersionLiteral {
     SimpleVersionLiteral(SimpleVersionLiteral),
-    PragmaSingleQuotedStringLiteral(PragmaSingleQuotedStringLiteral),
-    PragmaDoubleQuotedStringLiteral(PragmaDoubleQuotedStringLiteral),
+    PragmaStringLiteral(PragmaStringLiteral),
 }
 
 pub fn new_version_literal_simple_version_literal(element: SimpleVersionLiteral) -> VersionLiteral {
     VersionLiteral::SimpleVersionLiteral(element)
 }
 
-pub fn new_version_literal_pragma_single_quoted_string_literal(
-    element: PragmaSingleQuotedStringLiteral,
-) -> VersionLiteral {
-    VersionLiteral::PragmaSingleQuotedStringLiteral(element)
-}
-
-pub fn new_version_literal_pragma_double_quoted_string_literal(
-    element: PragmaDoubleQuotedStringLiteral,
-) -> VersionLiteral {
-    VersionLiteral::PragmaDoubleQuotedStringLiteral(element)
+pub fn new_version_literal_pragma_string_literal(element: PragmaStringLiteral) -> VersionLiteral {
+    VersionLiteral::PragmaStringLiteral(element)
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -4193,24 +4112,6 @@ pub fn new_yul_expression_yul_literal(element: YulLiteral) -> YulExpression {
 
 pub fn new_yul_expression_yul_path(element: YulPath) -> YulExpression {
     YulExpression::YulPath(element)
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub enum YulHexStringLiteral {
-    YulSingleQuotedHexStringLiteral(YulSingleQuotedHexStringLiteral),
-    YulDoubleQuotedHexStringLiteral(YulDoubleQuotedHexStringLiteral),
-}
-
-pub fn new_yul_hex_string_literal_yul_single_quoted_hex_string_literal(
-    element: YulSingleQuotedHexStringLiteral,
-) -> YulHexStringLiteral {
-    YulHexStringLiteral::YulSingleQuotedHexStringLiteral(element)
-}
-
-pub fn new_yul_hex_string_literal_yul_double_quoted_hex_string_literal(
-    element: YulDoubleQuotedHexStringLiteral,
-) -> YulHexStringLiteral {
-    YulHexStringLiteral::YulDoubleQuotedHexStringLiteral(element)
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -4308,24 +4209,6 @@ pub fn new_yul_statement_yul_variable_declaration_statement(
 
 pub fn new_yul_statement_yul_expression(element: YulExpression) -> YulStatement {
     YulStatement::YulExpression(element)
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub enum YulStringLiteral {
-    YulSingleQuotedStringLiteral(YulSingleQuotedStringLiteral),
-    YulDoubleQuotedStringLiteral(YulDoubleQuotedStringLiteral),
-}
-
-pub fn new_yul_string_literal_yul_single_quoted_string_literal(
-    element: YulSingleQuotedStringLiteral,
-) -> YulStringLiteral {
-    YulStringLiteral::YulSingleQuotedStringLiteral(element)
-}
-
-pub fn new_yul_string_literal_yul_double_quoted_string_literal(
-    element: YulDoubleQuotedStringLiteral,
-) -> YulStringLiteral {
-    YulStringLiteral::YulDoubleQuotedStringLiteral(element)
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -5214,42 +5097,6 @@ pub fn new_do_keyword(range: Range<usize>, _source: &str) -> DoKeyword {
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct DoubleQuotedHexStringLiteral {
-    pub range: Range<usize>,
-}
-
-pub fn new_double_quoted_hex_string_literal(
-    range: Range<usize>,
-    _source: &str,
-) -> DoubleQuotedHexStringLiteral {
-    DoubleQuotedHexStringLiteral { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct DoubleQuotedStringLiteral {
-    pub range: Range<usize>,
-}
-
-pub fn new_double_quoted_string_literal(
-    range: Range<usize>,
-    _source: &str,
-) -> DoubleQuotedStringLiteral {
-    DoubleQuotedStringLiteral { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct DoubleQuotedUnicodeStringLiteral {
-    pub range: Range<usize>,
-}
-
-pub fn new_double_quoted_unicode_string_literal(
-    range: Range<usize>,
-    _source: &str,
-) -> DoubleQuotedUnicodeStringLiteral {
-    DoubleQuotedUnicodeStringLiteral { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub struct ElseKeyword {
     pub range: Range<usize>,
 }
@@ -5517,6 +5364,15 @@ pub struct HexLiteral {
 
 pub fn new_hex_literal(range: Range<usize>, _source: &str) -> HexLiteral {
     HexLiteral { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct HexStringLiteral {
+    pub range: Range<usize>,
+}
+
+pub fn new_hex_string_literal(range: Range<usize>, _source: &str) -> HexStringLiteral {
+    HexStringLiteral { range }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -5964,18 +5820,6 @@ pub fn new_pragma_caret(range: Range<usize>, _source: &str) -> PragmaCaret {
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct PragmaDoubleQuotedStringLiteral {
-    pub range: Range<usize>,
-}
-
-pub fn new_pragma_double_quoted_string_literal(
-    range: Range<usize>,
-    _source: &str,
-) -> PragmaDoubleQuotedStringLiteral {
-    PragmaDoubleQuotedStringLiteral { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub struct PragmaEqual {
     pub range: Range<usize>,
 }
@@ -6057,15 +5901,12 @@ pub fn new_pragma_semicolon(range: Range<usize>, _source: &str) -> PragmaSemicol
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct PragmaSingleQuotedStringLiteral {
+pub struct PragmaStringLiteral {
     pub range: Range<usize>,
 }
 
-pub fn new_pragma_single_quoted_string_literal(
-    range: Range<usize>,
-    _source: &str,
-) -> PragmaSingleQuotedStringLiteral {
-    PragmaSingleQuotedStringLiteral { range }
+pub fn new_pragma_string_literal(range: Range<usize>, _source: &str) -> PragmaStringLiteral {
+    PragmaStringLiteral { range }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -6234,42 +6075,6 @@ pub fn new_single_line_nat_spec_comment(
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct SingleQuotedHexStringLiteral {
-    pub range: Range<usize>,
-}
-
-pub fn new_single_quoted_hex_string_literal(
-    range: Range<usize>,
-    _source: &str,
-) -> SingleQuotedHexStringLiteral {
-    SingleQuotedHexStringLiteral { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct SingleQuotedStringLiteral {
-    pub range: Range<usize>,
-}
-
-pub fn new_single_quoted_string_literal(
-    range: Range<usize>,
-    _source: &str,
-) -> SingleQuotedStringLiteral {
-    SingleQuotedStringLiteral { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct SingleQuotedUnicodeStringLiteral {
-    pub range: Range<usize>,
-}
-
-pub fn new_single_quoted_unicode_string_literal(
-    range: Range<usize>,
-    _source: &str,
-) -> SingleQuotedUnicodeStringLiteral {
-    SingleQuotedUnicodeStringLiteral { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub struct SizeOfKeyword {
     pub range: Range<usize>,
 }
@@ -6330,6 +6135,15 @@ pub struct StringKeyword {
 
 pub fn new_string_keyword(range: Range<usize>, _source: &str) -> StringKeyword {
     StringKeyword { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct StringLiteral {
+    pub range: Range<usize>,
+}
+
+pub fn new_string_literal(range: Range<usize>, _source: &str) -> StringLiteral {
+    StringLiteral { range }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -6474,6 +6288,15 @@ pub struct UncheckedKeyword {
 
 pub fn new_unchecked_keyword(range: Range<usize>, _source: &str) -> UncheckedKeyword {
     UncheckedKeyword { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct UnicodeStringLiteral {
+    pub range: Range<usize>,
+}
+
+pub fn new_unicode_string_literal(range: Range<usize>, _source: &str) -> UnicodeStringLiteral {
+    UnicodeStringLiteral { range }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -6648,30 +6471,6 @@ pub fn new_yul_default_keyword(range: Range<usize>, _source: &str) -> YulDefault
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct YulDoubleQuotedHexStringLiteral {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_double_quoted_hex_string_literal(
-    range: Range<usize>,
-    _source: &str,
-) -> YulDoubleQuotedHexStringLiteral {
-    YulDoubleQuotedHexStringLiteral { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulDoubleQuotedStringLiteral {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_double_quoted_string_literal(
-    range: Range<usize>,
-    _source: &str,
-) -> YulDoubleQuotedStringLiteral {
-    YulDoubleQuotedStringLiteral { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub struct YulFalseKeyword {
     pub range: Range<usize>,
 }
@@ -6714,6 +6513,15 @@ pub struct YulHexLiteral {
 
 pub fn new_yul_hex_literal(range: Range<usize>, _source: &str) -> YulHexLiteral {
     YulHexLiteral { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct YulHexStringLiteral {
+    pub range: Range<usize>,
+}
+
+pub fn new_yul_hex_string_literal(range: Range<usize>, _source: &str) -> YulHexStringLiteral {
+    YulHexStringLiteral { range }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -6789,27 +6597,12 @@ pub fn new_yul_period(range: Range<usize>, _source: &str) -> YulPeriod {
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct YulSingleQuotedHexStringLiteral {
+pub struct YulStringLiteral {
     pub range: Range<usize>,
 }
 
-pub fn new_yul_single_quoted_hex_string_literal(
-    range: Range<usize>,
-    _source: &str,
-) -> YulSingleQuotedHexStringLiteral {
-    YulSingleQuotedHexStringLiteral { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulSingleQuotedStringLiteral {
-    pub range: Range<usize>,
-}
-
-pub fn new_yul_single_quoted_string_literal(
-    range: Range<usize>,
-    _source: &str,
-) -> YulSingleQuotedStringLiteral {
-    YulSingleQuotedStringLiteral { range }
+pub fn new_yul_string_literal(range: Range<usize>, _source: &str) -> YulStringLiteral {
+    YulStringLiteral { range }
 }
 
 #[derive(Clone, Debug, PartialEq)]

@@ -58,16 +58,12 @@ SourceUnitStruct {
                                                                 UnicodeStringLiterals(
                                                                     UnicodeStringLiterals {
                                                                         elements: [
-                                                                            DoubleQuotedUnicodeStringLiteral(
-                                                                                DoubleQuotedUnicodeStringLiteral {
-                                                                                    range: 137..156,
-                                                                                },
-                                                                            ),
-                                                                            SingleQuotedUnicodeStringLiteral(
-                                                                                SingleQuotedUnicodeStringLiteral {
-                                                                                    range: 157..174,
-                                                                                },
-                                                                            ),
+                                                                            UnicodeStringLiteral {
+                                                                                range: 137..156,
+                                                                            },
+                                                                            UnicodeStringLiteral {
+                                                                                range: 157..174,
+                                                                            },
                                                                         ],
                                                                     },
                                                                 ),

@@ -25,11 +25,9 @@ SourceUnitStruct {
                         StringLiterals(
                             StringLiterals {
                                 elements: [
-                                    DoubleQuotedStringLiteral(
-                                        DoubleQuotedStringLiteral {
-                                            range: 20..22,
-                                        },
-                                    ),
+                                    StringLiteral {
+                                        range: 20..22,
+                                    },
                                 ],
                             },
                         ),

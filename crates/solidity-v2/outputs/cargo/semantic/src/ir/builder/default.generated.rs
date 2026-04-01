@@ -2028,7 +2028,6 @@ pub trait Builder {
         self.default_build_version_expression(source)
     }
 
-    #[allow(dead_code)]
     fn default_build_version_literal(
         &mut self,
         source: &input::VersionLiteral,
@@ -2041,10 +2040,16 @@ pub trait Builder {
                     self.build_simple_version_literal(simple_version_literal),
                 )
             }
-            _ => panic!("Unexpected variant {source:?}"),
+            input::VersionLiteral::PragmaStringLiteral(ref pragma_string_literal) => {
+                output::VersionLiteral::StringLiteral(
+                    self.build_pragma_string_literal(pragma_string_literal),
+                )
+            }
         }
     }
-    fn build_version_literal(&mut self, source: &input::VersionLiteral) -> output::VersionLiteral;
+    fn build_version_literal(&mut self, source: &input::VersionLiteral) -> output::VersionLiteral {
+        self.default_build_version_literal(source)
+    }
 
     fn default_build_version_operator(
         &mut self,
@@ -2212,24 +2217,6 @@ pub trait Builder {
     // Collapsed choices
     //
 
-    fn build_hex_string_literal(
-        &mut self,
-        source: &input::HexStringLiteral,
-    ) -> output::HexStringLiteral {
-        match source {
-            input::HexStringLiteral::SingleQuotedHexStringLiteral(terminal) => {
-                output::HexStringLiteral {
-                    range: terminal.range.clone(),
-                }
-            }
-            input::HexStringLiteral::DoubleQuotedHexStringLiteral(terminal) => {
-                output::HexStringLiteral {
-                    range: terminal.range.clone(),
-                }
-            }
-        }
-    }
-
     fn build_identifier_path_element(
         &mut self,
         source: &input::IdentifierPathElement,
@@ -2244,89 +2231,6 @@ pub trait Builder {
                 Rc::new(output::IdentifierStruct {
                     range: terminal.range.clone(),
                 })
-            }
-        }
-    }
-
-    fn build_pragma_string_literal(
-        &mut self,
-        source: &input::PragmaStringLiteral,
-    ) -> output::StringLiteral {
-        match source {
-            input::PragmaStringLiteral::PragmaSingleQuotedStringLiteral(terminal) => {
-                output::StringLiteral {
-                    range: terminal.range.clone(),
-                }
-            }
-            input::PragmaStringLiteral::PragmaDoubleQuotedStringLiteral(terminal) => {
-                output::StringLiteral {
-                    range: terminal.range.clone(),
-                }
-            }
-        }
-    }
-
-    fn build_string_literal(&mut self, source: &input::StringLiteral) -> output::StringLiteral {
-        match source {
-            input::StringLiteral::SingleQuotedStringLiteral(terminal) => output::StringLiteral {
-                range: terminal.range.clone(),
-            },
-            input::StringLiteral::DoubleQuotedStringLiteral(terminal) => output::StringLiteral {
-                range: terminal.range.clone(),
-            },
-        }
-    }
-
-    fn build_unicode_string_literal(
-        &mut self,
-        source: &input::UnicodeStringLiteral,
-    ) -> output::UnicodeStringLiteral {
-        match source {
-            input::UnicodeStringLiteral::SingleQuotedUnicodeStringLiteral(terminal) => {
-                output::UnicodeStringLiteral {
-                    range: terminal.range.clone(),
-                }
-            }
-            input::UnicodeStringLiteral::DoubleQuotedUnicodeStringLiteral(terminal) => {
-                output::UnicodeStringLiteral {
-                    range: terminal.range.clone(),
-                }
-            }
-        }
-    }
-
-    fn build_yul_hex_string_literal(
-        &mut self,
-        source: &input::YulHexStringLiteral,
-    ) -> output::HexStringLiteral {
-        match source {
-            input::YulHexStringLiteral::YulSingleQuotedHexStringLiteral(terminal) => {
-                output::HexStringLiteral {
-                    range: terminal.range.clone(),
-                }
-            }
-            input::YulHexStringLiteral::YulDoubleQuotedHexStringLiteral(terminal) => {
-                output::HexStringLiteral {
-                    range: terminal.range.clone(),
-                }
-            }
-        }
-    }
-
-    fn build_yul_string_literal(
-        &mut self,
-        source: &input::YulStringLiteral,
-    ) -> output::StringLiteral {
-        match source {
-            input::YulStringLiteral::YulSingleQuotedStringLiteral(terminal) => {
-                output::StringLiteral {
-                    range: terminal.range.clone(),
-                }
-            }
-            input::YulStringLiteral::YulDoubleQuotedStringLiteral(terminal) => {
-                output::StringLiteral {
-                    range: terminal.range.clone(),
-                }
             }
         }
     }
@@ -2677,6 +2581,15 @@ pub trait Builder {
         }
     }
 
+    fn build_hex_string_literal(
+        &mut self,
+        source: &input::HexStringLiteral,
+    ) -> output::HexStringLiteral {
+        output::HexStringLiteral {
+            range: source.range.clone(),
+        }
+    }
+
     fn build_identifier(&mut self, source: &input::Identifier) -> output::Identifier {
         Rc::new(output::IdentifierStruct {
             range: source.range.clone(),
@@ -2689,6 +2602,12 @@ pub trait Builder {
         }
     }
 
+    fn build_string_literal(&mut self, source: &input::StringLiteral) -> output::StringLiteral {
+        output::StringLiteral {
+            range: source.range.clone(),
+        }
+    }
+
     fn build_ufixed_keyword(&mut self, source: &input::UfixedKeyword) -> output::UfixedKeyword {
         output::UfixedKeyword {
             range: source.range.clone(),
@@ -2697,6 +2616,15 @@ pub trait Builder {
 
     fn build_uint_keyword(&mut self, source: &input::UintKeyword) -> output::UintKeyword {
         output::UintKeyword {
+            range: source.range.clone(),
+        }
+    }
+
+    fn build_unicode_string_literal(
+        &mut self,
+        source: &input::UnicodeStringLiteral,
+    ) -> output::UnicodeStringLiteral {
+        output::UnicodeStringLiteral {
             range: source.range.clone(),
         }
     }
@@ -2714,6 +2642,15 @@ pub trait Builder {
     // Normalized Terminals
     //
 
+    fn build_pragma_string_literal(
+        &mut self,
+        source: &input::PragmaStringLiteral,
+    ) -> output::StringLiteral {
+        output::StringLiteral {
+            range: source.range.clone(),
+        }
+    }
+
     fn build_yul_decimal_literal(
         &mut self,
         source: &input::YulDecimalLiteral,
@@ -2729,9 +2666,27 @@ pub trait Builder {
         }
     }
 
+    fn build_yul_hex_string_literal(
+        &mut self,
+        source: &input::YulHexStringLiteral,
+    ) -> output::HexStringLiteral {
+        output::HexStringLiteral {
+            range: source.range.clone(),
+        }
+    }
+
     fn build_yul_identifier(&mut self, source: &input::YulIdentifier) -> output::Identifier {
         Rc::new(output::IdentifierStruct {
             range: source.range.clone(),
         })
+    }
+
+    fn build_yul_string_literal(
+        &mut self,
+        source: &input::YulStringLiteral,
+    ) -> output::StringLiteral {
+        output::StringLiteral {
+            range: source.range.clone(),
+        }
     }
 }

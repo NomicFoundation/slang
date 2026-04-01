@@ -261,39 +261,10 @@ fn collapse_redundant_node_types(mutator: &mut IrModelMutator) {
 }
 
 fn simplify_string_literals(mutator: &mut IrModelMutator) {
-    // Collapse base string literal choices to non-unique terminals.
-    // This transmutes each choice type into a terminal with the same name,
-    // updating all references (in collection item types, sequence fields, choice
-    // variants) in-place. Auto-generates builders that extract range from each variant.
-    mutator.collapse_choice("StringLiteral", "StringLiteral");
-    mutator.remove_type("SingleQuotedStringLiteral");
-    mutator.remove_type("DoubleQuotedStringLiteral");
-
-    mutator.collapse_choice("HexStringLiteral", "HexStringLiteral");
-    mutator.remove_type("SingleQuotedHexStringLiteral");
-    mutator.remove_type("DoubleQuotedHexStringLiteral");
-
-    mutator.collapse_choice("UnicodeStringLiteral", "UnicodeStringLiteral");
-    mutator.remove_type("SingleQuotedUnicodeStringLiteral");
-    mutator.remove_type("DoubleQuotedUnicodeStringLiteral");
-
-    // Collapse Yul string literal choices (targets already exist from above)
-    mutator.collapse_choice("YulStringLiteral", "StringLiteral");
-    mutator.remove_type("YulSingleQuotedStringLiteral");
-    mutator.remove_type("YulDoubleQuotedStringLiteral");
-
-    mutator.collapse_choice("YulHexStringLiteral", "HexStringLiteral");
-    mutator.remove_type("YulSingleQuotedHexStringLiteral");
-    mutator.remove_type("YulDoubleQuotedHexStringLiteral");
-
-    // Collapse PragmaStringLiteral BEFORE removing sub-terminals
-    // (the auto-generated builder needs the variant list)
-    mutator.collapse_choice("PragmaStringLiteral", "StringLiteral");
-    mutator.remove_type("PragmaSingleQuotedStringLiteral");
-    mutator.remove_type("PragmaDoubleQuotedStringLiteral");
-
-    // Add StringLiteral variant to VersionLiteral (replacing removed Pragma variants)
-    mutator.add_choice_variant("VersionLiteral", "StringLiteral");
+    // Normalize StringLiteral kinds (same concept, different parsing context)
+    mutator.normalize_terminal("YulStringLiteral", "StringLiteral");
+    mutator.normalize_terminal("YulHexStringLiteral", "HexStringLiteral");
+    mutator.normalize_terminal("PragmaStringLiteral", "StringLiteral");
 
     // Collapse YulFlagsDeclaration to its inner YulFlags collection.
     // This preserves AssemblyStatement.flags as optional.

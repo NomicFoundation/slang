@@ -59,11 +59,9 @@ SourceUnitStruct {
                             from_keyword: FromKeyword {
                                 range: 152..156,
                             },
-                            path: DoubleQuotedStringLiteral(
-                                DoubleQuotedStringLiteral {
-                                    range: 157..162,
-                                },
-                            ),
+                            path: StringLiteral {
+                                range: 157..162,
+                            },
                         },
                     ),
                     semicolon: Semicolon {

@@ -10,11 +10,9 @@ SourceUnitStruct {
                     },
                     clause: PathImport(
                         PathImportStruct {
-                            path: DoubleQuotedStringLiteral(
-                                DoubleQuotedStringLiteral {
-                                    range: 120..125,
-                                },
-                            ),
+                            path: StringLiteral {
+                                range: 120..125,
+                            },
                             alias: Some(
                                 ImportAliasStruct {
                                     as_keyword: AsKeyword {

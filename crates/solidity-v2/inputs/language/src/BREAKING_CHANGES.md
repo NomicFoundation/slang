@@ -81,6 +81,10 @@ Added types in V2:
 - `UntypedDeclarationNames`, `UntypedTupleDeclaration`
 - `UntypedTupleDeclarationElements`, `UntypedTupleDeclarationElement`
 
+### String Literal Simplifications
+
+Combined single-quoted and double-quoted token pairs into single tokens with `Choice([...])` scanners, removing intermediate enum wrappers. This flattens the CST for string literals.
+
 ### NamedArgumentsDeclaration
 
 - Changed `arguments` field from `Optional(NamedArgumentGroup)` to `Required(NamedArgumentGroup)`.

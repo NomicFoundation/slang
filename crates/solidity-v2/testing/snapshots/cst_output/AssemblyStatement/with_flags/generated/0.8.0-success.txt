@@ -58,11 +58,9 @@ SourceUnitStruct {
                                                                 range: 135..143,
                                                             },
                                                             label: Some(
-                                                                YulDoubleQuotedStringLiteral(
-                                                                    YulDoubleQuotedStringLiteral {
-                                                                        range: 144..152,
-                                                                    },
-                                                                ),
+                                                                YulStringLiteral {
+                                                                    range: 144..152,
+                                                                },
                                                             ),
                                                             flags: Some(
                                                                 YulFlagsDeclarationStruct {
@@ -71,11 +69,9 @@ SourceUnitStruct {
                                                                     },
                                                                     flags: YulFlags {
                                                                         elements: [
-                                                                            YulDoubleQuotedStringLiteral(
-                                                                                YulDoubleQuotedStringLiteral {
-                                                                                    range: 154..167,
-                                                                                },
-                                                                            ),
+                                                                            YulStringLiteral {
+                                                                                range: 154..167,
+                                                                            },
                                                                         ],
                                                                     },
                                                                     close_paren: YulCloseParen {

@@ -58,11 +58,9 @@ SourceUnitStruct {
                                                                 UnicodeStringLiterals(
                                                                     UnicodeStringLiterals {
                                                                         elements: [
-                                                                            DoubleQuotedUnicodeStringLiteral(
-                                                                                DoubleQuotedUnicodeStringLiteral {
-                                                                                    range: 140..165,
-                                                                                },
-                                                                            ),
+                                                                            UnicodeStringLiteral {
+                                                                                range: 140..165,
+                                                                            },
                                                                         ],
                                                                     },
                                                                 ),
