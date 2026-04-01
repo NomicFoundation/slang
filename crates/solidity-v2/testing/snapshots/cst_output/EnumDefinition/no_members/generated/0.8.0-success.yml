@@ -6,11 +6,11 @@ Source: >
   3  │ // <<<                                                                                              │ 113..119
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (enum_definition: EnumDefinition):
-              - (enum_keyword: EnumKeyword): "enum" # (100..104)
-              - (name: Identifier): "Foo" # (105..108)
-              - (open_brace: OpenBrace): "{" # (109..110)
-              - (members: EnumMembers): []
-              - (close_brace: CloseBrace): "}" # (111..112)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (enum_definition꞉ EnumDefinition):
+              - (enum_keyword꞉ EnumKeyword): "enum" # (100..104)
+              - (name꞉ Identifier): "Foo" # (105..108)
+              - (open_brace꞉ OpenBrace): "{" # (109..110)
+              - (members꞉ EnumMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (111..112)

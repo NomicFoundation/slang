@@ -7,5 +7,5 @@ Source: >
   4  │ // <<<                                                                                                                          │ 141..147
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers): []
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

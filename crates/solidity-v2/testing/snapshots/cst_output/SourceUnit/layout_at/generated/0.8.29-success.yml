@@ -1,0 +1,84 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/layout_at/input.sol │ 0..94
+  2  │ contract SafeMath layout at 123  {                                                             │ 95..129
+  3  │ }                                                                                              │ 130..131
+  4  │                                                                                                │ 132..132
+  5  │ contract SafeMath layout at foo{gas:123}  {                                                    │ 133..176
+  6  │ }                                                                                              │ 177..178
+  7  │                                                                                                │ 179..179
+  8  │ contract SafeMath layout at foo()  {                                                           │ 180..216
+  9  │ }                                                                                              │ 217..218
+  10 │                                                                                                │ 219..219
+  11 │ contract SafeMath layout at 123 + foo  {                                                       │ 220..260
+  12 │ }                                                                                              │ 261..262
+  13 │                                                                                                │ 263..263
+  14 │ // <<<                                                                                         │ 264..270
+
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (95..103)
+              - (name꞉ Identifier): "SafeMath" # (104..112)
+              - (specifiers꞉ ContractSpecifiers):
+                  - (item꞉ ContractSpecifier) ► (storage_layout_specifier꞉ StorageLayoutSpecifier):
+                      - (layout_keyword꞉ LayoutKeyword): "layout" # (113..119)
+                      - (at_keyword꞉ AtKeyword): "at" # (120..122)
+                      - (expression꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression):
+                          - (literal꞉ DecimalLiteral): "123" # (123..126)
+              - (open_brace꞉ OpenBrace): "{" # (128..129)
+              - (members꞉ ContractMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (130..131)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (133..141)
+              - (name꞉ Identifier): "SafeMath" # (142..150)
+              - (specifiers꞉ ContractSpecifiers):
+                  - (item꞉ ContractSpecifier) ► (storage_layout_specifier꞉ StorageLayoutSpecifier):
+                      - (layout_keyword꞉ LayoutKeyword): "layout" # (151..157)
+                      - (at_keyword꞉ AtKeyword): "at" # (158..160)
+                      - (expression꞉ Expression) ► (call_options_expression꞉ CallOptionsExpression):
+                          - (operand꞉ Expression) ► (identifier꞉ Identifier): "foo" # (161..164)
+                          - (open_brace꞉ OpenBrace): "{" # (164..165)
+                          - (options꞉ CallOptions):
+                              - (item꞉ NamedArgument):
+                                  - (name꞉ Identifier): "gas" # (165..168)
+                                  - (colon꞉ Colon): ":" # (168..169)
+                                  - (value꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression):
+                                      - (literal꞉ DecimalLiteral): "123" # (169..172)
+                          - (close_brace꞉ CloseBrace): "}" # (172..173)
+              - (open_brace꞉ OpenBrace): "{" # (175..176)
+              - (members꞉ ContractMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (177..178)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (180..188)
+              - (name꞉ Identifier): "SafeMath" # (189..197)
+              - (specifiers꞉ ContractSpecifiers):
+                  - (item꞉ ContractSpecifier) ► (storage_layout_specifier꞉ StorageLayoutSpecifier):
+                      - (layout_keyword꞉ LayoutKeyword): "layout" # (198..204)
+                      - (at_keyword꞉ AtKeyword): "at" # (205..207)
+                      - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression):
+                          - (operand꞉ Expression) ► (identifier꞉ Identifier): "foo" # (208..211)
+                          - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration):
+                              - (open_paren꞉ OpenParen): "(" # (211..212)
+                              - (arguments꞉ PositionalArguments): []
+                              - (close_paren꞉ CloseParen): ")" # (212..213)
+              - (open_brace꞉ OpenBrace): "{" # (215..216)
+              - (members꞉ ContractMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (217..218)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (220..228)
+              - (name꞉ Identifier): "SafeMath" # (229..237)
+              - (specifiers꞉ ContractSpecifiers):
+                  - (item꞉ ContractSpecifier) ► (storage_layout_specifier꞉ StorageLayoutSpecifier):
+                      - (layout_keyword꞉ LayoutKeyword): "layout" # (238..244)
+                      - (at_keyword꞉ AtKeyword): "at" # (245..247)
+                      - (expression꞉ Expression) ► (additive_expression꞉ AdditiveExpression):
+                          - (left_operand꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression):
+                              - (literal꞉ DecimalLiteral): "123" # (248..251)
+                          - (expression_additive_expression_operator꞉ Expression_AdditiveExpression_Operator) ► (plus꞉ Plus): "+" # (252..253)
+                          - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "foo" # (254..257)
+              - (open_brace꞉ OpenBrace): "{" # (259..260)
+              - (members꞉ ContractMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (261..262)

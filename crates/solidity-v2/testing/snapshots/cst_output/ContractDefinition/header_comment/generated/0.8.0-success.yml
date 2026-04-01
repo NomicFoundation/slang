@@ -26,12 +26,12 @@ Source: >
   23 │ // <<<                                                                                                                                   │ 2110..2116
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (contract_keyword: ContractKeyword): "contract" # (2094..2102)
-              - (name: Identifier): "Foo" # (2103..2106)
-              - (specifiers: ContractSpecifiers): []
-              - (open_brace: OpenBrace): "{" # (2107..2108)
-              - (members: ContractMembers): []
-              - (close_brace: CloseBrace): "}" # (2108..2109)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (2094..2102)
+              - (name꞉ Identifier): "Foo" # (2103..2106)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (2107..2108)
+              - (members꞉ ContractMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (2108..2109)

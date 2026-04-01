@@ -12,21 +12,21 @@ Source: >
   9  │ // <<<                                                                                                              │ 175..181
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (contract_keyword: ContractKeyword): "contract" # (116..124)
-              - (name: Identifier): "Sample" # (125..131)
-              - (specifiers: ContractSpecifiers): []
-              - (open_brace: OpenBrace): "{" # (132..133)
-              - (members: ContractMembers):
-                  - (item: ContractMember) ► (enum_definition: EnumDefinition):
-                      - (enum_keyword: EnumKeyword): "enum" # (136..140)
-                      - (name: Identifier): "State" # (141..146)
-                      - (open_brace: OpenBrace): "{" # (147..148)
-                      - (members: EnumMembers):
-                          - (item: Identifier): "A" # (153..154)
-                          - (item: Identifier): "B" # (160..161)
-                          - (item: Identifier): "C" # (167..168)
-                      - (close_brace: CloseBrace): "}" # (171..172)
-              - (close_brace: CloseBrace): "}" # (173..174)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (116..124)
+              - (name꞉ Identifier): "Sample" # (125..131)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (132..133)
+              - (members꞉ ContractMembers):
+                  - (item꞉ ContractMember) ► (enum_definition꞉ EnumDefinition):
+                      - (enum_keyword꞉ EnumKeyword): "enum" # (136..140)
+                      - (name꞉ Identifier): "State" # (141..146)
+                      - (open_brace꞉ OpenBrace): "{" # (147..148)
+                      - (members꞉ EnumMembers):
+                          - (item꞉ Identifier): "A" # (153..154)
+                          - (item꞉ Identifier): "B" # (160..161)
+                          - (item꞉ Identifier): "C" # (167..168)
+                      - (close_brace꞉ CloseBrace): "}" # (171..172)
+              - (close_brace꞉ CloseBrace): "}" # (173..174)

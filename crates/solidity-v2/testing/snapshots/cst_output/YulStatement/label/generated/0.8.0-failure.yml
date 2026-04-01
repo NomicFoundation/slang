@@ -1,5 +1,17 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Source: >
+  1  │ contract C {                                                                                 │ 0..12
+  2  │     function f() {                                                                           │ 13..31
+  3  │         assembly {                                                                           │ 32..50
+  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulStatement/label/input.sol │ 51..143
+  5  │ foo_label:                                                                                   │ 144..154
+  6  │                                                                                              │ 155..155
+  7  │ // <<<                                                                                       │ 156..162
+  8  │         }                                                                                    │ 163..172
+  9  │     }                                                                                        │ 173..178
+  10 │ }                                                                                            │ 179..180
+
 Error: Unexpected UNRECOGNIZED. One of YulBreakKeyword_Reserved, YulCloseBrace, YulColonEqual, YulComma, YulContinueKeyword_Reserved, YulDecimalLiteral, YulFalseKeyword_Reserved, YulForKeyword_Reserved, YulFunctionKeyword_Reserved, YulHexLiteral, YulHexStringLiteral, YulIdentifier, YulIfKeyword_Reserved, YulLeaveKeyword_Reserved, YulLetKeyword_Reserved, YulOpenBrace, YulOpenParen, YulPeriod, YulStringLiteral, YulSwitchKeyword_Reserved, YulTrueKeyword_Reserved was expected
    ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulStatement/label/input.sol:5:10]
    │

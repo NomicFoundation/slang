@@ -1,0 +1,32 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/EventDefinition/transfer/input.sol │ 0..98
+  2  │ event Transfer(address indexed from, address indexed to, uint256 value);                           │ 99..171
+  3  │                                                                                                    │ 172..172
+  4  │ // <<<                                                                                             │ 173..179
+
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (event_definition꞉ EventDefinition):
+              - (event_keyword꞉ EventKeyword): "event" # (99..104)
+              - (name꞉ Identifier): "Transfer" # (105..113)
+              - (parameters꞉ EventParametersDeclaration):
+                  - (open_paren꞉ OpenParen): "(" # (113..114)
+                  - (parameters꞉ EventParameters):
+                      - (item꞉ EventParameter):
+                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (address_type꞉ AddressType):
+                              - (address_keyword꞉ AddressKeyword): "address" # (114..121)
+                          - (indexed_keyword꞉ IndexedKeyword): "indexed" # (122..129)
+                          - (name꞉ Identifier): "from" # (130..134)
+                      - (item꞉ EventParameter):
+                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (address_type꞉ AddressType):
+                              - (address_keyword꞉ AddressKeyword): "address" # (136..143)
+                          - (indexed_keyword꞉ IndexedKeyword): "indexed" # (144..151)
+                          - (name꞉ Identifier): "to" # (152..154)
+                      - (item꞉ EventParameter):
+                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (156..163)
+                          - (name꞉ Identifier): "value" # (164..169)
+                  - (close_paren꞉ CloseParen): ")" # (169..170)
+              - (semicolon꞉ Semicolon): ";" # (170..171)

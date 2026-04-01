@@ -1,0 +1,55 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                           │ 0..12
+  2  │     function f() {                                                                                     │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/AssemblyStatement/with_flags/input.sol │ 32..134
+  4  │ assembly "evmasm" ("memory-safe") {                                                                    │ 135..170
+  5  │                                                                                                        │ 171..171
+  6  │ }                                                                                                      │ 172..173
+  7  │                                                                                                        │ 174..174
+  8  │ // <<<                                                                                                 │ 175..181
+  9  │     }                                                                                                  │ 182..187
+  10 │ }                                                                                                      │ 188..189
+
+Error: This syntax was introduced in version '0.8.13'.
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/AssemblyStatement/with_flags/input.sol:4:19]
+   │
+ 4 │ assembly "evmasm" ("memory-safe") {
+   │                   ───────┬───────  
+   │                          ╰───────── Error occurred here.
+───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers):
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration):
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements):
+                              - (item꞉ Statement) ► (assembly_statement꞉ AssemblyStatement):
+                                  - (assembly_keyword꞉ AssemblyKeyword): "assembly" # (135..143)
+                                  - (label꞉ YulStringLiteral): '"evmasm"' # (144..152)
+                                  - (flags꞉ YulFlagsDeclaration):
+                                      - (open_paren꞉ YulOpenParen): "(" # (153..154)
+                                      - (flags꞉ YulFlags):
+                                          - (item꞉ YulStringLiteral): '"memory-safe"' # (154..167)
+                                      - (close_paren꞉ YulCloseParen): ")" # (167..168)
+                                  - (body꞉ YulBlock):
+                                      - (open_brace꞉ YulOpenBrace): "{" # (169..170)
+                                      - (statements꞉ YulStatements): []
+                                      - (close_brace꞉ YulCloseBrace): "}" # (172..173)
+                          - (close_brace꞉ CloseBrace): "}" # (186..187)
+              - (close_brace꞉ CloseBrace): "}" # (188..189)

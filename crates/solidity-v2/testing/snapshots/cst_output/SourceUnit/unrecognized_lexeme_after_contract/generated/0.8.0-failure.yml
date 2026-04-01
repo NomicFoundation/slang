@@ -1,5 +1,11 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/unrecognized_lexeme_after_contract/input.sol │ 0..119
+  2  │ contract X # { }                                                                                                        │ 120..136
+  3  │                                                                                                                         │ 137..137
+  4  │ // <<<                                                                                                                  │ 138..144
+
 Error: Unexpected UNRECOGNIZED. One of IsKeyword_Reserved, LayoutKeyword_Unreserved, OpenBrace was expected
    ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/unrecognized_lexeme_after_contract/input.sol:2:12]
    │

@@ -6,17 +6,17 @@ Source: >
   3  │ // <<<                                                                                            │ 121..127
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (pragma_directive: PragmaDirective):
-              - (pragma_keyword: PragmaKeyword): "pragma" # (98..104)
-              - (pragma: Pragma) ► (version_pragma: VersionPragma):
-                  - (solidity_keyword: SolidityKeyword): "solidity" # (105..113)
-                  - (sets: VersionExpressionSets):
-                      - (item: VersionExpressionSet):
-                          - (item: VersionExpression) ► (version_term: VersionTerm):
-                              - (literal: VersionLiteral) ► (simple_version_literal: SimpleVersionLiteral):
-                                  - (item: VersionSpecifier): "1" # (114..115)
-                                  - (item: VersionSpecifier): "0" # (116..117)
-                                  - (item: VersionSpecifier): "0" # (118..119)
-              - (semicolon: PragmaSemicolon): ";" # (119..120)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective):
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (98..104)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma):
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (105..113)
+                  - (sets꞉ VersionExpressionSets):
+                      - (item꞉ VersionExpressionSet):
+                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm):
+                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral):
+                                  - (item꞉ VersionSpecifier): "1" # (114..115)
+                                  - (item꞉ VersionSpecifier): "0" # (116..117)
+                                  - (item꞉ VersionSpecifier): "0" # (118..119)
+              - (semicolon꞉ PragmaSemicolon): ";" # (119..120)

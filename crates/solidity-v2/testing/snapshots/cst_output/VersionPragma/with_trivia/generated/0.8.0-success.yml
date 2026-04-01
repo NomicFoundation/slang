@@ -8,17 +8,17 @@ Source: >
   5  │ ;                                                                                                   │ 183..184
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (pragma_directive: PragmaDirective):
-              - (pragma_keyword: PragmaKeyword): "pragma" # (0..6)
-              - (pragma: Pragma) ► (version_pragma: VersionPragma):
-                  - (solidity_keyword: SolidityKeyword): "solidity" # (107..115)
-                  - (sets: VersionExpressionSets):
-                      - (item: VersionExpressionSet):
-                          - (item: VersionExpression) ► (version_term: VersionTerm):
-                              - (literal: VersionLiteral) ► (simple_version_literal: SimpleVersionLiteral):
-                                  - (item: VersionSpecifier): "0" # (131..132)
-                                  - (item: VersionSpecifier): "0" # (159..160)
-                                  - (item: VersionSpecifier): "0" # (174..175)
-              - (semicolon: PragmaSemicolon): ";" # (183..184)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective):
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma):
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (107..115)
+                  - (sets꞉ VersionExpressionSets):
+                      - (item꞉ VersionExpressionSet):
+                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm):
+                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral):
+                                  - (item꞉ VersionSpecifier): "0" # (131..132)
+                                  - (item꞉ VersionSpecifier): "0" # (159..160)
+                                  - (item꞉ VersionSpecifier): "0" # (174..175)
+              - (semicolon꞉ PragmaSemicolon): ";" # (183..184)

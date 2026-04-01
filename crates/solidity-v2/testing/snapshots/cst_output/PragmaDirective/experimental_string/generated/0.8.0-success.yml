@@ -7,11 +7,11 @@ Source: >
   4  │ // <<<                                                                                                        │ 147..153
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (pragma_directive: PragmaDirective):
-              - (pragma_keyword: PragmaKeyword): "pragma" # (110..116)
-              - (pragma: Pragma) ► (experimental_pragma: ExperimentalPragma):
-                  - (experimental_keyword: ExperimentalKeyword): "experimental" # (117..129)
-                  - (feature: ExperimentalFeature) ► (pragma_string_literal: PragmaStringLiteral): '"ABIEncoderV2"' # (130..144)
-              - (semicolon: PragmaSemicolon): ";" # (144..145)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective):
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (110..116)
+              - (pragma꞉ Pragma) ► (experimental_pragma꞉ ExperimentalPragma):
+                  - (experimental_keyword꞉ ExperimentalKeyword): "experimental" # (117..129)
+                  - (feature꞉ ExperimentalFeature) ► (pragma_string_literal꞉ PragmaStringLiteral): '"ABIEncoderV2"' # (130..144)
+              - (semicolon꞉ PragmaSemicolon): ";" # (144..145)

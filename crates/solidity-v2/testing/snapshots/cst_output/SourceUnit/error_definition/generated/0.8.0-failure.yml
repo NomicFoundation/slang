@@ -1,0 +1,69 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/error_definition/input.sol │ 0..101
+  2  │ error MyError(uint256 a, uint256 b);                                                                  │ 102..138
+  3  │                                                                                                       │ 139..139
+  4  │ contract A {                                                                                          │ 140..152
+  5  │   error MyOtherError(address addr);                                                                   │ 153..188
+  6  │   error foo;                                                                                          │ 189..201
+  7  │ }                                                                                                     │ 202..203
+  8  │                                                                                                       │ 204..204
+  9  │ // <<<                                                                                                │ 205..211
+
+Error: This syntax was introduced in version '0.8.4'.
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/error_definition/input.sol:2:1]
+   │
+ 2 │ error MyError(uint256 a, uint256 b);
+   │ ──────────────────┬─────────────────  
+   │                   ╰─────────────────── Error occurred here.
+───╯
+Error: This syntax was introduced in version '0.8.4'.
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/error_definition/input.sol:5:3]
+   │
+ 5 │   error MyOtherError(address addr);
+   │   ────────────────┬────────────────  
+   │                   ╰────────────────── Error occurred here.
+───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (error_definition꞉ ErrorDefinition):
+              - (error_keyword꞉ ErrorKeyword): "error" # (102..107)
+              - (name꞉ Identifier): "MyError" # (108..115)
+              - (members꞉ ErrorParametersDeclaration):
+                  - (open_paren꞉ OpenParen): "(" # (115..116)
+                  - (parameters꞉ ErrorParameters):
+                      - (item꞉ ErrorParameter):
+                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (116..123)
+                          - (name꞉ Identifier): "a" # (124..125)
+                      - (item꞉ ErrorParameter):
+                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (127..134)
+                          - (name꞉ Identifier): "b" # (135..136)
+                  - (close_paren꞉ CloseParen): ")" # (136..137)
+              - (semicolon꞉ Semicolon): ";" # (137..138)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (140..148)
+              - (name꞉ Identifier): "A" # (149..150)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (151..152)
+              - (members꞉ ContractMembers):
+                  - (item꞉ ContractMember) ► (error_definition꞉ ErrorDefinition):
+                      - (error_keyword꞉ ErrorKeyword): "error" # (155..160)
+                      - (name꞉ Identifier): "MyOtherError" # (161..173)
+                      - (members꞉ ErrorParametersDeclaration):
+                          - (open_paren꞉ OpenParen): "(" # (173..174)
+                          - (parameters꞉ ErrorParameters):
+                              - (item꞉ ErrorParameter):
+                                  - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (address_type꞉ AddressType):
+                                      - (address_keyword꞉ AddressKeyword): "address" # (174..181)
+                                  - (name꞉ Identifier): "addr" # (182..186)
+                          - (close_paren꞉ CloseParen): ")" # (186..187)
+                      - (semicolon꞉ Semicolon): ";" # (187..188)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition):
+                      - (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath):
+                          - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "error" # (191..196)
+                      - (attributes꞉ StateVariableAttributes): []
+                      - (name꞉ Identifier): "foo" # (197..200)
+                      - (semicolon꞉ Semicolon): ";" # (200..201)
+              - (close_brace꞉ CloseBrace): "}" # (202..203)

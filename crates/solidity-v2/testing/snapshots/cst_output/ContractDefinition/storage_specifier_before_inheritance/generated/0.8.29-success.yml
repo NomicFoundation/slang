@@ -1,0 +1,30 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/storage_specifier_before_inheritance/input.sol │ 0..129
+  2  │ contract Foo layout at 0 is Bar {                                                                                                 │ 130..163
+  3  │ }                                                                                                                                 │ 164..165
+  4  │                                                                                                                                   │ 166..166
+  5  │ // <<<                                                                                                                            │ 167..173
+
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (130..138)
+              - (name꞉ Identifier): "Foo" # (139..142)
+              - (specifiers꞉ ContractSpecifiers):
+                  - (item꞉ ContractSpecifier) ► (storage_layout_specifier꞉ StorageLayoutSpecifier):
+                      - (layout_keyword꞉ LayoutKeyword): "layout" # (143..149)
+                      - (at_keyword꞉ AtKeyword): "at" # (150..152)
+                      - (expression꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression):
+                          - (literal꞉ DecimalLiteral): "0" # (153..154)
+                  - (item꞉ ContractSpecifier) ► (inheritance_specifier꞉ InheritanceSpecifier):
+                      - (is_keyword꞉ IsKeyword): "is" # (155..157)
+                      - (types꞉ InheritanceTypes):
+                          - (item꞉ InheritanceType):
+                              - (type_name꞉ IdentifierPath):
+                                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "Bar" # (158..161)
+              - (open_brace꞉ OpenBrace): "{" # (162..163)
+              - (members꞉ ContractMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (164..165)

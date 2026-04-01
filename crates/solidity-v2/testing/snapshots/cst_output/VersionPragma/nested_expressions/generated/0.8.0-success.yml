@@ -8,29 +8,29 @@ Source: >
   5  │ ;                                                                                                          │ 152..153
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (pragma_directive: PragmaDirective):
-              - (pragma_keyword: PragmaKeyword): "pragma" # (0..6)
-              - (pragma: Pragma) ► (version_pragma: VersionPragma):
-                  - (solidity_keyword: SolidityKeyword): "solidity" # (114..122)
-                  - (sets: VersionExpressionSets):
-                      - (item: VersionExpressionSet):
-                          - (item: VersionExpression) ► (version_term: VersionTerm):
-                              - (operator: VersionOperator) ► (pragma_caret: PragmaCaret): "^" # (123..124)
-                              - (literal: VersionLiteral) ► (simple_version_literal: SimpleVersionLiteral):
-                                  - (item: VersionSpecifier): "1" # (124..125)
-                                  - (item: VersionSpecifier): "0" # (126..127)
-                                  - (item: VersionSpecifier): "0" # (128..129)
-                      - (item: VersionExpressionSet):
-                          - (item: VersionExpression) ► (version_range: VersionRange):
-                              - (start: VersionLiteral) ► (simple_version_literal: SimpleVersionLiteral):
-                                  - (item: VersionSpecifier): "2" # (133..134)
-                                  - (item: VersionSpecifier): "0" # (135..136)
-                                  - (item: VersionSpecifier): "0" # (137..138)
-                              - (minus: PragmaMinus): "-" # (138..139)
-                              - (end: VersionLiteral) ► (simple_version_literal: SimpleVersionLiteral):
-                                  - (item: VersionSpecifier): "3" # (139..140)
-                                  - (item: VersionSpecifier): "0" # (141..142)
-                                  - (item: VersionSpecifier): "0" # (143..144)
-              - (semicolon: PragmaSemicolon): ";" # (152..153)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective):
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma):
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (114..122)
+                  - (sets꞉ VersionExpressionSets):
+                      - (item꞉ VersionExpressionSet):
+                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm):
+                              - (operator꞉ VersionOperator) ► (pragma_caret꞉ PragmaCaret): "^" # (123..124)
+                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral):
+                                  - (item꞉ VersionSpecifier): "1" # (124..125)
+                                  - (item꞉ VersionSpecifier): "0" # (126..127)
+                                  - (item꞉ VersionSpecifier): "0" # (128..129)
+                      - (item꞉ VersionExpressionSet):
+                          - (item꞉ VersionExpression) ► (version_range꞉ VersionRange):
+                              - (start꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral):
+                                  - (item꞉ VersionSpecifier): "2" # (133..134)
+                                  - (item꞉ VersionSpecifier): "0" # (135..136)
+                                  - (item꞉ VersionSpecifier): "0" # (137..138)
+                              - (minus꞉ PragmaMinus): "-" # (138..139)
+                              - (end꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral):
+                                  - (item꞉ VersionSpecifier): "3" # (139..140)
+                                  - (item꞉ VersionSpecifier): "0" # (141..142)
+                                  - (item꞉ VersionSpecifier): "0" # (143..144)
+              - (semicolon꞉ PragmaSemicolon): ";" # (152..153)

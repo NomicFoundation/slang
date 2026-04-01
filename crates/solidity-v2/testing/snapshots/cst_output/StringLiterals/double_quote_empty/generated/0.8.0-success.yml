@@ -4,13 +4,13 @@ Source: >
   1  │ string constant x = "";                                                          │ 0..23
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (constant_definition: ConstantDefinition):
-              - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (string_keyword: StringKeyword): "string" # (0..6)
-              - (constant_keyword: ConstantKeyword): "constant" # (7..15)
-              - (name: Identifier): "x" # (16..17)
-              - (equal: Equal): "=" # (18..19)
-              - (value: Expression) ► (string_expression: StringExpression) ► (string_literals: StringLiterals):
-                  - (item: StringLiteral): '""' # (20..22)
-              - (semicolon: Semicolon): ";" # (22..23)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (constant_definition꞉ ConstantDefinition):
+              - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (string_keyword꞉ StringKeyword): "string" # (0..6)
+              - (constant_keyword꞉ ConstantKeyword): "constant" # (7..15)
+              - (name꞉ Identifier): "x" # (16..17)
+              - (equal꞉ Equal): "=" # (18..19)
+              - (value꞉ Expression) ► (string_expression꞉ StringExpression) ► (string_literals꞉ StringLiterals):
+                  - (item꞉ StringLiteral): '""' # (20..22)
+              - (semicolon꞉ Semicolon): ";" # (22..23)

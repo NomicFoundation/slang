@@ -1,0 +1,31 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/UsingDirective/destructure_single/input.sol │ 0..107
+  2  │ using {add} for Int global;                                                                                 │ 108..135
+  3  │ // <<<                                                                                                      │ 136..142
+
+Error: This syntax was introduced in version '0.8.13'.
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/destructure_single/input.sol:2:1]
+   │
+ 2 │ using {add} for Int global;
+   │ ─────────────┬─────────────  
+   │              ╰─────────────── Error occurred here.
+───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective):
+              - (using_keyword꞉ UsingKeyword): "using" # (108..113)
+              - (clause꞉ UsingClause) ► (using_deconstruction꞉ UsingDeconstruction):
+                  - (open_brace꞉ OpenBrace): "{" # (114..115)
+                  - (symbols꞉ UsingDeconstructionSymbols):
+                      - (item꞉ UsingDeconstructionSymbol):
+                          - (name꞉ IdentifierPath):
+                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "add" # (115..118)
+                  - (close_brace꞉ CloseBrace): "}" # (118..119)
+              - (for_keyword꞉ ForKeyword): "for" # (120..123)
+              - (target꞉ UsingTarget) ► (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath):
+                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "Int" # (124..127)
+              - (global_keyword꞉ GlobalKeyword): "global" # (128..134)
+              - (semicolon꞉ Semicolon): ";" # (134..135)

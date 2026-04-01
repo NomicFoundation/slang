@@ -9,19 +9,19 @@ Source: >
   6  │ // <<<                                                                                                                  │ 182..188
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (contract_keyword: ContractKeyword): "contract" # (120..128)
-              - (name: Identifier): "A" # (129..130)
-              - (specifiers: ContractSpecifiers): []
-              - (open_brace: OpenBrace): "{" # (131..132)
-              - (members: ContractMembers): []
-              - (close_brace: CloseBrace): "}" # (132..133)
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (contract_keyword: ContractKeyword): "contract" # (167..175)
-              - (name: Identifier): "B" # (176..177)
-              - (specifiers: ContractSpecifiers): []
-              - (open_brace: OpenBrace): "{" # (178..179)
-              - (members: ContractMembers): []
-              - (close_brace: CloseBrace): "}" # (179..180)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (120..128)
+              - (name꞉ Identifier): "A" # (129..130)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (131..132)
+              - (members꞉ ContractMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (132..133)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (167..175)
+              - (name꞉ Identifier): "B" # (176..177)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (178..179)
+              - (members꞉ ContractMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (179..180)

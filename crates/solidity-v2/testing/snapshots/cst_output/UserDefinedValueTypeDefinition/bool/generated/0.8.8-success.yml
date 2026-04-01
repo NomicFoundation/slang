@@ -1,0 +1,16 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/UserDefinedValueTypeDefinition/bool/input.sol │ 0..109
+  2  │ type Foo is bool;                                                                                             │ 110..127
+  3  │ // <<<                                                                                                        │ 128..134
+
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (user_defined_value_type_definition꞉ UserDefinedValueTypeDefinition):
+              - (type_keyword꞉ TypeKeyword): "type" # (110..114)
+              - (name꞉ Identifier): "Foo" # (115..118)
+              - (is_keyword꞉ IsKeyword): "is" # (119..121)
+              - (value_type꞉ ElementaryType) ► (bool_keyword꞉ BoolKeyword): "bool" # (122..126)
+              - (semicolon꞉ Semicolon): ";" # (126..127)

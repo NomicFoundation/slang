@@ -1,0 +1,32 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_user_defined_value_type_definition/input.sol │ 0..134
+  2  │ contract Sample {                                                                                                                      │ 135..152
+  3  │   type Foo is bool;                                                                                                                    │ 153..172
+  4  │ }                                                                                                                                      │ 173..174
+  5  │ // <<<                                                                                                                                 │ 175..181
+
+Error: This syntax was introduced in version '0.8.8'.
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/member_user_defined_value_type_definition/input.sol:3:3]
+   │
+ 3 │   type Foo is bool;
+   │   ────────┬────────  
+   │           ╰────────── Error occurred here.
+───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (135..143)
+              - (name꞉ Identifier): "Sample" # (144..150)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (151..152)
+              - (members꞉ ContractMembers):
+                  - (item꞉ ContractMember) ► (user_defined_value_type_definition꞉ UserDefinedValueTypeDefinition):
+                      - (type_keyword꞉ TypeKeyword): "type" # (155..159)
+                      - (name꞉ Identifier): "Foo" # (160..163)
+                      - (is_keyword꞉ IsKeyword): "is" # (164..166)
+                      - (value_type꞉ ElementaryType) ► (bool_keyword꞉ BoolKeyword): "bool" # (167..171)
+                      - (semicolon꞉ Semicolon): ";" # (171..172)
+              - (close_brace꞉ CloseBrace): "}" # (173..174)

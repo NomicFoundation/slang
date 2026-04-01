@@ -12,28 +12,28 @@ Source: >
   9  │ }                                                                                                    │ 154..155
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (contract_keyword: ContractKeyword): "contract" # (0..8)
-              - (name: Identifier): "C" # (9..10)
-              - (specifiers: ContractSpecifiers): []
-              - (open_brace: OpenBrace): "{" # (11..12)
-              - (members: ContractMembers):
-                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
-                      - (function_keyword: FunctionKeyword): "function" # (17..25)
-                      - (name: FunctionName) ► (identifier: Identifier): "f" # (26..27)
-                      - (parameters: ParametersDeclaration):
-                          - (open_paren: OpenParen): "(" # (27..28)
-                          - (parameters: Parameters): []
-                          - (close_paren: CloseParen): ")" # (28..29)
-                      - (attributes: FunctionAttributes): []
-                      - (body: FunctionBody) ► (block: Block):
-                          - (open_brace: OpenBrace): "{" # (30..31)
-                          - (statements: Statements):
-                              - (item: Statement) ► (expression_statement: ExpressionStatement):
-                                  - (expression: Expression) ► (string_expression: StringExpression) ► (string_literals: StringLiterals):
-                                      - (item: StringLiteral): '"\n"' # (133..137)
-                                  - (semicolon: Semicolon): ";" # (146..147)
-                          - (close_brace: CloseBrace): "}" # (152..153)
-              - (close_brace: CloseBrace): "}" # (154..155)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers):
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration):
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements):
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement):
+                                  - (expression꞉ Expression) ► (string_expression꞉ StringExpression) ► (string_literals꞉ StringLiterals):
+                                      - (item꞉ StringLiteral): '"\n"' # (133..137)
+                                  - (semicolon꞉ Semicolon): ";" # (146..147)
+                          - (close_brace꞉ CloseBrace): "}" # (152..153)
+              - (close_brace꞉ CloseBrace): "}" # (154..155)

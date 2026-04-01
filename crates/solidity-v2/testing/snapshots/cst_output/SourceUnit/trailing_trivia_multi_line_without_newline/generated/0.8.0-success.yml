@@ -8,19 +8,19 @@ Source: >
   5  │ // <<<                                                                                                                          │ 176..182
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (contract_keyword: ContractKeyword): "contract" # (128..136)
-              - (name: Identifier): "A" # (137..138)
-              - (specifiers: ContractSpecifiers): []
-              - (open_brace: OpenBrace): "{" # (139..140)
-              - (members: ContractMembers): []
-              - (close_brace: CloseBrace): "}" # (140..141)
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (contract_keyword: ContractKeyword): "contract" # (161..169)
-              - (name: Identifier): "B" # (170..171)
-              - (specifiers: ContractSpecifiers): []
-              - (open_brace: OpenBrace): "{" # (172..173)
-              - (members: ContractMembers): []
-              - (close_brace: CloseBrace): "}" # (173..174)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (128..136)
+              - (name꞉ Identifier): "A" # (137..138)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (139..140)
+              - (members꞉ ContractMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (140..141)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (161..169)
+              - (name꞉ Identifier): "B" # (170..171)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (172..173)
+              - (members꞉ ContractMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (173..174)

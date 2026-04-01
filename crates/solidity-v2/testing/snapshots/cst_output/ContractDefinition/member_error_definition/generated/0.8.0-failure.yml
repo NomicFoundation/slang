@@ -1,0 +1,34 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_error_definition/input.sol │ 0..116
+  2  │ contract Sample {                                                                                                    │ 117..134
+  3  │   error Error1();                                                                                                    │ 135..152
+  4  │ }                                                                                                                    │ 153..154
+  5  │ // <<<                                                                                                               │ 155..161
+
+Error: This syntax was introduced in version '0.8.4'.
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/member_error_definition/input.sol:3:3]
+   │
+ 3 │   error Error1();
+   │   ───────┬───────  
+   │          ╰───────── Error occurred here.
+───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (117..125)
+              - (name꞉ Identifier): "Sample" # (126..132)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (133..134)
+              - (members꞉ ContractMembers):
+                  - (item꞉ ContractMember) ► (error_definition꞉ ErrorDefinition):
+                      - (error_keyword꞉ ErrorKeyword): "error" # (137..142)
+                      - (name꞉ Identifier): "Error1" # (143..149)
+                      - (members꞉ ErrorParametersDeclaration):
+                          - (open_paren꞉ OpenParen): "(" # (149..150)
+                          - (parameters꞉ ErrorParameters): []
+                          - (close_paren꞉ CloseParen): ")" # (150..151)
+                      - (semicolon꞉ Semicolon): ";" # (151..152)
+              - (close_brace꞉ CloseBrace): "}" # (153..154)

@@ -14,19 +14,19 @@ Source: >
   11 │ // <<<                                                                                               │ 250..256
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (contract_keyword: ContractKeyword): "contract" # (101..109)
-              - (name: Identifier): "First" # (110..115)
-              - (specifiers: ContractSpecifiers): []
-              - (open_brace: OpenBrace): "{" # (116..117)
-              - (members: ContractMembers): []
-              - (close_brace: CloseBrace): "}" # (117..118)
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (contract_keyword: ContractKeyword): "contract" # (230..238)
-              - (name: Identifier): "Second" # (239..245)
-              - (specifiers: ContractSpecifiers): []
-              - (open_brace: OpenBrace): "{" # (246..247)
-              - (members: ContractMembers): []
-              - (close_brace: CloseBrace): "}" # (247..248)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (101..109)
+              - (name꞉ Identifier): "First" # (110..115)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (116..117)
+              - (members꞉ ContractMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (117..118)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (230..238)
+              - (name꞉ Identifier): "Second" # (239..245)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (246..247)
+              - (members꞉ ContractMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (247..248)

@@ -8,30 +8,30 @@ Source: >
   5  │ ;                                                                                                    │ 149..150
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (pragma_directive: PragmaDirective):
-              - (pragma_keyword: PragmaKeyword): "pragma" # (0..6)
-              - (pragma: Pragma) ► (version_pragma: VersionPragma):
-                  - (solidity_keyword: SolidityKeyword): "solidity" # (108..116)
-                  - (sets: VersionExpressionSets):
-                      - (item: VersionExpressionSet):
-                          - (item: VersionExpression) ► (version_term: VersionTerm):
-                              - (literal: VersionLiteral) ► (simple_version_literal: SimpleVersionLiteral):
-                                  - (item: VersionSpecifier): "0" # (117..118)
-                                  - (item: VersionSpecifier): "5" # (119..120)
-                                  - (item: VersionSpecifier): "0" # (121..122)
-                      - (item: VersionExpressionSet):
-                          - (item: VersionExpression) ► (version_term: VersionTerm):
-                              - (literal: VersionLiteral) ► (simple_version_literal: SimpleVersionLiteral):
-                                  - (item: VersionSpecifier): "0" # (126..127)
-                                  - (item: VersionSpecifier): "6" # (128..129)
-                                  - (item: VersionSpecifier): "0" # (130..131)
-                      - (item: VersionExpressionSet):
-                          - (item: VersionExpression) ► (version_term: VersionTerm):
-                              - (operator: VersionOperator) ► (pragma_caret: PragmaCaret): "^" # (135..136)
-                              - (literal: VersionLiteral) ► (simple_version_literal: SimpleVersionLiteral):
-                                  - (item: VersionSpecifier): "0" # (136..137)
-                                  - (item: VersionSpecifier): "7" # (138..139)
-                                  - (item: VersionSpecifier): "0" # (140..141)
-              - (semicolon: PragmaSemicolon): ";" # (149..150)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective):
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma):
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (108..116)
+                  - (sets꞉ VersionExpressionSets):
+                      - (item꞉ VersionExpressionSet):
+                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm):
+                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral):
+                                  - (item꞉ VersionSpecifier): "0" # (117..118)
+                                  - (item꞉ VersionSpecifier): "5" # (119..120)
+                                  - (item꞉ VersionSpecifier): "0" # (121..122)
+                      - (item꞉ VersionExpressionSet):
+                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm):
+                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral):
+                                  - (item꞉ VersionSpecifier): "0" # (126..127)
+                                  - (item꞉ VersionSpecifier): "6" # (128..129)
+                                  - (item꞉ VersionSpecifier): "0" # (130..131)
+                      - (item꞉ VersionExpressionSet):
+                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm):
+                              - (operator꞉ VersionOperator) ► (pragma_caret꞉ PragmaCaret): "^" # (135..136)
+                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral):
+                                  - (item꞉ VersionSpecifier): "0" # (136..137)
+                                  - (item꞉ VersionSpecifier): "7" # (138..139)
+                                  - (item꞉ VersionSpecifier): "0" # (140..141)
+              - (semicolon꞉ PragmaSemicolon): ";" # (149..150)

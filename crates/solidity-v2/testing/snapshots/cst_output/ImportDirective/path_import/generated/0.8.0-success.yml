@@ -6,10 +6,10 @@ Source: >
   3  │ // <<<                                                                                                │ 116..122
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (import_directive: ImportDirective):
-              - (import_keyword: ImportKeyword): "import" # (102..108)
-              - (clause: ImportClause) ► (path_import: PathImport):
-                  - (path: StringLiteral): '"foo"' # (109..114)
-              - (semicolon: Semicolon): ";" # (114..115)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (import_directive꞉ ImportDirective):
+              - (import_keyword꞉ ImportKeyword): "import" # (102..108)
+              - (clause꞉ ImportClause) ► (path_import꞉ PathImport):
+                  - (path꞉ StringLiteral): '"foo"' # (109..114)
+              - (semicolon꞉ Semicolon): ";" # (114..115)

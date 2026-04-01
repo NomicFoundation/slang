@@ -13,44 +13,44 @@ Source: >
   10 │ }                                                                                                                                       │ 232..233
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (contract_keyword: ContractKeyword): "contract" # (0..8)
-              - (name: Identifier): "C" # (9..10)
-              - (specifiers: ContractSpecifiers): []
-              - (open_brace: OpenBrace): "{" # (11..12)
-              - (members: ContractMembers):
-                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
-                      - (function_keyword: FunctionKeyword): "function" # (17..25)
-                      - (name: FunctionName) ► (identifier: Identifier): "f" # (26..27)
-                      - (parameters: ParametersDeclaration):
-                          - (open_paren: OpenParen): "(" # (27..28)
-                          - (parameters: Parameters): []
-                          - (close_paren: CloseParen): ")" # (28..29)
-                      - (attributes: FunctionAttributes): []
-                      - (body: FunctionBody) ► (block: Block):
-                          - (open_brace: OpenBrace): "{" # (30..31)
-                          - (statements: Statements):
-                              - (item: Statement) ► (assembly_statement: AssemblyStatement):
-                                  - (assembly_keyword: AssemblyKeyword): "assembly" # (40..48)
-                                  - (body: YulBlock):
-                                      - (open_brace: YulOpenBrace): "{" # (49..50)
-                                      - (statements: YulStatements):
-                                          - (item: YulStatement) ► (yul_variable_declaration_statement: YulVariableDeclarationStatement):
-                                              - (let_keyword: YulLetKeyword): "let" # (187..190)
-                                              - (variables: YulVariableNames):
-                                                  - (item: YulIdentifier): "x" # (191..192)
-                                                  - (item: YulIdentifier): "y" # (194..195)
-                                                  - (item: YulIdentifier): "z" # (197..198)
-                                              - (value: YulVariableDeclarationValue):
-                                                  - (assignment: YulColonEqual): ":=" # (199..201)
-                                                  - (expression: YulExpression) ► (yul_function_call_expression: YulFunctionCallExpression):
-                                                      - (operand: YulExpression) ► (yul_path: YulPath):
-                                                          - (item: YulIdentifier): "foo" # (202..205)
-                                                      - (open_paren: YulOpenParen): "(" # (205..206)
-                                                      - (arguments: YulArguments): []
-                                                      - (close_paren: YulCloseParen): ")" # (206..207)
-                                      - (close_brace: YulCloseBrace): "}" # (224..225)
-                          - (close_brace: CloseBrace): "}" # (230..231)
-              - (close_brace: CloseBrace): "}" # (232..233)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers):
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration):
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements):
+                              - (item꞉ Statement) ► (assembly_statement꞉ AssemblyStatement):
+                                  - (assembly_keyword꞉ AssemblyKeyword): "assembly" # (40..48)
+                                  - (body꞉ YulBlock):
+                                      - (open_brace꞉ YulOpenBrace): "{" # (49..50)
+                                      - (statements꞉ YulStatements):
+                                          - (item꞉ YulStatement) ► (yul_variable_declaration_statement꞉ YulVariableDeclarationStatement):
+                                              - (let_keyword꞉ YulLetKeyword): "let" # (187..190)
+                                              - (variables꞉ YulVariableNames):
+                                                  - (item꞉ YulIdentifier): "x" # (191..192)
+                                                  - (item꞉ YulIdentifier): "y" # (194..195)
+                                                  - (item꞉ YulIdentifier): "z" # (197..198)
+                                              - (value꞉ YulVariableDeclarationValue):
+                                                  - (assignment꞉ YulColonEqual): ":=" # (199..201)
+                                                  - (expression꞉ YulExpression) ► (yul_function_call_expression꞉ YulFunctionCallExpression):
+                                                      - (operand꞉ YulExpression) ► (yul_path꞉ YulPath):
+                                                          - (item꞉ YulIdentifier): "foo" # (202..205)
+                                                      - (open_paren꞉ YulOpenParen): "(" # (205..206)
+                                                      - (arguments꞉ YulArguments): []
+                                                      - (close_paren꞉ YulCloseParen): ")" # (206..207)
+                                      - (close_brace꞉ YulCloseBrace): "}" # (224..225)
+                          - (close_brace꞉ CloseBrace): "}" # (230..231)
+              - (close_brace꞉ CloseBrace): "}" # (232..233)

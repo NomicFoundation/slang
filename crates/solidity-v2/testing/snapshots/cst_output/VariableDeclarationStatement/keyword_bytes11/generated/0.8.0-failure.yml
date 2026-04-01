@@ -1,5 +1,15 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Source: >
+  1  │ contract C {                                                                                                           │ 0..12
+  2  │     function f() {                                                                                                     │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/VariableDeclarationStatement/keyword_bytes11/input.sol │ 32..150
+  4  │ uint bytes11;                                                                                                          │ 151..164
+  5  │                                                                                                                        │ 165..165
+  6  │ // <<<                                                                                                                 │ 166..172
+  7  │     }                                                                                                                  │ 173..178
+  8  │ }                                                                                                                      │ 179..180
+
 Error: Unexpected BytesKeyword_Reserved. One of Ampersand, AmpersandAmpersand, AmpersandEqual, Asterisk, AsteriskAsterisk, AsteriskEqual, AtKeyword_Unreserved, BangEqual, Bar, BarBar, BarEqual, CallDataKeyword_Reserved, Caret, CaretEqual, Equal, EqualEqual, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, GreaterThan, GreaterThanEqual, GreaterThanGreaterThan, GreaterThanGreaterThanEqual, GreaterThanGreaterThanGreaterThan, GreaterThanGreaterThanGreaterThanEqual, Identifier, LayoutKeyword_Unreserved, LessThan, LessThanEqual, LessThanLessThan, LessThanLessThanEqual, MemoryKeyword_Reserved, Minus, MinusEqual, MinusMinus, OpenBrace, OpenBracket, OpenParen, Percent, PercentEqual, Period, Plus, PlusEqual, PlusPlus, QuestionMark, RevertKeyword_Unreserved, Semicolon, Slash, SlashEqual, StorageKeyword_Reserved, TransientKeyword_Unreserved was expected
    ╭─[crates/solidity-v2/testing/snapshots/cst_output/VariableDeclarationStatement/keyword_bytes11/input.sol:4:6]
    │

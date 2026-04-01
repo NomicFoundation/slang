@@ -1,0 +1,24 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/UsingDirective/path_unnamed/input.sol │ 0..101
+  2  │ using foo for *;                                                                                      │ 102..118
+  3  │ // <<<                                                                                                │ 119..125
+
+Error: This syntax was introduced in version '0.8.13'.
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/path_unnamed/input.sol:2:1]
+   │
+ 2 │ using foo for *;
+   │ ────────┬───────  
+   │         ╰───────── Error occurred here.
+───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective):
+              - (using_keyword꞉ UsingKeyword): "using" # (102..107)
+              - (clause꞉ UsingClause) ► (identifier_path꞉ IdentifierPath):
+                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "foo" # (108..111)
+              - (for_keyword꞉ ForKeyword): "for" # (112..115)
+              - (target꞉ UsingTarget) ► (asterisk꞉ Asterisk): "*" # (116..117)
+              - (semicolon꞉ Semicolon): ";" # (117..118)

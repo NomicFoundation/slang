@@ -1,0 +1,39 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/unreserved_keywords/input.sol │ 0..104
+  2  │ contract A {                                                                                             │ 105..117
+  3  │ 	uint transient foo;                                                                                     │ 118..138
+  4  │ 	uint transient;                                                                                         │ 139..155
+  5  │ }                                                                                                        │ 156..157
+  6  │                                                                                                          │ 158..158
+  7  │ // <<<                                                                                                   │ 159..165
+
+Error: This syntax was introduced in version '0.8.27'.
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/unreserved_keywords/input.sol:3:7]
+   │
+ 3 │     uint transient foo;
+   │          ────┬────  
+   │              ╰────── Error occurred here.
+───╯
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (105..113)
+              - (name꞉ Identifier): "A" # (114..115)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (116..117)
+              - (members꞉ ContractMembers):
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition):
+                      - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (119..123)
+                      - (attributes꞉ StateVariableAttributes):
+                          - (item꞉ StateVariableAttribute) ► (transient_keyword꞉ TransientKeyword): "transient" # (124..133)
+                      - (name꞉ Identifier): "foo" # (134..137)
+                      - (semicolon꞉ Semicolon): ";" # (137..138)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition):
+                      - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (140..144)
+                      - (attributes꞉ StateVariableAttributes): []
+                      - (name꞉ Identifier): "transient" # (145..154)
+                      - (semicolon꞉ Semicolon): ";" # (154..155)
+              - (close_brace꞉ CloseBrace): "}" # (156..157)

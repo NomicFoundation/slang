@@ -1,0 +1,96 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/using_directive/input.sol │ 0..100
+  2  │ // SPDX-License-Identifier: MIT                                                                      │ 101..132
+  3  │ pragma solidity ^0.8.0;                                                                              │ 133..156
+  4  │                                                                                                      │ 157..157
+  5  │ using EnvelopeUtils for Envelope global;                                                             │ 158..198
+  6  │ using TransactionUtils for Transaction global;                                                       │ 199..245
+  7  │                                                                                                      │ 246..246
+  8  │ /**                                                                                                  │ 247..250
+  9  │  * @notice Object with the necessary information to define a unique envelope                         │ 251..327
+  10 │  * @param nonce sequential (unique) numeric indicator of the Envelope creation                       │ 328..406
+  11 │  * @param origin address that originated the bridging of a message                                   │ 407..473
+  12 │  * @param destination address where the message needs to be sent                                     │ 474..538
+  13 │  * @param originChainId id of the chain where the message originated                                 │ 539..607
+  14 │  * @param destinationChainId id of the chain where the message needs to be bridged                   │ 608..690
+  15 │  * @param message bytes that needs to be bridged                                                     │ 691..739
+  16 │  */                                                                                                  │ 740..743
+  17 │ struct Envelope {                                                                                    │ 744..761
+  18 │   uint256 nonce;                                                                                     │ 762..778
+  19 │   address origin;                                                                                    │ 779..796
+  20 │   address destination;                                                                               │ 797..819
+  21 │   uint256 originChainId;                                                                             │ 820..844
+  22 │   uint256 destinationChainId;                                                                        │ 845..874
+  23 │   bytes message;                                                                                     │ 875..891
+  24 │ }                                                                                                    │ 892..893
+  25 │                                                                                                      │ 894..894
+  26 │ // <<<                                                                                               │ 895..901
+
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective):
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (133..139)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma):
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (140..148)
+                  - (sets꞉ VersionExpressionSets):
+                      - (item꞉ VersionExpressionSet):
+                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm):
+                              - (operator꞉ VersionOperator) ► (pragma_caret꞉ PragmaCaret): "^" # (149..150)
+                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral):
+                                  - (item꞉ VersionSpecifier): "0" # (150..151)
+                                  - (item꞉ VersionSpecifier): "8" # (152..153)
+                                  - (item꞉ VersionSpecifier): "0" # (154..155)
+              - (semicolon꞉ PragmaSemicolon): ";" # (155..156)
+          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective):
+              - (using_keyword꞉ UsingKeyword): "using" # (158..163)
+              - (clause꞉ UsingClause) ► (identifier_path꞉ IdentifierPath):
+                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "EnvelopeUtils" # (164..177)
+              - (for_keyword꞉ ForKeyword): "for" # (178..181)
+              - (target꞉ UsingTarget) ► (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath):
+                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "Envelope" # (182..190)
+              - (global_keyword꞉ GlobalKeyword): "global" # (191..197)
+              - (semicolon꞉ Semicolon): ";" # (197..198)
+          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective):
+              - (using_keyword꞉ UsingKeyword): "using" # (199..204)
+              - (clause꞉ UsingClause) ► (identifier_path꞉ IdentifierPath):
+                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "TransactionUtils" # (205..221)
+              - (for_keyword꞉ ForKeyword): "for" # (222..225)
+              - (target꞉ UsingTarget) ► (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath):
+                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "Transaction" # (226..237)
+              - (global_keyword꞉ GlobalKeyword): "global" # (238..244)
+              - (semicolon꞉ Semicolon): ";" # (244..245)
+          - (item꞉ SourceUnitMember) ► (struct_definition꞉ StructDefinition):
+              - (struct_keyword꞉ StructKeyword): "struct" # (744..750)
+              - (name꞉ Identifier): "Envelope" # (751..759)
+              - (open_brace꞉ OpenBrace): "{" # (760..761)
+              - (members꞉ StructMembers):
+                  - (item꞉ StructMember):
+                      - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (764..771)
+                      - (name꞉ Identifier): "nonce" # (772..777)
+                      - (semicolon꞉ Semicolon): ";" # (777..778)
+                  - (item꞉ StructMember):
+                      - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (address_type꞉ AddressType):
+                          - (address_keyword꞉ AddressKeyword): "address" # (781..788)
+                      - (name꞉ Identifier): "origin" # (789..795)
+                      - (semicolon꞉ Semicolon): ";" # (795..796)
+                  - (item꞉ StructMember):
+                      - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (address_type꞉ AddressType):
+                          - (address_keyword꞉ AddressKeyword): "address" # (799..806)
+                      - (name꞉ Identifier): "destination" # (807..818)
+                      - (semicolon꞉ Semicolon): ";" # (818..819)
+                  - (item꞉ StructMember):
+                      - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (822..829)
+                      - (name꞉ Identifier): "originChainId" # (830..843)
+                      - (semicolon꞉ Semicolon): ";" # (843..844)
+                  - (item꞉ StructMember):
+                      - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (847..854)
+                      - (name꞉ Identifier): "destinationChainId" # (855..873)
+                      - (semicolon꞉ Semicolon): ";" # (873..874)
+                  - (item꞉ StructMember):
+                      - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (bytes_keyword꞉ BytesKeyword): "bytes" # (877..882)
+                      - (name꞉ Identifier): "message" # (883..890)
+                      - (semicolon꞉ Semicolon): ";" # (890..891)
+              - (close_brace꞉ CloseBrace): "}" # (892..893)

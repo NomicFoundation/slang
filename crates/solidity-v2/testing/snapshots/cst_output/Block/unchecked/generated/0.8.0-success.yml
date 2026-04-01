@@ -9,37 +9,37 @@ Source: >
   6  │ }                                                                                         │ 152..153
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (contract_keyword: ContractKeyword): "contract" # (0..8)
-              - (name: Identifier): "C" # (9..10)
-              - (specifiers: ContractSpecifiers): []
-              - (open_brace: OpenBrace): "{" # (11..12)
-              - (members: ContractMembers):
-                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
-                      - (function_keyword: FunctionKeyword): "function" # (17..25)
-                      - (name: FunctionName) ► (identifier: Identifier): "f" # (26..27)
-                      - (parameters: ParametersDeclaration):
-                          - (open_paren: OpenParen): "(" # (27..28)
-                          - (parameters: Parameters): []
-                          - (close_paren: CloseParen): ")" # (28..29)
-                      - (attributes: FunctionAttributes): []
-                      - (body: FunctionBody) ► (block: Block):
-                          - (open_brace: OpenBrace): "{" # (120..121)
-                          - (statements: Statements):
-                              - (item: Statement) ► (unchecked_block: UncheckedBlock):
-                                  - (unchecked_keyword: UncheckedKeyword): "unchecked" # (122..131)
-                                  - (block: Block):
-                                      - (open_brace: OpenBrace): "{" # (132..133)
-                                      - (statements: Statements):
-                                          - (item: Statement) ► (expression_statement: ExpressionStatement):
-                                              - (expression: Expression) ► (assignment_expression: AssignmentExpression):
-                                                  - (left_operand: Expression) ► (identifier: Identifier): "x" # (134..135)
-                                                  - (expression_assignment_expression_operator: Expression_AssignmentExpression_Operator) ► (equal: Equal): "=" # (136..137)
-                                                  - (right_operand: Expression) ► (decimal_number_expression: DecimalNumberExpression):
-                                                      - (literal: DecimalLiteral): "1" # (138..139)
-                                              - (semicolon: Semicolon): ";" # (139..140)
-                                      - (close_brace: CloseBrace): "}" # (141..142)
-                          - (close_brace: CloseBrace): "}" # (143..144)
-              - (close_brace: CloseBrace): "}" # (152..153)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers):
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration):
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                          - (open_brace꞉ OpenBrace): "{" # (120..121)
+                          - (statements꞉ Statements):
+                              - (item꞉ Statement) ► (unchecked_block꞉ UncheckedBlock):
+                                  - (unchecked_keyword꞉ UncheckedKeyword): "unchecked" # (122..131)
+                                  - (block꞉ Block):
+                                      - (open_brace꞉ OpenBrace): "{" # (132..133)
+                                      - (statements꞉ Statements):
+                                          - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement):
+                                              - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression):
+                                                  - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "x" # (134..135)
+                                                  - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (equal꞉ Equal): "=" # (136..137)
+                                                  - (right_operand꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression):
+                                                      - (literal꞉ DecimalLiteral): "1" # (138..139)
+                                              - (semicolon꞉ Semicolon): ";" # (139..140)
+                                      - (close_brace꞉ CloseBrace): "}" # (141..142)
+                          - (close_brace꞉ CloseBrace): "}" # (143..144)
+              - (close_brace꞉ CloseBrace): "}" # (152..153)

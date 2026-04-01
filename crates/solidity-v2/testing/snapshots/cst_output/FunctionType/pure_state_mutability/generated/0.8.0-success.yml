@@ -10,33 +10,33 @@ Source: >
   7  │ }                                                                                                            │ 174..175
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (contract_keyword: ContractKeyword): "contract" # (0..8)
-              - (name: Identifier): "C" # (9..10)
-              - (specifiers: ContractSpecifiers): []
-              - (open_brace: OpenBrace): "{" # (11..12)
-              - (members: ContractMembers):
-                  - (item: ContractMember) ► (state_variable_definition: StateVariableDefinition):
-                      - (type_name: TypeName) ► (function_type: FunctionType):
-                          - (function_keyword: FunctionKeyword): "function" # (122..130)
-                          - (parameters: ParametersDeclaration):
-                              - (open_paren: OpenParen): "(" # (131..132)
-                              - (parameters: Parameters): []
-                              - (close_paren: CloseParen): ")" # (132..133)
-                          - (attributes: FunctionTypeAttributes):
-                              - (item: FunctionTypeAttribute) ► (internal_keyword: InternalKeyword): "internal" # (134..142)
-                              - (item: FunctionTypeAttribute) ► (pure_keyword: PureKeyword): "pure" # (143..147)
-                          - (returns: ReturnsDeclaration):
-                              - (returns_keyword: ReturnsKeyword): "returns" # (148..155)
-                              - (variables: ParametersDeclaration):
-                                  - (open_paren: OpenParen): "(" # (156..157)
-                                  - (parameters: Parameters):
-                                      - (item: Parameter):
-                                          - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint" # (157..161)
-                                  - (close_paren: CloseParen): ")" # (161..162)
-                      - (attributes: StateVariableAttributes): []
-                      - (name: Identifier): "x" # (171..172)
-                      - (semicolon: Semicolon): ";" # (172..173)
-              - (close_brace: CloseBrace): "}" # (174..175)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers):
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition):
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType):
+                          - (function_keyword꞉ FunctionKeyword): "function" # (122..130)
+                          - (parameters꞉ ParametersDeclaration):
+                              - (open_paren꞉ OpenParen): "(" # (131..132)
+                              - (parameters꞉ Parameters): []
+                              - (close_paren꞉ CloseParen): ")" # (132..133)
+                          - (attributes꞉ FunctionTypeAttributes):
+                              - (item꞉ FunctionTypeAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (134..142)
+                              - (item꞉ FunctionTypeAttribute) ► (pure_keyword꞉ PureKeyword): "pure" # (143..147)
+                          - (returns꞉ ReturnsDeclaration):
+                              - (returns_keyword꞉ ReturnsKeyword): "returns" # (148..155)
+                              - (variables꞉ ParametersDeclaration):
+                                  - (open_paren꞉ OpenParen): "(" # (156..157)
+                                  - (parameters꞉ Parameters):
+                                      - (item꞉ Parameter):
+                                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (157..161)
+                                  - (close_paren꞉ CloseParen): ")" # (161..162)
+                      - (attributes꞉ StateVariableAttributes): []
+                      - (name꞉ Identifier): "x" # (171..172)
+                      - (semicolon꞉ Semicolon): ";" # (172..173)
+              - (close_brace꞉ CloseBrace): "}" # (174..175)

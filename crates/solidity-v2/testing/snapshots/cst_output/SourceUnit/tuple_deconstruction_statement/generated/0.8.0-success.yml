@@ -14,92 +14,92 @@ Source: >
   11 │ // <<<                                                                                                              │ 285..291
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (library_definition: LibraryDefinition):
-              - (library_keyword: LibraryKeyword): "library" # (116..123)
-              - (name: Identifier): "SafeMath" # (124..132)
-              - (open_brace: OpenBrace): "{" # (133..134)
-              - (members: LibraryMembers):
-                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
-                      - (function_keyword: FunctionKeyword): "function" # (137..145)
-                      - (name: FunctionName) ► (identifier: Identifier): "tryAdd" # (146..152)
-                      - (parameters: ParametersDeclaration):
-                          - (open_paren: OpenParen): "(" # (152..153)
-                          - (parameters: Parameters): []
-                          - (close_paren: CloseParen): ")" # (153..154)
-                      - (attributes: FunctionAttributes):
-                          - (item: FunctionAttribute) ► (internal_keyword: InternalKeyword): "internal" # (155..163)
-                          - (item: FunctionAttribute) ► (pure_keyword: PureKeyword): "pure" # (164..168)
-                      - (body: FunctionBody) ► (block: Block):
-                          - (open_brace: OpenBrace): "{" # (170..171)
-                          - (statements: Statements):
-                              - (item: Statement) ► (variable_declaration_statement: VariableDeclarationStatement):
-                                  - (target: VariableDeclarationTarget) ► (multi_typed_declaration: MultiTypedDeclaration):
-                                      - (open_paren: OpenParen): "(" # (176..177)
-                                      - (elements: MultiTypedDeclarationElements):
-                                          - (item: MultiTypedDeclarationElement):
-                                          - (item: MultiTypedDeclarationElement):
-                                              - (member: VariableDeclaration):
-                                                  - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (bool_keyword: BoolKeyword): "bool" # (179..183)
-                                                  - (name: Identifier): "z" # (184..185)
-                                          - (item: MultiTypedDeclarationElement):
-                                      - (close_paren: CloseParen): ")" # (187..188)
-                                      - (value: VariableDeclarationValue):
-                                          - (equal: Equal): "=" # (189..190)
-                                          - (expression: Expression) ► (identifier: Identifier): "foo" # (191..194)
-                                  - (semicolon: Semicolon): ";" # (194..195)
-                              - (item: Statement) ► (variable_declaration_statement: VariableDeclarationStatement):
-                                  - (target: VariableDeclarationTarget) ► (multi_typed_declaration: MultiTypedDeclaration):
-                                      - (open_paren: OpenParen): "(" # (200..201)
-                                      - (elements: MultiTypedDeclarationElements):
-                                          - (item: MultiTypedDeclarationElement):
-                                              - (member: VariableDeclaration):
-                                                  - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (bool_keyword: BoolKeyword): "bool" # (201..205)
-                                                  - (name: Identifier): "a" # (206..207)
-                                          - (item: MultiTypedDeclarationElement):
-                                              - (member: VariableDeclaration):
-                                                  - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint" # (209..213)
-                                                  - (name: Identifier): "b" # (214..215)
-                                      - (close_paren: CloseParen): ")" # (215..216)
-                                      - (value: VariableDeclarationValue):
-                                          - (equal: Equal): "=" # (217..218)
-                                          - (expression: Expression) ► (identifier: Identifier): "foo" # (219..222)
-                                  - (semicolon: Semicolon): ";" # (222..223)
-                              - (item: Statement) ► (variable_declaration_statement: VariableDeclarationStatement):
-                                  - (target: VariableDeclarationTarget) ► (multi_typed_declaration: MultiTypedDeclaration):
-                                      - (open_paren: OpenParen): "(" # (228..229)
-                                      - (elements: MultiTypedDeclarationElements):
-                                          - (item: MultiTypedDeclarationElement):
-                                              - (member: VariableDeclaration):
-                                                  - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint" # (229..233)
-                                                  - (name: Identifier): "x" # (234..235)
-                                          - (item: MultiTypedDeclarationElement):
-                                          - (item: MultiTypedDeclarationElement):
-                                              - (member: VariableDeclaration):
-                                                  - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint" # (239..243)
-                                                  - (name: Identifier): "y" # (244..245)
-                                      - (close_paren: CloseParen): ")" # (245..246)
-                                      - (value: VariableDeclarationValue):
-                                          - (equal: Equal): "=" # (247..248)
-                                          - (expression: Expression) ► (identifier: Identifier): "foo" # (249..252)
-                                  - (semicolon: Semicolon): ";" # (252..253)
-                              - (item: Statement) ► (variable_declaration_statement: VariableDeclarationStatement):
-                                  - (target: VariableDeclarationTarget) ► (multi_typed_declaration: MultiTypedDeclaration):
-                                      - (open_paren: OpenParen): "(" # (258..259)
-                                      - (elements: MultiTypedDeclarationElements):
-                                          - (item: MultiTypedDeclarationElement):
-                                          - (item: MultiTypedDeclarationElement):
-                                          - (item: MultiTypedDeclarationElement):
-                                          - (item: MultiTypedDeclarationElement):
-                                          - (item: MultiTypedDeclarationElement):
-                                              - (member: VariableDeclaration):
-                                                  - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (bool_keyword: BoolKeyword): "bool" # (263..267)
-                                                  - (name: Identifier): "a" # (268..269)
-                                      - (close_paren: CloseParen): ")" # (269..270)
-                                      - (value: VariableDeclarationValue):
-                                          - (equal: Equal): "=" # (271..272)
-                                          - (expression: Expression) ► (identifier: Identifier): "foo" # (273..276)
-                                  - (semicolon: Semicolon): ";" # (276..277)
-                          - (close_brace: CloseBrace): "}" # (280..281)
-              - (close_brace: CloseBrace): "}" # (282..283)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (library_definition꞉ LibraryDefinition):
+              - (library_keyword꞉ LibraryKeyword): "library" # (116..123)
+              - (name꞉ Identifier): "SafeMath" # (124..132)
+              - (open_brace꞉ OpenBrace): "{" # (133..134)
+              - (members꞉ LibraryMembers):
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+                      - (function_keyword꞉ FunctionKeyword): "function" # (137..145)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "tryAdd" # (146..152)
+                      - (parameters꞉ ParametersDeclaration):
+                          - (open_paren꞉ OpenParen): "(" # (152..153)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (153..154)
+                      - (attributes꞉ FunctionAttributes):
+                          - (item꞉ FunctionAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (155..163)
+                          - (item꞉ FunctionAttribute) ► (pure_keyword꞉ PureKeyword): "pure" # (164..168)
+                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                          - (open_brace꞉ OpenBrace): "{" # (170..171)
+                          - (statements꞉ Statements):
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement):
+                                  - (target꞉ VariableDeclarationTarget) ► (multi_typed_declaration꞉ MultiTypedDeclaration):
+                                      - (open_paren꞉ OpenParen): "(" # (176..177)
+                                      - (elements꞉ MultiTypedDeclarationElements):
+                                          - (item꞉ MultiTypedDeclarationElement):
+                                          - (item꞉ MultiTypedDeclarationElement):
+                                              - (member꞉ VariableDeclaration):
+                                                  - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (bool_keyword꞉ BoolKeyword): "bool" # (179..183)
+                                                  - (name꞉ Identifier): "z" # (184..185)
+                                          - (item꞉ MultiTypedDeclarationElement):
+                                      - (close_paren꞉ CloseParen): ")" # (187..188)
+                                      - (value꞉ VariableDeclarationValue):
+                                          - (equal꞉ Equal): "=" # (189..190)
+                                          - (expression꞉ Expression) ► (identifier꞉ Identifier): "foo" # (191..194)
+                                  - (semicolon꞉ Semicolon): ";" # (194..195)
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement):
+                                  - (target꞉ VariableDeclarationTarget) ► (multi_typed_declaration꞉ MultiTypedDeclaration):
+                                      - (open_paren꞉ OpenParen): "(" # (200..201)
+                                      - (elements꞉ MultiTypedDeclarationElements):
+                                          - (item꞉ MultiTypedDeclarationElement):
+                                              - (member꞉ VariableDeclaration):
+                                                  - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (bool_keyword꞉ BoolKeyword): "bool" # (201..205)
+                                                  - (name꞉ Identifier): "a" # (206..207)
+                                          - (item꞉ MultiTypedDeclarationElement):
+                                              - (member꞉ VariableDeclaration):
+                                                  - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (209..213)
+                                                  - (name꞉ Identifier): "b" # (214..215)
+                                      - (close_paren꞉ CloseParen): ")" # (215..216)
+                                      - (value꞉ VariableDeclarationValue):
+                                          - (equal꞉ Equal): "=" # (217..218)
+                                          - (expression꞉ Expression) ► (identifier꞉ Identifier): "foo" # (219..222)
+                                  - (semicolon꞉ Semicolon): ";" # (222..223)
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement):
+                                  - (target꞉ VariableDeclarationTarget) ► (multi_typed_declaration꞉ MultiTypedDeclaration):
+                                      - (open_paren꞉ OpenParen): "(" # (228..229)
+                                      - (elements꞉ MultiTypedDeclarationElements):
+                                          - (item꞉ MultiTypedDeclarationElement):
+                                              - (member꞉ VariableDeclaration):
+                                                  - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (229..233)
+                                                  - (name꞉ Identifier): "x" # (234..235)
+                                          - (item꞉ MultiTypedDeclarationElement):
+                                          - (item꞉ MultiTypedDeclarationElement):
+                                              - (member꞉ VariableDeclaration):
+                                                  - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (239..243)
+                                                  - (name꞉ Identifier): "y" # (244..245)
+                                      - (close_paren꞉ CloseParen): ")" # (245..246)
+                                      - (value꞉ VariableDeclarationValue):
+                                          - (equal꞉ Equal): "=" # (247..248)
+                                          - (expression꞉ Expression) ► (identifier꞉ Identifier): "foo" # (249..252)
+                                  - (semicolon꞉ Semicolon): ";" # (252..253)
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement):
+                                  - (target꞉ VariableDeclarationTarget) ► (multi_typed_declaration꞉ MultiTypedDeclaration):
+                                      - (open_paren꞉ OpenParen): "(" # (258..259)
+                                      - (elements꞉ MultiTypedDeclarationElements):
+                                          - (item꞉ MultiTypedDeclarationElement):
+                                          - (item꞉ MultiTypedDeclarationElement):
+                                          - (item꞉ MultiTypedDeclarationElement):
+                                          - (item꞉ MultiTypedDeclarationElement):
+                                          - (item꞉ MultiTypedDeclarationElement):
+                                              - (member꞉ VariableDeclaration):
+                                                  - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (bool_keyword꞉ BoolKeyword): "bool" # (263..267)
+                                                  - (name꞉ Identifier): "a" # (268..269)
+                                      - (close_paren꞉ CloseParen): ")" # (269..270)
+                                      - (value꞉ VariableDeclarationValue):
+                                          - (equal꞉ Equal): "=" # (271..272)
+                                          - (expression꞉ Expression) ► (identifier꞉ Identifier): "foo" # (273..276)
+                                  - (semicolon꞉ Semicolon): ";" # (276..277)
+                          - (close_brace꞉ CloseBrace): "}" # (280..281)
+              - (close_brace꞉ CloseBrace): "}" # (282..283)

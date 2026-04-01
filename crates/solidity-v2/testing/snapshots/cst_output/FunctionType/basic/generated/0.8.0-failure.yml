@@ -1,5 +1,14 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Source: >
+  1  │ contract C {                                                                                 │ 0..12
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/FunctionType/basic/input.sol │ 13..105
+  3  │ function (byte) internal pure returns (uint)                                                 │ 106..150
+  4  │                                                                                              │ 151..151
+  5  │ // <<<                                                                                       │ 152..158
+  6  │ x;                                                                                           │ 159..161
+  7  │ }                                                                                            │ 162..163
+
 Error: Unexpected ByteKeyword_Reserved. One of AddressKeyword_Reserved, AtKeyword_Unreserved, BoolKeyword_Reserved, BytesKeyword_Reserved, CloseParen, ErrorKeyword_Unreserved, FixedKeyword_Reserved, FromKeyword_Unreserved, FunctionKeyword_Reserved, GlobalKeyword_Unreserved, Identifier, IntKeyword_Reserved, LayoutKeyword_Unreserved, MappingKeyword_Reserved, RevertKeyword_Unreserved, StringKeyword_Reserved, TransientKeyword_Unreserved, UfixedKeyword_Reserved, UintKeyword_Reserved was expected
    ╭─[crates/solidity-v2/testing/snapshots/cst_output/FunctionType/basic/input.sol:3:11]
    │
