@@ -14,10 +14,11 @@ Source: >
   11 │ // <<<                                                                                                      │ 261..267
   12 │ }                                                                                                           │ 268..269
 
-Error: Unexpected UNRECOGNIZED. One of AddressKeyword_Reserved, AtKeyword_Unreserved, Bang, BoolKeyword_Reserved, BytesKeyword_Reserved, CloseParen, DecimalLiteral, DeleteKeyword_Reserved, ErrorKeyword_Unreserved, FalseKeyword_Reserved, FixedKeyword_Reserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, HexLiteral, HexStringLiteral, Identifier, IntKeyword_Reserved, LayoutKeyword_Unreserved, Minus, MinusMinus, NewKeyword_Reserved, OpenBrace, OpenBracket, OpenParen, PayableKeyword_Reserved, PlusPlus, RevertKeyword_Unreserved, StringKeyword_Reserved, StringLiteral, SuperKeyword_Reserved, ThisKeyword_Reserved, Tilde, TransientKeyword_Unreserved, TrueKeyword_Reserved, TypeKeyword_Reserved, UfixedKeyword_Reserved, UintKeyword_Reserved, UnicodeStringLiteral was expected
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/Block/postfix_recovery_regression/input.sol:7:9]
-   │
- 7 │     a.b('
-   │         ┬  
-   │         ╰── Error occurred here.
-───╯
+Error: >
+  Error: Unexpected UNRECOGNIZED. One of AddressKeyword_Reserved, AtKeyword_Unreserved, Bang, BoolKeyword_Reserved, BytesKeyword_Reserved, CloseParen, DecimalLiteral, DeleteKeyword_Reserved, ErrorKeyword_Unreserved, FalseKeyword_Reserved, FixedKeyword_Reserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, HexLiteral, HexStringLiteral, Identifier, IntKeyword_Reserved, LayoutKeyword_Unreserved, Minus, MinusMinus, NewKeyword_Reserved, OpenBrace, OpenBracket, OpenParen, PayableKeyword_Reserved, PlusPlus, RevertKeyword_Unreserved, StringKeyword_Reserved, StringLiteral, SuperKeyword_Reserved, ThisKeyword_Reserved, Tilde, TransientKeyword_Unreserved, TrueKeyword_Reserved, TypeKeyword_Reserved, UfixedKeyword_Reserved, UintKeyword_Reserved, UnicodeStringLiteral was expected
+     ╭─[crates/solidity-v2/testing/snapshots/cst_output/Block/postfix_recovery_regression/input.sol:7:9]
+     │
+   7 │     a.b('
+     │         ┬  
+     │         ╰── Error occurred here.
+  ───╯

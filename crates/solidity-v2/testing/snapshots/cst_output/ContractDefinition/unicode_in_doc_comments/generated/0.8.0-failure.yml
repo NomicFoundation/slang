@@ -9,10 +9,11 @@ Source: >
   6  │                                                                                                                      │ 606..606
   7  │ // <<<                                                                                                               │ 607..613
 
-Error: Unexpected end of file. One of ConstantKeyword_Reserved, OpenBracket, Period was expected
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/unicode_in_doc_comments/input.sol:5:11]
-   │
- 5 │ unexpected
-   │           │ 
-   │           ╰─ Error occurred here.
-───╯
+Error: >
+  Error: Unexpected end of file. One of ConstantKeyword_Reserved, OpenBracket, Period was expected
+     ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/unicode_in_doc_comments/input.sol:5:11]
+     │
+   5 │ unexpected
+     │           │ 
+     │           ╰─ Error occurred here.
+  ───╯

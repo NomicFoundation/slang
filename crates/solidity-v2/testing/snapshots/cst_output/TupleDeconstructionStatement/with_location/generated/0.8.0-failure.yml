@@ -9,10 +9,11 @@ Source: >
   6  │     }                                                                                                                │ 204..209
   7  │ }                                                                                                                    │ 210..211
 
-Error: Unexpected MemoryKeyword_Reserved. One of AddressKeyword_Reserved, AtKeyword_Unreserved, Bang, BoolKeyword_Reserved, BytesKeyword_Reserved, CloseParen, Comma, DecimalLiteral, DeleteKeyword_Reserved, ErrorKeyword_Unreserved, FalseKeyword_Reserved, FixedKeyword_Reserved, FromKeyword_Unreserved, FunctionKeyword_Reserved, GlobalKeyword_Unreserved, HexLiteral, HexStringLiteral, Identifier, IntKeyword_Reserved, LayoutKeyword_Unreserved, MappingKeyword_Reserved, Minus, MinusMinus, NewKeyword_Reserved, OpenBracket, OpenParen, PayableKeyword_Reserved, PlusPlus, RevertKeyword_Unreserved, StringKeyword_Reserved, StringLiteral, SuperKeyword_Reserved, ThisKeyword_Reserved, Tilde, TransientKeyword_Unreserved, TrueKeyword_Reserved, TypeKeyword_Reserved, UfixedKeyword_Reserved, UintKeyword_Reserved, UnicodeStringLiteral was expected
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/TupleDeconstructionStatement/with_location/input.sol:4:2]
-   │
- 4 │ (memory with_location, without_location) = rhs;
-   │  ───┬──  
-   │     ╰──── Error occurred here.
-───╯
+Error: >
+  Error: Unexpected MemoryKeyword_Reserved. One of AddressKeyword_Reserved, AtKeyword_Unreserved, Bang, BoolKeyword_Reserved, BytesKeyword_Reserved, CloseParen, Comma, DecimalLiteral, DeleteKeyword_Reserved, ErrorKeyword_Unreserved, FalseKeyword_Reserved, FixedKeyword_Reserved, FromKeyword_Unreserved, FunctionKeyword_Reserved, GlobalKeyword_Unreserved, HexLiteral, HexStringLiteral, Identifier, IntKeyword_Reserved, LayoutKeyword_Unreserved, MappingKeyword_Reserved, Minus, MinusMinus, NewKeyword_Reserved, OpenBracket, OpenParen, PayableKeyword_Reserved, PlusPlus, RevertKeyword_Unreserved, StringKeyword_Reserved, StringLiteral, SuperKeyword_Reserved, ThisKeyword_Reserved, Tilde, TransientKeyword_Unreserved, TrueKeyword_Reserved, TypeKeyword_Reserved, UfixedKeyword_Reserved, UintKeyword_Reserved, UnicodeStringLiteral was expected
+     ╭─[crates/solidity-v2/testing/snapshots/cst_output/TupleDeconstructionStatement/with_location/input.sol:4:2]
+     │
+   4 │ (memory with_location, without_location) = rhs;
+     │  ───┬──  
+     │     ╰──── Error occurred here.
+  ───╯

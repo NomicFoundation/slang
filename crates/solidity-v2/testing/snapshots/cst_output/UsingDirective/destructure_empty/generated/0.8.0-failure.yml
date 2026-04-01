@@ -7,10 +7,11 @@ Source: >
   4  │                                                                                                            │ 164..164
   5  │ // <<<                                                                                                     │ 165..171
 
-Error: Unexpected CloseBrace. One of AtKeyword_Unreserved, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, LayoutKeyword_Unreserved, RevertKeyword_Unreserved, TransientKeyword_Unreserved was expected
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/destructure_empty/input.sol:3:8]
-   │
- 3 │ using {} for *;
-   │        ┬  
-   │        ╰── Error occurred here.
-───╯
+Error: >
+  Error: Unexpected CloseBrace. One of AtKeyword_Unreserved, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, LayoutKeyword_Unreserved, RevertKeyword_Unreserved, TransientKeyword_Unreserved was expected
+     ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/destructure_empty/input.sol:3:8]
+     │
+   3 │ using {} for *;
+     │        ┬  
+     │        ╰── Error occurred here.
+  ───╯

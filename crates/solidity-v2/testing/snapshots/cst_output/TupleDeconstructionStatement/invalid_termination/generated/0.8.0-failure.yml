@@ -12,10 +12,11 @@ Source: >
   9  │     }                                                                                                                      │ 198..203
   10 │ }                                                                                                                          │ 204..205
 
-Error: Unexpected ThrowKeyword_Reserved. One of AtKeyword_Unreserved, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, LayoutKeyword_Unreserved, RevertKeyword_Unreserved, TransientKeyword_Unreserved was expected
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/TupleDeconstructionStatement/invalid_termination/input.sol:6:3]
-   │
- 6 │ { throw;
-   │   ──┬──  
-   │     ╰──── Error occurred here.
-───╯
+Error: >
+  Error: Unexpected ThrowKeyword_Reserved. One of AtKeyword_Unreserved, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, LayoutKeyword_Unreserved, RevertKeyword_Unreserved, TransientKeyword_Unreserved was expected
+     ╭─[crates/solidity-v2/testing/snapshots/cst_output/TupleDeconstructionStatement/invalid_termination/input.sol:6:3]
+     │
+   6 │ { throw;
+     │   ──┬──  
+     │     ╰──── Error occurred here.
+  ───╯

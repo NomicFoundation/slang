@@ -6,10 +6,11 @@ Source: >
   3  │                                                                                                                         │ 137..137
   4  │ // <<<                                                                                                                  │ 138..144
 
-Error: Unexpected UNRECOGNIZED. One of IsKeyword_Reserved, LayoutKeyword_Unreserved, OpenBrace was expected
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/unrecognized_lexeme_after_contract/input.sol:2:12]
-   │
- 2 │ contract X # { }
-   │            ┬  
-   │            ╰── Error occurred here.
-───╯
+Error: >
+  Error: Unexpected UNRECOGNIZED. One of IsKeyword_Reserved, LayoutKeyword_Unreserved, OpenBrace was expected
+     ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/unrecognized_lexeme_after_contract/input.sol:2:12]
+     │
+   2 │ contract X # { }
+     │            ┬  
+     │            ╰── Error occurred here.
+  ───╯
