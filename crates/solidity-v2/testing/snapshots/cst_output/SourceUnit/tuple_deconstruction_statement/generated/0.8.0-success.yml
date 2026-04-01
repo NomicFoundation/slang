@@ -38,12 +38,12 @@ Tree:
                                   - (target꞉ VariableDeclarationTarget) ► (multi_typed_declaration꞉ MultiTypedDeclaration):
                                       - (open_paren꞉ OpenParen): "(" # (176..177)
                                       - (elements꞉ MultiTypedDeclarationElements):
-                                          - (item꞉ MultiTypedDeclarationElement):
+                                          - (item꞉ MultiTypedDeclarationElement): []
                                           - (item꞉ MultiTypedDeclarationElement):
                                               - (member꞉ VariableDeclaration):
                                                   - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (bool_keyword꞉ BoolKeyword): "bool" # (179..183)
                                                   - (name꞉ Identifier): "z" # (184..185)
-                                          - (item꞉ MultiTypedDeclarationElement):
+                                          - (item꞉ MultiTypedDeclarationElement): []
                                       - (close_paren꞉ CloseParen): ")" # (187..188)
                                       - (value꞉ VariableDeclarationValue):
                                           - (equal꞉ Equal): "=" # (189..190)
@@ -74,7 +74,7 @@ Tree:
                                               - (member꞉ VariableDeclaration):
                                                   - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (229..233)
                                                   - (name꞉ Identifier): "x" # (234..235)
-                                          - (item꞉ MultiTypedDeclarationElement):
+                                          - (item꞉ MultiTypedDeclarationElement): []
                                           - (item꞉ MultiTypedDeclarationElement):
                                               - (member꞉ VariableDeclaration):
                                                   - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (239..243)
@@ -88,10 +88,10 @@ Tree:
                                   - (target꞉ VariableDeclarationTarget) ► (multi_typed_declaration꞉ MultiTypedDeclaration):
                                       - (open_paren꞉ OpenParen): "(" # (258..259)
                                       - (elements꞉ MultiTypedDeclarationElements):
-                                          - (item꞉ MultiTypedDeclarationElement):
-                                          - (item꞉ MultiTypedDeclarationElement):
-                                          - (item꞉ MultiTypedDeclarationElement):
-                                          - (item꞉ MultiTypedDeclarationElement):
+                                          - (item꞉ MultiTypedDeclarationElement): []
+                                          - (item꞉ MultiTypedDeclarationElement): []
+                                          - (item꞉ MultiTypedDeclarationElement): []
+                                          - (item꞉ MultiTypedDeclarationElement): []
                                           - (item꞉ MultiTypedDeclarationElement):
                                               - (member꞉ VariableDeclaration):
                                                   - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (bool_keyword꞉ BoolKeyword): "bool" # (263..267)

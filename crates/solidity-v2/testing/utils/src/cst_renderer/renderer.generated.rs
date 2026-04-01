@@ -2018,7 +2018,10 @@ pub fn render_multi_typed_declaration_element(
     ctx.write_nonterminal_start();
     ctx.depth += 1;
 
+    let mut has_children = false;
+
     if let Some(ref member) = node.member {
+        has_children = true;
         ctx.write_indent();
         ctx.write_key("member", "VariableDeclaration");
 
@@ -2026,6 +2029,8 @@ pub fn render_multi_typed_declaration_element(
     }
 
     ctx.depth -= 1;
+
+    ctx.finish_nonterminal(has_children);
 }
 
 pub fn render_multiplicative_expression(
@@ -2919,7 +2924,10 @@ pub fn render_tuple_value(ctx: &mut RenderContext<'_>, node: &TupleValueStruct) 
     ctx.write_nonterminal_start();
     ctx.depth += 1;
 
+    let mut has_children = false;
+
     if let Some(ref expression) = node.expression {
+        has_children = true;
         ctx.write_indent();
         ctx.write_key("expression", "Expression");
 
@@ -2927,6 +2935,8 @@ pub fn render_tuple_value(ctx: &mut RenderContext<'_>, node: &TupleValueStruct) 
     }
 
     ctx.depth -= 1;
+
+    ctx.finish_nonterminal(has_children);
 }
 
 pub fn render_type_expression(ctx: &mut RenderContext<'_>, node: &TypeExpressionStruct) {

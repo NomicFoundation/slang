@@ -12,12 +12,17 @@ use crate::cst_renderer::RenderContext;
 //
 
 {% for parent_type, sequence in target.sequences %}
+{%- set all_optional = sequence.fields | filter(attribute="is_optional", value=false) | length == 0 -%}
 pub fn render_{{ parent_type | snake_case }}(ctx: &mut RenderContext<'_>, node: &{{ parent_type }}Struct) {
   ctx.write_nonterminal_start();
   ctx.depth += 1;
+  {% if all_optional %}
+  let mut has_children = false;
+  {% endif %}
   {% for field in sequence.fields %}
     {% if field.is_optional %}
       if let Some(ref {{ field.label | snake_case }}) = node.{{ field.label | snake_case }} {
+        {% if all_optional %}has_children = true;{% endif %}
         ctx.write_indent();
         ctx.write_key("{{ field.label | snake_case }}", "{{ field.type.name }}");
         {% if field.type.is_terminal %}
@@ -39,6 +44,9 @@ pub fn render_{{ parent_type | snake_case }}(ctx: &mut RenderContext<'_>, node: 
     {% endif %}
   {% endfor %}
   ctx.depth -= 1;
+  {% if all_optional %}
+  ctx.finish_nonterminal(has_children);
+  {% endif %}
 }
 
 {% endfor %}

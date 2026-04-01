@@ -75,7 +75,7 @@ Tree:
                                               - (member꞉ VariableDeclaration):
                                                   - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (bool_keyword꞉ BoolKeyword): "bool" # (329..333)
                                                   - (name꞉ Identifier): "success" # (334..341)
-                                          - (item꞉ MultiTypedDeclarationElement):
+                                          - (item꞉ MultiTypedDeclarationElement): []
                                       - (close_paren꞉ CloseParen): ")" # (343..344)
                                       - (value꞉ VariableDeclarationValue):
                                           - (equal꞉ Equal): "=" # (345..346)

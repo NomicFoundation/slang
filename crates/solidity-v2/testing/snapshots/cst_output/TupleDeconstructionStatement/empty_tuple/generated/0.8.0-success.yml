@@ -35,11 +35,11 @@ Tree:
                                       - (left_operand꞉ Expression) ► (tuple_expression꞉ TupleExpression):
                                           - (open_paren꞉ OpenParen): "(" # (147..148)
                                           - (items꞉ TupleValues):
-                                              - (item꞉ TupleValue):
-                                              - (item꞉ TupleValue):
-                                              - (item꞉ TupleValue):
-                                              - (item꞉ TupleValue):
-                                              - (item꞉ TupleValue):
+                                              - (item꞉ TupleValue): []
+                                              - (item꞉ TupleValue): []
+                                              - (item꞉ TupleValue): []
+                                              - (item꞉ TupleValue): []
+                                              - (item꞉ TupleValue): []
                                           - (close_paren꞉ CloseParen): ")" # (152..153)
                                       - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (equal꞉ Equal): "=" # (154..155)
                                       - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "rhs" # (156..159)
