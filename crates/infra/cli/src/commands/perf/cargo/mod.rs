@@ -55,6 +55,7 @@ impl CargoController {
             let (package, bench_name) = match self.bench {
                 Benches::Slang => ("solidity_testing_perf_cargo", "slang"),
                 Benches::Comparison => ("solidity_testing_perf_cargo", "comparison"),
+                Benches::SlangV2 => ("solidity_testing_perf_cargo", "slang_v2"),
             };
             Command::new("cargo")
                 .args(["build", "--package", package, "--bench", bench_name])

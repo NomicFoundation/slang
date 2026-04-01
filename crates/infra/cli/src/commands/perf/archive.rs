@@ -7,6 +7,7 @@ use crate::toolchains::bencher;
 
 const BENCHER_PROJECTS: &[&str] = &[
     "slang-dashboard-cargo-slang",
+    "slang-dashboard-cargo-slang-v2",
     "slang-dashboard-cargo-cmp",
     "slang-dashboard-npm",
 ];
