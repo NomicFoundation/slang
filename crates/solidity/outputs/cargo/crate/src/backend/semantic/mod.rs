@@ -204,7 +204,7 @@ impl SemanticAnalysis {
 
     pub fn get_type_from_node_id(self: &Rc<Self>, node_id: NodeId) -> Option<ast::Type> {
         self.binder
-            .node_typing(node_id)
+            .try_node_typing(node_id)?
             .as_type_id()
             .map(|type_id| ast::Type::create(type_id, self))
     }
@@ -324,16 +324,15 @@ impl SemanticAnalysis {
             Type::Enum { .. } => Some("uint8".to_string()),
 
             Type::Struct { definition_id, .. } => {
-                let binder::Definition::Struct(struct_) = self
-                    .binder
-                    .find_definition_by_id(*definition_id)
-                    .expect("definition in type exists")
+                let binder::Definition::Struct(struct_) =
+                    self.binder.find_definition_by_id(*definition_id)?
                 else {
                     unreachable!("definition in struct type is not a struct");
                 };
                 let mut fields = Vec::new();
                 for member in &struct_.ir_node.members {
-                    let member_type_id = self.binder.node_typing(member.node_id).as_type_id()?;
+                    let member_type_id =
+                        self.binder.try_node_typing(member.node_id)?.as_type_id()?;
                     let field_type = self.type_canonical_name(member_type_id)?;
                     fields.push(field_type);
                 }
@@ -341,10 +340,8 @@ impl SemanticAnalysis {
             }
 
             Type::UserDefinedValue { definition_id } => {
-                let binder::Definition::UserDefinedValueType(udvt) = self
-                    .binder
-                    .find_definition_by_id(*definition_id)
-                    .expect("definition in type exists")
+                let binder::Definition::UserDefinedValueType(udvt) =
+                    self.binder.find_definition_by_id(*definition_id)?
                 else {
                     unreachable!("definition in user defined value type is not a UDVT");
                 };
@@ -406,7 +403,8 @@ impl SemanticAnalysis {
                 };
                 let mut ptr: usize = 0;
                 for member in &struct_definition.ir_node.members {
-                    let member_type_id = self.binder.node_typing(member.node_id).as_type_id()?;
+                    let member_type_id =
+                        self.binder.try_node_typing(member.node_id)?.as_type_id()?;
                     let member_size = self.storage_size_of_type_id(member_type_id)?;
                     let remaining_bytes = Self::SLOT_SIZE - (ptr % Self::SLOT_SIZE);
                     if remaining_bytes < Self::SLOT_SIZE && member_size >= remaining_bytes {
