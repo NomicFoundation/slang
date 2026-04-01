@@ -9,10 +9,11 @@ Source: >
   6  │ // <<<                                                                                                                 │ 199..205
   7  │ }                                                                                                                      │ 206..207
 
-Error: Unexpected OpenBrace. One of AtKeyword_Unreserved, ConstantKeyword_Reserved, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, ImmutableKeyword_Reserved, InternalKeyword_Reserved, LayoutKeyword_Unreserved, OverrideKeyword_Reserved, PrivateKeyword_Reserved, PublicKeyword_Reserved, RevertKeyword_Unreserved, TransientKeyword_Unreserved was expected
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/UnnamedFunctionDefinition/constant_attribute/input.sol:4:22]
-   │
- 4 │ function () constant {}
-   │                      ┬  
-   │                      ╰── Error occurred here.
-───╯
+Error: >
+  Error: Unexpected OpenBrace. One of AtKeyword_Unreserved, ConstantKeyword_Reserved, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, ImmutableKeyword_Reserved, InternalKeyword_Reserved, LayoutKeyword_Unreserved, OverrideKeyword_Reserved, PrivateKeyword_Reserved, PublicKeyword_Reserved, RevertKeyword_Unreserved, TransientKeyword_Unreserved was expected
+     ╭─[crates/solidity-v2/testing/snapshots/cst_output/UnnamedFunctionDefinition/constant_attribute/input.sol:4:22]
+     │
+   4 │ function () constant {}
+     │                      ┬  
+     │                      ╰── Error occurred here.
+  ───╯

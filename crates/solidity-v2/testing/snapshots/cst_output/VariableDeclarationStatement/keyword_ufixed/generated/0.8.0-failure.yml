@@ -10,10 +10,11 @@ Source: >
   7  │     }                                                                                                                 │ 171..176
   8  │ }                                                                                                                     │ 177..178
 
-Error: Unexpected UfixedKeyword_Reserved. One of Ampersand, AmpersandAmpersand, AmpersandEqual, Asterisk, AsteriskAsterisk, AsteriskEqual, AtKeyword_Unreserved, BangEqual, Bar, BarBar, BarEqual, CallDataKeyword_Reserved, Caret, CaretEqual, Equal, EqualEqual, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, GreaterThan, GreaterThanEqual, GreaterThanGreaterThan, GreaterThanGreaterThanEqual, GreaterThanGreaterThanGreaterThan, GreaterThanGreaterThanGreaterThanEqual, Identifier, LayoutKeyword_Unreserved, LessThan, LessThanEqual, LessThanLessThan, LessThanLessThanEqual, MemoryKeyword_Reserved, Minus, MinusEqual, MinusMinus, OpenBrace, OpenBracket, OpenParen, Percent, PercentEqual, Period, Plus, PlusEqual, PlusPlus, QuestionMark, RevertKeyword_Unreserved, Semicolon, Slash, SlashEqual, StorageKeyword_Reserved, TransientKeyword_Unreserved was expected
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/VariableDeclarationStatement/keyword_ufixed/input.sol:4:6]
-   │
- 4 │ uint ufixed;
-   │      ───┬──  
-   │         ╰──── Error occurred here.
-───╯
+Error: >
+  Error: Unexpected UfixedKeyword_Reserved. One of Ampersand, AmpersandAmpersand, AmpersandEqual, Asterisk, AsteriskAsterisk, AsteriskEqual, AtKeyword_Unreserved, BangEqual, Bar, BarBar, BarEqual, CallDataKeyword_Reserved, Caret, CaretEqual, Equal, EqualEqual, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, GreaterThan, GreaterThanEqual, GreaterThanGreaterThan, GreaterThanGreaterThanEqual, GreaterThanGreaterThanGreaterThan, GreaterThanGreaterThanGreaterThanEqual, Identifier, LayoutKeyword_Unreserved, LessThan, LessThanEqual, LessThanLessThan, LessThanLessThanEqual, MemoryKeyword_Reserved, Minus, MinusEqual, MinusMinus, OpenBrace, OpenBracket, OpenParen, Percent, PercentEqual, Period, Plus, PlusEqual, PlusPlus, QuestionMark, RevertKeyword_Unreserved, Semicolon, Slash, SlashEqual, StorageKeyword_Reserved, TransientKeyword_Unreserved was expected
+     ╭─[crates/solidity-v2/testing/snapshots/cst_output/VariableDeclarationStatement/keyword_ufixed/input.sol:4:6]
+     │
+   4 │ uint ufixed;
+     │      ───┬──  
+     │         ╰──── Error occurred here.
+  ───╯

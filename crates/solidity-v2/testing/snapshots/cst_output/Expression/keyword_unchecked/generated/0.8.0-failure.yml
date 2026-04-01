@@ -10,10 +10,11 @@ Source: >
   7  │     }                                                                                                  │ 154..159
   8  │ }                                                                                                      │ 160..161
 
-Error: Unexpected Semicolon. One of OpenBrace was expected
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/Expression/keyword_unchecked/input.sol:6:1]
-   │
- 6 │ ;
-   │ ┬  
-   │ ╰── Error occurred here.
-───╯
+Error: >
+  Error: Unexpected Semicolon. One of OpenBrace was expected
+     ╭─[crates/solidity-v2/testing/snapshots/cst_output/Expression/keyword_unchecked/input.sol:6:1]
+     │
+   6 │ ;
+     │ ┬  
+     │ ╰── Error occurred here.
+  ───╯

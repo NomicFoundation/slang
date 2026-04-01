@@ -19,10 +19,11 @@ Source: >
   16 │ // <<<                                                                                                       │ 683..689
   17 │ }                                                                                                            │ 690..691
 
-Error: Unexpected Identifier. One of CloseParen, Comma was expected
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:3:36]
-   │
- 3 │ function all() override(some.ident unexpected tokens, ISomeInterface, Other) public {
-   │                                    ─────┬────  
-   │                                         ╰────── Error occurred here.
-───╯
+Error: >
+  Error: Unexpected Identifier. One of CloseParen, Comma was expected
+     ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:3:36]
+     │
+   3 │ function all() override(some.ident unexpected tokens, ISomeInterface, Other) public {
+     │                                    ─────┬────  
+     │                                         ╰────── Error occurred here.
+  ───╯

@@ -10,10 +10,11 @@ Source: >
   7  │                                                                                                                          │ 185..185
   8  │ // <<<                                                                                                                   │ 186..192
 
-Error: Unexpected end of file. One of ConstantKeyword_Reserved, OpenBracket, Period was expected
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/end_of_file_trivia_unexpected_after/input.sol:6:16]
-   │
- 6 │ unexpectedchars
-   │                │ 
-   │                ╰─ Error occurred here.
-───╯
+Error: >
+  Error: Unexpected end of file. One of ConstantKeyword_Reserved, OpenBracket, Period was expected
+     ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/end_of_file_trivia_unexpected_after/input.sol:6:16]
+     │
+   6 │ unexpectedchars
+     │                │ 
+     │                ╰─ Error occurred here.
+  ───╯

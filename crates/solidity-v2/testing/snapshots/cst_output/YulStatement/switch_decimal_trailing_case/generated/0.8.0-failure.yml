@@ -11,10 +11,11 @@ Source: >
   8  │     }                                                                                                               │ 213..218
   9  │ }                                                                                                                   │ 219..220
 
-Error: Unexpected UNRECOGNIZED. One of YulDecimalLiteral, YulFalseKeyword_Reserved, YulHexLiteral, YulHexStringLiteral, YulIdentifier, YulStringLiteral, YulTrueKeyword_Reserved was expected
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulStatement/switch_decimal_trailing_case/input.sol:5:8]
-   │
- 5 │ switch 1case 0 {} default {}
-   │        ──┬──  
-   │          ╰──── Error occurred here.
-───╯
+Error: >
+  Error: Unexpected UNRECOGNIZED. One of YulDecimalLiteral, YulFalseKeyword_Reserved, YulHexLiteral, YulHexStringLiteral, YulIdentifier, YulStringLiteral, YulTrueKeyword_Reserved was expected
+     ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulStatement/switch_decimal_trailing_case/input.sol:5:8]
+     │
+   5 │ switch 1case 0 {} default {}
+     │        ──┬──  
+     │          ╰──── Error occurred here.
+  ───╯

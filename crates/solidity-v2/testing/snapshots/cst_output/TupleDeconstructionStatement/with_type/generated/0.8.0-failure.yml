@@ -9,10 +9,11 @@ Source: >
   6  │     }                                                                                                            │ 190..195
   7  │ }                                                                                                                │ 196..197
 
-Error: Unexpected CloseParen. One of AtKeyword_Unreserved, CallDataKeyword_Reserved, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, LayoutKeyword_Unreserved, MemoryKeyword_Reserved, RevertKeyword_Unreserved, StorageKeyword_Reserved, TransientKeyword_Unreserved was expected
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/TupleDeconstructionStatement/with_type/input.sol:4:30]
-   │
- 4 │ (bool with_type, without_type) = rhs;
-   │                              ┬  
-   │                              ╰── Error occurred here.
-───╯
+Error: >
+  Error: Unexpected CloseParen. One of AtKeyword_Unreserved, CallDataKeyword_Reserved, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, LayoutKeyword_Unreserved, MemoryKeyword_Reserved, RevertKeyword_Unreserved, StorageKeyword_Reserved, TransientKeyword_Unreserved was expected
+     ╭─[crates/solidity-v2/testing/snapshots/cst_output/TupleDeconstructionStatement/with_type/input.sol:4:30]
+     │
+   4 │ (bool with_type, without_type) = rhs;
+     │                              ┬  
+     │                              ╰── Error occurred here.
+  ───╯

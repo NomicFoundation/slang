@@ -58,8 +58,11 @@ pub fn render(
             ("failure", w)
         }
         (Err(err), _) => {
-            let errors = diagnostic::render(err, source_id, source, false);
-            writeln!(&mut w, "{errors}").unwrap();
+            let rendered = diagnostic::render(err, source_id, source, false);
+            writeln!(&mut w, "Error: >").unwrap();
+            for line in rendered.lines() {
+                writeln!(&mut w, "  {line}").unwrap();
+            }
 
             ("failure", w)
         }
