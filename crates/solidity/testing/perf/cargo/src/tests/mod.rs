@@ -6,6 +6,5 @@ pub mod cursor;
 pub mod parser;
 pub mod query;
 pub mod setup;
-pub mod slang_v2_parser;
 pub mod solar_parser;
 pub mod tree_sitter_parser;

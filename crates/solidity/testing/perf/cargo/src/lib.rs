@@ -2,9 +2,10 @@
 
 pub mod dataset;
 pub mod tests;
+pub mod tests_v2;
 
 mod __dependencies_used_in_benches__ {
-    use {iai_callgrind as _, infra_utils as _, paste as _, slang_solidity_v2_cst as _};
+    use {iai_callgrind as _, infra_utils as _, paste as _};
 }
 
 #[cfg(test)]
@@ -52,10 +53,16 @@ mod unit_tests {
     mod slang_v2 {
         #[test]
         fn parser() {
+            // __SLANG_V2_INFRA_BENCHMARKS_LIST__ (keep in sync)
+
             let payload = crate::tests::setup::setup(super::PROJECT_TO_TEST);
-            let source_units = crate::tests::slang_v2_parser::test(payload);
-            let contract_count = crate::tests::slang_v2_parser::count_contracts(&source_units);
+            let source_units = crate::tests_v2::parser::test(payload);
+            let contract_count = crate::tests_v2::parser::count_contracts(&source_units);
             assert_eq!(contract_count, super::CONTRACT_COUNT);
+
+            let ir_source_units = crate::tests_v2::ir_builder::test(source_units);
+            let ir_contract_count = crate::tests_v2::ir_builder::count_contracts(&ir_source_units);
+            assert_eq!(ir_contract_count, super::CONTRACT_COUNT);
         }
     }
 
