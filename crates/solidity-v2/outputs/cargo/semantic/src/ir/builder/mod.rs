@@ -292,19 +292,6 @@ impl Builder for CstToIrBuilder {
         }
     }
 
-    fn build_version_literal(&mut self, source: &input::VersionLiteral) -> output::VersionLiteral {
-        match source {
-            input::VersionLiteral::PragmaStringLiteral(string_literal) => {
-                output::VersionLiteral::StringLiteral(output::StringLiteral {
-                    range: string_literal.range.clone(),
-                })
-            }
-            input::VersionLiteral::SimpleVersionLiteral(_) => {
-                self.default_build_version_literal(source)
-            }
-        }
-    }
-
     fn build_arguments_declaration(
         &mut self,
         source: &input::ArgumentsDeclaration,
