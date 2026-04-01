@@ -5,6 +5,7 @@ use std::rc::Rc;
 
 use slang_solidity_v2_semantic::ir::{self, NodeId};
 use slang_solidity_v2_semantic::context::SemanticContext;
+use super::types::Type;
 
 //
 // Sequences
@@ -97,6 +98,10 @@ use slang_solidity_v2_semantic::context::SemanticContext;
         {% endif %}
       {% endif %}
     {% endfor %}
+
+    pub fn get_type(&self) -> Option<Type> {
+      Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
   }
 
 {% endfor %}

@@ -7,6 +7,8 @@ use std::rc::Rc;
 use slang_solidity_v2_semantic::context::SemanticContext;
 use slang_solidity_v2_semantic::ir::{self, NodeId};
 
+use super::types::Type;
+
 //
 // Sequences
 //
@@ -35,6 +37,10 @@ impl AbicoderPragmaStruct {
 
     pub fn version(&self) -> AbicoderVersion {
         create_abicoder_version(&self.ir_node.version, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -76,6 +82,10 @@ impl AdditiveExpressionStruct {
     pub fn right_operand(&self) -> Expression {
         create_expression(&self.ir_node.right_operand, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type AddressType = Rc<AddressTypeStruct>;
@@ -102,6 +112,10 @@ impl AddressTypeStruct {
 
     pub fn payable_keyword(&self) -> bool {
         self.ir_node.payable_keyword
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -134,6 +148,10 @@ impl AndExpressionStruct {
     pub fn right_operand(&self) -> Expression {
         create_expression(&self.ir_node.right_operand, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type ArrayExpression = Rc<ArrayExpressionStruct>;
@@ -160,6 +178,10 @@ impl ArrayExpressionStruct {
 
     pub fn items(&self) -> ArrayValues {
         create_array_values(&self.ir_node.items, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -195,6 +217,10 @@ impl ArrayTypeNameStruct {
             .as_ref()
             .map(|ir_node| create_expression(ir_node, &self.semantic))
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type AssemblyStatement = Rc<AssemblyStatementStruct>;
@@ -229,6 +255,10 @@ impl AssemblyStatementStruct {
 
     pub fn body(&self) -> YulBlock {
         create_yul_block(&self.ir_node.body, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -270,6 +300,10 @@ impl AssignmentExpressionStruct {
     pub fn right_operand(&self) -> Expression {
         create_expression(&self.ir_node.right_operand, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type BitwiseAndExpression = Rc<BitwiseAndExpressionStruct>;
@@ -300,6 +334,10 @@ impl BitwiseAndExpressionStruct {
 
     pub fn right_operand(&self) -> Expression {
         create_expression(&self.ir_node.right_operand, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -332,6 +370,10 @@ impl BitwiseOrExpressionStruct {
     pub fn right_operand(&self) -> Expression {
         create_expression(&self.ir_node.right_operand, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type BitwiseXorExpression = Rc<BitwiseXorExpressionStruct>;
@@ -363,6 +405,10 @@ impl BitwiseXorExpressionStruct {
     pub fn right_operand(&self) -> Expression {
         create_expression(&self.ir_node.right_operand, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type Block = Rc<BlockStruct>;
@@ -387,6 +433,10 @@ impl BlockStruct {
     pub fn statements(&self) -> Statements {
         create_statements(&self.ir_node.statements, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type BreakStatement = Rc<BreakStatementStruct>;
@@ -409,6 +459,10 @@ pub(crate) fn create_break_statement(
 impl BreakStatementStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -440,6 +494,10 @@ impl CallOptionsExpressionStruct {
 
     pub fn options(&self) -> CallOptions {
         create_call_options(&self.ir_node.options, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -475,6 +533,10 @@ impl CatchClauseStruct {
     pub fn body(&self) -> Block {
         create_block(&self.ir_node.body, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type CatchClauseError = Rc<CatchClauseErrorStruct>;
@@ -508,6 +570,10 @@ impl CatchClauseErrorStruct {
 
     pub fn parameters(&self) -> Parameters {
         create_parameters(&self.ir_node.parameters, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -543,6 +609,10 @@ impl ConditionalExpressionStruct {
 
     pub fn false_expression(&self) -> Expression {
         create_expression(&self.ir_node.false_expression, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -589,6 +659,10 @@ impl ConstantDefinitionStruct {
             .as_ref()
             .map(|ir_node| create_expression(ir_node, &self.semantic))
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type ContinueStatement = Rc<ContinueStatementStruct>;
@@ -611,6 +685,10 @@ pub(crate) fn create_continue_statement(
 impl ContinueStatementStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -658,6 +736,10 @@ impl ContractDefinitionStruct {
             .as_ref()
             .map(|ir_node| create_expression(ir_node, &self.semantic))
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type DecimalNumberExpression = Rc<DecimalNumberExpressionStruct>;
@@ -692,6 +774,10 @@ impl DecimalNumberExpressionStruct {
             .as_ref()
             .map(|ir_node| create_number_unit(ir_node, &self.semantic))
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type DoWhileStatement = Rc<DoWhileStatementStruct>;
@@ -722,6 +808,10 @@ impl DoWhileStatementStruct {
 
     pub fn condition(&self) -> Expression {
         create_expression(&self.ir_node.condition, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -754,6 +844,10 @@ impl EmitStatementStruct {
     pub fn arguments(&self) -> ArgumentsDeclaration {
         create_arguments_declaration(&self.ir_node.arguments, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type EnumDefinition = Rc<EnumDefinitionStruct>;
@@ -784,6 +878,10 @@ impl EnumDefinitionStruct {
 
     pub fn members(&self) -> EnumMembers {
         create_enum_members(&self.ir_node.members, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -825,6 +923,10 @@ impl EqualityExpressionStruct {
     pub fn right_operand(&self) -> Expression {
         create_expression(&self.ir_node.right_operand, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type ErrorDefinition = Rc<ErrorDefinitionStruct>;
@@ -855,6 +957,10 @@ impl ErrorDefinitionStruct {
 
     pub fn parameters(&self) -> Parameters {
         create_parameters(&self.ir_node.parameters, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -891,6 +997,10 @@ impl EventDefinitionStruct {
     pub fn parameters(&self) -> Parameters {
         create_parameters(&self.ir_node.parameters, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type ExperimentalPragma = Rc<ExperimentalPragmaStruct>;
@@ -917,6 +1027,10 @@ impl ExperimentalPragmaStruct {
 
     pub fn feature(&self) -> ExperimentalFeature {
         create_experimental_feature(&self.ir_node.feature, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -949,6 +1063,10 @@ impl ExponentiationExpressionStruct {
     pub fn right_operand(&self) -> Expression {
         create_expression(&self.ir_node.right_operand, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type ExpressionStatement = Rc<ExpressionStatementStruct>;
@@ -975,6 +1093,10 @@ impl ExpressionStatementStruct {
 
     pub fn expression(&self) -> Expression {
         create_expression(&self.ir_node.expression, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -1018,6 +1140,10 @@ impl ForStatementStruct {
     pub fn body(&self) -> Statement {
         create_statement(&self.ir_node.body, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type FunctionCallExpression = Rc<FunctionCallExpressionStruct>;
@@ -1048,6 +1174,10 @@ impl FunctionCallExpressionStruct {
 
     pub fn arguments(&self) -> ArgumentsDeclaration {
         create_arguments_declaration(&self.ir_node.arguments, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -1124,6 +1254,10 @@ impl FunctionDefinitionStruct {
     pub fn modifier_invocations(&self) -> ModifierInvocations {
         create_modifier_invocations(&self.ir_node.modifier_invocations, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type FunctionType = Rc<FunctionTypeStruct>;
@@ -1166,6 +1300,10 @@ impl FunctionTypeStruct {
     pub fn mutability(&self) -> FunctionMutability {
         create_function_mutability(&self.ir_node.mutability, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type HexNumberExpression = Rc<HexNumberExpressionStruct>;
@@ -1192,6 +1330,10 @@ impl HexNumberExpressionStruct {
 
     pub fn literal(&self) -> ir::HexLiteral {
         Rc::clone(&self.ir_node.literal)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -1231,6 +1373,10 @@ impl IfStatementStruct {
             .as_ref()
             .map(|ir_node| create_statement(ir_node, &self.semantic))
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type ImportDeconstruction = Rc<ImportDeconstructionStruct>;
@@ -1261,6 +1407,10 @@ impl ImportDeconstructionStruct {
 
     pub fn path(&self) -> ir::StringLiteral {
         Rc::clone(&self.ir_node.path)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -1295,6 +1445,10 @@ impl ImportDeconstructionSymbolStruct {
             .alias
             .as_ref()
             .map(|ir_node| create_identifier(ir_node, &self.semantic))
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -1337,6 +1491,10 @@ impl IndexAccessExpressionStruct {
             .as_ref()
             .map(|ir_node| create_expression(ir_node, &self.semantic))
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type InequalityExpression = Rc<InequalityExpressionStruct>;
@@ -1377,6 +1535,10 @@ impl InequalityExpressionStruct {
     pub fn right_operand(&self) -> Expression {
         create_expression(&self.ir_node.right_operand, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type InheritanceType = Rc<InheritanceTypeStruct>;
@@ -1410,6 +1572,10 @@ impl InheritanceTypeStruct {
             .arguments
             .as_ref()
             .map(|ir_node| create_arguments_declaration(ir_node, &self.semantic))
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -1449,6 +1615,10 @@ impl InterfaceDefinitionStruct {
     pub fn members(&self) -> InterfaceMembers {
         create_interface_members(&self.ir_node.members, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type LibraryDefinition = Rc<LibraryDefinitionStruct>;
@@ -1479,6 +1649,10 @@ impl LibraryDefinitionStruct {
 
     pub fn members(&self) -> LibraryMembers {
         create_library_members(&self.ir_node.members, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -1511,6 +1685,10 @@ impl MappingTypeStruct {
     pub fn value_type(&self) -> Parameter {
         create_parameter(&self.ir_node.value_type, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type MemberAccessExpression = Rc<MemberAccessExpressionStruct>;
@@ -1541,6 +1719,10 @@ impl MemberAccessExpressionStruct {
 
     pub fn member(&self) -> Identifier {
         create_identifier(&self.ir_node.member, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -1576,6 +1758,10 @@ impl ModifierInvocationStruct {
             .as_ref()
             .map(|ir_node| create_arguments_declaration(ir_node, &self.semantic))
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type MultiTypedDeclaration = Rc<MultiTypedDeclarationStruct>;
@@ -1607,6 +1793,10 @@ impl MultiTypedDeclarationStruct {
     pub fn value(&self) -> Expression {
         create_expression(&self.ir_node.value, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type MultiTypedDeclarationElement = Rc<MultiTypedDeclarationElementStruct>;
@@ -1636,6 +1826,10 @@ impl MultiTypedDeclarationElementStruct {
             .member
             .as_ref()
             .map(|ir_node| create_variable_declaration(ir_node, &self.semantic))
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -1677,6 +1871,10 @@ impl MultiplicativeExpressionStruct {
     pub fn right_operand(&self) -> Expression {
         create_expression(&self.ir_node.right_operand, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type NamedArgument = Rc<NamedArgumentStruct>;
@@ -1708,6 +1906,10 @@ impl NamedArgumentStruct {
     pub fn value(&self) -> Expression {
         create_expression(&self.ir_node.value, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type NewExpression = Rc<NewExpressionStruct>;
@@ -1734,6 +1936,10 @@ impl NewExpressionStruct {
 
     pub fn type_name(&self) -> TypeName {
         create_type_name(&self.ir_node.type_name, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -1765,6 +1971,10 @@ impl OrExpressionStruct {
 
     pub fn right_operand(&self) -> Expression {
         create_expression(&self.ir_node.right_operand, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -1811,6 +2021,10 @@ impl ParameterStruct {
     pub fn indexed(&self) -> bool {
         self.ir_node.indexed
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type PathImport = Rc<PathImportStruct>;
@@ -1844,6 +2058,10 @@ impl PathImportStruct {
             .alias
             .as_ref()
             .map(|ir_node| create_identifier(ir_node, &self.semantic))
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -1879,6 +2097,10 @@ impl PostfixExpressionStruct {
             &self.semantic,
         )
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type PragmaDirective = Rc<PragmaDirectiveStruct>;
@@ -1905,6 +2127,10 @@ impl PragmaDirectiveStruct {
 
     pub fn pragma(&self) -> Pragma {
         create_pragma(&self.ir_node.pragma, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -1940,6 +2166,10 @@ impl PrefixExpressionStruct {
     pub fn operand(&self) -> Expression {
         create_expression(&self.ir_node.operand, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type ReturnStatement = Rc<ReturnStatementStruct>;
@@ -1969,6 +2199,10 @@ impl ReturnStatementStruct {
             .expression
             .as_ref()
             .map(|ir_node| create_expression(ir_node, &self.semantic))
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -2000,6 +2234,10 @@ impl RevertStatementStruct {
 
     pub fn arguments(&self) -> ArgumentsDeclaration {
         create_arguments_declaration(&self.ir_node.arguments, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -2039,6 +2277,10 @@ impl ShiftExpressionStruct {
     pub fn right_operand(&self) -> Expression {
         create_expression(&self.ir_node.right_operand, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type SingleTypedDeclaration = Rc<SingleTypedDeclarationStruct>;
@@ -2073,6 +2315,10 @@ impl SingleTypedDeclarationStruct {
             .as_ref()
             .map(|ir_node| create_expression(ir_node, &self.semantic))
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type SourceUnit = Rc<SourceUnitStruct>;
@@ -2099,6 +2345,10 @@ impl SourceUnitStruct {
 
     pub fn members(&self) -> SourceUnitMembers {
         create_source_unit_members(&self.ir_node.members, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -2153,6 +2403,10 @@ impl StateVariableDefinitionStruct {
             .as_ref()
             .map(|ir_node| create_override_paths(ir_node, &self.semantic))
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type StructDefinition = Rc<StructDefinitionStruct>;
@@ -2184,6 +2438,10 @@ impl StructDefinitionStruct {
     pub fn members(&self) -> StructMembers {
         create_struct_members(&self.ir_node.members, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type StructMember = Rc<StructMemberStruct>;
@@ -2214,6 +2472,10 @@ impl StructMemberStruct {
 
     pub fn name(&self) -> Identifier {
         create_identifier(&self.ir_node.name, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -2257,6 +2519,10 @@ impl TryStatementStruct {
     pub fn catch_clauses(&self) -> CatchClauses {
         create_catch_clauses(&self.ir_node.catch_clauses, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type TupleExpression = Rc<TupleExpressionStruct>;
@@ -2283,6 +2549,10 @@ impl TupleExpressionStruct {
 
     pub fn items(&self) -> TupleValues {
         create_tuple_values(&self.ir_node.items, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -2314,6 +2584,10 @@ impl TupleValueStruct {
             .as_ref()
             .map(|ir_node| create_expression(ir_node, &self.semantic))
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type TypeExpression = Rc<TypeExpressionStruct>;
@@ -2341,6 +2615,10 @@ impl TypeExpressionStruct {
     pub fn type_name(&self) -> TypeName {
         create_type_name(&self.ir_node.type_name, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type UncheckedBlock = Rc<UncheckedBlockStruct>;
@@ -2367,6 +2645,10 @@ impl UncheckedBlockStruct {
 
     pub fn block(&self) -> Block {
         create_block(&self.ir_node.block, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -2399,6 +2681,10 @@ impl UserDefinedValueTypeDefinitionStruct {
     pub fn value_type(&self) -> ElementaryType {
         create_elementary_type(&self.ir_node.value_type, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type UsingDeconstruction = Rc<UsingDeconstructionStruct>;
@@ -2425,6 +2711,10 @@ impl UsingDeconstructionStruct {
 
     pub fn symbols(&self) -> UsingDeconstructionSymbols {
         create_using_deconstruction_symbols(&self.ir_node.symbols, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -2460,6 +2750,10 @@ impl UsingDeconstructionSymbolStruct {
             .as_ref()
             .map(|ir_node| create_using_operator(ir_node, &self.semantic))
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type UsingDirective = Rc<UsingDirectiveStruct>;
@@ -2494,6 +2788,10 @@ impl UsingDirectiveStruct {
 
     pub fn global_keyword(&self) -> bool {
         self.ir_node.global_keyword
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -2533,6 +2831,10 @@ impl VariableDeclarationStruct {
     pub fn name(&self) -> Identifier {
         create_identifier(&self.ir_node.name, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type VariableDeclarationStatement = Rc<VariableDeclarationStatementStruct>;
@@ -2560,6 +2862,10 @@ impl VariableDeclarationStatementStruct {
     pub fn target(&self) -> VariableDeclarationTarget {
         create_variable_declaration_target(&self.ir_node.target, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type VersionPragma = Rc<VersionPragmaStruct>;
@@ -2586,6 +2892,10 @@ impl VersionPragmaStruct {
 
     pub fn sets(&self) -> VersionExpressionSets {
         create_version_expression_sets(&self.ir_node.sets, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -2617,6 +2927,10 @@ impl VersionRangeStruct {
 
     pub fn end(&self) -> VersionLiteral {
         create_version_literal(&self.ir_node.end, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -2652,6 +2966,10 @@ impl VersionTermStruct {
     pub fn literal(&self) -> VersionLiteral {
         create_version_literal(&self.ir_node.literal, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type WhileStatement = Rc<WhileStatementStruct>;
@@ -2683,6 +3001,10 @@ impl WhileStatementStruct {
     pub fn body(&self) -> Statement {
         create_statement(&self.ir_node.body, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type YulBlock = Rc<YulBlockStruct>;
@@ -2707,6 +3029,10 @@ impl YulBlockStruct {
     pub fn statements(&self) -> YulStatements {
         create_yul_statements(&self.ir_node.statements, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type YulBreakStatement = Rc<YulBreakStatementStruct>;
@@ -2730,6 +3056,10 @@ impl YulBreakStatementStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type YulContinueStatement = Rc<YulContinueStatementStruct>;
@@ -2752,6 +3082,10 @@ pub(crate) fn create_yul_continue_statement(
 impl YulContinueStatementStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -2779,6 +3113,10 @@ impl YulDefaultCaseStruct {
 
     pub fn body(&self) -> YulBlock {
         create_yul_block(&self.ir_node.body, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -2819,6 +3157,10 @@ impl YulForStatementStruct {
     pub fn body(&self) -> YulBlock {
         create_yul_block(&self.ir_node.body, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type YulFunctionCallExpression = Rc<YulFunctionCallExpressionStruct>;
@@ -2849,6 +3191,10 @@ impl YulFunctionCallExpressionStruct {
 
     pub fn arguments(&self) -> YulArguments {
         create_yul_arguments(&self.ir_node.arguments, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -2892,6 +3238,10 @@ impl YulFunctionDefinitionStruct {
     pub fn body(&self) -> YulBlock {
         create_yul_block(&self.ir_node.body, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type YulIfStatement = Rc<YulIfStatementStruct>;
@@ -2923,6 +3273,10 @@ impl YulIfStatementStruct {
     pub fn body(&self) -> YulBlock {
         create_yul_block(&self.ir_node.body, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type YulLeaveStatement = Rc<YulLeaveStatementStruct>;
@@ -2945,6 +3299,10 @@ pub(crate) fn create_yul_leave_statement(
 impl YulLeaveStatementStruct {
     pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -2977,6 +3335,10 @@ impl YulSwitchStatementStruct {
     pub fn cases(&self) -> YulSwitchCases {
         create_yul_switch_cases(&self.ir_node.cases, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type YulValueCase = Rc<YulValueCaseStruct>;
@@ -3008,6 +3370,10 @@ impl YulValueCaseStruct {
     pub fn body(&self) -> YulBlock {
         create_yul_block(&self.ir_node.body, &self.semantic)
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type YulVariableAssignmentStatement = Rc<YulVariableAssignmentStatementStruct>;
@@ -3038,6 +3404,10 @@ impl YulVariableAssignmentStatementStruct {
 
     pub fn expression(&self) -> YulExpression {
         create_yul_expression(&self.ir_node.expression, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
@@ -3073,6 +3443,10 @@ impl YulVariableDeclarationStatementStruct {
             .as_ref()
             .map(|ir_node| create_yul_variable_declaration_value(ir_node, &self.semantic))
     }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
 }
 
 pub type YulVariableDeclarationValue = Rc<YulVariableDeclarationValueStruct>;
@@ -3099,6 +3473,10 @@ impl YulVariableDeclarationValueStruct {
 
     pub fn expression(&self) -> YulExpression {
         create_yul_expression(&self.ir_node.expression, &self.semantic)
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 }
 
