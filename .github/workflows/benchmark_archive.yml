@@ -7,7 +7,7 @@ on:
 
 jobs:
   archive:
-    runs-on: "ubuntu-24.04"
+    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
 
     # Only run for same-repo PRs (fork PRs never created bencher branches):
     if: "${{ github.event.pull_request.head.repo.full_name == github.repository }}"
