@@ -4,7 +4,7 @@ pub mod dataset;
 pub mod tests;
 
 mod __dependencies_used_in_benches__ {
-    use {iai_callgrind as _, infra_utils as _, paste as _};
+    use {iai_callgrind as _, infra_utils as _, paste as _, slang_solidity_v2_cst as _};
 }
 
 #[cfg(test)]
@@ -47,6 +47,16 @@ mod unit_tests {
         define_payload_test!(bindings_build);
         define_payload_test_and_assert_count_eq!(bindings_resolve, super::IDENTIFIER_COUNT);
         define_payload_test_and_assert_count_eq!(binder_v2_run, super::IDENTIFIER_COUNT);
+    }
+
+    mod slang_v2 {
+        #[test]
+        fn parser() {
+            let payload = crate::tests::setup::setup(super::PROJECT_TO_TEST);
+            let source_units = crate::tests::slang_v2_parser::test(payload);
+            let contract_count = crate::tests::slang_v2_parser::count_contracts(&source_units);
+            assert_eq!(contract_count, super::CONTRACT_COUNT);
+        }
     }
 
     mod solar {
