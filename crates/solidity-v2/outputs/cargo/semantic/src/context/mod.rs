@@ -36,3 +36,24 @@ impl SemanticContext {
         &self.types
     }
 }
+
+impl SemanticContext {
+    pub fn resolve_reference_identifier_to_definition_id(&self, node_id: NodeId) -> Option<NodeId> {
+        let reference = self
+            .binder()
+            .find_reference_by_identifier_node_id(node_id)?;
+        self.binder()
+            .follow_symbol_aliases(&reference.resolution)
+            .as_definition_id()
+    }
+
+    pub fn resolve_reference_identifier_to_immediate_definition_id(
+        &self,
+        node_id: NodeId,
+    ) -> Option<NodeId> {
+        let reference = self
+            .binder()
+            .find_reference_by_identifier_node_id(node_id)?;
+        reference.resolution.as_definition_id()
+    }
+}

@@ -72,7 +72,7 @@ pub enum Typing {
 }
 
 impl Typing {
-    pub(crate) fn as_type_id(&self) -> Option<TypeId> {
+    pub fn as_type_id(&self) -> Option<TypeId> {
         match self {
             Self::Resolved(type_id) => Some(*type_id),
             _ => None,
@@ -230,7 +230,7 @@ impl Binder {
         }
     }
 
-    pub(crate) fn get_linearised_bases(&self, node_id: NodeId) -> Option<&Vec<NodeId>> {
+    pub fn get_linearised_bases(&self, node_id: NodeId) -> Option<&Vec<NodeId>> {
         self.linearisations.get(&node_id)
     }
 

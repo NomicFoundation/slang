@@ -577,6 +577,24 @@ impl TypeRegistry {
                 }
             })
     }
+
+    pub fn type_id_is_function_and_overrides(
+        &self,
+        type_id: TypeId,
+        other_type_id: TypeId,
+    ) -> bool {
+        if type_id == other_type_id {
+            return true;
+        }
+        let type_ = self.get_type_by_id(type_id);
+        let other_type = self.get_type_by_id(other_type_id);
+        match (type_, other_type) {
+            (Type::Function(ftype), Type::Function(other)) => {
+                self.function_type_overrides(ftype, other)
+            }
+            _ => false,
+        }
+    }
 }
 
 // Convenience accessors for pre-defined types
