@@ -20,8 +20,14 @@ pub struct CargoController {
     bench: Benches,
     #[command(flatten)]
     dry_run: DryRun,
+    /// Run as a PR benchmark with regression detection via bencher start points.
+    #[arg(long)]
+    pr_benchmark: bool,
     #[arg(long)]
     no_deps: bool,
+    /// Install deps and build bench binaries, but skip running benchmarks.
+    #[arg(long, conflicts_with = "pr_benchmark")]
+    smoke: bool,
 }
 
 #[derive(Clone, Debug, Subcommand)]
@@ -40,6 +46,19 @@ impl CargoController {
             CargoWorkspace::install_binary("bencher_cli")?;
 
             Self::install_graphviz();
+        }
+
+        if self.smoke {
+            let (package, bench_name) = match self.bench {
+                Benches::Slang => ("solidity_testing_perf_cargo", "slang"),
+                Benches::Comparison => ("solidity_testing_perf_cargo", "comparison"),
+            };
+            Command::new("cargo")
+                .args(["build", "--package", package, "--bench", bench_name])
+                .run();
+            // Verify gprof2dot is installed (used by generate_callgraph after full benchmarks).
+            PipEnv::run("gprof2dot").arg("--version").run();
+            return Ok(());
         }
 
         // Bencher supports multiple languages/frameworks: https://bencher.dev/docs/explanation/adapters/
@@ -123,10 +142,33 @@ impl CargoController {
             "cargo bench --package {package_name} --bench {bench_name} --message-format json"
         );
 
+        // 1% threshold: iai-callgrind uses deterministic hardware counters (not wall clock),
+        // so any change reflects a real code change, not noise.
+        // PR comments disabled for cargo (exceeds GitHub's 65K char limit with bencher v0.5.8).
+        // Results are still uploaded to the bencher dashboard. TODO(#1586): re-enable once
+        // bencher v0.5.10 (auto-truncation) is available.
         run_bench(
             self.dry_run.get(),
+            self.pr_benchmark,
             bencher_project,
             "rust_iai_callgrind",
+            &[
+                ("estimated-cycles", "0.01"),
+                ("instructions", "0.01"),
+                ("l1-hits", "0.01"),
+                ("l2-hits", "0.01"),
+                ("ram-hits", "0.01"),
+                ("total-read-write", "0.01"),
+                ("total-bytes", "0.01"),
+                ("total-blocks", "0.01"),
+                ("at-t-gmax-bytes", "0.01"),
+                ("at-t-gmax-blocks", "0.01"),
+                ("at-t-end-bytes", "0.01"),
+                ("at-t-end-blocks", "0.01"),
+                ("reads-bytes", "0.01"),
+                ("writes-bytes", "0.01"),
+            ],
+            false,
             &test_runner,
         );
 

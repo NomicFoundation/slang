@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::fs;
 use std::path::Path;
 use std::sync::OnceLock;
@@ -10,7 +10,7 @@ use slang_solidity::compilation::{CompilationBuilder, CompilationBuilderConfig, 
 use solidity_testing_utils::import_resolver::{ImportRemap, ImportResolver, SourceMap};
 use solidity_testing_utils::{config, fetch};
 
-type ProjectMap = HashMap<String, SolidityProject>;
+type ProjectMap = BTreeMap<String, SolidityProject>;
 
 pub fn load_projects() -> &'static ProjectMap {
     static CACHE: OnceLock<ProjectMap> = OnceLock::new();
@@ -52,7 +52,7 @@ fn load_projects_internal() -> Result<ProjectMap> {
 /// Structure for deserealizing the metadata from a json file.
 #[derive(Deserialize)]
 struct Metadata {
-    pub sources: HashMap<String, Source>,
+    pub sources: BTreeMap<String, Source>,
     pub compilation: Compilation,
 }
 
@@ -77,7 +77,7 @@ struct CompilerSettings {
 
 pub struct SolidityProject {
     pub name: String,
-    pub sources: HashMap<String, String>,
+    pub sources: BTreeMap<String, String>,
     pub entrypoint: String,
     pub compiler_version: String,
     pub import_resolver: ImportResolver,
@@ -87,7 +87,7 @@ impl TryFrom<Metadata> for SolidityProject {
     type Error = anyhow::Error;
 
     fn try_from(value: Metadata) -> std::result::Result<Self, Self::Error> {
-        let sources: HashMap<String, String> = value
+        let sources: BTreeMap<String, String> = value
             .sources
             .into_iter()
             .map(|(k, v)| (k, v.content))

@@ -20,17 +20,29 @@ on:
     branches:
       - "main"
 
-# Queue up benchmark workflows for the same branch, so that results are reported in order:
+  # Run on pull requests (smoke test always, full benchmark with 'ci:perf' label):
+  pull_request:
+    types:
+      - "opened"
+      - "synchronize"
+      - "reopened"
+      - "labeled"
+
+# Queue benchmark workflows for the same branch (main pushes queue for ordered results; PR runs cancel stale ones):
 concurrency:
   group: "${{ github.workflow }}-${{ github.ref_name }}"
-  cancel-in-progress: false
+  cancel-in-progress: "${{ github.event_name == 'pull_request' }}"
 
 jobs:
   benchmark:
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
 
-    # Only run on the main repo (not forks), unless it is a dry run:
-    if: "${{ github.repository == 'NomicFoundation/slang' || inputs.dryRun == true }}"
+    # Skip fork PRs (can't access BENCHER_API_TOKEN). For non-PR events, only run on the main repo.
+    if: >-
+      ${{
+        (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)
+        || (github.event_name != 'pull_request' && (github.repository == 'NomicFoundation/slang' || inputs.dryRun == true))
+      }}
 
     steps:
       - name: "Checkout Repository"
@@ -50,12 +62,20 @@ jobs:
           echo "SLANG_BENCHER_PROJECT=${{ inputs.bencherProject }}" >> $GITHUB_ENV
         if: "${{ inputs.bencherProject }}"
 
-      - name: "infra perf cargo slang"
-        run: "./scripts/bin/infra perf cargo ${{ inputs.dryRun == true && '--dry-run' || '' }} slang"
+      - name: "Smoke Test > infra perf cargo --smoke slang"
+        if: "${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
+        run: "./scripts/bin/infra perf cargo --smoke slang"
+
+      - name: "Benchmark > infra perf cargo slang"
+        if: "${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
+        run: "./scripts/bin/infra perf cargo ${{ github.event_name == 'pull_request' && '--pr-benchmark' || (inputs.dryRun == true && '--dry-run' || '') }} slang"
         env:
           BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
+          BENCHER_PR_START_POINT_HASH: "${{ github.event.pull_request.base.sha }}"
+          BENCHER_PR_HEAD_HASH: "${{ github.event.pull_request.head.sha }}"
 
-      - name: "Upload Benchmarking Data"
+      - name: "Benchmark > Upload Benchmarking Data"
+        if: "${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
         uses: "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
         with:
           name: "benchmarking-data"

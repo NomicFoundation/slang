@@ -1,0 +1,31 @@
+name: "benchmark_archive"
+
+on:
+  pull_request:
+    types:
+      - "closed"
+
+jobs:
+  archive:
+    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+
+    # Only run for same-repo PRs (fork PRs never created bencher branches):
+    if: "${{ github.event.pull_request.head.repo.full_name == github.repository }}"
+
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+        with:
+          persist-credentials: false
+
+      - name: "Restore Cache"
+        uses: "./.github/actions/cache/restore"
+
+      - name: "infra setup cargo"
+        run: "./scripts/bin/infra setup cargo"
+
+      - name: "infra perf archive"
+        continue-on-error: true
+        env:
+          BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
+        run: "./scripts/bin/infra perf archive --branch ${{ github.head_ref }}"
