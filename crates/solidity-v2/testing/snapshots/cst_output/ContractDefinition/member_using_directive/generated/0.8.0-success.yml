@@ -8,17 +8,17 @@ Source: >
   5  │ // <<<                                                                                                              │ 153..159
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract Sample {\n  using x for *;\n}" (116..152)
+      - (members꞉ SourceUnitMembers): # "contract Sample {\n  using x for *;\n}" (116..152)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  using x for *;\n}" (116..152)
               - (contract_keyword꞉ ContractKeyword): "contract" # (116..124)
               - (name꞉ Identifier): "Sample" # (125..131)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (132..133)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (using_directive꞉ UsingDirective):
+              - (members꞉ ContractMembers): # "using x for *;" (136..150)
+                  - (item꞉ ContractMember) ► (using_directive꞉ UsingDirective): # "using x for *;" (136..150)
                       - (using_keyword꞉ UsingKeyword): "using" # (136..141)
-                      - (clause꞉ UsingClause) ► (identifier_path꞉ IdentifierPath):
+                      - (clause꞉ UsingClause) ► (identifier_path꞉ IdentifierPath): # "x" (142..143)
                           - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "x" # (142..143)
                       - (for_keyword꞉ ForKeyword): "for" # (144..147)
                       - (target꞉ UsingTarget) ► (asterisk꞉ Asterisk): "*" # (148..149)

@@ -14,49 +14,49 @@ Source: >
   11 │ }                                                                                                            │ 188..189
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..189)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..189)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..189)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
               - (name꞉ Identifier): "C" # (9..10)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..187)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..187)
                       - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
                       - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration):
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
                           - (open_paren꞉ OpenParen): "(" # (27..28)
                           - (parameters꞉ Parameters): []
                           - (close_paren꞉ CloseParen): ")" # (28..29)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..187)
                           - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements):
-                              - (item꞉ Statement) ► (try_statement꞉ TryStatement):
+                          - (statements꞉ Statements): # "try foo() {\n  bar();\n} catch {\n}" (141..173)
+                              - (item꞉ Statement) ► (try_statement꞉ TryStatement): # "try foo() {\n  bar();\n} catch {\n}" (141..173)
                                   - (try_keyword꞉ TryKeyword): "try" # (141..144)
-                                  - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression):
+                                  - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "foo()" (145..150)
                                       - (operand꞉ Expression) ► (identifier꞉ Identifier): "foo" # (145..148)
-                                      - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration):
+                                      - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "()" (148..150)
                                           - (open_paren꞉ OpenParen): "(" # (148..149)
                                           - (arguments꞉ PositionalArguments): []
                                           - (close_paren꞉ CloseParen): ")" # (149..150)
-                                  - (body꞉ Block):
+                                  - (body꞉ Block): # "{\n  bar();\n}" (151..163)
                                       - (open_brace꞉ OpenBrace): "{" # (151..152)
-                                      - (statements꞉ Statements):
-                                          - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement):
-                                              - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression):
+                                      - (statements꞉ Statements): # "bar();" (155..161)
+                                          - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "bar();" (155..161)
+                                              - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "bar()" (155..160)
                                                   - (operand꞉ Expression) ► (identifier꞉ Identifier): "bar" # (155..158)
-                                                  - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration):
+                                                  - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "()" (158..160)
                                                       - (open_paren꞉ OpenParen): "(" # (158..159)
                                                       - (arguments꞉ PositionalArguments): []
                                                       - (close_paren꞉ CloseParen): ")" # (159..160)
                                               - (semicolon꞉ Semicolon): ";" # (160..161)
                                       - (close_brace꞉ CloseBrace): "}" # (162..163)
-                                  - (catch_clauses꞉ CatchClauses):
-                                      - (item꞉ CatchClause):
+                                  - (catch_clauses꞉ CatchClauses): # "catch {\n}" (164..173)
+                                      - (item꞉ CatchClause): # "catch {\n}" (164..173)
                                           - (catch_keyword꞉ CatchKeyword): "catch" # (164..169)
-                                          - (body꞉ Block):
+                                          - (body꞉ Block): # "{\n}" (170..173)
                                               - (open_brace꞉ OpenBrace): "{" # (170..171)
                                               - (statements꞉ Statements): []
                                               - (close_brace꞉ CloseBrace): "}" # (172..173)

@@ -10,16 +10,16 @@ Source: >
   7  │ }                                                                                                  │ 139..140
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..140)
+      - (members꞉ SourceUnitMembers): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..140)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..140)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
               - (name꞉ Identifier): "C" # (9..10)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition):
-                      - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (address_type꞉ AddressType):
+              - (members꞉ ContractMembers): # "address payable\n\n// <<<\nx;" (112..138)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "address payable\n\n// <<<\nx;" (112..138)
+                      - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (address_type꞉ AddressType): # "address payable" (112..127)
                           - (address_keyword꞉ AddressKeyword): "address" # (112..119)
                           - (payable_keyword꞉ PayableKeyword): "payable" # (120..127)
                       - (attributes꞉ StateVariableAttributes): []

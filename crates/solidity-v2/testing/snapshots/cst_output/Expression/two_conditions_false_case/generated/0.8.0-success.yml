@@ -12,32 +12,32 @@ Source: >
   9  │ }                                                                                                              │ 202..203
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..203)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..203)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..203)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
               - (name꞉ Identifier): "C" # (9..10)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..201)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..201)
                       - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
                       - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration):
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
                           - (open_paren꞉ OpenParen): "(" # (27..28)
                           - (parameters꞉ Parameters): []
                           - (close_paren꞉ CloseParen): ")" # (28..29)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..201)
                           - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements):
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement):
-                                  - (expression꞉ Expression) ► (conditional_expression꞉ ConditionalExpression):
+                          - (statements꞉ Statements): # "a ? b : c ? d : e // (a ? b : (c ? d : e))\n\n// <<<..." (143..195)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a ? b : c ? d : e // (a ? b : (c ? d : e))\n\n// <<<..." (143..195)
+                                  - (expression꞉ Expression) ► (conditional_expression꞉ ConditionalExpression): # "a ? b : c ? d : e" (143..160)
                                       - (operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (143..144)
                                       - (question_mark꞉ QuestionMark): "?" # (145..146)
                                       - (true_expression꞉ Expression) ► (identifier꞉ Identifier): "b" # (147..148)
                                       - (colon꞉ Colon): ":" # (149..150)
-                                      - (false_expression꞉ Expression) ► (conditional_expression꞉ ConditionalExpression):
+                                      - (false_expression꞉ Expression) ► (conditional_expression꞉ ConditionalExpression): # "c ? d : e" (151..160)
                                           - (operand꞉ Expression) ► (identifier꞉ Identifier): "c" # (151..152)
                                           - (question_mark꞉ QuestionMark): "?" # (153..154)
                                           - (true_expression꞉ Expression) ► (identifier꞉ Identifier): "d" # (155..156)

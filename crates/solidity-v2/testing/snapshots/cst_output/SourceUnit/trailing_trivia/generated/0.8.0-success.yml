@@ -14,16 +14,16 @@ Source: >
   11 │ // <<<                                                                                               │ 250..256
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract First {}\n\n\n// Newlines both before and af..." (101..248)
+      - (members꞉ SourceUnitMembers): # "contract First {}\n\n\n// Newlines both before and af..." (101..248)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract First {}" (101..118)
               - (contract_keyword꞉ ContractKeyword): "contract" # (101..109)
               - (name꞉ Identifier): "First" # (110..115)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (116..117)
               - (members꞉ ContractMembers): []
               - (close_brace꞉ CloseBrace): "}" # (117..118)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Second {}" (230..248)
               - (contract_keyword꞉ ContractKeyword): "contract" # (230..238)
               - (name꞉ Identifier): "Second" # (239..245)
               - (specifiers꞉ ContractSpecifiers): []

@@ -9,22 +9,22 @@ Source: >
   6  │ // <<<                                                                                                                           │ 168..174
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract Sample {\n  fallback() {\n  }\n}" (129..167)
+      - (members꞉ SourceUnitMembers): # "contract Sample {\n  fallback() {\n  }\n}" (129..167)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  fallback() {\n  }\n}" (129..167)
               - (contract_keyword꞉ ContractKeyword): "contract" # (129..137)
               - (name꞉ Identifier): "Sample" # (138..144)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (145..146)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (fallback_function_definition꞉ FallbackFunctionDefinition):
+              - (members꞉ ContractMembers): # "fallback() {\n  }" (149..165)
+                  - (item꞉ ContractMember) ► (fallback_function_definition꞉ FallbackFunctionDefinition): # "fallback() {\n  }" (149..165)
                       - (fallback_keyword꞉ FallbackKeyword): "fallback" # (149..157)
-                      - (parameters꞉ ParametersDeclaration):
+                      - (parameters꞉ ParametersDeclaration): # "()" (157..159)
                           - (open_paren꞉ OpenParen): "(" # (157..158)
                           - (parameters꞉ Parameters): []
                           - (close_paren꞉ CloseParen): ")" # (158..159)
                       - (attributes꞉ FallbackFunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n  }" (160..165)
                           - (open_brace꞉ OpenBrace): "{" # (160..161)
                           - (statements꞉ Statements): []
                           - (close_brace꞉ CloseBrace): "}" # (164..165)

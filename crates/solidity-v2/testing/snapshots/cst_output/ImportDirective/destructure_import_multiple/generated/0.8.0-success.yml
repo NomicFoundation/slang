@@ -6,23 +6,23 @@ Source: >
   3  │ // <<<                                                                                                                │ 164..170
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (import_directive꞉ ImportDirective):
+  - (root꞉ SourceUnit): # 'import { A1 as A2, B1, C1 as C2 } from "foo";' (118..163)
+      - (members꞉ SourceUnitMembers): # 'import { A1 as A2, B1, C1 as C2 } from "foo";' (118..163)
+          - (item꞉ SourceUnitMember) ► (import_directive꞉ ImportDirective): # 'import { A1 as A2, B1, C1 as C2 } from "foo";' (118..163)
               - (import_keyword꞉ ImportKeyword): "import" # (118..124)
-              - (clause꞉ ImportClause) ► (import_deconstruction꞉ ImportDeconstruction):
+              - (clause꞉ ImportClause) ► (import_deconstruction꞉ ImportDeconstruction): # '{ A1 as A2, B1, C1 as C2 } from "foo"' (125..162)
                   - (open_brace꞉ OpenBrace): "{" # (125..126)
-                  - (symbols꞉ ImportDeconstructionSymbols):
-                      - (item꞉ ImportDeconstructionSymbol):
+                  - (symbols꞉ ImportDeconstructionSymbols): # "A1 as A2, B1, C1 as C2" (127..149)
+                      - (item꞉ ImportDeconstructionSymbol): # "A1 as A2" (127..135)
                           - (name꞉ Identifier): "A1" # (127..129)
-                          - (alias꞉ ImportAlias):
+                          - (alias꞉ ImportAlias): # "as A2" (130..135)
                               - (as_keyword꞉ AsKeyword): "as" # (130..132)
                               - (identifier꞉ Identifier): "A2" # (133..135)
-                      - (item꞉ ImportDeconstructionSymbol):
+                      - (item꞉ ImportDeconstructionSymbol): # "B1" (137..139)
                           - (name꞉ Identifier): "B1" # (137..139)
-                      - (item꞉ ImportDeconstructionSymbol):
+                      - (item꞉ ImportDeconstructionSymbol): # "C1 as C2" (141..149)
                           - (name꞉ Identifier): "C1" # (141..143)
-                          - (alias꞉ ImportAlias):
+                          - (alias꞉ ImportAlias): # "as C2" (144..149)
                               - (as_keyword꞉ AsKeyword): "as" # (144..146)
                               - (identifier꞉ Identifier): "C2" # (147..149)
                   - (close_brace꞉ CloseBrace): "}" # (150..151)

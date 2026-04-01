@@ -11,27 +11,27 @@ Source: >
   8  │ }                                                                                                        │ 190..191
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..191)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..191)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..191)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
               - (name꞉ Identifier): "C" # (9..10)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..189)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..189)
                       - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
                       - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration):
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
                           - (open_paren꞉ OpenParen): "(" # (27..28)
                           - (parameters꞉ Parameters): []
                           - (close_paren꞉ CloseParen): ")" # (28..29)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..189)
                           - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements):
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement):
-                                  - (expression꞉ Expression) ► (string_expression꞉ StringExpression) ► (unicode_string_literals꞉ UnicodeStringLiterals):
+                          - (statements꞉ Statements): # 'unicode"happy 😃" unicode''sad 😔''\n// <<<\n;' (137..183)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # 'unicode"happy 😃" unicode''sad 😔''\n// <<<\n;' (137..183)
+                                  - (expression꞉ Expression) ► (string_expression꞉ StringExpression) ► (unicode_string_literals꞉ UnicodeStringLiterals): # 'unicode"happy 😃" unicode''sad 😔''' (137..174)
                                       - (item꞉ UnicodeStringLiteral): 'unicode"happy 😃"' # (137..156)
                                       - (item꞉ UnicodeStringLiteral): "unicode'sad 😔'" # (157..174)
                                   - (semicolon꞉ Semicolon): ";" # (182..183)

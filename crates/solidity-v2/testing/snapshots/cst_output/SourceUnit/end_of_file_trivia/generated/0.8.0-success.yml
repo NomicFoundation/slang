@@ -12,9 +12,9 @@ Source: >
   9  │ // <<<                                                                                                  │ 176..182
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract X { }" (104..118)
+      - (members꞉ SourceUnitMembers): # "contract X { }" (104..118)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract X { }" (104..118)
               - (contract_keyword꞉ ContractKeyword): "contract" # (104..112)
               - (name꞉ Identifier): "X" # (113..114)
               - (specifiers꞉ ContractSpecifiers): []

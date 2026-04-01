@@ -8,18 +8,18 @@ Source: >
   5  │ // <<<                                                                                                               │ 155..161
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract Sample {\n  error Error1();\n}" (117..154)
+      - (members꞉ SourceUnitMembers): # "contract Sample {\n  error Error1();\n}" (117..154)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  error Error1();\n}" (117..154)
               - (contract_keyword꞉ ContractKeyword): "contract" # (117..125)
               - (name꞉ Identifier): "Sample" # (126..132)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (133..134)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (error_definition꞉ ErrorDefinition):
+              - (members꞉ ContractMembers): # "error Error1();" (137..152)
+                  - (item꞉ ContractMember) ► (error_definition꞉ ErrorDefinition): # "error Error1();" (137..152)
                       - (error_keyword꞉ ErrorKeyword): "error" # (137..142)
                       - (name꞉ Identifier): "Error1" # (143..149)
-                      - (members꞉ ErrorParametersDeclaration):
+                      - (members꞉ ErrorParametersDeclaration): # "()" (149..151)
                           - (open_paren꞉ OpenParen): "(" # (149..150)
                           - (parameters꞉ ErrorParameters): []
                           - (close_paren꞉ CloseParen): ")" # (150..151)

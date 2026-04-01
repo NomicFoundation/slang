@@ -13,30 +13,30 @@ Source: >
   10 │ }                                                                                                    │ 181..182
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n        assembly {..." (0..182)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n        assembly {..." (0..182)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n        assembly {..." (0..182)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
               - (name꞉ Identifier): "C" # (9..10)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+              - (members꞉ ContractMembers): # "function f() {\n        assembly {\n// >>> Copied fr..." (17..180)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n        assembly {\n// >>> Copied fr..." (17..180)
                       - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
                       - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration):
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
                           - (open_paren꞉ OpenParen): "(" # (27..28)
                           - (parameters꞉ Parameters): []
                           - (close_paren꞉ CloseParen): ")" # (28..29)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n        assembly {\n// >>> Copied from crates/sol..." (30..180)
                           - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements):
-                              - (item꞉ Statement) ► (assembly_statement꞉ AssemblyStatement):
+                          - (statements꞉ Statements): # "assembly {\n// >>> Copied from crates/solidity/test..." (40..174)
+                              - (item꞉ Statement) ► (assembly_statement꞉ AssemblyStatement): # "assembly {\n// >>> Copied from crates/solidity/test..." (40..174)
                                   - (assembly_keyword꞉ AssemblyKeyword): "assembly" # (40..48)
-                                  - (body꞉ YulBlock):
+                                  - (body꞉ YulBlock): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (49..174)
                                       - (open_brace꞉ YulOpenBrace): "{" # (49..50)
-                                      - (statements꞉ YulStatements):
+                                      - (statements꞉ YulStatements): # "true" (152..156)
                                           - (item꞉ YulStatement) ► (yul_expression꞉ YulExpression) ► (yul_literal꞉ YulLiteral) ► (yul_true_keyword꞉ YulTrueKeyword): "true" # (152..156)
                                       - (close_brace꞉ YulCloseBrace): "}" # (173..174)
                           - (close_brace꞉ CloseBrace): "}" # (179..180)

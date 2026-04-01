@@ -12,27 +12,27 @@ Source: >
   9  │ }                                                                                                        │ 161..162
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..162)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..162)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..162)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
               - (name꞉ Identifier): "C" # (9..10)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..160)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..160)
                       - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
                       - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration):
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
                           - (open_paren꞉ OpenParen): "(" # (27..28)
                           - (parameters꞉ Parameters): []
                           - (close_paren꞉ CloseParen): ")" # (28..29)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..160)
                           - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements):
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement):
-                                  - (expression꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression):
+                          - (statements꞉ Statements): # "super.x\n\n// <<<\n;" (137..154)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "super.x\n\n// <<<\n;" (137..154)
+                                  - (expression꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "super.x" (137..144)
                                       - (operand꞉ Expression) ► (super_keyword꞉ SuperKeyword): "super" # (137..142)
                                       - (period꞉ Period): "." # (142..143)
                                       - (member꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "x" # (143..144)

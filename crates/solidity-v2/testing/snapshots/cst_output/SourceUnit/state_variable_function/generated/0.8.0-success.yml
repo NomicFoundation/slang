@@ -13,86 +13,86 @@ Source: >
   10 │ // <<<                                                                                                       │ 322..328
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract A {\n\n    function (uint a) internal inter..." (109..320)
+      - (members꞉ SourceUnitMembers): # "contract A {\n\n    function (uint a) internal inter..." (109..320)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract A {\n\n    function (uint a) internal inter..." (109..320)
               - (contract_keyword꞉ ContractKeyword): "contract" # (109..117)
               - (name꞉ Identifier): "A" # (118..119)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (120..121)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition):
-                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType):
+              - (members꞉ ContractMembers): # "function (uint a) internal internal foo;\n    funct..." (127..318)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function (uint a) internal internal foo;" (127..167)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function (uint a) internal" (127..153)
                           - (function_keyword꞉ FunctionKeyword): "function" # (127..135)
-                          - (parameters꞉ ParametersDeclaration):
+                          - (parameters꞉ ParametersDeclaration): # "(uint a)" (136..144)
                               - (open_paren꞉ OpenParen): "(" # (136..137)
-                              - (parameters꞉ Parameters):
-                                  - (item꞉ Parameter):
+                              - (parameters꞉ Parameters): # "uint a" (137..143)
+                                  - (item꞉ Parameter): # "uint a" (137..143)
                                       - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (137..141)
                                       - (name꞉ Identifier): "a" # (142..143)
                               - (close_paren꞉ CloseParen): ")" # (143..144)
-                          - (attributes꞉ FunctionTypeAttributes):
+                          - (attributes꞉ FunctionTypeAttributes): # "internal" (145..153)
                               - (item꞉ FunctionTypeAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (145..153)
-                      - (attributes꞉ StateVariableAttributes):
+                      - (attributes꞉ StateVariableAttributes): # "internal" (154..162)
                           - (item꞉ StateVariableAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (154..162)
                       - (name꞉ Identifier): "foo" # (163..166)
                       - (semicolon꞉ Semicolon): ";" # (166..167)
-                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition):
-                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType):
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function (uint a) internal immutable internal foo;" (172..222)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function (uint a) internal" (172..198)
                           - (function_keyword꞉ FunctionKeyword): "function" # (172..180)
-                          - (parameters꞉ ParametersDeclaration):
+                          - (parameters꞉ ParametersDeclaration): # "(uint a)" (181..189)
                               - (open_paren꞉ OpenParen): "(" # (181..182)
-                              - (parameters꞉ Parameters):
-                                  - (item꞉ Parameter):
+                              - (parameters꞉ Parameters): # "uint a" (182..188)
+                                  - (item꞉ Parameter): # "uint a" (182..188)
                                       - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (182..186)
                                       - (name꞉ Identifier): "a" # (187..188)
                               - (close_paren꞉ CloseParen): ")" # (188..189)
-                          - (attributes꞉ FunctionTypeAttributes):
+                          - (attributes꞉ FunctionTypeAttributes): # "internal" (190..198)
                               - (item꞉ FunctionTypeAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (190..198)
-                      - (attributes꞉ StateVariableAttributes):
+                      - (attributes꞉ StateVariableAttributes): # "immutable internal" (199..217)
                           - (item꞉ StateVariableAttribute) ► (immutable_keyword꞉ ImmutableKeyword): "immutable" # (199..208)
                           - (item꞉ StateVariableAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (209..217)
                       - (name꞉ Identifier): "foo" # (218..221)
                       - (semicolon꞉ Semicolon): ";" # (221..222)
-                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition):
-                      - (type_name꞉ TypeName) ► (array_type_name꞉ ArrayTypeName):
-                          - (operand꞉ TypeName) ► (function_type꞉ FunctionType):
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function (uint a)[2] internal internal foo;" (227..270)
+                      - (type_name꞉ TypeName) ► (array_type_name꞉ ArrayTypeName): # "function (uint a)[2]" (227..247)
+                          - (operand꞉ TypeName) ► (function_type꞉ FunctionType): # "function (uint a)" (227..244)
                               - (function_keyword꞉ FunctionKeyword): "function" # (227..235)
-                              - (parameters꞉ ParametersDeclaration):
+                              - (parameters꞉ ParametersDeclaration): # "(uint a)" (236..244)
                                   - (open_paren꞉ OpenParen): "(" # (236..237)
-                                  - (parameters꞉ Parameters):
-                                      - (item꞉ Parameter):
+                                  - (parameters꞉ Parameters): # "uint a" (237..243)
+                                      - (item꞉ Parameter): # "uint a" (237..243)
                                           - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (237..241)
                                           - (name꞉ Identifier): "a" # (242..243)
                                   - (close_paren꞉ CloseParen): ")" # (243..244)
                               - (attributes꞉ FunctionTypeAttributes): []
                           - (open_bracket꞉ OpenBracket): "[" # (244..245)
-                          - (index꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression):
+                          - (index꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "2" (245..246)
                               - (literal꞉ DecimalLiteral): "2" # (245..246)
                           - (close_bracket꞉ CloseBracket): "]" # (246..247)
-                      - (attributes꞉ StateVariableAttributes):
+                      - (attributes꞉ StateVariableAttributes): # "internal internal" (248..265)
                           - (item꞉ StateVariableAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (248..256)
                           - (item꞉ StateVariableAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (257..265)
                       - (name꞉ Identifier): "foo" # (266..269)
                       - (semicolon꞉ Semicolon): ";" # (269..270)
-                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition):
-                      - (type_name꞉ TypeName) ► (array_type_name꞉ ArrayTypeName):
-                          - (operand꞉ TypeName) ► (function_type꞉ FunctionType):
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function (uint a) internal[2] internal foo;" (275..318)
+                      - (type_name꞉ TypeName) ► (array_type_name꞉ ArrayTypeName): # "function (uint a) internal[2]" (275..304)
+                          - (operand꞉ TypeName) ► (function_type꞉ FunctionType): # "function (uint a) internal" (275..301)
                               - (function_keyword꞉ FunctionKeyword): "function" # (275..283)
-                              - (parameters꞉ ParametersDeclaration):
+                              - (parameters꞉ ParametersDeclaration): # "(uint a)" (284..292)
                                   - (open_paren꞉ OpenParen): "(" # (284..285)
-                                  - (parameters꞉ Parameters):
-                                      - (item꞉ Parameter):
+                                  - (parameters꞉ Parameters): # "uint a" (285..291)
+                                      - (item꞉ Parameter): # "uint a" (285..291)
                                           - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (285..289)
                                           - (name꞉ Identifier): "a" # (290..291)
                                   - (close_paren꞉ CloseParen): ")" # (291..292)
-                              - (attributes꞉ FunctionTypeAttributes):
+                              - (attributes꞉ FunctionTypeAttributes): # "internal" (293..301)
                                   - (item꞉ FunctionTypeAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (293..301)
                           - (open_bracket꞉ OpenBracket): "[" # (301..302)
-                          - (index꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression):
+                          - (index꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "2" (302..303)
                               - (literal꞉ DecimalLiteral): "2" # (302..303)
                           - (close_bracket꞉ CloseBracket): "]" # (303..304)
-                      - (attributes꞉ StateVariableAttributes):
+                      - (attributes꞉ StateVariableAttributes): # "internal" (305..313)
                           - (item꞉ StateVariableAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (305..313)
                       - (name꞉ Identifier): "foo" # (314..317)
                       - (semicolon꞉ Semicolon): ";" # (317..318)

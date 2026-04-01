@@ -11,34 +11,34 @@ Source: >
   8  │ }                                                                                                  │ 154..155
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..155)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..155)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..155)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
               - (name꞉ Identifier): "C" # (9..10)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..153)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..153)
                       - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
                       - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration):
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
                           - (open_paren꞉ OpenParen): "(" # (27..28)
                           - (parameters꞉ Parameters): []
                           - (close_paren꞉ CloseParen): ")" # (28..29)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..153)
                           - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements):
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement):
-                                  - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression):
+                          - (statements꞉ Statements): # "x(1, 2)\n// <<<\n;" (131..147)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "x(1, 2)\n// <<<\n;" (131..147)
+                                  - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "x(1, 2)" (131..138)
                                       - (operand꞉ Expression) ► (identifier꞉ Identifier): "x" # (131..132)
-                                      - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration):
+                                      - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "(1, 2)" (132..138)
                                           - (open_paren꞉ OpenParen): "(" # (132..133)
-                                          - (arguments꞉ PositionalArguments):
-                                              - (item꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression):
+                                          - (arguments꞉ PositionalArguments): # "1, 2" (133..137)
+                                              - (item꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "1" (133..134)
                                                   - (literal꞉ DecimalLiteral): "1" # (133..134)
-                                              - (item꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression):
+                                              - (item꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "2" (136..137)
                                                   - (literal꞉ DecimalLiteral): "2" # (136..137)
                                           - (close_paren꞉ CloseParen): ")" # (137..138)
                                   - (semicolon꞉ Semicolon): ";" # (146..147)

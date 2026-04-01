@@ -15,61 +15,61 @@ Source: >
   12 │ // <<<                                                                                           │ 302..308
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (library_definition꞉ LibraryDefinition):
+  - (root꞉ SourceUnit): # "library SafeMath {\n  function tryAdd() internal pu..." (97..300)
+      - (members꞉ SourceUnitMembers): # "library SafeMath {\n  function tryAdd() internal pu..." (97..300)
+          - (item꞉ SourceUnitMember) ► (library_definition꞉ LibraryDefinition): # "library SafeMath {\n  function tryAdd() internal pu..." (97..300)
               - (library_keyword꞉ LibraryKeyword): "library" # (97..104)
               - (name꞉ Identifier): "SafeMath" # (105..113)
               - (open_brace꞉ OpenBrace): "{" # (114..115)
-              - (members꞉ LibraryMembers):
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+              - (members꞉ LibraryMembers): # "function tryAdd() internal pure  {\n    try foo{gas..." (118..298)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function tryAdd() internal pure  {\n    try foo{gas..." (118..298)
                       - (function_keyword꞉ FunctionKeyword): "function" # (118..126)
                       - (name꞉ FunctionName) ► (identifier꞉ Identifier): "tryAdd" # (127..133)
-                      - (parameters꞉ ParametersDeclaration):
+                      - (parameters꞉ ParametersDeclaration): # "()" (133..135)
                           - (open_paren꞉ OpenParen): "(" # (133..134)
                           - (parameters꞉ Parameters): []
                           - (close_paren꞉ CloseParen): ")" # (134..135)
-                      - (attributes꞉ FunctionAttributes):
+                      - (attributes꞉ FunctionAttributes): # "internal pure" (136..149)
                           - (item꞉ FunctionAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (136..144)
                           - (item꞉ FunctionAttribute) ► (pure_keyword꞉ PureKeyword): "pure" # (145..149)
-                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n    try foo{gas: 123}() {\n      // do something\n..." (151..298)
                           - (open_brace꞉ OpenBrace): "{" # (151..152)
-                          - (statements꞉ Statements):
-                              - (item꞉ Statement) ► (try_statement꞉ TryStatement):
+                          - (statements꞉ Statements): # "try foo{gas: 123}() {\n      // do something\n    } ..." (157..294)
+                              - (item꞉ Statement) ► (try_statement꞉ TryStatement): # "try foo{gas: 123}() {\n      // do something\n    } ..." (157..294)
                                   - (try_keyword꞉ TryKeyword): "try" # (157..160)
-                                  - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression):
-                                      - (operand꞉ Expression) ► (call_options_expression꞉ CallOptionsExpression):
+                                  - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "foo{gas: 123}()" (161..176)
+                                      - (operand꞉ Expression) ► (call_options_expression꞉ CallOptionsExpression): # "foo{gas: 123}" (161..174)
                                           - (operand꞉ Expression) ► (identifier꞉ Identifier): "foo" # (161..164)
                                           - (open_brace꞉ OpenBrace): "{" # (164..165)
-                                          - (options꞉ CallOptions):
-                                              - (item꞉ NamedArgument):
+                                          - (options꞉ CallOptions): # "gas: 123" (165..173)
+                                              - (item꞉ NamedArgument): # "gas: 123" (165..173)
                                                   - (name꞉ Identifier): "gas" # (165..168)
                                                   - (colon꞉ Colon): ":" # (168..169)
-                                                  - (value꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression):
+                                                  - (value꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "123" (170..173)
                                                       - (literal꞉ DecimalLiteral): "123" # (170..173)
                                           - (close_brace꞉ CloseBrace): "}" # (173..174)
-                                      - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration):
+                                      - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "()" (174..176)
                                           - (open_paren꞉ OpenParen): "(" # (174..175)
                                           - (arguments꞉ PositionalArguments): []
                                           - (close_paren꞉ CloseParen): ")" # (175..176)
-                                  - (body꞉ Block):
+                                  - (body꞉ Block): # "{\n      // do something\n    }" (177..206)
                                       - (open_brace꞉ OpenBrace): "{" # (177..178)
                                       - (statements꞉ Statements): []
                                       - (close_brace꞉ CloseBrace): "}" # (205..206)
-                                  - (catch_clauses꞉ CatchClauses):
-                                      - (item꞉ CatchClause):
+                                  - (catch_clauses꞉ CatchClauses): # "catch Error(string memory reason) {\n      // catch..." (207..294)
+                                      - (item꞉ CatchClause): # "catch Error(string memory reason) {\n      // catch..." (207..294)
                                           - (catch_keyword꞉ CatchKeyword): "catch" # (207..212)
-                                          - (error꞉ CatchClauseError):
+                                          - (error꞉ CatchClauseError): # "Error(string memory reason)" (213..240)
                                               - (name꞉ Identifier): "Error" # (213..218)
-                                              - (parameters꞉ ParametersDeclaration):
+                                              - (parameters꞉ ParametersDeclaration): # "(string memory reason)" (218..240)
                                                   - (open_paren꞉ OpenParen): "(" # (218..219)
-                                                  - (parameters꞉ Parameters):
-                                                      - (item꞉ Parameter):
+                                                  - (parameters꞉ Parameters): # "string memory reason" (219..239)
+                                                      - (item꞉ Parameter): # "string memory reason" (219..239)
                                                           - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (string_keyword꞉ StringKeyword): "string" # (219..225)
                                                           - (storage_location꞉ StorageLocation) ► (memory_keyword꞉ MemoryKeyword): "memory" # (226..232)
                                                           - (name꞉ Identifier): "reason" # (233..239)
                                                   - (close_paren꞉ CloseParen): ")" # (239..240)
-                                          - (body꞉ Block):
+                                          - (body꞉ Block): # "{\n      // catch failing revert() and require()\n  ..." (241..294)
                                               - (open_brace꞉ OpenBrace): "{" # (241..242)
                                               - (statements꞉ Statements): []
                                               - (close_brace꞉ CloseBrace): "}" # (293..294)

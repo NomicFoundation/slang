@@ -12,35 +12,35 @@ Source: >
   9  │ }                                                                                                     │ 183..184
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n        assembly {..." (0..184)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n        assembly {..." (0..184)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n        assembly {..." (0..184)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
               - (name꞉ Identifier): "C" # (9..10)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+              - (members꞉ ContractMembers): # "function f() {\n        assembly {\n// >>> Copied fr..." (17..182)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n        assembly {\n// >>> Copied fr..." (17..182)
                       - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
                       - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration):
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
                           - (open_paren꞉ OpenParen): "(" # (27..28)
                           - (parameters꞉ Parameters): []
                           - (close_paren꞉ CloseParen): ")" # (28..29)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n        assembly {\n// >>> Copied from crates/sol..." (30..182)
                           - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements):
-                              - (item꞉ Statement) ► (assembly_statement꞉ AssemblyStatement):
+                          - (statements꞉ Statements): # "assembly {\n// >>> Copied from crates/solidity/test..." (40..176)
+                              - (item꞉ Statement) ► (assembly_statement꞉ AssemblyStatement): # "assembly {\n// >>> Copied from crates/solidity/test..." (40..176)
                                   - (assembly_keyword꞉ AssemblyKeyword): "assembly" # (40..48)
-                                  - (body꞉ YulBlock):
+                                  - (body꞉ YulBlock): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (49..176)
                                       - (open_brace꞉ YulOpenBrace): "{" # (49..50)
-                                      - (statements꞉ YulStatements):
-                                          - (item꞉ YulStatement) ► (yul_expression꞉ YulExpression) ► (yul_function_call_expression꞉ YulFunctionCallExpression):
-                                              - (operand꞉ YulExpression) ► (yul_path꞉ YulPath):
+                                      - (statements꞉ YulStatements): # "foo(1)" (153..159)
+                                          - (item꞉ YulStatement) ► (yul_expression꞉ YulExpression) ► (yul_function_call_expression꞉ YulFunctionCallExpression): # "foo(1)" (153..159)
+                                              - (operand꞉ YulExpression) ► (yul_path꞉ YulPath): # "foo" (153..156)
                                                   - (item꞉ YulIdentifier): "foo" # (153..156)
                                               - (open_paren꞉ YulOpenParen): "(" # (156..157)
-                                              - (arguments꞉ YulArguments):
+                                              - (arguments꞉ YulArguments): # "1" (157..158)
                                                   - (item꞉ YulExpression) ► (yul_literal꞉ YulLiteral) ► (yul_decimal_literal꞉ YulDecimalLiteral): "1" # (157..158)
                                               - (close_paren꞉ YulCloseParen): ")" # (158..159)
                                       - (close_brace꞉ YulCloseBrace): "}" # (175..176)

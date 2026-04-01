@@ -10,6 +10,10 @@ use crate::reporting::diagnostic;
 #[path = "renderer.generated.rs"]
 mod renderer;
 
+/// The output of a render function: an optional byte range and a vec of string
+/// fragments that are concatenated directly (no separators) to form the output.
+pub(crate) type RenderedOutput = (Option<Range<usize>>, Vec<String>);
+
 /// Render a parse result (success or failure) to YAML format.
 ///
 /// Returns `(status, content)` where status is `"success"` or `"failure"`.
@@ -26,14 +30,13 @@ pub fn render(
     match result {
         Ok(cst) => {
             writeln!(&mut w, "Tree:").unwrap();
-            let mut ctx = RenderContext {
-                source,
-                w: &mut w,
-                depth: 0,
-            };
-            ctx.write_indent();
-            ctx.write_key("root", "SourceUnit");
-            renderer::render_source_unit(&mut ctx, cst);
+            let (_, root_frags) = renderer::render_source_unit(source, cst, 0);
+            // Note: \u{a789} (MODIFIER LETTER COLON) is used instead of : to avoid
+            // conflicting with YAML's key-value syntax, which breaks YAML linters.
+            w.push_str("  - (root\u{a789} SourceUnit)");
+            for frag in root_frags {
+                w.push_str(&frag);
+            }
 
             ("success", w)
         }
@@ -49,56 +52,73 @@ pub fn render(
     }
 }
 
-pub(crate) struct RenderContext<'a> {
-    pub source: &'a str,
-    pub w: &'a mut String,
-    pub depth: usize,
+/// Helper to accumulate rendered children, merge their ranges,
+/// and produce the final `RenderedOutput` for a nonterminal node.
+pub(crate) struct ChildrenAccumulator<'a> {
+    source: &'a str,
+    depth: usize,
+    range_start: usize,
+    range_end: usize,
+    fragments: Vec<String>,
 }
 
-impl RenderContext<'_> {
-    pub fn write_indent(&mut self) {
-        let indentation = " ".repeat(4 * self.depth);
-        write!(self.w, "{indentation}  - ").unwrap();
-    }
-
-    pub fn write_key(&mut self, label: &str, kind: &str) {
-        // Note: \u{a789} (MODIFIER LETTER COLON) is used instead of : to avoid
-        // conflicting with YAML's key-value syntax, which breaks YAML linters.
-        write!(self.w, "({label}\u{a789} {kind})").unwrap();
-    }
-
-    pub fn write_connector(&mut self) {
-        write!(self.w, " ► ").unwrap();
-    }
-
-    pub fn write_terminal_value(&mut self, range: &Range<usize>) {
-        let preview = render_preview(self.source, range);
-        writeln!(
-            self.w,
-            ": {preview} # ({start}..{end})",
-            start = range.start,
-            end = range.end
-        )
-        .unwrap();
-    }
-
-    pub fn write_nonterminal_start(&mut self) {
-        writeln!(self.w, ":").unwrap();
-    }
-
-    pub fn write_empty_collection(&mut self) {
-        writeln!(self.w, ": []").unwrap();
-    }
-
-    /// Called after rendering a nonterminal's children. If no children were
-    /// rendered, replaces the trailing ":\n" with ": []\n".
-    pub fn finish_nonterminal(&mut self, has_children: bool) {
-        if !has_children {
-            // Remove the ":\n" written by write_nonterminal_start
-            self.w.truncate(self.w.len() - 2);
-            writeln!(self.w, ": []").unwrap();
+impl<'a> ChildrenAccumulator<'a> {
+    pub fn new(source: &'a str, depth: usize) -> Self {
+        Self {
+            source,
+            depth,
+            range_start: usize::MAX,
+            range_end: 0,
+            fragments: Vec::new(),
         }
     }
+
+    pub fn add(&mut self, label: &str, kind: &str, (range, child_frags): RenderedOutput) {
+        if let Some(ref r) = range {
+            self.range_start = self.range_start.min(r.start);
+            self.range_end = self.range_end.max(r.end);
+        }
+        let indent = " ".repeat(4 * self.depth);
+        // Note: \u{a789} (MODIFIER LETTER COLON) is used instead of : to avoid
+        // conflicting with YAML's key-value syntax, which breaks YAML linters.
+        self.fragments
+            .push(format!("{indent}  - ({label}\u{a789} {kind})"));
+        self.fragments.extend(child_frags);
+    }
+
+    pub fn finish(self) -> RenderedOutput {
+        let range = if self.range_start <= self.range_end {
+            Some(self.range_start..self.range_end)
+        } else {
+            None
+        };
+
+        let value = if self.fragments.is_empty() {
+            ": []\n".to_string()
+        } else if let Some(ref r) = range {
+            let preview = render_preview(self.source, r);
+            format!(": # {preview} ({}..{})\n", r.start, r.end)
+        } else {
+            ":\n".to_string()
+        };
+
+        let mut result = Vec::with_capacity(1 + self.fragments.len());
+        result.push(value);
+        result.extend(self.fragments);
+        (range, result)
+    }
+}
+
+/// Produce the `RenderedOutput` for a terminal node.
+pub(crate) fn render_terminal(source: &str, range: &Range<usize>) -> RenderedOutput {
+    let preview = render_preview(source, range);
+    (
+        Some(range.clone()),
+        vec![format!(
+            ": {preview} # ({}..{})\n",
+            range.start, range.end
+        )],
+    )
 }
 
 fn write_source(w: &mut String, source: &str) {

@@ -7,34 +7,34 @@ Source: >
   4  │ // <<<                                                                                                               │ 207..213
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (function_definition꞉ FunctionDefinition):
+  - (root꞉ SourceUnit): # "function transferFrom(address from, address to, ui..." (117..205)
+      - (members꞉ SourceUnitMembers): # "function transferFrom(address from, address to, ui..." (117..205)
+          - (item꞉ SourceUnitMember) ► (function_definition꞉ FunctionDefinition): # "function transferFrom(address from, address to, ui..." (117..205)
               - (function_keyword꞉ FunctionKeyword): "function" # (117..125)
               - (name꞉ FunctionName) ► (identifier꞉ Identifier): "transferFrom" # (126..138)
-              - (parameters꞉ ParametersDeclaration):
+              - (parameters꞉ ParametersDeclaration): # "(address from, address to, uint256 amount)" (138..180)
                   - (open_paren꞉ OpenParen): "(" # (138..139)
-                  - (parameters꞉ Parameters):
-                      - (item꞉ Parameter):
-                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (address_type꞉ AddressType):
+                  - (parameters꞉ Parameters): # "address from, address to, uint256 amount" (139..179)
+                      - (item꞉ Parameter): # "address from" (139..151)
+                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (address_type꞉ AddressType): # "address" (139..146)
                               - (address_keyword꞉ AddressKeyword): "address" # (139..146)
                           - (name꞉ Identifier): "from" # (147..151)
-                      - (item꞉ Parameter):
-                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (address_type꞉ AddressType):
+                      - (item꞉ Parameter): # "address to" (153..163)
+                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (address_type꞉ AddressType): # "address" (153..160)
                               - (address_keyword꞉ AddressKeyword): "address" # (153..160)
                           - (name꞉ Identifier): "to" # (161..163)
-                      - (item꞉ Parameter):
+                      - (item꞉ Parameter): # "uint256 amount" (165..179)
                           - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (165..172)
                           - (name꞉ Identifier): "amount" # (173..179)
                   - (close_paren꞉ CloseParen): ")" # (179..180)
-              - (attributes꞉ FunctionAttributes):
+              - (attributes꞉ FunctionAttributes): # "external" (181..189)
                   - (item꞉ FunctionAttribute) ► (external_keyword꞉ ExternalKeyword): "external" # (181..189)
-              - (returns꞉ ReturnsDeclaration):
+              - (returns꞉ ReturnsDeclaration): # "returns (bool)" (190..204)
                   - (returns_keyword꞉ ReturnsKeyword): "returns" # (190..197)
-                  - (variables꞉ ParametersDeclaration):
+                  - (variables꞉ ParametersDeclaration): # "(bool)" (198..204)
                       - (open_paren꞉ OpenParen): "(" # (198..199)
-                      - (parameters꞉ Parameters):
-                          - (item꞉ Parameter):
+                      - (parameters꞉ Parameters): # "bool" (199..203)
+                          - (item꞉ Parameter): # "bool" (199..203)
                               - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (bool_keyword꞉ BoolKeyword): "bool" # (199..203)
                       - (close_paren꞉ CloseParen): ")" # (203..204)
               - (body꞉ FunctionBody) ► (semicolon꞉ Semicolon): ";" # (204..205)

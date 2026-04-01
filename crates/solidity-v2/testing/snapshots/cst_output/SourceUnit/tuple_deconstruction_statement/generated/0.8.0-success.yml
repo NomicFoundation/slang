@@ -14,90 +14,90 @@ Source: >
   11 │ // <<<                                                                                                              │ 285..291
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (library_definition꞉ LibraryDefinition):
+  - (root꞉ SourceUnit): # "library SafeMath {\n  function tryAdd() internal pu..." (116..283)
+      - (members꞉ SourceUnitMembers): # "library SafeMath {\n  function tryAdd() internal pu..." (116..283)
+          - (item꞉ SourceUnitMember) ► (library_definition꞉ LibraryDefinition): # "library SafeMath {\n  function tryAdd() internal pu..." (116..283)
               - (library_keyword꞉ LibraryKeyword): "library" # (116..123)
               - (name꞉ Identifier): "SafeMath" # (124..132)
               - (open_brace꞉ OpenBrace): "{" # (133..134)
-              - (members꞉ LibraryMembers):
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+              - (members꞉ LibraryMembers): # "function tryAdd() internal pure  {\n    (, bool z, ..." (137..281)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function tryAdd() internal pure  {\n    (, bool z, ..." (137..281)
                       - (function_keyword꞉ FunctionKeyword): "function" # (137..145)
                       - (name꞉ FunctionName) ► (identifier꞉ Identifier): "tryAdd" # (146..152)
-                      - (parameters꞉ ParametersDeclaration):
+                      - (parameters꞉ ParametersDeclaration): # "()" (152..154)
                           - (open_paren꞉ OpenParen): "(" # (152..153)
                           - (parameters꞉ Parameters): []
                           - (close_paren꞉ CloseParen): ")" # (153..154)
-                      - (attributes꞉ FunctionAttributes):
+                      - (attributes꞉ FunctionAttributes): # "internal pure" (155..168)
                           - (item꞉ FunctionAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (155..163)
                           - (item꞉ FunctionAttribute) ► (pure_keyword꞉ PureKeyword): "pure" # (164..168)
-                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n    (, bool z, ) = foo;\n    (bool a, uint b) = f..." (170..281)
                           - (open_brace꞉ OpenBrace): "{" # (170..171)
-                          - (statements꞉ Statements):
-                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement):
-                                  - (target꞉ VariableDeclarationTarget) ► (multi_typed_declaration꞉ MultiTypedDeclaration):
+                          - (statements꞉ Statements): # "(, bool z, ) = foo;\n    (bool a, uint b) = foo;\n  ..." (176..277)
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement): # "(, bool z, ) = foo;" (176..195)
+                                  - (target꞉ VariableDeclarationTarget) ► (multi_typed_declaration꞉ MultiTypedDeclaration): # "(, bool z, ) = foo" (176..194)
                                       - (open_paren꞉ OpenParen): "(" # (176..177)
-                                      - (elements꞉ MultiTypedDeclarationElements):
+                                      - (elements꞉ MultiTypedDeclarationElements): # "bool z" (179..185)
                                           - (item꞉ MultiTypedDeclarationElement): []
-                                          - (item꞉ MultiTypedDeclarationElement):
-                                              - (member꞉ VariableDeclaration):
+                                          - (item꞉ MultiTypedDeclarationElement): # "bool z" (179..185)
+                                              - (member꞉ VariableDeclaration): # "bool z" (179..185)
                                                   - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (bool_keyword꞉ BoolKeyword): "bool" # (179..183)
                                                   - (name꞉ Identifier): "z" # (184..185)
                                           - (item꞉ MultiTypedDeclarationElement): []
                                       - (close_paren꞉ CloseParen): ")" # (187..188)
-                                      - (value꞉ VariableDeclarationValue):
+                                      - (value꞉ VariableDeclarationValue): # "= foo" (189..194)
                                           - (equal꞉ Equal): "=" # (189..190)
                                           - (expression꞉ Expression) ► (identifier꞉ Identifier): "foo" # (191..194)
                                   - (semicolon꞉ Semicolon): ";" # (194..195)
-                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement):
-                                  - (target꞉ VariableDeclarationTarget) ► (multi_typed_declaration꞉ MultiTypedDeclaration):
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement): # "(bool a, uint b) = foo;" (200..223)
+                                  - (target꞉ VariableDeclarationTarget) ► (multi_typed_declaration꞉ MultiTypedDeclaration): # "(bool a, uint b) = foo" (200..222)
                                       - (open_paren꞉ OpenParen): "(" # (200..201)
-                                      - (elements꞉ MultiTypedDeclarationElements):
-                                          - (item꞉ MultiTypedDeclarationElement):
-                                              - (member꞉ VariableDeclaration):
+                                      - (elements꞉ MultiTypedDeclarationElements): # "bool a, uint b" (201..215)
+                                          - (item꞉ MultiTypedDeclarationElement): # "bool a" (201..207)
+                                              - (member꞉ VariableDeclaration): # "bool a" (201..207)
                                                   - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (bool_keyword꞉ BoolKeyword): "bool" # (201..205)
                                                   - (name꞉ Identifier): "a" # (206..207)
-                                          - (item꞉ MultiTypedDeclarationElement):
-                                              - (member꞉ VariableDeclaration):
+                                          - (item꞉ MultiTypedDeclarationElement): # "uint b" (209..215)
+                                              - (member꞉ VariableDeclaration): # "uint b" (209..215)
                                                   - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (209..213)
                                                   - (name꞉ Identifier): "b" # (214..215)
                                       - (close_paren꞉ CloseParen): ")" # (215..216)
-                                      - (value꞉ VariableDeclarationValue):
+                                      - (value꞉ VariableDeclarationValue): # "= foo" (217..222)
                                           - (equal꞉ Equal): "=" # (217..218)
                                           - (expression꞉ Expression) ► (identifier꞉ Identifier): "foo" # (219..222)
                                   - (semicolon꞉ Semicolon): ";" # (222..223)
-                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement):
-                                  - (target꞉ VariableDeclarationTarget) ► (multi_typed_declaration꞉ MultiTypedDeclaration):
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement): # "(uint x, , uint y) = foo;" (228..253)
+                                  - (target꞉ VariableDeclarationTarget) ► (multi_typed_declaration꞉ MultiTypedDeclaration): # "(uint x, , uint y) = foo" (228..252)
                                       - (open_paren꞉ OpenParen): "(" # (228..229)
-                                      - (elements꞉ MultiTypedDeclarationElements):
-                                          - (item꞉ MultiTypedDeclarationElement):
-                                              - (member꞉ VariableDeclaration):
+                                      - (elements꞉ MultiTypedDeclarationElements): # "uint x, , uint y" (229..245)
+                                          - (item꞉ MultiTypedDeclarationElement): # "uint x" (229..235)
+                                              - (member꞉ VariableDeclaration): # "uint x" (229..235)
                                                   - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (229..233)
                                                   - (name꞉ Identifier): "x" # (234..235)
                                           - (item꞉ MultiTypedDeclarationElement): []
-                                          - (item꞉ MultiTypedDeclarationElement):
-                                              - (member꞉ VariableDeclaration):
+                                          - (item꞉ MultiTypedDeclarationElement): # "uint y" (239..245)
+                                              - (member꞉ VariableDeclaration): # "uint y" (239..245)
                                                   - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (239..243)
                                                   - (name꞉ Identifier): "y" # (244..245)
                                       - (close_paren꞉ CloseParen): ")" # (245..246)
-                                      - (value꞉ VariableDeclarationValue):
+                                      - (value꞉ VariableDeclarationValue): # "= foo" (247..252)
                                           - (equal꞉ Equal): "=" # (247..248)
                                           - (expression꞉ Expression) ► (identifier꞉ Identifier): "foo" # (249..252)
                                   - (semicolon꞉ Semicolon): ";" # (252..253)
-                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement):
-                                  - (target꞉ VariableDeclarationTarget) ► (multi_typed_declaration꞉ MultiTypedDeclaration):
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement): # "(,,,,bool a) = foo;" (258..277)
+                                  - (target꞉ VariableDeclarationTarget) ► (multi_typed_declaration꞉ MultiTypedDeclaration): # "(,,,,bool a) = foo" (258..276)
                                       - (open_paren꞉ OpenParen): "(" # (258..259)
-                                      - (elements꞉ MultiTypedDeclarationElements):
+                                      - (elements꞉ MultiTypedDeclarationElements): # "bool a" (263..269)
                                           - (item꞉ MultiTypedDeclarationElement): []
                                           - (item꞉ MultiTypedDeclarationElement): []
                                           - (item꞉ MultiTypedDeclarationElement): []
                                           - (item꞉ MultiTypedDeclarationElement): []
-                                          - (item꞉ MultiTypedDeclarationElement):
-                                              - (member꞉ VariableDeclaration):
+                                          - (item꞉ MultiTypedDeclarationElement): # "bool a" (263..269)
+                                              - (member꞉ VariableDeclaration): # "bool a" (263..269)
                                                   - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (bool_keyword꞉ BoolKeyword): "bool" # (263..267)
                                                   - (name꞉ Identifier): "a" # (268..269)
                                       - (close_paren꞉ CloseParen): ")" # (269..270)
-                                      - (value꞉ VariableDeclarationValue):
+                                      - (value꞉ VariableDeclarationValue): # "= foo" (271..276)
                                           - (equal꞉ Equal): "=" # (271..272)
                                           - (expression꞉ Expression) ► (identifier꞉ Identifier): "foo" # (273..276)
                                   - (semicolon꞉ Semicolon): ";" # (276..277)

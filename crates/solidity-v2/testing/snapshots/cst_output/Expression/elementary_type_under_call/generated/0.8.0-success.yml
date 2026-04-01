@@ -12,34 +12,34 @@ Source: >
   9  │ }                                                                                                               │ 172..173
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..173)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..173)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..173)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
               - (name꞉ Identifier): "C" # (9..10)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..171)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..171)
                       - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
                       - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration):
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
                           - (open_paren꞉ OpenParen): "(" # (27..28)
                           - (parameters꞉ Parameters): []
                           - (close_paren꞉ CloseParen): ")" # (28..29)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..171)
                           - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements):
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement):
-                                  - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression):
-                                      - (operand꞉ Expression) ► (index_access_expression꞉ IndexAccessExpression):
+                          - (statements꞉ Statements): # "uint[](foo)\n\n// <<<\n;" (144..165)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "uint[](foo)\n\n// <<<\n;" (144..165)
+                                  - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "uint[](foo)" (144..155)
+                                      - (operand꞉ Expression) ► (index_access_expression꞉ IndexAccessExpression): # "uint[]" (144..150)
                                           - (operand꞉ Expression) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (144..148)
                                           - (open_bracket꞉ OpenBracket): "[" # (148..149)
                                           - (close_bracket꞉ CloseBracket): "]" # (149..150)
-                                      - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration):
+                                      - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "(foo)" (150..155)
                                           - (open_paren꞉ OpenParen): "(" # (150..151)
-                                          - (arguments꞉ PositionalArguments):
+                                          - (arguments꞉ PositionalArguments): # "foo" (151..154)
                                               - (item꞉ Expression) ► (identifier꞉ Identifier): "foo" # (151..154)
                                           - (close_paren꞉ CloseParen): ")" # (154..155)
                                   - (semicolon꞉ Semicolon): ";" # (164..165)

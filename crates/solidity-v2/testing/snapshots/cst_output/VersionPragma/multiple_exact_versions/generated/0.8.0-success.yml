@@ -8,21 +8,21 @@ Source: >
   5  │ ;                                                                                                               │ 147..148
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective):
+  - (root꞉ SourceUnit): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..148)
+      - (members꞉ SourceUnitMembers): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..148)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..148)
               - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
-              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma):
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity 0.7.0 0.8.0" (119..139)
                   - (solidity_keyword꞉ SolidityKeyword): "solidity" # (119..127)
-                  - (sets꞉ VersionExpressionSets):
-                      - (item꞉ VersionExpressionSet):
-                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm):
-                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral):
+                  - (sets꞉ VersionExpressionSets): # "0.7.0 0.8.0" (128..139)
+                      - (item꞉ VersionExpressionSet): # "0.7.0 0.8.0" (128..139)
+                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm): # "0.7.0" (128..133)
+                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral): # "0.7.0" (128..133)
                                   - (item꞉ VersionSpecifier): "0" # (128..129)
                                   - (item꞉ VersionSpecifier): "7" # (130..131)
                                   - (item꞉ VersionSpecifier): "0" # (132..133)
-                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm):
-                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral):
+                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm): # "0.8.0" (134..139)
+                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral): # "0.8.0" (134..139)
                                   - (item꞉ VersionSpecifier): "0" # (134..135)
                                   - (item꞉ VersionSpecifier): "8" # (136..137)
                                   - (item꞉ VersionSpecifier): "0" # (138..139)

@@ -6,9 +6,9 @@ Source: >
   3  │ // <<<                                                                                              │ 113..119
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (enum_definition꞉ EnumDefinition):
+  - (root꞉ SourceUnit): # "enum Foo { }" (100..112)
+      - (members꞉ SourceUnitMembers): # "enum Foo { }" (100..112)
+          - (item꞉ SourceUnitMember) ► (enum_definition꞉ EnumDefinition): # "enum Foo { }" (100..112)
               - (enum_keyword꞉ EnumKeyword): "enum" # (100..104)
               - (name꞉ Identifier): "Foo" # (105..108)
               - (open_brace꞉ OpenBrace): "{" # (109..110)

@@ -10,55 +10,55 @@ Source: >
   7  │ }                                                                                                                                │ 233..234
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..234)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..234)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..234)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
               - (name꞉ Identifier): "C" # (9..10)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+              - (members꞉ ContractMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..232)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..232)
                       - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
                       - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration):
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
                           - (open_paren꞉ OpenParen): "(" # (27..28)
                           - (parameters꞉ Parameters): []
                           - (close_paren꞉ CloseParen): ")" # (28..29)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "contract C {\n    function f() {\n// >>> Copied from..." (0..232)
                           - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements):
-                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement):
-                                  - (target꞉ VariableDeclarationTarget) ► (multi_typed_declaration꞉ MultiTypedDeclaration):
+                          - (statements꞉ Statements): # "contract C {\n    function f() {\n// >>> Copied from..." (0..219)
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement): # "contract C {\n    function f() {\n// >>> Copied from..." (0..219)
+                                  - (target꞉ VariableDeclarationTarget) ► (multi_typed_declaration꞉ MultiTypedDeclaration): # "contract C {\n    function f() {\n// >>> Copied from..." (0..218)
                                       - (open_paren꞉ OpenParen): "(" # (161..162)
-                                      - (elements꞉ MultiTypedDeclarationElements):
-                                          - (item꞉ MultiTypedDeclarationElement):
-                                              - (member꞉ VariableDeclaration):
+                                      - (elements꞉ MultiTypedDeclarationElements): # "uint32 a, uint32 b" (162..180)
+                                          - (item꞉ MultiTypedDeclarationElement): # "uint32 a" (162..170)
+                                              - (member꞉ VariableDeclaration): # "uint32 a" (162..170)
                                                   - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint32" # (162..168)
                                                   - (name꞉ Identifier): "a" # (169..170)
-                                          - (item꞉ MultiTypedDeclarationElement):
-                                              - (member꞉ VariableDeclaration):
+                                          - (item꞉ MultiTypedDeclarationElement): # "uint32 b" (172..180)
+                                              - (member꞉ VariableDeclaration): # "uint32 b" (172..180)
                                                   - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint32" # (172..178)
                                                   - (name꞉ Identifier): "b" # (179..180)
                                       - (close_paren꞉ CloseParen): ")" # (180..181)
-                                      - (value꞉ VariableDeclarationValue):
+                                      - (value꞉ VariableDeclarationValue): # "contract C {\n    function f() {\n// >>> Copied from..." (0..218)
                                           - (equal꞉ Equal): "=" # (182..183)
-                                          - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression):
-                                              - (operand꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression):
+                                          - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "contract C {\n    function f() {\n// >>> Copied from..." (0..218)
+                                              - (operand꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "contract C {\n    function f() {\n// >>> Copied from..." (0..194)
                                                   - (operand꞉ Expression) ► (identifier꞉ Identifier): "abi" # (184..187)
                                                   - (period꞉ Period): "" # (0..0)
                                                   - (member꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "decode" # (188..194)
-                                              - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration):
+                                              - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "(data, (uint32, uint32))" (194..218)
                                                   - (open_paren꞉ OpenParen): "(" # (194..195)
-                                                  - (arguments꞉ PositionalArguments):
+                                                  - (arguments꞉ PositionalArguments): # "data, (uint32, uint32)" (195..217)
                                                       - (item꞉ Expression) ► (identifier꞉ Identifier): "data" # (195..199)
-                                                      - (item꞉ Expression) ► (tuple_expression꞉ TupleExpression):
+                                                      - (item꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "(uint32, uint32)" (201..217)
                                                           - (open_paren꞉ OpenParen): "(" # (201..202)
-                                                          - (items꞉ TupleValues):
-                                                              - (item꞉ TupleValue):
+                                                          - (items꞉ TupleValues): # "uint32, uint32" (202..216)
+                                                              - (item꞉ TupleValue): # "uint32" (202..208)
                                                                   - (expression꞉ Expression) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint32" # (202..208)
-                                                              - (item꞉ TupleValue):
+                                                              - (item꞉ TupleValue): # "uint32" (210..216)
                                                                   - (expression꞉ Expression) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint32" # (210..216)
                                                           - (close_paren꞉ CloseParen): ")" # (216..217)
                                                   - (close_paren꞉ CloseParen): ")" # (217..218)

@@ -7,9 +7,9 @@ Source: >
   4  │ // <<<                                                                                                │ 116..122
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (struct_definition꞉ StructDefinition):
+  - (root꞉ SourceUnit): # "struct S { }" (102..114)
+      - (members꞉ SourceUnitMembers): # "struct S { }" (102..114)
+          - (item꞉ SourceUnitMember) ► (struct_definition꞉ StructDefinition): # "struct S { }" (102..114)
               - (struct_keyword꞉ StructKeyword): "struct" # (102..108)
               - (name꞉ Identifier): "S" # (109..110)
               - (open_brace꞉ OpenBrace): "{" # (111..112)

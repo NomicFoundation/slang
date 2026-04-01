@@ -6,13 +6,13 @@ Source: >
   3  │ // <<<                                                                                                           │ 134..140
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (import_directive꞉ ImportDirective):
+  - (root꞉ SourceUnit): # 'import "foo" as bar;' (113..133)
+      - (members꞉ SourceUnitMembers): # 'import "foo" as bar;' (113..133)
+          - (item꞉ SourceUnitMember) ► (import_directive꞉ ImportDirective): # 'import "foo" as bar;' (113..133)
               - (import_keyword꞉ ImportKeyword): "import" # (113..119)
-              - (clause꞉ ImportClause) ► (path_import꞉ PathImport):
+              - (clause꞉ ImportClause) ► (path_import꞉ PathImport): # '"foo" as bar' (120..132)
                   - (path꞉ StringLiteral): '"foo"' # (120..125)
-                  - (alias꞉ ImportAlias):
+                  - (alias꞉ ImportAlias): # "as bar" (126..132)
                       - (as_keyword꞉ AsKeyword): "as" # (126..128)
                       - (identifier꞉ Identifier): "bar" # (129..132)
               - (semicolon꞉ Semicolon): ";" # (132..133)

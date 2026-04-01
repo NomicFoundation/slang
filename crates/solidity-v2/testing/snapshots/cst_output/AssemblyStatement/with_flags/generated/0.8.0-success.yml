@@ -13,34 +13,34 @@ Source: >
   10 │ }                                                                                                      │ 188..189
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..189)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..189)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..189)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
               - (name꞉ Identifier): "C" # (9..10)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..187)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..187)
                       - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
                       - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration):
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
                           - (open_paren꞉ OpenParen): "(" # (27..28)
                           - (parameters꞉ Parameters): []
                           - (close_paren꞉ CloseParen): ")" # (28..29)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..187)
                           - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements):
-                              - (item꞉ Statement) ► (assembly_statement꞉ AssemblyStatement):
+                          - (statements꞉ Statements): # 'assembly "evmasm" ("memory-safe") {\n\n}' (135..173)
+                              - (item꞉ Statement) ► (assembly_statement꞉ AssemblyStatement): # 'assembly "evmasm" ("memory-safe") {\n\n}' (135..173)
                                   - (assembly_keyword꞉ AssemblyKeyword): "assembly" # (135..143)
                                   - (label꞉ YulStringLiteral): '"evmasm"' # (144..152)
-                                  - (flags꞉ YulFlagsDeclaration):
+                                  - (flags꞉ YulFlagsDeclaration): # '("memory-safe")' (153..168)
                                       - (open_paren꞉ YulOpenParen): "(" # (153..154)
-                                      - (flags꞉ YulFlags):
+                                      - (flags꞉ YulFlags): # '"memory-safe"' (154..167)
                                           - (item꞉ YulStringLiteral): '"memory-safe"' # (154..167)
                                       - (close_paren꞉ YulCloseParen): ")" # (167..168)
-                                  - (body꞉ YulBlock):
+                                  - (body꞉ YulBlock): # "{\n\n}" (169..173)
                                       - (open_brace꞉ YulOpenBrace): "{" # (169..170)
                                       - (statements꞉ YulStatements): []
                                       - (close_brace꞉ YulCloseBrace): "}" # (172..173)

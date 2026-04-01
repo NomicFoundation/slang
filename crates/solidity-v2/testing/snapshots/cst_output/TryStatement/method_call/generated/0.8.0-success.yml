@@ -13,41 +13,41 @@ Source: >
   10 │ }                                                                                                  │ 169..170
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..170)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..170)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..170)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
               - (name꞉ Identifier): "C" # (9..10)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..168)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..168)
                       - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
                       - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration):
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
                           - (open_paren꞉ OpenParen): "(" # (27..28)
                           - (parameters꞉ Parameters): []
                           - (close_paren꞉ CloseParen): ")" # (28..29)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..168)
                           - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements):
-                              - (item꞉ Statement) ► (try_statement꞉ TryStatement):
+                          - (statements꞉ Statements): # "try foo() {\n} catch {\n}" (131..154)
+                              - (item꞉ Statement) ► (try_statement꞉ TryStatement): # "try foo() {\n} catch {\n}" (131..154)
                                   - (try_keyword꞉ TryKeyword): "try" # (131..134)
-                                  - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression):
+                                  - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "foo()" (135..140)
                                       - (operand꞉ Expression) ► (identifier꞉ Identifier): "foo" # (135..138)
-                                      - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration):
+                                      - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "()" (138..140)
                                           - (open_paren꞉ OpenParen): "(" # (138..139)
                                           - (arguments꞉ PositionalArguments): []
                                           - (close_paren꞉ CloseParen): ")" # (139..140)
-                                  - (body꞉ Block):
+                                  - (body꞉ Block): # "{\n}" (141..144)
                                       - (open_brace꞉ OpenBrace): "{" # (141..142)
                                       - (statements꞉ Statements): []
                                       - (close_brace꞉ CloseBrace): "}" # (143..144)
-                                  - (catch_clauses꞉ CatchClauses):
-                                      - (item꞉ CatchClause):
+                                  - (catch_clauses꞉ CatchClauses): # "catch {\n}" (145..154)
+                                      - (item꞉ CatchClause): # "catch {\n}" (145..154)
                                           - (catch_keyword꞉ CatchKeyword): "catch" # (145..150)
-                                          - (body꞉ Block):
+                                          - (body꞉ Block): # "{\n}" (151..154)
                                               - (open_brace꞉ OpenBrace): "{" # (151..152)
                                               - (statements꞉ Statements): []
                                               - (close_brace꞉ CloseBrace): "}" # (153..154)

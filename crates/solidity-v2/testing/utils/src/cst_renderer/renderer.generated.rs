@@ -6,5632 +6,6352 @@
 #[allow(clippy::wildcard_imports)]
 use slang_solidity_v2_cst::structured_cst::nodes::*;
 
-use crate::cst_renderer::RenderContext;
+use crate::cst_renderer::{render_terminal, ChildrenAccumulator, RenderedOutput};
 
 //
 // Sequences:
 //
 
-pub fn render_abicoder_pragma(ctx: &mut RenderContext<'_>, node: &AbicoderPragmaStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_abicoder_pragma(
+    source: &str,
+    node: &AbicoderPragmaStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("abicoder_keyword", "AbicoderKeyword");
+    acc.add(
+        "abicoder_keyword",
+        "AbicoderKeyword",
+        render_terminal(source, &node.abicoder_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.abicoder_keyword.range);
-    }
+    acc.add(
+        "version",
+        "AbicoderVersion",
+        render_abicoder_version(source, &node.version, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("version", "AbicoderVersion");
-
-        render_abicoder_version(ctx, &node.version);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_additive_expression(ctx: &mut RenderContext<'_>, node: &AdditiveExpressionStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_additive_expression(
+    source: &str,
+    node: &AdditiveExpressionStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("left_operand", "Expression");
+    acc.add(
+        "left_operand",
+        "Expression",
+        render_expression(source, &node.left_operand, depth + 1),
+    );
 
-        render_expression(ctx, &node.left_operand);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key(
-            "expression_additive_expression_operator",
-            "Expression_AdditiveExpression_Operator",
-        );
-
+    acc.add(
+        "expression_additive_expression_operator",
+        "Expression_AdditiveExpression_Operator",
         render_expression_additive_expression_operator(
-            ctx,
+            source,
             &node.expression_additive_expression_operator,
-        );
-    }
+            depth + 1,
+        ),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("right_operand", "Expression");
+    acc.add(
+        "right_operand",
+        "Expression",
+        render_expression(source, &node.right_operand, depth + 1),
+    );
 
-        render_expression(ctx, &node.right_operand);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_address_type(ctx: &mut RenderContext<'_>, node: &AddressTypeStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_address_type(source: &str, node: &AddressTypeStruct, depth: usize) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("address_keyword", "AddressKeyword");
-
-        ctx.write_terminal_value(&node.address_keyword.range);
-    }
+    acc.add(
+        "address_keyword",
+        "AddressKeyword",
+        render_terminal(source, &node.address_keyword.range),
+    );
 
     if let Some(ref payable_keyword) = node.payable_keyword {
-        ctx.write_indent();
-        ctx.write_key("payable_keyword", "PayableKeyword");
-
-        ctx.write_terminal_value(&payable_keyword.range);
+        acc.add(
+            "payable_keyword",
+            "PayableKeyword",
+            render_terminal(source, &payable_keyword.range),
+        );
     }
 
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_and_expression(ctx: &mut RenderContext<'_>, node: &AndExpressionStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_and_expression(
+    source: &str,
+    node: &AndExpressionStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("left_operand", "Expression");
+    acc.add(
+        "left_operand",
+        "Expression",
+        render_expression(source, &node.left_operand, depth + 1),
+    );
 
-        render_expression(ctx, &node.left_operand);
-    }
+    acc.add(
+        "operator",
+        "AmpersandAmpersand",
+        render_terminal(source, &node.operator.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("operator", "AmpersandAmpersand");
+    acc.add(
+        "right_operand",
+        "Expression",
+        render_expression(source, &node.right_operand, depth + 1),
+    );
 
-        ctx.write_terminal_value(&node.operator.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("right_operand", "Expression");
-
-        render_expression(ctx, &node.right_operand);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_array_expression(ctx: &mut RenderContext<'_>, node: &ArrayExpressionStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_array_expression(
+    source: &str,
+    node: &ArrayExpressionStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("open_bracket", "OpenBracket");
+    acc.add(
+        "open_bracket",
+        "OpenBracket",
+        render_terminal(source, &node.open_bracket.range),
+    );
 
-        ctx.write_terminal_value(&node.open_bracket.range);
-    }
+    acc.add(
+        "items",
+        "ArrayValues",
+        render_array_values(source, &node.items, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("items", "ArrayValues");
+    acc.add(
+        "close_bracket",
+        "CloseBracket",
+        render_terminal(source, &node.close_bracket.range),
+    );
 
-        render_array_values(ctx, &node.items);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("close_bracket", "CloseBracket");
-
-        ctx.write_terminal_value(&node.close_bracket.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_array_type_name(ctx: &mut RenderContext<'_>, node: &ArrayTypeNameStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_array_type_name(
+    source: &str,
+    node: &ArrayTypeNameStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("operand", "TypeName");
+    acc.add(
+        "operand",
+        "TypeName",
+        render_type_name(source, &node.operand, depth + 1),
+    );
 
-        render_type_name(ctx, &node.operand);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("open_bracket", "OpenBracket");
-
-        ctx.write_terminal_value(&node.open_bracket.range);
-    }
+    acc.add(
+        "open_bracket",
+        "OpenBracket",
+        render_terminal(source, &node.open_bracket.range),
+    );
 
     if let Some(ref index) = node.index {
-        ctx.write_indent();
-        ctx.write_key("index", "Expression");
-
-        render_expression(ctx, index);
+        acc.add(
+            "index",
+            "Expression",
+            render_expression(source, index, depth + 1),
+        );
     }
 
-    {
-        ctx.write_indent();
-        ctx.write_key("close_bracket", "CloseBracket");
+    acc.add(
+        "close_bracket",
+        "CloseBracket",
+        render_terminal(source, &node.close_bracket.range),
+    );
 
-        ctx.write_terminal_value(&node.close_bracket.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_assembly_statement(ctx: &mut RenderContext<'_>, node: &AssemblyStatementStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_assembly_statement(
+    source: &str,
+    node: &AssemblyStatementStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("assembly_keyword", "AssemblyKeyword");
-
-        ctx.write_terminal_value(&node.assembly_keyword.range);
-    }
+    acc.add(
+        "assembly_keyword",
+        "AssemblyKeyword",
+        render_terminal(source, &node.assembly_keyword.range),
+    );
 
     if let Some(ref label) = node.label {
-        ctx.write_indent();
-        ctx.write_key("label", "YulStringLiteral");
-
-        ctx.write_terminal_value(&label.range);
+        acc.add(
+            "label",
+            "YulStringLiteral",
+            render_terminal(source, &label.range),
+        );
     }
 
     if let Some(ref flags) = node.flags {
-        ctx.write_indent();
-        ctx.write_key("flags", "YulFlagsDeclaration");
-
-        render_yul_flags_declaration(ctx, flags);
+        acc.add(
+            "flags",
+            "YulFlagsDeclaration",
+            render_yul_flags_declaration(source, flags, depth + 1),
+        );
     }
 
-    {
-        ctx.write_indent();
-        ctx.write_key("body", "YulBlock");
+    acc.add(
+        "body",
+        "YulBlock",
+        render_yul_block(source, &node.body, depth + 1),
+    );
 
-        render_yul_block(ctx, &node.body);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_assignment_expression(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &AssignmentExpressionStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("left_operand", "Expression");
+    acc.add(
+        "left_operand",
+        "Expression",
+        render_expression(source, &node.left_operand, depth + 1),
+    );
 
-        render_expression(ctx, &node.left_operand);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key(
-            "expression_assignment_expression_operator",
-            "Expression_AssignmentExpression_Operator",
-        );
-
+    acc.add(
+        "expression_assignment_expression_operator",
+        "Expression_AssignmentExpression_Operator",
         render_expression_assignment_expression_operator(
-            ctx,
+            source,
             &node.expression_assignment_expression_operator,
-        );
-    }
+            depth + 1,
+        ),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("right_operand", "Expression");
+    acc.add(
+        "right_operand",
+        "Expression",
+        render_expression(source, &node.right_operand, depth + 1),
+    );
 
-        render_expression(ctx, &node.right_operand);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_bitwise_and_expression(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &BitwiseAndExpressionStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("left_operand", "Expression");
+    acc.add(
+        "left_operand",
+        "Expression",
+        render_expression(source, &node.left_operand, depth + 1),
+    );
 
-        render_expression(ctx, &node.left_operand);
-    }
+    acc.add(
+        "operator",
+        "Ampersand",
+        render_terminal(source, &node.operator.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("operator", "Ampersand");
+    acc.add(
+        "right_operand",
+        "Expression",
+        render_expression(source, &node.right_operand, depth + 1),
+    );
 
-        ctx.write_terminal_value(&node.operator.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("right_operand", "Expression");
-
-        render_expression(ctx, &node.right_operand);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_bitwise_or_expression(ctx: &mut RenderContext<'_>, node: &BitwiseOrExpressionStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_bitwise_or_expression(
+    source: &str,
+    node: &BitwiseOrExpressionStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("left_operand", "Expression");
+    acc.add(
+        "left_operand",
+        "Expression",
+        render_expression(source, &node.left_operand, depth + 1),
+    );
 
-        render_expression(ctx, &node.left_operand);
-    }
+    acc.add(
+        "operator",
+        "Bar",
+        render_terminal(source, &node.operator.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("operator", "Bar");
+    acc.add(
+        "right_operand",
+        "Expression",
+        render_expression(source, &node.right_operand, depth + 1),
+    );
 
-        ctx.write_terminal_value(&node.operator.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("right_operand", "Expression");
-
-        render_expression(ctx, &node.right_operand);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_bitwise_xor_expression(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &BitwiseXorExpressionStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("left_operand", "Expression");
+    acc.add(
+        "left_operand",
+        "Expression",
+        render_expression(source, &node.left_operand, depth + 1),
+    );
 
-        render_expression(ctx, &node.left_operand);
-    }
+    acc.add(
+        "operator",
+        "Caret",
+        render_terminal(source, &node.operator.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("operator", "Caret");
+    acc.add(
+        "right_operand",
+        "Expression",
+        render_expression(source, &node.right_operand, depth + 1),
+    );
 
-        ctx.write_terminal_value(&node.operator.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("right_operand", "Expression");
-
-        render_expression(ctx, &node.right_operand);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_block(ctx: &mut RenderContext<'_>, node: &BlockStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_block(source: &str, node: &BlockStruct, depth: usize) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("open_brace", "OpenBrace");
+    acc.add(
+        "open_brace",
+        "OpenBrace",
+        render_terminal(source, &node.open_brace.range),
+    );
 
-        ctx.write_terminal_value(&node.open_brace.range);
-    }
+    acc.add(
+        "statements",
+        "Statements",
+        render_statements(source, &node.statements, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("statements", "Statements");
+    acc.add(
+        "close_brace",
+        "CloseBrace",
+        render_terminal(source, &node.close_brace.range),
+    );
 
-        render_statements(ctx, &node.statements);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("close_brace", "CloseBrace");
-
-        ctx.write_terminal_value(&node.close_brace.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_break_statement(ctx: &mut RenderContext<'_>, node: &BreakStatementStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_break_statement(
+    source: &str,
+    node: &BreakStatementStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("break_keyword", "BreakKeyword");
+    acc.add(
+        "break_keyword",
+        "BreakKeyword",
+        render_terminal(source, &node.break_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.break_keyword.range);
-    }
+    acc.add(
+        "semicolon",
+        "Semicolon",
+        render_terminal(source, &node.semicolon.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("semicolon", "Semicolon");
-
-        ctx.write_terminal_value(&node.semicolon.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_call_options_expression(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &CallOptionsExpressionStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("operand", "Expression");
+    acc.add(
+        "operand",
+        "Expression",
+        render_expression(source, &node.operand, depth + 1),
+    );
 
-        render_expression(ctx, &node.operand);
-    }
+    acc.add(
+        "open_brace",
+        "OpenBrace",
+        render_terminal(source, &node.open_brace.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("open_brace", "OpenBrace");
+    acc.add(
+        "options",
+        "CallOptions",
+        render_call_options(source, &node.options, depth + 1),
+    );
 
-        ctx.write_terminal_value(&node.open_brace.range);
-    }
+    acc.add(
+        "close_brace",
+        "CloseBrace",
+        render_terminal(source, &node.close_brace.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("options", "CallOptions");
-
-        render_call_options(ctx, &node.options);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("close_brace", "CloseBrace");
-
-        ctx.write_terminal_value(&node.close_brace.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_catch_clause(ctx: &mut RenderContext<'_>, node: &CatchClauseStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_catch_clause(source: &str, node: &CatchClauseStruct, depth: usize) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("catch_keyword", "CatchKeyword");
-
-        ctx.write_terminal_value(&node.catch_keyword.range);
-    }
+    acc.add(
+        "catch_keyword",
+        "CatchKeyword",
+        render_terminal(source, &node.catch_keyword.range),
+    );
 
     if let Some(ref error) = node.error {
-        ctx.write_indent();
-        ctx.write_key("error", "CatchClauseError");
-
-        render_catch_clause_error(ctx, error);
+        acc.add(
+            "error",
+            "CatchClauseError",
+            render_catch_clause_error(source, error, depth + 1),
+        );
     }
 
-    {
-        ctx.write_indent();
-        ctx.write_key("body", "Block");
+    acc.add("body", "Block", render_block(source, &node.body, depth + 1));
 
-        render_block(ctx, &node.body);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_catch_clause_error(ctx: &mut RenderContext<'_>, node: &CatchClauseErrorStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_catch_clause_error(
+    source: &str,
+    node: &CatchClauseErrorStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     if let Some(ref name) = node.name {
-        ctx.write_indent();
-        ctx.write_key("name", "Identifier");
-
-        ctx.write_terminal_value(&name.range);
+        acc.add("name", "Identifier", render_terminal(source, &name.range));
     }
 
-    {
-        ctx.write_indent();
-        ctx.write_key("parameters", "ParametersDeclaration");
+    acc.add(
+        "parameters",
+        "ParametersDeclaration",
+        render_parameters_declaration(source, &node.parameters, depth + 1),
+    );
 
-        render_parameters_declaration(ctx, &node.parameters);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_conditional_expression(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &ConditionalExpressionStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("operand", "Expression");
+    acc.add(
+        "operand",
+        "Expression",
+        render_expression(source, &node.operand, depth + 1),
+    );
 
-        render_expression(ctx, &node.operand);
-    }
+    acc.add(
+        "question_mark",
+        "QuestionMark",
+        render_terminal(source, &node.question_mark.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("question_mark", "QuestionMark");
+    acc.add(
+        "true_expression",
+        "Expression",
+        render_expression(source, &node.true_expression, depth + 1),
+    );
 
-        ctx.write_terminal_value(&node.question_mark.range);
-    }
+    acc.add("colon", "Colon", render_terminal(source, &node.colon.range));
 
-    {
-        ctx.write_indent();
-        ctx.write_key("true_expression", "Expression");
+    acc.add(
+        "false_expression",
+        "Expression",
+        render_expression(source, &node.false_expression, depth + 1),
+    );
 
-        render_expression(ctx, &node.true_expression);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("colon", "Colon");
-
-        ctx.write_terminal_value(&node.colon.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("false_expression", "Expression");
-
-        render_expression(ctx, &node.false_expression);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_constant_definition(ctx: &mut RenderContext<'_>, node: &ConstantDefinitionStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_constant_definition(
+    source: &str,
+    node: &ConstantDefinitionStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("type_name", "TypeName");
+    acc.add(
+        "type_name",
+        "TypeName",
+        render_type_name(source, &node.type_name, depth + 1),
+    );
 
-        render_type_name(ctx, &node.type_name);
-    }
+    acc.add(
+        "constant_keyword",
+        "ConstantKeyword",
+        render_terminal(source, &node.constant_keyword.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("constant_keyword", "ConstantKeyword");
+    acc.add(
+        "name",
+        "Identifier",
+        render_terminal(source, &node.name.range),
+    );
 
-        ctx.write_terminal_value(&node.constant_keyword.range);
-    }
+    acc.add("equal", "Equal", render_terminal(source, &node.equal.range));
 
-    {
-        ctx.write_indent();
-        ctx.write_key("name", "Identifier");
+    acc.add(
+        "value",
+        "Expression",
+        render_expression(source, &node.value, depth + 1),
+    );
 
-        ctx.write_terminal_value(&node.name.range);
-    }
+    acc.add(
+        "semicolon",
+        "Semicolon",
+        render_terminal(source, &node.semicolon.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("equal", "Equal");
-
-        ctx.write_terminal_value(&node.equal.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("value", "Expression");
-
-        render_expression(ctx, &node.value);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("semicolon", "Semicolon");
-
-        ctx.write_terminal_value(&node.semicolon.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_constructor_definition(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &ConstructorDefinitionStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("constructor_keyword", "ConstructorKeyword");
+    acc.add(
+        "constructor_keyword",
+        "ConstructorKeyword",
+        render_terminal(source, &node.constructor_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.constructor_keyword.range);
-    }
+    acc.add(
+        "parameters",
+        "ParametersDeclaration",
+        render_parameters_declaration(source, &node.parameters, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("parameters", "ParametersDeclaration");
+    acc.add(
+        "attributes",
+        "ConstructorAttributes",
+        render_constructor_attributes(source, &node.attributes, depth + 1),
+    );
 
-        render_parameters_declaration(ctx, &node.parameters);
-    }
+    acc.add("body", "Block", render_block(source, &node.body, depth + 1));
 
-    {
-        ctx.write_indent();
-        ctx.write_key("attributes", "ConstructorAttributes");
-
-        render_constructor_attributes(ctx, &node.attributes);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("body", "Block");
-
-        render_block(ctx, &node.body);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_continue_statement(ctx: &mut RenderContext<'_>, node: &ContinueStatementStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_continue_statement(
+    source: &str,
+    node: &ContinueStatementStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("continue_keyword", "ContinueKeyword");
+    acc.add(
+        "continue_keyword",
+        "ContinueKeyword",
+        render_terminal(source, &node.continue_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.continue_keyword.range);
-    }
+    acc.add(
+        "semicolon",
+        "Semicolon",
+        render_terminal(source, &node.semicolon.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("semicolon", "Semicolon");
-
-        ctx.write_terminal_value(&node.semicolon.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_contract_definition(ctx: &mut RenderContext<'_>, node: &ContractDefinitionStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_contract_definition(
+    source: &str,
+    node: &ContractDefinitionStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     if let Some(ref abstract_keyword) = node.abstract_keyword {
-        ctx.write_indent();
-        ctx.write_key("abstract_keyword", "AbstractKeyword");
-
-        ctx.write_terminal_value(&abstract_keyword.range);
+        acc.add(
+            "abstract_keyword",
+            "AbstractKeyword",
+            render_terminal(source, &abstract_keyword.range),
+        );
     }
 
-    {
-        ctx.write_indent();
-        ctx.write_key("contract_keyword", "ContractKeyword");
+    acc.add(
+        "contract_keyword",
+        "ContractKeyword",
+        render_terminal(source, &node.contract_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.contract_keyword.range);
-    }
+    acc.add(
+        "name",
+        "Identifier",
+        render_terminal(source, &node.name.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("name", "Identifier");
+    acc.add(
+        "specifiers",
+        "ContractSpecifiers",
+        render_contract_specifiers(source, &node.specifiers, depth + 1),
+    );
 
-        ctx.write_terminal_value(&node.name.range);
-    }
+    acc.add(
+        "open_brace",
+        "OpenBrace",
+        render_terminal(source, &node.open_brace.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("specifiers", "ContractSpecifiers");
+    acc.add(
+        "members",
+        "ContractMembers",
+        render_contract_members(source, &node.members, depth + 1),
+    );
 
-        render_contract_specifiers(ctx, &node.specifiers);
-    }
+    acc.add(
+        "close_brace",
+        "CloseBrace",
+        render_terminal(source, &node.close_brace.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("open_brace", "OpenBrace");
-
-        ctx.write_terminal_value(&node.open_brace.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("members", "ContractMembers");
-
-        render_contract_members(ctx, &node.members);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("close_brace", "CloseBrace");
-
-        ctx.write_terminal_value(&node.close_brace.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_decimal_number_expression(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &DecimalNumberExpressionStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("literal", "DecimalLiteral");
-
-        ctx.write_terminal_value(&node.literal.range);
-    }
+    acc.add(
+        "literal",
+        "DecimalLiteral",
+        render_terminal(source, &node.literal.range),
+    );
 
     if let Some(ref unit) = node.unit {
-        ctx.write_indent();
-        ctx.write_key("unit", "NumberUnit");
-
-        render_number_unit(ctx, unit);
-    }
-
-    ctx.depth -= 1;
-}
-
-pub fn render_do_while_statement(ctx: &mut RenderContext<'_>, node: &DoWhileStatementStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
-
-    {
-        ctx.write_indent();
-        ctx.write_key("do_keyword", "DoKeyword");
-
-        ctx.write_terminal_value(&node.do_keyword.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("body", "Statement");
-
-        render_statement(ctx, &node.body);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("while_keyword", "WhileKeyword");
-
-        ctx.write_terminal_value(&node.while_keyword.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("open_paren", "OpenParen");
-
-        ctx.write_terminal_value(&node.open_paren.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("condition", "Expression");
-
-        render_expression(ctx, &node.condition);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("close_paren", "CloseParen");
-
-        ctx.write_terminal_value(&node.close_paren.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("semicolon", "Semicolon");
-
-        ctx.write_terminal_value(&node.semicolon.range);
-    }
-
-    ctx.depth -= 1;
-}
-
-pub fn render_else_branch(ctx: &mut RenderContext<'_>, node: &ElseBranchStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
-
-    {
-        ctx.write_indent();
-        ctx.write_key("else_keyword", "ElseKeyword");
-
-        ctx.write_terminal_value(&node.else_keyword.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("body", "Statement");
-
-        render_statement(ctx, &node.body);
-    }
-
-    ctx.depth -= 1;
-}
-
-pub fn render_emit_statement(ctx: &mut RenderContext<'_>, node: &EmitStatementStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
-
-    {
-        ctx.write_indent();
-        ctx.write_key("emit_keyword", "EmitKeyword");
-
-        ctx.write_terminal_value(&node.emit_keyword.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("event", "IdentifierPath");
-
-        render_identifier_path(ctx, &node.event);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("arguments", "ArgumentsDeclaration");
-
-        render_arguments_declaration(ctx, &node.arguments);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("semicolon", "Semicolon");
-
-        ctx.write_terminal_value(&node.semicolon.range);
-    }
-
-    ctx.depth -= 1;
-}
-
-pub fn render_enum_definition(ctx: &mut RenderContext<'_>, node: &EnumDefinitionStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
-
-    {
-        ctx.write_indent();
-        ctx.write_key("enum_keyword", "EnumKeyword");
-
-        ctx.write_terminal_value(&node.enum_keyword.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("name", "Identifier");
-
-        ctx.write_terminal_value(&node.name.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("open_brace", "OpenBrace");
-
-        ctx.write_terminal_value(&node.open_brace.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("members", "EnumMembers");
-
-        render_enum_members(ctx, &node.members);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("close_brace", "CloseBrace");
-
-        ctx.write_terminal_value(&node.close_brace.range);
-    }
-
-    ctx.depth -= 1;
-}
-
-pub fn render_equality_expression(ctx: &mut RenderContext<'_>, node: &EqualityExpressionStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
-
-    {
-        ctx.write_indent();
-        ctx.write_key("left_operand", "Expression");
-
-        render_expression(ctx, &node.left_operand);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key(
-            "expression_equality_expression_operator",
-            "Expression_EqualityExpression_Operator",
+        acc.add(
+            "unit",
+            "NumberUnit",
+            render_number_unit(source, unit, depth + 1),
         );
+    }
 
+    acc.finish()
+}
+
+pub fn render_do_while_statement(
+    source: &str,
+    node: &DoWhileStatementStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+
+    acc.add(
+        "do_keyword",
+        "DoKeyword",
+        render_terminal(source, &node.do_keyword.range),
+    );
+
+    acc.add(
+        "body",
+        "Statement",
+        render_statement(source, &node.body, depth + 1),
+    );
+
+    acc.add(
+        "while_keyword",
+        "WhileKeyword",
+        render_terminal(source, &node.while_keyword.range),
+    );
+
+    acc.add(
+        "open_paren",
+        "OpenParen",
+        render_terminal(source, &node.open_paren.range),
+    );
+
+    acc.add(
+        "condition",
+        "Expression",
+        render_expression(source, &node.condition, depth + 1),
+    );
+
+    acc.add(
+        "close_paren",
+        "CloseParen",
+        render_terminal(source, &node.close_paren.range),
+    );
+
+    acc.add(
+        "semicolon",
+        "Semicolon",
+        render_terminal(source, &node.semicolon.range),
+    );
+
+    acc.finish()
+}
+
+pub fn render_else_branch(source: &str, node: &ElseBranchStruct, depth: usize) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+
+    acc.add(
+        "else_keyword",
+        "ElseKeyword",
+        render_terminal(source, &node.else_keyword.range),
+    );
+
+    acc.add(
+        "body",
+        "Statement",
+        render_statement(source, &node.body, depth + 1),
+    );
+
+    acc.finish()
+}
+
+pub fn render_emit_statement(
+    source: &str,
+    node: &EmitStatementStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+
+    acc.add(
+        "emit_keyword",
+        "EmitKeyword",
+        render_terminal(source, &node.emit_keyword.range),
+    );
+
+    acc.add(
+        "event",
+        "IdentifierPath",
+        render_identifier_path(source, &node.event, depth + 1),
+    );
+
+    acc.add(
+        "arguments",
+        "ArgumentsDeclaration",
+        render_arguments_declaration(source, &node.arguments, depth + 1),
+    );
+
+    acc.add(
+        "semicolon",
+        "Semicolon",
+        render_terminal(source, &node.semicolon.range),
+    );
+
+    acc.finish()
+}
+
+pub fn render_enum_definition(
+    source: &str,
+    node: &EnumDefinitionStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+
+    acc.add(
+        "enum_keyword",
+        "EnumKeyword",
+        render_terminal(source, &node.enum_keyword.range),
+    );
+
+    acc.add(
+        "name",
+        "Identifier",
+        render_terminal(source, &node.name.range),
+    );
+
+    acc.add(
+        "open_brace",
+        "OpenBrace",
+        render_terminal(source, &node.open_brace.range),
+    );
+
+    acc.add(
+        "members",
+        "EnumMembers",
+        render_enum_members(source, &node.members, depth + 1),
+    );
+
+    acc.add(
+        "close_brace",
+        "CloseBrace",
+        render_terminal(source, &node.close_brace.range),
+    );
+
+    acc.finish()
+}
+
+pub fn render_equality_expression(
+    source: &str,
+    node: &EqualityExpressionStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+
+    acc.add(
+        "left_operand",
+        "Expression",
+        render_expression(source, &node.left_operand, depth + 1),
+    );
+
+    acc.add(
+        "expression_equality_expression_operator",
+        "Expression_EqualityExpression_Operator",
         render_expression_equality_expression_operator(
-            ctx,
+            source,
             &node.expression_equality_expression_operator,
-        );
-    }
+            depth + 1,
+        ),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("right_operand", "Expression");
+    acc.add(
+        "right_operand",
+        "Expression",
+        render_expression(source, &node.right_operand, depth + 1),
+    );
 
-        render_expression(ctx, &node.right_operand);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_error_definition(ctx: &mut RenderContext<'_>, node: &ErrorDefinitionStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_error_definition(
+    source: &str,
+    node: &ErrorDefinitionStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("error_keyword", "ErrorKeyword");
+    acc.add(
+        "error_keyword",
+        "ErrorKeyword",
+        render_terminal(source, &node.error_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.error_keyword.range);
-    }
+    acc.add(
+        "name",
+        "Identifier",
+        render_terminal(source, &node.name.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("name", "Identifier");
+    acc.add(
+        "members",
+        "ErrorParametersDeclaration",
+        render_error_parameters_declaration(source, &node.members, depth + 1),
+    );
 
-        ctx.write_terminal_value(&node.name.range);
-    }
+    acc.add(
+        "semicolon",
+        "Semicolon",
+        render_terminal(source, &node.semicolon.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("members", "ErrorParametersDeclaration");
-
-        render_error_parameters_declaration(ctx, &node.members);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("semicolon", "Semicolon");
-
-        ctx.write_terminal_value(&node.semicolon.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_error_parameter(ctx: &mut RenderContext<'_>, node: &ErrorParameterStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_error_parameter(
+    source: &str,
+    node: &ErrorParameterStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("type_name", "TypeName");
-
-        render_type_name(ctx, &node.type_name);
-    }
+    acc.add(
+        "type_name",
+        "TypeName",
+        render_type_name(source, &node.type_name, depth + 1),
+    );
 
     if let Some(ref name) = node.name {
-        ctx.write_indent();
-        ctx.write_key("name", "Identifier");
-
-        ctx.write_terminal_value(&name.range);
+        acc.add("name", "Identifier", render_terminal(source, &name.range));
     }
 
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_error_parameters_declaration(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &ErrorParametersDeclarationStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("open_paren", "OpenParen");
+    acc.add(
+        "open_paren",
+        "OpenParen",
+        render_terminal(source, &node.open_paren.range),
+    );
 
-        ctx.write_terminal_value(&node.open_paren.range);
-    }
+    acc.add(
+        "parameters",
+        "ErrorParameters",
+        render_error_parameters(source, &node.parameters, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("parameters", "ErrorParameters");
+    acc.add(
+        "close_paren",
+        "CloseParen",
+        render_terminal(source, &node.close_paren.range),
+    );
 
-        render_error_parameters(ctx, &node.parameters);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("close_paren", "CloseParen");
-
-        ctx.write_terminal_value(&node.close_paren.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_event_definition(ctx: &mut RenderContext<'_>, node: &EventDefinitionStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_event_definition(
+    source: &str,
+    node: &EventDefinitionStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("event_keyword", "EventKeyword");
+    acc.add(
+        "event_keyword",
+        "EventKeyword",
+        render_terminal(source, &node.event_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.event_keyword.range);
-    }
+    acc.add(
+        "name",
+        "Identifier",
+        render_terminal(source, &node.name.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("name", "Identifier");
-
-        ctx.write_terminal_value(&node.name.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("parameters", "EventParametersDeclaration");
-
-        render_event_parameters_declaration(ctx, &node.parameters);
-    }
+    acc.add(
+        "parameters",
+        "EventParametersDeclaration",
+        render_event_parameters_declaration(source, &node.parameters, depth + 1),
+    );
 
     if let Some(ref anonymous_keyword) = node.anonymous_keyword {
-        ctx.write_indent();
-        ctx.write_key("anonymous_keyword", "AnonymousKeyword");
-
-        ctx.write_terminal_value(&anonymous_keyword.range);
+        acc.add(
+            "anonymous_keyword",
+            "AnonymousKeyword",
+            render_terminal(source, &anonymous_keyword.range),
+        );
     }
 
-    {
-        ctx.write_indent();
-        ctx.write_key("semicolon", "Semicolon");
+    acc.add(
+        "semicolon",
+        "Semicolon",
+        render_terminal(source, &node.semicolon.range),
+    );
 
-        ctx.write_terminal_value(&node.semicolon.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_event_parameter(ctx: &mut RenderContext<'_>, node: &EventParameterStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_event_parameter(
+    source: &str,
+    node: &EventParameterStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("type_name", "TypeName");
-
-        render_type_name(ctx, &node.type_name);
-    }
+    acc.add(
+        "type_name",
+        "TypeName",
+        render_type_name(source, &node.type_name, depth + 1),
+    );
 
     if let Some(ref indexed_keyword) = node.indexed_keyword {
-        ctx.write_indent();
-        ctx.write_key("indexed_keyword", "IndexedKeyword");
-
-        ctx.write_terminal_value(&indexed_keyword.range);
+        acc.add(
+            "indexed_keyword",
+            "IndexedKeyword",
+            render_terminal(source, &indexed_keyword.range),
+        );
     }
 
     if let Some(ref name) = node.name {
-        ctx.write_indent();
-        ctx.write_key("name", "Identifier");
-
-        ctx.write_terminal_value(&name.range);
+        acc.add("name", "Identifier", render_terminal(source, &name.range));
     }
 
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_event_parameters_declaration(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &EventParametersDeclarationStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("open_paren", "OpenParen");
+    acc.add(
+        "open_paren",
+        "OpenParen",
+        render_terminal(source, &node.open_paren.range),
+    );
 
-        ctx.write_terminal_value(&node.open_paren.range);
-    }
+    acc.add(
+        "parameters",
+        "EventParameters",
+        render_event_parameters(source, &node.parameters, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("parameters", "EventParameters");
+    acc.add(
+        "close_paren",
+        "CloseParen",
+        render_terminal(source, &node.close_paren.range),
+    );
 
-        render_event_parameters(ctx, &node.parameters);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("close_paren", "CloseParen");
-
-        ctx.write_terminal_value(&node.close_paren.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_experimental_pragma(ctx: &mut RenderContext<'_>, node: &ExperimentalPragmaStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_experimental_pragma(
+    source: &str,
+    node: &ExperimentalPragmaStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("experimental_keyword", "ExperimentalKeyword");
+    acc.add(
+        "experimental_keyword",
+        "ExperimentalKeyword",
+        render_terminal(source, &node.experimental_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.experimental_keyword.range);
-    }
+    acc.add(
+        "feature",
+        "ExperimentalFeature",
+        render_experimental_feature(source, &node.feature, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("feature", "ExperimentalFeature");
-
-        render_experimental_feature(ctx, &node.feature);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_exponentiation_expression(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &ExponentiationExpressionStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("left_operand", "Expression");
+    acc.add(
+        "left_operand",
+        "Expression",
+        render_expression(source, &node.left_operand, depth + 1),
+    );
 
-        render_expression(ctx, &node.left_operand);
-    }
+    acc.add(
+        "operator",
+        "AsteriskAsterisk",
+        render_terminal(source, &node.operator.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("operator", "AsteriskAsterisk");
+    acc.add(
+        "right_operand",
+        "Expression",
+        render_expression(source, &node.right_operand, depth + 1),
+    );
 
-        ctx.write_terminal_value(&node.operator.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("right_operand", "Expression");
-
-        render_expression(ctx, &node.right_operand);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_expression_statement(ctx: &mut RenderContext<'_>, node: &ExpressionStatementStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_expression_statement(
+    source: &str,
+    node: &ExpressionStatementStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("expression", "Expression");
+    acc.add(
+        "expression",
+        "Expression",
+        render_expression(source, &node.expression, depth + 1),
+    );
 
-        render_expression(ctx, &node.expression);
-    }
+    acc.add(
+        "semicolon",
+        "Semicolon",
+        render_terminal(source, &node.semicolon.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("semicolon", "Semicolon");
-
-        ctx.write_terminal_value(&node.semicolon.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_fallback_function_definition(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &FallbackFunctionDefinitionStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("fallback_keyword", "FallbackKeyword");
+    acc.add(
+        "fallback_keyword",
+        "FallbackKeyword",
+        render_terminal(source, &node.fallback_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.fallback_keyword.range);
-    }
+    acc.add(
+        "parameters",
+        "ParametersDeclaration",
+        render_parameters_declaration(source, &node.parameters, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("parameters", "ParametersDeclaration");
-
-        render_parameters_declaration(ctx, &node.parameters);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("attributes", "FallbackFunctionAttributes");
-
-        render_fallback_function_attributes(ctx, &node.attributes);
-    }
+    acc.add(
+        "attributes",
+        "FallbackFunctionAttributes",
+        render_fallback_function_attributes(source, &node.attributes, depth + 1),
+    );
 
     if let Some(ref returns) = node.returns {
-        ctx.write_indent();
-        ctx.write_key("returns", "ReturnsDeclaration");
-
-        render_returns_declaration(ctx, returns);
+        acc.add(
+            "returns",
+            "ReturnsDeclaration",
+            render_returns_declaration(source, returns, depth + 1),
+        );
     }
 
-    {
-        ctx.write_indent();
-        ctx.write_key("body", "FunctionBody");
+    acc.add(
+        "body",
+        "FunctionBody",
+        render_function_body(source, &node.body, depth + 1),
+    );
 
-        render_function_body(ctx, &node.body);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_for_statement(ctx: &mut RenderContext<'_>, node: &ForStatementStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_for_statement(
+    source: &str,
+    node: &ForStatementStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("for_keyword", "ForKeyword");
+    acc.add(
+        "for_keyword",
+        "ForKeyword",
+        render_terminal(source, &node.for_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.for_keyword.range);
-    }
+    acc.add(
+        "open_paren",
+        "OpenParen",
+        render_terminal(source, &node.open_paren.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("open_paren", "OpenParen");
+    acc.add(
+        "initialization",
+        "ForStatementInitialization",
+        render_for_statement_initialization(source, &node.initialization, depth + 1),
+    );
 
-        ctx.write_terminal_value(&node.open_paren.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("initialization", "ForStatementInitialization");
-
-        render_for_statement_initialization(ctx, &node.initialization);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("condition", "ForStatementCondition");
-
-        render_for_statement_condition(ctx, &node.condition);
-    }
+    acc.add(
+        "condition",
+        "ForStatementCondition",
+        render_for_statement_condition(source, &node.condition, depth + 1),
+    );
 
     if let Some(ref iterator) = node.iterator {
-        ctx.write_indent();
-        ctx.write_key("iterator", "Expression");
-
-        render_expression(ctx, iterator);
+        acc.add(
+            "iterator",
+            "Expression",
+            render_expression(source, iterator, depth + 1),
+        );
     }
 
-    {
-        ctx.write_indent();
-        ctx.write_key("close_paren", "CloseParen");
+    acc.add(
+        "close_paren",
+        "CloseParen",
+        render_terminal(source, &node.close_paren.range),
+    );
 
-        ctx.write_terminal_value(&node.close_paren.range);
-    }
+    acc.add(
+        "body",
+        "Statement",
+        render_statement(source, &node.body, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("body", "Statement");
-
-        render_statement(ctx, &node.body);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_function_call_expression(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &FunctionCallExpressionStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("operand", "Expression");
+    acc.add(
+        "operand",
+        "Expression",
+        render_expression(source, &node.operand, depth + 1),
+    );
 
-        render_expression(ctx, &node.operand);
-    }
+    acc.add(
+        "arguments",
+        "ArgumentsDeclaration",
+        render_arguments_declaration(source, &node.arguments, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("arguments", "ArgumentsDeclaration");
-
-        render_arguments_declaration(ctx, &node.arguments);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_function_definition(ctx: &mut RenderContext<'_>, node: &FunctionDefinitionStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_function_definition(
+    source: &str,
+    node: &FunctionDefinitionStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("function_keyword", "FunctionKeyword");
+    acc.add(
+        "function_keyword",
+        "FunctionKeyword",
+        render_terminal(source, &node.function_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.function_keyword.range);
-    }
+    acc.add(
+        "name",
+        "FunctionName",
+        render_function_name(source, &node.name, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("name", "FunctionName");
+    acc.add(
+        "parameters",
+        "ParametersDeclaration",
+        render_parameters_declaration(source, &node.parameters, depth + 1),
+    );
 
-        render_function_name(ctx, &node.name);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("parameters", "ParametersDeclaration");
-
-        render_parameters_declaration(ctx, &node.parameters);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("attributes", "FunctionAttributes");
-
-        render_function_attributes(ctx, &node.attributes);
-    }
+    acc.add(
+        "attributes",
+        "FunctionAttributes",
+        render_function_attributes(source, &node.attributes, depth + 1),
+    );
 
     if let Some(ref returns) = node.returns {
-        ctx.write_indent();
-        ctx.write_key("returns", "ReturnsDeclaration");
-
-        render_returns_declaration(ctx, returns);
+        acc.add(
+            "returns",
+            "ReturnsDeclaration",
+            render_returns_declaration(source, returns, depth + 1),
+        );
     }
 
-    {
-        ctx.write_indent();
-        ctx.write_key("body", "FunctionBody");
+    acc.add(
+        "body",
+        "FunctionBody",
+        render_function_body(source, &node.body, depth + 1),
+    );
 
-        render_function_body(ctx, &node.body);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_function_type(ctx: &mut RenderContext<'_>, node: &FunctionTypeStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_function_type(
+    source: &str,
+    node: &FunctionTypeStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("function_keyword", "FunctionKeyword");
+    acc.add(
+        "function_keyword",
+        "FunctionKeyword",
+        render_terminal(source, &node.function_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.function_keyword.range);
-    }
+    acc.add(
+        "parameters",
+        "ParametersDeclaration",
+        render_parameters_declaration(source, &node.parameters, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("parameters", "ParametersDeclaration");
-
-        render_parameters_declaration(ctx, &node.parameters);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("attributes", "FunctionTypeAttributes");
-
-        render_function_type_attributes(ctx, &node.attributes);
-    }
+    acc.add(
+        "attributes",
+        "FunctionTypeAttributes",
+        render_function_type_attributes(source, &node.attributes, depth + 1),
+    );
 
     if let Some(ref returns) = node.returns {
-        ctx.write_indent();
-        ctx.write_key("returns", "ReturnsDeclaration");
-
-        render_returns_declaration(ctx, returns);
+        acc.add(
+            "returns",
+            "ReturnsDeclaration",
+            render_returns_declaration(source, returns, depth + 1),
+        );
     }
 
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_hex_number_expression(ctx: &mut RenderContext<'_>, node: &HexNumberExpressionStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_hex_number_expression(
+    source: &str,
+    node: &HexNumberExpressionStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("literal", "HexLiteral");
+    acc.add(
+        "literal",
+        "HexLiteral",
+        render_terminal(source, &node.literal.range),
+    );
 
-        ctx.write_terminal_value(&node.literal.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_if_statement(ctx: &mut RenderContext<'_>, node: &IfStatementStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_if_statement(source: &str, node: &IfStatementStruct, depth: usize) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("if_keyword", "IfKeyword");
+    acc.add(
+        "if_keyword",
+        "IfKeyword",
+        render_terminal(source, &node.if_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.if_keyword.range);
-    }
+    acc.add(
+        "open_paren",
+        "OpenParen",
+        render_terminal(source, &node.open_paren.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("open_paren", "OpenParen");
+    acc.add(
+        "condition",
+        "Expression",
+        render_expression(source, &node.condition, depth + 1),
+    );
 
-        ctx.write_terminal_value(&node.open_paren.range);
-    }
+    acc.add(
+        "close_paren",
+        "CloseParen",
+        render_terminal(source, &node.close_paren.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("condition", "Expression");
-
-        render_expression(ctx, &node.condition);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("close_paren", "CloseParen");
-
-        ctx.write_terminal_value(&node.close_paren.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("body", "Statement");
-
-        render_statement(ctx, &node.body);
-    }
+    acc.add(
+        "body",
+        "Statement",
+        render_statement(source, &node.body, depth + 1),
+    );
 
     if let Some(ref else_branch) = node.else_branch {
-        ctx.write_indent();
-        ctx.write_key("else_branch", "ElseBranch");
-
-        render_else_branch(ctx, else_branch);
+        acc.add(
+            "else_branch",
+            "ElseBranch",
+            render_else_branch(source, else_branch, depth + 1),
+        );
     }
 
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_import_alias(ctx: &mut RenderContext<'_>, node: &ImportAliasStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_import_alias(source: &str, node: &ImportAliasStruct, depth: usize) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("as_keyword", "AsKeyword");
+    acc.add(
+        "as_keyword",
+        "AsKeyword",
+        render_terminal(source, &node.as_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.as_keyword.range);
-    }
+    acc.add(
+        "identifier",
+        "Identifier",
+        render_terminal(source, &node.identifier.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("identifier", "Identifier");
-
-        ctx.write_terminal_value(&node.identifier.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_import_deconstruction(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &ImportDeconstructionStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("open_brace", "OpenBrace");
+    acc.add(
+        "open_brace",
+        "OpenBrace",
+        render_terminal(source, &node.open_brace.range),
+    );
 
-        ctx.write_terminal_value(&node.open_brace.range);
-    }
+    acc.add(
+        "symbols",
+        "ImportDeconstructionSymbols",
+        render_import_deconstruction_symbols(source, &node.symbols, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("symbols", "ImportDeconstructionSymbols");
+    acc.add(
+        "close_brace",
+        "CloseBrace",
+        render_terminal(source, &node.close_brace.range),
+    );
 
-        render_import_deconstruction_symbols(ctx, &node.symbols);
-    }
+    acc.add(
+        "from_keyword",
+        "FromKeyword",
+        render_terminal(source, &node.from_keyword.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("close_brace", "CloseBrace");
+    acc.add(
+        "path",
+        "StringLiteral",
+        render_terminal(source, &node.path.range),
+    );
 
-        ctx.write_terminal_value(&node.close_brace.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("from_keyword", "FromKeyword");
-
-        ctx.write_terminal_value(&node.from_keyword.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("path", "StringLiteral");
-
-        ctx.write_terminal_value(&node.path.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_import_deconstruction_symbol(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &ImportDeconstructionSymbolStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("name", "Identifier");
-
-        ctx.write_terminal_value(&node.name.range);
-    }
+    acc.add(
+        "name",
+        "Identifier",
+        render_terminal(source, &node.name.range),
+    );
 
     if let Some(ref alias) = node.alias {
-        ctx.write_indent();
-        ctx.write_key("alias", "ImportAlias");
-
-        render_import_alias(ctx, alias);
+        acc.add(
+            "alias",
+            "ImportAlias",
+            render_import_alias(source, alias, depth + 1),
+        );
     }
 
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_import_directive(ctx: &mut RenderContext<'_>, node: &ImportDirectiveStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_import_directive(
+    source: &str,
+    node: &ImportDirectiveStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("import_keyword", "ImportKeyword");
+    acc.add(
+        "import_keyword",
+        "ImportKeyword",
+        render_terminal(source, &node.import_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.import_keyword.range);
-    }
+    acc.add(
+        "clause",
+        "ImportClause",
+        render_import_clause(source, &node.clause, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("clause", "ImportClause");
+    acc.add(
+        "semicolon",
+        "Semicolon",
+        render_terminal(source, &node.semicolon.range),
+    );
 
-        render_import_clause(ctx, &node.clause);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("semicolon", "Semicolon");
-
-        ctx.write_terminal_value(&node.semicolon.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_index_access_end(ctx: &mut RenderContext<'_>, node: &IndexAccessEndStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_index_access_end(
+    source: &str,
+    node: &IndexAccessEndStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("colon", "Colon");
-
-        ctx.write_terminal_value(&node.colon.range);
-    }
+    acc.add("colon", "Colon", render_terminal(source, &node.colon.range));
 
     if let Some(ref end) = node.end {
-        ctx.write_indent();
-        ctx.write_key("end", "Expression");
-
-        render_expression(ctx, end);
+        acc.add(
+            "end",
+            "Expression",
+            render_expression(source, end, depth + 1),
+        );
     }
 
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_index_access_expression(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &IndexAccessExpressionStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("operand", "Expression");
+    acc.add(
+        "operand",
+        "Expression",
+        render_expression(source, &node.operand, depth + 1),
+    );
 
-        render_expression(ctx, &node.operand);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("open_bracket", "OpenBracket");
-
-        ctx.write_terminal_value(&node.open_bracket.range);
-    }
+    acc.add(
+        "open_bracket",
+        "OpenBracket",
+        render_terminal(source, &node.open_bracket.range),
+    );
 
     if let Some(ref start) = node.start {
-        ctx.write_indent();
-        ctx.write_key("start", "Expression");
-
-        render_expression(ctx, start);
+        acc.add(
+            "start",
+            "Expression",
+            render_expression(source, start, depth + 1),
+        );
     }
 
     if let Some(ref end) = node.end {
-        ctx.write_indent();
-        ctx.write_key("end", "IndexAccessEnd");
-
-        render_index_access_end(ctx, end);
+        acc.add(
+            "end",
+            "IndexAccessEnd",
+            render_index_access_end(source, end, depth + 1),
+        );
     }
 
-    {
-        ctx.write_indent();
-        ctx.write_key("close_bracket", "CloseBracket");
+    acc.add(
+        "close_bracket",
+        "CloseBracket",
+        render_terminal(source, &node.close_bracket.range),
+    );
 
-        ctx.write_terminal_value(&node.close_bracket.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_inequality_expression(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &InequalityExpressionStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("left_operand", "Expression");
+    acc.add(
+        "left_operand",
+        "Expression",
+        render_expression(source, &node.left_operand, depth + 1),
+    );
 
-        render_expression(ctx, &node.left_operand);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key(
-            "expression_inequality_expression_operator",
-            "Expression_InequalityExpression_Operator",
-        );
-
+    acc.add(
+        "expression_inequality_expression_operator",
+        "Expression_InequalityExpression_Operator",
         render_expression_inequality_expression_operator(
-            ctx,
+            source,
             &node.expression_inequality_expression_operator,
-        );
-    }
+            depth + 1,
+        ),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("right_operand", "Expression");
+    acc.add(
+        "right_operand",
+        "Expression",
+        render_expression(source, &node.right_operand, depth + 1),
+    );
 
-        render_expression(ctx, &node.right_operand);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_inheritance_specifier(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &InheritanceSpecifierStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("is_keyword", "IsKeyword");
+    acc.add(
+        "is_keyword",
+        "IsKeyword",
+        render_terminal(source, &node.is_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.is_keyword.range);
-    }
+    acc.add(
+        "types",
+        "InheritanceTypes",
+        render_inheritance_types(source, &node.types, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("types", "InheritanceTypes");
-
-        render_inheritance_types(ctx, &node.types);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_inheritance_type(ctx: &mut RenderContext<'_>, node: &InheritanceTypeStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_inheritance_type(
+    source: &str,
+    node: &InheritanceTypeStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("type_name", "IdentifierPath");
-
-        render_identifier_path(ctx, &node.type_name);
-    }
+    acc.add(
+        "type_name",
+        "IdentifierPath",
+        render_identifier_path(source, &node.type_name, depth + 1),
+    );
 
     if let Some(ref arguments) = node.arguments {
-        ctx.write_indent();
-        ctx.write_key("arguments", "ArgumentsDeclaration");
-
-        render_arguments_declaration(ctx, arguments);
+        acc.add(
+            "arguments",
+            "ArgumentsDeclaration",
+            render_arguments_declaration(source, arguments, depth + 1),
+        );
     }
 
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_interface_definition(ctx: &mut RenderContext<'_>, node: &InterfaceDefinitionStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_interface_definition(
+    source: &str,
+    node: &InterfaceDefinitionStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("interface_keyword", "InterfaceKeyword");
+    acc.add(
+        "interface_keyword",
+        "InterfaceKeyword",
+        render_terminal(source, &node.interface_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.interface_keyword.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("name", "Identifier");
-
-        ctx.write_terminal_value(&node.name.range);
-    }
+    acc.add(
+        "name",
+        "Identifier",
+        render_terminal(source, &node.name.range),
+    );
 
     if let Some(ref inheritance) = node.inheritance {
-        ctx.write_indent();
-        ctx.write_key("inheritance", "InheritanceSpecifier");
-
-        render_inheritance_specifier(ctx, inheritance);
+        acc.add(
+            "inheritance",
+            "InheritanceSpecifier",
+            render_inheritance_specifier(source, inheritance, depth + 1),
+        );
     }
 
-    {
-        ctx.write_indent();
-        ctx.write_key("open_brace", "OpenBrace");
+    acc.add(
+        "open_brace",
+        "OpenBrace",
+        render_terminal(source, &node.open_brace.range),
+    );
 
-        ctx.write_terminal_value(&node.open_brace.range);
-    }
+    acc.add(
+        "members",
+        "InterfaceMembers",
+        render_interface_members(source, &node.members, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("members", "InterfaceMembers");
+    acc.add(
+        "close_brace",
+        "CloseBrace",
+        render_terminal(source, &node.close_brace.range),
+    );
 
-        render_interface_members(ctx, &node.members);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("close_brace", "CloseBrace");
-
-        ctx.write_terminal_value(&node.close_brace.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_library_definition(ctx: &mut RenderContext<'_>, node: &LibraryDefinitionStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_library_definition(
+    source: &str,
+    node: &LibraryDefinitionStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("library_keyword", "LibraryKeyword");
+    acc.add(
+        "library_keyword",
+        "LibraryKeyword",
+        render_terminal(source, &node.library_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.library_keyword.range);
-    }
+    acc.add(
+        "name",
+        "Identifier",
+        render_terminal(source, &node.name.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("name", "Identifier");
+    acc.add(
+        "open_brace",
+        "OpenBrace",
+        render_terminal(source, &node.open_brace.range),
+    );
 
-        ctx.write_terminal_value(&node.name.range);
-    }
+    acc.add(
+        "members",
+        "LibraryMembers",
+        render_library_members(source, &node.members, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("open_brace", "OpenBrace");
+    acc.add(
+        "close_brace",
+        "CloseBrace",
+        render_terminal(source, &node.close_brace.range),
+    );
 
-        ctx.write_terminal_value(&node.open_brace.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("members", "LibraryMembers");
-
-        render_library_members(ctx, &node.members);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("close_brace", "CloseBrace");
-
-        ctx.write_terminal_value(&node.close_brace.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_mapping_key(ctx: &mut RenderContext<'_>, node: &MappingKeyStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_mapping_key(source: &str, node: &MappingKeyStruct, depth: usize) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("key_type", "MappingKeyType");
-
-        render_mapping_key_type(ctx, &node.key_type);
-    }
+    acc.add(
+        "key_type",
+        "MappingKeyType",
+        render_mapping_key_type(source, &node.key_type, depth + 1),
+    );
 
     if let Some(ref name) = node.name {
-        ctx.write_indent();
-        ctx.write_key("name", "Identifier");
-
-        ctx.write_terminal_value(&name.range);
+        acc.add("name", "Identifier", render_terminal(source, &name.range));
     }
 
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_mapping_type(ctx: &mut RenderContext<'_>, node: &MappingTypeStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_mapping_type(source: &str, node: &MappingTypeStruct, depth: usize) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("mapping_keyword", "MappingKeyword");
+    acc.add(
+        "mapping_keyword",
+        "MappingKeyword",
+        render_terminal(source, &node.mapping_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.mapping_keyword.range);
-    }
+    acc.add(
+        "open_paren",
+        "OpenParen",
+        render_terminal(source, &node.open_paren.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("open_paren", "OpenParen");
+    acc.add(
+        "key_type",
+        "MappingKey",
+        render_mapping_key(source, &node.key_type, depth + 1),
+    );
 
-        ctx.write_terminal_value(&node.open_paren.range);
-    }
+    acc.add(
+        "equal_greater_than",
+        "EqualGreaterThan",
+        render_terminal(source, &node.equal_greater_than.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("key_type", "MappingKey");
+    acc.add(
+        "value_type",
+        "MappingValue",
+        render_mapping_value(source, &node.value_type, depth + 1),
+    );
 
-        render_mapping_key(ctx, &node.key_type);
-    }
+    acc.add(
+        "close_paren",
+        "CloseParen",
+        render_terminal(source, &node.close_paren.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("equal_greater_than", "EqualGreaterThan");
-
-        ctx.write_terminal_value(&node.equal_greater_than.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("value_type", "MappingValue");
-
-        render_mapping_value(ctx, &node.value_type);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("close_paren", "CloseParen");
-
-        ctx.write_terminal_value(&node.close_paren.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_mapping_value(ctx: &mut RenderContext<'_>, node: &MappingValueStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_mapping_value(
+    source: &str,
+    node: &MappingValueStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("type_name", "TypeName");
-
-        render_type_name(ctx, &node.type_name);
-    }
+    acc.add(
+        "type_name",
+        "TypeName",
+        render_type_name(source, &node.type_name, depth + 1),
+    );
 
     if let Some(ref name) = node.name {
-        ctx.write_indent();
-        ctx.write_key("name", "Identifier");
-
-        ctx.write_terminal_value(&name.range);
+        acc.add("name", "Identifier", render_terminal(source, &name.range));
     }
 
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_member_access_expression(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &MemberAccessExpressionStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("operand", "Expression");
+    acc.add(
+        "operand",
+        "Expression",
+        render_expression(source, &node.operand, depth + 1),
+    );
 
-        render_expression(ctx, &node.operand);
-    }
+    acc.add(
+        "period",
+        "Period",
+        render_terminal(source, &node.period.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("period", "Period");
+    acc.add(
+        "member",
+        "IdentifierPathElement",
+        render_identifier_path_element(source, &node.member, depth + 1),
+    );
 
-        ctx.write_terminal_value(&node.period.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("member", "IdentifierPathElement");
-
-        render_identifier_path_element(ctx, &node.member);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_modifier_definition(ctx: &mut RenderContext<'_>, node: &ModifierDefinitionStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_modifier_definition(
+    source: &str,
+    node: &ModifierDefinitionStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("modifier_keyword", "ModifierKeyword");
+    acc.add(
+        "modifier_keyword",
+        "ModifierKeyword",
+        render_terminal(source, &node.modifier_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.modifier_keyword.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("name", "Identifier");
-
-        ctx.write_terminal_value(&node.name.range);
-    }
+    acc.add(
+        "name",
+        "Identifier",
+        render_terminal(source, &node.name.range),
+    );
 
     if let Some(ref parameters) = node.parameters {
-        ctx.write_indent();
-        ctx.write_key("parameters", "ParametersDeclaration");
-
-        render_parameters_declaration(ctx, parameters);
+        acc.add(
+            "parameters",
+            "ParametersDeclaration",
+            render_parameters_declaration(source, parameters, depth + 1),
+        );
     }
 
-    {
-        ctx.write_indent();
-        ctx.write_key("attributes", "ModifierAttributes");
+    acc.add(
+        "attributes",
+        "ModifierAttributes",
+        render_modifier_attributes(source, &node.attributes, depth + 1),
+    );
 
-        render_modifier_attributes(ctx, &node.attributes);
-    }
+    acc.add(
+        "body",
+        "FunctionBody",
+        render_function_body(source, &node.body, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("body", "FunctionBody");
-
-        render_function_body(ctx, &node.body);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_modifier_invocation(ctx: &mut RenderContext<'_>, node: &ModifierInvocationStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_modifier_invocation(
+    source: &str,
+    node: &ModifierInvocationStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("name", "IdentifierPath");
-
-        render_identifier_path(ctx, &node.name);
-    }
+    acc.add(
+        "name",
+        "IdentifierPath",
+        render_identifier_path(source, &node.name, depth + 1),
+    );
 
     if let Some(ref arguments) = node.arguments {
-        ctx.write_indent();
-        ctx.write_key("arguments", "ArgumentsDeclaration");
-
-        render_arguments_declaration(ctx, arguments);
+        acc.add(
+            "arguments",
+            "ArgumentsDeclaration",
+            render_arguments_declaration(source, arguments, depth + 1),
+        );
     }
 
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_multi_typed_declaration(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &MultiTypedDeclarationStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("open_paren", "OpenParen");
+    acc.add(
+        "open_paren",
+        "OpenParen",
+        render_terminal(source, &node.open_paren.range),
+    );
 
-        ctx.write_terminal_value(&node.open_paren.range);
-    }
+    acc.add(
+        "elements",
+        "MultiTypedDeclarationElements",
+        render_multi_typed_declaration_elements(source, &node.elements, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("elements", "MultiTypedDeclarationElements");
+    acc.add(
+        "close_paren",
+        "CloseParen",
+        render_terminal(source, &node.close_paren.range),
+    );
 
-        render_multi_typed_declaration_elements(ctx, &node.elements);
-    }
+    acc.add(
+        "value",
+        "VariableDeclarationValue",
+        render_variable_declaration_value(source, &node.value, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("close_paren", "CloseParen");
-
-        ctx.write_terminal_value(&node.close_paren.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("value", "VariableDeclarationValue");
-
-        render_variable_declaration_value(ctx, &node.value);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_multi_typed_declaration_element(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &MultiTypedDeclarationElementStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
-
-    let mut has_children = false;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     if let Some(ref member) = node.member {
-        has_children = true;
-        ctx.write_indent();
-        ctx.write_key("member", "VariableDeclaration");
-
-        render_variable_declaration(ctx, member);
+        acc.add(
+            "member",
+            "VariableDeclaration",
+            render_variable_declaration(source, member, depth + 1),
+        );
     }
 
-    ctx.depth -= 1;
-
-    ctx.finish_nonterminal(has_children);
+    acc.finish()
 }
 
 pub fn render_multiplicative_expression(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &MultiplicativeExpressionStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("left_operand", "Expression");
+    acc.add(
+        "left_operand",
+        "Expression",
+        render_expression(source, &node.left_operand, depth + 1),
+    );
 
-        render_expression(ctx, &node.left_operand);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key(
-            "expression_multiplicative_expression_operator",
-            "Expression_MultiplicativeExpression_Operator",
-        );
-
+    acc.add(
+        "expression_multiplicative_expression_operator",
+        "Expression_MultiplicativeExpression_Operator",
         render_expression_multiplicative_expression_operator(
-            ctx,
+            source,
             &node.expression_multiplicative_expression_operator,
-        );
-    }
+            depth + 1,
+        ),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("right_operand", "Expression");
+    acc.add(
+        "right_operand",
+        "Expression",
+        render_expression(source, &node.right_operand, depth + 1),
+    );
 
-        render_expression(ctx, &node.right_operand);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_named_argument(ctx: &mut RenderContext<'_>, node: &NamedArgumentStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_named_argument(
+    source: &str,
+    node: &NamedArgumentStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("name", "Identifier");
+    acc.add(
+        "name",
+        "Identifier",
+        render_terminal(source, &node.name.range),
+    );
 
-        ctx.write_terminal_value(&node.name.range);
-    }
+    acc.add("colon", "Colon", render_terminal(source, &node.colon.range));
 
-    {
-        ctx.write_indent();
-        ctx.write_key("colon", "Colon");
+    acc.add(
+        "value",
+        "Expression",
+        render_expression(source, &node.value, depth + 1),
+    );
 
-        ctx.write_terminal_value(&node.colon.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("value", "Expression");
-
-        render_expression(ctx, &node.value);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_named_argument_group(ctx: &mut RenderContext<'_>, node: &NamedArgumentGroupStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_named_argument_group(
+    source: &str,
+    node: &NamedArgumentGroupStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("open_brace", "OpenBrace");
+    acc.add(
+        "open_brace",
+        "OpenBrace",
+        render_terminal(source, &node.open_brace.range),
+    );
 
-        ctx.write_terminal_value(&node.open_brace.range);
-    }
+    acc.add(
+        "arguments",
+        "NamedArguments",
+        render_named_arguments(source, &node.arguments, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("arguments", "NamedArguments");
+    acc.add(
+        "close_brace",
+        "CloseBrace",
+        render_terminal(source, &node.close_brace.range),
+    );
 
-        render_named_arguments(ctx, &node.arguments);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("close_brace", "CloseBrace");
-
-        ctx.write_terminal_value(&node.close_brace.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_named_arguments_declaration(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &NamedArgumentsDeclarationStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("open_paren", "OpenParen");
+    acc.add(
+        "open_paren",
+        "OpenParen",
+        render_terminal(source, &node.open_paren.range),
+    );
 
-        ctx.write_terminal_value(&node.open_paren.range);
-    }
+    acc.add(
+        "arguments",
+        "NamedArgumentGroup",
+        render_named_argument_group(source, &node.arguments, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("arguments", "NamedArgumentGroup");
+    acc.add(
+        "close_paren",
+        "CloseParen",
+        render_terminal(source, &node.close_paren.range),
+    );
 
-        render_named_argument_group(ctx, &node.arguments);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("close_paren", "CloseParen");
-
-        ctx.write_terminal_value(&node.close_paren.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_named_import(ctx: &mut RenderContext<'_>, node: &NamedImportStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_named_import(source: &str, node: &NamedImportStruct, depth: usize) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("asterisk", "Asterisk");
+    acc.add(
+        "asterisk",
+        "Asterisk",
+        render_terminal(source, &node.asterisk.range),
+    );
 
-        ctx.write_terminal_value(&node.asterisk.range);
-    }
+    acc.add(
+        "alias",
+        "ImportAlias",
+        render_import_alias(source, &node.alias, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("alias", "ImportAlias");
+    acc.add(
+        "from_keyword",
+        "FromKeyword",
+        render_terminal(source, &node.from_keyword.range),
+    );
 
-        render_import_alias(ctx, &node.alias);
-    }
+    acc.add(
+        "path",
+        "StringLiteral",
+        render_terminal(source, &node.path.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("from_keyword", "FromKeyword");
-
-        ctx.write_terminal_value(&node.from_keyword.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("path", "StringLiteral");
-
-        ctx.write_terminal_value(&node.path.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_new_expression(ctx: &mut RenderContext<'_>, node: &NewExpressionStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_new_expression(
+    source: &str,
+    node: &NewExpressionStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("new_keyword", "NewKeyword");
+    acc.add(
+        "new_keyword",
+        "NewKeyword",
+        render_terminal(source, &node.new_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.new_keyword.range);
-    }
+    acc.add(
+        "type_name",
+        "TypeName",
+        render_type_name(source, &node.type_name, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("type_name", "TypeName");
-
-        render_type_name(ctx, &node.type_name);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_or_expression(ctx: &mut RenderContext<'_>, node: &OrExpressionStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_or_expression(
+    source: &str,
+    node: &OrExpressionStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("left_operand", "Expression");
+    acc.add(
+        "left_operand",
+        "Expression",
+        render_expression(source, &node.left_operand, depth + 1),
+    );
 
-        render_expression(ctx, &node.left_operand);
-    }
+    acc.add(
+        "operator",
+        "BarBar",
+        render_terminal(source, &node.operator.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("operator", "BarBar");
+    acc.add(
+        "right_operand",
+        "Expression",
+        render_expression(source, &node.right_operand, depth + 1),
+    );
 
-        ctx.write_terminal_value(&node.operator.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("right_operand", "Expression");
-
-        render_expression(ctx, &node.right_operand);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_override_paths_declaration(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &OverridePathsDeclarationStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("open_paren", "OpenParen");
+    acc.add(
+        "open_paren",
+        "OpenParen",
+        render_terminal(source, &node.open_paren.range),
+    );
 
-        ctx.write_terminal_value(&node.open_paren.range);
-    }
+    acc.add(
+        "paths",
+        "OverridePaths",
+        render_override_paths(source, &node.paths, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("paths", "OverridePaths");
+    acc.add(
+        "close_paren",
+        "CloseParen",
+        render_terminal(source, &node.close_paren.range),
+    );
 
-        render_override_paths(ctx, &node.paths);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("close_paren", "CloseParen");
-
-        ctx.write_terminal_value(&node.close_paren.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_override_specifier(ctx: &mut RenderContext<'_>, node: &OverrideSpecifierStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_override_specifier(
+    source: &str,
+    node: &OverrideSpecifierStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("override_keyword", "OverrideKeyword");
-
-        ctx.write_terminal_value(&node.override_keyword.range);
-    }
+    acc.add(
+        "override_keyword",
+        "OverrideKeyword",
+        render_terminal(source, &node.override_keyword.range),
+    );
 
     if let Some(ref overridden) = node.overridden {
-        ctx.write_indent();
-        ctx.write_key("overridden", "OverridePathsDeclaration");
-
-        render_override_paths_declaration(ctx, overridden);
+        acc.add(
+            "overridden",
+            "OverridePathsDeclaration",
+            render_override_paths_declaration(source, overridden, depth + 1),
+        );
     }
 
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_parameter(ctx: &mut RenderContext<'_>, node: &ParameterStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_parameter(source: &str, node: &ParameterStruct, depth: usize) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("type_name", "TypeName");
-
-        render_type_name(ctx, &node.type_name);
-    }
+    acc.add(
+        "type_name",
+        "TypeName",
+        render_type_name(source, &node.type_name, depth + 1),
+    );
 
     if let Some(ref storage_location) = node.storage_location {
-        ctx.write_indent();
-        ctx.write_key("storage_location", "StorageLocation");
-
-        render_storage_location(ctx, storage_location);
+        acc.add(
+            "storage_location",
+            "StorageLocation",
+            render_storage_location(source, storage_location, depth + 1),
+        );
     }
 
     if let Some(ref name) = node.name {
-        ctx.write_indent();
-        ctx.write_key("name", "Identifier");
-
-        ctx.write_terminal_value(&name.range);
+        acc.add("name", "Identifier", render_terminal(source, &name.range));
     }
 
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_parameters_declaration(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &ParametersDeclarationStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("open_paren", "OpenParen");
+    acc.add(
+        "open_paren",
+        "OpenParen",
+        render_terminal(source, &node.open_paren.range),
+    );
 
-        ctx.write_terminal_value(&node.open_paren.range);
-    }
+    acc.add(
+        "parameters",
+        "Parameters",
+        render_parameters(source, &node.parameters, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("parameters", "Parameters");
+    acc.add(
+        "close_paren",
+        "CloseParen",
+        render_terminal(source, &node.close_paren.range),
+    );
 
-        render_parameters(ctx, &node.parameters);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("close_paren", "CloseParen");
-
-        ctx.write_terminal_value(&node.close_paren.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_path_import(ctx: &mut RenderContext<'_>, node: &PathImportStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_path_import(source: &str, node: &PathImportStruct, depth: usize) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("path", "StringLiteral");
-
-        ctx.write_terminal_value(&node.path.range);
-    }
+    acc.add(
+        "path",
+        "StringLiteral",
+        render_terminal(source, &node.path.range),
+    );
 
     if let Some(ref alias) = node.alias {
-        ctx.write_indent();
-        ctx.write_key("alias", "ImportAlias");
-
-        render_import_alias(ctx, alias);
+        acc.add(
+            "alias",
+            "ImportAlias",
+            render_import_alias(source, alias, depth + 1),
+        );
     }
 
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_positional_arguments_declaration(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &PositionalArgumentsDeclarationStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("open_paren", "OpenParen");
+    acc.add(
+        "open_paren",
+        "OpenParen",
+        render_terminal(source, &node.open_paren.range),
+    );
 
-        ctx.write_terminal_value(&node.open_paren.range);
-    }
+    acc.add(
+        "arguments",
+        "PositionalArguments",
+        render_positional_arguments(source, &node.arguments, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("arguments", "PositionalArguments");
+    acc.add(
+        "close_paren",
+        "CloseParen",
+        render_terminal(source, &node.close_paren.range),
+    );
 
-        render_positional_arguments(ctx, &node.arguments);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("close_paren", "CloseParen");
-
-        ctx.write_terminal_value(&node.close_paren.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_postfix_expression(ctx: &mut RenderContext<'_>, node: &PostfixExpressionStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_postfix_expression(
+    source: &str,
+    node: &PostfixExpressionStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("operand", "Expression");
+    acc.add(
+        "operand",
+        "Expression",
+        render_expression(source, &node.operand, depth + 1),
+    );
 
-        render_expression(ctx, &node.operand);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key(
-            "expression_postfix_expression_operator",
-            "Expression_PostfixExpression_Operator",
-        );
-
+    acc.add(
+        "expression_postfix_expression_operator",
+        "Expression_PostfixExpression_Operator",
         render_expression_postfix_expression_operator(
-            ctx,
+            source,
             &node.expression_postfix_expression_operator,
-        );
-    }
+            depth + 1,
+        ),
+    );
 
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_pragma_directive(ctx: &mut RenderContext<'_>, node: &PragmaDirectiveStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_pragma_directive(
+    source: &str,
+    node: &PragmaDirectiveStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("pragma_keyword", "PragmaKeyword");
+    acc.add(
+        "pragma_keyword",
+        "PragmaKeyword",
+        render_terminal(source, &node.pragma_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.pragma_keyword.range);
-    }
+    acc.add(
+        "pragma",
+        "Pragma",
+        render_pragma(source, &node.pragma, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("pragma", "Pragma");
+    acc.add(
+        "semicolon",
+        "PragmaSemicolon",
+        render_terminal(source, &node.semicolon.range),
+    );
 
-        render_pragma(ctx, &node.pragma);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("semicolon", "PragmaSemicolon");
-
-        ctx.write_terminal_value(&node.semicolon.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_prefix_expression(ctx: &mut RenderContext<'_>, node: &PrefixExpressionStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_prefix_expression(
+    source: &str,
+    node: &PrefixExpressionStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key(
-            "expression_prefix_expression_operator",
-            "Expression_PrefixExpression_Operator",
-        );
-
+    acc.add(
+        "expression_prefix_expression_operator",
+        "Expression_PrefixExpression_Operator",
         render_expression_prefix_expression_operator(
-            ctx,
+            source,
             &node.expression_prefix_expression_operator,
-        );
-    }
+            depth + 1,
+        ),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("operand", "Expression");
+    acc.add(
+        "operand",
+        "Expression",
+        render_expression(source, &node.operand, depth + 1),
+    );
 
-        render_expression(ctx, &node.operand);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_receive_function_definition(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &ReceiveFunctionDefinitionStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("receive_keyword", "ReceiveKeyword");
+    acc.add(
+        "receive_keyword",
+        "ReceiveKeyword",
+        render_terminal(source, &node.receive_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.receive_keyword.range);
-    }
+    acc.add(
+        "parameters",
+        "ParametersDeclaration",
+        render_parameters_declaration(source, &node.parameters, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("parameters", "ParametersDeclaration");
+    acc.add(
+        "attributes",
+        "ReceiveFunctionAttributes",
+        render_receive_function_attributes(source, &node.attributes, depth + 1),
+    );
 
-        render_parameters_declaration(ctx, &node.parameters);
-    }
+    acc.add(
+        "body",
+        "FunctionBody",
+        render_function_body(source, &node.body, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("attributes", "ReceiveFunctionAttributes");
-
-        render_receive_function_attributes(ctx, &node.attributes);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("body", "FunctionBody");
-
-        render_function_body(ctx, &node.body);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_return_statement(ctx: &mut RenderContext<'_>, node: &ReturnStatementStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_return_statement(
+    source: &str,
+    node: &ReturnStatementStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("return_keyword", "ReturnKeyword");
-
-        ctx.write_terminal_value(&node.return_keyword.range);
-    }
+    acc.add(
+        "return_keyword",
+        "ReturnKeyword",
+        render_terminal(source, &node.return_keyword.range),
+    );
 
     if let Some(ref expression) = node.expression {
-        ctx.write_indent();
-        ctx.write_key("expression", "Expression");
-
-        render_expression(ctx, expression);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("semicolon", "Semicolon");
-
-        ctx.write_terminal_value(&node.semicolon.range);
-    }
-
-    ctx.depth -= 1;
-}
-
-pub fn render_returns_declaration(ctx: &mut RenderContext<'_>, node: &ReturnsDeclarationStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
-
-    {
-        ctx.write_indent();
-        ctx.write_key("returns_keyword", "ReturnsKeyword");
-
-        ctx.write_terminal_value(&node.returns_keyword.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("variables", "ParametersDeclaration");
-
-        render_parameters_declaration(ctx, &node.variables);
-    }
-
-    ctx.depth -= 1;
-}
-
-pub fn render_revert_statement(ctx: &mut RenderContext<'_>, node: &RevertStatementStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
-
-    {
-        ctx.write_indent();
-        ctx.write_key("revert_keyword", "RevertKeyword");
-
-        ctx.write_terminal_value(&node.revert_keyword.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("error", "IdentifierPath");
-
-        render_identifier_path(ctx, &node.error);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("arguments", "ArgumentsDeclaration");
-
-        render_arguments_declaration(ctx, &node.arguments);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("semicolon", "Semicolon");
-
-        ctx.write_terminal_value(&node.semicolon.range);
-    }
-
-    ctx.depth -= 1;
-}
-
-pub fn render_shift_expression(ctx: &mut RenderContext<'_>, node: &ShiftExpressionStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
-
-    {
-        ctx.write_indent();
-        ctx.write_key("left_operand", "Expression");
-
-        render_expression(ctx, &node.left_operand);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key(
-            "expression_shift_expression_operator",
-            "Expression_ShiftExpression_Operator",
+        acc.add(
+            "expression",
+            "Expression",
+            render_expression(source, expression, depth + 1),
         );
+    }
 
+    acc.add(
+        "semicolon",
+        "Semicolon",
+        render_terminal(source, &node.semicolon.range),
+    );
+
+    acc.finish()
+}
+
+pub fn render_returns_declaration(
+    source: &str,
+    node: &ReturnsDeclarationStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+
+    acc.add(
+        "returns_keyword",
+        "ReturnsKeyword",
+        render_terminal(source, &node.returns_keyword.range),
+    );
+
+    acc.add(
+        "variables",
+        "ParametersDeclaration",
+        render_parameters_declaration(source, &node.variables, depth + 1),
+    );
+
+    acc.finish()
+}
+
+pub fn render_revert_statement(
+    source: &str,
+    node: &RevertStatementStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+
+    acc.add(
+        "revert_keyword",
+        "RevertKeyword",
+        render_terminal(source, &node.revert_keyword.range),
+    );
+
+    acc.add(
+        "error",
+        "IdentifierPath",
+        render_identifier_path(source, &node.error, depth + 1),
+    );
+
+    acc.add(
+        "arguments",
+        "ArgumentsDeclaration",
+        render_arguments_declaration(source, &node.arguments, depth + 1),
+    );
+
+    acc.add(
+        "semicolon",
+        "Semicolon",
+        render_terminal(source, &node.semicolon.range),
+    );
+
+    acc.finish()
+}
+
+pub fn render_shift_expression(
+    source: &str,
+    node: &ShiftExpressionStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+
+    acc.add(
+        "left_operand",
+        "Expression",
+        render_expression(source, &node.left_operand, depth + 1),
+    );
+
+    acc.add(
+        "expression_shift_expression_operator",
+        "Expression_ShiftExpression_Operator",
         render_expression_shift_expression_operator(
-            ctx,
+            source,
             &node.expression_shift_expression_operator,
-        );
-    }
+            depth + 1,
+        ),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("right_operand", "Expression");
+    acc.add(
+        "right_operand",
+        "Expression",
+        render_expression(source, &node.right_operand, depth + 1),
+    );
 
-        render_expression(ctx, &node.right_operand);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_single_typed_declaration(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &SingleTypedDeclarationStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("declaration", "VariableDeclaration");
-
-        render_variable_declaration(ctx, &node.declaration);
-    }
+    acc.add(
+        "declaration",
+        "VariableDeclaration",
+        render_variable_declaration(source, &node.declaration, depth + 1),
+    );
 
     if let Some(ref value) = node.value {
-        ctx.write_indent();
-        ctx.write_key("value", "VariableDeclarationValue");
-
-        render_variable_declaration_value(ctx, value);
+        acc.add(
+            "value",
+            "VariableDeclarationValue",
+            render_variable_declaration_value(source, value, depth + 1),
+        );
     }
 
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_source_unit(ctx: &mut RenderContext<'_>, node: &SourceUnitStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_source_unit(source: &str, node: &SourceUnitStruct, depth: usize) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("members", "SourceUnitMembers");
+    acc.add(
+        "members",
+        "SourceUnitMembers",
+        render_source_unit_members(source, &node.members, depth + 1),
+    );
 
-        render_source_unit_members(ctx, &node.members);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_state_variable_definition(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &StateVariableDefinitionStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("type_name", "TypeName");
+    acc.add(
+        "type_name",
+        "TypeName",
+        render_type_name(source, &node.type_name, depth + 1),
+    );
 
-        render_type_name(ctx, &node.type_name);
-    }
+    acc.add(
+        "attributes",
+        "StateVariableAttributes",
+        render_state_variable_attributes(source, &node.attributes, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("attributes", "StateVariableAttributes");
-
-        render_state_variable_attributes(ctx, &node.attributes);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("name", "Identifier");
-
-        ctx.write_terminal_value(&node.name.range);
-    }
+    acc.add(
+        "name",
+        "Identifier",
+        render_terminal(source, &node.name.range),
+    );
 
     if let Some(ref value) = node.value {
-        ctx.write_indent();
-        ctx.write_key("value", "StateVariableDefinitionValue");
-
-        render_state_variable_definition_value(ctx, value);
+        acc.add(
+            "value",
+            "StateVariableDefinitionValue",
+            render_state_variable_definition_value(source, value, depth + 1),
+        );
     }
 
-    {
-        ctx.write_indent();
-        ctx.write_key("semicolon", "Semicolon");
+    acc.add(
+        "semicolon",
+        "Semicolon",
+        render_terminal(source, &node.semicolon.range),
+    );
 
-        ctx.write_terminal_value(&node.semicolon.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_state_variable_definition_value(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &StateVariableDefinitionValueStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("equal", "Equal");
+    acc.add("equal", "Equal", render_terminal(source, &node.equal.range));
 
-        ctx.write_terminal_value(&node.equal.range);
-    }
+    acc.add(
+        "value",
+        "Expression",
+        render_expression(source, &node.value, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("value", "Expression");
-
-        render_expression(ctx, &node.value);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_storage_layout_specifier(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &StorageLayoutSpecifierStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("layout_keyword", "LayoutKeyword");
+    acc.add(
+        "layout_keyword",
+        "LayoutKeyword",
+        render_terminal(source, &node.layout_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.layout_keyword.range);
-    }
+    acc.add(
+        "at_keyword",
+        "AtKeyword",
+        render_terminal(source, &node.at_keyword.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("at_keyword", "AtKeyword");
+    acc.add(
+        "expression",
+        "Expression",
+        render_expression(source, &node.expression, depth + 1),
+    );
 
-        ctx.write_terminal_value(&node.at_keyword.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("expression", "Expression");
-
-        render_expression(ctx, &node.expression);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_struct_definition(ctx: &mut RenderContext<'_>, node: &StructDefinitionStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_struct_definition(
+    source: &str,
+    node: &StructDefinitionStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("struct_keyword", "StructKeyword");
+    acc.add(
+        "struct_keyword",
+        "StructKeyword",
+        render_terminal(source, &node.struct_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.struct_keyword.range);
-    }
+    acc.add(
+        "name",
+        "Identifier",
+        render_terminal(source, &node.name.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("name", "Identifier");
+    acc.add(
+        "open_brace",
+        "OpenBrace",
+        render_terminal(source, &node.open_brace.range),
+    );
 
-        ctx.write_terminal_value(&node.name.range);
-    }
+    acc.add(
+        "members",
+        "StructMembers",
+        render_struct_members(source, &node.members, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("open_brace", "OpenBrace");
+    acc.add(
+        "close_brace",
+        "CloseBrace",
+        render_terminal(source, &node.close_brace.range),
+    );
 
-        ctx.write_terminal_value(&node.open_brace.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("members", "StructMembers");
-
-        render_struct_members(ctx, &node.members);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("close_brace", "CloseBrace");
-
-        ctx.write_terminal_value(&node.close_brace.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_struct_member(ctx: &mut RenderContext<'_>, node: &StructMemberStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_struct_member(
+    source: &str,
+    node: &StructMemberStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("type_name", "TypeName");
+    acc.add(
+        "type_name",
+        "TypeName",
+        render_type_name(source, &node.type_name, depth + 1),
+    );
 
-        render_type_name(ctx, &node.type_name);
-    }
+    acc.add(
+        "name",
+        "Identifier",
+        render_terminal(source, &node.name.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("name", "Identifier");
+    acc.add(
+        "semicolon",
+        "Semicolon",
+        render_terminal(source, &node.semicolon.range),
+    );
 
-        ctx.write_terminal_value(&node.name.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("semicolon", "Semicolon");
-
-        ctx.write_terminal_value(&node.semicolon.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_try_statement(ctx: &mut RenderContext<'_>, node: &TryStatementStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_try_statement(
+    source: &str,
+    node: &TryStatementStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("try_keyword", "TryKeyword");
+    acc.add(
+        "try_keyword",
+        "TryKeyword",
+        render_terminal(source, &node.try_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.try_keyword.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("expression", "Expression");
-
-        render_expression(ctx, &node.expression);
-    }
+    acc.add(
+        "expression",
+        "Expression",
+        render_expression(source, &node.expression, depth + 1),
+    );
 
     if let Some(ref returns) = node.returns {
-        ctx.write_indent();
-        ctx.write_key("returns", "ReturnsDeclaration");
-
-        render_returns_declaration(ctx, returns);
+        acc.add(
+            "returns",
+            "ReturnsDeclaration",
+            render_returns_declaration(source, returns, depth + 1),
+        );
     }
 
-    {
-        ctx.write_indent();
-        ctx.write_key("body", "Block");
+    acc.add("body", "Block", render_block(source, &node.body, depth + 1));
 
-        render_block(ctx, &node.body);
-    }
+    acc.add(
+        "catch_clauses",
+        "CatchClauses",
+        render_catch_clauses(source, &node.catch_clauses, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("catch_clauses", "CatchClauses");
-
-        render_catch_clauses(ctx, &node.catch_clauses);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_tuple_expression(ctx: &mut RenderContext<'_>, node: &TupleExpressionStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_tuple_expression(
+    source: &str,
+    node: &TupleExpressionStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("open_paren", "OpenParen");
+    acc.add(
+        "open_paren",
+        "OpenParen",
+        render_terminal(source, &node.open_paren.range),
+    );
 
-        ctx.write_terminal_value(&node.open_paren.range);
-    }
+    acc.add(
+        "items",
+        "TupleValues",
+        render_tuple_values(source, &node.items, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("items", "TupleValues");
+    acc.add(
+        "close_paren",
+        "CloseParen",
+        render_terminal(source, &node.close_paren.range),
+    );
 
-        render_tuple_values(ctx, &node.items);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("close_paren", "CloseParen");
-
-        ctx.write_terminal_value(&node.close_paren.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_tuple_value(ctx: &mut RenderContext<'_>, node: &TupleValueStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
-
-    let mut has_children = false;
+pub fn render_tuple_value(source: &str, node: &TupleValueStruct, depth: usize) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     if let Some(ref expression) = node.expression {
-        has_children = true;
-        ctx.write_indent();
-        ctx.write_key("expression", "Expression");
-
-        render_expression(ctx, expression);
+        acc.add(
+            "expression",
+            "Expression",
+            render_expression(source, expression, depth + 1),
+        );
     }
 
-    ctx.depth -= 1;
-
-    ctx.finish_nonterminal(has_children);
+    acc.finish()
 }
 
-pub fn render_type_expression(ctx: &mut RenderContext<'_>, node: &TypeExpressionStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_type_expression(
+    source: &str,
+    node: &TypeExpressionStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("type_keyword", "TypeKeyword");
+    acc.add(
+        "type_keyword",
+        "TypeKeyword",
+        render_terminal(source, &node.type_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.type_keyword.range);
-    }
+    acc.add(
+        "open_paren",
+        "OpenParen",
+        render_terminal(source, &node.open_paren.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("open_paren", "OpenParen");
+    acc.add(
+        "type_name",
+        "TypeName",
+        render_type_name(source, &node.type_name, depth + 1),
+    );
 
-        ctx.write_terminal_value(&node.open_paren.range);
-    }
+    acc.add(
+        "close_paren",
+        "CloseParen",
+        render_terminal(source, &node.close_paren.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("type_name", "TypeName");
-
-        render_type_name(ctx, &node.type_name);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("close_paren", "CloseParen");
-
-        ctx.write_terminal_value(&node.close_paren.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_unchecked_block(ctx: &mut RenderContext<'_>, node: &UncheckedBlockStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_unchecked_block(
+    source: &str,
+    node: &UncheckedBlockStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("unchecked_keyword", "UncheckedKeyword");
+    acc.add(
+        "unchecked_keyword",
+        "UncheckedKeyword",
+        render_terminal(source, &node.unchecked_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.unchecked_keyword.range);
-    }
+    acc.add(
+        "block",
+        "Block",
+        render_block(source, &node.block, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("block", "Block");
-
-        render_block(ctx, &node.block);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_user_defined_value_type_definition(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &UserDefinedValueTypeDefinitionStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("type_keyword", "TypeKeyword");
+    acc.add(
+        "type_keyword",
+        "TypeKeyword",
+        render_terminal(source, &node.type_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.type_keyword.range);
-    }
+    acc.add(
+        "name",
+        "Identifier",
+        render_terminal(source, &node.name.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("name", "Identifier");
+    acc.add(
+        "is_keyword",
+        "IsKeyword",
+        render_terminal(source, &node.is_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.name.range);
-    }
+    acc.add(
+        "value_type",
+        "ElementaryType",
+        render_elementary_type(source, &node.value_type, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("is_keyword", "IsKeyword");
+    acc.add(
+        "semicolon",
+        "Semicolon",
+        render_terminal(source, &node.semicolon.range),
+    );
 
-        ctx.write_terminal_value(&node.is_keyword.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("value_type", "ElementaryType");
-
-        render_elementary_type(ctx, &node.value_type);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("semicolon", "Semicolon");
-
-        ctx.write_terminal_value(&node.semicolon.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_using_alias(ctx: &mut RenderContext<'_>, node: &UsingAliasStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_using_alias(source: &str, node: &UsingAliasStruct, depth: usize) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("as_keyword", "AsKeyword");
+    acc.add(
+        "as_keyword",
+        "AsKeyword",
+        render_terminal(source, &node.as_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.as_keyword.range);
-    }
+    acc.add(
+        "operator",
+        "UsingOperator",
+        render_using_operator(source, &node.operator, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("operator", "UsingOperator");
-
-        render_using_operator(ctx, &node.operator);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_using_deconstruction(ctx: &mut RenderContext<'_>, node: &UsingDeconstructionStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_using_deconstruction(
+    source: &str,
+    node: &UsingDeconstructionStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("open_brace", "OpenBrace");
+    acc.add(
+        "open_brace",
+        "OpenBrace",
+        render_terminal(source, &node.open_brace.range),
+    );
 
-        ctx.write_terminal_value(&node.open_brace.range);
-    }
+    acc.add(
+        "symbols",
+        "UsingDeconstructionSymbols",
+        render_using_deconstruction_symbols(source, &node.symbols, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("symbols", "UsingDeconstructionSymbols");
+    acc.add(
+        "close_brace",
+        "CloseBrace",
+        render_terminal(source, &node.close_brace.range),
+    );
 
-        render_using_deconstruction_symbols(ctx, &node.symbols);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("close_brace", "CloseBrace");
-
-        ctx.write_terminal_value(&node.close_brace.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_using_deconstruction_symbol(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &UsingDeconstructionSymbolStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("name", "IdentifierPath");
-
-        render_identifier_path(ctx, &node.name);
-    }
+    acc.add(
+        "name",
+        "IdentifierPath",
+        render_identifier_path(source, &node.name, depth + 1),
+    );
 
     if let Some(ref alias) = node.alias {
-        ctx.write_indent();
-        ctx.write_key("alias", "UsingAlias");
-
-        render_using_alias(ctx, alias);
+        acc.add(
+            "alias",
+            "UsingAlias",
+            render_using_alias(source, alias, depth + 1),
+        );
     }
 
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_using_directive(ctx: &mut RenderContext<'_>, node: &UsingDirectiveStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_using_directive(
+    source: &str,
+    node: &UsingDirectiveStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("using_keyword", "UsingKeyword");
+    acc.add(
+        "using_keyword",
+        "UsingKeyword",
+        render_terminal(source, &node.using_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.using_keyword.range);
-    }
+    acc.add(
+        "clause",
+        "UsingClause",
+        render_using_clause(source, &node.clause, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("clause", "UsingClause");
+    acc.add(
+        "for_keyword",
+        "ForKeyword",
+        render_terminal(source, &node.for_keyword.range),
+    );
 
-        render_using_clause(ctx, &node.clause);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("for_keyword", "ForKeyword");
-
-        ctx.write_terminal_value(&node.for_keyword.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("target", "UsingTarget");
-
-        render_using_target(ctx, &node.target);
-    }
+    acc.add(
+        "target",
+        "UsingTarget",
+        render_using_target(source, &node.target, depth + 1),
+    );
 
     if let Some(ref global_keyword) = node.global_keyword {
-        ctx.write_indent();
-        ctx.write_key("global_keyword", "GlobalKeyword");
-
-        ctx.write_terminal_value(&global_keyword.range);
+        acc.add(
+            "global_keyword",
+            "GlobalKeyword",
+            render_terminal(source, &global_keyword.range),
+        );
     }
 
-    {
-        ctx.write_indent();
-        ctx.write_key("semicolon", "Semicolon");
+    acc.add(
+        "semicolon",
+        "Semicolon",
+        render_terminal(source, &node.semicolon.range),
+    );
 
-        ctx.write_terminal_value(&node.semicolon.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_variable_declaration(ctx: &mut RenderContext<'_>, node: &VariableDeclarationStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_variable_declaration(
+    source: &str,
+    node: &VariableDeclarationStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("type_name", "TypeName");
-
-        render_type_name(ctx, &node.type_name);
-    }
+    acc.add(
+        "type_name",
+        "TypeName",
+        render_type_name(source, &node.type_name, depth + 1),
+    );
 
     if let Some(ref storage_location) = node.storage_location {
-        ctx.write_indent();
-        ctx.write_key("storage_location", "StorageLocation");
-
-        render_storage_location(ctx, storage_location);
+        acc.add(
+            "storage_location",
+            "StorageLocation",
+            render_storage_location(source, storage_location, depth + 1),
+        );
     }
 
-    {
-        ctx.write_indent();
-        ctx.write_key("name", "Identifier");
+    acc.add(
+        "name",
+        "Identifier",
+        render_terminal(source, &node.name.range),
+    );
 
-        ctx.write_terminal_value(&node.name.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_variable_declaration_statement(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &VariableDeclarationStatementStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("target", "VariableDeclarationTarget");
+    acc.add(
+        "target",
+        "VariableDeclarationTarget",
+        render_variable_declaration_target(source, &node.target, depth + 1),
+    );
 
-        render_variable_declaration_target(ctx, &node.target);
-    }
+    acc.add(
+        "semicolon",
+        "Semicolon",
+        render_terminal(source, &node.semicolon.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("semicolon", "Semicolon");
-
-        ctx.write_terminal_value(&node.semicolon.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_variable_declaration_value(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &VariableDeclarationValueStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("equal", "Equal");
+    acc.add("equal", "Equal", render_terminal(source, &node.equal.range));
 
-        ctx.write_terminal_value(&node.equal.range);
-    }
+    acc.add(
+        "expression",
+        "Expression",
+        render_expression(source, &node.expression, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("expression", "Expression");
-
-        render_expression(ctx, &node.expression);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_version_pragma(ctx: &mut RenderContext<'_>, node: &VersionPragmaStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_version_pragma(
+    source: &str,
+    node: &VersionPragmaStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("solidity_keyword", "SolidityKeyword");
+    acc.add(
+        "solidity_keyword",
+        "SolidityKeyword",
+        render_terminal(source, &node.solidity_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.solidity_keyword.range);
-    }
+    acc.add(
+        "sets",
+        "VersionExpressionSets",
+        render_version_expression_sets(source, &node.sets, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("sets", "VersionExpressionSets");
-
-        render_version_expression_sets(ctx, &node.sets);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_version_range(ctx: &mut RenderContext<'_>, node: &VersionRangeStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_version_range(
+    source: &str,
+    node: &VersionRangeStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("start", "VersionLiteral");
+    acc.add(
+        "start",
+        "VersionLiteral",
+        render_version_literal(source, &node.start, depth + 1),
+    );
 
-        render_version_literal(ctx, &node.start);
-    }
+    acc.add(
+        "minus",
+        "PragmaMinus",
+        render_terminal(source, &node.minus.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("minus", "PragmaMinus");
+    acc.add(
+        "end",
+        "VersionLiteral",
+        render_version_literal(source, &node.end, depth + 1),
+    );
 
-        ctx.write_terminal_value(&node.minus.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("end", "VersionLiteral");
-
-        render_version_literal(ctx, &node.end);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_version_term(ctx: &mut RenderContext<'_>, node: &VersionTermStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_version_term(source: &str, node: &VersionTermStruct, depth: usize) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     if let Some(ref operator) = node.operator {
-        ctx.write_indent();
-        ctx.write_key("operator", "VersionOperator");
-
-        render_version_operator(ctx, operator);
+        acc.add(
+            "operator",
+            "VersionOperator",
+            render_version_operator(source, operator, depth + 1),
+        );
     }
 
-    {
-        ctx.write_indent();
-        ctx.write_key("literal", "VersionLiteral");
+    acc.add(
+        "literal",
+        "VersionLiteral",
+        render_version_literal(source, &node.literal, depth + 1),
+    );
 
-        render_version_literal(ctx, &node.literal);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_while_statement(ctx: &mut RenderContext<'_>, node: &WhileStatementStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_while_statement(
+    source: &str,
+    node: &WhileStatementStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("while_keyword", "WhileKeyword");
+    acc.add(
+        "while_keyword",
+        "WhileKeyword",
+        render_terminal(source, &node.while_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.while_keyword.range);
-    }
+    acc.add(
+        "open_paren",
+        "OpenParen",
+        render_terminal(source, &node.open_paren.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("open_paren", "OpenParen");
+    acc.add(
+        "condition",
+        "Expression",
+        render_expression(source, &node.condition, depth + 1),
+    );
 
-        ctx.write_terminal_value(&node.open_paren.range);
-    }
+    acc.add(
+        "close_paren",
+        "CloseParen",
+        render_terminal(source, &node.close_paren.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("condition", "Expression");
+    acc.add(
+        "body",
+        "Statement",
+        render_statement(source, &node.body, depth + 1),
+    );
 
-        render_expression(ctx, &node.condition);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("close_paren", "CloseParen");
-
-        ctx.write_terminal_value(&node.close_paren.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("body", "Statement");
-
-        render_statement(ctx, &node.body);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_yul_block(ctx: &mut RenderContext<'_>, node: &YulBlockStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_yul_block(source: &str, node: &YulBlockStruct, depth: usize) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("open_brace", "YulOpenBrace");
+    acc.add(
+        "open_brace",
+        "YulOpenBrace",
+        render_terminal(source, &node.open_brace.range),
+    );
 
-        ctx.write_terminal_value(&node.open_brace.range);
-    }
+    acc.add(
+        "statements",
+        "YulStatements",
+        render_yul_statements(source, &node.statements, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("statements", "YulStatements");
+    acc.add(
+        "close_brace",
+        "YulCloseBrace",
+        render_terminal(source, &node.close_brace.range),
+    );
 
-        render_yul_statements(ctx, &node.statements);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("close_brace", "YulCloseBrace");
-
-        ctx.write_terminal_value(&node.close_brace.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_yul_break_statement(ctx: &mut RenderContext<'_>, node: &YulBreakStatementStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_yul_break_statement(
+    source: &str,
+    node: &YulBreakStatementStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("break_keyword", "YulBreakKeyword");
+    acc.add(
+        "break_keyword",
+        "YulBreakKeyword",
+        render_terminal(source, &node.break_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.break_keyword.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_yul_continue_statement(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &YulContinueStatementStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("continue_keyword", "YulContinueKeyword");
+    acc.add(
+        "continue_keyword",
+        "YulContinueKeyword",
+        render_terminal(source, &node.continue_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.continue_keyword.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_yul_default_case(ctx: &mut RenderContext<'_>, node: &YulDefaultCaseStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_yul_default_case(
+    source: &str,
+    node: &YulDefaultCaseStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("default_keyword", "YulDefaultKeyword");
+    acc.add(
+        "default_keyword",
+        "YulDefaultKeyword",
+        render_terminal(source, &node.default_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.default_keyword.range);
-    }
+    acc.add(
+        "body",
+        "YulBlock",
+        render_yul_block(source, &node.body, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("body", "YulBlock");
-
-        render_yul_block(ctx, &node.body);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_yul_flags_declaration(ctx: &mut RenderContext<'_>, node: &YulFlagsDeclarationStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_yul_flags_declaration(
+    source: &str,
+    node: &YulFlagsDeclarationStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("open_paren", "YulOpenParen");
+    acc.add(
+        "open_paren",
+        "YulOpenParen",
+        render_terminal(source, &node.open_paren.range),
+    );
 
-        ctx.write_terminal_value(&node.open_paren.range);
-    }
+    acc.add(
+        "flags",
+        "YulFlags",
+        render_yul_flags(source, &node.flags, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("flags", "YulFlags");
+    acc.add(
+        "close_paren",
+        "YulCloseParen",
+        render_terminal(source, &node.close_paren.range),
+    );
 
-        render_yul_flags(ctx, &node.flags);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("close_paren", "YulCloseParen");
-
-        ctx.write_terminal_value(&node.close_paren.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_yul_for_statement(ctx: &mut RenderContext<'_>, node: &YulForStatementStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_yul_for_statement(
+    source: &str,
+    node: &YulForStatementStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("for_keyword", "YulForKeyword");
+    acc.add(
+        "for_keyword",
+        "YulForKeyword",
+        render_terminal(source, &node.for_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.for_keyword.range);
-    }
+    acc.add(
+        "initialization",
+        "YulBlock",
+        render_yul_block(source, &node.initialization, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("initialization", "YulBlock");
+    acc.add(
+        "condition",
+        "YulExpression",
+        render_yul_expression(source, &node.condition, depth + 1),
+    );
 
-        render_yul_block(ctx, &node.initialization);
-    }
+    acc.add(
+        "iterator",
+        "YulBlock",
+        render_yul_block(source, &node.iterator, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("condition", "YulExpression");
+    acc.add(
+        "body",
+        "YulBlock",
+        render_yul_block(source, &node.body, depth + 1),
+    );
 
-        render_yul_expression(ctx, &node.condition);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("iterator", "YulBlock");
-
-        render_yul_block(ctx, &node.iterator);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("body", "YulBlock");
-
-        render_yul_block(ctx, &node.body);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_yul_function_call_expression(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &YulFunctionCallExpressionStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("operand", "YulExpression");
+    acc.add(
+        "operand",
+        "YulExpression",
+        render_yul_expression(source, &node.operand, depth + 1),
+    );
 
-        render_yul_expression(ctx, &node.operand);
-    }
+    acc.add(
+        "open_paren",
+        "YulOpenParen",
+        render_terminal(source, &node.open_paren.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("open_paren", "YulOpenParen");
+    acc.add(
+        "arguments",
+        "YulArguments",
+        render_yul_arguments(source, &node.arguments, depth + 1),
+    );
 
-        ctx.write_terminal_value(&node.open_paren.range);
-    }
+    acc.add(
+        "close_paren",
+        "YulCloseParen",
+        render_terminal(source, &node.close_paren.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("arguments", "YulArguments");
-
-        render_yul_arguments(ctx, &node.arguments);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("close_paren", "YulCloseParen");
-
-        ctx.write_terminal_value(&node.close_paren.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_yul_function_definition(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &YulFunctionDefinitionStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("function_keyword", "YulFunctionKeyword");
+    acc.add(
+        "function_keyword",
+        "YulFunctionKeyword",
+        render_terminal(source, &node.function_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.function_keyword.range);
-    }
+    acc.add(
+        "name",
+        "YulIdentifier",
+        render_terminal(source, &node.name.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("name", "YulIdentifier");
-
-        ctx.write_terminal_value(&node.name.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("parameters", "YulParametersDeclaration");
-
-        render_yul_parameters_declaration(ctx, &node.parameters);
-    }
+    acc.add(
+        "parameters",
+        "YulParametersDeclaration",
+        render_yul_parameters_declaration(source, &node.parameters, depth + 1),
+    );
 
     if let Some(ref returns) = node.returns {
-        ctx.write_indent();
-        ctx.write_key("returns", "YulReturnsDeclaration");
-
-        render_yul_returns_declaration(ctx, returns);
+        acc.add(
+            "returns",
+            "YulReturnsDeclaration",
+            render_yul_returns_declaration(source, returns, depth + 1),
+        );
     }
 
-    {
-        ctx.write_indent();
-        ctx.write_key("body", "YulBlock");
+    acc.add(
+        "body",
+        "YulBlock",
+        render_yul_block(source, &node.body, depth + 1),
+    );
 
-        render_yul_block(ctx, &node.body);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_yul_if_statement(ctx: &mut RenderContext<'_>, node: &YulIfStatementStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_yul_if_statement(
+    source: &str,
+    node: &YulIfStatementStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("if_keyword", "YulIfKeyword");
+    acc.add(
+        "if_keyword",
+        "YulIfKeyword",
+        render_terminal(source, &node.if_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.if_keyword.range);
-    }
+    acc.add(
+        "condition",
+        "YulExpression",
+        render_yul_expression(source, &node.condition, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("condition", "YulExpression");
+    acc.add(
+        "body",
+        "YulBlock",
+        render_yul_block(source, &node.body, depth + 1),
+    );
 
-        render_yul_expression(ctx, &node.condition);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("body", "YulBlock");
-
-        render_yul_block(ctx, &node.body);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_yul_leave_statement(ctx: &mut RenderContext<'_>, node: &YulLeaveStatementStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_yul_leave_statement(
+    source: &str,
+    node: &YulLeaveStatementStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("leave_keyword", "YulLeaveKeyword");
+    acc.add(
+        "leave_keyword",
+        "YulLeaveKeyword",
+        render_terminal(source, &node.leave_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.leave_keyword.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_yul_parameters_declaration(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &YulParametersDeclarationStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("open_paren", "YulOpenParen");
+    acc.add(
+        "open_paren",
+        "YulOpenParen",
+        render_terminal(source, &node.open_paren.range),
+    );
 
-        ctx.write_terminal_value(&node.open_paren.range);
-    }
+    acc.add(
+        "parameters",
+        "YulParameters",
+        render_yul_parameters(source, &node.parameters, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("parameters", "YulParameters");
+    acc.add(
+        "close_paren",
+        "YulCloseParen",
+        render_terminal(source, &node.close_paren.range),
+    );
 
-        render_yul_parameters(ctx, &node.parameters);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("close_paren", "YulCloseParen");
-
-        ctx.write_terminal_value(&node.close_paren.range);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_yul_returns_declaration(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &YulReturnsDeclarationStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("minus_greater_than", "YulMinusGreaterThan");
+    acc.add(
+        "minus_greater_than",
+        "YulMinusGreaterThan",
+        render_terminal(source, &node.minus_greater_than.range),
+    );
 
-        ctx.write_terminal_value(&node.minus_greater_than.range);
-    }
+    acc.add(
+        "variables",
+        "YulVariableNames",
+        render_yul_variable_names(source, &node.variables, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("variables", "YulVariableNames");
-
-        render_yul_variable_names(ctx, &node.variables);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_yul_switch_statement(ctx: &mut RenderContext<'_>, node: &YulSwitchStatementStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_yul_switch_statement(
+    source: &str,
+    node: &YulSwitchStatementStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("switch_keyword", "YulSwitchKeyword");
+    acc.add(
+        "switch_keyword",
+        "YulSwitchKeyword",
+        render_terminal(source, &node.switch_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.switch_keyword.range);
-    }
+    acc.add(
+        "expression",
+        "YulExpression",
+        render_yul_expression(source, &node.expression, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("expression", "YulExpression");
+    acc.add(
+        "cases",
+        "YulSwitchCases",
+        render_yul_switch_cases(source, &node.cases, depth + 1),
+    );
 
-        render_yul_expression(ctx, &node.expression);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("cases", "YulSwitchCases");
-
-        render_yul_switch_cases(ctx, &node.cases);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
-pub fn render_yul_value_case(ctx: &mut RenderContext<'_>, node: &YulValueCaseStruct) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+pub fn render_yul_value_case(
+    source: &str,
+    node: &YulValueCaseStruct,
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("case_keyword", "YulCaseKeyword");
+    acc.add(
+        "case_keyword",
+        "YulCaseKeyword",
+        render_terminal(source, &node.case_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.case_keyword.range);
-    }
+    acc.add(
+        "value",
+        "YulLiteral",
+        render_yul_literal(source, &node.value, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("value", "YulLiteral");
+    acc.add(
+        "body",
+        "YulBlock",
+        render_yul_block(source, &node.body, depth + 1),
+    );
 
-        render_yul_literal(ctx, &node.value);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("body", "YulBlock");
-
-        render_yul_block(ctx, &node.body);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_yul_variable_assignment_statement(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &YulVariableAssignmentStatementStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("variables", "YulPaths");
+    acc.add(
+        "variables",
+        "YulPaths",
+        render_yul_paths(source, &node.variables, depth + 1),
+    );
 
-        render_yul_paths(ctx, &node.variables);
-    }
+    acc.add(
+        "assignment",
+        "YulColonEqual",
+        render_terminal(source, &node.assignment.range),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("assignment", "YulColonEqual");
+    acc.add(
+        "expression",
+        "YulExpression",
+        render_yul_expression(source, &node.expression, depth + 1),
+    );
 
-        ctx.write_terminal_value(&node.assignment.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("expression", "YulExpression");
-
-        render_yul_expression(ctx, &node.expression);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_yul_variable_declaration_statement(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &YulVariableDeclarationStatementStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("let_keyword", "YulLetKeyword");
+    acc.add(
+        "let_keyword",
+        "YulLetKeyword",
+        render_terminal(source, &node.let_keyword.range),
+    );
 
-        ctx.write_terminal_value(&node.let_keyword.range);
-    }
-
-    {
-        ctx.write_indent();
-        ctx.write_key("variables", "YulVariableNames");
-
-        render_yul_variable_names(ctx, &node.variables);
-    }
+    acc.add(
+        "variables",
+        "YulVariableNames",
+        render_yul_variable_names(source, &node.variables, depth + 1),
+    );
 
     if let Some(ref value) = node.value {
-        ctx.write_indent();
-        ctx.write_key("value", "YulVariableDeclarationValue");
-
-        render_yul_variable_declaration_value(ctx, value);
+        acc.add(
+            "value",
+            "YulVariableDeclarationValue",
+            render_yul_variable_declaration_value(source, value, depth + 1),
+        );
     }
 
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 pub fn render_yul_variable_declaration_value(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &YulVariableDeclarationValueStruct,
-) {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
+    depth: usize,
+) -> RenderedOutput {
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    {
-        ctx.write_indent();
-        ctx.write_key("assignment", "YulColonEqual");
+    acc.add(
+        "assignment",
+        "YulColonEqual",
+        render_terminal(source, &node.assignment.range),
+    );
 
-        ctx.write_terminal_value(&node.assignment.range);
-    }
+    acc.add(
+        "expression",
+        "YulExpression",
+        render_yul_expression(source, &node.expression, depth + 1),
+    );
 
-    {
-        ctx.write_indent();
-        ctx.write_key("expression", "YulExpression");
-
-        render_yul_expression(ctx, &node.expression);
-    }
-
-    ctx.depth -= 1;
+    acc.finish()
 }
 
 //
 // Choices:
 //
 
-pub fn render_abicoder_version(ctx: &mut RenderContext<'_>, node: &AbicoderVersion) {
+pub fn render_abicoder_version(
+    source: &str,
+    node: &AbicoderVersion,
+    depth: usize,
+) -> RenderedOutput {
     match node {
         AbicoderVersion::AbicoderV1Keyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("abicoder_v1_keyword", "AbicoderV1Keyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (abicoder_v1_keyword\u{a789} AbicoderV1Keyword)".to_string(),
+            );
+            (range, frags)
         }
 
         AbicoderVersion::AbicoderV2Keyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("abicoder_v2_keyword", "AbicoderV2Keyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (abicoder_v2_keyword\u{a789} AbicoderV2Keyword)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_arguments_declaration(ctx: &mut RenderContext<'_>, node: &ArgumentsDeclaration) {
+pub fn render_arguments_declaration(
+    source: &str,
+    node: &ArgumentsDeclaration,
+    depth: usize,
+) -> RenderedOutput {
     match node {
         ArgumentsDeclaration::PositionalArgumentsDeclaration(ref element) => {
-            ctx.write_connector();
-            ctx.write_key(
-                "positional_arguments_declaration",
-                "PositionalArgumentsDeclaration",
-            );
-            render_positional_arguments_declaration(ctx, element);
+            let (range, mut frags) =
+                render_positional_arguments_declaration(source, element, depth);
+
+            frags.insert(0, " \u{25ba} (positional_arguments_declaration\u{a789} PositionalArgumentsDeclaration)".to_string());
+            (range, frags)
         }
 
         ArgumentsDeclaration::NamedArgumentsDeclaration(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("named_arguments_declaration", "NamedArgumentsDeclaration");
-            render_named_arguments_declaration(ctx, element);
+            let (range, mut frags) = render_named_arguments_declaration(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (named_arguments_declaration\u{a789} NamedArgumentsDeclaration)"
+                    .to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_constructor_attribute(ctx: &mut RenderContext<'_>, node: &ConstructorAttribute) {
+pub fn render_constructor_attribute(
+    source: &str,
+    node: &ConstructorAttribute,
+    depth: usize,
+) -> RenderedOutput {
     match node {
         ConstructorAttribute::ModifierInvocation(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("modifier_invocation", "ModifierInvocation");
-            render_modifier_invocation(ctx, element);
+            let (range, mut frags) = render_modifier_invocation(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (modifier_invocation\u{a789} ModifierInvocation)".to_string(),
+            );
+            (range, frags)
         }
 
         ConstructorAttribute::InternalKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("internal_keyword", "InternalKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (internal_keyword\u{a789} InternalKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         ConstructorAttribute::PayableKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("payable_keyword", "PayableKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (payable_keyword\u{a789} PayableKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         ConstructorAttribute::PublicKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("public_keyword", "PublicKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (public_keyword\u{a789} PublicKeyword)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_contract_member(ctx: &mut RenderContext<'_>, node: &ContractMember) {
+pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize) -> RenderedOutput {
     match node {
         ContractMember::UsingDirective(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("using_directive", "UsingDirective");
-            render_using_directive(ctx, element);
+            let (range, mut frags) = render_using_directive(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (using_directive\u{a789} UsingDirective)".to_string(),
+            );
+            (range, frags)
         }
 
         ContractMember::FunctionDefinition(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("function_definition", "FunctionDefinition");
-            render_function_definition(ctx, element);
+            let (range, mut frags) = render_function_definition(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (function_definition\u{a789} FunctionDefinition)".to_string(),
+            );
+            (range, frags)
         }
 
         ContractMember::ConstructorDefinition(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("constructor_definition", "ConstructorDefinition");
-            render_constructor_definition(ctx, element);
+            let (range, mut frags) = render_constructor_definition(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (constructor_definition\u{a789} ConstructorDefinition)".to_string(),
+            );
+            (range, frags)
         }
 
         ContractMember::ReceiveFunctionDefinition(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("receive_function_definition", "ReceiveFunctionDefinition");
-            render_receive_function_definition(ctx, element);
+            let (range, mut frags) = render_receive_function_definition(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (receive_function_definition\u{a789} ReceiveFunctionDefinition)"
+                    .to_string(),
+            );
+            (range, frags)
         }
 
         ContractMember::FallbackFunctionDefinition(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("fallback_function_definition", "FallbackFunctionDefinition");
-            render_fallback_function_definition(ctx, element);
+            let (range, mut frags) = render_fallback_function_definition(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (fallback_function_definition\u{a789} FallbackFunctionDefinition)"
+                    .to_string(),
+            );
+            (range, frags)
         }
 
         ContractMember::ModifierDefinition(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("modifier_definition", "ModifierDefinition");
-            render_modifier_definition(ctx, element);
+            let (range, mut frags) = render_modifier_definition(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (modifier_definition\u{a789} ModifierDefinition)".to_string(),
+            );
+            (range, frags)
         }
 
         ContractMember::StructDefinition(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("struct_definition", "StructDefinition");
-            render_struct_definition(ctx, element);
+            let (range, mut frags) = render_struct_definition(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (struct_definition\u{a789} StructDefinition)".to_string(),
+            );
+            (range, frags)
         }
 
         ContractMember::EnumDefinition(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("enum_definition", "EnumDefinition");
-            render_enum_definition(ctx, element);
+            let (range, mut frags) = render_enum_definition(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (enum_definition\u{a789} EnumDefinition)".to_string(),
+            );
+            (range, frags)
         }
 
         ContractMember::EventDefinition(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("event_definition", "EventDefinition");
-            render_event_definition(ctx, element);
+            let (range, mut frags) = render_event_definition(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (event_definition\u{a789} EventDefinition)".to_string(),
+            );
+            (range, frags)
         }
 
         ContractMember::ErrorDefinition(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("error_definition", "ErrorDefinition");
-            render_error_definition(ctx, element);
+            let (range, mut frags) = render_error_definition(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (error_definition\u{a789} ErrorDefinition)".to_string(),
+            );
+            (range, frags)
         }
 
         ContractMember::UserDefinedValueTypeDefinition(ref element) => {
-            ctx.write_connector();
-            ctx.write_key(
-                "user_defined_value_type_definition",
-                "UserDefinedValueTypeDefinition",
-            );
-            render_user_defined_value_type_definition(ctx, element);
+            let (range, mut frags) =
+                render_user_defined_value_type_definition(source, element, depth);
+
+            frags.insert(0, " \u{25ba} (user_defined_value_type_definition\u{a789} UserDefinedValueTypeDefinition)".to_string());
+            (range, frags)
         }
 
         ContractMember::StateVariableDefinition(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("state_variable_definition", "StateVariableDefinition");
-            render_state_variable_definition(ctx, element);
+            let (range, mut frags) = render_state_variable_definition(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (state_variable_definition\u{a789} StateVariableDefinition)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_contract_specifier(ctx: &mut RenderContext<'_>, node: &ContractSpecifier) {
+pub fn render_contract_specifier(
+    source: &str,
+    node: &ContractSpecifier,
+    depth: usize,
+) -> RenderedOutput {
     match node {
         ContractSpecifier::InheritanceSpecifier(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("inheritance_specifier", "InheritanceSpecifier");
-            render_inheritance_specifier(ctx, element);
+            let (range, mut frags) = render_inheritance_specifier(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (inheritance_specifier\u{a789} InheritanceSpecifier)".to_string(),
+            );
+            (range, frags)
         }
 
         ContractSpecifier::StorageLayoutSpecifier(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("storage_layout_specifier", "StorageLayoutSpecifier");
-            render_storage_layout_specifier(ctx, element);
+            let (range, mut frags) = render_storage_layout_specifier(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (storage_layout_specifier\u{a789} StorageLayoutSpecifier)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_elementary_type(ctx: &mut RenderContext<'_>, node: &ElementaryType) {
+pub fn render_elementary_type(source: &str, node: &ElementaryType, depth: usize) -> RenderedOutput {
     match node {
         ElementaryType::BoolKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("bool_keyword", "BoolKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (bool_keyword\u{a789} BoolKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         ElementaryType::StringKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("string_keyword", "StringKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (string_keyword\u{a789} StringKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         ElementaryType::AddressType(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("address_type", "AddressType");
-            render_address_type(ctx, element);
+            let (range, mut frags) = render_address_type(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (address_type\u{a789} AddressType)".to_string(),
+            );
+            (range, frags)
         }
 
         ElementaryType::BytesKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("bytes_keyword", "BytesKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (bytes_keyword\u{a789} BytesKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         ElementaryType::IntKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("int_keyword", "IntKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (int_keyword\u{a789} IntKeyword)".to_string());
+            (range, frags)
         }
 
         ElementaryType::UintKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("uint_keyword", "UintKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (uint_keyword\u{a789} UintKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         ElementaryType::FixedKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("fixed_keyword", "FixedKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (fixed_keyword\u{a789} FixedKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         ElementaryType::UfixedKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("ufixed_keyword", "UfixedKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (ufixed_keyword\u{a789} UfixedKeyword)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_experimental_feature(ctx: &mut RenderContext<'_>, node: &ExperimentalFeature) {
+pub fn render_experimental_feature(
+    source: &str,
+    node: &ExperimentalFeature,
+    depth: usize,
+) -> RenderedOutput {
     match node {
         ExperimentalFeature::ABIEncoderV2Keyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("abi_encoder_v2_keyword", "ABIEncoderV2Keyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (abi_encoder_v2_keyword\u{a789} ABIEncoderV2Keyword)".to_string(),
+            );
+            (range, frags)
         }
 
         ExperimentalFeature::SMTCheckerKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("smt_checker_keyword", "SMTCheckerKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (smt_checker_keyword\u{a789} SMTCheckerKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         ExperimentalFeature::PragmaStringLiteral(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("pragma_string_literal", "PragmaStringLiteral");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (pragma_string_literal\u{a789} PragmaStringLiteral)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_expression(ctx: &mut RenderContext<'_>, node: &Expression) {
+pub fn render_expression(source: &str, node: &Expression, depth: usize) -> RenderedOutput {
     match node {
         Expression::AssignmentExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("assignment_expression", "AssignmentExpression");
-            render_assignment_expression(ctx, element);
+            let (range, mut frags) = render_assignment_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (assignment_expression\u{a789} AssignmentExpression)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::ConditionalExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("conditional_expression", "ConditionalExpression");
-            render_conditional_expression(ctx, element);
+            let (range, mut frags) = render_conditional_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (conditional_expression\u{a789} ConditionalExpression)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::OrExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("or_expression", "OrExpression");
-            render_or_expression(ctx, element);
+            let (range, mut frags) = render_or_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (or_expression\u{a789} OrExpression)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::AndExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("and_expression", "AndExpression");
-            render_and_expression(ctx, element);
+            let (range, mut frags) = render_and_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (and_expression\u{a789} AndExpression)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::EqualityExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("equality_expression", "EqualityExpression");
-            render_equality_expression(ctx, element);
+            let (range, mut frags) = render_equality_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (equality_expression\u{a789} EqualityExpression)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::InequalityExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("inequality_expression", "InequalityExpression");
-            render_inequality_expression(ctx, element);
+            let (range, mut frags) = render_inequality_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (inequality_expression\u{a789} InequalityExpression)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::BitwiseOrExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("bitwise_or_expression", "BitwiseOrExpression");
-            render_bitwise_or_expression(ctx, element);
+            let (range, mut frags) = render_bitwise_or_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (bitwise_or_expression\u{a789} BitwiseOrExpression)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::BitwiseXorExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("bitwise_xor_expression", "BitwiseXorExpression");
-            render_bitwise_xor_expression(ctx, element);
+            let (range, mut frags) = render_bitwise_xor_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (bitwise_xor_expression\u{a789} BitwiseXorExpression)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::BitwiseAndExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("bitwise_and_expression", "BitwiseAndExpression");
-            render_bitwise_and_expression(ctx, element);
+            let (range, mut frags) = render_bitwise_and_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (bitwise_and_expression\u{a789} BitwiseAndExpression)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::ShiftExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("shift_expression", "ShiftExpression");
-            render_shift_expression(ctx, element);
+            let (range, mut frags) = render_shift_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (shift_expression\u{a789} ShiftExpression)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::AdditiveExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("additive_expression", "AdditiveExpression");
-            render_additive_expression(ctx, element);
+            let (range, mut frags) = render_additive_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (additive_expression\u{a789} AdditiveExpression)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::MultiplicativeExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("multiplicative_expression", "MultiplicativeExpression");
-            render_multiplicative_expression(ctx, element);
+            let (range, mut frags) = render_multiplicative_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (multiplicative_expression\u{a789} MultiplicativeExpression)"
+                    .to_string(),
+            );
+            (range, frags)
         }
 
         Expression::ExponentiationExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("exponentiation_expression", "ExponentiationExpression");
-            render_exponentiation_expression(ctx, element);
+            let (range, mut frags) = render_exponentiation_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (exponentiation_expression\u{a789} ExponentiationExpression)"
+                    .to_string(),
+            );
+            (range, frags)
         }
 
         Expression::PostfixExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("postfix_expression", "PostfixExpression");
-            render_postfix_expression(ctx, element);
+            let (range, mut frags) = render_postfix_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (postfix_expression\u{a789} PostfixExpression)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::PrefixExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("prefix_expression", "PrefixExpression");
-            render_prefix_expression(ctx, element);
+            let (range, mut frags) = render_prefix_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (prefix_expression\u{a789} PrefixExpression)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::FunctionCallExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("function_call_expression", "FunctionCallExpression");
-            render_function_call_expression(ctx, element);
+            let (range, mut frags) = render_function_call_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (function_call_expression\u{a789} FunctionCallExpression)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::CallOptionsExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("call_options_expression", "CallOptionsExpression");
-            render_call_options_expression(ctx, element);
+            let (range, mut frags) = render_call_options_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (call_options_expression\u{a789} CallOptionsExpression)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::MemberAccessExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("member_access_expression", "MemberAccessExpression");
-            render_member_access_expression(ctx, element);
+            let (range, mut frags) = render_member_access_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (member_access_expression\u{a789} MemberAccessExpression)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::IndexAccessExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("index_access_expression", "IndexAccessExpression");
-            render_index_access_expression(ctx, element);
+            let (range, mut frags) = render_index_access_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (index_access_expression\u{a789} IndexAccessExpression)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::NewExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("new_expression", "NewExpression");
-            render_new_expression(ctx, element);
+            let (range, mut frags) = render_new_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (new_expression\u{a789} NewExpression)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::TupleExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("tuple_expression", "TupleExpression");
-            render_tuple_expression(ctx, element);
+            let (range, mut frags) = render_tuple_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (tuple_expression\u{a789} TupleExpression)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::TypeExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("type_expression", "TypeExpression");
-            render_type_expression(ctx, element);
+            let (range, mut frags) = render_type_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (type_expression\u{a789} TypeExpression)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::ArrayExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("array_expression", "ArrayExpression");
-            render_array_expression(ctx, element);
+            let (range, mut frags) = render_array_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (array_expression\u{a789} ArrayExpression)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::HexNumberExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("hex_number_expression", "HexNumberExpression");
-            render_hex_number_expression(ctx, element);
+            let (range, mut frags) = render_hex_number_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (hex_number_expression\u{a789} HexNumberExpression)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::DecimalNumberExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("decimal_number_expression", "DecimalNumberExpression");
-            render_decimal_number_expression(ctx, element);
+            let (range, mut frags) = render_decimal_number_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (decimal_number_expression\u{a789} DecimalNumberExpression)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::StringExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("string_expression", "StringExpression");
-            render_string_expression(ctx, element);
+            let (range, mut frags) = render_string_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (string_expression\u{a789} StringExpression)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::ElementaryType(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("elementary_type", "ElementaryType");
-            render_elementary_type(ctx, element);
+            let (range, mut frags) = render_elementary_type(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (elementary_type\u{a789} ElementaryType)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::PayableKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("payable_keyword", "PayableKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (payable_keyword\u{a789} PayableKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::ThisKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("this_keyword", "ThisKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (this_keyword\u{a789} ThisKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::SuperKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("super_keyword", "SuperKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (super_keyword\u{a789} SuperKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::TrueKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("true_keyword", "TrueKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (true_keyword\u{a789} TrueKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::FalseKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("false_keyword", "FalseKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (false_keyword\u{a789} FalseKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression::Identifier(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("identifier", "Identifier");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (identifier\u{a789} Identifier)".to_string());
+            (range, frags)
         }
     }
 }
 
 pub fn render_expression_additive_expression_operator(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &Expression_AdditiveExpression_Operator,
-) {
+    depth: usize,
+) -> RenderedOutput {
     match node {
         Expression_AdditiveExpression_Operator::Minus(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("minus", "Minus");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (minus\u{a789} Minus)".to_string());
+            (range, frags)
         }
 
         Expression_AdditiveExpression_Operator::Plus(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("plus", "Plus");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (plus\u{a789} Plus)".to_string());
+            (range, frags)
         }
     }
 }
 
 pub fn render_expression_assignment_expression_operator(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &Expression_AssignmentExpression_Operator,
-) {
+    depth: usize,
+) -> RenderedOutput {
     match node {
         Expression_AssignmentExpression_Operator::AmpersandEqual(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("ampersand_equal", "AmpersandEqual");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (ampersand_equal\u{a789} AmpersandEqual)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression_AssignmentExpression_Operator::AsteriskEqual(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("asterisk_equal", "AsteriskEqual");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (asterisk_equal\u{a789} AsteriskEqual)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression_AssignmentExpression_Operator::BarEqual(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("bar_equal", "BarEqual");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (bar_equal\u{a789} BarEqual)".to_string());
+            (range, frags)
         }
 
         Expression_AssignmentExpression_Operator::CaretEqual(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("caret_equal", "CaretEqual");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (caret_equal\u{a789} CaretEqual)".to_string());
+            (range, frags)
         }
 
         Expression_AssignmentExpression_Operator::Equal(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("equal", "Equal");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (equal\u{a789} Equal)".to_string());
+            (range, frags)
         }
 
         Expression_AssignmentExpression_Operator::GreaterThanGreaterThanEqual(ref element) => {
-            ctx.write_connector();
-            ctx.write_key(
-                "greater_than_greater_than_equal",
-                "GreaterThanGreaterThanEqual",
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (greater_than_greater_than_equal\u{a789} GreaterThanGreaterThanEqual)"
+                    .to_string(),
             );
-            ctx.write_terminal_value(&element.range);
+            (range, frags)
         }
 
         Expression_AssignmentExpression_Operator::GreaterThanGreaterThanGreaterThanEqual(
             ref element,
         ) => {
-            ctx.write_connector();
-            ctx.write_key(
-                "greater_than_greater_than_greater_than_equal",
-                "GreaterThanGreaterThanGreaterThanEqual",
-            );
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (greater_than_greater_than_greater_than_equal\u{a789} GreaterThanGreaterThanGreaterThanEqual)".to_string());
+            (range, frags)
         }
 
         Expression_AssignmentExpression_Operator::LessThanLessThanEqual(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("less_than_less_than_equal", "LessThanLessThanEqual");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (less_than_less_than_equal\u{a789} LessThanLessThanEqual)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression_AssignmentExpression_Operator::MinusEqual(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("minus_equal", "MinusEqual");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (minus_equal\u{a789} MinusEqual)".to_string());
+            (range, frags)
         }
 
         Expression_AssignmentExpression_Operator::PercentEqual(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("percent_equal", "PercentEqual");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (percent_equal\u{a789} PercentEqual)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression_AssignmentExpression_Operator::PlusEqual(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("plus_equal", "PlusEqual");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (plus_equal\u{a789} PlusEqual)".to_string());
+            (range, frags)
         }
 
         Expression_AssignmentExpression_Operator::SlashEqual(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("slash_equal", "SlashEqual");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (slash_equal\u{a789} SlashEqual)".to_string());
+            (range, frags)
         }
     }
 }
 
 pub fn render_expression_equality_expression_operator(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &Expression_EqualityExpression_Operator,
-) {
+    depth: usize,
+) -> RenderedOutput {
     match node {
         Expression_EqualityExpression_Operator::BangEqual(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("bang_equal", "BangEqual");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (bang_equal\u{a789} BangEqual)".to_string());
+            (range, frags)
         }
 
         Expression_EqualityExpression_Operator::EqualEqual(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("equal_equal", "EqualEqual");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (equal_equal\u{a789} EqualEqual)".to_string());
+            (range, frags)
         }
     }
 }
 
 pub fn render_expression_inequality_expression_operator(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &Expression_InequalityExpression_Operator,
-) {
+    depth: usize,
+) -> RenderedOutput {
     match node {
         Expression_InequalityExpression_Operator::GreaterThan(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("greater_than", "GreaterThan");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (greater_than\u{a789} GreaterThan)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression_InequalityExpression_Operator::GreaterThanEqual(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("greater_than_equal", "GreaterThanEqual");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (greater_than_equal\u{a789} GreaterThanEqual)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression_InequalityExpression_Operator::LessThan(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("less_than", "LessThan");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (less_than\u{a789} LessThan)".to_string());
+            (range, frags)
         }
 
         Expression_InequalityExpression_Operator::LessThanEqual(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("less_than_equal", "LessThanEqual");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (less_than_equal\u{a789} LessThanEqual)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
 pub fn render_expression_multiplicative_expression_operator(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &Expression_MultiplicativeExpression_Operator,
-) {
+    depth: usize,
+) -> RenderedOutput {
     match node {
         Expression_MultiplicativeExpression_Operator::Asterisk(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("asterisk", "Asterisk");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (asterisk\u{a789} Asterisk)".to_string());
+            (range, frags)
         }
 
         Expression_MultiplicativeExpression_Operator::Percent(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("percent", "Percent");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (percent\u{a789} Percent)".to_string());
+            (range, frags)
         }
 
         Expression_MultiplicativeExpression_Operator::Slash(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("slash", "Slash");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (slash\u{a789} Slash)".to_string());
+            (range, frags)
         }
     }
 }
 
 pub fn render_expression_postfix_expression_operator(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &Expression_PostfixExpression_Operator,
-) {
+    depth: usize,
+) -> RenderedOutput {
     match node {
         Expression_PostfixExpression_Operator::MinusMinus(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("minus_minus", "MinusMinus");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (minus_minus\u{a789} MinusMinus)".to_string());
+            (range, frags)
         }
 
         Expression_PostfixExpression_Operator::PlusPlus(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("plus_plus", "PlusPlus");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (plus_plus\u{a789} PlusPlus)".to_string());
+            (range, frags)
         }
     }
 }
 
 pub fn render_expression_prefix_expression_operator(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &Expression_PrefixExpression_Operator,
-) {
+    depth: usize,
+) -> RenderedOutput {
     match node {
         Expression_PrefixExpression_Operator::Bang(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("bang", "Bang");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (bang\u{a789} Bang)".to_string());
+            (range, frags)
         }
 
         Expression_PrefixExpression_Operator::DeleteKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("delete_keyword", "DeleteKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (delete_keyword\u{a789} DeleteKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression_PrefixExpression_Operator::Minus(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("minus", "Minus");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (minus\u{a789} Minus)".to_string());
+            (range, frags)
         }
 
         Expression_PrefixExpression_Operator::MinusMinus(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("minus_minus", "MinusMinus");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (minus_minus\u{a789} MinusMinus)".to_string());
+            (range, frags)
         }
 
         Expression_PrefixExpression_Operator::PlusPlus(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("plus_plus", "PlusPlus");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (plus_plus\u{a789} PlusPlus)".to_string());
+            (range, frags)
         }
 
         Expression_PrefixExpression_Operator::Tilde(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("tilde", "Tilde");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (tilde\u{a789} Tilde)".to_string());
+            (range, frags)
         }
     }
 }
 
 pub fn render_expression_shift_expression_operator(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &Expression_ShiftExpression_Operator,
-) {
+    depth: usize,
+) -> RenderedOutput {
     match node {
         Expression_ShiftExpression_Operator::GreaterThanGreaterThan(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("greater_than_greater_than", "GreaterThanGreaterThan");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (greater_than_greater_than\u{a789} GreaterThanGreaterThan)".to_string(),
+            );
+            (range, frags)
         }
 
         Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan(ref element) => {
-            ctx.write_connector();
-            ctx.write_key(
-                "greater_than_greater_than_greater_than",
-                "GreaterThanGreaterThanGreaterThan",
-            );
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (greater_than_greater_than_greater_than\u{a789} GreaterThanGreaterThanGreaterThan)".to_string());
+            (range, frags)
         }
 
         Expression_ShiftExpression_Operator::LessThanLessThan(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("less_than_less_than", "LessThanLessThan");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (less_than_less_than\u{a789} LessThanLessThan)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
 pub fn render_fallback_function_attribute(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &FallbackFunctionAttribute,
-) {
+    depth: usize,
+) -> RenderedOutput {
     match node {
         FallbackFunctionAttribute::ModifierInvocation(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("modifier_invocation", "ModifierInvocation");
-            render_modifier_invocation(ctx, element);
+            let (range, mut frags) = render_modifier_invocation(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (modifier_invocation\u{a789} ModifierInvocation)".to_string(),
+            );
+            (range, frags)
         }
 
         FallbackFunctionAttribute::OverrideSpecifier(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("override_specifier", "OverrideSpecifier");
-            render_override_specifier(ctx, element);
+            let (range, mut frags) = render_override_specifier(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (override_specifier\u{a789} OverrideSpecifier)".to_string(),
+            );
+            (range, frags)
         }
 
         FallbackFunctionAttribute::ExternalKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("external_keyword", "ExternalKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (external_keyword\u{a789} ExternalKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         FallbackFunctionAttribute::PayableKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("payable_keyword", "PayableKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (payable_keyword\u{a789} PayableKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         FallbackFunctionAttribute::PureKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("pure_keyword", "PureKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (pure_keyword\u{a789} PureKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         FallbackFunctionAttribute::ViewKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("view_keyword", "ViewKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (view_keyword\u{a789} ViewKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         FallbackFunctionAttribute::VirtualKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("virtual_keyword", "VirtualKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (virtual_keyword\u{a789} VirtualKeyword)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_for_statement_condition(ctx: &mut RenderContext<'_>, node: &ForStatementCondition) {
+pub fn render_for_statement_condition(
+    source: &str,
+    node: &ForStatementCondition,
+    depth: usize,
+) -> RenderedOutput {
     match node {
         ForStatementCondition::ExpressionStatement(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("expression_statement", "ExpressionStatement");
-            render_expression_statement(ctx, element);
+            let (range, mut frags) = render_expression_statement(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (expression_statement\u{a789} ExpressionStatement)".to_string(),
+            );
+            (range, frags)
         }
 
         ForStatementCondition::Semicolon(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("semicolon", "Semicolon");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (semicolon\u{a789} Semicolon)".to_string());
+            (range, frags)
         }
     }
 }
 
 pub fn render_for_statement_initialization(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &ForStatementInitialization,
-) {
+    depth: usize,
+) -> RenderedOutput {
     match node {
         ForStatementInitialization::VariableDeclarationStatement(ref element) => {
-            ctx.write_connector();
-            ctx.write_key(
-                "variable_declaration_statement",
-                "VariableDeclarationStatement",
+            let (range, mut frags) = render_variable_declaration_statement(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (variable_declaration_statement\u{a789} VariableDeclarationStatement)"
+                    .to_string(),
             );
-            render_variable_declaration_statement(ctx, element);
+            (range, frags)
         }
 
         ForStatementInitialization::ExpressionStatement(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("expression_statement", "ExpressionStatement");
-            render_expression_statement(ctx, element);
+            let (range, mut frags) = render_expression_statement(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (expression_statement\u{a789} ExpressionStatement)".to_string(),
+            );
+            (range, frags)
         }
 
         ForStatementInitialization::Semicolon(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("semicolon", "Semicolon");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (semicolon\u{a789} Semicolon)".to_string());
+            (range, frags)
         }
     }
 }
 
-pub fn render_function_attribute(ctx: &mut RenderContext<'_>, node: &FunctionAttribute) {
+pub fn render_function_attribute(
+    source: &str,
+    node: &FunctionAttribute,
+    depth: usize,
+) -> RenderedOutput {
     match node {
         FunctionAttribute::ModifierInvocation(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("modifier_invocation", "ModifierInvocation");
-            render_modifier_invocation(ctx, element);
+            let (range, mut frags) = render_modifier_invocation(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (modifier_invocation\u{a789} ModifierInvocation)".to_string(),
+            );
+            (range, frags)
         }
 
         FunctionAttribute::OverrideSpecifier(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("override_specifier", "OverrideSpecifier");
-            render_override_specifier(ctx, element);
+            let (range, mut frags) = render_override_specifier(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (override_specifier\u{a789} OverrideSpecifier)".to_string(),
+            );
+            (range, frags)
         }
 
         FunctionAttribute::ExternalKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("external_keyword", "ExternalKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (external_keyword\u{a789} ExternalKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         FunctionAttribute::InternalKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("internal_keyword", "InternalKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (internal_keyword\u{a789} InternalKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         FunctionAttribute::PayableKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("payable_keyword", "PayableKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (payable_keyword\u{a789} PayableKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         FunctionAttribute::PrivateKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("private_keyword", "PrivateKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (private_keyword\u{a789} PrivateKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         FunctionAttribute::PublicKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("public_keyword", "PublicKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (public_keyword\u{a789} PublicKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         FunctionAttribute::PureKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("pure_keyword", "PureKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (pure_keyword\u{a789} PureKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         FunctionAttribute::ViewKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("view_keyword", "ViewKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (view_keyword\u{a789} ViewKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         FunctionAttribute::VirtualKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("virtual_keyword", "VirtualKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (virtual_keyword\u{a789} VirtualKeyword)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_function_body(ctx: &mut RenderContext<'_>, node: &FunctionBody) {
+pub fn render_function_body(source: &str, node: &FunctionBody, depth: usize) -> RenderedOutput {
     match node {
         FunctionBody::Block(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("block", "Block");
-            render_block(ctx, element);
+            let (range, mut frags) = render_block(source, element, depth);
+
+            frags.insert(0, " \u{25ba} (block\u{a789} Block)".to_string());
+            (range, frags)
         }
 
         FunctionBody::Semicolon(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("semicolon", "Semicolon");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (semicolon\u{a789} Semicolon)".to_string());
+            (range, frags)
         }
     }
 }
 
-pub fn render_function_name(ctx: &mut RenderContext<'_>, node: &FunctionName) {
+pub fn render_function_name(source: &str, node: &FunctionName, depth: usize) -> RenderedOutput {
     match node {
         FunctionName::Identifier(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("identifier", "Identifier");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (identifier\u{a789} Identifier)".to_string());
+            (range, frags)
         }
 
         FunctionName::FallbackKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("fallback_keyword", "FallbackKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (fallback_keyword\u{a789} FallbackKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         FunctionName::ReceiveKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("receive_keyword", "ReceiveKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (receive_keyword\u{a789} ReceiveKeyword)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_function_type_attribute(ctx: &mut RenderContext<'_>, node: &FunctionTypeAttribute) {
+pub fn render_function_type_attribute(
+    source: &str,
+    node: &FunctionTypeAttribute,
+    depth: usize,
+) -> RenderedOutput {
     match node {
         FunctionTypeAttribute::InternalKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("internal_keyword", "InternalKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (internal_keyword\u{a789} InternalKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         FunctionTypeAttribute::ExternalKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("external_keyword", "ExternalKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (external_keyword\u{a789} ExternalKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         FunctionTypeAttribute::PrivateKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("private_keyword", "PrivateKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (private_keyword\u{a789} PrivateKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         FunctionTypeAttribute::PublicKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("public_keyword", "PublicKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (public_keyword\u{a789} PublicKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         FunctionTypeAttribute::PureKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("pure_keyword", "PureKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (pure_keyword\u{a789} PureKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         FunctionTypeAttribute::ViewKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("view_keyword", "ViewKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (view_keyword\u{a789} ViewKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         FunctionTypeAttribute::PayableKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("payable_keyword", "PayableKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (payable_keyword\u{a789} PayableKeyword)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_identifier_path_element(ctx: &mut RenderContext<'_>, node: &IdentifierPathElement) {
+pub fn render_identifier_path_element(
+    source: &str,
+    node: &IdentifierPathElement,
+    depth: usize,
+) -> RenderedOutput {
     match node {
         IdentifierPathElement::Identifier(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("identifier", "Identifier");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (identifier\u{a789} Identifier)".to_string());
+            (range, frags)
         }
 
         IdentifierPathElement::AddressKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("address_keyword", "AddressKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (address_keyword\u{a789} AddressKeyword)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_import_clause(ctx: &mut RenderContext<'_>, node: &ImportClause) {
+pub fn render_import_clause(source: &str, node: &ImportClause, depth: usize) -> RenderedOutput {
     match node {
         ImportClause::PathImport(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("path_import", "PathImport");
-            render_path_import(ctx, element);
+            let (range, mut frags) = render_path_import(source, element, depth);
+
+            frags.insert(0, " \u{25ba} (path_import\u{a789} PathImport)".to_string());
+            (range, frags)
         }
 
         ImportClause::NamedImport(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("named_import", "NamedImport");
-            render_named_import(ctx, element);
+            let (range, mut frags) = render_named_import(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (named_import\u{a789} NamedImport)".to_string(),
+            );
+            (range, frags)
         }
 
         ImportClause::ImportDeconstruction(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("import_deconstruction", "ImportDeconstruction");
-            render_import_deconstruction(ctx, element);
+            let (range, mut frags) = render_import_deconstruction(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (import_deconstruction\u{a789} ImportDeconstruction)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_mapping_key_type(ctx: &mut RenderContext<'_>, node: &MappingKeyType) {
+pub fn render_mapping_key_type(
+    source: &str,
+    node: &MappingKeyType,
+    depth: usize,
+) -> RenderedOutput {
     match node {
         MappingKeyType::ElementaryType(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("elementary_type", "ElementaryType");
-            render_elementary_type(ctx, element);
+            let (range, mut frags) = render_elementary_type(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (elementary_type\u{a789} ElementaryType)".to_string(),
+            );
+            (range, frags)
         }
 
         MappingKeyType::IdentifierPath(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("identifier_path", "IdentifierPath");
-            render_identifier_path(ctx, element);
+            let (range, mut frags) = render_identifier_path(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (identifier_path\u{a789} IdentifierPath)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_modifier_attribute(ctx: &mut RenderContext<'_>, node: &ModifierAttribute) {
+pub fn render_modifier_attribute(
+    source: &str,
+    node: &ModifierAttribute,
+    depth: usize,
+) -> RenderedOutput {
     match node {
         ModifierAttribute::OverrideSpecifier(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("override_specifier", "OverrideSpecifier");
-            render_override_specifier(ctx, element);
+            let (range, mut frags) = render_override_specifier(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (override_specifier\u{a789} OverrideSpecifier)".to_string(),
+            );
+            (range, frags)
         }
 
         ModifierAttribute::VirtualKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("virtual_keyword", "VirtualKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (virtual_keyword\u{a789} VirtualKeyword)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_number_unit(ctx: &mut RenderContext<'_>, node: &NumberUnit) {
+pub fn render_number_unit(source: &str, node: &NumberUnit, depth: usize) -> RenderedOutput {
     match node {
         NumberUnit::WeiKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("wei_keyword", "WeiKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (wei_keyword\u{a789} WeiKeyword)".to_string());
+            (range, frags)
         }
 
         NumberUnit::GweiKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("gwei_keyword", "GweiKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (gwei_keyword\u{a789} GweiKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         NumberUnit::EtherKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("ether_keyword", "EtherKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (ether_keyword\u{a789} EtherKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         NumberUnit::SecondsKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("seconds_keyword", "SecondsKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (seconds_keyword\u{a789} SecondsKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         NumberUnit::MinutesKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("minutes_keyword", "MinutesKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (minutes_keyword\u{a789} MinutesKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         NumberUnit::HoursKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("hours_keyword", "HoursKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (hours_keyword\u{a789} HoursKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         NumberUnit::DaysKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("days_keyword", "DaysKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (days_keyword\u{a789} DaysKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         NumberUnit::WeeksKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("weeks_keyword", "WeeksKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (weeks_keyword\u{a789} WeeksKeyword)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_pragma(ctx: &mut RenderContext<'_>, node: &Pragma) {
+pub fn render_pragma(source: &str, node: &Pragma, depth: usize) -> RenderedOutput {
     match node {
         Pragma::VersionPragma(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("version_pragma", "VersionPragma");
-            render_version_pragma(ctx, element);
+            let (range, mut frags) = render_version_pragma(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (version_pragma\u{a789} VersionPragma)".to_string(),
+            );
+            (range, frags)
         }
 
         Pragma::AbicoderPragma(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("abicoder_pragma", "AbicoderPragma");
-            render_abicoder_pragma(ctx, element);
+            let (range, mut frags) = render_abicoder_pragma(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (abicoder_pragma\u{a789} AbicoderPragma)".to_string(),
+            );
+            (range, frags)
         }
 
         Pragma::ExperimentalPragma(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("experimental_pragma", "ExperimentalPragma");
-            render_experimental_pragma(ctx, element);
+            let (range, mut frags) = render_experimental_pragma(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (experimental_pragma\u{a789} ExperimentalPragma)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
 pub fn render_receive_function_attribute(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &ReceiveFunctionAttribute,
-) {
+    depth: usize,
+) -> RenderedOutput {
     match node {
         ReceiveFunctionAttribute::ModifierInvocation(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("modifier_invocation", "ModifierInvocation");
-            render_modifier_invocation(ctx, element);
+            let (range, mut frags) = render_modifier_invocation(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (modifier_invocation\u{a789} ModifierInvocation)".to_string(),
+            );
+            (range, frags)
         }
 
         ReceiveFunctionAttribute::OverrideSpecifier(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("override_specifier", "OverrideSpecifier");
-            render_override_specifier(ctx, element);
+            let (range, mut frags) = render_override_specifier(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (override_specifier\u{a789} OverrideSpecifier)".to_string(),
+            );
+            (range, frags)
         }
 
         ReceiveFunctionAttribute::ExternalKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("external_keyword", "ExternalKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (external_keyword\u{a789} ExternalKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         ReceiveFunctionAttribute::PayableKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("payable_keyword", "PayableKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (payable_keyword\u{a789} PayableKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         ReceiveFunctionAttribute::VirtualKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("virtual_keyword", "VirtualKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (virtual_keyword\u{a789} VirtualKeyword)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_source_unit_member(ctx: &mut RenderContext<'_>, node: &SourceUnitMember) {
+pub fn render_source_unit_member(
+    source: &str,
+    node: &SourceUnitMember,
+    depth: usize,
+) -> RenderedOutput {
     match node {
         SourceUnitMember::PragmaDirective(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("pragma_directive", "PragmaDirective");
-            render_pragma_directive(ctx, element);
+            let (range, mut frags) = render_pragma_directive(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (pragma_directive\u{a789} PragmaDirective)".to_string(),
+            );
+            (range, frags)
         }
 
         SourceUnitMember::ImportDirective(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("import_directive", "ImportDirective");
-            render_import_directive(ctx, element);
+            let (range, mut frags) = render_import_directive(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (import_directive\u{a789} ImportDirective)".to_string(),
+            );
+            (range, frags)
         }
 
         SourceUnitMember::ContractDefinition(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("contract_definition", "ContractDefinition");
-            render_contract_definition(ctx, element);
+            let (range, mut frags) = render_contract_definition(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (contract_definition\u{a789} ContractDefinition)".to_string(),
+            );
+            (range, frags)
         }
 
         SourceUnitMember::InterfaceDefinition(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("interface_definition", "InterfaceDefinition");
-            render_interface_definition(ctx, element);
+            let (range, mut frags) = render_interface_definition(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (interface_definition\u{a789} InterfaceDefinition)".to_string(),
+            );
+            (range, frags)
         }
 
         SourceUnitMember::LibraryDefinition(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("library_definition", "LibraryDefinition");
-            render_library_definition(ctx, element);
+            let (range, mut frags) = render_library_definition(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (library_definition\u{a789} LibraryDefinition)".to_string(),
+            );
+            (range, frags)
         }
 
         SourceUnitMember::StructDefinition(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("struct_definition", "StructDefinition");
-            render_struct_definition(ctx, element);
+            let (range, mut frags) = render_struct_definition(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (struct_definition\u{a789} StructDefinition)".to_string(),
+            );
+            (range, frags)
         }
 
         SourceUnitMember::EnumDefinition(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("enum_definition", "EnumDefinition");
-            render_enum_definition(ctx, element);
+            let (range, mut frags) = render_enum_definition(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (enum_definition\u{a789} EnumDefinition)".to_string(),
+            );
+            (range, frags)
         }
 
         SourceUnitMember::FunctionDefinition(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("function_definition", "FunctionDefinition");
-            render_function_definition(ctx, element);
+            let (range, mut frags) = render_function_definition(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (function_definition\u{a789} FunctionDefinition)".to_string(),
+            );
+            (range, frags)
         }
 
         SourceUnitMember::ErrorDefinition(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("error_definition", "ErrorDefinition");
-            render_error_definition(ctx, element);
+            let (range, mut frags) = render_error_definition(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (error_definition\u{a789} ErrorDefinition)".to_string(),
+            );
+            (range, frags)
         }
 
         SourceUnitMember::UserDefinedValueTypeDefinition(ref element) => {
-            ctx.write_connector();
-            ctx.write_key(
-                "user_defined_value_type_definition",
-                "UserDefinedValueTypeDefinition",
-            );
-            render_user_defined_value_type_definition(ctx, element);
+            let (range, mut frags) =
+                render_user_defined_value_type_definition(source, element, depth);
+
+            frags.insert(0, " \u{25ba} (user_defined_value_type_definition\u{a789} UserDefinedValueTypeDefinition)".to_string());
+            (range, frags)
         }
 
         SourceUnitMember::UsingDirective(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("using_directive", "UsingDirective");
-            render_using_directive(ctx, element);
+            let (range, mut frags) = render_using_directive(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (using_directive\u{a789} UsingDirective)".to_string(),
+            );
+            (range, frags)
         }
 
         SourceUnitMember::EventDefinition(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("event_definition", "EventDefinition");
-            render_event_definition(ctx, element);
+            let (range, mut frags) = render_event_definition(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (event_definition\u{a789} EventDefinition)".to_string(),
+            );
+            (range, frags)
         }
 
         SourceUnitMember::ConstantDefinition(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("constant_definition", "ConstantDefinition");
-            render_constant_definition(ctx, element);
+            let (range, mut frags) = render_constant_definition(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (constant_definition\u{a789} ConstantDefinition)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_state_variable_attribute(ctx: &mut RenderContext<'_>, node: &StateVariableAttribute) {
+pub fn render_state_variable_attribute(
+    source: &str,
+    node: &StateVariableAttribute,
+    depth: usize,
+) -> RenderedOutput {
     match node {
         StateVariableAttribute::OverrideSpecifier(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("override_specifier", "OverrideSpecifier");
-            render_override_specifier(ctx, element);
+            let (range, mut frags) = render_override_specifier(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (override_specifier\u{a789} OverrideSpecifier)".to_string(),
+            );
+            (range, frags)
         }
 
         StateVariableAttribute::ConstantKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("constant_keyword", "ConstantKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (constant_keyword\u{a789} ConstantKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         StateVariableAttribute::InternalKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("internal_keyword", "InternalKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (internal_keyword\u{a789} InternalKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         StateVariableAttribute::PrivateKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("private_keyword", "PrivateKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (private_keyword\u{a789} PrivateKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         StateVariableAttribute::PublicKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("public_keyword", "PublicKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (public_keyword\u{a789} PublicKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         StateVariableAttribute::ImmutableKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("immutable_keyword", "ImmutableKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (immutable_keyword\u{a789} ImmutableKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         StateVariableAttribute::TransientKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("transient_keyword", "TransientKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (transient_keyword\u{a789} TransientKeyword)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_statement(ctx: &mut RenderContext<'_>, node: &Statement) {
+pub fn render_statement(source: &str, node: &Statement, depth: usize) -> RenderedOutput {
     match node {
         Statement::IfStatement(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("if_statement", "IfStatement");
-            render_if_statement(ctx, element);
+            let (range, mut frags) = render_if_statement(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (if_statement\u{a789} IfStatement)".to_string(),
+            );
+            (range, frags)
         }
 
         Statement::ForStatement(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("for_statement", "ForStatement");
-            render_for_statement(ctx, element);
+            let (range, mut frags) = render_for_statement(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (for_statement\u{a789} ForStatement)".to_string(),
+            );
+            (range, frags)
         }
 
         Statement::WhileStatement(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("while_statement", "WhileStatement");
-            render_while_statement(ctx, element);
+            let (range, mut frags) = render_while_statement(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (while_statement\u{a789} WhileStatement)".to_string(),
+            );
+            (range, frags)
         }
 
         Statement::DoWhileStatement(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("do_while_statement", "DoWhileStatement");
-            render_do_while_statement(ctx, element);
+            let (range, mut frags) = render_do_while_statement(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (do_while_statement\u{a789} DoWhileStatement)".to_string(),
+            );
+            (range, frags)
         }
 
         Statement::ContinueStatement(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("continue_statement", "ContinueStatement");
-            render_continue_statement(ctx, element);
+            let (range, mut frags) = render_continue_statement(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (continue_statement\u{a789} ContinueStatement)".to_string(),
+            );
+            (range, frags)
         }
 
         Statement::BreakStatement(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("break_statement", "BreakStatement");
-            render_break_statement(ctx, element);
+            let (range, mut frags) = render_break_statement(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (break_statement\u{a789} BreakStatement)".to_string(),
+            );
+            (range, frags)
         }
 
         Statement::ReturnStatement(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("return_statement", "ReturnStatement");
-            render_return_statement(ctx, element);
+            let (range, mut frags) = render_return_statement(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (return_statement\u{a789} ReturnStatement)".to_string(),
+            );
+            (range, frags)
         }
 
         Statement::EmitStatement(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("emit_statement", "EmitStatement");
-            render_emit_statement(ctx, element);
+            let (range, mut frags) = render_emit_statement(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (emit_statement\u{a789} EmitStatement)".to_string(),
+            );
+            (range, frags)
         }
 
         Statement::TryStatement(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("try_statement", "TryStatement");
-            render_try_statement(ctx, element);
+            let (range, mut frags) = render_try_statement(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (try_statement\u{a789} TryStatement)".to_string(),
+            );
+            (range, frags)
         }
 
         Statement::RevertStatement(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("revert_statement", "RevertStatement");
-            render_revert_statement(ctx, element);
+            let (range, mut frags) = render_revert_statement(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (revert_statement\u{a789} RevertStatement)".to_string(),
+            );
+            (range, frags)
         }
 
         Statement::AssemblyStatement(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("assembly_statement", "AssemblyStatement");
-            render_assembly_statement(ctx, element);
+            let (range, mut frags) = render_assembly_statement(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (assembly_statement\u{a789} AssemblyStatement)".to_string(),
+            );
+            (range, frags)
         }
 
         Statement::Block(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("block", "Block");
-            render_block(ctx, element);
+            let (range, mut frags) = render_block(source, element, depth);
+
+            frags.insert(0, " \u{25ba} (block\u{a789} Block)".to_string());
+            (range, frags)
         }
 
         Statement::UncheckedBlock(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("unchecked_block", "UncheckedBlock");
-            render_unchecked_block(ctx, element);
+            let (range, mut frags) = render_unchecked_block(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (unchecked_block\u{a789} UncheckedBlock)".to_string(),
+            );
+            (range, frags)
         }
 
         Statement::VariableDeclarationStatement(ref element) => {
-            ctx.write_connector();
-            ctx.write_key(
-                "variable_declaration_statement",
-                "VariableDeclarationStatement",
+            let (range, mut frags) = render_variable_declaration_statement(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (variable_declaration_statement\u{a789} VariableDeclarationStatement)"
+                    .to_string(),
             );
-            render_variable_declaration_statement(ctx, element);
+            (range, frags)
         }
 
         Statement::ExpressionStatement(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("expression_statement", "ExpressionStatement");
-            render_expression_statement(ctx, element);
+            let (range, mut frags) = render_expression_statement(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (expression_statement\u{a789} ExpressionStatement)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_storage_location(ctx: &mut RenderContext<'_>, node: &StorageLocation) {
+pub fn render_storage_location(
+    source: &str,
+    node: &StorageLocation,
+    depth: usize,
+) -> RenderedOutput {
     match node {
         StorageLocation::MemoryKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("memory_keyword", "MemoryKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (memory_keyword\u{a789} MemoryKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         StorageLocation::StorageKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("storage_keyword", "StorageKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (storage_keyword\u{a789} StorageKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         StorageLocation::CallDataKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("call_data_keyword", "CallDataKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (call_data_keyword\u{a789} CallDataKeyword)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_string_expression(ctx: &mut RenderContext<'_>, node: &StringExpression) {
+pub fn render_string_expression(
+    source: &str,
+    node: &StringExpression,
+    depth: usize,
+) -> RenderedOutput {
     match node {
         StringExpression::StringLiterals(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("string_literals", "StringLiterals");
-            render_string_literals(ctx, element);
+            let (range, mut frags) = render_string_literals(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (string_literals\u{a789} StringLiterals)".to_string(),
+            );
+            (range, frags)
         }
 
         StringExpression::HexStringLiterals(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("hex_string_literals", "HexStringLiterals");
-            render_hex_string_literals(ctx, element);
+            let (range, mut frags) = render_hex_string_literals(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (hex_string_literals\u{a789} HexStringLiterals)".to_string(),
+            );
+            (range, frags)
         }
 
         StringExpression::UnicodeStringLiterals(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("unicode_string_literals", "UnicodeStringLiterals");
-            render_unicode_string_literals(ctx, element);
+            let (range, mut frags) = render_unicode_string_literals(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (unicode_string_literals\u{a789} UnicodeStringLiterals)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_type_name(ctx: &mut RenderContext<'_>, node: &TypeName) {
+pub fn render_type_name(source: &str, node: &TypeName, depth: usize) -> RenderedOutput {
     match node {
         TypeName::ArrayTypeName(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("array_type_name", "ArrayTypeName");
-            render_array_type_name(ctx, element);
+            let (range, mut frags) = render_array_type_name(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (array_type_name\u{a789} ArrayTypeName)".to_string(),
+            );
+            (range, frags)
         }
 
         TypeName::FunctionType(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("function_type", "FunctionType");
-            render_function_type(ctx, element);
+            let (range, mut frags) = render_function_type(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (function_type\u{a789} FunctionType)".to_string(),
+            );
+            (range, frags)
         }
 
         TypeName::MappingType(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("mapping_type", "MappingType");
-            render_mapping_type(ctx, element);
+            let (range, mut frags) = render_mapping_type(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (mapping_type\u{a789} MappingType)".to_string(),
+            );
+            (range, frags)
         }
 
         TypeName::ElementaryType(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("elementary_type", "ElementaryType");
-            render_elementary_type(ctx, element);
+            let (range, mut frags) = render_elementary_type(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (elementary_type\u{a789} ElementaryType)".to_string(),
+            );
+            (range, frags)
         }
 
         TypeName::IdentifierPath(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("identifier_path", "IdentifierPath");
-            render_identifier_path(ctx, element);
+            let (range, mut frags) = render_identifier_path(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (identifier_path\u{a789} IdentifierPath)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_using_clause(ctx: &mut RenderContext<'_>, node: &UsingClause) {
+pub fn render_using_clause(source: &str, node: &UsingClause, depth: usize) -> RenderedOutput {
     match node {
         UsingClause::IdentifierPath(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("identifier_path", "IdentifierPath");
-            render_identifier_path(ctx, element);
+            let (range, mut frags) = render_identifier_path(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (identifier_path\u{a789} IdentifierPath)".to_string(),
+            );
+            (range, frags)
         }
 
         UsingClause::UsingDeconstruction(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("using_deconstruction", "UsingDeconstruction");
-            render_using_deconstruction(ctx, element);
+            let (range, mut frags) = render_using_deconstruction(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (using_deconstruction\u{a789} UsingDeconstruction)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_using_operator(ctx: &mut RenderContext<'_>, node: &UsingOperator) {
+pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -> RenderedOutput {
     match node {
         UsingOperator::Ampersand(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("ampersand", "Ampersand");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (ampersand\u{a789} Ampersand)".to_string());
+            (range, frags)
         }
 
         UsingOperator::Asterisk(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("asterisk", "Asterisk");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (asterisk\u{a789} Asterisk)".to_string());
+            (range, frags)
         }
 
         UsingOperator::BangEqual(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("bang_equal", "BangEqual");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (bang_equal\u{a789} BangEqual)".to_string());
+            (range, frags)
         }
 
         UsingOperator::Bar(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("bar", "Bar");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (bar\u{a789} Bar)".to_string());
+            (range, frags)
         }
 
         UsingOperator::Caret(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("caret", "Caret");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (caret\u{a789} Caret)".to_string());
+            (range, frags)
         }
 
         UsingOperator::EqualEqual(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("equal_equal", "EqualEqual");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (equal_equal\u{a789} EqualEqual)".to_string());
+            (range, frags)
         }
 
         UsingOperator::GreaterThan(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("greater_than", "GreaterThan");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (greater_than\u{a789} GreaterThan)".to_string(),
+            );
+            (range, frags)
         }
 
         UsingOperator::GreaterThanEqual(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("greater_than_equal", "GreaterThanEqual");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (greater_than_equal\u{a789} GreaterThanEqual)".to_string(),
+            );
+            (range, frags)
         }
 
         UsingOperator::LessThan(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("less_than", "LessThan");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (less_than\u{a789} LessThan)".to_string());
+            (range, frags)
         }
 
         UsingOperator::LessThanEqual(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("less_than_equal", "LessThanEqual");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (less_than_equal\u{a789} LessThanEqual)".to_string(),
+            );
+            (range, frags)
         }
 
         UsingOperator::Minus(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("minus", "Minus");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (minus\u{a789} Minus)".to_string());
+            (range, frags)
         }
 
         UsingOperator::Percent(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("percent", "Percent");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (percent\u{a789} Percent)".to_string());
+            (range, frags)
         }
 
         UsingOperator::Plus(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("plus", "Plus");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (plus\u{a789} Plus)".to_string());
+            (range, frags)
         }
 
         UsingOperator::Slash(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("slash", "Slash");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (slash\u{a789} Slash)".to_string());
+            (range, frags)
         }
 
         UsingOperator::Tilde(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("tilde", "Tilde");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (tilde\u{a789} Tilde)".to_string());
+            (range, frags)
         }
     }
 }
 
-pub fn render_using_target(ctx: &mut RenderContext<'_>, node: &UsingTarget) {
+pub fn render_using_target(source: &str, node: &UsingTarget, depth: usize) -> RenderedOutput {
     match node {
         UsingTarget::TypeName(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("type_name", "TypeName");
-            render_type_name(ctx, element);
+            let (range, mut frags) = render_type_name(source, element, depth);
+
+            frags.insert(0, " \u{25ba} (type_name\u{a789} TypeName)".to_string());
+            (range, frags)
         }
 
         UsingTarget::Asterisk(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("asterisk", "Asterisk");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(0, " \u{25ba} (asterisk\u{a789} Asterisk)".to_string());
+            (range, frags)
         }
     }
 }
 
 pub fn render_variable_declaration_target(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &VariableDeclarationTarget,
-) {
+    depth: usize,
+) -> RenderedOutput {
     match node {
         VariableDeclarationTarget::SingleTypedDeclaration(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("single_typed_declaration", "SingleTypedDeclaration");
-            render_single_typed_declaration(ctx, element);
+            let (range, mut frags) = render_single_typed_declaration(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (single_typed_declaration\u{a789} SingleTypedDeclaration)".to_string(),
+            );
+            (range, frags)
         }
 
         VariableDeclarationTarget::MultiTypedDeclaration(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("multi_typed_declaration", "MultiTypedDeclaration");
-            render_multi_typed_declaration(ctx, element);
+            let (range, mut frags) = render_multi_typed_declaration(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (multi_typed_declaration\u{a789} MultiTypedDeclaration)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_version_expression(ctx: &mut RenderContext<'_>, node: &VersionExpression) {
+pub fn render_version_expression(
+    source: &str,
+    node: &VersionExpression,
+    depth: usize,
+) -> RenderedOutput {
     match node {
         VersionExpression::VersionRange(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("version_range", "VersionRange");
-            render_version_range(ctx, element);
+            let (range, mut frags) = render_version_range(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (version_range\u{a789} VersionRange)".to_string(),
+            );
+            (range, frags)
         }
 
         VersionExpression::VersionTerm(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("version_term", "VersionTerm");
-            render_version_term(ctx, element);
+            let (range, mut frags) = render_version_term(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (version_term\u{a789} VersionTerm)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_version_literal(ctx: &mut RenderContext<'_>, node: &VersionLiteral) {
+pub fn render_version_literal(source: &str, node: &VersionLiteral, depth: usize) -> RenderedOutput {
     match node {
         VersionLiteral::SimpleVersionLiteral(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("simple_version_literal", "SimpleVersionLiteral");
-            render_simple_version_literal(ctx, element);
+            let (range, mut frags) = render_simple_version_literal(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (simple_version_literal\u{a789} SimpleVersionLiteral)".to_string(),
+            );
+            (range, frags)
         }
 
         VersionLiteral::PragmaStringLiteral(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("pragma_string_literal", "PragmaStringLiteral");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (pragma_string_literal\u{a789} PragmaStringLiteral)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_version_operator(ctx: &mut RenderContext<'_>, node: &VersionOperator) {
+pub fn render_version_operator(
+    source: &str,
+    node: &VersionOperator,
+    depth: usize,
+) -> RenderedOutput {
     match node {
         VersionOperator::PragmaCaret(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("pragma_caret", "PragmaCaret");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (pragma_caret\u{a789} PragmaCaret)".to_string(),
+            );
+            (range, frags)
         }
 
         VersionOperator::PragmaTilde(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("pragma_tilde", "PragmaTilde");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (pragma_tilde\u{a789} PragmaTilde)".to_string(),
+            );
+            (range, frags)
         }
 
         VersionOperator::PragmaEqual(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("pragma_equal", "PragmaEqual");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (pragma_equal\u{a789} PragmaEqual)".to_string(),
+            );
+            (range, frags)
         }
 
         VersionOperator::PragmaLessThan(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("pragma_less_than", "PragmaLessThan");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (pragma_less_than\u{a789} PragmaLessThan)".to_string(),
+            );
+            (range, frags)
         }
 
         VersionOperator::PragmaGreaterThan(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("pragma_greater_than", "PragmaGreaterThan");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (pragma_greater_than\u{a789} PragmaGreaterThan)".to_string(),
+            );
+            (range, frags)
         }
 
         VersionOperator::PragmaLessThanEqual(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("pragma_less_than_equal", "PragmaLessThanEqual");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (pragma_less_than_equal\u{a789} PragmaLessThanEqual)".to_string(),
+            );
+            (range, frags)
         }
 
         VersionOperator::PragmaGreaterThanEqual(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("pragma_greater_than_equal", "PragmaGreaterThanEqual");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (pragma_greater_than_equal\u{a789} PragmaGreaterThanEqual)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_yul_expression(ctx: &mut RenderContext<'_>, node: &YulExpression) {
+pub fn render_yul_expression(source: &str, node: &YulExpression, depth: usize) -> RenderedOutput {
     match node {
         YulExpression::YulFunctionCallExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("yul_function_call_expression", "YulFunctionCallExpression");
-            render_yul_function_call_expression(ctx, element);
+            let (range, mut frags) = render_yul_function_call_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (yul_function_call_expression\u{a789} YulFunctionCallExpression)"
+                    .to_string(),
+            );
+            (range, frags)
         }
 
         YulExpression::YulLiteral(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("yul_literal", "YulLiteral");
-            render_yul_literal(ctx, element);
+            let (range, mut frags) = render_yul_literal(source, element, depth);
+
+            frags.insert(0, " \u{25ba} (yul_literal\u{a789} YulLiteral)".to_string());
+            (range, frags)
         }
 
         YulExpression::YulPath(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("yul_path", "YulPath");
-            render_yul_path(ctx, element);
+            let (range, mut frags) = render_yul_path(source, element, depth);
+
+            frags.insert(0, " \u{25ba} (yul_path\u{a789} YulPath)".to_string());
+            (range, frags)
         }
     }
 }
 
-pub fn render_yul_literal(ctx: &mut RenderContext<'_>, node: &YulLiteral) {
+pub fn render_yul_literal(source: &str, node: &YulLiteral, depth: usize) -> RenderedOutput {
     match node {
         YulLiteral::YulTrueKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("yul_true_keyword", "YulTrueKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (yul_true_keyword\u{a789} YulTrueKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         YulLiteral::YulFalseKeyword(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("yul_false_keyword", "YulFalseKeyword");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (yul_false_keyword\u{a789} YulFalseKeyword)".to_string(),
+            );
+            (range, frags)
         }
 
         YulLiteral::YulDecimalLiteral(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("yul_decimal_literal", "YulDecimalLiteral");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (yul_decimal_literal\u{a789} YulDecimalLiteral)".to_string(),
+            );
+            (range, frags)
         }
 
         YulLiteral::YulHexLiteral(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("yul_hex_literal", "YulHexLiteral");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (yul_hex_literal\u{a789} YulHexLiteral)".to_string(),
+            );
+            (range, frags)
         }
 
         YulLiteral::YulHexStringLiteral(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("yul_hex_string_literal", "YulHexStringLiteral");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (yul_hex_string_literal\u{a789} YulHexStringLiteral)".to_string(),
+            );
+            (range, frags)
         }
 
         YulLiteral::YulStringLiteral(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("yul_string_literal", "YulStringLiteral");
-            ctx.write_terminal_value(&element.range);
+            let (range, mut frags) = render_terminal(source, &element.range);
+
+            frags.insert(
+                0,
+                " \u{25ba} (yul_string_literal\u{a789} YulStringLiteral)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_yul_statement(ctx: &mut RenderContext<'_>, node: &YulStatement) {
+pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> RenderedOutput {
     match node {
         YulStatement::YulBlock(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("yul_block", "YulBlock");
-            render_yul_block(ctx, element);
+            let (range, mut frags) = render_yul_block(source, element, depth);
+
+            frags.insert(0, " \u{25ba} (yul_block\u{a789} YulBlock)".to_string());
+            (range, frags)
         }
 
         YulStatement::YulFunctionDefinition(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("yul_function_definition", "YulFunctionDefinition");
-            render_yul_function_definition(ctx, element);
+            let (range, mut frags) = render_yul_function_definition(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (yul_function_definition\u{a789} YulFunctionDefinition)".to_string(),
+            );
+            (range, frags)
         }
 
         YulStatement::YulIfStatement(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("yul_if_statement", "YulIfStatement");
-            render_yul_if_statement(ctx, element);
+            let (range, mut frags) = render_yul_if_statement(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (yul_if_statement\u{a789} YulIfStatement)".to_string(),
+            );
+            (range, frags)
         }
 
         YulStatement::YulForStatement(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("yul_for_statement", "YulForStatement");
-            render_yul_for_statement(ctx, element);
+            let (range, mut frags) = render_yul_for_statement(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (yul_for_statement\u{a789} YulForStatement)".to_string(),
+            );
+            (range, frags)
         }
 
         YulStatement::YulSwitchStatement(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("yul_switch_statement", "YulSwitchStatement");
-            render_yul_switch_statement(ctx, element);
+            let (range, mut frags) = render_yul_switch_statement(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (yul_switch_statement\u{a789} YulSwitchStatement)".to_string(),
+            );
+            (range, frags)
         }
 
         YulStatement::YulLeaveStatement(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("yul_leave_statement", "YulLeaveStatement");
-            render_yul_leave_statement(ctx, element);
+            let (range, mut frags) = render_yul_leave_statement(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (yul_leave_statement\u{a789} YulLeaveStatement)".to_string(),
+            );
+            (range, frags)
         }
 
         YulStatement::YulBreakStatement(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("yul_break_statement", "YulBreakStatement");
-            render_yul_break_statement(ctx, element);
+            let (range, mut frags) = render_yul_break_statement(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (yul_break_statement\u{a789} YulBreakStatement)".to_string(),
+            );
+            (range, frags)
         }
 
         YulStatement::YulContinueStatement(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("yul_continue_statement", "YulContinueStatement");
-            render_yul_continue_statement(ctx, element);
+            let (range, mut frags) = render_yul_continue_statement(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (yul_continue_statement\u{a789} YulContinueStatement)".to_string(),
+            );
+            (range, frags)
         }
 
         YulStatement::YulVariableAssignmentStatement(ref element) => {
-            ctx.write_connector();
-            ctx.write_key(
-                "yul_variable_assignment_statement",
-                "YulVariableAssignmentStatement",
-            );
-            render_yul_variable_assignment_statement(ctx, element);
+            let (range, mut frags) =
+                render_yul_variable_assignment_statement(source, element, depth);
+
+            frags.insert(0, " \u{25ba} (yul_variable_assignment_statement\u{a789} YulVariableAssignmentStatement)".to_string());
+            (range, frags)
         }
 
         YulStatement::YulVariableDeclarationStatement(ref element) => {
-            ctx.write_connector();
-            ctx.write_key(
-                "yul_variable_declaration_statement",
-                "YulVariableDeclarationStatement",
-            );
-            render_yul_variable_declaration_statement(ctx, element);
+            let (range, mut frags) =
+                render_yul_variable_declaration_statement(source, element, depth);
+
+            frags.insert(0, " \u{25ba} (yul_variable_declaration_statement\u{a789} YulVariableDeclarationStatement)".to_string());
+            (range, frags)
         }
 
         YulStatement::YulExpression(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("yul_expression", "YulExpression");
-            render_yul_expression(ctx, element);
+            let (range, mut frags) = render_yul_expression(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (yul_expression\u{a789} YulExpression)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
 
-pub fn render_yul_switch_case(ctx: &mut RenderContext<'_>, node: &YulSwitchCase) {
+pub fn render_yul_switch_case(source: &str, node: &YulSwitchCase, depth: usize) -> RenderedOutput {
     match node {
         YulSwitchCase::YulDefaultCase(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("yul_default_case", "YulDefaultCase");
-            render_yul_default_case(ctx, element);
+            let (range, mut frags) = render_yul_default_case(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (yul_default_case\u{a789} YulDefaultCase)".to_string(),
+            );
+            (range, frags)
         }
 
         YulSwitchCase::YulValueCase(ref element) => {
-            ctx.write_connector();
-            ctx.write_key("yul_value_case", "YulValueCase");
-            render_yul_value_case(ctx, element);
+            let (range, mut frags) = render_yul_value_case(source, element, depth);
+
+            frags.insert(
+                0,
+                " \u{25ba} (yul_value_case\u{a789} YulValueCase)".to_string(),
+            );
+            (range, frags)
         }
     }
 }
@@ -5640,724 +6360,762 @@ pub fn render_yul_switch_case(ctx: &mut RenderContext<'_>, node: &YulSwitchCase)
 // Repeated & Separated
 //
 
-pub fn render_array_values(ctx: &mut RenderContext<'_>, node: &ArrayValues) {
+pub fn render_array_values(source: &str, node: &ArrayValues, depth: usize) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "Expression");
-
-            render_expression(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "Expression",
+            render_expression(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_call_options(ctx: &mut RenderContext<'_>, node: &CallOptions) {
+pub fn render_call_options(source: &str, node: &CallOptions, depth: usize) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "NamedArgument");
-
-            render_named_argument(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "NamedArgument",
+            render_named_argument(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_catch_clauses(ctx: &mut RenderContext<'_>, node: &CatchClauses) {
+pub fn render_catch_clauses(source: &str, node: &CatchClauses, depth: usize) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "CatchClause");
-
-            render_catch_clause(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "CatchClause",
+            render_catch_clause(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_constructor_attributes(ctx: &mut RenderContext<'_>, node: &ConstructorAttributes) {
+pub fn render_constructor_attributes(
+    source: &str,
+    node: &ConstructorAttributes,
+    depth: usize,
+) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "ConstructorAttribute");
-
-            render_constructor_attribute(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "ConstructorAttribute",
+            render_constructor_attribute(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_contract_members(ctx: &mut RenderContext<'_>, node: &ContractMembers) {
+pub fn render_contract_members(
+    source: &str,
+    node: &ContractMembers,
+    depth: usize,
+) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "ContractMember");
-
-            render_contract_member(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "ContractMember",
+            render_contract_member(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_contract_specifiers(ctx: &mut RenderContext<'_>, node: &ContractSpecifiers) {
+pub fn render_contract_specifiers(
+    source: &str,
+    node: &ContractSpecifiers,
+    depth: usize,
+) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "ContractSpecifier");
-
-            render_contract_specifier(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "ContractSpecifier",
+            render_contract_specifier(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_enum_members(ctx: &mut RenderContext<'_>, node: &EnumMembers) {
+pub fn render_enum_members(source: &str, node: &EnumMembers, depth: usize) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "Identifier");
-
-            ctx.write_terminal_value(&element.range);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "Identifier",
+            render_terminal(source, &element.range),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_error_parameters(ctx: &mut RenderContext<'_>, node: &ErrorParameters) {
+pub fn render_error_parameters(
+    source: &str,
+    node: &ErrorParameters,
+    depth: usize,
+) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "ErrorParameter");
-
-            render_error_parameter(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "ErrorParameter",
+            render_error_parameter(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_event_parameters(ctx: &mut RenderContext<'_>, node: &EventParameters) {
+pub fn render_event_parameters(
+    source: &str,
+    node: &EventParameters,
+    depth: usize,
+) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "EventParameter");
-
-            render_event_parameter(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "EventParameter",
+            render_event_parameter(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
 pub fn render_fallback_function_attributes(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &FallbackFunctionAttributes,
-) {
+    depth: usize,
+) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "FallbackFunctionAttribute");
-
-            render_fallback_function_attribute(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "FallbackFunctionAttribute",
+            render_fallback_function_attribute(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_function_attributes(ctx: &mut RenderContext<'_>, node: &FunctionAttributes) {
+pub fn render_function_attributes(
+    source: &str,
+    node: &FunctionAttributes,
+    depth: usize,
+) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "FunctionAttribute");
-
-            render_function_attribute(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "FunctionAttribute",
+            render_function_attribute(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_function_type_attributes(ctx: &mut RenderContext<'_>, node: &FunctionTypeAttributes) {
+pub fn render_function_type_attributes(
+    source: &str,
+    node: &FunctionTypeAttributes,
+    depth: usize,
+) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "FunctionTypeAttribute");
-
-            render_function_type_attribute(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "FunctionTypeAttribute",
+            render_function_type_attribute(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_hex_string_literals(ctx: &mut RenderContext<'_>, node: &HexStringLiterals) {
+pub fn render_hex_string_literals(
+    source: &str,
+    node: &HexStringLiterals,
+    depth: usize,
+) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "HexStringLiteral");
-
-            ctx.write_terminal_value(&element.range);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "HexStringLiteral",
+            render_terminal(source, &element.range),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_identifier_path(ctx: &mut RenderContext<'_>, node: &IdentifierPath) {
+pub fn render_identifier_path(source: &str, node: &IdentifierPath, depth: usize) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "IdentifierPathElement");
-
-            render_identifier_path_element(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "IdentifierPathElement",
+            render_identifier_path_element(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
 pub fn render_import_deconstruction_symbols(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &ImportDeconstructionSymbols,
-) {
+    depth: usize,
+) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "ImportDeconstructionSymbol");
-
-            render_import_deconstruction_symbol(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "ImportDeconstructionSymbol",
+            render_import_deconstruction_symbol(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_inheritance_types(ctx: &mut RenderContext<'_>, node: &InheritanceTypes) {
+pub fn render_inheritance_types(
+    source: &str,
+    node: &InheritanceTypes,
+    depth: usize,
+) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "InheritanceType");
-
-            render_inheritance_type(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "InheritanceType",
+            render_inheritance_type(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_interface_members(ctx: &mut RenderContext<'_>, node: &InterfaceMembers) {
+pub fn render_interface_members(
+    source: &str,
+    node: &InterfaceMembers,
+    depth: usize,
+) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "ContractMember");
-
-            render_contract_member(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "ContractMember",
+            render_contract_member(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_library_members(ctx: &mut RenderContext<'_>, node: &LibraryMembers) {
+pub fn render_library_members(source: &str, node: &LibraryMembers, depth: usize) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "ContractMember");
-
-            render_contract_member(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "ContractMember",
+            render_contract_member(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_modifier_attributes(ctx: &mut RenderContext<'_>, node: &ModifierAttributes) {
+pub fn render_modifier_attributes(
+    source: &str,
+    node: &ModifierAttributes,
+    depth: usize,
+) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "ModifierAttribute");
-
-            render_modifier_attribute(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "ModifierAttribute",
+            render_modifier_attribute(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
 pub fn render_multi_typed_declaration_elements(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &MultiTypedDeclarationElements,
-) {
+    depth: usize,
+) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "MultiTypedDeclarationElement");
-
-            render_multi_typed_declaration_element(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "MultiTypedDeclarationElement",
+            render_multi_typed_declaration_element(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_named_arguments(ctx: &mut RenderContext<'_>, node: &NamedArguments) {
+pub fn render_named_arguments(source: &str, node: &NamedArguments, depth: usize) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "NamedArgument");
-
-            render_named_argument(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "NamedArgument",
+            render_named_argument(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_override_paths(ctx: &mut RenderContext<'_>, node: &OverridePaths) {
+pub fn render_override_paths(source: &str, node: &OverridePaths, depth: usize) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "IdentifierPath");
-
-            render_identifier_path(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "IdentifierPath",
+            render_identifier_path(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_parameters(ctx: &mut RenderContext<'_>, node: &Parameters) {
+pub fn render_parameters(source: &str, node: &Parameters, depth: usize) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "Parameter");
-
-            render_parameter(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "Parameter",
+            render_parameter(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_positional_arguments(ctx: &mut RenderContext<'_>, node: &PositionalArguments) {
+pub fn render_positional_arguments(
+    source: &str,
+    node: &PositionalArguments,
+    depth: usize,
+) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "Expression");
-
-            render_expression(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "Expression",
+            render_expression(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
 pub fn render_receive_function_attributes(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &ReceiveFunctionAttributes,
-) {
+    depth: usize,
+) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "ReceiveFunctionAttribute");
-
-            render_receive_function_attribute(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "ReceiveFunctionAttribute",
+            render_receive_function_attribute(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_simple_version_literal(ctx: &mut RenderContext<'_>, node: &SimpleVersionLiteral) {
+pub fn render_simple_version_literal(
+    source: &str,
+    node: &SimpleVersionLiteral,
+    depth: usize,
+) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "VersionSpecifier");
-
-            ctx.write_terminal_value(&element.range);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "VersionSpecifier",
+            render_terminal(source, &element.range),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_source_unit_members(ctx: &mut RenderContext<'_>, node: &SourceUnitMembers) {
+pub fn render_source_unit_members(
+    source: &str,
+    node: &SourceUnitMembers,
+    depth: usize,
+) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "SourceUnitMember");
-
-            render_source_unit_member(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "SourceUnitMember",
+            render_source_unit_member(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
 pub fn render_state_variable_attributes(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &StateVariableAttributes,
-) {
+    depth: usize,
+) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "StateVariableAttribute");
-
-            render_state_variable_attribute(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "StateVariableAttribute",
+            render_state_variable_attribute(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_statements(ctx: &mut RenderContext<'_>, node: &Statements) {
+pub fn render_statements(source: &str, node: &Statements, depth: usize) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "Statement");
-
-            render_statement(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "Statement",
+            render_statement(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_string_literals(ctx: &mut RenderContext<'_>, node: &StringLiterals) {
+pub fn render_string_literals(source: &str, node: &StringLiterals, depth: usize) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "StringLiteral");
-
-            ctx.write_terminal_value(&element.range);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "StringLiteral",
+            render_terminal(source, &element.range),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_struct_members(ctx: &mut RenderContext<'_>, node: &StructMembers) {
+pub fn render_struct_members(source: &str, node: &StructMembers, depth: usize) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "StructMember");
-
-            render_struct_member(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "StructMember",
+            render_struct_member(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_tuple_values(ctx: &mut RenderContext<'_>, node: &TupleValues) {
+pub fn render_tuple_values(source: &str, node: &TupleValues, depth: usize) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "TupleValue");
-
-            render_tuple_value(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "TupleValue",
+            render_tuple_value(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_unicode_string_literals(ctx: &mut RenderContext<'_>, node: &UnicodeStringLiterals) {
+pub fn render_unicode_string_literals(
+    source: &str,
+    node: &UnicodeStringLiterals,
+    depth: usize,
+) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "UnicodeStringLiteral");
-
-            ctx.write_terminal_value(&element.range);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "UnicodeStringLiteral",
+            render_terminal(source, &element.range),
+        );
+    }
+    acc.finish()
 }
 
 pub fn render_using_deconstruction_symbols(
-    ctx: &mut RenderContext<'_>,
+    source: &str,
     node: &UsingDeconstructionSymbols,
-) {
+    depth: usize,
+) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "UsingDeconstructionSymbol");
-
-            render_using_deconstruction_symbol(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "UsingDeconstructionSymbol",
+            render_using_deconstruction_symbol(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_version_expression_set(ctx: &mut RenderContext<'_>, node: &VersionExpressionSet) {
+pub fn render_version_expression_set(
+    source: &str,
+    node: &VersionExpressionSet,
+    depth: usize,
+) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "VersionExpression");
-
-            render_version_expression(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "VersionExpression",
+            render_version_expression(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_version_expression_sets(ctx: &mut RenderContext<'_>, node: &VersionExpressionSets) {
+pub fn render_version_expression_sets(
+    source: &str,
+    node: &VersionExpressionSets,
+    depth: usize,
+) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "VersionExpressionSet");
-
-            render_version_expression_set(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "VersionExpressionSet",
+            render_version_expression_set(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_yul_arguments(ctx: &mut RenderContext<'_>, node: &YulArguments) {
+pub fn render_yul_arguments(source: &str, node: &YulArguments, depth: usize) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "YulExpression");
-
-            render_yul_expression(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "YulExpression",
+            render_yul_expression(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_yul_flags(ctx: &mut RenderContext<'_>, node: &YulFlags) {
+pub fn render_yul_flags(source: &str, node: &YulFlags, depth: usize) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "YulStringLiteral");
-
-            ctx.write_terminal_value(&element.range);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "YulStringLiteral",
+            render_terminal(source, &element.range),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_yul_parameters(ctx: &mut RenderContext<'_>, node: &YulParameters) {
+pub fn render_yul_parameters(source: &str, node: &YulParameters, depth: usize) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "YulIdentifier");
-
-            ctx.write_terminal_value(&element.range);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "YulIdentifier",
+            render_terminal(source, &element.range),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_yul_path(ctx: &mut RenderContext<'_>, node: &YulPath) {
+pub fn render_yul_path(source: &str, node: &YulPath, depth: usize) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "YulIdentifier");
-
-            ctx.write_terminal_value(&element.range);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "YulIdentifier",
+            render_terminal(source, &element.range),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_yul_paths(ctx: &mut RenderContext<'_>, node: &YulPaths) {
+pub fn render_yul_paths(source: &str, node: &YulPaths, depth: usize) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "YulPath");
-
-            render_yul_path(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "YulPath",
+            render_yul_path(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_yul_statements(ctx: &mut RenderContext<'_>, node: &YulStatements) {
+pub fn render_yul_statements(source: &str, node: &YulStatements, depth: usize) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "YulStatement");
-
-            render_yul_statement(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "YulStatement",
+            render_yul_statement(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_yul_switch_cases(ctx: &mut RenderContext<'_>, node: &YulSwitchCases) {
+pub fn render_yul_switch_cases(
+    source: &str,
+    node: &YulSwitchCases,
+    depth: usize,
+) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "YulSwitchCase");
-
-            render_yul_switch_case(ctx, element);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "YulSwitchCase",
+            render_yul_switch_case(source, element, depth + 1),
+        );
+    }
+    acc.finish()
 }
 
-pub fn render_yul_variable_names(ctx: &mut RenderContext<'_>, node: &YulVariableNames) {
+pub fn render_yul_variable_names(
+    source: &str,
+    node: &YulVariableNames,
+    depth: usize,
+) -> RenderedOutput {
     if node.elements.is_empty() {
-        ctx.write_empty_collection();
-    } else {
-        ctx.write_nonterminal_start();
-        ctx.depth += 1;
-        for element in &node.elements {
-            ctx.write_indent();
-            ctx.write_key("item", "YulIdentifier");
-
-            ctx.write_terminal_value(&element.range);
-        }
-        ctx.depth -= 1;
+        return (None, vec![": []\n".to_string()]);
     }
+    let mut acc = ChildrenAccumulator::new(source, depth + 1);
+    for element in &node.elements {
+        acc.add(
+            "item",
+            "YulIdentifier",
+            render_terminal(source, &element.range),
+        );
+    }
+    acc.finish()
 }

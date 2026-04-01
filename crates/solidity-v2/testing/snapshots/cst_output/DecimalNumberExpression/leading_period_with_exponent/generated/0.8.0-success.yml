@@ -4,13 +4,13 @@ Source: >
   1  │ uint constant x = .2e3;                                                          │ 0..23
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (constant_definition꞉ ConstantDefinition):
+  - (root꞉ SourceUnit): # "uint constant x = .2e3;" (0..23)
+      - (members꞉ SourceUnitMembers): # "uint constant x = .2e3;" (0..23)
+          - (item꞉ SourceUnitMember) ► (constant_definition꞉ ConstantDefinition): # "uint constant x = .2e3;" (0..23)
               - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (0..4)
               - (constant_keyword꞉ ConstantKeyword): "constant" # (5..13)
               - (name꞉ Identifier): "x" # (14..15)
               - (equal꞉ Equal): "=" # (16..17)
-              - (value꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression):
+              - (value꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # ".2e3" (18..22)
                   - (literal꞉ DecimalLiteral): ".2e3" # (18..22)
               - (semicolon꞉ Semicolon): ";" # (22..23)

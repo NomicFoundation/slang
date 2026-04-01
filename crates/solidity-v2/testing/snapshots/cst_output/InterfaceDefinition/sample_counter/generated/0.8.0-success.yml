@@ -12,40 +12,40 @@ Source: >
   9  │ // <<<                                                                                                       │ 282..288
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (interface_definition꞉ InterfaceDefinition):
+  - (root꞉ SourceUnit): # "interface ICounter {\n    // returns the current co..." (109..281)
+      - (members꞉ SourceUnitMembers): # "interface ICounter {\n    // returns the current co..." (109..281)
+          - (item꞉ SourceUnitMember) ► (interface_definition꞉ InterfaceDefinition): # "interface ICounter {\n    // returns the current co..." (109..281)
               - (interface_keyword꞉ InterfaceKeyword): "interface" # (109..118)
               - (name꞉ Identifier): "ICounter" # (119..127)
               - (open_brace꞉ OpenBrace): "{" # (128..129)
-              - (members꞉ InterfaceMembers):
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+              - (members꞉ InterfaceMembers): # "function count() external view returns (uint);\n\n  ..." (167..279)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function count() external view returns (uint);" (167..213)
                       - (function_keyword꞉ FunctionKeyword): "function" # (167..175)
                       - (name꞉ FunctionName) ► (identifier꞉ Identifier): "count" # (176..181)
-                      - (parameters꞉ ParametersDeclaration):
+                      - (parameters꞉ ParametersDeclaration): # "()" (181..183)
                           - (open_paren꞉ OpenParen): "(" # (181..182)
                           - (parameters꞉ Parameters): []
                           - (close_paren꞉ CloseParen): ")" # (182..183)
-                      - (attributes꞉ FunctionAttributes):
+                      - (attributes꞉ FunctionAttributes): # "external view" (184..197)
                           - (item꞉ FunctionAttribute) ► (external_keyword꞉ ExternalKeyword): "external" # (184..192)
                           - (item꞉ FunctionAttribute) ► (view_keyword꞉ ViewKeyword): "view" # (193..197)
-                      - (returns꞉ ReturnsDeclaration):
+                      - (returns꞉ ReturnsDeclaration): # "returns (uint)" (198..212)
                           - (returns_keyword꞉ ReturnsKeyword): "returns" # (198..205)
-                          - (variables꞉ ParametersDeclaration):
+                          - (variables꞉ ParametersDeclaration): # "(uint)" (206..212)
                               - (open_paren꞉ OpenParen): "(" # (206..207)
-                              - (parameters꞉ Parameters):
-                                  - (item꞉ Parameter):
+                              - (parameters꞉ Parameters): # "uint" (207..211)
+                                  - (item꞉ Parameter): # "uint" (207..211)
                                       - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (207..211)
                               - (close_paren꞉ CloseParen): ")" # (211..212)
                       - (body꞉ FunctionBody) ► (semicolon꞉ Semicolon): ";" # (212..213)
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function increment() external;" (249..279)
                       - (function_keyword꞉ FunctionKeyword): "function" # (249..257)
                       - (name꞉ FunctionName) ► (identifier꞉ Identifier): "increment" # (258..267)
-                      - (parameters꞉ ParametersDeclaration):
+                      - (parameters꞉ ParametersDeclaration): # "()" (267..269)
                           - (open_paren꞉ OpenParen): "(" # (267..268)
                           - (parameters꞉ Parameters): []
                           - (close_paren꞉ CloseParen): ")" # (268..269)
-                      - (attributes꞉ FunctionAttributes):
+                      - (attributes꞉ FunctionAttributes): # "external" (270..278)
                           - (item꞉ FunctionAttribute) ► (external_keyword꞉ ExternalKeyword): "external" # (270..278)
                       - (body꞉ FunctionBody) ► (semicolon꞉ Semicolon): ";" # (278..279)
               - (close_brace꞉ CloseBrace): "}" # (280..281)

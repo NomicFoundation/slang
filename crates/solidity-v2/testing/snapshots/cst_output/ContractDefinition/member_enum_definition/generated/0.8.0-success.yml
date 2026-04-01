@@ -12,19 +12,19 @@ Source: >
   9  │ // <<<                                                                                                              │ 175..181
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract Sample {\n  enum State {\n    A,\n    B,\n   ..." (116..174)
+      - (members꞉ SourceUnitMembers): # "contract Sample {\n  enum State {\n    A,\n    B,\n   ..." (116..174)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  enum State {\n    A,\n    B,\n   ..." (116..174)
               - (contract_keyword꞉ ContractKeyword): "contract" # (116..124)
               - (name꞉ Identifier): "Sample" # (125..131)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (132..133)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (enum_definition꞉ EnumDefinition):
+              - (members꞉ ContractMembers): # "enum State {\n    A,\n    B,\n    C\n  }" (136..172)
+                  - (item꞉ ContractMember) ► (enum_definition꞉ EnumDefinition): # "enum State {\n    A,\n    B,\n    C\n  }" (136..172)
                       - (enum_keyword꞉ EnumKeyword): "enum" # (136..140)
                       - (name꞉ Identifier): "State" # (141..146)
                       - (open_brace꞉ OpenBrace): "{" # (147..148)
-                      - (members꞉ EnumMembers):
+                      - (members꞉ EnumMembers): # "A,\n    B,\n    C" (153..168)
                           - (item꞉ Identifier): "A" # (153..154)
                           - (item꞉ Identifier): "B" # (160..161)
                           - (item꞉ Identifier): "C" # (167..168)

@@ -11,30 +11,30 @@ Source: >
   8  │ }                                                                                                │ 154..155
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..155)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..155)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..155)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
               - (name꞉ Identifier): "C" # (9..10)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..153)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..153)
                       - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
                       - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration):
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
                           - (open_paren꞉ OpenParen): "(" # (27..28)
                           - (parameters꞉ Parameters): []
                           - (close_paren꞉ CloseParen): ")" # (28..29)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..153)
                           - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements):
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement):
-                                  - (expression꞉ Expression) ► (new_expression꞉ NewExpression):
+                          - (statements꞉ Statements): # "new Foo[]\n// <<<\n;" (129..147)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "new Foo[]\n// <<<\n;" (129..147)
+                                  - (expression꞉ Expression) ► (new_expression꞉ NewExpression): # "new Foo[]" (129..138)
                                       - (new_keyword꞉ NewKeyword): "new" # (129..132)
-                                      - (type_name꞉ TypeName) ► (array_type_name꞉ ArrayTypeName):
-                                          - (operand꞉ TypeName) ► (identifier_path꞉ IdentifierPath):
+                                      - (type_name꞉ TypeName) ► (array_type_name꞉ ArrayTypeName): # "Foo[]" (133..138)
+                                          - (operand꞉ TypeName) ► (identifier_path꞉ IdentifierPath): # "Foo" (133..136)
                                               - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "Foo" # (133..136)
                                           - (open_bracket꞉ OpenBracket): "[" # (136..137)
                                           - (close_bracket꞉ CloseBracket): "]" # (137..138)

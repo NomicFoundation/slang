@@ -11,41 +11,41 @@ Source: >
   8  │ }                                                                                                          │ 170..171
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..171)
+      - (members꞉ SourceUnitMembers): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..171)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..171)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
               - (name꞉ Identifier): "C" # (9..10)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+              - (members꞉ ContractMembers): # "function func() {\n  uint a = 1 + 2 * 3;\n}" (120..161)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function func() {\n  uint a = 1 + 2 * 3;\n}" (120..161)
                       - (function_keyword꞉ FunctionKeyword): "function" # (120..128)
                       - (name꞉ FunctionName) ► (identifier꞉ Identifier): "func" # (129..133)
-                      - (parameters꞉ ParametersDeclaration):
+                      - (parameters꞉ ParametersDeclaration): # "()" (133..135)
                           - (open_paren꞉ OpenParen): "(" # (133..134)
                           - (parameters꞉ Parameters): []
                           - (close_paren꞉ CloseParen): ")" # (134..135)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n  uint a = 1 + 2 * 3;\n}" (136..161)
                           - (open_brace꞉ OpenBrace): "{" # (136..137)
-                          - (statements꞉ Statements):
-                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement):
-                                  - (target꞉ VariableDeclarationTarget) ► (single_typed_declaration꞉ SingleTypedDeclaration):
-                                      - (declaration꞉ VariableDeclaration):
+                          - (statements꞉ Statements): # "uint a = 1 + 2 * 3;" (140..159)
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement): # "uint a = 1 + 2 * 3;" (140..159)
+                                  - (target꞉ VariableDeclarationTarget) ► (single_typed_declaration꞉ SingleTypedDeclaration): # "uint a = 1 + 2 * 3" (140..158)
+                                      - (declaration꞉ VariableDeclaration): # "uint a" (140..146)
                                           - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (140..144)
                                           - (name꞉ Identifier): "a" # (145..146)
-                                      - (value꞉ VariableDeclarationValue):
+                                      - (value꞉ VariableDeclarationValue): # "= 1 + 2 * 3" (147..158)
                                           - (equal꞉ Equal): "=" # (147..148)
-                                          - (expression꞉ Expression) ► (additive_expression꞉ AdditiveExpression):
-                                              - (left_operand꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression):
+                                          - (expression꞉ Expression) ► (additive_expression꞉ AdditiveExpression): # "1 + 2 * 3" (149..158)
+                                              - (left_operand꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "1" (149..150)
                                                   - (literal꞉ DecimalLiteral): "1" # (149..150)
                                               - (expression_additive_expression_operator꞉ Expression_AdditiveExpression_Operator) ► (plus꞉ Plus): "+" # (151..152)
-                                              - (right_operand꞉ Expression) ► (multiplicative_expression꞉ MultiplicativeExpression):
-                                                  - (left_operand꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression):
+                                              - (right_operand꞉ Expression) ► (multiplicative_expression꞉ MultiplicativeExpression): # "2 * 3" (153..158)
+                                                  - (left_operand꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "2" (153..154)
                                                       - (literal꞉ DecimalLiteral): "2" # (153..154)
                                                   - (expression_multiplicative_expression_operator꞉ Expression_MultiplicativeExpression_Operator) ► (asterisk꞉ Asterisk): "*" # (155..156)
-                                                  - (right_operand꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression):
+                                                  - (right_operand꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "3" (157..158)
                                                       - (literal꞉ DecimalLiteral): "3" # (157..158)
                                   - (semicolon꞉ Semicolon): ";" # (158..159)
                           - (close_brace꞉ CloseBrace): "}" # (160..161)
