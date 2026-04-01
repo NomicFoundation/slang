@@ -7,9 +7,9 @@ Source: >
   4  │ // <<<                                                                                                      │ 128..134
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract Sample {}" (108..126)
+      - (members꞉ SourceUnitMembers): # "contract Sample {}" (108..126)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {}" (108..126)
               - (contract_keyword꞉ ContractKeyword): "contract" # (108..116)
               - (name꞉ Identifier): "Sample" # (117..123)
               - (specifiers꞉ ContractSpecifiers): []

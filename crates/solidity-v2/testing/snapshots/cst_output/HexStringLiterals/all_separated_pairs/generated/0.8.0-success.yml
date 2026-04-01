@@ -11,27 +11,27 @@ Source: >
   8  │ }                                                                                                               │ 188..189
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..189)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..189)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..189)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
               - (name꞉ Identifier): "C" # (9..10)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..187)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..187)
                       - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
                       - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration):
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
                           - (open_paren꞉ OpenParen): "(" # (27..28)
                           - (parameters꞉ Parameters): []
                           - (close_paren꞉ CloseParen): ")" # (28..29)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..187)
                           - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements):
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement):
-                                  - (expression꞉ Expression) ► (string_expression꞉ StringExpression) ► (hex_string_literals꞉ HexStringLiterals):
+                          - (statements꞉ Statements): # 'hex"12_34_56_78_90_ab_cd_ef"\n// <<<\n;' (144..181)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # 'hex"12_34_56_78_90_ab_cd_ef"\n// <<<\n;' (144..181)
+                                  - (expression꞉ Expression) ► (string_expression꞉ StringExpression) ► (hex_string_literals꞉ HexStringLiterals): # 'hex"12_34_56_78_90_ab_cd_ef"' (144..172)
                                       - (item꞉ HexStringLiteral): 'hex"12_34_56_78_90_ab_cd_ef"' # (144..172)
                                   - (semicolon꞉ Semicolon): ";" # (180..181)
                           - (close_brace꞉ CloseBrace): "}" # (186..187)

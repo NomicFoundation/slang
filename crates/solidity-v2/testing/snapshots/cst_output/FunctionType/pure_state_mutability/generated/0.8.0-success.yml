@@ -10,30 +10,30 @@ Source: >
   7  │ }                                                                                                            │ 174..175
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..175)
+      - (members꞉ SourceUnitMembers): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..175)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..175)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
               - (name꞉ Identifier): "C" # (9..10)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition):
-                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType):
+              - (members꞉ ContractMembers): # "function () internal pure returns (uint)\n\n// <<<\nx..." (122..173)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function () internal pure returns (uint)\n\n// <<<\nx..." (122..173)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function () internal pure returns (uint)" (122..162)
                           - (function_keyword꞉ FunctionKeyword): "function" # (122..130)
-                          - (parameters꞉ ParametersDeclaration):
+                          - (parameters꞉ ParametersDeclaration): # "()" (131..133)
                               - (open_paren꞉ OpenParen): "(" # (131..132)
                               - (parameters꞉ Parameters): []
                               - (close_paren꞉ CloseParen): ")" # (132..133)
-                          - (attributes꞉ FunctionTypeAttributes):
+                          - (attributes꞉ FunctionTypeAttributes): # "internal pure" (134..147)
                               - (item꞉ FunctionTypeAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (134..142)
                               - (item꞉ FunctionTypeAttribute) ► (pure_keyword꞉ PureKeyword): "pure" # (143..147)
-                          - (returns꞉ ReturnsDeclaration):
+                          - (returns꞉ ReturnsDeclaration): # "returns (uint)" (148..162)
                               - (returns_keyword꞉ ReturnsKeyword): "returns" # (148..155)
-                              - (variables꞉ ParametersDeclaration):
+                              - (variables꞉ ParametersDeclaration): # "(uint)" (156..162)
                                   - (open_paren꞉ OpenParen): "(" # (156..157)
-                                  - (parameters꞉ Parameters):
-                                      - (item꞉ Parameter):
+                                  - (parameters꞉ Parameters): # "uint" (157..161)
+                                      - (item꞉ Parameter): # "uint" (157..161)
                                           - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (157..161)
                                   - (close_paren꞉ CloseParen): ")" # (161..162)
                       - (attributes꞉ StateVariableAttributes): []

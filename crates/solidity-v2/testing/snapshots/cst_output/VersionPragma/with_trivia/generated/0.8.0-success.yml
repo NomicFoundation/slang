@@ -8,16 +8,16 @@ Source: >
   5  │ ;                                                                                                   │ 183..184
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective):
+  - (root꞉ SourceUnit): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..184)
+      - (members꞉ SourceUnitMembers): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..184)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..184)
               - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
-              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma):
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity /* comments */ 0 /* are */ . /* allowed *..." (107..175)
                   - (solidity_keyword꞉ SolidityKeyword): "solidity" # (107..115)
-                  - (sets꞉ VersionExpressionSets):
-                      - (item꞉ VersionExpressionSet):
-                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm):
-                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral):
+                  - (sets꞉ VersionExpressionSets): # "0 /* are */ . /* allowed */ 0 . /* here */ 0" (131..175)
+                      - (item꞉ VersionExpressionSet): # "0 /* are */ . /* allowed */ 0 . /* here */ 0" (131..175)
+                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm): # "0 /* are */ . /* allowed */ 0 . /* here */ 0" (131..175)
+                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral): # "0 /* are */ . /* allowed */ 0 . /* here */ 0" (131..175)
                                   - (item꞉ VersionSpecifier): "0" # (131..132)
                                   - (item꞉ VersionSpecifier): "0" # (159..160)
                                   - (item꞉ VersionSpecifier): "0" # (174..175)

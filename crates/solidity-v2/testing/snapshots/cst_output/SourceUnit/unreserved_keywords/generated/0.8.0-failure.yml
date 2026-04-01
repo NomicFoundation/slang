@@ -17,21 +17,21 @@ Error: This syntax was introduced in version '0.8.27'.
    │              ╰────── Error occurred here.
 ───╯
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract A {\n\tuint transient foo;\n\tuint transient;..." (105..157)
+      - (members꞉ SourceUnitMembers): # "contract A {\n\tuint transient foo;\n\tuint transient;..." (105..157)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract A {\n\tuint transient foo;\n\tuint transient;..." (105..157)
               - (contract_keyword꞉ ContractKeyword): "contract" # (105..113)
               - (name꞉ Identifier): "A" # (114..115)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (116..117)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition):
+              - (members꞉ ContractMembers): # "uint transient foo;\n\tuint transient;" (119..155)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "uint transient foo;" (119..138)
                       - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (119..123)
-                      - (attributes꞉ StateVariableAttributes):
+                      - (attributes꞉ StateVariableAttributes): # "transient" (124..133)
                           - (item꞉ StateVariableAttribute) ► (transient_keyword꞉ TransientKeyword): "transient" # (124..133)
                       - (name꞉ Identifier): "foo" # (134..137)
                       - (semicolon꞉ Semicolon): ";" # (137..138)
-                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition):
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "uint transient;" (140..155)
                       - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (140..144)
                       - (attributes꞉ StateVariableAttributes): []
                       - (name꞉ Identifier): "transient" # (145..154)

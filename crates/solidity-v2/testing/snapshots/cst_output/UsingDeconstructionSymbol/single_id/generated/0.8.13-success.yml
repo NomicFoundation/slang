@@ -8,15 +8,15 @@ Source: >
   5  │ } for uint;                                                                                                   │ 129..140
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective):
+  - (root꞉ SourceUnit): # "using {\n// >>> Copied from crates/solidity/testing..." (0..140)
+      - (members꞉ SourceUnitMembers): # "using {\n// >>> Copied from crates/solidity/testing..." (0..140)
+          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective): # "using {\n// >>> Copied from crates/solidity/testing..." (0..140)
               - (using_keyword꞉ UsingKeyword): "using" # (0..5)
-              - (clause꞉ UsingClause) ► (using_deconstruction꞉ UsingDeconstruction):
+              - (clause꞉ UsingClause) ► (using_deconstruction꞉ UsingDeconstruction): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (6..130)
                   - (open_brace꞉ OpenBrace): "{" # (6..7)
-                  - (symbols꞉ UsingDeconstructionSymbols):
-                      - (item꞉ UsingDeconstructionSymbol):
-                          - (name꞉ IdentifierPath):
+                  - (symbols꞉ UsingDeconstructionSymbols): # "foo" (118..121)
+                      - (item꞉ UsingDeconstructionSymbol): # "foo" (118..121)
+                          - (name꞉ IdentifierPath): # "foo" (118..121)
                               - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "foo" # (118..121)
                   - (close_brace꞉ CloseBrace): "}" # (129..130)
               - (for_keyword꞉ ForKeyword): "for" # (131..134)

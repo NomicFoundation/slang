@@ -6,16 +6,16 @@ Source: >
   3  │ // <<<                                                                                            │ 121..127
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective):
+  - (root꞉ SourceUnit): # "pragma solidity 1.0.0;" (98..120)
+      - (members꞉ SourceUnitMembers): # "pragma solidity 1.0.0;" (98..120)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity 1.0.0;" (98..120)
               - (pragma_keyword꞉ PragmaKeyword): "pragma" # (98..104)
-              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma):
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity 1.0.0" (105..119)
                   - (solidity_keyword꞉ SolidityKeyword): "solidity" # (105..113)
-                  - (sets꞉ VersionExpressionSets):
-                      - (item꞉ VersionExpressionSet):
-                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm):
-                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral):
+                  - (sets꞉ VersionExpressionSets): # "1.0.0" (114..119)
+                      - (item꞉ VersionExpressionSet): # "1.0.0" (114..119)
+                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm): # "1.0.0" (114..119)
+                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral): # "1.0.0" (114..119)
                                   - (item꞉ VersionSpecifier): "1" # (114..115)
                                   - (item꞉ VersionSpecifier): "0" # (116..117)
                                   - (item꞉ VersionSpecifier): "0" # (118..119)

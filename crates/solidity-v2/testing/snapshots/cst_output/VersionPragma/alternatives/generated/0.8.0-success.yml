@@ -8,29 +8,29 @@ Source: >
   5  │ ;                                                                                                    │ 149..150
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective):
+  - (root꞉ SourceUnit): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..150)
+      - (members꞉ SourceUnitMembers): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..150)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..150)
               - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
-              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma):
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity 0.5.0 || 0.6.0 || ^0.7.0" (108..141)
                   - (solidity_keyword꞉ SolidityKeyword): "solidity" # (108..116)
-                  - (sets꞉ VersionExpressionSets):
-                      - (item꞉ VersionExpressionSet):
-                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm):
-                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral):
+                  - (sets꞉ VersionExpressionSets): # "0.5.0 || 0.6.0 || ^0.7.0" (117..141)
+                      - (item꞉ VersionExpressionSet): # "0.5.0" (117..122)
+                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm): # "0.5.0" (117..122)
+                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral): # "0.5.0" (117..122)
                                   - (item꞉ VersionSpecifier): "0" # (117..118)
                                   - (item꞉ VersionSpecifier): "5" # (119..120)
                                   - (item꞉ VersionSpecifier): "0" # (121..122)
-                      - (item꞉ VersionExpressionSet):
-                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm):
-                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral):
+                      - (item꞉ VersionExpressionSet): # "0.6.0" (126..131)
+                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm): # "0.6.0" (126..131)
+                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral): # "0.6.0" (126..131)
                                   - (item꞉ VersionSpecifier): "0" # (126..127)
                                   - (item꞉ VersionSpecifier): "6" # (128..129)
                                   - (item꞉ VersionSpecifier): "0" # (130..131)
-                      - (item꞉ VersionExpressionSet):
-                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm):
+                      - (item꞉ VersionExpressionSet): # "^0.7.0" (135..141)
+                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm): # "^0.7.0" (135..141)
                               - (operator꞉ VersionOperator) ► (pragma_caret꞉ PragmaCaret): "^" # (135..136)
-                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral):
+                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral): # "0.7.0" (136..141)
                                   - (item꞉ VersionSpecifier): "0" # (136..137)
                                   - (item꞉ VersionSpecifier): "7" # (138..139)
                                   - (item꞉ VersionSpecifier): "0" # (140..141)

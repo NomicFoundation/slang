@@ -8,15 +8,15 @@ Source: >
   5  │ // <<<                                                                                                                                 │ 175..181
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract Sample {\n  type Foo is bool;\n}" (135..174)
+      - (members꞉ SourceUnitMembers): # "contract Sample {\n  type Foo is bool;\n}" (135..174)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  type Foo is bool;\n}" (135..174)
               - (contract_keyword꞉ ContractKeyword): "contract" # (135..143)
               - (name꞉ Identifier): "Sample" # (144..150)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (151..152)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (user_defined_value_type_definition꞉ UserDefinedValueTypeDefinition):
+              - (members꞉ ContractMembers): # "type Foo is bool;" (155..172)
+                  - (item꞉ ContractMember) ► (user_defined_value_type_definition꞉ UserDefinedValueTypeDefinition): # "type Foo is bool;" (155..172)
                       - (type_keyword꞉ TypeKeyword): "type" # (155..159)
                       - (name꞉ Identifier): "Foo" # (160..163)
                       - (is_keyword꞉ IsKeyword): "is" # (164..166)

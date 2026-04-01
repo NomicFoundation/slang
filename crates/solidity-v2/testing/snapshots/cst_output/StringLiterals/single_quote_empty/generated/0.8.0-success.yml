@@ -4,13 +4,13 @@ Source: >
   1  │ string constant x = '';                                                          │ 0..23
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (constant_definition꞉ ConstantDefinition):
+  - (root꞉ SourceUnit): # "string constant x = '';" (0..23)
+      - (members꞉ SourceUnitMembers): # "string constant x = '';" (0..23)
+          - (item꞉ SourceUnitMember) ► (constant_definition꞉ ConstantDefinition): # "string constant x = '';" (0..23)
               - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (string_keyword꞉ StringKeyword): "string" # (0..6)
               - (constant_keyword꞉ ConstantKeyword): "constant" # (7..15)
               - (name꞉ Identifier): "x" # (16..17)
               - (equal꞉ Equal): "=" # (18..19)
-              - (value꞉ Expression) ► (string_expression꞉ StringExpression) ► (string_literals꞉ StringLiterals):
+              - (value꞉ Expression) ► (string_expression꞉ StringExpression) ► (string_literals꞉ StringLiterals): # "''" (20..22)
                   - (item꞉ StringLiteral): "''" # (20..22)
               - (semicolon꞉ Semicolon): ";" # (22..23)

@@ -15,22 +15,22 @@ Error: This syntax was introduced in version '0.8.29'.
    │                   ╰─────── Error occurred here.
 ───╯
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract Foo layout at 0 is Bar {\n}" (130..165)
+      - (members꞉ SourceUnitMembers): # "contract Foo layout at 0 is Bar {\n}" (130..165)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Foo layout at 0 is Bar {\n}" (130..165)
               - (contract_keyword꞉ ContractKeyword): "contract" # (130..138)
               - (name꞉ Identifier): "Foo" # (139..142)
-              - (specifiers꞉ ContractSpecifiers):
-                  - (item꞉ ContractSpecifier) ► (storage_layout_specifier꞉ StorageLayoutSpecifier):
+              - (specifiers꞉ ContractSpecifiers): # "layout at 0 is Bar" (143..161)
+                  - (item꞉ ContractSpecifier) ► (storage_layout_specifier꞉ StorageLayoutSpecifier): # "layout at 0" (143..154)
                       - (layout_keyword꞉ LayoutKeyword): "layout" # (143..149)
                       - (at_keyword꞉ AtKeyword): "at" # (150..152)
-                      - (expression꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression):
+                      - (expression꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "0" (153..154)
                           - (literal꞉ DecimalLiteral): "0" # (153..154)
-                  - (item꞉ ContractSpecifier) ► (inheritance_specifier꞉ InheritanceSpecifier):
+                  - (item꞉ ContractSpecifier) ► (inheritance_specifier꞉ InheritanceSpecifier): # "is Bar" (155..161)
                       - (is_keyword꞉ IsKeyword): "is" # (155..157)
-                      - (types꞉ InheritanceTypes):
-                          - (item꞉ InheritanceType):
-                              - (type_name꞉ IdentifierPath):
+                      - (types꞉ InheritanceTypes): # "Bar" (158..161)
+                          - (item꞉ InheritanceType): # "Bar" (158..161)
+                              - (type_name꞉ IdentifierPath): # "Bar" (158..161)
                                   - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "Bar" # (158..161)
               - (open_brace꞉ OpenBrace): "{" # (162..163)
               - (members꞉ ContractMembers): []

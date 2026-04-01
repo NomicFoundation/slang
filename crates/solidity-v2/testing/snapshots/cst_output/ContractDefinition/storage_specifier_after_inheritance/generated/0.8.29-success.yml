@@ -8,22 +8,22 @@ Source: >
   5  │ // <<<                                                                                                                           │ 166..172
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract Foo is Bar layout at 0 {\n}" (129..164)
+      - (members꞉ SourceUnitMembers): # "contract Foo is Bar layout at 0 {\n}" (129..164)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Foo is Bar layout at 0 {\n}" (129..164)
               - (contract_keyword꞉ ContractKeyword): "contract" # (129..137)
               - (name꞉ Identifier): "Foo" # (138..141)
-              - (specifiers꞉ ContractSpecifiers):
-                  - (item꞉ ContractSpecifier) ► (inheritance_specifier꞉ InheritanceSpecifier):
+              - (specifiers꞉ ContractSpecifiers): # "is Bar layout at 0" (142..160)
+                  - (item꞉ ContractSpecifier) ► (inheritance_specifier꞉ InheritanceSpecifier): # "is Bar" (142..148)
                       - (is_keyword꞉ IsKeyword): "is" # (142..144)
-                      - (types꞉ InheritanceTypes):
-                          - (item꞉ InheritanceType):
-                              - (type_name꞉ IdentifierPath):
+                      - (types꞉ InheritanceTypes): # "Bar" (145..148)
+                          - (item꞉ InheritanceType): # "Bar" (145..148)
+                              - (type_name꞉ IdentifierPath): # "Bar" (145..148)
                                   - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "Bar" # (145..148)
-                  - (item꞉ ContractSpecifier) ► (storage_layout_specifier꞉ StorageLayoutSpecifier):
+                  - (item꞉ ContractSpecifier) ► (storage_layout_specifier꞉ StorageLayoutSpecifier): # "layout at 0" (149..160)
                       - (layout_keyword꞉ LayoutKeyword): "layout" # (149..155)
                       - (at_keyword꞉ AtKeyword): "at" # (156..158)
-                      - (expression꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression):
+                      - (expression꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "0" (159..160)
                           - (literal꞉ DecimalLiteral): "0" # (159..160)
               - (open_brace꞉ OpenBrace): "{" # (161..162)
               - (members꞉ ContractMembers): []

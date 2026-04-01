@@ -10,26 +10,26 @@ Source: >
   7  │ // <<<                                                                                                                  │ 170..176
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract Sample {\n  modifier foo() {\n    _;\n  }\n}" (120..169)
+      - (members꞉ SourceUnitMembers): # "contract Sample {\n  modifier foo() {\n    _;\n  }\n}" (120..169)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  modifier foo() {\n    _;\n  }\n}" (120..169)
               - (contract_keyword꞉ ContractKeyword): "contract" # (120..128)
               - (name꞉ Identifier): "Sample" # (129..135)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (136..137)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (modifier_definition꞉ ModifierDefinition):
+              - (members꞉ ContractMembers): # "modifier foo() {\n    _;\n  }" (140..167)
+                  - (item꞉ ContractMember) ► (modifier_definition꞉ ModifierDefinition): # "modifier foo() {\n    _;\n  }" (140..167)
                       - (modifier_keyword꞉ ModifierKeyword): "modifier" # (140..148)
                       - (name꞉ Identifier): "foo" # (149..152)
-                      - (parameters꞉ ParametersDeclaration):
+                      - (parameters꞉ ParametersDeclaration): # "()" (152..154)
                           - (open_paren꞉ OpenParen): "(" # (152..153)
                           - (parameters꞉ Parameters): []
                           - (close_paren꞉ CloseParen): ")" # (153..154)
                       - (attributes꞉ ModifierAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n    _;\n  }" (155..167)
                           - (open_brace꞉ OpenBrace): "{" # (155..156)
-                          - (statements꞉ Statements):
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement):
+                          - (statements꞉ Statements): # "_;" (161..163)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "_;" (161..163)
                                   - (expression꞉ Expression) ► (identifier꞉ Identifier): "_" # (161..162)
                                   - (semicolon꞉ Semicolon): ";" # (162..163)
                           - (close_brace꞉ CloseBrace): "}" # (166..167)

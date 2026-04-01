@@ -8,17 +8,17 @@ Source: >
   5  │ ;                                                                                                          │ 137..138
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective):
+  - (root꞉ SourceUnit): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..138)
+      - (members꞉ SourceUnitMembers): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..138)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..138)
               - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
-              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma):
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity <1.0.0" (114..129)
                   - (solidity_keyword꞉ SolidityKeyword): "solidity" # (114..122)
-                  - (sets꞉ VersionExpressionSets):
-                      - (item꞉ VersionExpressionSet):
-                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm):
+                  - (sets꞉ VersionExpressionSets): # "<1.0.0" (123..129)
+                      - (item꞉ VersionExpressionSet): # "<1.0.0" (123..129)
+                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm): # "<1.0.0" (123..129)
                               - (operator꞉ VersionOperator) ► (pragma_less_than꞉ PragmaLessThan): "<" # (123..124)
-                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral):
+                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral): # "1.0.0" (124..129)
                                   - (item꞉ VersionSpecifier): "1" # (124..125)
                                   - (item꞉ VersionSpecifier): "0" # (126..127)
                                   - (item꞉ VersionSpecifier): "0" # (128..129)

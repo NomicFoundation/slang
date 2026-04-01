@@ -14,15 +14,15 @@ Error: This syntax was introduced in version '0.8.22'.
    │             ╰───────────── Error occurred here.
 ───╯
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (event_definition꞉ EventDefinition):
+  - (root꞉ SourceUnit): # "event E1(uint256 value);" (101..125)
+      - (members꞉ SourceUnitMembers): # "event E1(uint256 value);" (101..125)
+          - (item꞉ SourceUnitMember) ► (event_definition꞉ EventDefinition): # "event E1(uint256 value);" (101..125)
               - (event_keyword꞉ EventKeyword): "event" # (101..106)
               - (name꞉ Identifier): "E1" # (107..109)
-              - (parameters꞉ EventParametersDeclaration):
+              - (parameters꞉ EventParametersDeclaration): # "(uint256 value)" (109..124)
                   - (open_paren꞉ OpenParen): "(" # (109..110)
-                  - (parameters꞉ EventParameters):
-                      - (item꞉ EventParameter):
+                  - (parameters꞉ EventParameters): # "uint256 value" (110..123)
+                      - (item꞉ EventParameter): # "uint256 value" (110..123)
                           - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (110..117)
                           - (name꞉ Identifier): "value" # (118..123)
                   - (close_paren꞉ CloseParen): ")" # (123..124)

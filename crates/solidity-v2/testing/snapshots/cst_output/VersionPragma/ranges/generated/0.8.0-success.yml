@@ -8,21 +8,21 @@ Source: >
   5  │ ;                                                                                              │ 132..133
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective):
+  - (root꞉ SourceUnit): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..133)
+      - (members꞉ SourceUnitMembers): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..133)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..133)
               - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
-              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma):
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity 0.6.0 - 0.7.0" (102..124)
                   - (solidity_keyword꞉ SolidityKeyword): "solidity" # (102..110)
-                  - (sets꞉ VersionExpressionSets):
-                      - (item꞉ VersionExpressionSet):
-                          - (item꞉ VersionExpression) ► (version_range꞉ VersionRange):
-                              - (start꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral):
+                  - (sets꞉ VersionExpressionSets): # "0.6.0 - 0.7.0" (111..124)
+                      - (item꞉ VersionExpressionSet): # "0.6.0 - 0.7.0" (111..124)
+                          - (item꞉ VersionExpression) ► (version_range꞉ VersionRange): # "0.6.0 - 0.7.0" (111..124)
+                              - (start꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral): # "0.6.0" (111..116)
                                   - (item꞉ VersionSpecifier): "0" # (111..112)
                                   - (item꞉ VersionSpecifier): "6" # (113..114)
                                   - (item꞉ VersionSpecifier): "0" # (115..116)
                               - (minus꞉ PragmaMinus): "-" # (117..118)
-                              - (end꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral):
+                              - (end꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral): # "0.7.0" (119..124)
                                   - (item꞉ VersionSpecifier): "0" # (119..120)
                                   - (item꞉ VersionSpecifier): "7" # (121..122)
                                   - (item꞉ VersionSpecifier): "0" # (123..124)

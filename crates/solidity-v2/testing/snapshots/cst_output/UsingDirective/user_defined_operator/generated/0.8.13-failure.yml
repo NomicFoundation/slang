@@ -13,22 +13,22 @@ Error: This syntax was introduced in version '0.8.19'.
    │              ╰─── Error occurred here.
 ───╯
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective):
+  - (root꞉ SourceUnit): # "using {div as /} for Int global;" (111..143)
+      - (members꞉ SourceUnitMembers): # "using {div as /} for Int global;" (111..143)
+          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective): # "using {div as /} for Int global;" (111..143)
               - (using_keyword꞉ UsingKeyword): "using" # (111..116)
-              - (clause꞉ UsingClause) ► (using_deconstruction꞉ UsingDeconstruction):
+              - (clause꞉ UsingClause) ► (using_deconstruction꞉ UsingDeconstruction): # "{div as /}" (117..127)
                   - (open_brace꞉ OpenBrace): "{" # (117..118)
-                  - (symbols꞉ UsingDeconstructionSymbols):
-                      - (item꞉ UsingDeconstructionSymbol):
-                          - (name꞉ IdentifierPath):
+                  - (symbols꞉ UsingDeconstructionSymbols): # "div as /" (118..126)
+                      - (item꞉ UsingDeconstructionSymbol): # "div as /" (118..126)
+                          - (name꞉ IdentifierPath): # "div" (118..121)
                               - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "div" # (118..121)
-                          - (alias꞉ UsingAlias):
+                          - (alias꞉ UsingAlias): # "as /" (122..126)
                               - (as_keyword꞉ AsKeyword): "as" # (122..124)
                               - (operator꞉ UsingOperator) ► (slash꞉ Slash): "/" # (125..126)
                   - (close_brace꞉ CloseBrace): "}" # (126..127)
               - (for_keyword꞉ ForKeyword): "for" # (128..131)
-              - (target꞉ UsingTarget) ► (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath):
+              - (target꞉ UsingTarget) ► (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath): # "Int" (132..135)
                   - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "Int" # (132..135)
               - (global_keyword꞉ GlobalKeyword): "global" # (136..142)
               - (semicolon꞉ Semicolon): ";" # (142..143)

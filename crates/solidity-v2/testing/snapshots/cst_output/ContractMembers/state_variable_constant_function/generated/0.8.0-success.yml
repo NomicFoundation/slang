@@ -9,23 +9,23 @@ Source: >
   6  │ }                                                                                                                          │ 169..170
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..170)
+      - (members꞉ SourceUnitMembers): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..170)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..170)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
               - (name꞉ Identifier): "C" # (9..10)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition):
-                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType):
+              - (members꞉ ContractMembers): # "function() constant foo;" (136..160)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function() constant foo;" (136..160)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function()" (136..146)
                           - (function_keyword꞉ FunctionKeyword): "function" # (136..144)
-                          - (parameters꞉ ParametersDeclaration):
+                          - (parameters꞉ ParametersDeclaration): # "()" (144..146)
                               - (open_paren꞉ OpenParen): "(" # (144..145)
                               - (parameters꞉ Parameters): []
                               - (close_paren꞉ CloseParen): ")" # (145..146)
                           - (attributes꞉ FunctionTypeAttributes): []
-                      - (attributes꞉ StateVariableAttributes):
+                      - (attributes꞉ StateVariableAttributes): # "constant" (147..155)
                           - (item꞉ StateVariableAttribute) ► (constant_keyword꞉ ConstantKeyword): "constant" # (147..155)
                       - (name꞉ Identifier): "foo" # (156..159)
                       - (semicolon꞉ Semicolon): ";" # (159..160)

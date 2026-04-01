@@ -13,11 +13,11 @@ Error: This syntax was introduced in version '0.8.13'.
    │         ╰───────── Error occurred here.
 ───╯
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective):
+  - (root꞉ SourceUnit): # "using foo for *;" (102..118)
+      - (members꞉ SourceUnitMembers): # "using foo for *;" (102..118)
+          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective): # "using foo for *;" (102..118)
               - (using_keyword꞉ UsingKeyword): "using" # (102..107)
-              - (clause꞉ UsingClause) ► (identifier_path꞉ IdentifierPath):
+              - (clause꞉ UsingClause) ► (identifier_path꞉ IdentifierPath): # "foo" (108..111)
                   - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "foo" # (108..111)
               - (for_keyword꞉ ForKeyword): "for" # (112..115)
               - (target꞉ UsingTarget) ► (asterisk꞉ Asterisk): "*" # (116..117)

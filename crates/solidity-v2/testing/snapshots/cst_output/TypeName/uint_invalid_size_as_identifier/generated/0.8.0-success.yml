@@ -9,16 +9,16 @@ Source: >
   6  │ }                                                                                                                  │ 146..147
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..147)
+      - (members꞉ SourceUnitMembers): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..147)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..147)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
               - (name꞉ Identifier): "C" # (9..10)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition):
-                      - (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath):
+              - (members꞉ ContractMembers): # "uint320\n// <<<\nx;" (128..145)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "uint320\n// <<<\nx;" (128..145)
+                      - (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath): # "uint320" (128..135)
                           - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "uint320" # (128..135)
                       - (attributes꞉ StateVariableAttributes): []
                       - (name꞉ Identifier): "x" # (143..144)

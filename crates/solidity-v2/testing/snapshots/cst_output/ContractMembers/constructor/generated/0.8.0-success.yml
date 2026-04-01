@@ -9,23 +9,23 @@ Source: >
   6  │ }                                                                                                     │ 147..148
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..148)
+      - (members꞉ SourceUnitMembers): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..148)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..148)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
               - (name꞉ Identifier): "C" # (9..10)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (constructor_definition꞉ ConstructorDefinition):
+              - (members꞉ ContractMembers): # "constructor() public {}" (115..138)
+                  - (item꞉ ContractMember) ► (constructor_definition꞉ ConstructorDefinition): # "constructor() public {}" (115..138)
                       - (constructor_keyword꞉ ConstructorKeyword): "constructor" # (115..126)
-                      - (parameters꞉ ParametersDeclaration):
+                      - (parameters꞉ ParametersDeclaration): # "()" (126..128)
                           - (open_paren꞉ OpenParen): "(" # (126..127)
                           - (parameters꞉ Parameters): []
                           - (close_paren꞉ CloseParen): ")" # (127..128)
-                      - (attributes꞉ ConstructorAttributes):
+                      - (attributes꞉ ConstructorAttributes): # "public" (129..135)
                           - (item꞉ ConstructorAttribute) ► (public_keyword꞉ PublicKeyword): "public" # (129..135)
-                      - (body꞉ Block):
+                      - (body꞉ Block): # "{}" (136..138)
                           - (open_brace꞉ OpenBrace): "{" # (136..137)
                           - (statements꞉ Statements): []
                           - (close_brace꞉ CloseBrace): "}" # (137..138)

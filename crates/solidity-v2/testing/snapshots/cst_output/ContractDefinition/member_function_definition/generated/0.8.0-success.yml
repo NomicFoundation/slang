@@ -10,36 +10,36 @@ Source: >
   7  │ // <<<                                                                                                                  │ 192..198
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract Sample {\n  function foo() returns (uint) ..." (120..191)
+      - (members꞉ SourceUnitMembers): # "contract Sample {\n  function foo() returns (uint) ..." (120..191)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  function foo() returns (uint) ..." (120..191)
               - (contract_keyword꞉ ContractKeyword): "contract" # (120..128)
               - (name꞉ Identifier): "Sample" # (129..135)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (136..137)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+              - (members꞉ ContractMembers): # "function foo() returns (uint) {\n    return 1;\n  }" (140..189)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function foo() returns (uint) {\n    return 1;\n  }" (140..189)
                       - (function_keyword꞉ FunctionKeyword): "function" # (140..148)
                       - (name꞉ FunctionName) ► (identifier꞉ Identifier): "foo" # (149..152)
-                      - (parameters꞉ ParametersDeclaration):
+                      - (parameters꞉ ParametersDeclaration): # "()" (152..154)
                           - (open_paren꞉ OpenParen): "(" # (152..153)
                           - (parameters꞉ Parameters): []
                           - (close_paren꞉ CloseParen): ")" # (153..154)
                       - (attributes꞉ FunctionAttributes): []
-                      - (returns꞉ ReturnsDeclaration):
+                      - (returns꞉ ReturnsDeclaration): # "returns (uint)" (155..169)
                           - (returns_keyword꞉ ReturnsKeyword): "returns" # (155..162)
-                          - (variables꞉ ParametersDeclaration):
+                          - (variables꞉ ParametersDeclaration): # "(uint)" (163..169)
                               - (open_paren꞉ OpenParen): "(" # (163..164)
-                              - (parameters꞉ Parameters):
-                                  - (item꞉ Parameter):
+                              - (parameters꞉ Parameters): # "uint" (164..168)
+                                  - (item꞉ Parameter): # "uint" (164..168)
                                       - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (164..168)
                               - (close_paren꞉ CloseParen): ")" # (168..169)
-                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n    return 1;\n  }" (170..189)
                           - (open_brace꞉ OpenBrace): "{" # (170..171)
-                          - (statements꞉ Statements):
-                              - (item꞉ Statement) ► (return_statement꞉ ReturnStatement):
+                          - (statements꞉ Statements): # "return 1;" (176..185)
+                              - (item꞉ Statement) ► (return_statement꞉ ReturnStatement): # "return 1;" (176..185)
                                   - (return_keyword꞉ ReturnKeyword): "return" # (176..182)
-                                  - (expression꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression):
+                                  - (expression꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "1" (183..184)
                                       - (literal꞉ DecimalLiteral): "1" # (183..184)
                                   - (semicolon꞉ Semicolon): ";" # (184..185)
                           - (close_brace꞉ CloseBrace): "}" # (188..189)

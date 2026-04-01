@@ -8,17 +8,17 @@ Source: >
   5  │ // <<<                                                                                                                         │ 164..170
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract Sample {\n  uint public a;\n}" (127..163)
+      - (members꞉ SourceUnitMembers): # "contract Sample {\n  uint public a;\n}" (127..163)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  uint public a;\n}" (127..163)
               - (contract_keyword꞉ ContractKeyword): "contract" # (127..135)
               - (name꞉ Identifier): "Sample" # (136..142)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (143..144)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition):
+              - (members꞉ ContractMembers): # "uint public a;" (147..161)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "uint public a;" (147..161)
                       - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (147..151)
-                      - (attributes꞉ StateVariableAttributes):
+                      - (attributes꞉ StateVariableAttributes): # "public" (152..158)
                           - (item꞉ StateVariableAttribute) ► (public_keyword꞉ PublicKeyword): "public" # (152..158)
                       - (name꞉ Identifier): "a" # (159..160)
                       - (semicolon꞉ Semicolon): ";" # (160..161)

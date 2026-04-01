@@ -12,9 +12,9 @@ Source: >
   9  │ // <<<                                                                                                            │ 242..248
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract Foo {\n  /**/\n}" (212..235)
+      - (members꞉ SourceUnitMembers): # "contract Foo {\n  /**/\n}" (212..235)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Foo {\n  /**/\n}" (212..235)
               - (contract_keyword꞉ ContractKeyword): "contract" # (212..220)
               - (name꞉ Identifier): "Foo" # (221..224)
               - (specifiers꞉ ContractSpecifiers): []

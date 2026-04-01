@@ -12,37 +12,37 @@ Source: >
   9  │ }                                                                                                          │ 179..180
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..180)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..180)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..180)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
               - (name꞉ Identifier): "C" # (9..10)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+              - (members꞉ ContractMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..178)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..178)
                       - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
                       - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration):
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
                           - (open_paren꞉ OpenParen): "(" # (27..28)
                           - (parameters꞉ Parameters): []
                           - (close_paren꞉ CloseParen): ")" # (28..29)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "contract C {\n    function f() {\n// >>> Copied from..." (0..178)
                           - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements):
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement):
-                                  - (expression꞉ Expression) ► (call_options_expression꞉ CallOptionsExpression):
-                                      - (operand꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression):
+                          - (statements꞉ Statements): # "contract C {\n    function f() {\n// >>> Copied from..." (0..172)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "contract C {\n    function f() {\n// >>> Copied from..." (0..172)
+                                  - (expression꞉ Expression) ► (call_options_expression꞉ CallOptionsExpression): # "contract C {\n    function f() {\n// >>> Copied from..." (0..162)
+                                      - (operand꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "contract C {\n    function f() {\n// >>> Copied from..." (0..150)
                                           - (operand꞉ Expression) ► (identifier꞉ Identifier): "foo" # (139..142)
                                           - (period꞉ Period): "" # (0..0)
                                           - (member꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "deposit" # (143..150)
                                       - (open_brace꞉ OpenBrace): "{" # (150..151)
-                                      - (options꞉ CallOptions):
-                                          - (item꞉ NamedArgument):
+                                      - (options꞉ CallOptions): # "value: 100" (151..161)
+                                          - (item꞉ NamedArgument): # "value: 100" (151..161)
                                               - (name꞉ Identifier): "value" # (151..156)
                                               - (colon꞉ Colon): ":" # (156..157)
-                                              - (value꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression):
+                                              - (value꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "100" (158..161)
                                                   - (literal꞉ DecimalLiteral): "100" # (158..161)
                                       - (close_brace꞉ CloseBrace): "}" # (161..162)
                                   - (semicolon꞉ Semicolon): ";" # (171..172)

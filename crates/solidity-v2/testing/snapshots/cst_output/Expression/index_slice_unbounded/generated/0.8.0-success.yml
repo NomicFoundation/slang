@@ -11,30 +11,30 @@ Source: >
   8  │ }                                                                                                          │ 161..162
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..162)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..162)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..162)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
               - (name꞉ Identifier): "C" # (9..10)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..160)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..160)
                       - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
                       - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
-                      - (parameters꞉ ParametersDeclaration):
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
                           - (open_paren꞉ OpenParen): "(" # (27..28)
                           - (parameters꞉ Parameters): []
                           - (close_paren꞉ CloseParen): ")" # (28..29)
                       - (attributes꞉ FunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..160)
                           - (open_brace꞉ OpenBrace): "{" # (30..31)
-                          - (statements꞉ Statements):
-                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement):
-                                  - (expression꞉ Expression) ► (index_access_expression꞉ IndexAccessExpression):
+                          - (statements꞉ Statements): # "arr[:]\n// <<<\n;" (139..154)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "arr[:]\n// <<<\n;" (139..154)
+                                  - (expression꞉ Expression) ► (index_access_expression꞉ IndexAccessExpression): # "arr[:]" (139..145)
                                       - (operand꞉ Expression) ► (identifier꞉ Identifier): "arr" # (139..142)
                                       - (open_bracket꞉ OpenBracket): "[" # (142..143)
-                                      - (end꞉ IndexAccessEnd):
+                                      - (end꞉ IndexAccessEnd): # ":" (143..144)
                                           - (colon꞉ Colon): ":" # (143..144)
                                       - (close_bracket꞉ CloseBracket): "]" # (144..145)
                                   - (semicolon꞉ Semicolon): ";" # (153..154)

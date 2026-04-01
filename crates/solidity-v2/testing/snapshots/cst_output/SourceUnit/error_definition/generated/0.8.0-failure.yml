@@ -26,42 +26,42 @@ Error: This syntax was introduced in version '0.8.4'.
    │                   ╰────────────────── Error occurred here.
 ───╯
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (error_definition꞉ ErrorDefinition):
+  - (root꞉ SourceUnit): # "error MyError(uint256 a, uint256 b);\n\ncontract A {..." (102..203)
+      - (members꞉ SourceUnitMembers): # "error MyError(uint256 a, uint256 b);\n\ncontract A {..." (102..203)
+          - (item꞉ SourceUnitMember) ► (error_definition꞉ ErrorDefinition): # "error MyError(uint256 a, uint256 b);" (102..138)
               - (error_keyword꞉ ErrorKeyword): "error" # (102..107)
               - (name꞉ Identifier): "MyError" # (108..115)
-              - (members꞉ ErrorParametersDeclaration):
+              - (members꞉ ErrorParametersDeclaration): # "(uint256 a, uint256 b)" (115..137)
                   - (open_paren꞉ OpenParen): "(" # (115..116)
-                  - (parameters꞉ ErrorParameters):
-                      - (item꞉ ErrorParameter):
+                  - (parameters꞉ ErrorParameters): # "uint256 a, uint256 b" (116..136)
+                      - (item꞉ ErrorParameter): # "uint256 a" (116..125)
                           - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (116..123)
                           - (name꞉ Identifier): "a" # (124..125)
-                      - (item꞉ ErrorParameter):
+                      - (item꞉ ErrorParameter): # "uint256 b" (127..136)
                           - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (127..134)
                           - (name꞉ Identifier): "b" # (135..136)
                   - (close_paren꞉ CloseParen): ")" # (136..137)
               - (semicolon꞉ Semicolon): ";" # (137..138)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract A {\n  error MyOtherError(address addr);\n ..." (140..203)
               - (contract_keyword꞉ ContractKeyword): "contract" # (140..148)
               - (name꞉ Identifier): "A" # (149..150)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (151..152)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (error_definition꞉ ErrorDefinition):
+              - (members꞉ ContractMembers): # "error MyOtherError(address addr);\n  error foo;" (155..201)
+                  - (item꞉ ContractMember) ► (error_definition꞉ ErrorDefinition): # "error MyOtherError(address addr);" (155..188)
                       - (error_keyword꞉ ErrorKeyword): "error" # (155..160)
                       - (name꞉ Identifier): "MyOtherError" # (161..173)
-                      - (members꞉ ErrorParametersDeclaration):
+                      - (members꞉ ErrorParametersDeclaration): # "(address addr)" (173..187)
                           - (open_paren꞉ OpenParen): "(" # (173..174)
-                          - (parameters꞉ ErrorParameters):
-                              - (item꞉ ErrorParameter):
-                                  - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (address_type꞉ AddressType):
+                          - (parameters꞉ ErrorParameters): # "address addr" (174..186)
+                              - (item꞉ ErrorParameter): # "address addr" (174..186)
+                                  - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (address_type꞉ AddressType): # "address" (174..181)
                                       - (address_keyword꞉ AddressKeyword): "address" # (174..181)
                                   - (name꞉ Identifier): "addr" # (182..186)
                           - (close_paren꞉ CloseParen): ")" # (186..187)
                       - (semicolon꞉ Semicolon): ";" # (187..188)
-                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition):
-                      - (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath):
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "error foo;" (191..201)
+                      - (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath): # "error" (191..196)
                           - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "error" # (191..196)
                       - (attributes꞉ StateVariableAttributes): []
                       - (name꞉ Identifier): "foo" # (197..200)

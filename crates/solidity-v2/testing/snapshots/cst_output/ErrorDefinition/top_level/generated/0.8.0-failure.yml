@@ -13,12 +13,12 @@ Error: This syntax was introduced in version '0.8.4'.
    │         ╰───────── Error occurred here.
 ───╯
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (error_definition꞉ ErrorDefinition):
+  - (root꞉ SourceUnit): # "error MyError();" (100..116)
+      - (members꞉ SourceUnitMembers): # "error MyError();" (100..116)
+          - (item꞉ SourceUnitMember) ► (error_definition꞉ ErrorDefinition): # "error MyError();" (100..116)
               - (error_keyword꞉ ErrorKeyword): "error" # (100..105)
               - (name꞉ Identifier): "MyError" # (106..113)
-              - (members꞉ ErrorParametersDeclaration):
+              - (members꞉ ErrorParametersDeclaration): # "()" (113..115)
                   - (open_paren꞉ OpenParen): "(" # (113..114)
                   - (parameters꞉ ErrorParameters): []
                   - (close_paren꞉ CloseParen): ")" # (114..115)

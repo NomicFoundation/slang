@@ -6,16 +6,16 @@ Source: >
   3  │ // <<<                                                                                                              │ 146..152
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (import_directive꞉ ImportDirective):
+  - (root꞉ SourceUnit): # 'import { x as y } from "foo";' (116..145)
+      - (members꞉ SourceUnitMembers): # 'import { x as y } from "foo";' (116..145)
+          - (item꞉ SourceUnitMember) ► (import_directive꞉ ImportDirective): # 'import { x as y } from "foo";' (116..145)
               - (import_keyword꞉ ImportKeyword): "import" # (116..122)
-              - (clause꞉ ImportClause) ► (import_deconstruction꞉ ImportDeconstruction):
+              - (clause꞉ ImportClause) ► (import_deconstruction꞉ ImportDeconstruction): # '{ x as y } from "foo"' (123..144)
                   - (open_brace꞉ OpenBrace): "{" # (123..124)
-                  - (symbols꞉ ImportDeconstructionSymbols):
-                      - (item꞉ ImportDeconstructionSymbol):
+                  - (symbols꞉ ImportDeconstructionSymbols): # "x as y" (125..131)
+                      - (item꞉ ImportDeconstructionSymbol): # "x as y" (125..131)
                           - (name꞉ Identifier): "x" # (125..126)
-                          - (alias꞉ ImportAlias):
+                          - (alias꞉ ImportAlias): # "as y" (127..131)
                               - (as_keyword꞉ AsKeyword): "as" # (127..129)
                               - (identifier꞉ Identifier): "y" # (130..131)
                   - (close_brace꞉ CloseBrace): "}" # (132..133)

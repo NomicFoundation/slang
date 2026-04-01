@@ -6,9 +6,9 @@ Source: >
   3  │ // <<<                                                                                                        │ 128..134
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (user_defined_value_type_definition꞉ UserDefinedValueTypeDefinition):
+  - (root꞉ SourceUnit): # "type Foo is bool;" (110..127)
+      - (members꞉ SourceUnitMembers): # "type Foo is bool;" (110..127)
+          - (item꞉ SourceUnitMember) ► (user_defined_value_type_definition꞉ UserDefinedValueTypeDefinition): # "type Foo is bool;" (110..127)
               - (type_keyword꞉ TypeKeyword): "type" # (110..114)
               - (name꞉ Identifier): "Foo" # (115..118)
               - (is_keyword꞉ IsKeyword): "is" # (119..121)

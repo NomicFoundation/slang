@@ -5,48 +5,33 @@
 #[allow(clippy::wildcard_imports)]
 use slang_solidity_v2_cst::structured_cst::nodes::*;
 
-use crate::cst_renderer::RenderContext;
+use crate::cst_renderer::{render_terminal, ChildrenAccumulator, RenderedOutput};
 
 //
 // Sequences:
 //
 
 {% for parent_type, sequence in target.sequences %}
-{%- set all_optional = sequence.fields | filter(attribute="is_optional", value=false) | length == 0 -%}
-pub fn render_{{ parent_type | snake_case }}(ctx: &mut RenderContext<'_>, node: &{{ parent_type }}Struct) {
-  ctx.write_nonterminal_start();
-  ctx.depth += 1;
-  {% if all_optional %}
-  let mut has_children = false;
-  {% endif %}
+pub fn render_{{ parent_type | snake_case }}(source: &str, node: &{{ parent_type }}Struct, depth: usize) -> RenderedOutput {
+  let mut acc = ChildrenAccumulator::new(source, depth + 1);
   {% for field in sequence.fields %}
     {% if field.is_optional %}
       if let Some(ref {{ field.label | snake_case }}) = node.{{ field.label | snake_case }} {
-        {% if all_optional %}has_children = true;{% endif %}
-        ctx.write_indent();
-        ctx.write_key("{{ field.label | snake_case }}", "{{ field.field_type.name }}");
         {% if field.field_type.is_terminal %}
-          ctx.write_terminal_value(&{{ field.label | snake_case }}.range);
+          acc.add("{{ field.label | snake_case }}", "{{ field.field_type.name }}", render_terminal(source, &{{ field.label | snake_case }}.range));
         {% else %}
-          render_{{ field.field_type.name | snake_case }}(ctx, {{ field.label | snake_case }});
+          acc.add("{{ field.label | snake_case }}", "{{ field.field_type.name }}", render_{{ field.field_type.name | snake_case }}(source, {{ field.label | snake_case }}, depth + 1));
         {% endif %}
       }
     {% else %}
-      {
-        ctx.write_indent();
-        ctx.write_key("{{ field.label | snake_case }}", "{{ field.field_type.name }}");
-        {% if field.field_type.is_terminal %}
-          ctx.write_terminal_value(&node.{{ field.label | snake_case }}.range);
-        {% else %}
-          render_{{ field.field_type.name | snake_case }}(ctx, &node.{{ field.label | snake_case }});
-        {% endif %}
-      }
+      {% if field.field_type.is_terminal %}
+        acc.add("{{ field.label | snake_case }}", "{{ field.field_type.name }}", render_terminal(source, &node.{{ field.label | snake_case }}.range));
+      {% else %}
+        acc.add("{{ field.label | snake_case }}", "{{ field.field_type.name }}", render_{{ field.field_type.name | snake_case }}(source, &node.{{ field.label | snake_case }}, depth + 1));
+      {% endif %}
     {% endif %}
   {% endfor %}
-  ctx.depth -= 1;
-  {% if all_optional %}
-  ctx.finish_nonterminal(has_children);
-  {% endif %}
+  acc.finish()
 }
 
 {% endfor %}
@@ -56,22 +41,18 @@ pub fn render_{{ parent_type | snake_case }}(ctx: &mut RenderContext<'_>, node: 
 //
 
 {% for parent_type, choice in target.choices %}
-pub fn render_{{ parent_type | snake_case }}(ctx: &mut RenderContext<'_>, node: &{{ parent_type }}) {
+pub fn render_{{ parent_type | snake_case }}(source: &str, node: &{{ parent_type }}, depth: usize) -> RenderedOutput {
   match node {
     {% for variant in choice.variants %}
-      {% if variant.variant_type.is_terminal %}
-        {{ parent_type }}::{{ variant.variant_type.name }}(ref element) => {
-          ctx.write_connector();
-          ctx.write_key("{{ variant.variant_type.name | snake_case }}", "{{ variant.variant_type.name }}");
-          ctx.write_terminal_value(&element.range);
-        }
-      {% else %}
-        {{ parent_type }}::{{ variant.variant_type.name }}(ref element) => {
-          ctx.write_connector();
-          ctx.write_key("{{ variant.variant_type.name | snake_case }}", "{{ variant.variant_type.name }}");
-          render_{{ variant.variant_type.name | snake_case }}(ctx, element);
-        }
-      {% endif %}
+      {{ parent_type }}::{{ variant.variant_type.name }}(ref element) => {
+        {% if variant.variant_type.is_terminal %}
+          let (range, mut frags) = render_terminal(source, &element.range);
+        {% else %}
+          let (range, mut frags) = render_{{ variant.variant_type.name | snake_case }}(source, element, depth);
+        {% endif %}
+        frags.insert(0, " \u{25ba} ({{ variant.variant_type.name | snake_case }}\u{a789} {{ variant.variant_type.name }})".to_string());
+        (range, frags)
+      }
     {% endfor %}
   }
 }
@@ -83,23 +64,19 @@ pub fn render_{{ parent_type | snake_case }}(ctx: &mut RenderContext<'_>, node: 
 //
 
 {% for parent_type, collection in target.collections %}
-pub fn render_{{ parent_type | snake_case }}(ctx: &mut RenderContext<'_>, node: &{{ parent_type }}) {
+pub fn render_{{ parent_type | snake_case }}(source: &str, node: &{{ parent_type }}, depth: usize) -> RenderedOutput {
   if node.elements.is_empty() {
-    ctx.write_empty_collection();
-  } else {
-    ctx.write_nonterminal_start();
-    ctx.depth += 1;
-    for element in &node.elements {
-      ctx.write_indent();
-      ctx.write_key("item", "{{ collection.item_type.name }}");
-      {% if collection.item_type.is_terminal %}
-        ctx.write_terminal_value(&element.range);
-      {% else %}
-        render_{{ collection.item_type.name | snake_case }}(ctx, element);
-      {% endif %}
-    }
-    ctx.depth -= 1;
+    return (None, vec![": []\n".to_string()]);
   }
+  let mut acc = ChildrenAccumulator::new(source, depth + 1);
+  for element in &node.elements {
+    {% if collection.item_type.is_terminal %}
+      acc.add("item", "{{ collection.item_type.name }}", render_terminal(source, &element.range));
+    {% else %}
+      acc.add("item", "{{ collection.item_type.name }}", render_{{ collection.item_type.name | snake_case }}(source, element, depth + 1));
+    {% endif %}
+  }
+  acc.finish()
 }
 
 {% endfor %}

@@ -14,25 +14,25 @@ Error: This syntax was introduced in version '0.8.22'.
    │                                     ╰───────────────────────────────────── Error occurred here.
 ───╯
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (event_definition꞉ EventDefinition):
+  - (root꞉ SourceUnit): # "event Transfer(address indexed from, address index..." (99..171)
+      - (members꞉ SourceUnitMembers): # "event Transfer(address indexed from, address index..." (99..171)
+          - (item꞉ SourceUnitMember) ► (event_definition꞉ EventDefinition): # "event Transfer(address indexed from, address index..." (99..171)
               - (event_keyword꞉ EventKeyword): "event" # (99..104)
               - (name꞉ Identifier): "Transfer" # (105..113)
-              - (parameters꞉ EventParametersDeclaration):
+              - (parameters꞉ EventParametersDeclaration): # "(address indexed from, address indexed to, uint256..." (113..170)
                   - (open_paren꞉ OpenParen): "(" # (113..114)
-                  - (parameters꞉ EventParameters):
-                      - (item꞉ EventParameter):
-                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (address_type꞉ AddressType):
+                  - (parameters꞉ EventParameters): # "address indexed from, address indexed to, uint256 ..." (114..169)
+                      - (item꞉ EventParameter): # "address indexed from" (114..134)
+                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (address_type꞉ AddressType): # "address" (114..121)
                               - (address_keyword꞉ AddressKeyword): "address" # (114..121)
                           - (indexed_keyword꞉ IndexedKeyword): "indexed" # (122..129)
                           - (name꞉ Identifier): "from" # (130..134)
-                      - (item꞉ EventParameter):
-                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (address_type꞉ AddressType):
+                      - (item꞉ EventParameter): # "address indexed to" (136..154)
+                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (address_type꞉ AddressType): # "address" (136..143)
                               - (address_keyword꞉ AddressKeyword): "address" # (136..143)
                           - (indexed_keyword꞉ IndexedKeyword): "indexed" # (144..151)
                           - (name꞉ Identifier): "to" # (152..154)
-                      - (item꞉ EventParameter):
+                      - (item꞉ EventParameter): # "uint256 value" (156..169)
                           - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (156..163)
                           - (name꞉ Identifier): "value" # (164..169)
                   - (close_paren꞉ CloseParen): ")" # (169..170)

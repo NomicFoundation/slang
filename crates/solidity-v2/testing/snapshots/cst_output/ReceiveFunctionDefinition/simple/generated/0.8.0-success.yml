@@ -8,22 +8,22 @@ Source: >
   5  │ }                                                                                                          │ 141..142
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..142)
+      - (members꞉ SourceUnitMembers): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..142)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..142)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
               - (name꞉ Identifier): "C" # (9..10)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (receive_function_definition꞉ ReceiveFunctionDefinition):
+              - (members꞉ ContractMembers): # "receive () {}" (120..133)
+                  - (item꞉ ContractMember) ► (receive_function_definition꞉ ReceiveFunctionDefinition): # "receive () {}" (120..133)
                       - (receive_keyword꞉ ReceiveKeyword): "receive" # (120..127)
-                      - (parameters꞉ ParametersDeclaration):
+                      - (parameters꞉ ParametersDeclaration): # "()" (128..130)
                           - (open_paren꞉ OpenParen): "(" # (128..129)
                           - (parameters꞉ Parameters): []
                           - (close_paren꞉ CloseParen): ")" # (129..130)
                       - (attributes꞉ ReceiveFunctionAttributes): []
-                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{}" (131..133)
                           - (open_brace꞉ OpenBrace): "{" # (131..132)
                           - (statements꞉ Statements): []
                           - (close_brace꞉ CloseBrace): "}" # (132..133)

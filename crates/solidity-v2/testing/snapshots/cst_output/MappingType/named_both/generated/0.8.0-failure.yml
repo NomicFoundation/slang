@@ -23,23 +23,23 @@ Error: This syntax was introduced in version '0.8.18'.
    │                                ╰─── Error occurred here.
 ───╯
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..156)
+      - (members꞉ SourceUnitMembers): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..156)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..156)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
               - (name꞉ Identifier): "C" # (9..10)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition):
-                      - (type_name꞉ TypeName) ► (mapping_type꞉ MappingType):
+              - (members꞉ ContractMembers): # "mapping(string Foo => bytes32 Bar)\n// <<<\nx;" (110..154)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "mapping(string Foo => bytes32 Bar)\n// <<<\nx;" (110..154)
+                      - (type_name꞉ TypeName) ► (mapping_type꞉ MappingType): # "mapping(string Foo => bytes32 Bar)" (110..144)
                           - (mapping_keyword꞉ MappingKeyword): "mapping" # (110..117)
                           - (open_paren꞉ OpenParen): "(" # (117..118)
-                          - (key_type꞉ MappingKey):
+                          - (key_type꞉ MappingKey): # "string Foo" (118..128)
                               - (key_type꞉ MappingKeyType) ► (elementary_type꞉ ElementaryType) ► (string_keyword꞉ StringKeyword): "string" # (118..124)
                               - (name꞉ Identifier): "Foo" # (125..128)
                           - (equal_greater_than꞉ EqualGreaterThan): "=>" # (129..131)
-                          - (value_type꞉ MappingValue):
+                          - (value_type꞉ MappingValue): # "bytes32 Bar" (132..143)
                               - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (bytes_keyword꞉ BytesKeyword): "bytes32" # (132..139)
                               - (name꞉ Identifier): "Bar" # (140..143)
                           - (close_paren꞉ CloseParen): ")" # (143..144)

@@ -16,17 +16,17 @@ Error: This syntax was introduced in version '0.8.27'.
    │          ╰────── Error occurred here.
 ───╯
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..150)
+      - (members꞉ SourceUnitMembers): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..150)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..150)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
               - (name꞉ Identifier): "C" # (9..10)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (11..12)
-              - (members꞉ ContractMembers):
-                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition):
+              - (members꞉ ContractMembers): # "uint transient foo;" (121..140)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "uint transient foo;" (121..140)
                       - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (121..125)
-                      - (attributes꞉ StateVariableAttributes):
+                      - (attributes꞉ StateVariableAttributes): # "transient" (126..135)
                           - (item꞉ StateVariableAttribute) ► (transient_keyword꞉ TransientKeyword): "transient" # (126..135)
                       - (name꞉ Identifier): "foo" # (136..139)
                       - (semicolon꞉ Semicolon): ";" # (139..140)

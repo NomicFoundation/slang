@@ -15,17 +15,17 @@ Error: This syntax was introduced in version '0.8.19'.
    │       ╰─── Error occurred here.
 ───╯
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective):
+  - (root꞉ SourceUnit): # "using {\n// >>> Copied from crates/solidity/testing..." (0..157)
+      - (members꞉ SourceUnitMembers): # "using {\n// >>> Copied from crates/solidity/testing..." (0..157)
+          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective): # "using {\n// >>> Copied from crates/solidity/testing..." (0..157)
               - (using_keyword꞉ UsingKeyword): "using" # (0..5)
-              - (clause꞉ UsingClause) ► (using_deconstruction꞉ UsingDeconstruction):
+              - (clause꞉ UsingClause) ► (using_deconstruction꞉ UsingDeconstruction): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (6..147)
                   - (open_brace꞉ OpenBrace): "{" # (6..7)
-                  - (symbols꞉ UsingDeconstructionSymbols):
-                      - (item꞉ UsingDeconstructionSymbol):
-                          - (name꞉ IdentifierPath):
+                  - (symbols꞉ UsingDeconstructionSymbols): # "foo as /" (130..138)
+                      - (item꞉ UsingDeconstructionSymbol): # "foo as /" (130..138)
+                          - (name꞉ IdentifierPath): # "foo" (130..133)
                               - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "foo" # (130..133)
-                          - (alias꞉ UsingAlias):
+                          - (alias꞉ UsingAlias): # "as /" (134..138)
                               - (as_keyword꞉ AsKeyword): "as" # (134..136)
                               - (operator꞉ UsingOperator) ► (slash꞉ Slash): "/" # (137..138)
                   - (close_brace꞉ CloseBrace): "}" # (146..147)

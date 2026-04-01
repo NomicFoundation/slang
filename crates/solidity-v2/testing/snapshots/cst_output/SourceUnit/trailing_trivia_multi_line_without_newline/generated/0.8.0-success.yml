@@ -8,16 +8,16 @@ Source: >
   5  │ // <<<                                                                                                                          │ 176..182
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract A {} /* some comment */\ncontract B {}" (128..174)
+      - (members꞉ SourceUnitMembers): # "contract A {} /* some comment */\ncontract B {}" (128..174)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract A {}" (128..141)
               - (contract_keyword꞉ ContractKeyword): "contract" # (128..136)
               - (name꞉ Identifier): "A" # (137..138)
               - (specifiers꞉ ContractSpecifiers): []
               - (open_brace꞉ OpenBrace): "{" # (139..140)
               - (members꞉ ContractMembers): []
               - (close_brace꞉ CloseBrace): "}" # (140..141)
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract B {}" (161..174)
               - (contract_keyword꞉ ContractKeyword): "contract" # (161..169)
               - (name꞉ Identifier): "B" # (170..171)
               - (specifiers꞉ ContractSpecifiers): []

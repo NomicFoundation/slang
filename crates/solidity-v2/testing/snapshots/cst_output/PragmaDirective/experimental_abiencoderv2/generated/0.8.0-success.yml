@@ -7,11 +7,11 @@ Source: >
   4  │ // <<<                                                                                                              │ 149..155
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective):
+  - (root꞉ SourceUnit): # "pragma experimental SMTChecker;" (116..147)
+      - (members꞉ SourceUnitMembers): # "pragma experimental SMTChecker;" (116..147)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma experimental SMTChecker;" (116..147)
               - (pragma_keyword꞉ PragmaKeyword): "pragma" # (116..122)
-              - (pragma꞉ Pragma) ► (experimental_pragma꞉ ExperimentalPragma):
+              - (pragma꞉ Pragma) ► (experimental_pragma꞉ ExperimentalPragma): # "experimental SMTChecker" (123..146)
                   - (experimental_keyword꞉ ExperimentalKeyword): "experimental" # (123..135)
                   - (feature꞉ ExperimentalFeature) ► (smt_checker_keyword꞉ SMTCheckerKeyword): "SMTChecker" # (136..146)
               - (semicolon꞉ PragmaSemicolon): ";" # (146..147)

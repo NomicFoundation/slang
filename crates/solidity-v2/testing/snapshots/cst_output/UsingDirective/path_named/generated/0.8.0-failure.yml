@@ -13,14 +13,14 @@ Error: This syntax was introduced in version '0.8.13'.
    │             ╰────────────── Error occurred here.
 ───╯
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective):
+  - (root꞉ SourceUnit): # "using foo for bar global;" (100..125)
+      - (members꞉ SourceUnitMembers): # "using foo for bar global;" (100..125)
+          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective): # "using foo for bar global;" (100..125)
               - (using_keyword꞉ UsingKeyword): "using" # (100..105)
-              - (clause꞉ UsingClause) ► (identifier_path꞉ IdentifierPath):
+              - (clause꞉ UsingClause) ► (identifier_path꞉ IdentifierPath): # "foo" (106..109)
                   - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "foo" # (106..109)
               - (for_keyword꞉ ForKeyword): "for" # (110..113)
-              - (target꞉ UsingTarget) ► (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath):
+              - (target꞉ UsingTarget) ► (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath): # "bar" (114..117)
                   - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "bar" # (114..117)
               - (global_keyword꞉ GlobalKeyword): "global" # (118..124)
               - (semicolon꞉ Semicolon): ";" # (124..125)

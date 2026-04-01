@@ -26,9 +26,9 @@ Source: >
   23 │ // <<<                                                                                                                                   │ 2110..2116
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+  - (root꞉ SourceUnit): # "contract Foo {}" (2094..2109)
+      - (members꞉ SourceUnitMembers): # "contract Foo {}" (2094..2109)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Foo {}" (2094..2109)
               - (contract_keyword꞉ ContractKeyword): "contract" # (2094..2102)
               - (name꞉ Identifier): "Foo" # (2103..2106)
               - (specifiers꞉ ContractSpecifiers): []

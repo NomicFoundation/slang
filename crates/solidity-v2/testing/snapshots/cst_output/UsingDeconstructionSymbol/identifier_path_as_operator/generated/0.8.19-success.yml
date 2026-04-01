@@ -8,18 +8,18 @@ Source: >
   5  │ } for uint;                                                                                                                     │ 156..167
 
 Tree:
-  - (root꞉ SourceUnit):
-      - (members꞉ SourceUnitMembers):
-          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective):
+  - (root꞉ SourceUnit): # "using {\n// >>> Copied from crates/solidity/testing..." (0..167)
+      - (members꞉ SourceUnitMembers): # "using {\n// >>> Copied from crates/solidity/testing..." (0..167)
+          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective): # "using {\n// >>> Copied from crates/solidity/testing..." (0..167)
               - (using_keyword꞉ UsingKeyword): "using" # (0..5)
-              - (clause꞉ UsingClause) ► (using_deconstruction꞉ UsingDeconstruction):
+              - (clause꞉ UsingClause) ► (using_deconstruction꞉ UsingDeconstruction): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (6..157)
                   - (open_brace꞉ OpenBrace): "{" # (6..7)
-                  - (symbols꞉ UsingDeconstructionSymbols):
-                      - (item꞉ UsingDeconstructionSymbol):
-                          - (name꞉ IdentifierPath):
+                  - (symbols꞉ UsingDeconstructionSymbols): # "foo.bar as /" (136..148)
+                      - (item꞉ UsingDeconstructionSymbol): # "foo.bar as /" (136..148)
+                          - (name꞉ IdentifierPath): # "foo.bar" (136..143)
                               - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "foo" # (136..139)
                               - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "bar" # (140..143)
-                          - (alias꞉ UsingAlias):
+                          - (alias꞉ UsingAlias): # "as /" (144..148)
                               - (as_keyword꞉ AsKeyword): "as" # (144..146)
                               - (operator꞉ UsingOperator) ► (slash꞉ Slash): "/" # (147..148)
                   - (close_brace꞉ CloseBrace): "}" # (156..157)
