@@ -3,7 +3,11 @@ use super::{ContractDefinition, SourceUnitMember, SourceUnitStruct};
 mod contracts;
 pub use contracts::ContractBase;
 
+mod errors;
+mod events;
+mod functions;
 mod identifiers;
+mod state_variables;
 
 impl SourceUnitStruct {
     pub fn file_id(&self) -> String {

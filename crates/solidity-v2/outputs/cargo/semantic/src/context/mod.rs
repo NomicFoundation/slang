@@ -1,11 +1,11 @@
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeId};
 
-use crate::binder::{Binder, Scope};
+use crate::binder::{Binder, Definition, Scope};
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_resolve_references,
 };
-use crate::types::TypeRegistry;
+use crate::types::{Type, TypeId, TypeRegistry};
 
 /// Trait for files that can be used as input to the semantic analysis passes.
 pub trait SemanticFile {
@@ -97,5 +97,211 @@ impl SemanticContext {
             .binder()
             .find_reference_by_identifier_node_id(node_id)?;
         reference.resolution.as_definition_id()
+    }
+
+    pub fn definition_canonical_name(&self, definition_id: NodeId) -> String {
+        self.binder
+            .find_definition_by_id(definition_id)
+            .unwrap()
+            .identifier()
+            .unparse()
+            .to_string()
+    }
+
+    pub fn type_internal_name(&self, type_id: TypeId) -> String {
+        match self.types.get_type_by_id(type_id) {
+            Type::Address { .. } => "address".to_string(),
+            Type::Array { element_type, .. } => {
+                format!(
+                    "{element}[]",
+                    element = self.type_internal_name(*element_type)
+                )
+            }
+            Type::Boolean => "bool".to_string(),
+            Type::ByteArray { width } => format!("bytes{width}"),
+            Type::Bytes { .. } => "bytes".to_string(),
+            Type::FixedPointNumber {
+                signed,
+                bits,
+                precision_bits,
+            } => format!(
+                "{prefix}{bits}x{precision_bits}",
+                prefix = if *signed { "fixed" } else { "ufixed" },
+            ),
+            Type::FixedSizeArray {
+                element_type, size, ..
+            } => {
+                format!(
+                    "{element}[{size}]",
+                    element = self.type_internal_name(*element_type),
+                )
+            }
+            Type::Function(_) => "function".to_string(),
+            Type::Integer { signed, bits } => format!(
+                "{prefix}{bits}",
+                prefix = if *signed { "int" } else { "uint" }
+            ),
+            Type::Literal(_) => "literal".to_string(),
+            Type::Mapping {
+                key_type_id,
+                value_type_id,
+            } => format!(
+                "mapping({key_type} => {value_type})",
+                key_type = self.type_internal_name(*key_type_id),
+                value_type = self.type_internal_name(*value_type_id)
+            ),
+            Type::String { .. } => "string".to_string(),
+            Type::Tuple { types } => format!(
+                "({types})",
+                types = types
+                    .iter()
+                    .map(|type_id| self.type_internal_name(*type_id))
+                    .collect::<Vec<_>>()
+                    .join(",")
+            ),
+            Type::Contract { definition_id }
+            | Type::Enum { definition_id }
+            | Type::Interface { definition_id }
+            | Type::Struct { definition_id, .. }
+            | Type::UserDefinedValue { definition_id } => {
+                self.definition_canonical_name(*definition_id)
+            }
+            Type::Void => "void".to_string(),
+        }
+    }
+
+    pub fn type_canonical_name(&self, type_id: TypeId) -> Option<String> {
+        match self.types.get_type_by_id(type_id) {
+            Type::Address { .. }
+            | Type::Boolean
+            | Type::ByteArray { .. }
+            | Type::Bytes { .. }
+            | Type::FixedPointNumber { .. }
+            | Type::Function(_)
+            | Type::Integer { .. }
+            | Type::String { .. } => Some(self.type_internal_name(type_id)),
+
+            Type::Array { element_type, .. } => self
+                .type_canonical_name(*element_type)
+                .map(|element| format!("{element}[]",)),
+            Type::FixedSizeArray {
+                element_type, size, ..
+            } => self
+                .type_canonical_name(*element_type)
+                .map(|element| format!("{element}[{size}]",)),
+
+            Type::Contract { .. } | Type::Interface { .. } => Some("address".to_string()),
+
+            Type::Enum { .. } => Some("uint8".to_string()),
+
+            Type::Struct { definition_id, .. } => {
+                let Definition::Struct(struct_) = self
+                    .binder
+                    .find_definition_by_id(*definition_id)
+                    .expect("definition in type exists")
+                else {
+                    unreachable!("definition in struct type is not a struct");
+                };
+                let mut fields = Vec::new();
+                for member in &struct_.ir_node.members {
+                    let member_type_id = self.binder.node_typing(member.id()).as_type_id()?;
+                    let field_type = self.type_canonical_name(member_type_id)?;
+                    fields.push(field_type);
+                }
+                Some(format!("({fields})", fields = fields.join(",")))
+            }
+
+            Type::UserDefinedValue { definition_id } => {
+                let Definition::UserDefinedValueType(udvt) = self
+                    .binder
+                    .find_definition_by_id(*definition_id)
+                    .expect("definition in type exists")
+                else {
+                    unreachable!("definition in user defined value type is not a UDVT");
+                };
+                udvt.target_type_id
+                    .and_then(|type_id| self.type_canonical_name(type_id))
+            }
+
+            Type::Literal(_) | Type::Mapping { .. } | Type::Tuple { .. } | Type::Void => None,
+        }
+    }
+
+    pub const SLOT_SIZE: usize = 32;
+    pub const ADDRESS_BYTE_SIZE: usize = 20;
+    pub const SELECTOR_SIZE: usize = 4;
+
+    pub fn storage_size_of_type_id(&self, type_id: TypeId) -> Option<usize> {
+        match self.types.get_type_by_id(type_id) {
+            Type::Address { .. } | Type::Contract { .. } | Type::Interface { .. } => {
+                Some(Self::ADDRESS_BYTE_SIZE)
+            }
+            Type::Boolean => Some(1),
+            Type::FixedPointNumber { bits, .. } | Type::Integer { bits, .. } => {
+                Some((bits.div_ceil(8)).try_into().unwrap())
+            }
+            Type::ByteArray { width } => Some((*width).try_into().unwrap()),
+            Type::Enum { .. } => Some(1),
+            Type::Bytes { .. } | Type::String { .. } => Some(Self::SLOT_SIZE),
+            Type::Mapping { .. } => Some(Self::SLOT_SIZE),
+
+            Type::Array { .. } => Some(Self::SLOT_SIZE),
+            Type::FixedSizeArray {
+                element_type, size, ..
+            } => {
+                let element_size = self.storage_size_of_type_id(*element_type)?;
+                if element_size > Self::SLOT_SIZE {
+                    let slots_per_element = element_size.div_ceil(Self::SLOT_SIZE);
+                    Some(slots_per_element * size * Self::SLOT_SIZE)
+                } else {
+                    let elements_per_slot = Self::SLOT_SIZE / element_size;
+                    let num_slots = size.div_ceil(elements_per_slot);
+                    Some(num_slots * Self::SLOT_SIZE)
+                }
+            }
+
+            Type::Function(function_type) => {
+                if function_type.is_externally_visible() {
+                    Some(Self::ADDRESS_BYTE_SIZE + Self::SELECTOR_SIZE)
+                } else {
+                    // NOTE: an internal function ref type is 8 bytes long, it's
+                    // opaque and its meaning not documented
+                    Some(8)
+                }
+            }
+            Type::Struct { definition_id, .. } => {
+                let Definition::Struct(struct_definition) =
+                    self.binder.find_definition_by_id(*definition_id)?
+                else {
+                    return None;
+                };
+                let mut ptr: usize = 0;
+                for member in &struct_definition.ir_node.members {
+                    let member_type_id = self.binder.node_typing(member.id()).as_type_id()?;
+                    let member_size = self.storage_size_of_type_id(member_type_id)?;
+                    let remaining_bytes = Self::SLOT_SIZE - (ptr % Self::SLOT_SIZE);
+                    if remaining_bytes < Self::SLOT_SIZE && member_size >= remaining_bytes {
+                        ptr += remaining_bytes;
+                    }
+                    ptr += member_size;
+                }
+                // round up the final allocation to a full slot, because the
+                // next variable needs to start at the next slot anyway
+                ptr = ptr.div_ceil(Self::SLOT_SIZE) * Self::SLOT_SIZE;
+                Some(ptr)
+            }
+            Type::UserDefinedValue { definition_id } => {
+                let Definition::UserDefinedValueType(user_defined_value) =
+                    self.binder.find_definition_by_id(*definition_id)?
+                else {
+                    return None;
+                };
+                self.storage_size_of_type_id(user_defined_value.target_type_id?)
+            }
+
+            Type::Literal(_) => None,
+            Type::Tuple { .. } => None,
+            Type::Void => None,
+        }
     }
 }

@@ -20,6 +20,7 @@ categories = ["compilers", "utilities"]
 
 [dependencies]
 paste = { workspace = true }
+sha3 = { workspace = true }
 slang_solidity_v2_ir = { workspace = true }
 slang_solidity_v2_semantic = { workspace = true }
 
