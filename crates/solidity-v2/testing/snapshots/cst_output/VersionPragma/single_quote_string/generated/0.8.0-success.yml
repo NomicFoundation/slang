@@ -9,14 +9,14 @@ Source: >
   6  │ ;                                                                                                           │ 140..141
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (pragma_directive: PragmaDirective):
-              - (pragma_keyword: PragmaKeyword): "pragma" # (0..6)
-              - (pragma: Pragma) ► (version_pragma: VersionPragma):
-                  - (solidity_keyword: SolidityKeyword): "solidity" # (115..123)
-                  - (sets: VersionExpressionSets):
-                      - (item: VersionExpressionSet):
-                          - (item: VersionExpression) ► (version_term: VersionTerm):
-                              - (literal: VersionLiteral) ► (pragma_string_literal: PragmaStringLiteral): "'1.2.3'" # (124..131)
-              - (semicolon: PragmaSemicolon): ";" # (140..141)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective):
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma):
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (115..123)
+                  - (sets꞉ VersionExpressionSets):
+                      - (item꞉ VersionExpressionSet):
+                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm):
+                              - (literal꞉ VersionLiteral) ► (pragma_string_literal꞉ PragmaStringLiteral): "'1.2.3'" # (124..131)
+              - (semicolon꞉ PragmaSemicolon): ";" # (140..141)

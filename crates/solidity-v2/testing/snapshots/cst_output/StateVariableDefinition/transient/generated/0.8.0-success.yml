@@ -9,18 +9,18 @@ Source: >
   6  │ }                                                                                                           │ 149..150
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (contract_keyword: ContractKeyword): "contract" # (0..8)
-              - (name: Identifier): "C" # (9..10)
-              - (specifiers: ContractSpecifiers): []
-              - (open_brace: OpenBrace): "{" # (11..12)
-              - (members: ContractMembers):
-                  - (item: ContractMember) ► (state_variable_definition: StateVariableDefinition):
-                      - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint" # (121..125)
-                      - (attributes: StateVariableAttributes):
-                          - (item: StateVariableAttribute) ► (transient_keyword: TransientKeyword): "transient" # (126..135)
-                      - (name: Identifier): "foo" # (136..139)
-                      - (semicolon: Semicolon): ";" # (139..140)
-              - (close_brace: CloseBrace): "}" # (149..150)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers):
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition):
+                      - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (121..125)
+                      - (attributes꞉ StateVariableAttributes):
+                          - (item꞉ StateVariableAttribute) ► (transient_keyword꞉ TransientKeyword): "transient" # (126..135)
+                      - (name꞉ Identifier): "foo" # (136..139)
+                      - (semicolon꞉ Semicolon): ";" # (139..140)
+              - (close_brace꞉ CloseBrace): "}" # (149..150)

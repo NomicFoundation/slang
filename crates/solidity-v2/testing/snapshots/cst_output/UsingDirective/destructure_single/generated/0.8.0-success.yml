@@ -6,19 +6,19 @@ Source: >
   3  │ // <<<                                                                                                      │ 136..142
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (using_directive: UsingDirective):
-              - (using_keyword: UsingKeyword): "using" # (108..113)
-              - (clause: UsingClause) ► (using_deconstruction: UsingDeconstruction):
-                  - (open_brace: OpenBrace): "{" # (114..115)
-                  - (symbols: UsingDeconstructionSymbols):
-                      - (item: UsingDeconstructionSymbol):
-                          - (name: IdentifierPath):
-                              - (item: IdentifierPathElement) ► (identifier: Identifier): "add" # (115..118)
-                  - (close_brace: CloseBrace): "}" # (118..119)
-              - (for_keyword: ForKeyword): "for" # (120..123)
-              - (target: UsingTarget) ► (type_name: TypeName) ► (identifier_path: IdentifierPath):
-                  - (item: IdentifierPathElement) ► (identifier: Identifier): "Int" # (124..127)
-              - (global_keyword: GlobalKeyword): "global" # (128..134)
-              - (semicolon: Semicolon): ";" # (134..135)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective):
+              - (using_keyword꞉ UsingKeyword): "using" # (108..113)
+              - (clause꞉ UsingClause) ► (using_deconstruction꞉ UsingDeconstruction):
+                  - (open_brace꞉ OpenBrace): "{" # (114..115)
+                  - (symbols꞉ UsingDeconstructionSymbols):
+                      - (item꞉ UsingDeconstructionSymbol):
+                          - (name꞉ IdentifierPath):
+                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "add" # (115..118)
+                  - (close_brace꞉ CloseBrace): "}" # (118..119)
+              - (for_keyword꞉ ForKeyword): "for" # (120..123)
+              - (target꞉ UsingTarget) ► (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath):
+                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "Int" # (124..127)
+              - (global_keyword꞉ GlobalKeyword): "global" # (128..134)
+              - (semicolon꞉ Semicolon): ";" # (134..135)

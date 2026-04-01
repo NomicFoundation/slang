@@ -12,44 +12,44 @@ Source: >
   9  │ }                                                                                                       │ 197..198
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (contract_keyword: ContractKeyword): "contract" # (0..8)
-              - (name: Identifier): "C" # (9..10)
-              - (specifiers: ContractSpecifiers): []
-              - (open_brace: OpenBrace): "{" # (11..12)
-              - (members: ContractMembers):
-                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
-                      - (function_keyword: FunctionKeyword): "function" # (17..25)
-                      - (name: FunctionName) ► (identifier: Identifier): "f" # (26..27)
-                      - (parameters: ParametersDeclaration):
-                          - (open_paren: OpenParen): "(" # (27..28)
-                          - (parameters: Parameters): []
-                          - (close_paren: CloseParen): ")" # (28..29)
-                      - (attributes: FunctionAttributes): []
-                      - (body: FunctionBody) ► (block: Block):
-                          - (open_brace: OpenBrace): "{" # (30..31)
-                          - (statements: Statements):
-                              - (item: Statement) ► (expression_statement: ExpressionStatement):
-                                  - (expression: Expression) ► (conditional_expression: ConditionalExpression):
-                                      - (operand: Expression) ► (identifier: Identifier): "cond" # (136..140)
-                                      - (question_mark: QuestionMark): "?" # (141..142)
-                                      - (true_expression: Expression) ► (prefix_expression: PrefixExpression):
-                                          - (expression_prefix_expression_operator: Expression_PrefixExpression_Operator) ► (delete_keyword: DeleteKeyword): "delete" # (143..149)
-                                          - (operand: Expression) ► (index_access_expression: IndexAccessExpression):
-                                              - (operand: Expression) ► (identifier: Identifier): "obj" # (150..153)
-                                              - (open_bracket: OpenBracket): "[" # (153..154)
-                                              - (start: Expression) ► (identifier: Identifier): "slot1" # (154..159)
-                                              - (close_bracket: CloseBracket): "]" # (159..160)
-                                      - (colon: Colon): ":" # (161..162)
-                                      - (false_expression: Expression) ► (prefix_expression: PrefixExpression):
-                                          - (expression_prefix_expression_operator: Expression_PrefixExpression_Operator) ► (delete_keyword: DeleteKeyword): "delete" # (163..169)
-                                          - (operand: Expression) ► (index_access_expression: IndexAccessExpression):
-                                              - (operand: Expression) ► (identifier: Identifier): "obj" # (170..173)
-                                              - (open_bracket: OpenBracket): "[" # (173..174)
-                                              - (start: Expression) ► (identifier: Identifier): "slot2" # (174..179)
-                                              - (close_bracket: CloseBracket): "]" # (179..180)
-                                  - (semicolon: Semicolon): ";" # (189..190)
-                          - (close_brace: CloseBrace): "}" # (195..196)
-              - (close_brace: CloseBrace): "}" # (197..198)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers):
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration):
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements):
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement):
+                                  - (expression꞉ Expression) ► (conditional_expression꞉ ConditionalExpression):
+                                      - (operand꞉ Expression) ► (identifier꞉ Identifier): "cond" # (136..140)
+                                      - (question_mark꞉ QuestionMark): "?" # (141..142)
+                                      - (true_expression꞉ Expression) ► (prefix_expression꞉ PrefixExpression):
+                                          - (expression_prefix_expression_operator꞉ Expression_PrefixExpression_Operator) ► (delete_keyword꞉ DeleteKeyword): "delete" # (143..149)
+                                          - (operand꞉ Expression) ► (index_access_expression꞉ IndexAccessExpression):
+                                              - (operand꞉ Expression) ► (identifier꞉ Identifier): "obj" # (150..153)
+                                              - (open_bracket꞉ OpenBracket): "[" # (153..154)
+                                              - (start꞉ Expression) ► (identifier꞉ Identifier): "slot1" # (154..159)
+                                              - (close_bracket꞉ CloseBracket): "]" # (159..160)
+                                      - (colon꞉ Colon): ":" # (161..162)
+                                      - (false_expression꞉ Expression) ► (prefix_expression꞉ PrefixExpression):
+                                          - (expression_prefix_expression_operator꞉ Expression_PrefixExpression_Operator) ► (delete_keyword꞉ DeleteKeyword): "delete" # (163..169)
+                                          - (operand꞉ Expression) ► (index_access_expression꞉ IndexAccessExpression):
+                                              - (operand꞉ Expression) ► (identifier꞉ Identifier): "obj" # (170..173)
+                                              - (open_bracket꞉ OpenBracket): "[" # (173..174)
+                                              - (start꞉ Expression) ► (identifier꞉ Identifier): "slot2" # (174..179)
+                                              - (close_bracket꞉ CloseBracket): "]" # (179..180)
+                                  - (semicolon꞉ Semicolon): ";" # (189..190)
+                          - (close_brace꞉ CloseBrace): "}" # (195..196)
+              - (close_brace꞉ CloseBrace): "}" # (197..198)

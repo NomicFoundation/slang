@@ -6,14 +6,14 @@ Source: >
   3  │ // <<<                                                                                              │ 126..132
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (using_directive: UsingDirective):
-              - (using_keyword: UsingKeyword): "using" # (100..105)
-              - (clause: UsingClause) ► (identifier_path: IdentifierPath):
-                  - (item: IdentifierPathElement) ► (identifier: Identifier): "foo" # (106..109)
-              - (for_keyword: ForKeyword): "for" # (110..113)
-              - (target: UsingTarget) ► (type_name: TypeName) ► (identifier_path: IdentifierPath):
-                  - (item: IdentifierPathElement) ► (identifier: Identifier): "bar" # (114..117)
-              - (global_keyword: GlobalKeyword): "global" # (118..124)
-              - (semicolon: Semicolon): ";" # (124..125)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective):
+              - (using_keyword꞉ UsingKeyword): "using" # (100..105)
+              - (clause꞉ UsingClause) ► (identifier_path꞉ IdentifierPath):
+                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "foo" # (106..109)
+              - (for_keyword꞉ ForKeyword): "for" # (110..113)
+              - (target꞉ UsingTarget) ► (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath):
+                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "bar" # (114..117)
+              - (global_keyword꞉ GlobalKeyword): "global" # (118..124)
+              - (semicolon꞉ Semicolon): ";" # (124..125)

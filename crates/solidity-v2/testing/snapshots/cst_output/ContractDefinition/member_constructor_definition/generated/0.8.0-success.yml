@@ -9,24 +9,24 @@ Source: >
   6  │ // <<<                                                                                                                     │ 172..178
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (contract_keyword: ContractKeyword): "contract" # (123..131)
-              - (name: Identifier): "Sample" # (132..138)
-              - (specifiers: ContractSpecifiers): []
-              - (open_brace: OpenBrace): "{" # (139..140)
-              - (members: ContractMembers):
-                  - (item: ContractMember) ► (constructor_definition: ConstructorDefinition):
-                      - (constructor_keyword: ConstructorKeyword): "constructor" # (143..154)
-                      - (parameters: ParametersDeclaration):
-                          - (open_paren: OpenParen): "(" # (154..155)
-                          - (parameters: Parameters): []
-                          - (close_paren: CloseParen): ")" # (155..156)
-                      - (attributes: ConstructorAttributes):
-                          - (item: ConstructorAttribute) ► (public_keyword: PublicKeyword): "public" # (157..163)
-                      - (body: Block):
-                          - (open_brace: OpenBrace): "{" # (164..165)
-                          - (statements: Statements): []
-                          - (close_brace: CloseBrace): "}" # (168..169)
-              - (close_brace: CloseBrace): "}" # (170..171)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (123..131)
+              - (name꞉ Identifier): "Sample" # (132..138)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (139..140)
+              - (members꞉ ContractMembers):
+                  - (item꞉ ContractMember) ► (constructor_definition꞉ ConstructorDefinition):
+                      - (constructor_keyword꞉ ConstructorKeyword): "constructor" # (143..154)
+                      - (parameters꞉ ParametersDeclaration):
+                          - (open_paren꞉ OpenParen): "(" # (154..155)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (155..156)
+                      - (attributes꞉ ConstructorAttributes):
+                          - (item꞉ ConstructorAttribute) ► (public_keyword꞉ PublicKeyword): "public" # (157..163)
+                      - (body꞉ Block):
+                          - (open_brace꞉ OpenBrace): "{" # (164..165)
+                          - (statements꞉ Statements): []
+                          - (close_brace꞉ CloseBrace): "}" # (168..169)
+              - (close_brace꞉ CloseBrace): "}" # (170..171)

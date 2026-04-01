@@ -12,12 +12,12 @@ Source: >
   9  │ // <<<                                                                                                            │ 242..248
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (contract_keyword: ContractKeyword): "contract" # (212..220)
-              - (name: Identifier): "Foo" # (221..224)
-              - (specifiers: ContractSpecifiers): []
-              - (open_brace: OpenBrace): "{" # (225..226)
-              - (members: ContractMembers): []
-              - (close_brace: CloseBrace): "}" # (234..235)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (212..220)
+              - (name꞉ Identifier): "Foo" # (221..224)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (225..226)
+              - (members꞉ ContractMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (234..235)

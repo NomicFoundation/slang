@@ -6,32 +6,32 @@ Source: >
   3  │ // <<<                                                                                                             │ 157..163
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (contract_keyword: ContractKeyword): "contract" # (115..123)
-              - (name: Identifier): "Sample" # (124..130)
-              - (specifiers: ContractSpecifiers):
-                  - (item: ContractSpecifier) ► (inheritance_specifier: InheritanceSpecifier):
-                      - (is_keyword: IsKeyword): "is" # (131..133)
-                      - (types: InheritanceTypes):
-                          - (item: InheritanceType):
-                              - (type_name: IdentifierPath):
-                                  - (item: IdentifierPathElement) ► (identifier: Identifier): "Foo" # (134..137)
-                          - (item: InheritanceType):
-                              - (type_name: IdentifierPath):
-                                  - (item: IdentifierPathElement) ► (identifier: Identifier): "Bar" # (139..142)
-                              - (arguments: ArgumentsDeclaration) ► (positional_arguments_declaration: PositionalArgumentsDeclaration):
-                                  - (open_paren: OpenParen): "(" # (142..143)
-                                  - (arguments: PositionalArguments):
-                                      - (item: Expression) ► (decimal_number_expression: DecimalNumberExpression):
-                                          - (literal: DecimalLiteral): "1" # (143..144)
-                                      - (item: Expression) ► (decimal_number_expression: DecimalNumberExpression):
-                                          - (literal: DecimalLiteral): "2" # (146..147)
-                                  - (close_paren: CloseParen): ")" # (147..148)
-                          - (item: InheritanceType):
-                              - (type_name: IdentifierPath):
-                                  - (item: IdentifierPathElement) ► (identifier: Identifier): "Baz" # (150..153)
-              - (open_brace: OpenBrace): "{" # (154..155)
-              - (members: ContractMembers): []
-              - (close_brace: CloseBrace): "}" # (155..156)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (115..123)
+              - (name꞉ Identifier): "Sample" # (124..130)
+              - (specifiers꞉ ContractSpecifiers):
+                  - (item꞉ ContractSpecifier) ► (inheritance_specifier꞉ InheritanceSpecifier):
+                      - (is_keyword꞉ IsKeyword): "is" # (131..133)
+                      - (types꞉ InheritanceTypes):
+                          - (item꞉ InheritanceType):
+                              - (type_name꞉ IdentifierPath):
+                                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "Foo" # (134..137)
+                          - (item꞉ InheritanceType):
+                              - (type_name꞉ IdentifierPath):
+                                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "Bar" # (139..142)
+                              - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration):
+                                  - (open_paren꞉ OpenParen): "(" # (142..143)
+                                  - (arguments꞉ PositionalArguments):
+                                      - (item꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression):
+                                          - (literal꞉ DecimalLiteral): "1" # (143..144)
+                                      - (item꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression):
+                                          - (literal꞉ DecimalLiteral): "2" # (146..147)
+                                  - (close_paren꞉ CloseParen): ")" # (147..148)
+                          - (item꞉ InheritanceType):
+                              - (type_name꞉ IdentifierPath):
+                                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "Baz" # (150..153)
+              - (open_brace꞉ OpenBrace): "{" # (154..155)
+              - (members꞉ ContractMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (155..156)

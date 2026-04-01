@@ -13,36 +13,36 @@ Source: >
   10 │ }                                                                                                      │ 188..189
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (contract_keyword: ContractKeyword): "contract" # (0..8)
-              - (name: Identifier): "C" # (9..10)
-              - (specifiers: ContractSpecifiers): []
-              - (open_brace: OpenBrace): "{" # (11..12)
-              - (members: ContractMembers):
-                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
-                      - (function_keyword: FunctionKeyword): "function" # (17..25)
-                      - (name: FunctionName) ► (identifier: Identifier): "f" # (26..27)
-                      - (parameters: ParametersDeclaration):
-                          - (open_paren: OpenParen): "(" # (27..28)
-                          - (parameters: Parameters): []
-                          - (close_paren: CloseParen): ")" # (28..29)
-                      - (attributes: FunctionAttributes): []
-                      - (body: FunctionBody) ► (block: Block):
-                          - (open_brace: OpenBrace): "{" # (30..31)
-                          - (statements: Statements):
-                              - (item: Statement) ► (assembly_statement: AssemblyStatement):
-                                  - (assembly_keyword: AssemblyKeyword): "assembly" # (135..143)
-                                  - (label: YulStringLiteral): '"evmasm"' # (144..152)
-                                  - (flags: YulFlagsDeclaration):
-                                      - (open_paren: YulOpenParen): "(" # (153..154)
-                                      - (flags: YulFlags):
-                                          - (item: YulStringLiteral): '"memory-safe"' # (154..167)
-                                      - (close_paren: YulCloseParen): ")" # (167..168)
-                                  - (body: YulBlock):
-                                      - (open_brace: YulOpenBrace): "{" # (169..170)
-                                      - (statements: YulStatements): []
-                                      - (close_brace: YulCloseBrace): "}" # (172..173)
-                          - (close_brace: CloseBrace): "}" # (186..187)
-              - (close_brace: CloseBrace): "}" # (188..189)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers):
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration):
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements):
+                              - (item꞉ Statement) ► (assembly_statement꞉ AssemblyStatement):
+                                  - (assembly_keyword꞉ AssemblyKeyword): "assembly" # (135..143)
+                                  - (label꞉ YulStringLiteral): '"evmasm"' # (144..152)
+                                  - (flags꞉ YulFlagsDeclaration):
+                                      - (open_paren꞉ YulOpenParen): "(" # (153..154)
+                                      - (flags꞉ YulFlags):
+                                          - (item꞉ YulStringLiteral): '"memory-safe"' # (154..167)
+                                      - (close_paren꞉ YulCloseParen): ")" # (167..168)
+                                  - (body꞉ YulBlock):
+                                      - (open_brace꞉ YulOpenBrace): "{" # (169..170)
+                                      - (statements꞉ YulStatements): []
+                                      - (close_brace꞉ YulCloseBrace): "}" # (172..173)
+                          - (close_brace꞉ CloseBrace): "}" # (186..187)
+              - (close_brace꞉ CloseBrace): "}" # (188..189)

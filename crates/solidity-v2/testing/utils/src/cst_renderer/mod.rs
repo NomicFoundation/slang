@@ -3,27 +3,47 @@ use std::fmt::Write;
 use std::ops::Range;
 
 use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit;
+use slang_solidity_v2_parser::ParserError;
+
+use crate::reporting::diagnostic;
 
 #[path = "renderer.generated.rs"]
 mod renderer;
 
-pub fn render(source: &str, cst: &SourceUnit) -> String {
+/// Render a parse result (success or failure) to YAML format.
+///
+/// Returns `(status, content)` where status is `"success"` or `"failure"`.
+pub fn render(
+    source: &str,
+    source_id: &str,
+    result: &Result<SourceUnit, ParserError>,
+) -> (&'static str, String) {
     let mut w = String::new();
 
     write_source(&mut w, source);
     writeln!(&mut w).unwrap();
 
-    writeln!(&mut w, "Tree:").unwrap();
-    let mut ctx = RenderContext {
-        source,
-        w: &mut w,
-        depth: 0,
-    };
-    ctx.write_indent();
-    ctx.write_key("root", "SourceUnit");
-    renderer::render_source_unit(&mut ctx, cst);
+    match result {
+        Ok(cst) => {
+            writeln!(&mut w, "Tree:").unwrap();
+            let mut ctx = RenderContext {
+                source,
+                w: &mut w,
+                depth: 0,
+            };
+            ctx.write_indent();
+            ctx.write_key("root", "SourceUnit");
+            renderer::render_source_unit(&mut ctx, cst);
 
-    w
+            ("success", w)
+        }
+        Err(err) => {
+            let errors = diagnostic::render(err, source_id, source, false);
+            writeln!(&mut w, "{errors}").unwrap();
+
+            ("failure", w)
+        }
+    }
 }
 
 pub(crate) struct RenderContext<'a> {
@@ -39,7 +59,9 @@ impl RenderContext<'_> {
     }
 
     pub fn write_key(&mut self, label: &str, kind: &str) {
-        write!(self.w, "({label}: {kind})").unwrap();
+        // Note: \u{a789} (MODIFIER LETTER COLON) is used instead of : to avoid
+        // conflicting with YAML's key-value syntax, which breaks YAML linters.
+        write!(self.w, "({label}\u{a789} {kind})").unwrap();
     }
 
     pub fn write_connector(&mut self) {
@@ -94,9 +116,11 @@ fn write_source(w: &mut String, source: &str) {
     let mut offset = 0;
     for (index, line, bytes, chars) in &line_data {
         let range = offset..(offset + bytes);
+        // Note: │ (U+2502, BOX DRAWINGS LIGHT VERTICAL) is used instead of |
+        // to avoid confusion with Solidity's bitwise OR operator in source code.
         writeln!(
             w,
-            "  {line_number: <2} \u{2502} {line}{padding} \u{2502} {range:?}",
+            "  {line_number: <2} │ {line}{padding} │ {range:?}",
             line_number = index + 1,
             padding = " ".repeat(source_width - chars),
         )

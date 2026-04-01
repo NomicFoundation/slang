@@ -1,5 +1,8 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Source: >
+  1  │ uint constant x = .;                                                             │ 0..20
+
 Error: Unexpected Period. One of AddressKeyword_Reserved, AtKeyword_Unreserved, Bang, BoolKeyword_Reserved, BytesKeyword_Reserved, DecimalLiteral, DeleteKeyword_Reserved, ErrorKeyword_Unreserved, FalseKeyword_Reserved, FixedKeyword_Reserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, HexLiteral, HexStringLiteral, Identifier, IntKeyword_Reserved, LayoutKeyword_Unreserved, Minus, MinusMinus, NewKeyword_Reserved, OpenBracket, OpenParen, PayableKeyword_Reserved, PlusPlus, RevertKeyword_Unreserved, StringKeyword_Reserved, StringLiteral, SuperKeyword_Reserved, ThisKeyword_Reserved, Tilde, TransientKeyword_Unreserved, TrueKeyword_Reserved, TypeKeyword_Reserved, UfixedKeyword_Reserved, UintKeyword_Reserved, UnicodeStringLiteral was expected
    ╭─[crates/solidity-v2/testing/snapshots/cst_output/DecimalNumberExpression/bare_period/input.sol:1:19]
    │

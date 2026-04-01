@@ -8,18 +8,18 @@ Source: >
   5  │ // <<<                                                                                                                                 │ 175..181
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (contract_keyword: ContractKeyword): "contract" # (135..143)
-              - (name: Identifier): "Sample" # (144..150)
-              - (specifiers: ContractSpecifiers): []
-              - (open_brace: OpenBrace): "{" # (151..152)
-              - (members: ContractMembers):
-                  - (item: ContractMember) ► (user_defined_value_type_definition: UserDefinedValueTypeDefinition):
-                      - (type_keyword: TypeKeyword): "type" # (155..159)
-                      - (name: Identifier): "Foo" # (160..163)
-                      - (is_keyword: IsKeyword): "is" # (164..166)
-                      - (value_type: ElementaryType) ► (bool_keyword: BoolKeyword): "bool" # (167..171)
-                      - (semicolon: Semicolon): ";" # (171..172)
-              - (close_brace: CloseBrace): "}" # (173..174)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (135..143)
+              - (name꞉ Identifier): "Sample" # (144..150)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (151..152)
+              - (members꞉ ContractMembers):
+                  - (item꞉ ContractMember) ► (user_defined_value_type_definition꞉ UserDefinedValueTypeDefinition):
+                      - (type_keyword꞉ TypeKeyword): "type" # (155..159)
+                      - (name꞉ Identifier): "Foo" # (160..163)
+                      - (is_keyword꞉ IsKeyword): "is" # (164..166)
+                      - (value_type꞉ ElementaryType) ► (bool_keyword꞉ BoolKeyword): "bool" # (167..171)
+                      - (semicolon꞉ Semicolon): ";" # (171..172)
+              - (close_brace꞉ CloseBrace): "}" # (173..174)

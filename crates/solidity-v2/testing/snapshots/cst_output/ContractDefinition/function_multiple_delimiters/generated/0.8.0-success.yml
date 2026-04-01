@@ -15,100 +15,100 @@ Source: >
   12 │ // <<<                                                                                                                    │ 475..481
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (contract_keyword: ContractKeyword): "contract" # (154..162)
-              - (name: Identifier): "ABC" # (163..166)
-              - (specifiers: ContractSpecifiers): []
-              - (open_brace: OpenBrace): "{" # (167..168)
-              - (members: ContractMembers):
-                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
-                      - (function_keyword: FunctionKeyword): "function" # (171..179)
-                      - (name: FunctionName) ► (identifier: Identifier): "sendValue" # (180..189)
-                      - (parameters: ParametersDeclaration):
-                          - (open_paren: OpenParen): "(" # (189..190)
-                          - (parameters: Parameters):
-                              - (item: Parameter):
-                                  - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (address_type: AddressType):
-                                      - (address_keyword: AddressKeyword): "address" # (190..197)
-                                      - (payable_keyword: PayableKeyword): "payable" # (198..205)
-                                  - (name: Identifier): "recipient" # (206..215)
-                              - (item: Parameter):
-                                  - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint256" # (217..224)
-                                  - (name: Identifier): "amount" # (225..231)
-                          - (close_paren: CloseParen): ")" # (231..232)
-                      - (attributes: FunctionAttributes):
-                          - (item: FunctionAttribute) ► (internal_keyword: InternalKeyword): "internal" # (233..241)
-                      - (body: FunctionBody) ► (block: Block):
-                          - (open_brace: OpenBrace): "{" # (242..243)
-                          - (statements: Statements):
-                              - (item: Statement) ► (expression_statement: ExpressionStatement):
-                                  - (expression: Expression) ► (function_call_expression: FunctionCallExpression):
-                                      - (operand: Expression) ► (identifier: Identifier): "require" # (248..255)
-                                      - (arguments: ArgumentsDeclaration) ► (positional_arguments_declaration: PositionalArgumentsDeclaration):
-                                          - (open_paren: OpenParen): "(" # (255..256)
-                                          - (arguments: PositionalArguments):
-                                              - (item: Expression) ► (inequality_expression: InequalityExpression):
-                                                  - (left_operand: Expression) ► (member_access_expression: MemberAccessExpression):
-                                                      - (operand: Expression) ► (function_call_expression: FunctionCallExpression):
-                                                          - (operand: Expression) ► (elementary_type: ElementaryType) ► (address_type: AddressType):
-                                                              - (address_keyword: AddressKeyword): "address" # (256..263)
-                                                          - (arguments: ArgumentsDeclaration) ► (positional_arguments_declaration: PositionalArgumentsDeclaration):
-                                                              - (open_paren: OpenParen): "(" # (263..264)
-                                                              - (arguments: PositionalArguments):
-                                                                  - (item: Expression) ► (this_keyword: ThisKeyword): "this" # (264..268)
-                                                              - (close_paren: CloseParen): ")" # (268..269)
-                                                      - (period: Period): "." # (269..270)
-                                                      - (member: IdentifierPathElement) ► (identifier: Identifier): "balance" # (270..277)
-                                                  - (expression_inequality_expression_operator: Expression_InequalityExpression_Operator) ► (greater_than_equal: GreaterThanEqual): ">=" # (278..280)
-                                                  - (right_operand: Expression) ► (identifier: Identifier): "amount" # (281..287)
-                                              - (item: Expression) ► (string_expression: StringExpression) ► (string_literals: StringLiterals):
-                                                  - (item: StringLiteral): '"Address: insufficient balance"' # (289..320)
-                                          - (close_paren: CloseParen): ")" # (320..321)
-                                  - (semicolon: Semicolon): ";" # (321..322)
-                              - (item: Statement) ► (variable_declaration_statement: VariableDeclarationStatement):
-                                  - (target: VariableDeclarationTarget) ► (multi_typed_declaration: MultiTypedDeclaration):
-                                      - (open_paren: OpenParen): "(" # (328..329)
-                                      - (elements: MultiTypedDeclarationElements):
-                                          - (item: MultiTypedDeclarationElement):
-                                              - (member: VariableDeclaration):
-                                                  - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (bool_keyword: BoolKeyword): "bool" # (329..333)
-                                                  - (name: Identifier): "success" # (334..341)
-                                          - (item: MultiTypedDeclarationElement):
-                                      - (close_paren: CloseParen): ")" # (343..344)
-                                      - (value: VariableDeclarationValue):
-                                          - (equal: Equal): "=" # (345..346)
-                                          - (expression: Expression) ► (function_call_expression: FunctionCallExpression):
-                                              - (operand: Expression) ► (call_options_expression: CallOptionsExpression):
-                                                  - (operand: Expression) ► (member_access_expression: MemberAccessExpression):
-                                                      - (operand: Expression) ► (identifier: Identifier): "recipient" # (347..356)
-                                                      - (period: Period): "" # (0..0)
-                                                      - (member: IdentifierPathElement) ► (identifier: Identifier): "call" # (357..361)
-                                                  - (open_brace: OpenBrace): "{" # (361..362)
-                                                  - (options: CallOptions):
-                                                      - (item: NamedArgument):
-                                                          - (name: Identifier): "value" # (363..368)
-                                                          - (colon: Colon): ":" # (368..369)
-                                                          - (value: Expression) ► (identifier: Identifier): "amount" # (370..376)
-                                                  - (close_brace: CloseBrace): "}" # (377..378)
-                                              - (arguments: ArgumentsDeclaration) ► (positional_arguments_declaration: PositionalArgumentsDeclaration):
-                                                  - (open_paren: OpenParen): "(" # (378..379)
-                                                  - (arguments: PositionalArguments):
-                                                      - (item: Expression) ► (string_expression: StringExpression) ► (string_literals: StringLiterals):
-                                                          - (item: StringLiteral): '""' # (379..381)
-                                                  - (close_paren: CloseParen): ")" # (381..382)
-                                  - (semicolon: Semicolon): ";" # (382..383)
-                              - (item: Statement) ► (expression_statement: ExpressionStatement):
-                                  - (expression: Expression) ► (function_call_expression: FunctionCallExpression):
-                                      - (operand: Expression) ► (identifier: Identifier): "require" # (388..395)
-                                      - (arguments: ArgumentsDeclaration) ► (positional_arguments_declaration: PositionalArgumentsDeclaration):
-                                          - (open_paren: OpenParen): "(" # (395..396)
-                                          - (arguments: PositionalArguments):
-                                              - (item: Expression) ► (identifier: Identifier): "success" # (396..403)
-                                              - (item: Expression) ► (string_expression: StringExpression) ► (string_literals: StringLiterals):
-                                                  - (item: StringLiteral): '"Address: unable to send value, recipient may have...' # (405..465)
-                                          - (close_paren: CloseParen): ")" # (465..466)
-                                  - (semicolon: Semicolon): ";" # (466..467)
-                          - (close_brace: CloseBrace): "}" # (470..471)
-              - (close_brace: CloseBrace): "}" # (472..473)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (154..162)
+              - (name꞉ Identifier): "ABC" # (163..166)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (167..168)
+              - (members꞉ ContractMembers):
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+                      - (function_keyword꞉ FunctionKeyword): "function" # (171..179)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "sendValue" # (180..189)
+                      - (parameters꞉ ParametersDeclaration):
+                          - (open_paren꞉ OpenParen): "(" # (189..190)
+                          - (parameters꞉ Parameters):
+                              - (item꞉ Parameter):
+                                  - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (address_type꞉ AddressType):
+                                      - (address_keyword꞉ AddressKeyword): "address" # (190..197)
+                                      - (payable_keyword꞉ PayableKeyword): "payable" # (198..205)
+                                  - (name꞉ Identifier): "recipient" # (206..215)
+                              - (item꞉ Parameter):
+                                  - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (217..224)
+                                  - (name꞉ Identifier): "amount" # (225..231)
+                          - (close_paren꞉ CloseParen): ")" # (231..232)
+                      - (attributes꞉ FunctionAttributes):
+                          - (item꞉ FunctionAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (233..241)
+                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                          - (open_brace꞉ OpenBrace): "{" # (242..243)
+                          - (statements꞉ Statements):
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement):
+                                  - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression):
+                                      - (operand꞉ Expression) ► (identifier꞉ Identifier): "require" # (248..255)
+                                      - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration):
+                                          - (open_paren꞉ OpenParen): "(" # (255..256)
+                                          - (arguments꞉ PositionalArguments):
+                                              - (item꞉ Expression) ► (inequality_expression꞉ InequalityExpression):
+                                                  - (left_operand꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression):
+                                                      - (operand꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression):
+                                                          - (operand꞉ Expression) ► (elementary_type꞉ ElementaryType) ► (address_type꞉ AddressType):
+                                                              - (address_keyword꞉ AddressKeyword): "address" # (256..263)
+                                                          - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration):
+                                                              - (open_paren꞉ OpenParen): "(" # (263..264)
+                                                              - (arguments꞉ PositionalArguments):
+                                                                  - (item꞉ Expression) ► (this_keyword꞉ ThisKeyword): "this" # (264..268)
+                                                              - (close_paren꞉ CloseParen): ")" # (268..269)
+                                                      - (period꞉ Period): "." # (269..270)
+                                                      - (member꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "balance" # (270..277)
+                                                  - (expression_inequality_expression_operator꞉ Expression_InequalityExpression_Operator) ► (greater_than_equal꞉ GreaterThanEqual): ">=" # (278..280)
+                                                  - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "amount" # (281..287)
+                                              - (item꞉ Expression) ► (string_expression꞉ StringExpression) ► (string_literals꞉ StringLiterals):
+                                                  - (item꞉ StringLiteral): '"Address: insufficient balance"' # (289..320)
+                                          - (close_paren꞉ CloseParen): ")" # (320..321)
+                                  - (semicolon꞉ Semicolon): ";" # (321..322)
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement):
+                                  - (target꞉ VariableDeclarationTarget) ► (multi_typed_declaration꞉ MultiTypedDeclaration):
+                                      - (open_paren꞉ OpenParen): "(" # (328..329)
+                                      - (elements꞉ MultiTypedDeclarationElements):
+                                          - (item꞉ MultiTypedDeclarationElement):
+                                              - (member꞉ VariableDeclaration):
+                                                  - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (bool_keyword꞉ BoolKeyword): "bool" # (329..333)
+                                                  - (name꞉ Identifier): "success" # (334..341)
+                                          - (item꞉ MultiTypedDeclarationElement):
+                                      - (close_paren꞉ CloseParen): ")" # (343..344)
+                                      - (value꞉ VariableDeclarationValue):
+                                          - (equal꞉ Equal): "=" # (345..346)
+                                          - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression):
+                                              - (operand꞉ Expression) ► (call_options_expression꞉ CallOptionsExpression):
+                                                  - (operand꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression):
+                                                      - (operand꞉ Expression) ► (identifier꞉ Identifier): "recipient" # (347..356)
+                                                      - (period꞉ Period): "" # (0..0)
+                                                      - (member꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "call" # (357..361)
+                                                  - (open_brace꞉ OpenBrace): "{" # (361..362)
+                                                  - (options꞉ CallOptions):
+                                                      - (item꞉ NamedArgument):
+                                                          - (name꞉ Identifier): "value" # (363..368)
+                                                          - (colon꞉ Colon): ":" # (368..369)
+                                                          - (value꞉ Expression) ► (identifier꞉ Identifier): "amount" # (370..376)
+                                                  - (close_brace꞉ CloseBrace): "}" # (377..378)
+                                              - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration):
+                                                  - (open_paren꞉ OpenParen): "(" # (378..379)
+                                                  - (arguments꞉ PositionalArguments):
+                                                      - (item꞉ Expression) ► (string_expression꞉ StringExpression) ► (string_literals꞉ StringLiterals):
+                                                          - (item꞉ StringLiteral): '""' # (379..381)
+                                                  - (close_paren꞉ CloseParen): ")" # (381..382)
+                                  - (semicolon꞉ Semicolon): ";" # (382..383)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement):
+                                  - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression):
+                                      - (operand꞉ Expression) ► (identifier꞉ Identifier): "require" # (388..395)
+                                      - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration):
+                                          - (open_paren꞉ OpenParen): "(" # (395..396)
+                                          - (arguments꞉ PositionalArguments):
+                                              - (item꞉ Expression) ► (identifier꞉ Identifier): "success" # (396..403)
+                                              - (item꞉ Expression) ► (string_expression꞉ StringExpression) ► (string_literals꞉ StringLiterals):
+                                                  - (item꞉ StringLiteral): '"Address: unable to send value, recipient may have...' # (405..465)
+                                          - (close_paren꞉ CloseParen): ")" # (465..466)
+                                  - (semicolon꞉ Semicolon): ";" # (466..467)
+                          - (close_brace꞉ CloseBrace): "}" # (470..471)
+              - (close_brace꞉ CloseBrace): "}" # (472..473)

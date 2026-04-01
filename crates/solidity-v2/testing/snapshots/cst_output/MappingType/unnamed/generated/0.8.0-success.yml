@@ -9,25 +9,25 @@ Source: >
   6  │ }                                                                                             │ 144..145
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (contract_keyword: ContractKeyword): "contract" # (0..8)
-              - (name: Identifier): "C" # (9..10)
-              - (specifiers: ContractSpecifiers): []
-              - (open_brace: OpenBrace): "{" # (11..12)
-              - (members: ContractMembers):
-                  - (item: ContractMember) ► (state_variable_definition: StateVariableDefinition):
-                      - (type_name: TypeName) ► (mapping_type: MappingType):
-                          - (mapping_keyword: MappingKeyword): "mapping" # (107..114)
-                          - (open_paren: OpenParen): "(" # (114..115)
-                          - (key_type: MappingKey):
-                              - (key_type: MappingKeyType) ► (elementary_type: ElementaryType) ► (string_keyword: StringKeyword): "string" # (115..121)
-                          - (equal_greater_than: EqualGreaterThan): "=>" # (122..124)
-                          - (value_type: MappingValue):
-                              - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (bytes_keyword: BytesKeyword): "bytes32" # (125..132)
-                          - (close_paren: CloseParen): ")" # (132..133)
-                      - (attributes: StateVariableAttributes): []
-                      - (name: Identifier): "x" # (141..142)
-                      - (semicolon: Semicolon): ";" # (142..143)
-              - (close_brace: CloseBrace): "}" # (144..145)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers):
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition):
+                      - (type_name꞉ TypeName) ► (mapping_type꞉ MappingType):
+                          - (mapping_keyword꞉ MappingKeyword): "mapping" # (107..114)
+                          - (open_paren꞉ OpenParen): "(" # (114..115)
+                          - (key_type꞉ MappingKey):
+                              - (key_type꞉ MappingKeyType) ► (elementary_type꞉ ElementaryType) ► (string_keyword꞉ StringKeyword): "string" # (115..121)
+                          - (equal_greater_than꞉ EqualGreaterThan): "=>" # (122..124)
+                          - (value_type꞉ MappingValue):
+                              - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (bytes_keyword꞉ BytesKeyword): "bytes32" # (125..132)
+                          - (close_paren꞉ CloseParen): ")" # (132..133)
+                      - (attributes꞉ StateVariableAttributes): []
+                      - (name꞉ Identifier): "x" # (141..142)
+                      - (semicolon꞉ Semicolon): ";" # (142..143)
+              - (close_brace꞉ CloseBrace): "}" # (144..145)

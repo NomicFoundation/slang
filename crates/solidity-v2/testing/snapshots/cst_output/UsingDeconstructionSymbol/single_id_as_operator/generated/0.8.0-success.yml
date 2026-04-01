@@ -8,20 +8,20 @@ Source: >
   5  │ } for uint;                                                                                                               │ 146..157
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (using_directive: UsingDirective):
-              - (using_keyword: UsingKeyword): "using" # (0..5)
-              - (clause: UsingClause) ► (using_deconstruction: UsingDeconstruction):
-                  - (open_brace: OpenBrace): "{" # (6..7)
-                  - (symbols: UsingDeconstructionSymbols):
-                      - (item: UsingDeconstructionSymbol):
-                          - (name: IdentifierPath):
-                              - (item: IdentifierPathElement) ► (identifier: Identifier): "foo" # (130..133)
-                          - (alias: UsingAlias):
-                              - (as_keyword: AsKeyword): "as" # (134..136)
-                              - (operator: UsingOperator) ► (slash: Slash): "/" # (137..138)
-                  - (close_brace: CloseBrace): "}" # (146..147)
-              - (for_keyword: ForKeyword): "for" # (148..151)
-              - (target: UsingTarget) ► (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint" # (152..156)
-              - (semicolon: Semicolon): ";" # (156..157)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective):
+              - (using_keyword꞉ UsingKeyword): "using" # (0..5)
+              - (clause꞉ UsingClause) ► (using_deconstruction꞉ UsingDeconstruction):
+                  - (open_brace꞉ OpenBrace): "{" # (6..7)
+                  - (symbols꞉ UsingDeconstructionSymbols):
+                      - (item꞉ UsingDeconstructionSymbol):
+                          - (name꞉ IdentifierPath):
+                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "foo" # (130..133)
+                          - (alias꞉ UsingAlias):
+                              - (as_keyword꞉ AsKeyword): "as" # (134..136)
+                              - (operator꞉ UsingOperator) ► (slash꞉ Slash): "/" # (137..138)
+                  - (close_brace꞉ CloseBrace): "}" # (146..147)
+              - (for_keyword꞉ ForKeyword): "for" # (148..151)
+              - (target꞉ UsingTarget) ► (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (152..156)
+              - (semicolon꞉ Semicolon): ";" # (156..157)

@@ -35,17 +35,8 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             // Note: comparing objects cheaply before expensive serialization.
             Some(ref last) if last == &v2_output => continue,
             _ => {
-                let (status, content) = match &v2_output {
-                    Ok(parsed_cst) => (
-                        "success",
-                        solidity_v2_testing_utils::cst_renderer::render(&source, parsed_cst),
-                    ),
-                    Err(err) => {
-                        // We don't care about the errors for now, we just write them
-                        let e = diagnostic::render(err, &source_id, &source, false);
-                        ("failure", format!("{e}\n"))
-                    }
-                };
+                let (status, content) =
+                    solidity_v2_testing_utils::cst_renderer::render(&source, &source_id, &v2_output);
 
                 let snapshot_path = test_dir
                     .join("generated")

@@ -7,18 +7,18 @@ Source: >
   4  │ // <<<                                                                                                             │ 137..143
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (function_definition: FunctionDefinition):
-              - (function_keyword: FunctionKeyword): "function" # (115..123)
-              - (name: FunctionName) ► (identifier: Identifier): "a" # (124..125)
-              - (parameters: ParametersDeclaration):
-                  - (open_paren: OpenParen): "(" # (125..126)
-                  - (parameters: Parameters): []
-                  - (close_paren: CloseParen): ")" # (126..127)
-              - (attributes: FunctionAttributes):
-                  - (item: FunctionAttribute) ► (pure_keyword: PureKeyword): "pure" # (128..132)
-              - (body: FunctionBody) ► (block: Block):
-                  - (open_brace: OpenBrace): "{" # (133..134)
-                  - (statements: Statements): []
-                  - (close_brace: CloseBrace): "}" # (134..135)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (function_definition꞉ FunctionDefinition):
+              - (function_keyword꞉ FunctionKeyword): "function" # (115..123)
+              - (name꞉ FunctionName) ► (identifier꞉ Identifier): "a" # (124..125)
+              - (parameters꞉ ParametersDeclaration):
+                  - (open_paren꞉ OpenParen): "(" # (125..126)
+                  - (parameters꞉ Parameters): []
+                  - (close_paren꞉ CloseParen): ")" # (126..127)
+              - (attributes꞉ FunctionAttributes):
+                  - (item꞉ FunctionAttribute) ► (pure_keyword꞉ PureKeyword): "pure" # (128..132)
+              - (body꞉ FunctionBody) ► (block꞉ Block):
+                  - (open_brace꞉ OpenBrace): "{" # (133..134)
+                  - (statements꞉ Statements): []
+                  - (close_brace꞉ CloseBrace): "}" # (134..135)

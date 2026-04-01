@@ -6,17 +6,17 @@ Source: >
   3  │ // <<<                                                                                                  │ 123..129
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (function_definition: FunctionDefinition):
-              - (function_keyword: FunctionKeyword): "function" # (104..112)
-              - (name: FunctionName) ► (identifier: Identifier): "foo" # (113..116)
-              - (parameters: ParametersDeclaration):
-                  - (open_paren: OpenParen): "(" # (116..117)
-                  - (parameters: Parameters): []
-                  - (close_paren: CloseParen): ")" # (117..118)
-              - (attributes: FunctionAttributes): []
-              - (body: FunctionBody) ► (block: Block):
-                  - (open_brace: OpenBrace): "{" # (119..120)
-                  - (statements: Statements): []
-                  - (close_brace: CloseBrace): "}" # (121..122)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (function_definition꞉ FunctionDefinition):
+              - (function_keyword꞉ FunctionKeyword): "function" # (104..112)
+              - (name꞉ FunctionName) ► (identifier꞉ Identifier): "foo" # (113..116)
+              - (parameters꞉ ParametersDeclaration):
+                  - (open_paren꞉ OpenParen): "(" # (116..117)
+                  - (parameters꞉ Parameters): []
+                  - (close_paren꞉ CloseParen): ")" # (117..118)
+              - (attributes꞉ FunctionAttributes): []
+              - (body꞉ FunctionBody) ► (block꞉ Block):
+                  - (open_brace꞉ OpenBrace): "{" # (119..120)
+                  - (statements꞉ Statements): []
+                  - (close_brace꞉ CloseBrace): "}" # (121..122)

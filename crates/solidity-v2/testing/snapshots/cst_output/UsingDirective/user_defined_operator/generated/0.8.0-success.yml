@@ -6,22 +6,22 @@ Source: >
   3  │ // <<<                                                                                                         │ 144..150
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (using_directive: UsingDirective):
-              - (using_keyword: UsingKeyword): "using" # (111..116)
-              - (clause: UsingClause) ► (using_deconstruction: UsingDeconstruction):
-                  - (open_brace: OpenBrace): "{" # (117..118)
-                  - (symbols: UsingDeconstructionSymbols):
-                      - (item: UsingDeconstructionSymbol):
-                          - (name: IdentifierPath):
-                              - (item: IdentifierPathElement) ► (identifier: Identifier): "div" # (118..121)
-                          - (alias: UsingAlias):
-                              - (as_keyword: AsKeyword): "as" # (122..124)
-                              - (operator: UsingOperator) ► (slash: Slash): "/" # (125..126)
-                  - (close_brace: CloseBrace): "}" # (126..127)
-              - (for_keyword: ForKeyword): "for" # (128..131)
-              - (target: UsingTarget) ► (type_name: TypeName) ► (identifier_path: IdentifierPath):
-                  - (item: IdentifierPathElement) ► (identifier: Identifier): "Int" # (132..135)
-              - (global_keyword: GlobalKeyword): "global" # (136..142)
-              - (semicolon: Semicolon): ";" # (142..143)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective):
+              - (using_keyword꞉ UsingKeyword): "using" # (111..116)
+              - (clause꞉ UsingClause) ► (using_deconstruction꞉ UsingDeconstruction):
+                  - (open_brace꞉ OpenBrace): "{" # (117..118)
+                  - (symbols꞉ UsingDeconstructionSymbols):
+                      - (item꞉ UsingDeconstructionSymbol):
+                          - (name꞉ IdentifierPath):
+                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "div" # (118..121)
+                          - (alias꞉ UsingAlias):
+                              - (as_keyword꞉ AsKeyword): "as" # (122..124)
+                              - (operator꞉ UsingOperator) ► (slash꞉ Slash): "/" # (125..126)
+                  - (close_brace꞉ CloseBrace): "}" # (126..127)
+              - (for_keyword꞉ ForKeyword): "for" # (128..131)
+              - (target꞉ UsingTarget) ► (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath):
+                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "Int" # (132..135)
+              - (global_keyword꞉ GlobalKeyword): "global" # (136..142)
+              - (semicolon꞉ Semicolon): ";" # (142..143)

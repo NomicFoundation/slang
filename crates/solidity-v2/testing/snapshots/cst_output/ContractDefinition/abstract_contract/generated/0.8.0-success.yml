@@ -7,13 +7,13 @@ Source: >
   4  │ // <<<                                                                                                         │ 140..146
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (abstract_keyword: AbstractKeyword): "abstract" # (111..119)
-              - (contract_keyword: ContractKeyword): "contract" # (120..128)
-              - (name: Identifier): "Sample" # (129..135)
-              - (specifiers: ContractSpecifiers): []
-              - (open_brace: OpenBrace): "{" # (136..137)
-              - (members: ContractMembers): []
-              - (close_brace: CloseBrace): "}" # (137..138)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (abstract_keyword꞉ AbstractKeyword): "abstract" # (111..119)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (120..128)
+              - (name꞉ Identifier): "Sample" # (129..135)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (136..137)
+              - (members꞉ ContractMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (137..138)

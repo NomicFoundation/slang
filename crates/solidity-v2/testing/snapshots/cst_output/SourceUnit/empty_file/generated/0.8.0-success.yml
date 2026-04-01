@@ -6,5 +6,5 @@ Source: >
   3  │ // <<<                                                                                          │ 97..103
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers): []
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

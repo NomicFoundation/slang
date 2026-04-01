@@ -9,18 +9,18 @@ Source: >
   6  │ }                                                                                                                 │ 144..145
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (contract_keyword: ContractKeyword): "contract" # (0..8)
-              - (name: Identifier): "C" # (9..10)
-              - (specifiers: ContractSpecifiers): []
-              - (open_brace: OpenBrace): "{" # (11..12)
-              - (members: ContractMembers):
-                  - (item: ContractMember) ► (state_variable_definition: StateVariableDefinition):
-                      - (type_name: TypeName) ► (identifier_path: IdentifierPath):
-                          - (item: IdentifierPathElement) ► (identifier: Identifier): "int320" # (127..133)
-                      - (attributes: StateVariableAttributes): []
-                      - (name: Identifier): "x" # (141..142)
-                      - (semicolon: Semicolon): ";" # (142..143)
-              - (close_brace: CloseBrace): "}" # (144..145)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers):
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition):
+                      - (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath):
+                          - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "int320" # (127..133)
+                      - (attributes꞉ StateVariableAttributes): []
+                      - (name꞉ Identifier): "x" # (141..142)
+                      - (semicolon꞉ Semicolon): ";" # (142..143)
+              - (close_brace꞉ CloseBrace): "}" # (144..145)

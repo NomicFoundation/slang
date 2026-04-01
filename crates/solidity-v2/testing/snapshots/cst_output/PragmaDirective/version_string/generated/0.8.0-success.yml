@@ -7,14 +7,14 @@ Source: >
   4  │ // <<<                                                                                                   │ 127..133
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (pragma_directive: PragmaDirective):
-              - (pragma_keyword: PragmaKeyword): "pragma" # (105..111)
-              - (pragma: Pragma) ► (version_pragma: VersionPragma):
-                  - (solidity_keyword: SolidityKeyword): "solidity" # (112..120)
-                  - (sets: VersionExpressionSets):
-                      - (item: VersionExpressionSet):
-                          - (item: VersionExpression) ► (version_term: VersionTerm):
-                              - (literal: VersionLiteral) ► (pragma_string_literal: PragmaStringLiteral): '"Y"' # (121..124)
-              - (semicolon: PragmaSemicolon): ";" # (124..125)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective):
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (105..111)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma):
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (112..120)
+                  - (sets꞉ VersionExpressionSets):
+                      - (item꞉ VersionExpressionSet):
+                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm):
+                              - (literal꞉ VersionLiteral) ► (pragma_string_literal꞉ PragmaStringLiteral): '"Y"' # (121..124)
+              - (semicolon꞉ PragmaSemicolon): ";" # (124..125)

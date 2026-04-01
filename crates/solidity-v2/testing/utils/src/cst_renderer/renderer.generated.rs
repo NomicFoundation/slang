@@ -14,7 +14,6 @@ use crate::cst_renderer::RenderContext;
 
 pub fn render_abicoder_pragma(ctx: &mut RenderContext<'_>, node: &AbicoderPragmaStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -31,12 +30,11 @@ pub fn render_abicoder_pragma(ctx: &mut RenderContext<'_>, node: &AbicoderPragma
         render_abicoder_version(ctx, &node.version);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_additive_expression(ctx: &mut RenderContext<'_>, node: &AdditiveExpressionStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -66,12 +64,11 @@ pub fn render_additive_expression(ctx: &mut RenderContext<'_>, node: &AdditiveEx
         render_expression(ctx, &node.right_operand);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_address_type(ctx: &mut RenderContext<'_>, node: &AddressTypeStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -88,12 +85,11 @@ pub fn render_address_type(ctx: &mut RenderContext<'_>, node: &AddressTypeStruct
         ctx.write_terminal_value(&payable_keyword.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_and_expression(ctx: &mut RenderContext<'_>, node: &AndExpressionStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -117,12 +113,11 @@ pub fn render_and_expression(ctx: &mut RenderContext<'_>, node: &AndExpressionSt
         render_expression(ctx, &node.right_operand);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_array_expression(ctx: &mut RenderContext<'_>, node: &ArrayExpressionStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -146,12 +141,11 @@ pub fn render_array_expression(ctx: &mut RenderContext<'_>, node: &ArrayExpressi
         ctx.write_terminal_value(&node.close_bracket.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_array_type_name(ctx: &mut RenderContext<'_>, node: &ArrayTypeNameStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -182,12 +176,11 @@ pub fn render_array_type_name(ctx: &mut RenderContext<'_>, node: &ArrayTypeNameS
         ctx.write_terminal_value(&node.close_bracket.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_assembly_statement(ctx: &mut RenderContext<'_>, node: &AssemblyStatementStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -218,7 +211,7 @@ pub fn render_assembly_statement(ctx: &mut RenderContext<'_>, node: &AssemblySta
         render_yul_block(ctx, &node.body);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_assignment_expression(
@@ -226,7 +219,6 @@ pub fn render_assignment_expression(
     node: &AssignmentExpressionStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -256,7 +248,7 @@ pub fn render_assignment_expression(
         render_expression(ctx, &node.right_operand);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_bitwise_and_expression(
@@ -264,7 +256,6 @@ pub fn render_bitwise_and_expression(
     node: &BitwiseAndExpressionStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -288,12 +279,11 @@ pub fn render_bitwise_and_expression(
         render_expression(ctx, &node.right_operand);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_bitwise_or_expression(ctx: &mut RenderContext<'_>, node: &BitwiseOrExpressionStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -317,7 +307,7 @@ pub fn render_bitwise_or_expression(ctx: &mut RenderContext<'_>, node: &BitwiseO
         render_expression(ctx, &node.right_operand);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_bitwise_xor_expression(
@@ -325,7 +315,6 @@ pub fn render_bitwise_xor_expression(
     node: &BitwiseXorExpressionStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -349,12 +338,11 @@ pub fn render_bitwise_xor_expression(
         render_expression(ctx, &node.right_operand);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_block(ctx: &mut RenderContext<'_>, node: &BlockStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -378,12 +366,11 @@ pub fn render_block(ctx: &mut RenderContext<'_>, node: &BlockStruct) {
         ctx.write_terminal_value(&node.close_brace.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_break_statement(ctx: &mut RenderContext<'_>, node: &BreakStatementStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -400,7 +387,7 @@ pub fn render_break_statement(ctx: &mut RenderContext<'_>, node: &BreakStatement
         ctx.write_terminal_value(&node.semicolon.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_call_options_expression(
@@ -408,7 +395,6 @@ pub fn render_call_options_expression(
     node: &CallOptionsExpressionStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -439,12 +425,11 @@ pub fn render_call_options_expression(
         ctx.write_terminal_value(&node.close_brace.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_catch_clause(ctx: &mut RenderContext<'_>, node: &CatchClauseStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -468,12 +453,11 @@ pub fn render_catch_clause(ctx: &mut RenderContext<'_>, node: &CatchClauseStruct
         render_block(ctx, &node.body);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_catch_clause_error(ctx: &mut RenderContext<'_>, node: &CatchClauseErrorStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     if let Some(ref name) = node.name {
@@ -490,7 +474,7 @@ pub fn render_catch_clause_error(ctx: &mut RenderContext<'_>, node: &CatchClause
         render_parameters_declaration(ctx, &node.parameters);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_conditional_expression(
@@ -498,7 +482,6 @@ pub fn render_conditional_expression(
     node: &ConditionalExpressionStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -536,12 +519,11 @@ pub fn render_conditional_expression(
         render_expression(ctx, &node.false_expression);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_constant_definition(ctx: &mut RenderContext<'_>, node: &ConstantDefinitionStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -586,7 +568,7 @@ pub fn render_constant_definition(ctx: &mut RenderContext<'_>, node: &ConstantDe
         ctx.write_terminal_value(&node.semicolon.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_constructor_definition(
@@ -594,7 +576,6 @@ pub fn render_constructor_definition(
     node: &ConstructorDefinitionStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -625,12 +606,11 @@ pub fn render_constructor_definition(
         render_block(ctx, &node.body);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_continue_statement(ctx: &mut RenderContext<'_>, node: &ContinueStatementStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -647,12 +627,11 @@ pub fn render_continue_statement(ctx: &mut RenderContext<'_>, node: &ContinueSta
         ctx.write_terminal_value(&node.semicolon.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_contract_definition(ctx: &mut RenderContext<'_>, node: &ContractDefinitionStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     if let Some(ref abstract_keyword) = node.abstract_keyword {
@@ -704,7 +683,7 @@ pub fn render_contract_definition(ctx: &mut RenderContext<'_>, node: &ContractDe
         ctx.write_terminal_value(&node.close_brace.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_decimal_number_expression(
@@ -712,7 +691,6 @@ pub fn render_decimal_number_expression(
     node: &DecimalNumberExpressionStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -729,12 +707,11 @@ pub fn render_decimal_number_expression(
         render_number_unit(ctx, unit);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_do_while_statement(ctx: &mut RenderContext<'_>, node: &DoWhileStatementStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -786,12 +763,11 @@ pub fn render_do_while_statement(ctx: &mut RenderContext<'_>, node: &DoWhileStat
         ctx.write_terminal_value(&node.semicolon.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_else_branch(ctx: &mut RenderContext<'_>, node: &ElseBranchStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -808,12 +784,11 @@ pub fn render_else_branch(ctx: &mut RenderContext<'_>, node: &ElseBranchStruct) 
         render_statement(ctx, &node.body);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_emit_statement(ctx: &mut RenderContext<'_>, node: &EmitStatementStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -844,12 +819,11 @@ pub fn render_emit_statement(ctx: &mut RenderContext<'_>, node: &EmitStatementSt
         ctx.write_terminal_value(&node.semicolon.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_enum_definition(ctx: &mut RenderContext<'_>, node: &EnumDefinitionStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -887,12 +861,11 @@ pub fn render_enum_definition(ctx: &mut RenderContext<'_>, node: &EnumDefinition
         ctx.write_terminal_value(&node.close_brace.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_equality_expression(ctx: &mut RenderContext<'_>, node: &EqualityExpressionStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -922,12 +895,11 @@ pub fn render_equality_expression(ctx: &mut RenderContext<'_>, node: &EqualityEx
         render_expression(ctx, &node.right_operand);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_error_definition(ctx: &mut RenderContext<'_>, node: &ErrorDefinitionStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -958,12 +930,11 @@ pub fn render_error_definition(ctx: &mut RenderContext<'_>, node: &ErrorDefiniti
         ctx.write_terminal_value(&node.semicolon.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_error_parameter(ctx: &mut RenderContext<'_>, node: &ErrorParameterStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -980,7 +951,7 @@ pub fn render_error_parameter(ctx: &mut RenderContext<'_>, node: &ErrorParameter
         ctx.write_terminal_value(&name.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_error_parameters_declaration(
@@ -988,7 +959,6 @@ pub fn render_error_parameters_declaration(
     node: &ErrorParametersDeclarationStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1012,12 +982,11 @@ pub fn render_error_parameters_declaration(
         ctx.write_terminal_value(&node.close_paren.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_event_definition(ctx: &mut RenderContext<'_>, node: &EventDefinitionStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1055,12 +1024,11 @@ pub fn render_event_definition(ctx: &mut RenderContext<'_>, node: &EventDefiniti
         ctx.write_terminal_value(&node.semicolon.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_event_parameter(ctx: &mut RenderContext<'_>, node: &EventParameterStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1084,7 +1052,7 @@ pub fn render_event_parameter(ctx: &mut RenderContext<'_>, node: &EventParameter
         ctx.write_terminal_value(&name.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_event_parameters_declaration(
@@ -1092,7 +1060,6 @@ pub fn render_event_parameters_declaration(
     node: &EventParametersDeclarationStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1116,12 +1083,11 @@ pub fn render_event_parameters_declaration(
         ctx.write_terminal_value(&node.close_paren.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_experimental_pragma(ctx: &mut RenderContext<'_>, node: &ExperimentalPragmaStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1138,7 +1104,7 @@ pub fn render_experimental_pragma(ctx: &mut RenderContext<'_>, node: &Experiment
         render_experimental_feature(ctx, &node.feature);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_exponentiation_expression(
@@ -1146,7 +1112,6 @@ pub fn render_exponentiation_expression(
     node: &ExponentiationExpressionStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1170,12 +1135,11 @@ pub fn render_exponentiation_expression(
         render_expression(ctx, &node.right_operand);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_expression_statement(ctx: &mut RenderContext<'_>, node: &ExpressionStatementStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1192,7 +1156,7 @@ pub fn render_expression_statement(ctx: &mut RenderContext<'_>, node: &Expressio
         ctx.write_terminal_value(&node.semicolon.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_fallback_function_definition(
@@ -1200,7 +1164,6 @@ pub fn render_fallback_function_definition(
     node: &FallbackFunctionDefinitionStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1238,12 +1201,11 @@ pub fn render_fallback_function_definition(
         render_function_body(ctx, &node.body);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_for_statement(ctx: &mut RenderContext<'_>, node: &ForStatementStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1295,7 +1257,7 @@ pub fn render_for_statement(ctx: &mut RenderContext<'_>, node: &ForStatementStru
         render_statement(ctx, &node.body);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_function_call_expression(
@@ -1303,7 +1265,6 @@ pub fn render_function_call_expression(
     node: &FunctionCallExpressionStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1320,12 +1281,11 @@ pub fn render_function_call_expression(
         render_arguments_declaration(ctx, &node.arguments);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_function_definition(ctx: &mut RenderContext<'_>, node: &FunctionDefinitionStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1370,12 +1330,11 @@ pub fn render_function_definition(ctx: &mut RenderContext<'_>, node: &FunctionDe
         render_function_body(ctx, &node.body);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_function_type(ctx: &mut RenderContext<'_>, node: &FunctionTypeStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1406,12 +1365,11 @@ pub fn render_function_type(ctx: &mut RenderContext<'_>, node: &FunctionTypeStru
         render_returns_declaration(ctx, returns);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_hex_number_expression(ctx: &mut RenderContext<'_>, node: &HexNumberExpressionStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1421,12 +1379,11 @@ pub fn render_hex_number_expression(ctx: &mut RenderContext<'_>, node: &HexNumbe
         ctx.write_terminal_value(&node.literal.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_if_statement(ctx: &mut RenderContext<'_>, node: &IfStatementStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1471,12 +1428,11 @@ pub fn render_if_statement(ctx: &mut RenderContext<'_>, node: &IfStatementStruct
         render_else_branch(ctx, else_branch);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_import_alias(ctx: &mut RenderContext<'_>, node: &ImportAliasStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1493,7 +1449,7 @@ pub fn render_import_alias(ctx: &mut RenderContext<'_>, node: &ImportAliasStruct
         ctx.write_terminal_value(&node.identifier.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_import_deconstruction(
@@ -1501,7 +1457,6 @@ pub fn render_import_deconstruction(
     node: &ImportDeconstructionStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1539,7 +1494,7 @@ pub fn render_import_deconstruction(
         ctx.write_terminal_value(&node.path.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_import_deconstruction_symbol(
@@ -1547,7 +1502,6 @@ pub fn render_import_deconstruction_symbol(
     node: &ImportDeconstructionSymbolStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1564,12 +1518,11 @@ pub fn render_import_deconstruction_symbol(
         render_import_alias(ctx, alias);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_import_directive(ctx: &mut RenderContext<'_>, node: &ImportDirectiveStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1593,12 +1546,11 @@ pub fn render_import_directive(ctx: &mut RenderContext<'_>, node: &ImportDirecti
         ctx.write_terminal_value(&node.semicolon.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_index_access_end(ctx: &mut RenderContext<'_>, node: &IndexAccessEndStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1615,7 +1567,7 @@ pub fn render_index_access_end(ctx: &mut RenderContext<'_>, node: &IndexAccessEn
         render_expression(ctx, end);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_index_access_expression(
@@ -1623,7 +1575,6 @@ pub fn render_index_access_expression(
     node: &IndexAccessExpressionStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1661,7 +1612,7 @@ pub fn render_index_access_expression(
         ctx.write_terminal_value(&node.close_bracket.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_inequality_expression(
@@ -1669,7 +1620,6 @@ pub fn render_inequality_expression(
     node: &InequalityExpressionStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1699,7 +1649,7 @@ pub fn render_inequality_expression(
         render_expression(ctx, &node.right_operand);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_inheritance_specifier(
@@ -1707,7 +1657,6 @@ pub fn render_inheritance_specifier(
     node: &InheritanceSpecifierStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1724,12 +1673,11 @@ pub fn render_inheritance_specifier(
         render_inheritance_types(ctx, &node.types);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_inheritance_type(ctx: &mut RenderContext<'_>, node: &InheritanceTypeStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1746,12 +1694,11 @@ pub fn render_inheritance_type(ctx: &mut RenderContext<'_>, node: &InheritanceTy
         render_arguments_declaration(ctx, arguments);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_interface_definition(ctx: &mut RenderContext<'_>, node: &InterfaceDefinitionStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1796,12 +1743,11 @@ pub fn render_interface_definition(ctx: &mut RenderContext<'_>, node: &Interface
         ctx.write_terminal_value(&node.close_brace.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_library_definition(ctx: &mut RenderContext<'_>, node: &LibraryDefinitionStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1839,12 +1785,11 @@ pub fn render_library_definition(ctx: &mut RenderContext<'_>, node: &LibraryDefi
         ctx.write_terminal_value(&node.close_brace.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_mapping_key(ctx: &mut RenderContext<'_>, node: &MappingKeyStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1861,12 +1806,11 @@ pub fn render_mapping_key(ctx: &mut RenderContext<'_>, node: &MappingKeyStruct) 
         ctx.write_terminal_value(&name.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_mapping_type(ctx: &mut RenderContext<'_>, node: &MappingTypeStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1911,12 +1855,11 @@ pub fn render_mapping_type(ctx: &mut RenderContext<'_>, node: &MappingTypeStruct
         ctx.write_terminal_value(&node.close_paren.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_mapping_value(ctx: &mut RenderContext<'_>, node: &MappingValueStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1933,7 +1876,7 @@ pub fn render_mapping_value(ctx: &mut RenderContext<'_>, node: &MappingValueStru
         ctx.write_terminal_value(&name.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_member_access_expression(
@@ -1941,7 +1884,6 @@ pub fn render_member_access_expression(
     node: &MemberAccessExpressionStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -1965,12 +1907,11 @@ pub fn render_member_access_expression(
         render_identifier_path_element(ctx, &node.member);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_modifier_definition(ctx: &mut RenderContext<'_>, node: &ModifierDefinitionStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2008,12 +1949,11 @@ pub fn render_modifier_definition(ctx: &mut RenderContext<'_>, node: &ModifierDe
         render_function_body(ctx, &node.body);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_modifier_invocation(ctx: &mut RenderContext<'_>, node: &ModifierInvocationStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2030,7 +1970,7 @@ pub fn render_modifier_invocation(ctx: &mut RenderContext<'_>, node: &ModifierIn
         render_arguments_declaration(ctx, arguments);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_multi_typed_declaration(
@@ -2038,7 +1978,6 @@ pub fn render_multi_typed_declaration(
     node: &MultiTypedDeclarationStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2069,7 +2008,7 @@ pub fn render_multi_typed_declaration(
         render_variable_declaration_value(ctx, &node.value);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_multi_typed_declaration_element(
@@ -2077,7 +2016,6 @@ pub fn render_multi_typed_declaration_element(
     node: &MultiTypedDeclarationElementStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     if let Some(ref member) = node.member {
@@ -2087,7 +2025,7 @@ pub fn render_multi_typed_declaration_element(
         render_variable_declaration(ctx, member);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_multiplicative_expression(
@@ -2095,7 +2033,6 @@ pub fn render_multiplicative_expression(
     node: &MultiplicativeExpressionStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2125,12 +2062,11 @@ pub fn render_multiplicative_expression(
         render_expression(ctx, &node.right_operand);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_named_argument(ctx: &mut RenderContext<'_>, node: &NamedArgumentStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2154,12 +2090,11 @@ pub fn render_named_argument(ctx: &mut RenderContext<'_>, node: &NamedArgumentSt
         render_expression(ctx, &node.value);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_named_argument_group(ctx: &mut RenderContext<'_>, node: &NamedArgumentGroupStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2183,7 +2118,7 @@ pub fn render_named_argument_group(ctx: &mut RenderContext<'_>, node: &NamedArgu
         ctx.write_terminal_value(&node.close_brace.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_named_arguments_declaration(
@@ -2191,7 +2126,6 @@ pub fn render_named_arguments_declaration(
     node: &NamedArgumentsDeclarationStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2215,12 +2149,11 @@ pub fn render_named_arguments_declaration(
         ctx.write_terminal_value(&node.close_paren.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_named_import(ctx: &mut RenderContext<'_>, node: &NamedImportStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2251,12 +2184,11 @@ pub fn render_named_import(ctx: &mut RenderContext<'_>, node: &NamedImportStruct
         ctx.write_terminal_value(&node.path.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_new_expression(ctx: &mut RenderContext<'_>, node: &NewExpressionStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2273,12 +2205,11 @@ pub fn render_new_expression(ctx: &mut RenderContext<'_>, node: &NewExpressionSt
         render_type_name(ctx, &node.type_name);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_or_expression(ctx: &mut RenderContext<'_>, node: &OrExpressionStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2302,7 +2233,7 @@ pub fn render_or_expression(ctx: &mut RenderContext<'_>, node: &OrExpressionStru
         render_expression(ctx, &node.right_operand);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_override_paths_declaration(
@@ -2310,7 +2241,6 @@ pub fn render_override_paths_declaration(
     node: &OverridePathsDeclarationStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2334,12 +2264,11 @@ pub fn render_override_paths_declaration(
         ctx.write_terminal_value(&node.close_paren.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_override_specifier(ctx: &mut RenderContext<'_>, node: &OverrideSpecifierStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2356,12 +2285,11 @@ pub fn render_override_specifier(ctx: &mut RenderContext<'_>, node: &OverrideSpe
         render_override_paths_declaration(ctx, overridden);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_parameter(ctx: &mut RenderContext<'_>, node: &ParameterStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2385,7 +2313,7 @@ pub fn render_parameter(ctx: &mut RenderContext<'_>, node: &ParameterStruct) {
         ctx.write_terminal_value(&name.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_parameters_declaration(
@@ -2393,7 +2321,6 @@ pub fn render_parameters_declaration(
     node: &ParametersDeclarationStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2417,12 +2344,11 @@ pub fn render_parameters_declaration(
         ctx.write_terminal_value(&node.close_paren.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_path_import(ctx: &mut RenderContext<'_>, node: &PathImportStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2439,7 +2365,7 @@ pub fn render_path_import(ctx: &mut RenderContext<'_>, node: &PathImportStruct) 
         render_import_alias(ctx, alias);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_positional_arguments_declaration(
@@ -2447,7 +2373,6 @@ pub fn render_positional_arguments_declaration(
     node: &PositionalArgumentsDeclarationStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2471,12 +2396,11 @@ pub fn render_positional_arguments_declaration(
         ctx.write_terminal_value(&node.close_paren.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_postfix_expression(ctx: &mut RenderContext<'_>, node: &PostfixExpressionStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2499,12 +2423,11 @@ pub fn render_postfix_expression(ctx: &mut RenderContext<'_>, node: &PostfixExpr
         );
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_pragma_directive(ctx: &mut RenderContext<'_>, node: &PragmaDirectiveStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2528,12 +2451,11 @@ pub fn render_pragma_directive(ctx: &mut RenderContext<'_>, node: &PragmaDirecti
         ctx.write_terminal_value(&node.semicolon.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_prefix_expression(ctx: &mut RenderContext<'_>, node: &PrefixExpressionStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2556,7 +2478,7 @@ pub fn render_prefix_expression(ctx: &mut RenderContext<'_>, node: &PrefixExpres
         render_expression(ctx, &node.operand);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_receive_function_definition(
@@ -2564,7 +2486,6 @@ pub fn render_receive_function_definition(
     node: &ReceiveFunctionDefinitionStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2595,12 +2516,11 @@ pub fn render_receive_function_definition(
         render_function_body(ctx, &node.body);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_return_statement(ctx: &mut RenderContext<'_>, node: &ReturnStatementStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2624,12 +2544,11 @@ pub fn render_return_statement(ctx: &mut RenderContext<'_>, node: &ReturnStateme
         ctx.write_terminal_value(&node.semicolon.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_returns_declaration(ctx: &mut RenderContext<'_>, node: &ReturnsDeclarationStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2646,12 +2565,11 @@ pub fn render_returns_declaration(ctx: &mut RenderContext<'_>, node: &ReturnsDec
         render_parameters_declaration(ctx, &node.variables);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_revert_statement(ctx: &mut RenderContext<'_>, node: &RevertStatementStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2682,12 +2600,11 @@ pub fn render_revert_statement(ctx: &mut RenderContext<'_>, node: &RevertStateme
         ctx.write_terminal_value(&node.semicolon.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_shift_expression(ctx: &mut RenderContext<'_>, node: &ShiftExpressionStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2717,7 +2634,7 @@ pub fn render_shift_expression(ctx: &mut RenderContext<'_>, node: &ShiftExpressi
         render_expression(ctx, &node.right_operand);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_single_typed_declaration(
@@ -2725,7 +2642,6 @@ pub fn render_single_typed_declaration(
     node: &SingleTypedDeclarationStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2742,12 +2658,11 @@ pub fn render_single_typed_declaration(
         render_variable_declaration_value(ctx, value);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_source_unit(ctx: &mut RenderContext<'_>, node: &SourceUnitStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2757,7 +2672,7 @@ pub fn render_source_unit(ctx: &mut RenderContext<'_>, node: &SourceUnitStruct) 
         render_source_unit_members(ctx, &node.members);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_state_variable_definition(
@@ -2765,7 +2680,6 @@ pub fn render_state_variable_definition(
     node: &StateVariableDefinitionStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2803,7 +2717,7 @@ pub fn render_state_variable_definition(
         ctx.write_terminal_value(&node.semicolon.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_state_variable_definition_value(
@@ -2811,7 +2725,6 @@ pub fn render_state_variable_definition_value(
     node: &StateVariableDefinitionValueStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2828,7 +2741,7 @@ pub fn render_state_variable_definition_value(
         render_expression(ctx, &node.value);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_storage_layout_specifier(
@@ -2836,7 +2749,6 @@ pub fn render_storage_layout_specifier(
     node: &StorageLayoutSpecifierStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2860,12 +2772,11 @@ pub fn render_storage_layout_specifier(
         render_expression(ctx, &node.expression);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_struct_definition(ctx: &mut RenderContext<'_>, node: &StructDefinitionStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2903,12 +2814,11 @@ pub fn render_struct_definition(ctx: &mut RenderContext<'_>, node: &StructDefini
         ctx.write_terminal_value(&node.close_brace.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_struct_member(ctx: &mut RenderContext<'_>, node: &StructMemberStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2932,12 +2842,11 @@ pub fn render_struct_member(ctx: &mut RenderContext<'_>, node: &StructMemberStru
         ctx.write_terminal_value(&node.semicolon.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_try_statement(ctx: &mut RenderContext<'_>, node: &TryStatementStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -2975,12 +2884,11 @@ pub fn render_try_statement(ctx: &mut RenderContext<'_>, node: &TryStatementStru
         render_catch_clauses(ctx, &node.catch_clauses);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_tuple_expression(ctx: &mut RenderContext<'_>, node: &TupleExpressionStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3004,12 +2912,11 @@ pub fn render_tuple_expression(ctx: &mut RenderContext<'_>, node: &TupleExpressi
         ctx.write_terminal_value(&node.close_paren.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_tuple_value(ctx: &mut RenderContext<'_>, node: &TupleValueStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     if let Some(ref expression) = node.expression {
@@ -3019,12 +2926,11 @@ pub fn render_tuple_value(ctx: &mut RenderContext<'_>, node: &TupleValueStruct) 
         render_expression(ctx, expression);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_type_expression(ctx: &mut RenderContext<'_>, node: &TypeExpressionStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3055,12 +2961,11 @@ pub fn render_type_expression(ctx: &mut RenderContext<'_>, node: &TypeExpression
         ctx.write_terminal_value(&node.close_paren.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_unchecked_block(ctx: &mut RenderContext<'_>, node: &UncheckedBlockStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3077,7 +2982,7 @@ pub fn render_unchecked_block(ctx: &mut RenderContext<'_>, node: &UncheckedBlock
         render_block(ctx, &node.block);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_user_defined_value_type_definition(
@@ -3085,7 +2990,6 @@ pub fn render_user_defined_value_type_definition(
     node: &UserDefinedValueTypeDefinitionStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3123,12 +3027,11 @@ pub fn render_user_defined_value_type_definition(
         ctx.write_terminal_value(&node.semicolon.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_using_alias(ctx: &mut RenderContext<'_>, node: &UsingAliasStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3145,12 +3048,11 @@ pub fn render_using_alias(ctx: &mut RenderContext<'_>, node: &UsingAliasStruct) 
         render_using_operator(ctx, &node.operator);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_using_deconstruction(ctx: &mut RenderContext<'_>, node: &UsingDeconstructionStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3174,7 +3076,7 @@ pub fn render_using_deconstruction(ctx: &mut RenderContext<'_>, node: &UsingDeco
         ctx.write_terminal_value(&node.close_brace.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_using_deconstruction_symbol(
@@ -3182,7 +3084,6 @@ pub fn render_using_deconstruction_symbol(
     node: &UsingDeconstructionSymbolStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3199,12 +3100,11 @@ pub fn render_using_deconstruction_symbol(
         render_using_alias(ctx, alias);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_using_directive(ctx: &mut RenderContext<'_>, node: &UsingDirectiveStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3249,12 +3149,11 @@ pub fn render_using_directive(ctx: &mut RenderContext<'_>, node: &UsingDirective
         ctx.write_terminal_value(&node.semicolon.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_variable_declaration(ctx: &mut RenderContext<'_>, node: &VariableDeclarationStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3278,7 +3177,7 @@ pub fn render_variable_declaration(ctx: &mut RenderContext<'_>, node: &VariableD
         ctx.write_terminal_value(&node.name.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_variable_declaration_statement(
@@ -3286,7 +3185,6 @@ pub fn render_variable_declaration_statement(
     node: &VariableDeclarationStatementStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3303,7 +3201,7 @@ pub fn render_variable_declaration_statement(
         ctx.write_terminal_value(&node.semicolon.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_variable_declaration_value(
@@ -3311,7 +3209,6 @@ pub fn render_variable_declaration_value(
     node: &VariableDeclarationValueStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3328,12 +3225,11 @@ pub fn render_variable_declaration_value(
         render_expression(ctx, &node.expression);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_version_pragma(ctx: &mut RenderContext<'_>, node: &VersionPragmaStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3350,12 +3246,11 @@ pub fn render_version_pragma(ctx: &mut RenderContext<'_>, node: &VersionPragmaSt
         render_version_expression_sets(ctx, &node.sets);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_version_range(ctx: &mut RenderContext<'_>, node: &VersionRangeStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3379,12 +3274,11 @@ pub fn render_version_range(ctx: &mut RenderContext<'_>, node: &VersionRangeStru
         render_version_literal(ctx, &node.end);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_version_term(ctx: &mut RenderContext<'_>, node: &VersionTermStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     if let Some(ref operator) = node.operator {
@@ -3401,12 +3295,11 @@ pub fn render_version_term(ctx: &mut RenderContext<'_>, node: &VersionTermStruct
         render_version_literal(ctx, &node.literal);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_while_statement(ctx: &mut RenderContext<'_>, node: &WhileStatementStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3444,12 +3337,11 @@ pub fn render_while_statement(ctx: &mut RenderContext<'_>, node: &WhileStatement
         render_statement(ctx, &node.body);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_yul_block(ctx: &mut RenderContext<'_>, node: &YulBlockStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3473,12 +3365,11 @@ pub fn render_yul_block(ctx: &mut RenderContext<'_>, node: &YulBlockStruct) {
         ctx.write_terminal_value(&node.close_brace.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_yul_break_statement(ctx: &mut RenderContext<'_>, node: &YulBreakStatementStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3488,7 +3379,7 @@ pub fn render_yul_break_statement(ctx: &mut RenderContext<'_>, node: &YulBreakSt
         ctx.write_terminal_value(&node.break_keyword.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_yul_continue_statement(
@@ -3496,7 +3387,6 @@ pub fn render_yul_continue_statement(
     node: &YulContinueStatementStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3506,12 +3396,11 @@ pub fn render_yul_continue_statement(
         ctx.write_terminal_value(&node.continue_keyword.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_yul_default_case(ctx: &mut RenderContext<'_>, node: &YulDefaultCaseStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3528,12 +3417,11 @@ pub fn render_yul_default_case(ctx: &mut RenderContext<'_>, node: &YulDefaultCas
         render_yul_block(ctx, &node.body);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_yul_flags_declaration(ctx: &mut RenderContext<'_>, node: &YulFlagsDeclarationStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3557,12 +3445,11 @@ pub fn render_yul_flags_declaration(ctx: &mut RenderContext<'_>, node: &YulFlags
         ctx.write_terminal_value(&node.close_paren.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_yul_for_statement(ctx: &mut RenderContext<'_>, node: &YulForStatementStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3600,7 +3487,7 @@ pub fn render_yul_for_statement(ctx: &mut RenderContext<'_>, node: &YulForStatem
         render_yul_block(ctx, &node.body);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_yul_function_call_expression(
@@ -3608,7 +3495,6 @@ pub fn render_yul_function_call_expression(
     node: &YulFunctionCallExpressionStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3639,7 +3525,7 @@ pub fn render_yul_function_call_expression(
         ctx.write_terminal_value(&node.close_paren.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_yul_function_definition(
@@ -3647,7 +3533,6 @@ pub fn render_yul_function_definition(
     node: &YulFunctionDefinitionStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3685,12 +3570,11 @@ pub fn render_yul_function_definition(
         render_yul_block(ctx, &node.body);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_yul_if_statement(ctx: &mut RenderContext<'_>, node: &YulIfStatementStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3714,12 +3598,11 @@ pub fn render_yul_if_statement(ctx: &mut RenderContext<'_>, node: &YulIfStatemen
         render_yul_block(ctx, &node.body);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_yul_leave_statement(ctx: &mut RenderContext<'_>, node: &YulLeaveStatementStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3729,7 +3612,7 @@ pub fn render_yul_leave_statement(ctx: &mut RenderContext<'_>, node: &YulLeaveSt
         ctx.write_terminal_value(&node.leave_keyword.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_yul_parameters_declaration(
@@ -3737,7 +3620,6 @@ pub fn render_yul_parameters_declaration(
     node: &YulParametersDeclarationStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3761,7 +3643,7 @@ pub fn render_yul_parameters_declaration(
         ctx.write_terminal_value(&node.close_paren.range);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_yul_returns_declaration(
@@ -3769,7 +3651,6 @@ pub fn render_yul_returns_declaration(
     node: &YulReturnsDeclarationStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3786,12 +3667,11 @@ pub fn render_yul_returns_declaration(
         render_yul_variable_names(ctx, &node.variables);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_yul_switch_statement(ctx: &mut RenderContext<'_>, node: &YulSwitchStatementStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3815,12 +3695,11 @@ pub fn render_yul_switch_statement(ctx: &mut RenderContext<'_>, node: &YulSwitch
         render_yul_switch_cases(ctx, &node.cases);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_yul_value_case(ctx: &mut RenderContext<'_>, node: &YulValueCaseStruct) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3844,7 +3723,7 @@ pub fn render_yul_value_case(ctx: &mut RenderContext<'_>, node: &YulValueCaseStr
         render_yul_block(ctx, &node.body);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_yul_variable_assignment_statement(
@@ -3852,7 +3731,6 @@ pub fn render_yul_variable_assignment_statement(
     node: &YulVariableAssignmentStatementStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3876,7 +3754,7 @@ pub fn render_yul_variable_assignment_statement(
         render_yul_expression(ctx, &node.expression);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_yul_variable_declaration_statement(
@@ -3884,7 +3762,6 @@ pub fn render_yul_variable_declaration_statement(
     node: &YulVariableDeclarationStatementStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3908,7 +3785,7 @@ pub fn render_yul_variable_declaration_statement(
         render_yul_variable_declaration_value(ctx, value);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 pub fn render_yul_variable_declaration_value(
@@ -3916,7 +3793,6 @@ pub fn render_yul_variable_declaration_value(
     node: &YulVariableDeclarationValueStruct,
 ) {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
 
     {
@@ -3933,7 +3809,7 @@ pub fn render_yul_variable_declaration_value(
         render_yul_expression(ctx, &node.expression);
     }
 
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
 }
 
 //
@@ -5759,7 +5635,6 @@ pub fn render_array_values(ctx: &mut RenderContext<'_>, node: &ArrayValues) {
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -5767,7 +5642,7 @@ pub fn render_array_values(ctx: &mut RenderContext<'_>, node: &ArrayValues) {
 
             render_expression(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -5776,7 +5651,6 @@ pub fn render_call_options(ctx: &mut RenderContext<'_>, node: &CallOptions) {
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -5784,7 +5658,7 @@ pub fn render_call_options(ctx: &mut RenderContext<'_>, node: &CallOptions) {
 
             render_named_argument(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -5793,7 +5667,6 @@ pub fn render_catch_clauses(ctx: &mut RenderContext<'_>, node: &CatchClauses) {
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -5801,7 +5674,7 @@ pub fn render_catch_clauses(ctx: &mut RenderContext<'_>, node: &CatchClauses) {
 
             render_catch_clause(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -5810,7 +5683,6 @@ pub fn render_constructor_attributes(ctx: &mut RenderContext<'_>, node: &Constru
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -5818,7 +5690,7 @@ pub fn render_constructor_attributes(ctx: &mut RenderContext<'_>, node: &Constru
 
             render_constructor_attribute(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -5827,7 +5699,6 @@ pub fn render_contract_members(ctx: &mut RenderContext<'_>, node: &ContractMembe
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -5835,7 +5706,7 @@ pub fn render_contract_members(ctx: &mut RenderContext<'_>, node: &ContractMembe
 
             render_contract_member(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -5844,7 +5715,6 @@ pub fn render_contract_specifiers(ctx: &mut RenderContext<'_>, node: &ContractSp
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -5852,7 +5722,7 @@ pub fn render_contract_specifiers(ctx: &mut RenderContext<'_>, node: &ContractSp
 
             render_contract_specifier(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -5861,7 +5731,6 @@ pub fn render_enum_members(ctx: &mut RenderContext<'_>, node: &EnumMembers) {
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -5869,7 +5738,7 @@ pub fn render_enum_members(ctx: &mut RenderContext<'_>, node: &EnumMembers) {
 
             ctx.write_terminal_value(&element.range);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -5878,7 +5747,6 @@ pub fn render_error_parameters(ctx: &mut RenderContext<'_>, node: &ErrorParamete
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -5886,7 +5754,7 @@ pub fn render_error_parameters(ctx: &mut RenderContext<'_>, node: &ErrorParamete
 
             render_error_parameter(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -5895,7 +5763,6 @@ pub fn render_event_parameters(ctx: &mut RenderContext<'_>, node: &EventParamete
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -5903,7 +5770,7 @@ pub fn render_event_parameters(ctx: &mut RenderContext<'_>, node: &EventParamete
 
             render_event_parameter(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -5915,7 +5782,6 @@ pub fn render_fallback_function_attributes(
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -5923,7 +5789,7 @@ pub fn render_fallback_function_attributes(
 
             render_fallback_function_attribute(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -5932,7 +5798,6 @@ pub fn render_function_attributes(ctx: &mut RenderContext<'_>, node: &FunctionAt
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -5940,7 +5805,7 @@ pub fn render_function_attributes(ctx: &mut RenderContext<'_>, node: &FunctionAt
 
             render_function_attribute(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -5949,7 +5814,6 @@ pub fn render_function_type_attributes(ctx: &mut RenderContext<'_>, node: &Funct
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -5957,7 +5821,7 @@ pub fn render_function_type_attributes(ctx: &mut RenderContext<'_>, node: &Funct
 
             render_function_type_attribute(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -5966,7 +5830,6 @@ pub fn render_hex_string_literals(ctx: &mut RenderContext<'_>, node: &HexStringL
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -5974,7 +5837,7 @@ pub fn render_hex_string_literals(ctx: &mut RenderContext<'_>, node: &HexStringL
 
             ctx.write_terminal_value(&element.range);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -5983,7 +5846,6 @@ pub fn render_identifier_path(ctx: &mut RenderContext<'_>, node: &IdentifierPath
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -5991,7 +5853,7 @@ pub fn render_identifier_path(ctx: &mut RenderContext<'_>, node: &IdentifierPath
 
             render_identifier_path_element(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6003,7 +5865,6 @@ pub fn render_import_deconstruction_symbols(
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6011,7 +5872,7 @@ pub fn render_import_deconstruction_symbols(
 
             render_import_deconstruction_symbol(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6020,7 +5881,6 @@ pub fn render_inheritance_types(ctx: &mut RenderContext<'_>, node: &InheritanceT
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6028,7 +5888,7 @@ pub fn render_inheritance_types(ctx: &mut RenderContext<'_>, node: &InheritanceT
 
             render_inheritance_type(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6037,7 +5897,6 @@ pub fn render_interface_members(ctx: &mut RenderContext<'_>, node: &InterfaceMem
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6045,7 +5904,7 @@ pub fn render_interface_members(ctx: &mut RenderContext<'_>, node: &InterfaceMem
 
             render_contract_member(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6054,7 +5913,6 @@ pub fn render_library_members(ctx: &mut RenderContext<'_>, node: &LibraryMembers
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6062,7 +5920,7 @@ pub fn render_library_members(ctx: &mut RenderContext<'_>, node: &LibraryMembers
 
             render_contract_member(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6071,7 +5929,6 @@ pub fn render_modifier_attributes(ctx: &mut RenderContext<'_>, node: &ModifierAt
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6079,7 +5936,7 @@ pub fn render_modifier_attributes(ctx: &mut RenderContext<'_>, node: &ModifierAt
 
             render_modifier_attribute(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6091,7 +5948,6 @@ pub fn render_multi_typed_declaration_elements(
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6099,7 +5955,7 @@ pub fn render_multi_typed_declaration_elements(
 
             render_multi_typed_declaration_element(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6108,7 +5964,6 @@ pub fn render_named_arguments(ctx: &mut RenderContext<'_>, node: &NamedArguments
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6116,7 +5971,7 @@ pub fn render_named_arguments(ctx: &mut RenderContext<'_>, node: &NamedArguments
 
             render_named_argument(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6125,7 +5980,6 @@ pub fn render_override_paths(ctx: &mut RenderContext<'_>, node: &OverridePaths) 
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6133,7 +5987,7 @@ pub fn render_override_paths(ctx: &mut RenderContext<'_>, node: &OverridePaths) 
 
             render_identifier_path(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6142,7 +5996,6 @@ pub fn render_parameters(ctx: &mut RenderContext<'_>, node: &Parameters) {
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6150,7 +6003,7 @@ pub fn render_parameters(ctx: &mut RenderContext<'_>, node: &Parameters) {
 
             render_parameter(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6159,7 +6012,6 @@ pub fn render_positional_arguments(ctx: &mut RenderContext<'_>, node: &Positiona
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6167,7 +6019,7 @@ pub fn render_positional_arguments(ctx: &mut RenderContext<'_>, node: &Positiona
 
             render_expression(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6179,7 +6031,6 @@ pub fn render_receive_function_attributes(
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6187,7 +6038,7 @@ pub fn render_receive_function_attributes(
 
             render_receive_function_attribute(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6196,7 +6047,6 @@ pub fn render_simple_version_literal(ctx: &mut RenderContext<'_>, node: &SimpleV
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6204,7 +6054,7 @@ pub fn render_simple_version_literal(ctx: &mut RenderContext<'_>, node: &SimpleV
 
             ctx.write_terminal_value(&element.range);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6213,7 +6063,6 @@ pub fn render_source_unit_members(ctx: &mut RenderContext<'_>, node: &SourceUnit
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6221,7 +6070,7 @@ pub fn render_source_unit_members(ctx: &mut RenderContext<'_>, node: &SourceUnit
 
             render_source_unit_member(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6233,7 +6082,6 @@ pub fn render_state_variable_attributes(
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6241,7 +6089,7 @@ pub fn render_state_variable_attributes(
 
             render_state_variable_attribute(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6250,7 +6098,6 @@ pub fn render_statements(ctx: &mut RenderContext<'_>, node: &Statements) {
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6258,7 +6105,7 @@ pub fn render_statements(ctx: &mut RenderContext<'_>, node: &Statements) {
 
             render_statement(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6267,7 +6114,6 @@ pub fn render_string_literals(ctx: &mut RenderContext<'_>, node: &StringLiterals
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6275,7 +6121,7 @@ pub fn render_string_literals(ctx: &mut RenderContext<'_>, node: &StringLiterals
 
             ctx.write_terminal_value(&element.range);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6284,7 +6130,6 @@ pub fn render_struct_members(ctx: &mut RenderContext<'_>, node: &StructMembers) 
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6292,7 +6137,7 @@ pub fn render_struct_members(ctx: &mut RenderContext<'_>, node: &StructMembers) 
 
             render_struct_member(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6301,7 +6146,6 @@ pub fn render_tuple_values(ctx: &mut RenderContext<'_>, node: &TupleValues) {
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6309,7 +6153,7 @@ pub fn render_tuple_values(ctx: &mut RenderContext<'_>, node: &TupleValues) {
 
             render_tuple_value(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6318,7 +6162,6 @@ pub fn render_unicode_string_literals(ctx: &mut RenderContext<'_>, node: &Unicod
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6326,7 +6169,7 @@ pub fn render_unicode_string_literals(ctx: &mut RenderContext<'_>, node: &Unicod
 
             ctx.write_terminal_value(&element.range);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6338,7 +6181,6 @@ pub fn render_using_deconstruction_symbols(
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6346,7 +6188,7 @@ pub fn render_using_deconstruction_symbols(
 
             render_using_deconstruction_symbol(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6355,7 +6197,6 @@ pub fn render_version_expression_set(ctx: &mut RenderContext<'_>, node: &Version
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6363,7 +6204,7 @@ pub fn render_version_expression_set(ctx: &mut RenderContext<'_>, node: &Version
 
             render_version_expression(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6372,7 +6213,6 @@ pub fn render_version_expression_sets(ctx: &mut RenderContext<'_>, node: &Versio
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6380,7 +6220,7 @@ pub fn render_version_expression_sets(ctx: &mut RenderContext<'_>, node: &Versio
 
             render_version_expression_set(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6389,7 +6229,6 @@ pub fn render_yul_arguments(ctx: &mut RenderContext<'_>, node: &YulArguments) {
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6397,7 +6236,7 @@ pub fn render_yul_arguments(ctx: &mut RenderContext<'_>, node: &YulArguments) {
 
             render_yul_expression(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6406,7 +6245,6 @@ pub fn render_yul_flags(ctx: &mut RenderContext<'_>, node: &YulFlags) {
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6414,7 +6252,7 @@ pub fn render_yul_flags(ctx: &mut RenderContext<'_>, node: &YulFlags) {
 
             ctx.write_terminal_value(&element.range);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6423,7 +6261,6 @@ pub fn render_yul_parameters(ctx: &mut RenderContext<'_>, node: &YulParameters) 
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6431,7 +6268,7 @@ pub fn render_yul_parameters(ctx: &mut RenderContext<'_>, node: &YulParameters) 
 
             ctx.write_terminal_value(&element.range);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6440,7 +6277,6 @@ pub fn render_yul_path(ctx: &mut RenderContext<'_>, node: &YulPath) {
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6448,7 +6284,7 @@ pub fn render_yul_path(ctx: &mut RenderContext<'_>, node: &YulPath) {
 
             ctx.write_terminal_value(&element.range);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6457,7 +6293,6 @@ pub fn render_yul_paths(ctx: &mut RenderContext<'_>, node: &YulPaths) {
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6465,7 +6300,7 @@ pub fn render_yul_paths(ctx: &mut RenderContext<'_>, node: &YulPaths) {
 
             render_yul_path(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6474,7 +6309,6 @@ pub fn render_yul_statements(ctx: &mut RenderContext<'_>, node: &YulStatements) 
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6482,7 +6316,7 @@ pub fn render_yul_statements(ctx: &mut RenderContext<'_>, node: &YulStatements) 
 
             render_yul_statement(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6491,7 +6325,6 @@ pub fn render_yul_switch_cases(ctx: &mut RenderContext<'_>, node: &YulSwitchCase
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6499,7 +6332,7 @@ pub fn render_yul_switch_cases(ctx: &mut RenderContext<'_>, node: &YulSwitchCase
 
             render_yul_switch_case(ctx, element);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }
 
@@ -6508,7 +6341,6 @@ pub fn render_yul_variable_names(ctx: &mut RenderContext<'_>, node: &YulVariable
         ctx.write_empty_collection();
     } else {
         ctx.write_nonterminal_start();
-        let parent_depth = ctx.depth;
         ctx.depth += 1;
         for element in &node.elements {
             ctx.write_indent();
@@ -6516,6 +6348,6 @@ pub fn render_yul_variable_names(ctx: &mut RenderContext<'_>, node: &YulVariable
 
             ctx.write_terminal_value(&element.range);
         }
-        ctx.depth = parent_depth;
+        ctx.depth -= 1;
     }
 }

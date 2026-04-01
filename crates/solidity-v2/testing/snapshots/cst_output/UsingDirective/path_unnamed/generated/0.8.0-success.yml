@@ -6,12 +6,12 @@ Source: >
   3  │ // <<<                                                                                                │ 119..125
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (using_directive: UsingDirective):
-              - (using_keyword: UsingKeyword): "using" # (102..107)
-              - (clause: UsingClause) ► (identifier_path: IdentifierPath):
-                  - (item: IdentifierPathElement) ► (identifier: Identifier): "foo" # (108..111)
-              - (for_keyword: ForKeyword): "for" # (112..115)
-              - (target: UsingTarget) ► (asterisk: Asterisk): "*" # (116..117)
-              - (semicolon: Semicolon): ";" # (117..118)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective):
+              - (using_keyword꞉ UsingKeyword): "using" # (102..107)
+              - (clause꞉ UsingClause) ► (identifier_path꞉ IdentifierPath):
+                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "foo" # (108..111)
+              - (for_keyword꞉ ForKeyword): "for" # (112..115)
+              - (target꞉ UsingTarget) ► (asterisk꞉ Asterisk): "*" # (116..117)
+              - (semicolon꞉ Semicolon): ";" # (117..118)

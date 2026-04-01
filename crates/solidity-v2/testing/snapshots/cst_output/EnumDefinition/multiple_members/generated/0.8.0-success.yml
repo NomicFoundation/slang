@@ -10,14 +10,14 @@ Source: >
   7  │ // <<<                                                                                                    │ 148..154
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (enum_definition: EnumDefinition):
-              - (enum_keyword: EnumKeyword): "enum" # (106..110)
-              - (name: Identifier): "Foo" # (111..114)
-              - (open_brace: OpenBrace): "{" # (115..116)
-              - (members: EnumMembers):
-                  - (item: Identifier): "Bar1" # (121..125)
-                  - (item: Identifier): "Bar2" # (131..135)
-                  - (item: Identifier): "Bar3" # (141..145)
-              - (close_brace: CloseBrace): "}" # (146..147)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (enum_definition꞉ EnumDefinition):
+              - (enum_keyword꞉ EnumKeyword): "enum" # (106..110)
+              - (name꞉ Identifier): "Foo" # (111..114)
+              - (open_brace꞉ OpenBrace): "{" # (115..116)
+              - (members꞉ EnumMembers):
+                  - (item꞉ Identifier): "Bar1" # (121..125)
+                  - (item꞉ Identifier): "Bar2" # (131..135)
+                  - (item꞉ Identifier): "Bar3" # (141..145)
+              - (close_brace꞉ CloseBrace): "}" # (146..147)

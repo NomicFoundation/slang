@@ -7,16 +7,16 @@ Source: >
   4  │ // <<<                                                                                               │ 127..133
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (event_definition: EventDefinition):
-              - (event_keyword: EventKeyword): "event" # (101..106)
-              - (name: Identifier): "E1" # (107..109)
-              - (parameters: EventParametersDeclaration):
-                  - (open_paren: OpenParen): "(" # (109..110)
-                  - (parameters: EventParameters):
-                      - (item: EventParameter):
-                          - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint256" # (110..117)
-                          - (name: Identifier): "value" # (118..123)
-                  - (close_paren: CloseParen): ")" # (123..124)
-              - (semicolon: Semicolon): ";" # (124..125)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (event_definition꞉ EventDefinition):
+              - (event_keyword꞉ EventKeyword): "event" # (101..106)
+              - (name꞉ Identifier): "E1" # (107..109)
+              - (parameters꞉ EventParametersDeclaration):
+                  - (open_paren꞉ OpenParen): "(" # (109..110)
+                  - (parameters꞉ EventParameters):
+                      - (item꞉ EventParameter):
+                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (110..117)
+                          - (name꞉ Identifier): "value" # (118..123)
+                  - (close_paren꞉ CloseParen): ")" # (123..124)
+              - (semicolon꞉ Semicolon): ";" # (124..125)

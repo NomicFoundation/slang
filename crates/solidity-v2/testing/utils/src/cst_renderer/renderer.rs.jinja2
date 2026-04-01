@@ -14,7 +14,6 @@ use crate::cst_renderer::RenderContext;
 {% for parent_type, sequence in target.sequences %}
 pub fn render_{{ parent_type | snake_case }}(ctx: &mut RenderContext<'_>, node: &{{ parent_type }}Struct) {
   ctx.write_nonterminal_start();
-  let parent_depth = ctx.depth;
   ctx.depth += 1;
   {% for field in sequence.fields %}
     {% if field.is_optional %}
@@ -39,7 +38,7 @@ pub fn render_{{ parent_type | snake_case }}(ctx: &mut RenderContext<'_>, node: 
       }
     {% endif %}
   {% endfor %}
-  ctx.depth = parent_depth;
+  ctx.depth -= 1;
 }
 
 {% endfor %}
@@ -81,7 +80,6 @@ pub fn render_{{ parent_type | snake_case }}(ctx: &mut RenderContext<'_>, node: 
     ctx.write_empty_collection();
   } else {
     ctx.write_nonterminal_start();
-    let parent_depth = ctx.depth;
     ctx.depth += 1;
     for element in &node.elements {
       ctx.write_indent();
@@ -92,7 +90,7 @@ pub fn render_{{ parent_type | snake_case }}(ctx: &mut RenderContext<'_>, node: 
         render_{{ collection.item_type.name | snake_case }}(ctx, element);
       {% endif %}
     }
-    ctx.depth = parent_depth;
+    ctx.depth -= 1;
   }
 }
 

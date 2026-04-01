@@ -8,18 +8,18 @@ Source: >
   5  │ } for uint;                                                                                                         │ 139..150
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (using_directive: UsingDirective):
-              - (using_keyword: UsingKeyword): "using" # (0..5)
-              - (clause: UsingClause) ► (using_deconstruction: UsingDeconstruction):
-                  - (open_brace: OpenBrace): "{" # (6..7)
-                  - (symbols: UsingDeconstructionSymbols):
-                      - (item: UsingDeconstructionSymbol):
-                          - (name: IdentifierPath):
-                              - (item: IdentifierPathElement) ► (identifier: Identifier): "foo" # (124..127)
-                              - (item: IdentifierPathElement) ► (identifier: Identifier): "bar" # (128..131)
-                  - (close_brace: CloseBrace): "}" # (139..140)
-              - (for_keyword: ForKeyword): "for" # (141..144)
-              - (target: UsingTarget) ► (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint" # (145..149)
-              - (semicolon: Semicolon): ";" # (149..150)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective):
+              - (using_keyword꞉ UsingKeyword): "using" # (0..5)
+              - (clause꞉ UsingClause) ► (using_deconstruction꞉ UsingDeconstruction):
+                  - (open_brace꞉ OpenBrace): "{" # (6..7)
+                  - (symbols꞉ UsingDeconstructionSymbols):
+                      - (item꞉ UsingDeconstructionSymbol):
+                          - (name꞉ IdentifierPath):
+                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "foo" # (124..127)
+                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "bar" # (128..131)
+                  - (close_brace꞉ CloseBrace): "}" # (139..140)
+              - (for_keyword꞉ ForKeyword): "for" # (141..144)
+              - (target꞉ UsingTarget) ► (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (145..149)
+              - (semicolon꞉ Semicolon): ";" # (149..150)

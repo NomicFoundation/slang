@@ -14,34 +14,34 @@ Source: >
   11 │ }                                                                                                                              │ 282..283
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (contract_keyword: ContractKeyword): "contract" # (0..8)
-              - (name: Identifier): "C" # (9..10)
-              - (specifiers: ContractSpecifiers): []
-              - (open_brace: OpenBrace): "{" # (11..12)
-              - (members: ContractMembers):
-                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
-                      - (function_keyword: FunctionKeyword): "function" # (17..25)
-                      - (name: FunctionName) ► (identifier: Identifier): "f" # (26..27)
-                      - (parameters: ParametersDeclaration):
-                          - (open_paren: OpenParen): "(" # (27..28)
-                          - (parameters: Parameters): []
-                          - (close_paren: CloseParen): ")" # (28..29)
-                      - (attributes: FunctionAttributes): []
-                      - (body: FunctionBody) ► (block: Block):
-                          - (open_brace: OpenBrace): "{" # (30..31)
-                          - (statements: Statements):
-                              - (item: Statement) ► (assembly_statement: AssemblyStatement):
-                                  - (assembly_keyword: AssemblyKeyword): "assembly" # (40..48)
-                                  - (body: YulBlock):
-                                      - (open_brace: YulOpenBrace): "{" # (49..50)
-                                      - (statements: YulStatements):
-                                          - (item: YulStatement) ► (yul_variable_declaration_statement: YulVariableDeclarationStatement):
-                                              - (let_keyword: YulLetKeyword): "let" # (241..244)
-                                              - (variables: YulVariableNames):
-                                                  - (item: YulIdentifier): "ufixed184x80" # (245..257)
-                                      - (close_brace: YulCloseBrace): "}" # (274..275)
-                          - (close_brace: CloseBrace): "}" # (280..281)
-              - (close_brace: CloseBrace): "}" # (282..283)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers):
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration):
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements):
+                              - (item꞉ Statement) ► (assembly_statement꞉ AssemblyStatement):
+                                  - (assembly_keyword꞉ AssemblyKeyword): "assembly" # (40..48)
+                                  - (body꞉ YulBlock):
+                                      - (open_brace꞉ YulOpenBrace): "{" # (49..50)
+                                      - (statements꞉ YulStatements):
+                                          - (item꞉ YulStatement) ► (yul_variable_declaration_statement꞉ YulVariableDeclarationStatement):
+                                              - (let_keyword꞉ YulLetKeyword): "let" # (241..244)
+                                              - (variables꞉ YulVariableNames):
+                                                  - (item꞉ YulIdentifier): "ufixed184x80" # (245..257)
+                                      - (close_brace꞉ YulCloseBrace): "}" # (274..275)
+                          - (close_brace꞉ CloseBrace): "}" # (280..281)
+              - (close_brace꞉ CloseBrace): "}" # (282..283)

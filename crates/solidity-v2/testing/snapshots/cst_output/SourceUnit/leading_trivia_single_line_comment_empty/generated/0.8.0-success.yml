@@ -4,5 +4,5 @@ Source: >
   1  │ //                                                                               │ 0..2
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers): []
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

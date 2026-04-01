@@ -1,5 +1,16 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Source: >
+  1  │ contract C {                                                                                                 │ 0..12
+  2  │     function f() {                                                                                           │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/DecimalNumberExpression/years_unit/input.sol │ 32..140
+  4  │ 10 years                                                                                                     │ 141..149
+  5  │                                                                                                              │ 150..150
+  6  │ // <<<                                                                                                       │ 151..157
+  7  │ ;                                                                                                            │ 158..159
+  8  │     }                                                                                                        │ 160..165
+  9  │ }                                                                                                            │ 166..167
+
 Error: Unexpected YearsKeyword_Reserved. One of Ampersand, AmpersandAmpersand, AmpersandEqual, Asterisk, AsteriskAsterisk, AsteriskEqual, BangEqual, Bar, BarBar, BarEqual, Caret, CaretEqual, DaysKeyword_Reserved, Equal, EqualEqual, EtherKeyword_Reserved, GreaterThan, GreaterThanEqual, GreaterThanGreaterThan, GreaterThanGreaterThanEqual, GreaterThanGreaterThanGreaterThan, GreaterThanGreaterThanGreaterThanEqual, GweiKeyword_Reserved, HoursKeyword_Reserved, LessThan, LessThanEqual, LessThanLessThan, LessThanLessThanEqual, Minus, MinusEqual, MinusMinus, MinutesKeyword_Reserved, OpenBrace, OpenBracket, OpenParen, Percent, PercentEqual, Period, Plus, PlusEqual, PlusPlus, QuestionMark, SecondsKeyword_Reserved, Semicolon, Slash, SlashEqual, WeeksKeyword_Reserved, WeiKeyword_Reserved was expected
    ╭─[crates/solidity-v2/testing/snapshots/cst_output/DecimalNumberExpression/years_unit/input.sol:4:4]
    │

@@ -9,18 +9,18 @@ Source: >
   6  │ }                                                                                                                   │ 148..149
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (contract_keyword: ContractKeyword): "contract" # (0..8)
-              - (name: Identifier): "C" # (9..10)
-              - (specifiers: ContractSpecifiers): []
-              - (open_brace: OpenBrace): "{" # (11..12)
-              - (members: ContractMembers):
-                  - (item: ContractMember) ► (state_variable_definition: StateVariableDefinition):
-                      - (type_name: TypeName) ► (identifier_path: IdentifierPath):
-                          - (item: IdentifierPathElement) ► (identifier: Identifier): "bytes320" # (129..137)
-                      - (attributes: StateVariableAttributes): []
-                      - (name: Identifier): "x" # (145..146)
-                      - (semicolon: Semicolon): ";" # (146..147)
-              - (close_brace: CloseBrace): "}" # (148..149)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers):
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition):
+                      - (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath):
+                          - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "bytes320" # (129..137)
+                      - (attributes꞉ StateVariableAttributes): []
+                      - (name꞉ Identifier): "x" # (145..146)
+                      - (semicolon꞉ Semicolon): ";" # (146..147)
+              - (close_brace꞉ CloseBrace): "}" # (148..149)

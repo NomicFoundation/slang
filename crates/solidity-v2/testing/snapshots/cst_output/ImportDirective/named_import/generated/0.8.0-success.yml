@@ -6,15 +6,15 @@ Source: >
   3  │ // <<<                                                                                                 │ 131..137
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (import_directive: ImportDirective):
-              - (import_keyword: ImportKeyword): "import" # (103..109)
-              - (clause: ImportClause) ► (named_import: NamedImport):
-                  - (asterisk: Asterisk): "*" # (110..111)
-                  - (alias: ImportAlias):
-                      - (as_keyword: AsKeyword): "as" # (112..114)
-                      - (identifier: Identifier): "foo" # (115..118)
-                  - (from_keyword: FromKeyword): "from" # (119..123)
-                  - (path: StringLiteral): '"bar"' # (124..129)
-              - (semicolon: Semicolon): ";" # (129..130)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (import_directive꞉ ImportDirective):
+              - (import_keyword꞉ ImportKeyword): "import" # (103..109)
+              - (clause꞉ ImportClause) ► (named_import꞉ NamedImport):
+                  - (asterisk꞉ Asterisk): "*" # (110..111)
+                  - (alias꞉ ImportAlias):
+                      - (as_keyword꞉ AsKeyword): "as" # (112..114)
+                      - (identifier꞉ Identifier): "foo" # (115..118)
+                  - (from_keyword꞉ FromKeyword): "from" # (119..123)
+                  - (path꞉ StringLiteral): '"bar"' # (124..129)
+              - (semicolon꞉ Semicolon): ";" # (129..130)

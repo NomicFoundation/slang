@@ -31,109 +31,109 @@ Source: >
   28 │ // <<<                                                                                          │ 340..346
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (pragma_directive: PragmaDirective):
-              - (pragma_keyword: PragmaKeyword): "pragma" # (96..102)
-              - (pragma: Pragma) ► (version_pragma: VersionPragma):
-                  - (solidity_keyword: SolidityKeyword): "solidity" # (103..111)
-                  - (sets: VersionExpressionSets):
-                      - (item: VersionExpressionSet):
-                          - (item: VersionExpression) ► (version_term: VersionTerm):
-                              - (literal: VersionLiteral) ► (simple_version_literal: SimpleVersionLiteral):
-                                  - (item: VersionSpecifier): "0" # (112..113)
-                                  - (item: VersionSpecifier): "0" # (114..115)
-                                  - (item: VersionSpecifier): "0" # (116..117)
-              - (semicolon: PragmaSemicolon): ";" # (117..118)
-          - (item: SourceUnitMember) ► (import_directive: ImportDirective):
-              - (import_keyword: ImportKeyword): "import" # (120..126)
-              - (clause: ImportClause) ► (path_import: PathImport):
-                  - (path: StringLiteral): '"foo.sol"' # (127..136)
-              - (semicolon: Semicolon): ";" # (136..137)
-          - (item: SourceUnitMember) ► (using_directive: UsingDirective):
-              - (using_keyword: UsingKeyword): "using" # (139..144)
-              - (clause: UsingClause) ► (identifier_path: IdentifierPath):
-                  - (item: IdentifierPathElement) ► (identifier: Identifier): "A" # (145..146)
-              - (for_keyword: ForKeyword): "for" # (147..150)
-              - (target: UsingTarget) ► (type_name: TypeName) ► (identifier_path: IdentifierPath):
-                  - (item: IdentifierPathElement) ► (identifier: Identifier): "B" # (151..152)
-              - (semicolon: Semicolon): ";" # (152..153)
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (contract_keyword: ContractKeyword): "contract" # (155..163)
-              - (name: Identifier): "C" # (164..165)
-              - (specifiers: ContractSpecifiers): []
-              - (open_brace: OpenBrace): "{" # (166..167)
-              - (members: ContractMembers): []
-              - (close_brace: CloseBrace): "}" # (168..169)
-          - (item: SourceUnitMember) ► (interface_definition: InterfaceDefinition):
-              - (interface_keyword: InterfaceKeyword): "interface" # (171..180)
-              - (name: Identifier): "I" # (181..182)
-              - (open_brace: OpenBrace): "{" # (183..184)
-              - (members: InterfaceMembers): []
-              - (close_brace: CloseBrace): "}" # (185..186)
-          - (item: SourceUnitMember) ► (library_definition: LibraryDefinition):
-              - (library_keyword: LibraryKeyword): "library" # (188..195)
-              - (name: Identifier): "L" # (196..197)
-              - (open_brace: OpenBrace): "{" # (198..199)
-              - (members: LibraryMembers): []
-              - (close_brace: CloseBrace): "}" # (200..201)
-          - (item: SourceUnitMember) ► (struct_definition: StructDefinition):
-              - (struct_keyword: StructKeyword): "struct" # (203..209)
-              - (name: Identifier): "S" # (210..211)
-              - (open_brace: OpenBrace): "{" # (212..213)
-              - (members: StructMembers): []
-              - (close_brace: CloseBrace): "}" # (214..215)
-          - (item: SourceUnitMember) ► (enum_definition: EnumDefinition):
-              - (enum_keyword: EnumKeyword): "enum" # (217..221)
-              - (name: Identifier): "E" # (222..223)
-              - (open_brace: OpenBrace): "{" # (224..225)
-              - (members: EnumMembers): []
-              - (close_brace: CloseBrace): "}" # (226..227)
-          - (item: SourceUnitMember) ► (constant_definition: ConstantDefinition):
-              - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint32" # (229..235)
-              - (constant_keyword: ConstantKeyword): "constant" # (236..244)
-              - (name: Identifier): "x" # (245..246)
-              - (equal: Equal): "=" # (247..248)
-              - (value: Expression) ► (decimal_number_expression: DecimalNumberExpression):
-                  - (literal: DecimalLiteral): "0" # (249..250)
-              - (semicolon: Semicolon): ";" # (250..251)
-          - (item: SourceUnitMember) ► (function_definition: FunctionDefinition):
-              - (function_keyword: FunctionKeyword): "function" # (253..261)
-              - (name: FunctionName) ► (identifier: Identifier): "f" # (262..263)
-              - (parameters: ParametersDeclaration):
-                  - (open_paren: OpenParen): "(" # (263..264)
-                  - (parameters: Parameters): []
-                  - (close_paren: CloseParen): ")" # (264..265)
-              - (attributes: FunctionAttributes):
-                  - (item: FunctionAttribute) ► (public_keyword: PublicKeyword): "public" # (266..272)
-              - (body: FunctionBody) ► (block: Block):
-                  - (open_brace: OpenBrace): "{" # (273..274)
-                  - (statements: Statements): []
-                  - (close_brace: CloseBrace): "}" # (275..276)
-          - (item: SourceUnitMember) ► (error_definition: ErrorDefinition):
-              - (error_keyword: ErrorKeyword): "error" # (278..283)
-              - (name: Identifier): "E1" # (284..286)
-              - (members: ErrorParametersDeclaration):
-                  - (open_paren: OpenParen): "(" # (286..287)
-                  - (parameters: ErrorParameters):
-                      - (item: ErrorParameter):
-                          - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (string_keyword: StringKeyword): "string" # (287..293)
-                  - (close_paren: CloseParen): ")" # (293..294)
-              - (semicolon: Semicolon): ";" # (294..295)
-          - (item: SourceUnitMember) ► (user_defined_value_type_definition: UserDefinedValueTypeDefinition):
-              - (type_keyword: TypeKeyword): "type" # (297..301)
-              - (name: Identifier): "T" # (302..303)
-              - (is_keyword: IsKeyword): "is" # (304..306)
-              - (value_type: ElementaryType) ► (bool_keyword: BoolKeyword): "bool" # (307..311)
-              - (semicolon: Semicolon): ";" # (311..312)
-          - (item: SourceUnitMember) ► (event_definition: EventDefinition):
-              - (event_keyword: EventKeyword): "event" # (314..319)
-              - (name: Identifier): "E1" # (320..322)
-              - (parameters: EventParametersDeclaration):
-                  - (open_paren: OpenParen): "(" # (322..323)
-                  - (parameters: EventParameters):
-                      - (item: EventParameter):
-                          - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint256" # (323..330)
-                          - (name: Identifier): "value" # (331..336)
-                  - (close_paren: CloseParen): ")" # (336..337)
-              - (semicolon: Semicolon): ";" # (337..338)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective):
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (96..102)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma):
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (103..111)
+                  - (sets꞉ VersionExpressionSets):
+                      - (item꞉ VersionExpressionSet):
+                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm):
+                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral):
+                                  - (item꞉ VersionSpecifier): "0" # (112..113)
+                                  - (item꞉ VersionSpecifier): "0" # (114..115)
+                                  - (item꞉ VersionSpecifier): "0" # (116..117)
+              - (semicolon꞉ PragmaSemicolon): ";" # (117..118)
+          - (item꞉ SourceUnitMember) ► (import_directive꞉ ImportDirective):
+              - (import_keyword꞉ ImportKeyword): "import" # (120..126)
+              - (clause꞉ ImportClause) ► (path_import꞉ PathImport):
+                  - (path꞉ StringLiteral): '"foo.sol"' # (127..136)
+              - (semicolon꞉ Semicolon): ";" # (136..137)
+          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective):
+              - (using_keyword꞉ UsingKeyword): "using" # (139..144)
+              - (clause꞉ UsingClause) ► (identifier_path꞉ IdentifierPath):
+                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "A" # (145..146)
+              - (for_keyword꞉ ForKeyword): "for" # (147..150)
+              - (target꞉ UsingTarget) ► (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath):
+                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "B" # (151..152)
+              - (semicolon꞉ Semicolon): ";" # (152..153)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (155..163)
+              - (name꞉ Identifier): "C" # (164..165)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (166..167)
+              - (members꞉ ContractMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (168..169)
+          - (item꞉ SourceUnitMember) ► (interface_definition꞉ InterfaceDefinition):
+              - (interface_keyword꞉ InterfaceKeyword): "interface" # (171..180)
+              - (name꞉ Identifier): "I" # (181..182)
+              - (open_brace꞉ OpenBrace): "{" # (183..184)
+              - (members꞉ InterfaceMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (185..186)
+          - (item꞉ SourceUnitMember) ► (library_definition꞉ LibraryDefinition):
+              - (library_keyword꞉ LibraryKeyword): "library" # (188..195)
+              - (name꞉ Identifier): "L" # (196..197)
+              - (open_brace꞉ OpenBrace): "{" # (198..199)
+              - (members꞉ LibraryMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (200..201)
+          - (item꞉ SourceUnitMember) ► (struct_definition꞉ StructDefinition):
+              - (struct_keyword꞉ StructKeyword): "struct" # (203..209)
+              - (name꞉ Identifier): "S" # (210..211)
+              - (open_brace꞉ OpenBrace): "{" # (212..213)
+              - (members꞉ StructMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (214..215)
+          - (item꞉ SourceUnitMember) ► (enum_definition꞉ EnumDefinition):
+              - (enum_keyword꞉ EnumKeyword): "enum" # (217..221)
+              - (name꞉ Identifier): "E" # (222..223)
+              - (open_brace꞉ OpenBrace): "{" # (224..225)
+              - (members꞉ EnumMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (226..227)
+          - (item꞉ SourceUnitMember) ► (constant_definition꞉ ConstantDefinition):
+              - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint32" # (229..235)
+              - (constant_keyword꞉ ConstantKeyword): "constant" # (236..244)
+              - (name꞉ Identifier): "x" # (245..246)
+              - (equal꞉ Equal): "=" # (247..248)
+              - (value꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression):
+                  - (literal꞉ DecimalLiteral): "0" # (249..250)
+              - (semicolon꞉ Semicolon): ";" # (250..251)
+          - (item꞉ SourceUnitMember) ► (function_definition꞉ FunctionDefinition):
+              - (function_keyword꞉ FunctionKeyword): "function" # (253..261)
+              - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (262..263)
+              - (parameters꞉ ParametersDeclaration):
+                  - (open_paren꞉ OpenParen): "(" # (263..264)
+                  - (parameters꞉ Parameters): []
+                  - (close_paren꞉ CloseParen): ")" # (264..265)
+              - (attributes꞉ FunctionAttributes):
+                  - (item꞉ FunctionAttribute) ► (public_keyword꞉ PublicKeyword): "public" # (266..272)
+              - (body꞉ FunctionBody) ► (block꞉ Block):
+                  - (open_brace꞉ OpenBrace): "{" # (273..274)
+                  - (statements꞉ Statements): []
+                  - (close_brace꞉ CloseBrace): "}" # (275..276)
+          - (item꞉ SourceUnitMember) ► (error_definition꞉ ErrorDefinition):
+              - (error_keyword꞉ ErrorKeyword): "error" # (278..283)
+              - (name꞉ Identifier): "E1" # (284..286)
+              - (members꞉ ErrorParametersDeclaration):
+                  - (open_paren꞉ OpenParen): "(" # (286..287)
+                  - (parameters꞉ ErrorParameters):
+                      - (item꞉ ErrorParameter):
+                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (string_keyword꞉ StringKeyword): "string" # (287..293)
+                  - (close_paren꞉ CloseParen): ")" # (293..294)
+              - (semicolon꞉ Semicolon): ";" # (294..295)
+          - (item꞉ SourceUnitMember) ► (user_defined_value_type_definition꞉ UserDefinedValueTypeDefinition):
+              - (type_keyword꞉ TypeKeyword): "type" # (297..301)
+              - (name꞉ Identifier): "T" # (302..303)
+              - (is_keyword꞉ IsKeyword): "is" # (304..306)
+              - (value_type꞉ ElementaryType) ► (bool_keyword꞉ BoolKeyword): "bool" # (307..311)
+              - (semicolon꞉ Semicolon): ";" # (311..312)
+          - (item꞉ SourceUnitMember) ► (event_definition꞉ EventDefinition):
+              - (event_keyword꞉ EventKeyword): "event" # (314..319)
+              - (name꞉ Identifier): "E1" # (320..322)
+              - (parameters꞉ EventParametersDeclaration):
+                  - (open_paren꞉ OpenParen): "(" # (322..323)
+                  - (parameters꞉ EventParameters):
+                      - (item꞉ EventParameter):
+                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (323..330)
+                          - (name꞉ Identifier): "value" # (331..336)
+                  - (close_paren꞉ CloseParen): ")" # (336..337)
+              - (semicolon꞉ Semicolon): ";" # (337..338)

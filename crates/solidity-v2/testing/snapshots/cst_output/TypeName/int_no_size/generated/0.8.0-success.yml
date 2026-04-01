@@ -9,17 +9,17 @@ Source: >
   6  │ }                                                                                              │ 122..123
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (contract_keyword: ContractKeyword): "contract" # (0..8)
-              - (name: Identifier): "C" # (9..10)
-              - (specifiers: ContractSpecifiers): []
-              - (open_brace: OpenBrace): "{" # (11..12)
-              - (members: ContractMembers):
-                  - (item: ContractMember) ► (state_variable_definition: StateVariableDefinition):
-                      - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (int_keyword: IntKeyword): "int" # (108..111)
-                      - (attributes: StateVariableAttributes): []
-                      - (name: Identifier): "x" # (119..120)
-                      - (semicolon: Semicolon): ";" # (120..121)
-              - (close_brace: CloseBrace): "}" # (122..123)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers):
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition):
+                      - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (int_keyword꞉ IntKeyword): "int" # (108..111)
+                      - (attributes꞉ StateVariableAttributes): []
+                      - (name꞉ Identifier): "x" # (119..120)
+                      - (semicolon꞉ Semicolon): ";" # (120..121)
+              - (close_brace꞉ CloseBrace): "}" # (122..123)

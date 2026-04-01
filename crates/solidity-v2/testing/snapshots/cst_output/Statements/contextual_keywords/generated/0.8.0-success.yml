@@ -14,48 +14,48 @@ Source: >
   11 │ }                                                                                                        │ 212..213
 
 Tree:
-  - (root: SourceUnit):
-      - (members: SourceUnitMembers):
-          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
-              - (contract_keyword: ContractKeyword): "contract" # (0..8)
-              - (name: Identifier): "C" # (9..10)
-              - (specifiers: ContractSpecifiers): []
-              - (open_brace: OpenBrace): "{" # (11..12)
-              - (members: ContractMembers):
-                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
-                      - (function_keyword: FunctionKeyword): "function" # (17..25)
-                      - (name: FunctionName) ► (identifier: Identifier): "f" # (26..27)
-                      - (parameters: ParametersDeclaration):
-                          - (open_paren: OpenParen): "(" # (27..28)
-                          - (parameters: Parameters): []
-                          - (close_paren: CloseParen): ")" # (28..29)
-                      - (attributes: FunctionAttributes): []
-                      - (body: FunctionBody) ► (block: Block):
-                          - (open_brace: OpenBrace): "{" # (30..31)
-                          - (statements: Statements):
-                              - (item: Statement) ► (variable_declaration_statement: VariableDeclarationStatement):
-                                  - (target: VariableDeclarationTarget) ► (single_typed_declaration: SingleTypedDeclaration):
-                                      - (declaration: VariableDeclaration):
-                                          - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint256" # (137..144)
-                                          - (name: Identifier): "error" # (145..150)
-                                  - (semicolon: Semicolon): ";" # (150..151)
-                              - (item: Statement) ► (variable_declaration_statement: VariableDeclarationStatement):
-                                  - (target: VariableDeclarationTarget) ► (single_typed_declaration: SingleTypedDeclaration):
-                                      - (declaration: VariableDeclaration):
-                                          - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint256" # (152..159)
-                                          - (name: Identifier): "from" # (160..164)
-                                  - (semicolon: Semicolon): ";" # (164..165)
-                              - (item: Statement) ► (variable_declaration_statement: VariableDeclarationStatement):
-                                  - (target: VariableDeclarationTarget) ► (single_typed_declaration: SingleTypedDeclaration):
-                                      - (declaration: VariableDeclaration):
-                                          - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint256" # (166..173)
-                                          - (name: Identifier): "revert" # (174..180)
-                                  - (semicolon: Semicolon): ";" # (180..181)
-                              - (item: Statement) ► (variable_declaration_statement: VariableDeclarationStatement):
-                                  - (target: VariableDeclarationTarget) ► (single_typed_declaration: SingleTypedDeclaration):
-                                      - (declaration: VariableDeclaration):
-                                          - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint256" # (182..189)
-                                          - (name: Identifier): "global" # (190..196)
-                                  - (semicolon: Semicolon): ";" # (196..197)
-                          - (close_brace: CloseBrace): "}" # (210..211)
-              - (close_brace: CloseBrace): "}" # (212..213)
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers):
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition):
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers):
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition):
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration):
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block):
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements):
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement):
+                                  - (target꞉ VariableDeclarationTarget) ► (single_typed_declaration꞉ SingleTypedDeclaration):
+                                      - (declaration꞉ VariableDeclaration):
+                                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (137..144)
+                                          - (name꞉ Identifier): "error" # (145..150)
+                                  - (semicolon꞉ Semicolon): ";" # (150..151)
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement):
+                                  - (target꞉ VariableDeclarationTarget) ► (single_typed_declaration꞉ SingleTypedDeclaration):
+                                      - (declaration꞉ VariableDeclaration):
+                                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (152..159)
+                                          - (name꞉ Identifier): "from" # (160..164)
+                                  - (semicolon꞉ Semicolon): ";" # (164..165)
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement):
+                                  - (target꞉ VariableDeclarationTarget) ► (single_typed_declaration꞉ SingleTypedDeclaration):
+                                      - (declaration꞉ VariableDeclaration):
+                                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (166..173)
+                                          - (name꞉ Identifier): "revert" # (174..180)
+                                  - (semicolon꞉ Semicolon): ";" # (180..181)
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement):
+                                  - (target꞉ VariableDeclarationTarget) ► (single_typed_declaration꞉ SingleTypedDeclaration):
+                                      - (declaration꞉ VariableDeclaration):
+                                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (182..189)
+                                          - (name꞉ Identifier): "global" # (190..196)
+                                  - (semicolon꞉ Semicolon): ";" # (196..197)
+                          - (close_brace꞉ CloseBrace): "}" # (210..211)
+              - (close_brace꞉ CloseBrace): "}" # (212..213)
