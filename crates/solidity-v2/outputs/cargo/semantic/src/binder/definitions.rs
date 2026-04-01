@@ -37,13 +37,13 @@ pub enum Definition {
 
 #[derive(Debug)]
 pub struct ConstantDefinition {
-    pub(crate) ir_node: ir::ConstantDefinition,
+    pub ir_node: ir::ConstantDefinition,
     pub scope_id: ScopeId,
 }
 
 #[derive(Debug)]
 pub struct ContractDefinition {
-    pub(crate) ir_node: ir::ContractDefinition,
+    pub ir_node: ir::ContractDefinition,
     pub bases: Option<Vec<NodeId>>,
     pub constructor_parameters_scope_id: Option<ScopeId>,
     pub base_slot: Option<usize>,
@@ -51,113 +51,113 @@ pub struct ContractDefinition {
 
 #[derive(Debug)]
 pub struct EnumDefinition {
-    pub(crate) ir_node: ir::EnumDefinition,
+    pub ir_node: ir::EnumDefinition,
 }
 
 #[derive(Debug)]
 pub struct EnumMemberDefinition {
-    pub(crate) ir_node: ir::Identifier,
+    pub ir_node: ir::Identifier,
 }
 
 #[derive(Debug)]
 pub struct ErrorDefinition {
-    pub(crate) ir_node: ir::ErrorDefinition,
+    pub ir_node: ir::ErrorDefinition,
     pub parameters_scope_id: ScopeId,
 }
 
 #[derive(Debug)]
 pub struct EventDefinition {
-    pub(crate) ir_node: ir::EventDefinition,
+    pub ir_node: ir::EventDefinition,
     pub parameters_scope_id: ScopeId,
 }
 
 #[derive(Debug)]
 pub struct FunctionDefinition {
-    pub(crate) ir_node: ir::FunctionDefinition,
+    pub ir_node: ir::FunctionDefinition,
     pub parameters_scope_id: ScopeId,
     pub visibility: ir::FunctionVisibility,
 }
 
 #[derive(Debug)]
 pub struct ImportDefinition {
-    pub(crate) ir_node: ir::PathImport,
+    pub ir_node: ir::PathImport,
     pub resolved_file_id: Option<String>,
 }
 
 #[derive(Debug)]
 pub struct ImportedSymbolDefinition {
-    pub(crate) ir_node: ir::ImportDeconstructionSymbol,
+    pub ir_node: ir::ImportDeconstructionSymbol,
     pub symbol: String,
     pub resolved_file_id: Option<String>,
 }
 
 #[derive(Debug)]
 pub struct InterfaceDefinition {
-    pub(crate) ir_node: ir::InterfaceDefinition,
+    pub ir_node: ir::InterfaceDefinition,
     pub bases: Option<Vec<NodeId>>,
 }
 
 #[derive(Debug)]
 pub struct LibraryDefinition {
-    pub(crate) ir_node: ir::LibraryDefinition,
+    pub ir_node: ir::LibraryDefinition,
 }
 
 #[derive(Debug)]
 pub struct ModifierDefinition {
-    pub(crate) ir_node: ir::FunctionDefinition,
+    pub ir_node: ir::FunctionDefinition,
 }
 
 #[derive(Debug)]
 pub struct ParameterDefinition {
-    pub(crate) ir_node: ir::Parameter,
+    pub ir_node: ir::Parameter,
 }
 
 #[derive(Debug)]
 pub struct StateVariableDefinition {
-    pub(crate) ir_node: ir::StateVariableDefinition,
+    pub ir_node: ir::StateVariableDefinition,
     pub getter_type_id: Option<TypeId>,
     pub visibility: ir::StateVariableVisibility,
 }
 
 #[derive(Debug)]
 pub struct StructDefinition {
-    pub(crate) ir_node: ir::StructDefinition,
+    pub ir_node: ir::StructDefinition,
 }
 
 #[derive(Debug)]
 pub struct StructMemberDefinition {
-    pub(crate) ir_node: ir::StructMember,
+    pub ir_node: ir::StructMember,
 }
 
 #[derive(Debug)]
 pub struct TypeParameterDefinition {
-    pub(crate) ir_node: ir::Parameter,
+    pub ir_node: ir::Parameter,
 }
 
 #[derive(Debug)]
 pub struct UserDefinedValueTypeDefinition {
-    pub(crate) ir_node: ir::UserDefinedValueTypeDefinition,
+    pub ir_node: ir::UserDefinedValueTypeDefinition,
     pub target_type_id: Option<TypeId>,
 }
 
 #[derive(Debug)]
 pub struct VariableDefinition {
-    pub(crate) ir_node: ir::VariableDeclaration,
+    pub ir_node: ir::VariableDeclaration,
 }
 
 #[derive(Debug)]
 pub struct YulFunctionDefinition {
-    pub(crate) ir_node: ir::YulFunctionDefinition,
+    pub ir_node: ir::YulFunctionDefinition,
 }
 
 #[derive(Debug)]
 pub struct YulParameterDefinition {
-    pub(crate) ir_node: ir::Identifier,
+    pub ir_node: ir::Identifier,
 }
 
 #[derive(Debug)]
 pub struct YulVariableDefinition {
-    pub(crate) ir_node: ir::Identifier,
+    pub ir_node: ir::Identifier,
 }
 
 impl Definition {
