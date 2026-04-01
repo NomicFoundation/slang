@@ -1,0 +1,49 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                     │ 0..12
+  2  │     function f() {                                                                                               │ 13..31
+  3  │         assembly {                                                                                               │ 32..50
+  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulFunctionCallExpression/built_in_and/input.sol │ 51..163
+  5  │ // this identifier is unreserved, and bound as a built-in function. See #1203:                                   │ 164..242
+  6  │ and()                                                                                                            │ 243..248
+  7  │                                                                                                                  │ 249..249
+  8  │ // <<<                                                                                                           │ 250..256
+  9  │         }                                                                                                        │ 257..266
+  10 │     }                                                                                                            │ 267..272
+  11 │ }                                                                                                                │ 273..274
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
+                      - (function_keyword: FunctionKeyword): "function" # (17..25)
+                      - (name: FunctionName) ► (identifier: Identifier): "f" # (26..27)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (27..28)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (28..29)
+                      - (attributes: FunctionAttributes): []
+                      - (body: FunctionBody) ► (block: Block):
+                          - (open_brace: OpenBrace): "{" # (30..31)
+                          - (statements: Statements):
+                              - (item: Statement) ► (assembly_statement: AssemblyStatement):
+                                  - (assembly_keyword: AssemblyKeyword): "assembly" # (40..48)
+                                  - (body: YulBlock):
+                                      - (open_brace: YulOpenBrace): "{" # (49..50)
+                                      - (statements: YulStatements):
+                                          - (item: YulStatement) ► (yul_expression: YulExpression) ► (yul_function_call_expression: YulFunctionCallExpression):
+                                              - (operand: YulExpression) ► (yul_path: YulPath):
+                                                  - (item: YulIdentifier): "and" # (243..246)
+                                              - (open_paren: YulOpenParen): "(" # (246..247)
+                                              - (arguments: YulArguments): []
+                                              - (close_paren: YulCloseParen): ")" # (247..248)
+                                      - (close_brace: YulCloseBrace): "}" # (265..266)
+                          - (close_brace: CloseBrace): "}" # (271..272)
+              - (close_brace: CloseBrace): "}" # (273..274)

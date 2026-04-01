@@ -1,0 +1,47 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                                │ 0..12
+  2  │     function f() {                                                                                                          │ 13..31
+  3  │         assembly {                                                                                                          │ 32..50
+  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulVariableDeclarationStatement/keyword_ufixed8x0/input.sol │ 51..174
+  5  │ // This form is reserved only since 0.4.14 until 0.7.1 in Yul:                                                              │ 175..237
+  6  │ let ufixed8x0                                                                                                               │ 238..251
+  7  │                                                                                                                             │ 252..252
+  8  │ // <<<                                                                                                                      │ 253..259
+  9  │         }                                                                                                                   │ 260..269
+  10 │     }                                                                                                                       │ 270..275
+  11 │ }                                                                                                                           │ 276..277
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
+                      - (function_keyword: FunctionKeyword): "function" # (17..25)
+                      - (name: FunctionName) ► (identifier: Identifier): "f" # (26..27)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (27..28)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (28..29)
+                      - (attributes: FunctionAttributes): []
+                      - (body: FunctionBody) ► (block: Block):
+                          - (open_brace: OpenBrace): "{" # (30..31)
+                          - (statements: Statements):
+                              - (item: Statement) ► (assembly_statement: AssemblyStatement):
+                                  - (assembly_keyword: AssemblyKeyword): "assembly" # (40..48)
+                                  - (body: YulBlock):
+                                      - (open_brace: YulOpenBrace): "{" # (49..50)
+                                      - (statements: YulStatements):
+                                          - (item: YulStatement) ► (yul_variable_declaration_statement: YulVariableDeclarationStatement):
+                                              - (let_keyword: YulLetKeyword): "let" # (238..241)
+                                              - (variables: YulVariableNames):
+                                                  - (item: YulIdentifier): "ufixed8x0" # (242..251)
+                                      - (close_brace: YulCloseBrace): "}" # (268..269)
+                          - (close_brace: CloseBrace): "}" # (274..275)
+              - (close_brace: CloseBrace): "}" # (276..277)

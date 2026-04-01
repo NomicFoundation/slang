@@ -1,0 +1,25 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ pragma                                                                                                 │ 0..6
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/VersionPragma/equal_operator/input.sol │ 7..109
+  3  │ solidity =0.8.0                                                                                        │ 110..125
+  4  │ // <<<                                                                                                 │ 126..132
+  5  │ ;                                                                                                      │ 133..134
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (pragma_directive: PragmaDirective):
+              - (pragma_keyword: PragmaKeyword): "pragma" # (0..6)
+              - (pragma: Pragma) ► (version_pragma: VersionPragma):
+                  - (solidity_keyword: SolidityKeyword): "solidity" # (110..118)
+                  - (sets: VersionExpressionSets):
+                      - (item: VersionExpressionSet):
+                          - (item: VersionExpression) ► (version_term: VersionTerm):
+                              - (operator: VersionOperator) ► (pragma_equal: PragmaEqual): "=" # (119..120)
+                              - (literal: VersionLiteral) ► (simple_version_literal: SimpleVersionLiteral):
+                                  - (item: VersionSpecifier): "0" # (120..121)
+                                  - (item: VersionSpecifier): "8" # (122..123)
+                                  - (item: VersionSpecifier): "0" # (124..125)
+              - (semicolon: PragmaSemicolon): ";" # (133..134)

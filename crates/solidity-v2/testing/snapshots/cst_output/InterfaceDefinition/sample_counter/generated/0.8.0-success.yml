@@ -1,0 +1,51 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/InterfaceDefinition/sample_counter/input.sol │ 0..108
+  2  │ interface ICounter {                                                                                         │ 109..129
+  3  │     // returns the current count                                                                             │ 130..162
+  4  │     function count() external view returns (uint);                                                           │ 163..213
+  5  │                                                                                                              │ 214..214
+  6  │     // increments the counter                                                                                │ 215..244
+  7  │     function increment() external;                                                                           │ 245..279
+  8  │ }                                                                                                            │ 280..281
+  9  │ // <<<                                                                                                       │ 282..288
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (interface_definition: InterfaceDefinition):
+              - (interface_keyword: InterfaceKeyword): "interface" # (109..118)
+              - (name: Identifier): "ICounter" # (119..127)
+              - (open_brace: OpenBrace): "{" # (128..129)
+              - (members: InterfaceMembers):
+                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
+                      - (function_keyword: FunctionKeyword): "function" # (167..175)
+                      - (name: FunctionName) ► (identifier: Identifier): "count" # (176..181)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (181..182)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (182..183)
+                      - (attributes: FunctionAttributes):
+                          - (item: FunctionAttribute) ► (external_keyword: ExternalKeyword): "external" # (184..192)
+                          - (item: FunctionAttribute) ► (view_keyword: ViewKeyword): "view" # (193..197)
+                      - (returns: ReturnsDeclaration):
+                          - (returns_keyword: ReturnsKeyword): "returns" # (198..205)
+                          - (variables: ParametersDeclaration):
+                              - (open_paren: OpenParen): "(" # (206..207)
+                              - (parameters: Parameters):
+                                  - (item: Parameter):
+                                      - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint" # (207..211)
+                              - (close_paren: CloseParen): ")" # (211..212)
+                      - (body: FunctionBody) ► (semicolon: Semicolon): ";" # (212..213)
+                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
+                      - (function_keyword: FunctionKeyword): "function" # (249..257)
+                      - (name: FunctionName) ► (identifier: Identifier): "increment" # (258..267)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (267..268)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (268..269)
+                      - (attributes: FunctionAttributes):
+                          - (item: FunctionAttribute) ► (external_keyword: ExternalKeyword): "external" # (270..278)
+                      - (body: FunctionBody) ► (semicolon: Semicolon): ";" # (278..279)
+              - (close_brace: CloseBrace): "}" # (280..281)

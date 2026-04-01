@@ -1,0 +1,28 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                       │ 0..12
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/TypeName/address_payable/input.sol │ 13..111
+  3  │ address payable                                                                                    │ 112..127
+  4  │                                                                                                    │ 128..128
+  5  │ // <<<                                                                                             │ 129..135
+  6  │ x;                                                                                                 │ 136..138
+  7  │ }                                                                                                  │ 139..140
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (state_variable_definition: StateVariableDefinition):
+                      - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (address_type: AddressType):
+                          - (address_keyword: AddressKeyword): "address" # (112..119)
+                          - (payable_keyword: PayableKeyword): "payable" # (120..127)
+                      - (attributes: StateVariableAttributes): []
+                      - (name: Identifier): "x" # (136..137)
+                      - (semicolon: Semicolon): ";" # (137..138)
+              - (close_brace: CloseBrace): "}" # (139..140)

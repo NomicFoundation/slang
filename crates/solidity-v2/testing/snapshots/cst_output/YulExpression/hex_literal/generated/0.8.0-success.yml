@@ -1,0 +1,42 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                        │ 0..12
+  2  │     function f() {                                                                                  │ 13..31
+  3  │         assembly {                                                                                  │ 32..50
+  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulExpression/hex_literal/input.sol │ 51..150
+  5  │ 0x123                                                                                               │ 151..156
+  6  │ // <<<                                                                                              │ 157..163
+  7  │         }                                                                                           │ 164..173
+  8  │     }                                                                                               │ 174..179
+  9  │ }                                                                                                   │ 180..181
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
+                      - (function_keyword: FunctionKeyword): "function" # (17..25)
+                      - (name: FunctionName) ► (identifier: Identifier): "f" # (26..27)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (27..28)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (28..29)
+                      - (attributes: FunctionAttributes): []
+                      - (body: FunctionBody) ► (block: Block):
+                          - (open_brace: OpenBrace): "{" # (30..31)
+                          - (statements: Statements):
+                              - (item: Statement) ► (assembly_statement: AssemblyStatement):
+                                  - (assembly_keyword: AssemblyKeyword): "assembly" # (40..48)
+                                  - (body: YulBlock):
+                                      - (open_brace: YulOpenBrace): "{" # (49..50)
+                                      - (statements: YulStatements):
+                                          - (item: YulStatement) ► (yul_expression: YulExpression) ► (yul_literal: YulLiteral) ► (yul_hex_literal: YulHexLiteral): "0x123" # (151..156)
+                                      - (close_brace: YulCloseBrace): "}" # (172..173)
+                          - (close_brace: CloseBrace): "}" # (178..179)
+              - (close_brace: CloseBrace): "}" # (180..181)

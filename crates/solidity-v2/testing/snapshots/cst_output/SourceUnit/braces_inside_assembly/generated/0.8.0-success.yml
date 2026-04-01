@@ -1,0 +1,85 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/braces_inside_assembly/input.sol │ 0..107
+  2  │ // File: @openzeppelin/contracts/token/ERC20/IERC20.sol                                                     │ 108..163
+  3  │                                                                                                             │ 164..164
+  4  │ // OpenZeppelin Contracts (last updated v5.1.0) (token/ERC20/IERC20.sol)                                    │ 165..237
+  5  │                                                                                                             │ 238..238
+  6  │ pragma solidity ^0.8.20;                                                                                    │ 239..263
+  7  │                                                                                                             │ 264..264
+  8  │ library SafeERC20 {                                                                                         │ 265..284
+  9  │   function _callOptionalReturn() private {                                                                  │ 285..327
+  10 │     assembly {                                                                                              │ 328..342
+  11 │       if iszero(success) {                                                                                  │ 343..369
+  12 │         revert(ptr)                                                                                         │ 370..389
+  13 │       }                                                                                                     │ 390..397
+  14 │     }                                                                                                       │ 398..403
+  15 │   }                                                                                                         │ 404..407
+  16 │ }                                                                                                           │ 408..409
+  17 │                                                                                                             │ 410..410
+  18 │ // <<<                                                                                                      │ 411..417
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (pragma_directive: PragmaDirective):
+              - (pragma_keyword: PragmaKeyword): "pragma" # (239..245)
+              - (pragma: Pragma) ► (version_pragma: VersionPragma):
+                  - (solidity_keyword: SolidityKeyword): "solidity" # (246..254)
+                  - (sets: VersionExpressionSets):
+                      - (item: VersionExpressionSet):
+                          - (item: VersionExpression) ► (version_term: VersionTerm):
+                              - (operator: VersionOperator) ► (pragma_caret: PragmaCaret): "^" # (255..256)
+                              - (literal: VersionLiteral) ► (simple_version_literal: SimpleVersionLiteral):
+                                  - (item: VersionSpecifier): "0" # (256..257)
+                                  - (item: VersionSpecifier): "8" # (258..259)
+                                  - (item: VersionSpecifier): "20" # (260..262)
+              - (semicolon: PragmaSemicolon): ";" # (262..263)
+          - (item: SourceUnitMember) ► (library_definition: LibraryDefinition):
+              - (library_keyword: LibraryKeyword): "library" # (265..272)
+              - (name: Identifier): "SafeERC20" # (273..282)
+              - (open_brace: OpenBrace): "{" # (283..284)
+              - (members: LibraryMembers):
+                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
+                      - (function_keyword: FunctionKeyword): "function" # (287..295)
+                      - (name: FunctionName) ► (identifier: Identifier): "_callOptionalReturn" # (296..315)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (315..316)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (316..317)
+                      - (attributes: FunctionAttributes):
+                          - (item: FunctionAttribute) ► (private_keyword: PrivateKeyword): "private" # (318..325)
+                      - (body: FunctionBody) ► (block: Block):
+                          - (open_brace: OpenBrace): "{" # (326..327)
+                          - (statements: Statements):
+                              - (item: Statement) ► (assembly_statement: AssemblyStatement):
+                                  - (assembly_keyword: AssemblyKeyword): "assembly" # (332..340)
+                                  - (body: YulBlock):
+                                      - (open_brace: YulOpenBrace): "{" # (341..342)
+                                      - (statements: YulStatements):
+                                          - (item: YulStatement) ► (yul_if_statement: YulIfStatement):
+                                              - (if_keyword: YulIfKeyword): "if" # (349..351)
+                                              - (condition: YulExpression) ► (yul_function_call_expression: YulFunctionCallExpression):
+                                                  - (operand: YulExpression) ► (yul_path: YulPath):
+                                                      - (item: YulIdentifier): "iszero" # (352..358)
+                                                  - (open_paren: YulOpenParen): "(" # (358..359)
+                                                  - (arguments: YulArguments):
+                                                      - (item: YulExpression) ► (yul_path: YulPath):
+                                                          - (item: YulIdentifier): "success" # (359..366)
+                                                  - (close_paren: YulCloseParen): ")" # (366..367)
+                                              - (body: YulBlock):
+                                                  - (open_brace: YulOpenBrace): "{" # (368..369)
+                                                  - (statements: YulStatements):
+                                                      - (item: YulStatement) ► (yul_expression: YulExpression) ► (yul_function_call_expression: YulFunctionCallExpression):
+                                                          - (operand: YulExpression) ► (yul_path: YulPath):
+                                                              - (item: YulIdentifier): "revert" # (378..384)
+                                                          - (open_paren: YulOpenParen): "(" # (384..385)
+                                                          - (arguments: YulArguments):
+                                                              - (item: YulExpression) ► (yul_path: YulPath):
+                                                                  - (item: YulIdentifier): "ptr" # (385..388)
+                                                          - (close_paren: YulCloseParen): ")" # (388..389)
+                                                  - (close_brace: YulCloseBrace): "}" # (396..397)
+                                      - (close_brace: YulCloseBrace): "}" # (402..403)
+                          - (close_brace: CloseBrace): "}" # (406..407)
+              - (close_brace: CloseBrace): "}" # (408..409)

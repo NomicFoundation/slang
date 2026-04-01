@@ -1,0 +1,25 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_state_variable_declaration/input.sol │ 0..126
+  2  │ contract Sample {                                                                                                              │ 127..144
+  3  │   uint public a;                                                                                                               │ 145..161
+  4  │ }                                                                                                                              │ 162..163
+  5  │ // <<<                                                                                                                         │ 164..170
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (127..135)
+              - (name: Identifier): "Sample" # (136..142)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (143..144)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (state_variable_definition: StateVariableDefinition):
+                      - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint" # (147..151)
+                      - (attributes: StateVariableAttributes):
+                          - (item: StateVariableAttribute) ► (public_keyword: PublicKeyword): "public" # (152..158)
+                      - (name: Identifier): "a" # (159..160)
+                      - (semicolon: Semicolon): ";" # (160..161)
+              - (close_brace: CloseBrace): "}" # (162..163)

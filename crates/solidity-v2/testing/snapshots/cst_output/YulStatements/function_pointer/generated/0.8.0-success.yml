@@ -1,0 +1,66 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                                                                  │ 0..12
+  2  │     function f() {                                                                                                                                            │ 13..31
+  3  │         assembly {                                                                                                                                            │ 32..50
+  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulStatements/function_pointer/input.sol                                                      │ 51..155
+  5  │ {                                                                                                                                                             │ 156..157
+  6  │ 	// https://github.com/ethereum/solidity/blob/ebdce269005e8f2a6652bad64a000725ff1624fe/docs/assembly.rst#access-to-external-variables-functions-and-libraries │ 158..315
+  7  │ 	f.address := newAddress                                                                                                                                      │ 316..340
+  8  │ 	f.selector := newSelector                                                                                                                                    │ 341..367
+  9  │ }                                                                                                                                                             │ 368..369
+  10 │                                                                                                                                                               │ 370..370
+  11 │ // <<<                                                                                                                                                        │ 371..377
+  12 │         }                                                                                                                                                     │ 378..387
+  13 │     }                                                                                                                                                         │ 388..393
+  14 │ }                                                                                                                                                             │ 394..395
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
+                      - (function_keyword: FunctionKeyword): "function" # (17..25)
+                      - (name: FunctionName) ► (identifier: Identifier): "f" # (26..27)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (27..28)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (28..29)
+                      - (attributes: FunctionAttributes): []
+                      - (body: FunctionBody) ► (block: Block):
+                          - (open_brace: OpenBrace): "{" # (30..31)
+                          - (statements: Statements):
+                              - (item: Statement) ► (assembly_statement: AssemblyStatement):
+                                  - (assembly_keyword: AssemblyKeyword): "assembly" # (40..48)
+                                  - (body: YulBlock):
+                                      - (open_brace: YulOpenBrace): "{" # (49..50)
+                                      - (statements: YulStatements):
+                                          - (item: YulStatement) ► (yul_block: YulBlock):
+                                              - (open_brace: YulOpenBrace): "{" # (156..157)
+                                              - (statements: YulStatements):
+                                                  - (item: YulStatement) ► (yul_variable_assignment_statement: YulVariableAssignmentStatement):
+                                                      - (variables: YulPaths):
+                                                          - (item: YulPath):
+                                                              - (item: YulIdentifier): "f" # (317..318)
+                                                              - (item: YulIdentifier): "address" # (319..326)
+                                                      - (assignment: YulColonEqual): ":=" # (327..329)
+                                                      - (expression: YulExpression) ► (yul_path: YulPath):
+                                                          - (item: YulIdentifier): "newAddress" # (330..340)
+                                                  - (item: YulStatement) ► (yul_variable_assignment_statement: YulVariableAssignmentStatement):
+                                                      - (variables: YulPaths):
+                                                          - (item: YulPath):
+                                                              - (item: YulIdentifier): "f" # (342..343)
+                                                              - (item: YulIdentifier): "selector" # (344..352)
+                                                      - (assignment: YulColonEqual): ":=" # (353..355)
+                                                      - (expression: YulExpression) ► (yul_path: YulPath):
+                                                          - (item: YulIdentifier): "newSelector" # (356..367)
+                                              - (close_brace: YulCloseBrace): "}" # (368..369)
+                                      - (close_brace: YulCloseBrace): "}" # (386..387)
+                          - (close_brace: CloseBrace): "}" # (392..393)
+              - (close_brace: CloseBrace): "}" # (394..395)

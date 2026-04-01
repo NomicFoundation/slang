@@ -1,0 +1,99 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/state_variable_function/input.sol │ 0..108
+  2  │ contract A {                                                                                                 │ 109..121
+  3  │                                                                                                              │ 122..122
+  4  │     function (uint a) internal internal foo;                                                                 │ 123..167
+  5  │     function (uint a) internal immutable internal foo;                                                       │ 168..222
+  6  │     function (uint a)[2] internal internal foo;                                                              │ 223..270
+  7  │     function (uint a) internal[2] internal foo;                                                              │ 271..318
+  8  │ }                                                                                                            │ 319..320
+  9  │                                                                                                              │ 321..321
+  10 │ // <<<                                                                                                       │ 322..328
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (109..117)
+              - (name: Identifier): "A" # (118..119)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (120..121)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (state_variable_definition: StateVariableDefinition):
+                      - (type_name: TypeName) ► (function_type: FunctionType):
+                          - (function_keyword: FunctionKeyword): "function" # (127..135)
+                          - (parameters: ParametersDeclaration):
+                              - (open_paren: OpenParen): "(" # (136..137)
+                              - (parameters: Parameters):
+                                  - (item: Parameter):
+                                      - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint" # (137..141)
+                                      - (name: Identifier): "a" # (142..143)
+                              - (close_paren: CloseParen): ")" # (143..144)
+                          - (attributes: FunctionTypeAttributes):
+                              - (item: FunctionTypeAttribute) ► (internal_keyword: InternalKeyword): "internal" # (145..153)
+                      - (attributes: StateVariableAttributes):
+                          - (item: StateVariableAttribute) ► (internal_keyword: InternalKeyword): "internal" # (154..162)
+                      - (name: Identifier): "foo" # (163..166)
+                      - (semicolon: Semicolon): ";" # (166..167)
+                  - (item: ContractMember) ► (state_variable_definition: StateVariableDefinition):
+                      - (type_name: TypeName) ► (function_type: FunctionType):
+                          - (function_keyword: FunctionKeyword): "function" # (172..180)
+                          - (parameters: ParametersDeclaration):
+                              - (open_paren: OpenParen): "(" # (181..182)
+                              - (parameters: Parameters):
+                                  - (item: Parameter):
+                                      - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint" # (182..186)
+                                      - (name: Identifier): "a" # (187..188)
+                              - (close_paren: CloseParen): ")" # (188..189)
+                          - (attributes: FunctionTypeAttributes):
+                              - (item: FunctionTypeAttribute) ► (internal_keyword: InternalKeyword): "internal" # (190..198)
+                      - (attributes: StateVariableAttributes):
+                          - (item: StateVariableAttribute) ► (immutable_keyword: ImmutableKeyword): "immutable" # (199..208)
+                          - (item: StateVariableAttribute) ► (internal_keyword: InternalKeyword): "internal" # (209..217)
+                      - (name: Identifier): "foo" # (218..221)
+                      - (semicolon: Semicolon): ";" # (221..222)
+                  - (item: ContractMember) ► (state_variable_definition: StateVariableDefinition):
+                      - (type_name: TypeName) ► (array_type_name: ArrayTypeName):
+                          - (operand: TypeName) ► (function_type: FunctionType):
+                              - (function_keyword: FunctionKeyword): "function" # (227..235)
+                              - (parameters: ParametersDeclaration):
+                                  - (open_paren: OpenParen): "(" # (236..237)
+                                  - (parameters: Parameters):
+                                      - (item: Parameter):
+                                          - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint" # (237..241)
+                                          - (name: Identifier): "a" # (242..243)
+                                  - (close_paren: CloseParen): ")" # (243..244)
+                              - (attributes: FunctionTypeAttributes): []
+                          - (open_bracket: OpenBracket): "[" # (244..245)
+                          - (index: Expression) ► (decimal_number_expression: DecimalNumberExpression):
+                              - (literal: DecimalLiteral): "2" # (245..246)
+                          - (close_bracket: CloseBracket): "]" # (246..247)
+                      - (attributes: StateVariableAttributes):
+                          - (item: StateVariableAttribute) ► (internal_keyword: InternalKeyword): "internal" # (248..256)
+                          - (item: StateVariableAttribute) ► (internal_keyword: InternalKeyword): "internal" # (257..265)
+                      - (name: Identifier): "foo" # (266..269)
+                      - (semicolon: Semicolon): ";" # (269..270)
+                  - (item: ContractMember) ► (state_variable_definition: StateVariableDefinition):
+                      - (type_name: TypeName) ► (array_type_name: ArrayTypeName):
+                          - (operand: TypeName) ► (function_type: FunctionType):
+                              - (function_keyword: FunctionKeyword): "function" # (275..283)
+                              - (parameters: ParametersDeclaration):
+                                  - (open_paren: OpenParen): "(" # (284..285)
+                                  - (parameters: Parameters):
+                                      - (item: Parameter):
+                                          - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint" # (285..289)
+                                          - (name: Identifier): "a" # (290..291)
+                                  - (close_paren: CloseParen): ")" # (291..292)
+                              - (attributes: FunctionTypeAttributes):
+                                  - (item: FunctionTypeAttribute) ► (internal_keyword: InternalKeyword): "internal" # (293..301)
+                          - (open_bracket: OpenBracket): "[" # (301..302)
+                          - (index: Expression) ► (decimal_number_expression: DecimalNumberExpression):
+                              - (literal: DecimalLiteral): "2" # (302..303)
+                          - (close_bracket: CloseBracket): "]" # (303..304)
+                      - (attributes: StateVariableAttributes):
+                          - (item: StateVariableAttribute) ► (internal_keyword: InternalKeyword): "internal" # (305..313)
+                      - (name: Identifier): "foo" # (314..317)
+                      - (semicolon: Semicolon): ";" # (317..318)
+              - (close_brace: CloseBrace): "}" # (319..320)

@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/trailing_trivia_only_until_newline/input.sol │ 0..119
+  2  │ contract A {} // first                                                                                                  │ 120..142
+  3  │               // second                                                                                                 │ 143..166
+  4  │ contract B {}                                                                                                           │ 167..180
+  5  │                                                                                                                         │ 181..181
+  6  │ // <<<                                                                                                                  │ 182..188
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (120..128)
+              - (name: Identifier): "A" # (129..130)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (131..132)
+              - (members: ContractMembers): []
+              - (close_brace: CloseBrace): "}" # (132..133)
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (167..175)
+              - (name: Identifier): "B" # (176..177)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (178..179)
+              - (members: ContractMembers): []
+              - (close_brace: CloseBrace): "}" # (179..180)

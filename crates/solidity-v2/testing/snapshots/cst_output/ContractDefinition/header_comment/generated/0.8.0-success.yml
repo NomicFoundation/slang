@@ -1,0 +1,37 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/header_comment/input.sol                              │ 0..107
+  2  │ /*                                                                                                                                       │ 108..110
+  3  │  * Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum mauris.                              │ 111..218
+  4  │  * Maecenas congue ligula ac quam viverra nec consectetur ante hendrerit. Donec et mollis dolor.                                         │ 219..315
+  5  │  * Praesent et diam eget libero egestas mattis sit amet vitae augue. Nam tincidunt congue enim, ut porta lorem lacinia consectetur.      │ 316..447
+  6  │  * Donec ut libero sed arcu vehicula ultricies a non tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit.                    │ 448..565
+  7  │  * Aenean ut gravida lorem. Ut turpis felis, pulvinar a semper sed, adipiscing id dolor.                                                 │ 566..654
+  8  │  * Pellentesque auctor nisi id magna consequat sagittis. Curabitur dapibus enim sit amet elit pharetra tincidunt feugiat nisl imperdiet. │ 655..791
+  9  │  * Ut convallis libero in urna ultrices accumsan. Donec sed odio eros. Donec viverra mi quis quam pulvinar at malesuada arcu rhoncus.    │ 792..925
+  10 │  * Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In rutrum accumsan ultricies.                   │ 926..1044
+  11 │  * Mauris vitae nisi at sem facilisis semper ac in est.                                                                                  │ 1045..1100
+  12 │  * Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum mauris.                              │ 1101..1208
+  13 │  * Maecenas congue ligula ac quam viverra nec consectetur ante hendrerit. Donec et mollis dolor.                                         │ 1209..1305
+  14 │  * Praesent et diam eget libero egestas mattis sit amet vitae augue. Nam tincidunt congue enim, ut porta lorem lacinia consectetur.      │ 1306..1437
+  15 │  * Donec ut libero sed arcu vehicula ultricies a non tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit.                    │ 1438..1555
+  16 │  * Aenean ut gravida lorem. Ut turpis felis, pulvinar a semper sed, adipiscing id dolor.                                                 │ 1556..1644
+  17 │  * Pellentesque auctor nisi id magna consequat sagittis. Curabitur dapibus enim sit amet elit pharetra tincidunt feugiat nisl imperdiet. │ 1645..1781
+  18 │  * Ut convallis libero in urna ultrices accumsan. Donec sed odio eros. Donec viverra mi quis quam pulvinar at malesuada arcu rhoncus.    │ 1782..1915
+  19 │  * Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In rutrum accumsan ultricies.                   │ 1916..2034
+  20 │  * Mauris vitae nisi at sem facilisis semper ac in est.                                                                                  │ 2035..2090
+  21 │ */                                                                                                                                       │ 2091..2093
+  22 │ contract Foo {}                                                                                                                          │ 2094..2109
+  23 │ // <<<                                                                                                                                   │ 2110..2116
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (2094..2102)
+              - (name: Identifier): "Foo" # (2103..2106)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (2107..2108)
+              - (members: ContractMembers): []
+              - (close_brace: CloseBrace): "}" # (2108..2109)

@@ -51,7 +51,10 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
                 let (status, content) = match &v2_output {
                     (Ok(parsed_cst), validation_errors) if validation_errors.is_empty() => {
                         // Print the structured CST:
-                        ("success", format!("{parsed_cst:#?}\n"))
+                        (
+                            "success",
+                            solidity_v2_testing_utils::cst_renderer::render(&source, parsed_cst),
+                        )
                     }
                     (Ok(parsed_cst), validation_errors) => {
                         // Print validation errors, followed by the structured CST:
@@ -74,7 +77,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
 
                 let snapshot_path = test_dir
                     .join("generated")
-                    .join(format!("{lang_version}-{status}.txt"));
+                    .join(format!("{lang_version}-{status}.yml"));
 
                 fs.write_file_raw(&snapshot_path, content)?;
                 last_output = Some(v2_output);

@@ -1,0 +1,23 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ uint constant x = 1.e-1;                                                         │ 0..24
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (constant_definition: ConstantDefinition):
+              - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint" # (0..4)
+              - (constant_keyword: ConstantKeyword): "constant" # (5..13)
+              - (name: Identifier): "x" # (14..15)
+              - (equal: Equal): "=" # (16..17)
+              - (value: Expression) ► (additive_expression: AdditiveExpression):
+                  - (left_operand: Expression) ► (member_access_expression: MemberAccessExpression):
+                      - (operand: Expression) ► (decimal_number_expression: DecimalNumberExpression):
+                          - (literal: DecimalLiteral): "1" # (18..19)
+                      - (period: Period): "." # (19..20)
+                      - (member: IdentifierPathElement) ► (identifier: Identifier): "e" # (20..21)
+                  - (expression_additive_expression_operator: Expression_AdditiveExpression_Operator) ► (minus: Minus): "-" # (21..22)
+                  - (right_operand: Expression) ► (decimal_number_expression: DecimalNumberExpression):
+                      - (literal: DecimalLiteral): "1" # (22..23)
+              - (semicolon: Semicolon): ";" # (23..24)

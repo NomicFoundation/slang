@@ -1,0 +1,23 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/empty_multiline_over_natspec/input.sol │ 0..113
+  2  │ // The below comments should be parsed into two separate tokens, instead of one NatSpec comment:                  │ 114..210
+  3  │                                                                                                                   │ 211..211
+  4  │ contract Foo {                                                                                                    │ 212..226
+  5  │   /**/                                                                                                            │ 227..233
+  6  │ }                                                                                                                 │ 234..235
+  7  │ /**/                                                                                                              │ 236..240
+  8  │                                                                                                                   │ 241..241
+  9  │ // <<<                                                                                                            │ 242..248
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (212..220)
+              - (name: Identifier): "Foo" # (221..224)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (225..226)
+              - (members: ContractMembers): []
+              - (close_brace: CloseBrace): "}" # (234..235)

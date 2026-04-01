@@ -1,0 +1,48 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                           │ 0..12
+  2  │     function f() {                                                                                                     │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/TupleDeconstructionStatement/ignored_members/input.sol │ 32..150
+  4  │ (, second, , fourth) = rhs;                                                                                            │ 151..178
+  5  │ // <<<                                                                                                                 │ 179..185
+  6  │     }                                                                                                                  │ 186..191
+  7  │ }                                                                                                                      │ 192..193
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
+                      - (function_keyword: FunctionKeyword): "function" # (17..25)
+                      - (name: FunctionName) ► (identifier: Identifier): "f" # (26..27)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (27..28)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (28..29)
+                      - (attributes: FunctionAttributes): []
+                      - (body: FunctionBody) ► (block: Block):
+                          - (open_brace: OpenBrace): "{" # (30..31)
+                          - (statements: Statements):
+                              - (item: Statement) ► (expression_statement: ExpressionStatement):
+                                  - (expression: Expression) ► (assignment_expression: AssignmentExpression):
+                                      - (left_operand: Expression) ► (tuple_expression: TupleExpression):
+                                          - (open_paren: OpenParen): "(" # (151..152)
+                                          - (items: TupleValues):
+                                              - (item: TupleValue):
+                                              - (item: TupleValue):
+                                                  - (expression: Expression) ► (identifier: Identifier): "second" # (154..160)
+                                              - (item: TupleValue):
+                                              - (item: TupleValue):
+                                                  - (expression: Expression) ► (identifier: Identifier): "fourth" # (164..170)
+                                          - (close_paren: CloseParen): ")" # (170..171)
+                                      - (expression_assignment_expression_operator: Expression_AssignmentExpression_Operator) ► (equal: Equal): "=" # (172..173)
+                                      - (right_operand: Expression) ► (identifier: Identifier): "rhs" # (174..177)
+                                  - (semicolon: Semicolon): ";" # (177..178)
+                          - (close_brace: CloseBrace): "}" # (190..191)
+              - (close_brace: CloseBrace): "}" # (192..193)

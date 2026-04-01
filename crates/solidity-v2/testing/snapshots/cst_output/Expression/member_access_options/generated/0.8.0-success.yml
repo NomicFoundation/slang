@@ -1,0 +1,50 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                               │ 0..12
+  2  │     function f() {                                                                                         │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/member_access_options/input.sol │ 32..138
+  4  │ foo.deposit{value: 100}                                                                                    │ 139..162
+  5  │                                                                                                            │ 163..163
+  6  │ // <<<                                                                                                     │ 164..170
+  7  │ ;                                                                                                          │ 171..172
+  8  │     }                                                                                                      │ 173..178
+  9  │ }                                                                                                          │ 179..180
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
+                      - (function_keyword: FunctionKeyword): "function" # (17..25)
+                      - (name: FunctionName) ► (identifier: Identifier): "f" # (26..27)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (27..28)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (28..29)
+                      - (attributes: FunctionAttributes): []
+                      - (body: FunctionBody) ► (block: Block):
+                          - (open_brace: OpenBrace): "{" # (30..31)
+                          - (statements: Statements):
+                              - (item: Statement) ► (expression_statement: ExpressionStatement):
+                                  - (expression: Expression) ► (call_options_expression: CallOptionsExpression):
+                                      - (operand: Expression) ► (member_access_expression: MemberAccessExpression):
+                                          - (operand: Expression) ► (identifier: Identifier): "foo" # (139..142)
+                                          - (period: Period): "" # (0..0)
+                                          - (member: IdentifierPathElement) ► (identifier: Identifier): "deposit" # (143..150)
+                                      - (open_brace: OpenBrace): "{" # (150..151)
+                                      - (options: CallOptions):
+                                          - (item: NamedArgument):
+                                              - (name: Identifier): "value" # (151..156)
+                                              - (colon: Colon): ":" # (156..157)
+                                              - (value: Expression) ► (decimal_number_expression: DecimalNumberExpression):
+                                                  - (literal: DecimalLiteral): "100" # (158..161)
+                                      - (close_brace: CloseBrace): "}" # (161..162)
+                                  - (semicolon: Semicolon): ";" # (171..172)
+                          - (close_brace: CloseBrace): "}" # (177..178)
+              - (close_brace: CloseBrace): "}" # (179..180)

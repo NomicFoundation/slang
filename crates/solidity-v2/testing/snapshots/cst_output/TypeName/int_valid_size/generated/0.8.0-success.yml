@@ -1,0 +1,25 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                      │ 0..12
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/TypeName/int_valid_size/input.sol │ 13..110
+  3  │ int32                                                                                             │ 111..116
+  4  │ // <<<                                                                                            │ 117..123
+  5  │ x;                                                                                                │ 124..126
+  6  │ }                                                                                                 │ 127..128
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (state_variable_definition: StateVariableDefinition):
+                      - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (int_keyword: IntKeyword): "int32" # (111..116)
+                      - (attributes: StateVariableAttributes): []
+                      - (name: Identifier): "x" # (124..125)
+                      - (semicolon: Semicolon): ";" # (125..126)
+              - (close_brace: CloseBrace): "}" # (127..128)

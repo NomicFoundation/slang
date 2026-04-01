@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_event_definition/input.sol │ 0..116
+  2  │ contract Sample {                                                                                                    │ 117..134
+  3  │   event Log(uint256 indexed a, uint256 indexed b);                                                                   │ 135..185
+  4  │ }                                                                                                                    │ 186..187
+  5  │ // <<<                                                                                                               │ 188..194
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (117..125)
+              - (name: Identifier): "Sample" # (126..132)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (133..134)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (event_definition: EventDefinition):
+                      - (event_keyword: EventKeyword): "event" # (137..142)
+                      - (name: Identifier): "Log" # (143..146)
+                      - (parameters: EventParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (146..147)
+                          - (parameters: EventParameters):
+                              - (item: EventParameter):
+                                  - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint256" # (147..154)
+                                  - (indexed_keyword: IndexedKeyword): "indexed" # (155..162)
+                                  - (name: Identifier): "a" # (163..164)
+                              - (item: EventParameter):
+                                  - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint256" # (166..173)
+                                  - (indexed_keyword: IndexedKeyword): "indexed" # (174..181)
+                                  - (name: Identifier): "b" # (182..183)
+                          - (close_paren: CloseParen): ")" # (183..184)
+                      - (semicolon: Semicolon): ";" # (184..185)
+              - (close_brace: CloseBrace): "}" # (186..187)

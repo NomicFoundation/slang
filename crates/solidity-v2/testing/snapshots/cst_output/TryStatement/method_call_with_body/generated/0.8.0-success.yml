@@ -1,0 +1,64 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                 │ 0..12
+  2  │     function f() {                                                                                           │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/TryStatement/method_call_with_body/input.sol │ 32..140
+  4  │ try foo() {                                                                                                  │ 141..152
+  5  │   bar();                                                                                                     │ 153..161
+  6  │ } catch {                                                                                                    │ 162..171
+  7  │ }                                                                                                            │ 172..173
+  8  │                                                                                                              │ 174..174
+  9  │ // <<<                                                                                                       │ 175..181
+  10 │     }                                                                                                        │ 182..187
+  11 │ }                                                                                                            │ 188..189
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
+                      - (function_keyword: FunctionKeyword): "function" # (17..25)
+                      - (name: FunctionName) ► (identifier: Identifier): "f" # (26..27)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (27..28)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (28..29)
+                      - (attributes: FunctionAttributes): []
+                      - (body: FunctionBody) ► (block: Block):
+                          - (open_brace: OpenBrace): "{" # (30..31)
+                          - (statements: Statements):
+                              - (item: Statement) ► (try_statement: TryStatement):
+                                  - (try_keyword: TryKeyword): "try" # (141..144)
+                                  - (expression: Expression) ► (function_call_expression: FunctionCallExpression):
+                                      - (operand: Expression) ► (identifier: Identifier): "foo" # (145..148)
+                                      - (arguments: ArgumentsDeclaration) ► (positional_arguments_declaration: PositionalArgumentsDeclaration):
+                                          - (open_paren: OpenParen): "(" # (148..149)
+                                          - (arguments: PositionalArguments): []
+                                          - (close_paren: CloseParen): ")" # (149..150)
+                                  - (body: Block):
+                                      - (open_brace: OpenBrace): "{" # (151..152)
+                                      - (statements: Statements):
+                                          - (item: Statement) ► (expression_statement: ExpressionStatement):
+                                              - (expression: Expression) ► (function_call_expression: FunctionCallExpression):
+                                                  - (operand: Expression) ► (identifier: Identifier): "bar" # (155..158)
+                                                  - (arguments: ArgumentsDeclaration) ► (positional_arguments_declaration: PositionalArgumentsDeclaration):
+                                                      - (open_paren: OpenParen): "(" # (158..159)
+                                                      - (arguments: PositionalArguments): []
+                                                      - (close_paren: CloseParen): ")" # (159..160)
+                                              - (semicolon: Semicolon): ";" # (160..161)
+                                      - (close_brace: CloseBrace): "}" # (162..163)
+                                  - (catch_clauses: CatchClauses):
+                                      - (item: CatchClause):
+                                          - (catch_keyword: CatchKeyword): "catch" # (164..169)
+                                          - (body: Block):
+                                              - (open_brace: OpenBrace): "{" # (170..171)
+                                              - (statements: Statements): []
+                                              - (close_brace: CloseBrace): "}" # (172..173)
+                          - (close_brace: CloseBrace): "}" # (186..187)
+              - (close_brace: CloseBrace): "}" # (188..189)

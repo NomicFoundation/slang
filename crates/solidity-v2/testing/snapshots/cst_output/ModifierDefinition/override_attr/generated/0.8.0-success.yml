@@ -1,0 +1,40 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                               │ 0..12
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ModifierDefinition/override_attr/input.sol │ 13..119
+  3  │ modifier mod(uint a) override { _; }                                                                       │ 120..156
+  4  │                                                                                                            │ 157..157
+  5  │ // <<<                                                                                                     │ 158..164
+  6  │ }                                                                                                          │ 165..166
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (modifier_definition: ModifierDefinition):
+                      - (modifier_keyword: ModifierKeyword): "modifier" # (120..128)
+                      - (name: Identifier): "mod" # (129..132)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (132..133)
+                          - (parameters: Parameters):
+                              - (item: Parameter):
+                                  - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint" # (133..137)
+                                  - (name: Identifier): "a" # (138..139)
+                          - (close_paren: CloseParen): ")" # (139..140)
+                      - (attributes: ModifierAttributes):
+                          - (item: ModifierAttribute) ► (override_specifier: OverrideSpecifier):
+                              - (override_keyword: OverrideKeyword): "override" # (141..149)
+                      - (body: FunctionBody) ► (block: Block):
+                          - (open_brace: OpenBrace): "{" # (150..151)
+                          - (statements: Statements):
+                              - (item: Statement) ► (expression_statement: ExpressionStatement):
+                                  - (expression: Expression) ► (identifier: Identifier): "_" # (152..153)
+                                  - (semicolon: Semicolon): ";" # (153..154)
+                          - (close_brace: CloseBrace): "}" # (155..156)
+              - (close_brace: CloseBrace): "}" # (165..166)

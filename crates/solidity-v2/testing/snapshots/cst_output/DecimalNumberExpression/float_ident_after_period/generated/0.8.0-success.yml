@@ -1,0 +1,42 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                               │ 0..12
+  2  │     function f() {                                                                                                         │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/DecimalNumberExpression/float_ident_after_period/input.sol │ 32..154
+  4  │ 1.2.a                                                                                                                      │ 155..160
+  5  │                                                                                                                            │ 161..161
+  6  │ // <<<                                                                                                                     │ 162..168
+  7  │ ;                                                                                                                          │ 169..170
+  8  │     }                                                                                                                      │ 171..176
+  9  │ }                                                                                                                          │ 177..178
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
+                      - (function_keyword: FunctionKeyword): "function" # (17..25)
+                      - (name: FunctionName) ► (identifier: Identifier): "f" # (26..27)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (27..28)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (28..29)
+                      - (attributes: FunctionAttributes): []
+                      - (body: FunctionBody) ► (block: Block):
+                          - (open_brace: OpenBrace): "{" # (30..31)
+                          - (statements: Statements):
+                              - (item: Statement) ► (expression_statement: ExpressionStatement):
+                                  - (expression: Expression) ► (member_access_expression: MemberAccessExpression):
+                                      - (operand: Expression) ► (decimal_number_expression: DecimalNumberExpression):
+                                          - (literal: DecimalLiteral): "1.2" # (155..158)
+                                      - (period: Period): "." # (158..159)
+                                      - (member: IdentifierPathElement) ► (identifier: Identifier): "a" # (159..160)
+                                  - (semicolon: Semicolon): ";" # (169..170)
+                          - (close_brace: CloseBrace): "}" # (175..176)
+              - (close_brace: CloseBrace): "}" # (177..178)

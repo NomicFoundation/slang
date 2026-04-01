@@ -1,0 +1,25 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                              │ 0..12
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/TypeName/bytes_no_size_reserved/input.sol │ 13..118
+  3  │ bytes                                                                                                     │ 119..124
+  4  │ // <<<                                                                                                    │ 125..131
+  5  │ x;                                                                                                        │ 132..134
+  6  │ }                                                                                                         │ 135..136
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (state_variable_definition: StateVariableDefinition):
+                      - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (bytes_keyword: BytesKeyword): "bytes" # (119..124)
+                      - (attributes: StateVariableAttributes): []
+                      - (name: Identifier): "x" # (132..133)
+                      - (semicolon: Semicolon): ";" # (133..134)
+              - (close_brace: CloseBrace): "}" # (135..136)

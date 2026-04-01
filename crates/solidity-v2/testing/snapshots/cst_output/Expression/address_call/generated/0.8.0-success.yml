@@ -1,0 +1,44 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                      │ 0..12
+  2  │     function f() {                                                                                │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/address_call/input.sol │ 32..129
+  4  │ address(value)                                                                                    │ 130..144
+  5  │ // <<<                                                                                            │ 145..151
+  6  │ ;                                                                                                 │ 152..153
+  7  │     }                                                                                             │ 154..159
+  8  │ }                                                                                                 │ 160..161
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
+                      - (function_keyword: FunctionKeyword): "function" # (17..25)
+                      - (name: FunctionName) ► (identifier: Identifier): "f" # (26..27)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (27..28)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (28..29)
+                      - (attributes: FunctionAttributes): []
+                      - (body: FunctionBody) ► (block: Block):
+                          - (open_brace: OpenBrace): "{" # (30..31)
+                          - (statements: Statements):
+                              - (item: Statement) ► (expression_statement: ExpressionStatement):
+                                  - (expression: Expression) ► (function_call_expression: FunctionCallExpression):
+                                      - (operand: Expression) ► (elementary_type: ElementaryType) ► (address_type: AddressType):
+                                          - (address_keyword: AddressKeyword): "address" # (130..137)
+                                      - (arguments: ArgumentsDeclaration) ► (positional_arguments_declaration: PositionalArgumentsDeclaration):
+                                          - (open_paren: OpenParen): "(" # (137..138)
+                                          - (arguments: PositionalArguments):
+                                              - (item: Expression) ► (identifier: Identifier): "value" # (138..143)
+                                          - (close_paren: CloseParen): ")" # (143..144)
+                                  - (semicolon: Semicolon): ";" # (152..153)
+                          - (close_brace: CloseBrace): "}" # (158..159)
+              - (close_brace: CloseBrace): "}" # (160..161)

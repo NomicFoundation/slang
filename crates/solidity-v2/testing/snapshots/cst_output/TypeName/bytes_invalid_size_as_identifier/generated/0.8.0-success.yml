@@ -1,0 +1,26 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                        │ 0..12
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/TypeName/bytes_invalid_size_as_identifier/input.sol │ 13..128
+  3  │ bytes320                                                                                                            │ 129..137
+  4  │ // <<<                                                                                                              │ 138..144
+  5  │ x;                                                                                                                  │ 145..147
+  6  │ }                                                                                                                   │ 148..149
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (state_variable_definition: StateVariableDefinition):
+                      - (type_name: TypeName) ► (identifier_path: IdentifierPath):
+                          - (item: IdentifierPathElement) ► (identifier: Identifier): "bytes320" # (129..137)
+                      - (attributes: StateVariableAttributes): []
+                      - (name: Identifier): "x" # (145..146)
+                      - (semicolon: Semicolon): ";" # (146..147)
+              - (close_brace: CloseBrace): "}" # (148..149)

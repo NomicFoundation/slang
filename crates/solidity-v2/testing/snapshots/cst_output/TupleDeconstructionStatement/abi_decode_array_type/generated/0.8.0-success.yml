@@ -1,0 +1,74 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                                 │ 0..12
+  2  │     function f() {                                                                                                           │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/TupleDeconstructionStatement/abi_decode_array_type/input.sol │ 32..156
+  4  │ (uint32 a, uint32[] memory b) = abi.decode(data, (uint32, uint32[]));                                                        │ 157..226
+  5  │ // <<<                                                                                                                       │ 227..233
+  6  │     }                                                                                                                        │ 234..239
+  7  │ }                                                                                                                            │ 240..241
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
+                      - (function_keyword: FunctionKeyword): "function" # (17..25)
+                      - (name: FunctionName) ► (identifier: Identifier): "f" # (26..27)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (27..28)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (28..29)
+                      - (attributes: FunctionAttributes): []
+                      - (body: FunctionBody) ► (block: Block):
+                          - (open_brace: OpenBrace): "{" # (30..31)
+                          - (statements: Statements):
+                              - (item: Statement) ► (variable_declaration_statement: VariableDeclarationStatement):
+                                  - (target: VariableDeclarationTarget) ► (multi_typed_declaration: MultiTypedDeclaration):
+                                      - (open_paren: OpenParen): "(" # (157..158)
+                                      - (elements: MultiTypedDeclarationElements):
+                                          - (item: MultiTypedDeclarationElement):
+                                              - (member: VariableDeclaration):
+                                                  - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint32" # (158..164)
+                                                  - (name: Identifier): "a" # (165..166)
+                                          - (item: MultiTypedDeclarationElement):
+                                              - (member: VariableDeclaration):
+                                                  - (type_name: TypeName) ► (array_type_name: ArrayTypeName):
+                                                      - (operand: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint32" # (168..174)
+                                                      - (open_bracket: OpenBracket): "[" # (174..175)
+                                                      - (close_bracket: CloseBracket): "]" # (175..176)
+                                                  - (storage_location: StorageLocation) ► (memory_keyword: MemoryKeyword): "memory" # (177..183)
+                                                  - (name: Identifier): "b" # (184..185)
+                                      - (close_paren: CloseParen): ")" # (185..186)
+                                      - (value: VariableDeclarationValue):
+                                          - (equal: Equal): "=" # (187..188)
+                                          - (expression: Expression) ► (function_call_expression: FunctionCallExpression):
+                                              - (operand: Expression) ► (member_access_expression: MemberAccessExpression):
+                                                  - (operand: Expression) ► (identifier: Identifier): "abi" # (189..192)
+                                                  - (period: Period): "" # (0..0)
+                                                  - (member: IdentifierPathElement) ► (identifier: Identifier): "decode" # (193..199)
+                                              - (arguments: ArgumentsDeclaration) ► (positional_arguments_declaration: PositionalArgumentsDeclaration):
+                                                  - (open_paren: OpenParen): "(" # (199..200)
+                                                  - (arguments: PositionalArguments):
+                                                      - (item: Expression) ► (identifier: Identifier): "data" # (200..204)
+                                                      - (item: Expression) ► (tuple_expression: TupleExpression):
+                                                          - (open_paren: OpenParen): "(" # (206..207)
+                                                          - (items: TupleValues):
+                                                              - (item: TupleValue):
+                                                                  - (expression: Expression) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint32" # (207..213)
+                                                              - (item: TupleValue):
+                                                                  - (expression: Expression) ► (index_access_expression: IndexAccessExpression):
+                                                                      - (operand: Expression) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint32" # (215..221)
+                                                                      - (open_bracket: OpenBracket): "[" # (221..222)
+                                                                      - (close_bracket: CloseBracket): "]" # (222..223)
+                                                          - (close_paren: CloseParen): ")" # (223..224)
+                                                  - (close_paren: CloseParen): ")" # (224..225)
+                                  - (semicolon: Semicolon): ";" # (225..226)
+                          - (close_brace: CloseBrace): "}" # (238..239)
+              - (close_brace: CloseBrace): "}" # (240..241)

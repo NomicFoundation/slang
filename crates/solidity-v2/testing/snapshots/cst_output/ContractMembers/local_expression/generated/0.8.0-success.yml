@@ -1,0 +1,52 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                               │ 0..12
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractMembers/local_expression/input.sol │ 13..119
+  3  │ function func() {                                                                                          │ 120..137
+  4  │   uint a = 1 + 2 * 3;                                                                                      │ 138..159
+  5  │ }                                                                                                          │ 160..161
+  6  │                                                                                                            │ 162..162
+  7  │ // <<<                                                                                                     │ 163..169
+  8  │ }                                                                                                          │ 170..171
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
+                      - (function_keyword: FunctionKeyword): "function" # (120..128)
+                      - (name: FunctionName) ► (identifier: Identifier): "func" # (129..133)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (133..134)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (134..135)
+                      - (attributes: FunctionAttributes): []
+                      - (body: FunctionBody) ► (block: Block):
+                          - (open_brace: OpenBrace): "{" # (136..137)
+                          - (statements: Statements):
+                              - (item: Statement) ► (variable_declaration_statement: VariableDeclarationStatement):
+                                  - (target: VariableDeclarationTarget) ► (single_typed_declaration: SingleTypedDeclaration):
+                                      - (declaration: VariableDeclaration):
+                                          - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint" # (140..144)
+                                          - (name: Identifier): "a" # (145..146)
+                                      - (value: VariableDeclarationValue):
+                                          - (equal: Equal): "=" # (147..148)
+                                          - (expression: Expression) ► (additive_expression: AdditiveExpression):
+                                              - (left_operand: Expression) ► (decimal_number_expression: DecimalNumberExpression):
+                                                  - (literal: DecimalLiteral): "1" # (149..150)
+                                              - (expression_additive_expression_operator: Expression_AdditiveExpression_Operator) ► (plus: Plus): "+" # (151..152)
+                                              - (right_operand: Expression) ► (multiplicative_expression: MultiplicativeExpression):
+                                                  - (left_operand: Expression) ► (decimal_number_expression: DecimalNumberExpression):
+                                                      - (literal: DecimalLiteral): "2" # (153..154)
+                                                  - (expression_multiplicative_expression_operator: Expression_MultiplicativeExpression_Operator) ► (asterisk: Asterisk): "*" # (155..156)
+                                                  - (right_operand: Expression) ► (decimal_number_expression: DecimalNumberExpression):
+                                                      - (literal: DecimalLiteral): "3" # (157..158)
+                                  - (semicolon: Semicolon): ";" # (158..159)
+                          - (close_brace: CloseBrace): "}" # (160..161)
+              - (close_brace: CloseBrace): "}" # (170..171)

@@ -1,0 +1,47 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                               │ 0..12
+  2  │     function f() {                                                                                                         │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/member_access_rational_leading_period/input.sol │ 32..154
+  4  │ .1.fromUint()                                                                                                              │ 155..168
+  5  │                                                                                                                            │ 169..169
+  6  │ // <<<                                                                                                                     │ 170..176
+  7  │ ;                                                                                                                          │ 177..178
+  8  │     }                                                                                                                      │ 179..184
+  9  │ }                                                                                                                          │ 185..186
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (function_definition: FunctionDefinition):
+                      - (function_keyword: FunctionKeyword): "function" # (17..25)
+                      - (name: FunctionName) ► (identifier: Identifier): "f" # (26..27)
+                      - (parameters: ParametersDeclaration):
+                          - (open_paren: OpenParen): "(" # (27..28)
+                          - (parameters: Parameters): []
+                          - (close_paren: CloseParen): ")" # (28..29)
+                      - (attributes: FunctionAttributes): []
+                      - (body: FunctionBody) ► (block: Block):
+                          - (open_brace: OpenBrace): "{" # (30..31)
+                          - (statements: Statements):
+                              - (item: Statement) ► (expression_statement: ExpressionStatement):
+                                  - (expression: Expression) ► (function_call_expression: FunctionCallExpression):
+                                      - (operand: Expression) ► (member_access_expression: MemberAccessExpression):
+                                          - (operand: Expression) ► (decimal_number_expression: DecimalNumberExpression):
+                                              - (literal: DecimalLiteral): ".1" # (155..157)
+                                          - (period: Period): "." # (157..158)
+                                          - (member: IdentifierPathElement) ► (identifier: Identifier): "fromUint" # (158..166)
+                                      - (arguments: ArgumentsDeclaration) ► (positional_arguments_declaration: PositionalArgumentsDeclaration):
+                                          - (open_paren: OpenParen): "(" # (166..167)
+                                          - (arguments: PositionalArguments): []
+                                          - (close_paren: CloseParen): ")" # (167..168)
+                                  - (semicolon: Semicolon): ";" # (177..178)
+                          - (close_brace: CloseBrace): "}" # (183..184)
+              - (close_brace: CloseBrace): "}" # (185..186)

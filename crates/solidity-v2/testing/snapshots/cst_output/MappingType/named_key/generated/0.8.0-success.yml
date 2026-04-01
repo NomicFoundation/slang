@@ -1,0 +1,34 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                    │ 0..12
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/MappingType/named_key/input.sol │ 13..108
+  3  │ mapping(string Foo => bytes32)                                                                  │ 109..139
+  4  │ // <<<                                                                                          │ 140..146
+  5  │ x;                                                                                              │ 147..149
+  6  │ }                                                                                               │ 150..151
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (0..8)
+              - (name: Identifier): "C" # (9..10)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (11..12)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (state_variable_definition: StateVariableDefinition):
+                      - (type_name: TypeName) ► (mapping_type: MappingType):
+                          - (mapping_keyword: MappingKeyword): "mapping" # (109..116)
+                          - (open_paren: OpenParen): "(" # (116..117)
+                          - (key_type: MappingKey):
+                              - (key_type: MappingKeyType) ► (elementary_type: ElementaryType) ► (string_keyword: StringKeyword): "string" # (117..123)
+                              - (name: Identifier): "Foo" # (124..127)
+                          - (equal_greater_than: EqualGreaterThan): "=>" # (128..130)
+                          - (value_type: MappingValue):
+                              - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (bytes_keyword: BytesKeyword): "bytes32" # (131..138)
+                          - (close_paren: CloseParen): ")" # (138..139)
+                      - (attributes: StateVariableAttributes): []
+                      - (name: Identifier): "x" # (147..148)
+                      - (semicolon: Semicolon): ";" # (148..149)
+              - (close_brace: CloseBrace): "}" # (150..151)

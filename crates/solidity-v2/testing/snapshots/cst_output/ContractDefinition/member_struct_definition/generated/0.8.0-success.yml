@@ -1,0 +1,36 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_struct_definition/input.sol │ 0..117
+  2  │ contract Sample {                                                                                                     │ 118..135
+  3  │   struct S {                                                                                                          │ 136..148
+  4  │     uint a;                                                                                                           │ 149..160
+  5  │     uint b;                                                                                                           │ 161..172
+  6  │   }                                                                                                                   │ 173..176
+  7  │ }                                                                                                                     │ 177..178
+  8  │ // <<<                                                                                                                │ 179..185
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (118..126)
+              - (name: Identifier): "Sample" # (127..133)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (134..135)
+              - (members: ContractMembers):
+                  - (item: ContractMember) ► (struct_definition: StructDefinition):
+                      - (struct_keyword: StructKeyword): "struct" # (138..144)
+                      - (name: Identifier): "S" # (145..146)
+                      - (open_brace: OpenBrace): "{" # (147..148)
+                      - (members: StructMembers):
+                          - (item: StructMember):
+                              - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint" # (153..157)
+                              - (name: Identifier): "a" # (158..159)
+                              - (semicolon: Semicolon): ";" # (159..160)
+                          - (item: StructMember):
+                              - (type_name: TypeName) ► (elementary_type: ElementaryType) ► (uint_keyword: UintKeyword): "uint" # (165..169)
+                              - (name: Identifier): "b" # (170..171)
+                              - (semicolon: Semicolon): ";" # (171..172)
+                      - (close_brace: CloseBrace): "}" # (175..176)
+              - (close_brace: CloseBrace): "}" # (177..178)

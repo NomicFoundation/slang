@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/PragmaDirective/abi_coder_v1/input.sol │ 0..102
+  2  │ pragma abicoder v1;                                                                                    │ 103..122
+  3  │                                                                                                        │ 123..123
+  4  │ // <<<                                                                                                 │ 124..130
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (pragma_directive: PragmaDirective):
+              - (pragma_keyword: PragmaKeyword): "pragma" # (103..109)
+              - (pragma: Pragma) ► (abicoder_pragma: AbicoderPragma):
+                  - (abicoder_keyword: AbicoderKeyword): "abicoder" # (110..118)
+                  - (version: AbicoderVersion) ► (abicoder_v1_keyword: AbicoderV1Keyword): "v1" # (119..121)
+              - (semicolon: PragmaSemicolon): ";" # (121..122)

@@ -1,0 +1,32 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/trailing_trivia/input.sol │ 0..100
+  2  │ contract First {}                                                                                    │ 101..118
+  3  │                                                                                                      │ 119..119
+  4  │                                                                                                      │ 120..120
+  5  │ // Newlines both before and after this comment should                                                │ 121..174
+  6  │ // be included in the trivia of the second contract.                                                 │ 175..227
+  7  │                                                                                                      │ 228..228
+  8  │                                                                                                      │ 229..229
+  9  │ contract Second {}                                                                                   │ 230..248
+  10 │                                                                                                      │ 249..249
+  11 │ // <<<                                                                                               │ 250..256
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (101..109)
+              - (name: Identifier): "First" # (110..115)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (116..117)
+              - (members: ContractMembers): []
+              - (close_brace: CloseBrace): "}" # (117..118)
+          - (item: SourceUnitMember) ► (contract_definition: ContractDefinition):
+              - (contract_keyword: ContractKeyword): "contract" # (230..238)
+              - (name: Identifier): "Second" # (239..245)
+              - (specifiers: ContractSpecifiers): []
+              - (open_brace: OpenBrace): "{" # (246..247)
+              - (members: ContractMembers): []
+              - (close_brace: CloseBrace): "}" # (247..248)

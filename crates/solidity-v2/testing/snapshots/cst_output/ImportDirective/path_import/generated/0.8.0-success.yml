@@ -1,0 +1,15 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ImportDirective/path_import/input.sol │ 0..101
+  2  │ import "foo";                                                                                         │ 102..115
+  3  │ // <<<                                                                                                │ 116..122
+
+Tree:
+  - (root: SourceUnit):
+      - (members: SourceUnitMembers):
+          - (item: SourceUnitMember) ► (import_directive: ImportDirective):
+              - (import_keyword: ImportKeyword): "import" # (102..108)
+              - (clause: ImportClause) ► (path_import: PathImport):
+                  - (path: StringLiteral): '"foo"' # (109..114)
+              - (semicolon: Semicolon): ";" # (114..115)
