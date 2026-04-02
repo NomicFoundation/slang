@@ -1,0 +1,256 @@
+{%- set target = model.ir_language_model.target -%}
+#![allow(unused)]
+#![allow(non_camel_case_types)]
+use std::rc::Rc;
+
+use slang_solidity_v2_semantic::ir::{self, NodeId};
+use slang_solidity_v2_semantic::context::SemanticContext;
+use super::types::Type;
+
+//
+// Sequences
+//
+
+{% for parent_type, sequence in target.sequences %}
+  pub type {{ parent_type }} = Rc<{{ parent_type }}Struct>;
+
+  pub struct {{ parent_type }}Struct {
+    pub(crate) ir_node: ir::{{ parent_type }},
+    pub(crate) semantic: Rc<SemanticContext>,
+  }
+
+  pub(crate) fn create_{{ parent_type | snake_case }}(
+    ir_node: &ir::{{ parent_type }},
+    semantic: &Rc<SemanticContext>,
+  ) -> {{ parent_type }} {
+    Rc::new({{ parent_type }}Struct {
+      ir_node: Rc::clone(ir_node),
+      semantic: Rc::clone(semantic),
+    })
+  }
+
+  impl {{ parent_type }}Struct {
+    pub fn node_id(&self) -> NodeId {
+      self.ir_node.id()
+    }
+    {% for field in sequence.fields -%}
+      {% if field.is_optional %}
+        {% if field.type.kind == "UniqueTerminal" %}
+          pub fn {{ field.label }}(&self) -> bool {
+            self.ir_node.{{ field.label }}
+          }
+        {% elif target.sequences is containing(field.type.name) or
+                target.choices is containing(field.type.name) or
+                (field.type.is_terminal and target.terminals[field.type.name].is_identifier) %}
+          pub fn {{ field.label }}(&self) -> Option<{{ field.type.name }}> {
+            self.ir_node.{{ field.label }}.as_ref().map(|ir_node| {
+              create_{{ field.type.name | snake_case }}(ir_node, &self.semantic)
+            })
+          }
+        {% elif field.type.is_terminal %}
+          {# non-identifier terminals #}
+          pub fn {{ field.label }}(&self) -> Option<ir::{{ field.type.name }}> {
+            self.ir_node.{{ field.label }}.as_ref().map(Rc::clone)
+          }
+        {% elif target.collections is containing(field.type.name) %}
+          {% set item_type = target.collections[field.type.name].item_type %}
+          {% if not item_type.is_terminal or
+                target.terminals[item_type.name].is_identifier %}
+            pub fn {{ field.label }}(&self) -> Option<{{ field.type.name }}> {
+              self.ir_node.{{ field.label }}.as_ref().map(|ir_node| {
+                create_{{ field.type.name | snake_case }}(ir_node, &self.semantic)
+              })
+            }
+          {% elif item_type.is_terminal %}
+            {# non-identifier terminals #}
+            pub fn {{ field.label }}(&self) -> Option<Vec<ir::{{ item_type.name }}>> {
+              self.ir_node.{{ field.label }}.clone()
+            }
+          {% endif -%}
+        {% endif %}
+      {% else %} {# not field.is_optional #}
+        {% if target.sequences is containing(field.type.name) or
+              target.choices is containing(field.type.name) or
+              (field.type.is_terminal and target.terminals[field.type.name].is_identifier) %}
+          pub fn {{ field.label }}(&self) -> {{ field.type.name }} {
+            create_{{ field.type.name | snake_case }}(&self.ir_node.{{ field.label }}, &self.semantic)
+          }
+        {% elif field.type.is_terminal %}
+          {# non-identifier terminals #}
+          pub fn {{ field.label }}(&self) -> ir::{{ field.type.name }} {
+            Rc::clone(&self.ir_node.{{ field.label }})
+          }
+        {% elif target.collections is containing(field.type.name) %}
+          {% set item_type = target.collections[field.type.name].item_type %}
+          {% if not item_type.is_terminal or
+                target.terminals[item_type.name].is_identifier %}
+            pub fn {{ field.label }}(&self) -> {{ field.type.name }} {
+              create_{{ field.type.name | snake_case }}(
+                &self.ir_node.{{ field.label }}, &self.semantic
+              )
+            }
+          {% else %}
+            {# non-identifier terminals #}
+            pub fn {{ field.label }}(&self) -> Vec<ir::{{ item_type.name }}> {
+              self.ir_node.{{ field.label }}.clone()
+            }
+          {% endif %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    pub fn get_type(&self) -> Option<Type> {
+      Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+  }
+
+{% endfor %}
+
+//
+// Choices
+//
+
+{% for parent_type, choice in target.choices %}
+  pub enum {{ parent_type }} {
+    {% for variant in choice.variants -%}
+      {{ variant.name }}
+      {%- if target.sequences is containing(variant.name) or
+             target.choices is containing(variant.name) or
+             (variant.kind == "Terminal" and target.terminals[variant.name].is_identifier) -%}
+        ({{ variant.name }})
+      {%- elif target.collections is containing(variant.name) -%}
+        {% set item_type = target.collections[variant.name].item_type %}
+        {% if not item_type.is_terminal or
+              target.terminals[item_type.name].is_identifier %}
+          {# collection of non-terminals or identifier terminals #}
+          ({{ variant.name }})
+        {% elif item_type.kind == "Terminal" %}
+          {# collection of non-identifier terminals #}
+          (Vec<ir::{{ item_type.name }}>)
+        {% else %}
+          {{ throw(message="Cannot generate choice of collection of unique terminals") }}
+        {% endif %}
+      {% elif variant.kind == "Terminal" %}
+        {# non-identifier terminals #}
+        (ir::{{ variant.name }})
+      {%- endif -%}
+      ,
+    {%- endfor -%}
+  }
+
+  #[allow(clippy::too_many_lines)]
+  pub(crate) fn create_{{ parent_type | snake_case }}(
+    ir_node: &ir::{{ parent_type }},
+    semantic: &Rc<SemanticContext>,
+  ) -> {{ parent_type }}{
+    match ir_node {
+      {% for variant in choice.variants -%}
+        ir::{{ parent_type }}::{{ variant.name }}
+        {%- if target.sequences is containing(variant.name) or
+               target.choices is containing(variant.name) or
+               (variant.kind == "Terminal" and target.terminals[variant.name].is_identifier) -%}
+          (variant) => {{ parent_type }}::{{ variant.name }}(
+            create_{{ variant.name | snake_case }}(variant, semantic)
+          ),
+        {%- elif target.collections is containing(variant.name) -%}
+          {% set item_type = target.collections[variant.name].item_type %}
+          {% if not item_type.is_terminal or target.terminals[item_type.name].is_identifier %}
+            {# collection of non-terminals or identifier terminals #}
+            (nodes) => {{ parent_type }}::{{ variant.name }}(
+              create_{{ variant.name | snake_case }}(nodes, semantic)
+            ),
+          {% elif item_type.kind == "Terminal" %}
+            {# collection of non-identifier non-unique terminals #}
+            (nodes) => {{ parent_type }}::{{ variant.name }}(nodes.clone()),
+          {% endif %}
+        {% elif variant.kind == "Terminal" %}
+          {# non-identifier non-unique terminals #}
+          (variant) => {{ parent_type }}::{{ variant.name }}(Rc::clone(variant)),
+        {%- else -%}
+          => {{ parent_type }}::{{ variant.name }},
+        {%- endif -%}
+      {%- endfor %}
+    }
+  }
+
+{% endfor %}
+
+//
+// Repeated & Separated
+//
+
+{% for parent_type, collection in target.collections -%}
+  {%- if not collection.item_type.is_terminal or
+         target.terminals[collection.item_type.name].is_identifier %}
+    pub type {{ parent_type }} = Rc<{{ parent_type }}Struct>;
+
+    pub(crate) fn create_{{ parent_type | snake_case }}(
+      nodes: &[ir::{{ collection.item_type.name }}],
+      semantic: &Rc<SemanticContext>,
+    ) -> {{ parent_type }} {
+      Rc::new({{ parent_type }}Struct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+      })
+    }
+
+    pub struct {{ parent_type }}Struct {
+      pub(crate) ir_nodes: Vec<ir::{{ collection.item_type.name }}>,
+      pub(crate) semantic: Rc<SemanticContext>,
+    }
+
+    impl {{ parent_type }}Struct {
+      pub fn iter(&self) -> impl Iterator<Item = {{ collection.item_type.name }}> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| create_{{ collection.item_type.name | snake_case }}(ir_node, &self.semantic))
+      }
+      pub fn len(&self) -> usize {
+        self.ir_nodes.len()
+      }
+      pub fn is_empty(&self) -> bool {
+        self.ir_nodes.is_empty()
+      }
+    }
+  {% endif -%}
+
+{% endfor %}
+
+//
+// Identifiers
+//
+
+{% for terminal_type, terminal in target.terminals %}
+  {% if terminal.is_identifier %}
+    pub type {{ terminal_type }} = Rc<{{ terminal_type }}Struct>;
+
+    pub struct {{ terminal_type }}Struct {
+      pub(crate) ir_node: ir::{{ terminal_type }},
+      pub(crate) semantic: Rc<SemanticContext>,
+    }
+
+    pub(crate) fn create_{{ terminal_type | snake_case }}(
+      ir_node: &ir::{{ terminal_type }},
+      semantic: &Rc<SemanticContext>,
+    ) -> {{ terminal_type }} {
+      Rc::new({{ terminal_type }}Struct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+      })
+    }
+
+    impl {{ terminal_type }}Struct {
+      pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+      }
+
+      pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+      }
+
+      pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+      }
+    }
+  {% endif %}
+{% endfor %}
