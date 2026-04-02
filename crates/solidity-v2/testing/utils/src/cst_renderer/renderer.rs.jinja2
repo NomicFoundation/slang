@@ -5,14 +5,14 @@
 #[allow(clippy::wildcard_imports)]
 use slang_solidity_v2_cst::structured_cst::nodes::*;
 
-use crate::cst_renderer::{render_terminal, ChildrenAccumulator, RenderedOutput};
+use crate::cst_renderer::{format_label_kind, render_terminal, ChildrenAccumulator, RenderedOutput};
 
 //
 // Sequences:
 //
 
 {% for parent_type, sequence in target.sequences %}
-pub fn render_{{ parent_type | snake_case }}(source: &str, node: &{{ parent_type }}Struct, depth: usize) -> RenderedOutput {
+pub fn render_{{ parent_type | snake_case }}(source: &str, node: &{{ parent_type }}, depth: usize) -> RenderedOutput {
   let mut acc = ChildrenAccumulator::new(source, depth + 1);
   {% for field in sequence.fields %}
     {% if field.is_optional %}
@@ -50,7 +50,7 @@ pub fn render_{{ parent_type | snake_case }}(source: &str, node: &{{ parent_type
         {% else %}
           let (range, mut frags) = render_{{ variant.variant_type.name | snake_case }}(source, element, depth);
         {% endif %}
-        frags.insert(0, " \u{25ba} ({{ variant.variant_type.name | snake_case }}\u{a789} {{ variant.variant_type.name }})".to_string());
+        frags.insert(0, format!(" \u{25ba} {}", format_label_kind("{{ variant.variant_type.name | snake_case }}", "{{ variant.variant_type.name }}")));
         (range, frags)
       }
     {% endfor %}

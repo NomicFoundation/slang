@@ -15,6 +15,14 @@ mod renderer;
 /// fragments that are concatenated directly (no separators) to form the output.
 pub(crate) type RenderedOutput = (Option<Range<usize>>, Vec<String>);
 
+/// Format a label-kind pair for YAML output.
+///
+/// Note: \u{a789} (MODIFIER LETTER COLON) is used instead of : to avoid
+/// conflicting with YAML's key-value syntax, which breaks YAML linters.
+pub(crate) fn format_label_kind(label: &str, kind: &str) -> String {
+    format!("({label}\u{a789} {kind})")
+}
+
 /// Render a parse result (success or failure) to YAML format.
 ///
 /// Returns `(status, content)` where status is `"success"` or `"failure"`.
@@ -32,9 +40,7 @@ pub fn render(
         (Ok(cst), validation_errors) if validation_errors.is_empty() => {
             writeln!(&mut w, "Tree:").unwrap();
             let (_, root_frags) = renderer::render_source_unit(source, cst, 0);
-            // Note: \u{a789} (MODIFIER LETTER COLON) is used instead of : to avoid
-            // conflicting with YAML's key-value syntax, which breaks YAML linters.
-            w.push_str("  - (root\u{a789} SourceUnit)");
+            write!(w, "  - {}", format_label_kind("root", "SourceUnit")).unwrap();
             for frag in root_frags {
                 w.push_str(&frag);
             }
@@ -99,10 +105,8 @@ impl<'a> ChildrenAccumulator<'a> {
             self.range_end = self.range_end.max(r.end);
         }
         let indent = " ".repeat(4 * self.depth);
-        // Note: \u{a789} (MODIFIER LETTER COLON) is used instead of : to avoid
-        // conflicting with YAML's key-value syntax, which breaks YAML linters.
         self.fragments
-            .push(format!("{indent}  - ({label}\u{a789} {kind})"));
+            .push(format!("{indent}  - {}", format_label_kind(label, kind)));
         self.fragments.extend(child_frags);
     }
 
@@ -122,10 +126,9 @@ impl<'a> ChildrenAccumulator<'a> {
             ":\n".to_string()
         };
 
-        let mut result = Vec::with_capacity(1 + self.fragments.len());
-        result.push(value);
-        result.extend(self.fragments);
-        (range, result)
+        let mut fragments = self.fragments;
+        fragments.insert(0, value);
+        (range, fragments)
     }
 }
 
