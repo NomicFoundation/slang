@@ -6,17 +6,15 @@
 #[allow(clippy::wildcard_imports)]
 use slang_solidity_v2_cst::structured_cst::nodes::*;
 
-use crate::cst_renderer::{render_terminal, ChildrenAccumulator, RenderedOutput};
+use crate::cst_renderer::{
+    format_label_kind, render_terminal, ChildrenAccumulator, RenderedOutput,
+};
 
 //
 // Sequences:
 //
 
-pub fn render_abicoder_pragma(
-    source: &str,
-    node: &AbicoderPragmaStruct,
-    depth: usize,
-) -> RenderedOutput {
+pub fn render_abicoder_pragma(source: &str, node: &AbicoderPragma, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -36,7 +34,7 @@ pub fn render_abicoder_pragma(
 
 pub fn render_additive_expression(
     source: &str,
-    node: &AdditiveExpressionStruct,
+    node: &AdditiveExpression,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -66,7 +64,7 @@ pub fn render_additive_expression(
     acc.finish()
 }
 
-pub fn render_address_type(source: &str, node: &AddressTypeStruct, depth: usize) -> RenderedOutput {
+pub fn render_address_type(source: &str, node: &AddressType, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -86,11 +84,7 @@ pub fn render_address_type(source: &str, node: &AddressTypeStruct, depth: usize)
     acc.finish()
 }
 
-pub fn render_and_expression(
-    source: &str,
-    node: &AndExpressionStruct,
-    depth: usize,
-) -> RenderedOutput {
+pub fn render_and_expression(source: &str, node: &AndExpression, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -116,7 +110,7 @@ pub fn render_and_expression(
 
 pub fn render_array_expression(
     source: &str,
-    node: &ArrayExpressionStruct,
+    node: &ArrayExpression,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -142,11 +136,7 @@ pub fn render_array_expression(
     acc.finish()
 }
 
-pub fn render_array_type_name(
-    source: &str,
-    node: &ArrayTypeNameStruct,
-    depth: usize,
-) -> RenderedOutput {
+pub fn render_array_type_name(source: &str, node: &ArrayTypeName, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -180,7 +170,7 @@ pub fn render_array_type_name(
 
 pub fn render_assembly_statement(
     source: &str,
-    node: &AssemblyStatementStruct,
+    node: &AssemblyStatement,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -218,7 +208,7 @@ pub fn render_assembly_statement(
 
 pub fn render_assignment_expression(
     source: &str,
-    node: &AssignmentExpressionStruct,
+    node: &AssignmentExpression,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -250,7 +240,7 @@ pub fn render_assignment_expression(
 
 pub fn render_bitwise_and_expression(
     source: &str,
-    node: &BitwiseAndExpressionStruct,
+    node: &BitwiseAndExpression,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -278,7 +268,7 @@ pub fn render_bitwise_and_expression(
 
 pub fn render_bitwise_or_expression(
     source: &str,
-    node: &BitwiseOrExpressionStruct,
+    node: &BitwiseOrExpression,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -306,7 +296,7 @@ pub fn render_bitwise_or_expression(
 
 pub fn render_bitwise_xor_expression(
     source: &str,
-    node: &BitwiseXorExpressionStruct,
+    node: &BitwiseXorExpression,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -332,7 +322,7 @@ pub fn render_bitwise_xor_expression(
     acc.finish()
 }
 
-pub fn render_block(source: &str, node: &BlockStruct, depth: usize) -> RenderedOutput {
+pub fn render_block(source: &str, node: &Block, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -356,11 +346,7 @@ pub fn render_block(source: &str, node: &BlockStruct, depth: usize) -> RenderedO
     acc.finish()
 }
 
-pub fn render_break_statement(
-    source: &str,
-    node: &BreakStatementStruct,
-    depth: usize,
-) -> RenderedOutput {
+pub fn render_break_statement(source: &str, node: &BreakStatement, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -380,7 +366,7 @@ pub fn render_break_statement(
 
 pub fn render_call_options_expression(
     source: &str,
-    node: &CallOptionsExpressionStruct,
+    node: &CallOptionsExpression,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -412,7 +398,7 @@ pub fn render_call_options_expression(
     acc.finish()
 }
 
-pub fn render_catch_clause(source: &str, node: &CatchClauseStruct, depth: usize) -> RenderedOutput {
+pub fn render_catch_clause(source: &str, node: &CatchClause, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -436,7 +422,7 @@ pub fn render_catch_clause(source: &str, node: &CatchClauseStruct, depth: usize)
 
 pub fn render_catch_clause_error(
     source: &str,
-    node: &CatchClauseErrorStruct,
+    node: &CatchClauseError,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -456,7 +442,7 @@ pub fn render_catch_clause_error(
 
 pub fn render_conditional_expression(
     source: &str,
-    node: &ConditionalExpressionStruct,
+    node: &ConditionalExpression,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -492,7 +478,7 @@ pub fn render_conditional_expression(
 
 pub fn render_constant_definition(
     source: &str,
-    node: &ConstantDefinitionStruct,
+    node: &ConstantDefinition,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -534,7 +520,7 @@ pub fn render_constant_definition(
 
 pub fn render_constructor_definition(
     source: &str,
-    node: &ConstructorDefinitionStruct,
+    node: &ConstructorDefinition,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -564,7 +550,7 @@ pub fn render_constructor_definition(
 
 pub fn render_continue_statement(
     source: &str,
-    node: &ContinueStatementStruct,
+    node: &ContinueStatement,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -586,7 +572,7 @@ pub fn render_continue_statement(
 
 pub fn render_contract_definition(
     source: &str,
-    node: &ContractDefinitionStruct,
+    node: &ContractDefinition,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -640,7 +626,7 @@ pub fn render_contract_definition(
 
 pub fn render_decimal_number_expression(
     source: &str,
-    node: &DecimalNumberExpressionStruct,
+    node: &DecimalNumberExpression,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -664,7 +650,7 @@ pub fn render_decimal_number_expression(
 
 pub fn render_do_while_statement(
     source: &str,
-    node: &DoWhileStatementStruct,
+    node: &DoWhileStatement,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -714,7 +700,7 @@ pub fn render_do_while_statement(
     acc.finish()
 }
 
-pub fn render_else_branch(source: &str, node: &ElseBranchStruct, depth: usize) -> RenderedOutput {
+pub fn render_else_branch(source: &str, node: &ElseBranch, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -732,11 +718,7 @@ pub fn render_else_branch(source: &str, node: &ElseBranchStruct, depth: usize) -
     acc.finish()
 }
 
-pub fn render_emit_statement(
-    source: &str,
-    node: &EmitStatementStruct,
-    depth: usize,
-) -> RenderedOutput {
+pub fn render_emit_statement(source: &str, node: &EmitStatement, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -766,11 +748,7 @@ pub fn render_emit_statement(
     acc.finish()
 }
 
-pub fn render_enum_definition(
-    source: &str,
-    node: &EnumDefinitionStruct,
-    depth: usize,
-) -> RenderedOutput {
+pub fn render_enum_definition(source: &str, node: &EnumDefinition, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -808,7 +786,7 @@ pub fn render_enum_definition(
 
 pub fn render_equality_expression(
     source: &str,
-    node: &EqualityExpressionStruct,
+    node: &EqualityExpression,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -840,7 +818,7 @@ pub fn render_equality_expression(
 
 pub fn render_error_definition(
     source: &str,
-    node: &ErrorDefinitionStruct,
+    node: &ErrorDefinition,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -872,11 +850,7 @@ pub fn render_error_definition(
     acc.finish()
 }
 
-pub fn render_error_parameter(
-    source: &str,
-    node: &ErrorParameterStruct,
-    depth: usize,
-) -> RenderedOutput {
+pub fn render_error_parameter(source: &str, node: &ErrorParameter, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -894,7 +868,7 @@ pub fn render_error_parameter(
 
 pub fn render_error_parameters_declaration(
     source: &str,
-    node: &ErrorParametersDeclarationStruct,
+    node: &ErrorParametersDeclaration,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -922,7 +896,7 @@ pub fn render_error_parameters_declaration(
 
 pub fn render_event_definition(
     source: &str,
-    node: &EventDefinitionStruct,
+    node: &EventDefinition,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -962,11 +936,7 @@ pub fn render_event_definition(
     acc.finish()
 }
 
-pub fn render_event_parameter(
-    source: &str,
-    node: &EventParameterStruct,
-    depth: usize,
-) -> RenderedOutput {
+pub fn render_event_parameter(source: &str, node: &EventParameter, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -992,7 +962,7 @@ pub fn render_event_parameter(
 
 pub fn render_event_parameters_declaration(
     source: &str,
-    node: &EventParametersDeclarationStruct,
+    node: &EventParametersDeclaration,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -1020,7 +990,7 @@ pub fn render_event_parameters_declaration(
 
 pub fn render_experimental_pragma(
     source: &str,
-    node: &ExperimentalPragmaStruct,
+    node: &ExperimentalPragma,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -1042,7 +1012,7 @@ pub fn render_experimental_pragma(
 
 pub fn render_exponentiation_expression(
     source: &str,
-    node: &ExponentiationExpressionStruct,
+    node: &ExponentiationExpression,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -1070,7 +1040,7 @@ pub fn render_exponentiation_expression(
 
 pub fn render_expression_statement(
     source: &str,
-    node: &ExpressionStatementStruct,
+    node: &ExpressionStatement,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -1092,7 +1062,7 @@ pub fn render_expression_statement(
 
 pub fn render_fallback_function_definition(
     source: &str,
-    node: &FallbackFunctionDefinitionStruct,
+    node: &FallbackFunctionDefinition,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -1132,11 +1102,7 @@ pub fn render_fallback_function_definition(
     acc.finish()
 }
 
-pub fn render_for_statement(
-    source: &str,
-    node: &ForStatementStruct,
-    depth: usize,
-) -> RenderedOutput {
+pub fn render_for_statement(source: &str, node: &ForStatement, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -1188,7 +1154,7 @@ pub fn render_for_statement(
 
 pub fn render_function_call_expression(
     source: &str,
-    node: &FunctionCallExpressionStruct,
+    node: &FunctionCallExpression,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -1210,7 +1176,7 @@ pub fn render_function_call_expression(
 
 pub fn render_function_definition(
     source: &str,
-    node: &FunctionDefinitionStruct,
+    node: &FunctionDefinition,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -1256,11 +1222,7 @@ pub fn render_function_definition(
     acc.finish()
 }
 
-pub fn render_function_type(
-    source: &str,
-    node: &FunctionTypeStruct,
-    depth: usize,
-) -> RenderedOutput {
+pub fn render_function_type(source: &str, node: &FunctionType, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -1294,7 +1256,7 @@ pub fn render_function_type(
 
 pub fn render_hex_number_expression(
     source: &str,
-    node: &HexNumberExpressionStruct,
+    node: &HexNumberExpression,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -1308,7 +1270,7 @@ pub fn render_hex_number_expression(
     acc.finish()
 }
 
-pub fn render_if_statement(source: &str, node: &IfStatementStruct, depth: usize) -> RenderedOutput {
+pub fn render_if_statement(source: &str, node: &IfStatement, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -1352,7 +1314,7 @@ pub fn render_if_statement(source: &str, node: &IfStatementStruct, depth: usize)
     acc.finish()
 }
 
-pub fn render_import_alias(source: &str, node: &ImportAliasStruct, depth: usize) -> RenderedOutput {
+pub fn render_import_alias(source: &str, node: &ImportAlias, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -1372,7 +1334,7 @@ pub fn render_import_alias(source: &str, node: &ImportAliasStruct, depth: usize)
 
 pub fn render_import_deconstruction(
     source: &str,
-    node: &ImportDeconstructionStruct,
+    node: &ImportDeconstruction,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -1412,7 +1374,7 @@ pub fn render_import_deconstruction(
 
 pub fn render_import_deconstruction_symbol(
     source: &str,
-    node: &ImportDeconstructionSymbolStruct,
+    node: &ImportDeconstructionSymbol,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -1436,7 +1398,7 @@ pub fn render_import_deconstruction_symbol(
 
 pub fn render_import_directive(
     source: &str,
-    node: &ImportDirectiveStruct,
+    node: &ImportDirective,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -1464,7 +1426,7 @@ pub fn render_import_directive(
 
 pub fn render_index_access_end(
     source: &str,
-    node: &IndexAccessEndStruct,
+    node: &IndexAccessEnd,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -1484,7 +1446,7 @@ pub fn render_index_access_end(
 
 pub fn render_index_access_expression(
     source: &str,
-    node: &IndexAccessExpressionStruct,
+    node: &IndexAccessExpression,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -1528,7 +1490,7 @@ pub fn render_index_access_expression(
 
 pub fn render_inequality_expression(
     source: &str,
-    node: &InequalityExpressionStruct,
+    node: &InequalityExpression,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -1560,7 +1522,7 @@ pub fn render_inequality_expression(
 
 pub fn render_inheritance_specifier(
     source: &str,
-    node: &InheritanceSpecifierStruct,
+    node: &InheritanceSpecifier,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -1582,7 +1544,7 @@ pub fn render_inheritance_specifier(
 
 pub fn render_inheritance_type(
     source: &str,
-    node: &InheritanceTypeStruct,
+    node: &InheritanceType,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -1606,7 +1568,7 @@ pub fn render_inheritance_type(
 
 pub fn render_interface_definition(
     source: &str,
-    node: &InterfaceDefinitionStruct,
+    node: &InterfaceDefinition,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -1654,7 +1616,7 @@ pub fn render_interface_definition(
 
 pub fn render_library_definition(
     source: &str,
-    node: &LibraryDefinitionStruct,
+    node: &LibraryDefinition,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -1692,7 +1654,7 @@ pub fn render_library_definition(
     acc.finish()
 }
 
-pub fn render_mapping_key(source: &str, node: &MappingKeyStruct, depth: usize) -> RenderedOutput {
+pub fn render_mapping_key(source: &str, node: &MappingKey, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -1708,7 +1670,7 @@ pub fn render_mapping_key(source: &str, node: &MappingKeyStruct, depth: usize) -
     acc.finish()
 }
 
-pub fn render_mapping_type(source: &str, node: &MappingTypeStruct, depth: usize) -> RenderedOutput {
+pub fn render_mapping_type(source: &str, node: &MappingType, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -1750,11 +1712,7 @@ pub fn render_mapping_type(source: &str, node: &MappingTypeStruct, depth: usize)
     acc.finish()
 }
 
-pub fn render_mapping_value(
-    source: &str,
-    node: &MappingValueStruct,
-    depth: usize,
-) -> RenderedOutput {
+pub fn render_mapping_value(source: &str, node: &MappingValue, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -1772,7 +1730,7 @@ pub fn render_mapping_value(
 
 pub fn render_member_access_expression(
     source: &str,
-    node: &MemberAccessExpressionStruct,
+    node: &MemberAccessExpression,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -1800,7 +1758,7 @@ pub fn render_member_access_expression(
 
 pub fn render_modifier_definition(
     source: &str,
-    node: &ModifierDefinitionStruct,
+    node: &ModifierDefinition,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -1842,7 +1800,7 @@ pub fn render_modifier_definition(
 
 pub fn render_modifier_invocation(
     source: &str,
-    node: &ModifierInvocationStruct,
+    node: &ModifierInvocation,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -1866,7 +1824,7 @@ pub fn render_modifier_invocation(
 
 pub fn render_multi_typed_declaration(
     source: &str,
-    node: &MultiTypedDeclarationStruct,
+    node: &MultiTypedDeclaration,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -1900,7 +1858,7 @@ pub fn render_multi_typed_declaration(
 
 pub fn render_multi_typed_declaration_element(
     source: &str,
-    node: &MultiTypedDeclarationElementStruct,
+    node: &MultiTypedDeclarationElement,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -1918,7 +1876,7 @@ pub fn render_multi_typed_declaration_element(
 
 pub fn render_multiplicative_expression(
     source: &str,
-    node: &MultiplicativeExpressionStruct,
+    node: &MultiplicativeExpression,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -1948,11 +1906,7 @@ pub fn render_multiplicative_expression(
     acc.finish()
 }
 
-pub fn render_named_argument(
-    source: &str,
-    node: &NamedArgumentStruct,
-    depth: usize,
-) -> RenderedOutput {
+pub fn render_named_argument(source: &str, node: &NamedArgument, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -1974,7 +1928,7 @@ pub fn render_named_argument(
 
 pub fn render_named_argument_group(
     source: &str,
-    node: &NamedArgumentGroupStruct,
+    node: &NamedArgumentGroup,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -2002,7 +1956,7 @@ pub fn render_named_argument_group(
 
 pub fn render_named_arguments_declaration(
     source: &str,
-    node: &NamedArgumentsDeclarationStruct,
+    node: &NamedArgumentsDeclaration,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -2028,7 +1982,7 @@ pub fn render_named_arguments_declaration(
     acc.finish()
 }
 
-pub fn render_named_import(source: &str, node: &NamedImportStruct, depth: usize) -> RenderedOutput {
+pub fn render_named_import(source: &str, node: &NamedImport, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -2058,11 +2012,7 @@ pub fn render_named_import(source: &str, node: &NamedImportStruct, depth: usize)
     acc.finish()
 }
 
-pub fn render_new_expression(
-    source: &str,
-    node: &NewExpressionStruct,
-    depth: usize,
-) -> RenderedOutput {
+pub fn render_new_expression(source: &str, node: &NewExpression, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -2080,11 +2030,7 @@ pub fn render_new_expression(
     acc.finish()
 }
 
-pub fn render_or_expression(
-    source: &str,
-    node: &OrExpressionStruct,
-    depth: usize,
-) -> RenderedOutput {
+pub fn render_or_expression(source: &str, node: &OrExpression, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -2110,7 +2056,7 @@ pub fn render_or_expression(
 
 pub fn render_override_paths_declaration(
     source: &str,
-    node: &OverridePathsDeclarationStruct,
+    node: &OverridePathsDeclaration,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -2138,7 +2084,7 @@ pub fn render_override_paths_declaration(
 
 pub fn render_override_specifier(
     source: &str,
-    node: &OverrideSpecifierStruct,
+    node: &OverrideSpecifier,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -2160,7 +2106,7 @@ pub fn render_override_specifier(
     acc.finish()
 }
 
-pub fn render_parameter(source: &str, node: &ParameterStruct, depth: usize) -> RenderedOutput {
+pub fn render_parameter(source: &str, node: &Parameter, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -2186,7 +2132,7 @@ pub fn render_parameter(source: &str, node: &ParameterStruct, depth: usize) -> R
 
 pub fn render_parameters_declaration(
     source: &str,
-    node: &ParametersDeclarationStruct,
+    node: &ParametersDeclaration,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -2212,7 +2158,7 @@ pub fn render_parameters_declaration(
     acc.finish()
 }
 
-pub fn render_path_import(source: &str, node: &PathImportStruct, depth: usize) -> RenderedOutput {
+pub fn render_path_import(source: &str, node: &PathImport, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -2234,7 +2180,7 @@ pub fn render_path_import(source: &str, node: &PathImportStruct, depth: usize) -
 
 pub fn render_positional_arguments_declaration(
     source: &str,
-    node: &PositionalArgumentsDeclarationStruct,
+    node: &PositionalArgumentsDeclaration,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -2262,7 +2208,7 @@ pub fn render_positional_arguments_declaration(
 
 pub fn render_postfix_expression(
     source: &str,
-    node: &PostfixExpressionStruct,
+    node: &PostfixExpression,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -2288,7 +2234,7 @@ pub fn render_postfix_expression(
 
 pub fn render_pragma_directive(
     source: &str,
-    node: &PragmaDirectiveStruct,
+    node: &PragmaDirective,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -2316,7 +2262,7 @@ pub fn render_pragma_directive(
 
 pub fn render_prefix_expression(
     source: &str,
-    node: &PrefixExpressionStruct,
+    node: &PrefixExpression,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -2342,7 +2288,7 @@ pub fn render_prefix_expression(
 
 pub fn render_receive_function_definition(
     source: &str,
-    node: &ReceiveFunctionDefinitionStruct,
+    node: &ReceiveFunctionDefinition,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -2376,7 +2322,7 @@ pub fn render_receive_function_definition(
 
 pub fn render_return_statement(
     source: &str,
-    node: &ReturnStatementStruct,
+    node: &ReturnStatement,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -2406,7 +2352,7 @@ pub fn render_return_statement(
 
 pub fn render_returns_declaration(
     source: &str,
-    node: &ReturnsDeclarationStruct,
+    node: &ReturnsDeclaration,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -2428,7 +2374,7 @@ pub fn render_returns_declaration(
 
 pub fn render_revert_statement(
     source: &str,
-    node: &RevertStatementStruct,
+    node: &RevertStatement,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -2462,7 +2408,7 @@ pub fn render_revert_statement(
 
 pub fn render_shift_expression(
     source: &str,
-    node: &ShiftExpressionStruct,
+    node: &ShiftExpression,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -2494,7 +2440,7 @@ pub fn render_shift_expression(
 
 pub fn render_single_typed_declaration(
     source: &str,
-    node: &SingleTypedDeclarationStruct,
+    node: &SingleTypedDeclaration,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -2516,7 +2462,7 @@ pub fn render_single_typed_declaration(
     acc.finish()
 }
 
-pub fn render_source_unit(source: &str, node: &SourceUnitStruct, depth: usize) -> RenderedOutput {
+pub fn render_source_unit(source: &str, node: &SourceUnit, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -2530,7 +2476,7 @@ pub fn render_source_unit(source: &str, node: &SourceUnitStruct, depth: usize) -
 
 pub fn render_state_variable_definition(
     source: &str,
-    node: &StateVariableDefinitionStruct,
+    node: &StateVariableDefinition,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -2572,7 +2518,7 @@ pub fn render_state_variable_definition(
 
 pub fn render_state_variable_definition_value(
     source: &str,
-    node: &StateVariableDefinitionValueStruct,
+    node: &StateVariableDefinitionValue,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -2590,7 +2536,7 @@ pub fn render_state_variable_definition_value(
 
 pub fn render_storage_layout_specifier(
     source: &str,
-    node: &StorageLayoutSpecifierStruct,
+    node: &StorageLayoutSpecifier,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -2618,7 +2564,7 @@ pub fn render_storage_layout_specifier(
 
 pub fn render_struct_definition(
     source: &str,
-    node: &StructDefinitionStruct,
+    node: &StructDefinition,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -2656,11 +2602,7 @@ pub fn render_struct_definition(
     acc.finish()
 }
 
-pub fn render_struct_member(
-    source: &str,
-    node: &StructMemberStruct,
-    depth: usize,
-) -> RenderedOutput {
+pub fn render_struct_member(source: &str, node: &StructMember, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -2684,11 +2626,7 @@ pub fn render_struct_member(
     acc.finish()
 }
 
-pub fn render_try_statement(
-    source: &str,
-    node: &TryStatementStruct,
-    depth: usize,
-) -> RenderedOutput {
+pub fn render_try_statement(source: &str, node: &TryStatement, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -2724,7 +2662,7 @@ pub fn render_try_statement(
 
 pub fn render_tuple_expression(
     source: &str,
-    node: &TupleExpressionStruct,
+    node: &TupleExpression,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -2750,7 +2688,7 @@ pub fn render_tuple_expression(
     acc.finish()
 }
 
-pub fn render_tuple_value(source: &str, node: &TupleValueStruct, depth: usize) -> RenderedOutput {
+pub fn render_tuple_value(source: &str, node: &TupleValue, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     if let Some(ref expression) = node.expression {
@@ -2764,11 +2702,7 @@ pub fn render_tuple_value(source: &str, node: &TupleValueStruct, depth: usize) -
     acc.finish()
 }
 
-pub fn render_type_expression(
-    source: &str,
-    node: &TypeExpressionStruct,
-    depth: usize,
-) -> RenderedOutput {
+pub fn render_type_expression(source: &str, node: &TypeExpression, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -2798,11 +2732,7 @@ pub fn render_type_expression(
     acc.finish()
 }
 
-pub fn render_unchecked_block(
-    source: &str,
-    node: &UncheckedBlockStruct,
-    depth: usize,
-) -> RenderedOutput {
+pub fn render_unchecked_block(source: &str, node: &UncheckedBlock, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -2822,7 +2752,7 @@ pub fn render_unchecked_block(
 
 pub fn render_user_defined_value_type_definition(
     source: &str,
-    node: &UserDefinedValueTypeDefinitionStruct,
+    node: &UserDefinedValueTypeDefinition,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -2860,7 +2790,7 @@ pub fn render_user_defined_value_type_definition(
     acc.finish()
 }
 
-pub fn render_using_alias(source: &str, node: &UsingAliasStruct, depth: usize) -> RenderedOutput {
+pub fn render_using_alias(source: &str, node: &UsingAlias, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -2880,7 +2810,7 @@ pub fn render_using_alias(source: &str, node: &UsingAliasStruct, depth: usize) -
 
 pub fn render_using_deconstruction(
     source: &str,
-    node: &UsingDeconstructionStruct,
+    node: &UsingDeconstruction,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -2908,7 +2838,7 @@ pub fn render_using_deconstruction(
 
 pub fn render_using_deconstruction_symbol(
     source: &str,
-    node: &UsingDeconstructionSymbolStruct,
+    node: &UsingDeconstructionSymbol,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -2930,11 +2860,7 @@ pub fn render_using_deconstruction_symbol(
     acc.finish()
 }
 
-pub fn render_using_directive(
-    source: &str,
-    node: &UsingDirectiveStruct,
-    depth: usize,
-) -> RenderedOutput {
+pub fn render_using_directive(source: &str, node: &UsingDirective, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -2980,7 +2906,7 @@ pub fn render_using_directive(
 
 pub fn render_variable_declaration(
     source: &str,
-    node: &VariableDeclarationStruct,
+    node: &VariableDeclaration,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -3010,7 +2936,7 @@ pub fn render_variable_declaration(
 
 pub fn render_variable_declaration_statement(
     source: &str,
-    node: &VariableDeclarationStatementStruct,
+    node: &VariableDeclarationStatement,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -3032,7 +2958,7 @@ pub fn render_variable_declaration_statement(
 
 pub fn render_variable_declaration_value(
     source: &str,
-    node: &VariableDeclarationValueStruct,
+    node: &VariableDeclarationValue,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -3048,11 +2974,7 @@ pub fn render_variable_declaration_value(
     acc.finish()
 }
 
-pub fn render_version_pragma(
-    source: &str,
-    node: &VersionPragmaStruct,
-    depth: usize,
-) -> RenderedOutput {
+pub fn render_version_pragma(source: &str, node: &VersionPragma, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -3070,11 +2992,7 @@ pub fn render_version_pragma(
     acc.finish()
 }
 
-pub fn render_version_range(
-    source: &str,
-    node: &VersionRangeStruct,
-    depth: usize,
-) -> RenderedOutput {
+pub fn render_version_range(source: &str, node: &VersionRange, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -3098,7 +3016,7 @@ pub fn render_version_range(
     acc.finish()
 }
 
-pub fn render_version_term(source: &str, node: &VersionTermStruct, depth: usize) -> RenderedOutput {
+pub fn render_version_term(source: &str, node: &VersionTerm, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     if let Some(ref operator) = node.operator {
@@ -3118,11 +3036,7 @@ pub fn render_version_term(source: &str, node: &VersionTermStruct, depth: usize)
     acc.finish()
 }
 
-pub fn render_while_statement(
-    source: &str,
-    node: &WhileStatementStruct,
-    depth: usize,
-) -> RenderedOutput {
+pub fn render_while_statement(source: &str, node: &WhileStatement, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -3158,7 +3072,7 @@ pub fn render_while_statement(
     acc.finish()
 }
 
-pub fn render_yul_block(source: &str, node: &YulBlockStruct, depth: usize) -> RenderedOutput {
+pub fn render_yul_block(source: &str, node: &YulBlock, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -3184,7 +3098,7 @@ pub fn render_yul_block(source: &str, node: &YulBlockStruct, depth: usize) -> Re
 
 pub fn render_yul_break_statement(
     source: &str,
-    node: &YulBreakStatementStruct,
+    node: &YulBreakStatement,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -3200,7 +3114,7 @@ pub fn render_yul_break_statement(
 
 pub fn render_yul_continue_statement(
     source: &str,
-    node: &YulContinueStatementStruct,
+    node: &YulContinueStatement,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -3216,7 +3130,7 @@ pub fn render_yul_continue_statement(
 
 pub fn render_yul_default_case(
     source: &str,
-    node: &YulDefaultCaseStruct,
+    node: &YulDefaultCase,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -3238,7 +3152,7 @@ pub fn render_yul_default_case(
 
 pub fn render_yul_flags_declaration(
     source: &str,
-    node: &YulFlagsDeclarationStruct,
+    node: &YulFlagsDeclaration,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -3266,7 +3180,7 @@ pub fn render_yul_flags_declaration(
 
 pub fn render_yul_for_statement(
     source: &str,
-    node: &YulForStatementStruct,
+    node: &YulForStatement,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -3306,7 +3220,7 @@ pub fn render_yul_for_statement(
 
 pub fn render_yul_function_call_expression(
     source: &str,
-    node: &YulFunctionCallExpressionStruct,
+    node: &YulFunctionCallExpression,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -3340,7 +3254,7 @@ pub fn render_yul_function_call_expression(
 
 pub fn render_yul_function_definition(
     source: &str,
-    node: &YulFunctionDefinitionStruct,
+    node: &YulFunctionDefinition,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -3382,7 +3296,7 @@ pub fn render_yul_function_definition(
 
 pub fn render_yul_if_statement(
     source: &str,
-    node: &YulIfStatementStruct,
+    node: &YulIfStatement,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -3410,7 +3324,7 @@ pub fn render_yul_if_statement(
 
 pub fn render_yul_leave_statement(
     source: &str,
-    node: &YulLeaveStatementStruct,
+    node: &YulLeaveStatement,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -3426,7 +3340,7 @@ pub fn render_yul_leave_statement(
 
 pub fn render_yul_parameters_declaration(
     source: &str,
-    node: &YulParametersDeclarationStruct,
+    node: &YulParametersDeclaration,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -3454,7 +3368,7 @@ pub fn render_yul_parameters_declaration(
 
 pub fn render_yul_returns_declaration(
     source: &str,
-    node: &YulReturnsDeclarationStruct,
+    node: &YulReturnsDeclaration,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -3476,7 +3390,7 @@ pub fn render_yul_returns_declaration(
 
 pub fn render_yul_switch_statement(
     source: &str,
-    node: &YulSwitchStatementStruct,
+    node: &YulSwitchStatement,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -3502,11 +3416,7 @@ pub fn render_yul_switch_statement(
     acc.finish()
 }
 
-pub fn render_yul_value_case(
-    source: &str,
-    node: &YulValueCaseStruct,
-    depth: usize,
-) -> RenderedOutput {
+pub fn render_yul_value_case(source: &str, node: &YulValueCase, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     acc.add(
@@ -3532,7 +3442,7 @@ pub fn render_yul_value_case(
 
 pub fn render_yul_variable_assignment_statement(
     source: &str,
-    node: &YulVariableAssignmentStatementStruct,
+    node: &YulVariableAssignmentStatement,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -3560,7 +3470,7 @@ pub fn render_yul_variable_assignment_statement(
 
 pub fn render_yul_variable_declaration_statement(
     source: &str,
-    node: &YulVariableDeclarationStatementStruct,
+    node: &YulVariableDeclarationStatement,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -3590,7 +3500,7 @@ pub fn render_yul_variable_declaration_statement(
 
 pub fn render_yul_variable_declaration_value(
     source: &str,
-    node: &YulVariableDeclarationValueStruct,
+    node: &YulVariableDeclarationValue,
     depth: usize,
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
@@ -3625,7 +3535,10 @@ pub fn render_abicoder_version(
 
             frags.insert(
                 0,
-                " \u{25ba} (abicoder_v1_keyword\u{a789} AbicoderV1Keyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("abicoder_v1_keyword", "AbicoderV1Keyword")
+                ),
             );
             (range, frags)
         }
@@ -3635,7 +3548,10 @@ pub fn render_abicoder_version(
 
             frags.insert(
                 0,
-                " \u{25ba} (abicoder_v2_keyword\u{a789} AbicoderV2Keyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("abicoder_v2_keyword", "AbicoderV2Keyword")
+                ),
             );
             (range, frags)
         }
@@ -3652,7 +3568,16 @@ pub fn render_arguments_declaration(
             let (range, mut frags) =
                 render_positional_arguments_declaration(source, element, depth);
 
-            frags.insert(0, " \u{25ba} (positional_arguments_declaration\u{a789} PositionalArgumentsDeclaration)".to_string());
+            frags.insert(
+                0,
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind(
+                        "positional_arguments_declaration",
+                        "PositionalArgumentsDeclaration"
+                    )
+                ),
+            );
             (range, frags)
         }
 
@@ -3661,8 +3586,10 @@ pub fn render_arguments_declaration(
 
             frags.insert(
                 0,
-                " \u{25ba} (named_arguments_declaration\u{a789} NamedArgumentsDeclaration)"
-                    .to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("named_arguments_declaration", "NamedArgumentsDeclaration")
+                ),
             );
             (range, frags)
         }
@@ -3680,7 +3607,10 @@ pub fn render_constructor_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (modifier_invocation\u{a789} ModifierInvocation)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("modifier_invocation", "ModifierInvocation")
+                ),
             );
             (range, frags)
         }
@@ -3690,7 +3620,10 @@ pub fn render_constructor_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (internal_keyword\u{a789} InternalKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("internal_keyword", "InternalKeyword")
+                ),
             );
             (range, frags)
         }
@@ -3700,7 +3633,10 @@ pub fn render_constructor_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (payable_keyword\u{a789} PayableKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("payable_keyword", "PayableKeyword")
+                ),
             );
             (range, frags)
         }
@@ -3710,7 +3646,10 @@ pub fn render_constructor_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (public_keyword\u{a789} PublicKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("public_keyword", "PublicKeyword")
+                ),
             );
             (range, frags)
         }
@@ -3724,7 +3663,10 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
 
             frags.insert(
                 0,
-                " \u{25ba} (using_directive\u{a789} UsingDirective)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("using_directive", "UsingDirective")
+                ),
             );
             (range, frags)
         }
@@ -3734,7 +3676,10 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
 
             frags.insert(
                 0,
-                " \u{25ba} (function_definition\u{a789} FunctionDefinition)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("function_definition", "FunctionDefinition")
+                ),
             );
             (range, frags)
         }
@@ -3744,7 +3689,10 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
 
             frags.insert(
                 0,
-                " \u{25ba} (constructor_definition\u{a789} ConstructorDefinition)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("constructor_definition", "ConstructorDefinition")
+                ),
             );
             (range, frags)
         }
@@ -3754,8 +3702,10 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
 
             frags.insert(
                 0,
-                " \u{25ba} (receive_function_definition\u{a789} ReceiveFunctionDefinition)"
-                    .to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("receive_function_definition", "ReceiveFunctionDefinition")
+                ),
             );
             (range, frags)
         }
@@ -3765,8 +3715,10 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
 
             frags.insert(
                 0,
-                " \u{25ba} (fallback_function_definition\u{a789} FallbackFunctionDefinition)"
-                    .to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("fallback_function_definition", "FallbackFunctionDefinition")
+                ),
             );
             (range, frags)
         }
@@ -3776,7 +3728,10 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
 
             frags.insert(
                 0,
-                " \u{25ba} (modifier_definition\u{a789} ModifierDefinition)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("modifier_definition", "ModifierDefinition")
+                ),
             );
             (range, frags)
         }
@@ -3786,7 +3741,10 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
 
             frags.insert(
                 0,
-                " \u{25ba} (struct_definition\u{a789} StructDefinition)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("struct_definition", "StructDefinition")
+                ),
             );
             (range, frags)
         }
@@ -3796,7 +3754,10 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
 
             frags.insert(
                 0,
-                " \u{25ba} (enum_definition\u{a789} EnumDefinition)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("enum_definition", "EnumDefinition")
+                ),
             );
             (range, frags)
         }
@@ -3806,7 +3767,10 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
 
             frags.insert(
                 0,
-                " \u{25ba} (event_definition\u{a789} EventDefinition)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("event_definition", "EventDefinition")
+                ),
             );
             (range, frags)
         }
@@ -3816,7 +3780,10 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
 
             frags.insert(
                 0,
-                " \u{25ba} (error_definition\u{a789} ErrorDefinition)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("error_definition", "ErrorDefinition")
+                ),
             );
             (range, frags)
         }
@@ -3825,7 +3792,16 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
             let (range, mut frags) =
                 render_user_defined_value_type_definition(source, element, depth);
 
-            frags.insert(0, " \u{25ba} (user_defined_value_type_definition\u{a789} UserDefinedValueTypeDefinition)".to_string());
+            frags.insert(
+                0,
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind(
+                        "user_defined_value_type_definition",
+                        "UserDefinedValueTypeDefinition"
+                    )
+                ),
+            );
             (range, frags)
         }
 
@@ -3834,7 +3810,10 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
 
             frags.insert(
                 0,
-                " \u{25ba} (state_variable_definition\u{a789} StateVariableDefinition)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("state_variable_definition", "StateVariableDefinition")
+                ),
             );
             (range, frags)
         }
@@ -3852,7 +3831,10 @@ pub fn render_contract_specifier(
 
             frags.insert(
                 0,
-                " \u{25ba} (inheritance_specifier\u{a789} InheritanceSpecifier)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("inheritance_specifier", "InheritanceSpecifier")
+                ),
             );
             (range, frags)
         }
@@ -3862,7 +3844,10 @@ pub fn render_contract_specifier(
 
             frags.insert(
                 0,
-                " \u{25ba} (storage_layout_specifier\u{a789} StorageLayoutSpecifier)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("storage_layout_specifier", "StorageLayoutSpecifier")
+                ),
             );
             (range, frags)
         }
@@ -3876,7 +3861,10 @@ pub fn render_elementary_type(source: &str, node: &ElementaryType, depth: usize)
 
             frags.insert(
                 0,
-                " \u{25ba} (bool_keyword\u{a789} BoolKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("bool_keyword", "BoolKeyword")
+                ),
             );
             (range, frags)
         }
@@ -3886,7 +3874,10 @@ pub fn render_elementary_type(source: &str, node: &ElementaryType, depth: usize)
 
             frags.insert(
                 0,
-                " \u{25ba} (string_keyword\u{a789} StringKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("string_keyword", "StringKeyword")
+                ),
             );
             (range, frags)
         }
@@ -3896,7 +3887,10 @@ pub fn render_elementary_type(source: &str, node: &ElementaryType, depth: usize)
 
             frags.insert(
                 0,
-                " \u{25ba} (address_type\u{a789} AddressType)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("address_type", "AddressType")
+                ),
             );
             (range, frags)
         }
@@ -3906,7 +3900,10 @@ pub fn render_elementary_type(source: &str, node: &ElementaryType, depth: usize)
 
             frags.insert(
                 0,
-                " \u{25ba} (bytes_keyword\u{a789} BytesKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("bytes_keyword", "BytesKeyword")
+                ),
             );
             (range, frags)
         }
@@ -3914,7 +3911,13 @@ pub fn render_elementary_type(source: &str, node: &ElementaryType, depth: usize)
         ElementaryType::IntKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (int_keyword\u{a789} IntKeyword)".to_string());
+            frags.insert(
+                0,
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("int_keyword", "IntKeyword")
+                ),
+            );
             (range, frags)
         }
 
@@ -3923,7 +3926,10 @@ pub fn render_elementary_type(source: &str, node: &ElementaryType, depth: usize)
 
             frags.insert(
                 0,
-                " \u{25ba} (uint_keyword\u{a789} UintKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("uint_keyword", "UintKeyword")
+                ),
             );
             (range, frags)
         }
@@ -3933,7 +3939,10 @@ pub fn render_elementary_type(source: &str, node: &ElementaryType, depth: usize)
 
             frags.insert(
                 0,
-                " \u{25ba} (fixed_keyword\u{a789} FixedKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("fixed_keyword", "FixedKeyword")
+                ),
             );
             (range, frags)
         }
@@ -3943,7 +3952,10 @@ pub fn render_elementary_type(source: &str, node: &ElementaryType, depth: usize)
 
             frags.insert(
                 0,
-                " \u{25ba} (ufixed_keyword\u{a789} UfixedKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("ufixed_keyword", "UfixedKeyword")
+                ),
             );
             (range, frags)
         }
@@ -3961,7 +3973,10 @@ pub fn render_experimental_feature(
 
             frags.insert(
                 0,
-                " \u{25ba} (abi_encoder_v2_keyword\u{a789} ABIEncoderV2Keyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("abi_encoder_v2_keyword", "ABIEncoderV2Keyword")
+                ),
             );
             (range, frags)
         }
@@ -3971,7 +3986,10 @@ pub fn render_experimental_feature(
 
             frags.insert(
                 0,
-                " \u{25ba} (smt_checker_keyword\u{a789} SMTCheckerKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("smt_checker_keyword", "SMTCheckerKeyword")
+                ),
             );
             (range, frags)
         }
@@ -3981,7 +3999,10 @@ pub fn render_experimental_feature(
 
             frags.insert(
                 0,
-                " \u{25ba} (pragma_string_literal\u{a789} PragmaStringLiteral)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("pragma_string_literal", "PragmaStringLiteral")
+                ),
             );
             (range, frags)
         }
@@ -3995,7 +4016,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (assignment_expression\u{a789} AssignmentExpression)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("assignment_expression", "AssignmentExpression")
+                ),
             );
             (range, frags)
         }
@@ -4005,7 +4029,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (conditional_expression\u{a789} ConditionalExpression)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("conditional_expression", "ConditionalExpression")
+                ),
             );
             (range, frags)
         }
@@ -4015,7 +4042,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (or_expression\u{a789} OrExpression)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("or_expression", "OrExpression")
+                ),
             );
             (range, frags)
         }
@@ -4025,7 +4055,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (and_expression\u{a789} AndExpression)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("and_expression", "AndExpression")
+                ),
             );
             (range, frags)
         }
@@ -4035,7 +4068,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (equality_expression\u{a789} EqualityExpression)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("equality_expression", "EqualityExpression")
+                ),
             );
             (range, frags)
         }
@@ -4045,7 +4081,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (inequality_expression\u{a789} InequalityExpression)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("inequality_expression", "InequalityExpression")
+                ),
             );
             (range, frags)
         }
@@ -4055,7 +4094,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (bitwise_or_expression\u{a789} BitwiseOrExpression)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("bitwise_or_expression", "BitwiseOrExpression")
+                ),
             );
             (range, frags)
         }
@@ -4065,7 +4107,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (bitwise_xor_expression\u{a789} BitwiseXorExpression)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("bitwise_xor_expression", "BitwiseXorExpression")
+                ),
             );
             (range, frags)
         }
@@ -4075,7 +4120,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (bitwise_and_expression\u{a789} BitwiseAndExpression)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("bitwise_and_expression", "BitwiseAndExpression")
+                ),
             );
             (range, frags)
         }
@@ -4085,7 +4133,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (shift_expression\u{a789} ShiftExpression)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("shift_expression", "ShiftExpression")
+                ),
             );
             (range, frags)
         }
@@ -4095,7 +4146,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (additive_expression\u{a789} AdditiveExpression)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("additive_expression", "AdditiveExpression")
+                ),
             );
             (range, frags)
         }
@@ -4105,8 +4159,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (multiplicative_expression\u{a789} MultiplicativeExpression)"
-                    .to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("multiplicative_expression", "MultiplicativeExpression")
+                ),
             );
             (range, frags)
         }
@@ -4116,8 +4172,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (exponentiation_expression\u{a789} ExponentiationExpression)"
-                    .to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("exponentiation_expression", "ExponentiationExpression")
+                ),
             );
             (range, frags)
         }
@@ -4127,7 +4185,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (postfix_expression\u{a789} PostfixExpression)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("postfix_expression", "PostfixExpression")
+                ),
             );
             (range, frags)
         }
@@ -4137,7 +4198,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (prefix_expression\u{a789} PrefixExpression)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("prefix_expression", "PrefixExpression")
+                ),
             );
             (range, frags)
         }
@@ -4147,7 +4211,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (function_call_expression\u{a789} FunctionCallExpression)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("function_call_expression", "FunctionCallExpression")
+                ),
             );
             (range, frags)
         }
@@ -4157,7 +4224,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (call_options_expression\u{a789} CallOptionsExpression)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("call_options_expression", "CallOptionsExpression")
+                ),
             );
             (range, frags)
         }
@@ -4167,7 +4237,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (member_access_expression\u{a789} MemberAccessExpression)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("member_access_expression", "MemberAccessExpression")
+                ),
             );
             (range, frags)
         }
@@ -4177,7 +4250,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (index_access_expression\u{a789} IndexAccessExpression)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("index_access_expression", "IndexAccessExpression")
+                ),
             );
             (range, frags)
         }
@@ -4187,7 +4263,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (new_expression\u{a789} NewExpression)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("new_expression", "NewExpression")
+                ),
             );
             (range, frags)
         }
@@ -4197,7 +4276,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (tuple_expression\u{a789} TupleExpression)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("tuple_expression", "TupleExpression")
+                ),
             );
             (range, frags)
         }
@@ -4207,7 +4289,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (type_expression\u{a789} TypeExpression)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("type_expression", "TypeExpression")
+                ),
             );
             (range, frags)
         }
@@ -4217,7 +4302,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (array_expression\u{a789} ArrayExpression)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("array_expression", "ArrayExpression")
+                ),
             );
             (range, frags)
         }
@@ -4227,7 +4315,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (hex_number_expression\u{a789} HexNumberExpression)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("hex_number_expression", "HexNumberExpression")
+                ),
             );
             (range, frags)
         }
@@ -4237,7 +4328,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (decimal_number_expression\u{a789} DecimalNumberExpression)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("decimal_number_expression", "DecimalNumberExpression")
+                ),
             );
             (range, frags)
         }
@@ -4247,7 +4341,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (string_expression\u{a789} StringExpression)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("string_expression", "StringExpression")
+                ),
             );
             (range, frags)
         }
@@ -4257,7 +4354,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (elementary_type\u{a789} ElementaryType)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("elementary_type", "ElementaryType")
+                ),
             );
             (range, frags)
         }
@@ -4267,7 +4367,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (payable_keyword\u{a789} PayableKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("payable_keyword", "PayableKeyword")
+                ),
             );
             (range, frags)
         }
@@ -4277,7 +4380,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (this_keyword\u{a789} ThisKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("this_keyword", "ThisKeyword")
+                ),
             );
             (range, frags)
         }
@@ -4287,7 +4393,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (super_keyword\u{a789} SuperKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("super_keyword", "SuperKeyword")
+                ),
             );
             (range, frags)
         }
@@ -4297,7 +4406,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (true_keyword\u{a789} TrueKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("true_keyword", "TrueKeyword")
+                ),
             );
             (range, frags)
         }
@@ -4307,7 +4419,10 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
 
             frags.insert(
                 0,
-                " \u{25ba} (false_keyword\u{a789} FalseKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("false_keyword", "FalseKeyword")
+                ),
             );
             (range, frags)
         }
@@ -4315,7 +4430,13 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::Identifier(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (identifier\u{a789} Identifier)".to_string());
+            frags.insert(
+                0,
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("identifier", "Identifier")
+                ),
+            );
             (range, frags)
         }
     }
@@ -4330,14 +4451,20 @@ pub fn render_expression_additive_expression_operator(
         Expression_AdditiveExpression_Operator::Minus(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (minus\u{a789} Minus)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("minus", "Minus")),
+            );
             (range, frags)
         }
 
         Expression_AdditiveExpression_Operator::Plus(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (plus\u{a789} Plus)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("plus", "Plus")),
+            );
             (range, frags)
         }
     }
@@ -4354,7 +4481,10 @@ pub fn render_expression_assignment_expression_operator(
 
             frags.insert(
                 0,
-                " \u{25ba} (ampersand_equal\u{a789} AmpersandEqual)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("ampersand_equal", "AmpersandEqual")
+                ),
             );
             (range, frags)
         }
@@ -4364,7 +4494,10 @@ pub fn render_expression_assignment_expression_operator(
 
             frags.insert(
                 0,
-                " \u{25ba} (asterisk_equal\u{a789} AsteriskEqual)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("asterisk_equal", "AsteriskEqual")
+                ),
             );
             (range, frags)
         }
@@ -4372,21 +4505,33 @@ pub fn render_expression_assignment_expression_operator(
         Expression_AssignmentExpression_Operator::BarEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (bar_equal\u{a789} BarEqual)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("bar_equal", "BarEqual")),
+            );
             (range, frags)
         }
 
         Expression_AssignmentExpression_Operator::CaretEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (caret_equal\u{a789} CaretEqual)".to_string());
+            frags.insert(
+                0,
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("caret_equal", "CaretEqual")
+                ),
+            );
             (range, frags)
         }
 
         Expression_AssignmentExpression_Operator::Equal(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (equal\u{a789} Equal)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("equal", "Equal")),
+            );
             (range, frags)
         }
 
@@ -4395,8 +4540,13 @@ pub fn render_expression_assignment_expression_operator(
 
             frags.insert(
                 0,
-                " \u{25ba} (greater_than_greater_than_equal\u{a789} GreaterThanGreaterThanEqual)"
-                    .to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind(
+                        "greater_than_greater_than_equal",
+                        "GreaterThanGreaterThanEqual"
+                    )
+                ),
             );
             (range, frags)
         }
@@ -4406,7 +4556,16 @@ pub fn render_expression_assignment_expression_operator(
         ) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (greater_than_greater_than_greater_than_equal\u{a789} GreaterThanGreaterThanGreaterThanEqual)".to_string());
+            frags.insert(
+                0,
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind(
+                        "greater_than_greater_than_greater_than_equal",
+                        "GreaterThanGreaterThanGreaterThanEqual"
+                    )
+                ),
+            );
             (range, frags)
         }
 
@@ -4415,7 +4574,10 @@ pub fn render_expression_assignment_expression_operator(
 
             frags.insert(
                 0,
-                " \u{25ba} (less_than_less_than_equal\u{a789} LessThanLessThanEqual)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("less_than_less_than_equal", "LessThanLessThanEqual")
+                ),
             );
             (range, frags)
         }
@@ -4423,7 +4585,13 @@ pub fn render_expression_assignment_expression_operator(
         Expression_AssignmentExpression_Operator::MinusEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (minus_equal\u{a789} MinusEqual)".to_string());
+            frags.insert(
+                0,
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("minus_equal", "MinusEqual")
+                ),
+            );
             (range, frags)
         }
 
@@ -4432,7 +4600,10 @@ pub fn render_expression_assignment_expression_operator(
 
             frags.insert(
                 0,
-                " \u{25ba} (percent_equal\u{a789} PercentEqual)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("percent_equal", "PercentEqual")
+                ),
             );
             (range, frags)
         }
@@ -4440,14 +4611,23 @@ pub fn render_expression_assignment_expression_operator(
         Expression_AssignmentExpression_Operator::PlusEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (plus_equal\u{a789} PlusEqual)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("plus_equal", "PlusEqual")),
+            );
             (range, frags)
         }
 
         Expression_AssignmentExpression_Operator::SlashEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (slash_equal\u{a789} SlashEqual)".to_string());
+            frags.insert(
+                0,
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("slash_equal", "SlashEqual")
+                ),
+            );
             (range, frags)
         }
     }
@@ -4462,14 +4642,23 @@ pub fn render_expression_equality_expression_operator(
         Expression_EqualityExpression_Operator::BangEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (bang_equal\u{a789} BangEqual)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("bang_equal", "BangEqual")),
+            );
             (range, frags)
         }
 
         Expression_EqualityExpression_Operator::EqualEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (equal_equal\u{a789} EqualEqual)".to_string());
+            frags.insert(
+                0,
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("equal_equal", "EqualEqual")
+                ),
+            );
             (range, frags)
         }
     }
@@ -4486,7 +4675,10 @@ pub fn render_expression_inequality_expression_operator(
 
             frags.insert(
                 0,
-                " \u{25ba} (greater_than\u{a789} GreaterThan)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("greater_than", "GreaterThan")
+                ),
             );
             (range, frags)
         }
@@ -4496,7 +4688,10 @@ pub fn render_expression_inequality_expression_operator(
 
             frags.insert(
                 0,
-                " \u{25ba} (greater_than_equal\u{a789} GreaterThanEqual)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("greater_than_equal", "GreaterThanEqual")
+                ),
             );
             (range, frags)
         }
@@ -4504,7 +4699,10 @@ pub fn render_expression_inequality_expression_operator(
         Expression_InequalityExpression_Operator::LessThan(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (less_than\u{a789} LessThan)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("less_than", "LessThan")),
+            );
             (range, frags)
         }
 
@@ -4513,7 +4711,10 @@ pub fn render_expression_inequality_expression_operator(
 
             frags.insert(
                 0,
-                " \u{25ba} (less_than_equal\u{a789} LessThanEqual)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("less_than_equal", "LessThanEqual")
+                ),
             );
             (range, frags)
         }
@@ -4529,21 +4730,30 @@ pub fn render_expression_multiplicative_expression_operator(
         Expression_MultiplicativeExpression_Operator::Asterisk(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (asterisk\u{a789} Asterisk)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("asterisk", "Asterisk")),
+            );
             (range, frags)
         }
 
         Expression_MultiplicativeExpression_Operator::Percent(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (percent\u{a789} Percent)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("percent", "Percent")),
+            );
             (range, frags)
         }
 
         Expression_MultiplicativeExpression_Operator::Slash(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (slash\u{a789} Slash)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("slash", "Slash")),
+            );
             (range, frags)
         }
     }
@@ -4558,14 +4768,23 @@ pub fn render_expression_postfix_expression_operator(
         Expression_PostfixExpression_Operator::MinusMinus(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (minus_minus\u{a789} MinusMinus)".to_string());
+            frags.insert(
+                0,
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("minus_minus", "MinusMinus")
+                ),
+            );
             (range, frags)
         }
 
         Expression_PostfixExpression_Operator::PlusPlus(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (plus_plus\u{a789} PlusPlus)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("plus_plus", "PlusPlus")),
+            );
             (range, frags)
         }
     }
@@ -4580,7 +4799,10 @@ pub fn render_expression_prefix_expression_operator(
         Expression_PrefixExpression_Operator::Bang(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (bang\u{a789} Bang)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("bang", "Bang")),
+            );
             (range, frags)
         }
 
@@ -4589,7 +4811,10 @@ pub fn render_expression_prefix_expression_operator(
 
             frags.insert(
                 0,
-                " \u{25ba} (delete_keyword\u{a789} DeleteKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("delete_keyword", "DeleteKeyword")
+                ),
             );
             (range, frags)
         }
@@ -4597,28 +4822,43 @@ pub fn render_expression_prefix_expression_operator(
         Expression_PrefixExpression_Operator::Minus(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (minus\u{a789} Minus)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("minus", "Minus")),
+            );
             (range, frags)
         }
 
         Expression_PrefixExpression_Operator::MinusMinus(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (minus_minus\u{a789} MinusMinus)".to_string());
+            frags.insert(
+                0,
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("minus_minus", "MinusMinus")
+                ),
+            );
             (range, frags)
         }
 
         Expression_PrefixExpression_Operator::PlusPlus(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (plus_plus\u{a789} PlusPlus)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("plus_plus", "PlusPlus")),
+            );
             (range, frags)
         }
 
         Expression_PrefixExpression_Operator::Tilde(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (tilde\u{a789} Tilde)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("tilde", "Tilde")),
+            );
             (range, frags)
         }
     }
@@ -4635,7 +4875,10 @@ pub fn render_expression_shift_expression_operator(
 
             frags.insert(
                 0,
-                " \u{25ba} (greater_than_greater_than\u{a789} GreaterThanGreaterThan)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("greater_than_greater_than", "GreaterThanGreaterThan")
+                ),
             );
             (range, frags)
         }
@@ -4643,7 +4886,16 @@ pub fn render_expression_shift_expression_operator(
         Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (greater_than_greater_than_greater_than\u{a789} GreaterThanGreaterThanGreaterThan)".to_string());
+            frags.insert(
+                0,
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind(
+                        "greater_than_greater_than_greater_than",
+                        "GreaterThanGreaterThanGreaterThan"
+                    )
+                ),
+            );
             (range, frags)
         }
 
@@ -4652,7 +4904,10 @@ pub fn render_expression_shift_expression_operator(
 
             frags.insert(
                 0,
-                " \u{25ba} (less_than_less_than\u{a789} LessThanLessThan)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("less_than_less_than", "LessThanLessThan")
+                ),
             );
             (range, frags)
         }
@@ -4670,7 +4925,10 @@ pub fn render_fallback_function_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (modifier_invocation\u{a789} ModifierInvocation)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("modifier_invocation", "ModifierInvocation")
+                ),
             );
             (range, frags)
         }
@@ -4680,7 +4938,10 @@ pub fn render_fallback_function_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (override_specifier\u{a789} OverrideSpecifier)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("override_specifier", "OverrideSpecifier")
+                ),
             );
             (range, frags)
         }
@@ -4690,7 +4951,10 @@ pub fn render_fallback_function_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (external_keyword\u{a789} ExternalKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("external_keyword", "ExternalKeyword")
+                ),
             );
             (range, frags)
         }
@@ -4700,7 +4964,10 @@ pub fn render_fallback_function_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (payable_keyword\u{a789} PayableKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("payable_keyword", "PayableKeyword")
+                ),
             );
             (range, frags)
         }
@@ -4710,7 +4977,10 @@ pub fn render_fallback_function_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (pure_keyword\u{a789} PureKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("pure_keyword", "PureKeyword")
+                ),
             );
             (range, frags)
         }
@@ -4720,7 +4990,10 @@ pub fn render_fallback_function_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (view_keyword\u{a789} ViewKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("view_keyword", "ViewKeyword")
+                ),
             );
             (range, frags)
         }
@@ -4730,7 +5003,10 @@ pub fn render_fallback_function_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (virtual_keyword\u{a789} VirtualKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("virtual_keyword", "VirtualKeyword")
+                ),
             );
             (range, frags)
         }
@@ -4748,7 +5024,10 @@ pub fn render_for_statement_condition(
 
             frags.insert(
                 0,
-                " \u{25ba} (expression_statement\u{a789} ExpressionStatement)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("expression_statement", "ExpressionStatement")
+                ),
             );
             (range, frags)
         }
@@ -4756,7 +5035,10 @@ pub fn render_for_statement_condition(
         ForStatementCondition::Semicolon(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (semicolon\u{a789} Semicolon)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("semicolon", "Semicolon")),
+            );
             (range, frags)
         }
     }
@@ -4773,8 +5055,13 @@ pub fn render_for_statement_initialization(
 
             frags.insert(
                 0,
-                " \u{25ba} (variable_declaration_statement\u{a789} VariableDeclarationStatement)"
-                    .to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind(
+                        "variable_declaration_statement",
+                        "VariableDeclarationStatement"
+                    )
+                ),
             );
             (range, frags)
         }
@@ -4784,7 +5071,10 @@ pub fn render_for_statement_initialization(
 
             frags.insert(
                 0,
-                " \u{25ba} (expression_statement\u{a789} ExpressionStatement)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("expression_statement", "ExpressionStatement")
+                ),
             );
             (range, frags)
         }
@@ -4792,7 +5082,10 @@ pub fn render_for_statement_initialization(
         ForStatementInitialization::Semicolon(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (semicolon\u{a789} Semicolon)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("semicolon", "Semicolon")),
+            );
             (range, frags)
         }
     }
@@ -4809,7 +5102,10 @@ pub fn render_function_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (modifier_invocation\u{a789} ModifierInvocation)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("modifier_invocation", "ModifierInvocation")
+                ),
             );
             (range, frags)
         }
@@ -4819,7 +5115,10 @@ pub fn render_function_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (override_specifier\u{a789} OverrideSpecifier)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("override_specifier", "OverrideSpecifier")
+                ),
             );
             (range, frags)
         }
@@ -4829,7 +5128,10 @@ pub fn render_function_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (external_keyword\u{a789} ExternalKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("external_keyword", "ExternalKeyword")
+                ),
             );
             (range, frags)
         }
@@ -4839,7 +5141,10 @@ pub fn render_function_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (internal_keyword\u{a789} InternalKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("internal_keyword", "InternalKeyword")
+                ),
             );
             (range, frags)
         }
@@ -4849,7 +5154,10 @@ pub fn render_function_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (payable_keyword\u{a789} PayableKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("payable_keyword", "PayableKeyword")
+                ),
             );
             (range, frags)
         }
@@ -4859,7 +5167,10 @@ pub fn render_function_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (private_keyword\u{a789} PrivateKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("private_keyword", "PrivateKeyword")
+                ),
             );
             (range, frags)
         }
@@ -4869,7 +5180,10 @@ pub fn render_function_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (public_keyword\u{a789} PublicKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("public_keyword", "PublicKeyword")
+                ),
             );
             (range, frags)
         }
@@ -4879,7 +5193,10 @@ pub fn render_function_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (pure_keyword\u{a789} PureKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("pure_keyword", "PureKeyword")
+                ),
             );
             (range, frags)
         }
@@ -4889,7 +5206,10 @@ pub fn render_function_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (view_keyword\u{a789} ViewKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("view_keyword", "ViewKeyword")
+                ),
             );
             (range, frags)
         }
@@ -4899,7 +5219,10 @@ pub fn render_function_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (virtual_keyword\u{a789} VirtualKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("virtual_keyword", "VirtualKeyword")
+                ),
             );
             (range, frags)
         }
@@ -4911,14 +5234,20 @@ pub fn render_function_body(source: &str, node: &FunctionBody, depth: usize) -> 
         FunctionBody::Block(ref element) => {
             let (range, mut frags) = render_block(source, element, depth);
 
-            frags.insert(0, " \u{25ba} (block\u{a789} Block)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("block", "Block")),
+            );
             (range, frags)
         }
 
         FunctionBody::Semicolon(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (semicolon\u{a789} Semicolon)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("semicolon", "Semicolon")),
+            );
             (range, frags)
         }
     }
@@ -4929,7 +5258,13 @@ pub fn render_function_name(source: &str, node: &FunctionName, depth: usize) -> 
         FunctionName::Identifier(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (identifier\u{a789} Identifier)".to_string());
+            frags.insert(
+                0,
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("identifier", "Identifier")
+                ),
+            );
             (range, frags)
         }
 
@@ -4938,7 +5273,10 @@ pub fn render_function_name(source: &str, node: &FunctionName, depth: usize) -> 
 
             frags.insert(
                 0,
-                " \u{25ba} (fallback_keyword\u{a789} FallbackKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("fallback_keyword", "FallbackKeyword")
+                ),
             );
             (range, frags)
         }
@@ -4948,7 +5286,10 @@ pub fn render_function_name(source: &str, node: &FunctionName, depth: usize) -> 
 
             frags.insert(
                 0,
-                " \u{25ba} (receive_keyword\u{a789} ReceiveKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("receive_keyword", "ReceiveKeyword")
+                ),
             );
             (range, frags)
         }
@@ -4966,7 +5307,10 @@ pub fn render_function_type_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (internal_keyword\u{a789} InternalKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("internal_keyword", "InternalKeyword")
+                ),
             );
             (range, frags)
         }
@@ -4976,7 +5320,10 @@ pub fn render_function_type_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (external_keyword\u{a789} ExternalKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("external_keyword", "ExternalKeyword")
+                ),
             );
             (range, frags)
         }
@@ -4986,7 +5333,10 @@ pub fn render_function_type_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (private_keyword\u{a789} PrivateKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("private_keyword", "PrivateKeyword")
+                ),
             );
             (range, frags)
         }
@@ -4996,7 +5346,10 @@ pub fn render_function_type_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (public_keyword\u{a789} PublicKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("public_keyword", "PublicKeyword")
+                ),
             );
             (range, frags)
         }
@@ -5006,7 +5359,10 @@ pub fn render_function_type_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (pure_keyword\u{a789} PureKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("pure_keyword", "PureKeyword")
+                ),
             );
             (range, frags)
         }
@@ -5016,7 +5372,10 @@ pub fn render_function_type_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (view_keyword\u{a789} ViewKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("view_keyword", "ViewKeyword")
+                ),
             );
             (range, frags)
         }
@@ -5026,7 +5385,10 @@ pub fn render_function_type_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (payable_keyword\u{a789} PayableKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("payable_keyword", "PayableKeyword")
+                ),
             );
             (range, frags)
         }
@@ -5042,7 +5404,13 @@ pub fn render_identifier_path_element(
         IdentifierPathElement::Identifier(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (identifier\u{a789} Identifier)".to_string());
+            frags.insert(
+                0,
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("identifier", "Identifier")
+                ),
+            );
             (range, frags)
         }
 
@@ -5051,7 +5419,10 @@ pub fn render_identifier_path_element(
 
             frags.insert(
                 0,
-                " \u{25ba} (address_keyword\u{a789} AddressKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("address_keyword", "AddressKeyword")
+                ),
             );
             (range, frags)
         }
@@ -5063,7 +5434,13 @@ pub fn render_import_clause(source: &str, node: &ImportClause, depth: usize) -> 
         ImportClause::PathImport(ref element) => {
             let (range, mut frags) = render_path_import(source, element, depth);
 
-            frags.insert(0, " \u{25ba} (path_import\u{a789} PathImport)".to_string());
+            frags.insert(
+                0,
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("path_import", "PathImport")
+                ),
+            );
             (range, frags)
         }
 
@@ -5072,7 +5449,10 @@ pub fn render_import_clause(source: &str, node: &ImportClause, depth: usize) -> 
 
             frags.insert(
                 0,
-                " \u{25ba} (named_import\u{a789} NamedImport)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("named_import", "NamedImport")
+                ),
             );
             (range, frags)
         }
@@ -5082,7 +5462,10 @@ pub fn render_import_clause(source: &str, node: &ImportClause, depth: usize) -> 
 
             frags.insert(
                 0,
-                " \u{25ba} (import_deconstruction\u{a789} ImportDeconstruction)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("import_deconstruction", "ImportDeconstruction")
+                ),
             );
             (range, frags)
         }
@@ -5100,7 +5483,10 @@ pub fn render_mapping_key_type(
 
             frags.insert(
                 0,
-                " \u{25ba} (elementary_type\u{a789} ElementaryType)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("elementary_type", "ElementaryType")
+                ),
             );
             (range, frags)
         }
@@ -5110,7 +5496,10 @@ pub fn render_mapping_key_type(
 
             frags.insert(
                 0,
-                " \u{25ba} (identifier_path\u{a789} IdentifierPath)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("identifier_path", "IdentifierPath")
+                ),
             );
             (range, frags)
         }
@@ -5128,7 +5517,10 @@ pub fn render_modifier_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (override_specifier\u{a789} OverrideSpecifier)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("override_specifier", "OverrideSpecifier")
+                ),
             );
             (range, frags)
         }
@@ -5138,7 +5530,10 @@ pub fn render_modifier_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (virtual_keyword\u{a789} VirtualKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("virtual_keyword", "VirtualKeyword")
+                ),
             );
             (range, frags)
         }
@@ -5150,7 +5545,13 @@ pub fn render_number_unit(source: &str, node: &NumberUnit, depth: usize) -> Rend
         NumberUnit::WeiKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (wei_keyword\u{a789} WeiKeyword)".to_string());
+            frags.insert(
+                0,
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("wei_keyword", "WeiKeyword")
+                ),
+            );
             (range, frags)
         }
 
@@ -5159,7 +5560,10 @@ pub fn render_number_unit(source: &str, node: &NumberUnit, depth: usize) -> Rend
 
             frags.insert(
                 0,
-                " \u{25ba} (gwei_keyword\u{a789} GweiKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("gwei_keyword", "GweiKeyword")
+                ),
             );
             (range, frags)
         }
@@ -5169,7 +5573,10 @@ pub fn render_number_unit(source: &str, node: &NumberUnit, depth: usize) -> Rend
 
             frags.insert(
                 0,
-                " \u{25ba} (ether_keyword\u{a789} EtherKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("ether_keyword", "EtherKeyword")
+                ),
             );
             (range, frags)
         }
@@ -5179,7 +5586,10 @@ pub fn render_number_unit(source: &str, node: &NumberUnit, depth: usize) -> Rend
 
             frags.insert(
                 0,
-                " \u{25ba} (seconds_keyword\u{a789} SecondsKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("seconds_keyword", "SecondsKeyword")
+                ),
             );
             (range, frags)
         }
@@ -5189,7 +5599,10 @@ pub fn render_number_unit(source: &str, node: &NumberUnit, depth: usize) -> Rend
 
             frags.insert(
                 0,
-                " \u{25ba} (minutes_keyword\u{a789} MinutesKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("minutes_keyword", "MinutesKeyword")
+                ),
             );
             (range, frags)
         }
@@ -5199,7 +5612,10 @@ pub fn render_number_unit(source: &str, node: &NumberUnit, depth: usize) -> Rend
 
             frags.insert(
                 0,
-                " \u{25ba} (hours_keyword\u{a789} HoursKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("hours_keyword", "HoursKeyword")
+                ),
             );
             (range, frags)
         }
@@ -5209,7 +5625,10 @@ pub fn render_number_unit(source: &str, node: &NumberUnit, depth: usize) -> Rend
 
             frags.insert(
                 0,
-                " \u{25ba} (days_keyword\u{a789} DaysKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("days_keyword", "DaysKeyword")
+                ),
             );
             (range, frags)
         }
@@ -5219,7 +5638,10 @@ pub fn render_number_unit(source: &str, node: &NumberUnit, depth: usize) -> Rend
 
             frags.insert(
                 0,
-                " \u{25ba} (weeks_keyword\u{a789} WeeksKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("weeks_keyword", "WeeksKeyword")
+                ),
             );
             (range, frags)
         }
@@ -5233,7 +5655,10 @@ pub fn render_pragma(source: &str, node: &Pragma, depth: usize) -> RenderedOutpu
 
             frags.insert(
                 0,
-                " \u{25ba} (version_pragma\u{a789} VersionPragma)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("version_pragma", "VersionPragma")
+                ),
             );
             (range, frags)
         }
@@ -5243,7 +5668,10 @@ pub fn render_pragma(source: &str, node: &Pragma, depth: usize) -> RenderedOutpu
 
             frags.insert(
                 0,
-                " \u{25ba} (abicoder_pragma\u{a789} AbicoderPragma)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("abicoder_pragma", "AbicoderPragma")
+                ),
             );
             (range, frags)
         }
@@ -5253,7 +5681,10 @@ pub fn render_pragma(source: &str, node: &Pragma, depth: usize) -> RenderedOutpu
 
             frags.insert(
                 0,
-                " \u{25ba} (experimental_pragma\u{a789} ExperimentalPragma)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("experimental_pragma", "ExperimentalPragma")
+                ),
             );
             (range, frags)
         }
@@ -5271,7 +5702,10 @@ pub fn render_receive_function_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (modifier_invocation\u{a789} ModifierInvocation)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("modifier_invocation", "ModifierInvocation")
+                ),
             );
             (range, frags)
         }
@@ -5281,7 +5715,10 @@ pub fn render_receive_function_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (override_specifier\u{a789} OverrideSpecifier)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("override_specifier", "OverrideSpecifier")
+                ),
             );
             (range, frags)
         }
@@ -5291,7 +5728,10 @@ pub fn render_receive_function_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (external_keyword\u{a789} ExternalKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("external_keyword", "ExternalKeyword")
+                ),
             );
             (range, frags)
         }
@@ -5301,7 +5741,10 @@ pub fn render_receive_function_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (payable_keyword\u{a789} PayableKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("payable_keyword", "PayableKeyword")
+                ),
             );
             (range, frags)
         }
@@ -5311,7 +5754,10 @@ pub fn render_receive_function_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (virtual_keyword\u{a789} VirtualKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("virtual_keyword", "VirtualKeyword")
+                ),
             );
             (range, frags)
         }
@@ -5329,7 +5775,10 @@ pub fn render_source_unit_member(
 
             frags.insert(
                 0,
-                " \u{25ba} (pragma_directive\u{a789} PragmaDirective)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("pragma_directive", "PragmaDirective")
+                ),
             );
             (range, frags)
         }
@@ -5339,7 +5788,10 @@ pub fn render_source_unit_member(
 
             frags.insert(
                 0,
-                " \u{25ba} (import_directive\u{a789} ImportDirective)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("import_directive", "ImportDirective")
+                ),
             );
             (range, frags)
         }
@@ -5349,7 +5801,10 @@ pub fn render_source_unit_member(
 
             frags.insert(
                 0,
-                " \u{25ba} (contract_definition\u{a789} ContractDefinition)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("contract_definition", "ContractDefinition")
+                ),
             );
             (range, frags)
         }
@@ -5359,7 +5814,10 @@ pub fn render_source_unit_member(
 
             frags.insert(
                 0,
-                " \u{25ba} (interface_definition\u{a789} InterfaceDefinition)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("interface_definition", "InterfaceDefinition")
+                ),
             );
             (range, frags)
         }
@@ -5369,7 +5827,10 @@ pub fn render_source_unit_member(
 
             frags.insert(
                 0,
-                " \u{25ba} (library_definition\u{a789} LibraryDefinition)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("library_definition", "LibraryDefinition")
+                ),
             );
             (range, frags)
         }
@@ -5379,7 +5840,10 @@ pub fn render_source_unit_member(
 
             frags.insert(
                 0,
-                " \u{25ba} (struct_definition\u{a789} StructDefinition)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("struct_definition", "StructDefinition")
+                ),
             );
             (range, frags)
         }
@@ -5389,7 +5853,10 @@ pub fn render_source_unit_member(
 
             frags.insert(
                 0,
-                " \u{25ba} (enum_definition\u{a789} EnumDefinition)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("enum_definition", "EnumDefinition")
+                ),
             );
             (range, frags)
         }
@@ -5399,7 +5866,10 @@ pub fn render_source_unit_member(
 
             frags.insert(
                 0,
-                " \u{25ba} (function_definition\u{a789} FunctionDefinition)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("function_definition", "FunctionDefinition")
+                ),
             );
             (range, frags)
         }
@@ -5409,7 +5879,10 @@ pub fn render_source_unit_member(
 
             frags.insert(
                 0,
-                " \u{25ba} (error_definition\u{a789} ErrorDefinition)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("error_definition", "ErrorDefinition")
+                ),
             );
             (range, frags)
         }
@@ -5418,7 +5891,16 @@ pub fn render_source_unit_member(
             let (range, mut frags) =
                 render_user_defined_value_type_definition(source, element, depth);
 
-            frags.insert(0, " \u{25ba} (user_defined_value_type_definition\u{a789} UserDefinedValueTypeDefinition)".to_string());
+            frags.insert(
+                0,
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind(
+                        "user_defined_value_type_definition",
+                        "UserDefinedValueTypeDefinition"
+                    )
+                ),
+            );
             (range, frags)
         }
 
@@ -5427,7 +5909,10 @@ pub fn render_source_unit_member(
 
             frags.insert(
                 0,
-                " \u{25ba} (using_directive\u{a789} UsingDirective)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("using_directive", "UsingDirective")
+                ),
             );
             (range, frags)
         }
@@ -5437,7 +5922,10 @@ pub fn render_source_unit_member(
 
             frags.insert(
                 0,
-                " \u{25ba} (event_definition\u{a789} EventDefinition)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("event_definition", "EventDefinition")
+                ),
             );
             (range, frags)
         }
@@ -5447,7 +5935,10 @@ pub fn render_source_unit_member(
 
             frags.insert(
                 0,
-                " \u{25ba} (constant_definition\u{a789} ConstantDefinition)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("constant_definition", "ConstantDefinition")
+                ),
             );
             (range, frags)
         }
@@ -5465,7 +5956,10 @@ pub fn render_state_variable_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (override_specifier\u{a789} OverrideSpecifier)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("override_specifier", "OverrideSpecifier")
+                ),
             );
             (range, frags)
         }
@@ -5475,7 +5969,10 @@ pub fn render_state_variable_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (constant_keyword\u{a789} ConstantKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("constant_keyword", "ConstantKeyword")
+                ),
             );
             (range, frags)
         }
@@ -5485,7 +5982,10 @@ pub fn render_state_variable_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (internal_keyword\u{a789} InternalKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("internal_keyword", "InternalKeyword")
+                ),
             );
             (range, frags)
         }
@@ -5495,7 +5995,10 @@ pub fn render_state_variable_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (private_keyword\u{a789} PrivateKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("private_keyword", "PrivateKeyword")
+                ),
             );
             (range, frags)
         }
@@ -5505,7 +6008,10 @@ pub fn render_state_variable_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (public_keyword\u{a789} PublicKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("public_keyword", "PublicKeyword")
+                ),
             );
             (range, frags)
         }
@@ -5515,7 +6021,10 @@ pub fn render_state_variable_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (immutable_keyword\u{a789} ImmutableKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("immutable_keyword", "ImmutableKeyword")
+                ),
             );
             (range, frags)
         }
@@ -5525,7 +6034,10 @@ pub fn render_state_variable_attribute(
 
             frags.insert(
                 0,
-                " \u{25ba} (transient_keyword\u{a789} TransientKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("transient_keyword", "TransientKeyword")
+                ),
             );
             (range, frags)
         }
@@ -5539,7 +6051,10 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
 
             frags.insert(
                 0,
-                " \u{25ba} (if_statement\u{a789} IfStatement)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("if_statement", "IfStatement")
+                ),
             );
             (range, frags)
         }
@@ -5549,7 +6064,10 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
 
             frags.insert(
                 0,
-                " \u{25ba} (for_statement\u{a789} ForStatement)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("for_statement", "ForStatement")
+                ),
             );
             (range, frags)
         }
@@ -5559,7 +6077,10 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
 
             frags.insert(
                 0,
-                " \u{25ba} (while_statement\u{a789} WhileStatement)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("while_statement", "WhileStatement")
+                ),
             );
             (range, frags)
         }
@@ -5569,7 +6090,10 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
 
             frags.insert(
                 0,
-                " \u{25ba} (do_while_statement\u{a789} DoWhileStatement)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("do_while_statement", "DoWhileStatement")
+                ),
             );
             (range, frags)
         }
@@ -5579,7 +6103,10 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
 
             frags.insert(
                 0,
-                " \u{25ba} (continue_statement\u{a789} ContinueStatement)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("continue_statement", "ContinueStatement")
+                ),
             );
             (range, frags)
         }
@@ -5589,7 +6116,10 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
 
             frags.insert(
                 0,
-                " \u{25ba} (break_statement\u{a789} BreakStatement)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("break_statement", "BreakStatement")
+                ),
             );
             (range, frags)
         }
@@ -5599,7 +6129,10 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
 
             frags.insert(
                 0,
-                " \u{25ba} (return_statement\u{a789} ReturnStatement)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("return_statement", "ReturnStatement")
+                ),
             );
             (range, frags)
         }
@@ -5609,7 +6142,10 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
 
             frags.insert(
                 0,
-                " \u{25ba} (emit_statement\u{a789} EmitStatement)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("emit_statement", "EmitStatement")
+                ),
             );
             (range, frags)
         }
@@ -5619,7 +6155,10 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
 
             frags.insert(
                 0,
-                " \u{25ba} (try_statement\u{a789} TryStatement)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("try_statement", "TryStatement")
+                ),
             );
             (range, frags)
         }
@@ -5629,7 +6168,10 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
 
             frags.insert(
                 0,
-                " \u{25ba} (revert_statement\u{a789} RevertStatement)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("revert_statement", "RevertStatement")
+                ),
             );
             (range, frags)
         }
@@ -5639,7 +6181,10 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
 
             frags.insert(
                 0,
-                " \u{25ba} (assembly_statement\u{a789} AssemblyStatement)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("assembly_statement", "AssemblyStatement")
+                ),
             );
             (range, frags)
         }
@@ -5647,7 +6192,10 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
         Statement::Block(ref element) => {
             let (range, mut frags) = render_block(source, element, depth);
 
-            frags.insert(0, " \u{25ba} (block\u{a789} Block)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("block", "Block")),
+            );
             (range, frags)
         }
 
@@ -5656,7 +6204,10 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
 
             frags.insert(
                 0,
-                " \u{25ba} (unchecked_block\u{a789} UncheckedBlock)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("unchecked_block", "UncheckedBlock")
+                ),
             );
             (range, frags)
         }
@@ -5666,8 +6217,13 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
 
             frags.insert(
                 0,
-                " \u{25ba} (variable_declaration_statement\u{a789} VariableDeclarationStatement)"
-                    .to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind(
+                        "variable_declaration_statement",
+                        "VariableDeclarationStatement"
+                    )
+                ),
             );
             (range, frags)
         }
@@ -5677,7 +6233,10 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
 
             frags.insert(
                 0,
-                " \u{25ba} (expression_statement\u{a789} ExpressionStatement)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("expression_statement", "ExpressionStatement")
+                ),
             );
             (range, frags)
         }
@@ -5695,7 +6254,10 @@ pub fn render_storage_location(
 
             frags.insert(
                 0,
-                " \u{25ba} (memory_keyword\u{a789} MemoryKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("memory_keyword", "MemoryKeyword")
+                ),
             );
             (range, frags)
         }
@@ -5705,7 +6267,10 @@ pub fn render_storage_location(
 
             frags.insert(
                 0,
-                " \u{25ba} (storage_keyword\u{a789} StorageKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("storage_keyword", "StorageKeyword")
+                ),
             );
             (range, frags)
         }
@@ -5715,7 +6280,10 @@ pub fn render_storage_location(
 
             frags.insert(
                 0,
-                " \u{25ba} (call_data_keyword\u{a789} CallDataKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("call_data_keyword", "CallDataKeyword")
+                ),
             );
             (range, frags)
         }
@@ -5733,7 +6301,10 @@ pub fn render_string_expression(
 
             frags.insert(
                 0,
-                " \u{25ba} (string_literals\u{a789} StringLiterals)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("string_literals", "StringLiterals")
+                ),
             );
             (range, frags)
         }
@@ -5743,7 +6314,10 @@ pub fn render_string_expression(
 
             frags.insert(
                 0,
-                " \u{25ba} (hex_string_literals\u{a789} HexStringLiterals)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("hex_string_literals", "HexStringLiterals")
+                ),
             );
             (range, frags)
         }
@@ -5753,7 +6327,10 @@ pub fn render_string_expression(
 
             frags.insert(
                 0,
-                " \u{25ba} (unicode_string_literals\u{a789} UnicodeStringLiterals)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("unicode_string_literals", "UnicodeStringLiterals")
+                ),
             );
             (range, frags)
         }
@@ -5767,7 +6344,10 @@ pub fn render_type_name(source: &str, node: &TypeName, depth: usize) -> Rendered
 
             frags.insert(
                 0,
-                " \u{25ba} (array_type_name\u{a789} ArrayTypeName)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("array_type_name", "ArrayTypeName")
+                ),
             );
             (range, frags)
         }
@@ -5777,7 +6357,10 @@ pub fn render_type_name(source: &str, node: &TypeName, depth: usize) -> Rendered
 
             frags.insert(
                 0,
-                " \u{25ba} (function_type\u{a789} FunctionType)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("function_type", "FunctionType")
+                ),
             );
             (range, frags)
         }
@@ -5787,7 +6370,10 @@ pub fn render_type_name(source: &str, node: &TypeName, depth: usize) -> Rendered
 
             frags.insert(
                 0,
-                " \u{25ba} (mapping_type\u{a789} MappingType)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("mapping_type", "MappingType")
+                ),
             );
             (range, frags)
         }
@@ -5797,7 +6383,10 @@ pub fn render_type_name(source: &str, node: &TypeName, depth: usize) -> Rendered
 
             frags.insert(
                 0,
-                " \u{25ba} (elementary_type\u{a789} ElementaryType)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("elementary_type", "ElementaryType")
+                ),
             );
             (range, frags)
         }
@@ -5807,7 +6396,10 @@ pub fn render_type_name(source: &str, node: &TypeName, depth: usize) -> Rendered
 
             frags.insert(
                 0,
-                " \u{25ba} (identifier_path\u{a789} IdentifierPath)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("identifier_path", "IdentifierPath")
+                ),
             );
             (range, frags)
         }
@@ -5821,7 +6413,10 @@ pub fn render_using_clause(source: &str, node: &UsingClause, depth: usize) -> Re
 
             frags.insert(
                 0,
-                " \u{25ba} (identifier_path\u{a789} IdentifierPath)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("identifier_path", "IdentifierPath")
+                ),
             );
             (range, frags)
         }
@@ -5831,7 +6426,10 @@ pub fn render_using_clause(source: &str, node: &UsingClause, depth: usize) -> Re
 
             frags.insert(
                 0,
-                " \u{25ba} (using_deconstruction\u{a789} UsingDeconstruction)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("using_deconstruction", "UsingDeconstruction")
+                ),
             );
             (range, frags)
         }
@@ -5843,42 +6441,60 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
         UsingOperator::Ampersand(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (ampersand\u{a789} Ampersand)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("ampersand", "Ampersand")),
+            );
             (range, frags)
         }
 
         UsingOperator::Asterisk(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (asterisk\u{a789} Asterisk)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("asterisk", "Asterisk")),
+            );
             (range, frags)
         }
 
         UsingOperator::BangEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (bang_equal\u{a789} BangEqual)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("bang_equal", "BangEqual")),
+            );
             (range, frags)
         }
 
         UsingOperator::Bar(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (bar\u{a789} Bar)".to_string());
+            frags.insert(0, format!(" \u{25ba} {}", format_label_kind("bar", "Bar")));
             (range, frags)
         }
 
         UsingOperator::Caret(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (caret\u{a789} Caret)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("caret", "Caret")),
+            );
             (range, frags)
         }
 
         UsingOperator::EqualEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (equal_equal\u{a789} EqualEqual)".to_string());
+            frags.insert(
+                0,
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("equal_equal", "EqualEqual")
+                ),
+            );
             (range, frags)
         }
 
@@ -5887,7 +6503,10 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
 
             frags.insert(
                 0,
-                " \u{25ba} (greater_than\u{a789} GreaterThan)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("greater_than", "GreaterThan")
+                ),
             );
             (range, frags)
         }
@@ -5897,7 +6516,10 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
 
             frags.insert(
                 0,
-                " \u{25ba} (greater_than_equal\u{a789} GreaterThanEqual)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("greater_than_equal", "GreaterThanEqual")
+                ),
             );
             (range, frags)
         }
@@ -5905,7 +6527,10 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
         UsingOperator::LessThan(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (less_than\u{a789} LessThan)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("less_than", "LessThan")),
+            );
             (range, frags)
         }
 
@@ -5914,7 +6539,10 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
 
             frags.insert(
                 0,
-                " \u{25ba} (less_than_equal\u{a789} LessThanEqual)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("less_than_equal", "LessThanEqual")
+                ),
             );
             (range, frags)
         }
@@ -5922,35 +6550,50 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
         UsingOperator::Minus(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (minus\u{a789} Minus)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("minus", "Minus")),
+            );
             (range, frags)
         }
 
         UsingOperator::Percent(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (percent\u{a789} Percent)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("percent", "Percent")),
+            );
             (range, frags)
         }
 
         UsingOperator::Plus(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (plus\u{a789} Plus)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("plus", "Plus")),
+            );
             (range, frags)
         }
 
         UsingOperator::Slash(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (slash\u{a789} Slash)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("slash", "Slash")),
+            );
             (range, frags)
         }
 
         UsingOperator::Tilde(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (tilde\u{a789} Tilde)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("tilde", "Tilde")),
+            );
             (range, frags)
         }
     }
@@ -5961,14 +6604,20 @@ pub fn render_using_target(source: &str, node: &UsingTarget, depth: usize) -> Re
         UsingTarget::TypeName(ref element) => {
             let (range, mut frags) = render_type_name(source, element, depth);
 
-            frags.insert(0, " \u{25ba} (type_name\u{a789} TypeName)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("type_name", "TypeName")),
+            );
             (range, frags)
         }
 
         UsingTarget::Asterisk(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
-            frags.insert(0, " \u{25ba} (asterisk\u{a789} Asterisk)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("asterisk", "Asterisk")),
+            );
             (range, frags)
         }
     }
@@ -5985,7 +6634,10 @@ pub fn render_variable_declaration_target(
 
             frags.insert(
                 0,
-                " \u{25ba} (single_typed_declaration\u{a789} SingleTypedDeclaration)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("single_typed_declaration", "SingleTypedDeclaration")
+                ),
             );
             (range, frags)
         }
@@ -5995,7 +6647,10 @@ pub fn render_variable_declaration_target(
 
             frags.insert(
                 0,
-                " \u{25ba} (multi_typed_declaration\u{a789} MultiTypedDeclaration)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("multi_typed_declaration", "MultiTypedDeclaration")
+                ),
             );
             (range, frags)
         }
@@ -6013,7 +6668,10 @@ pub fn render_version_expression(
 
             frags.insert(
                 0,
-                " \u{25ba} (version_range\u{a789} VersionRange)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("version_range", "VersionRange")
+                ),
             );
             (range, frags)
         }
@@ -6023,7 +6681,10 @@ pub fn render_version_expression(
 
             frags.insert(
                 0,
-                " \u{25ba} (version_term\u{a789} VersionTerm)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("version_term", "VersionTerm")
+                ),
             );
             (range, frags)
         }
@@ -6037,7 +6698,10 @@ pub fn render_version_literal(source: &str, node: &VersionLiteral, depth: usize)
 
             frags.insert(
                 0,
-                " \u{25ba} (simple_version_literal\u{a789} SimpleVersionLiteral)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("simple_version_literal", "SimpleVersionLiteral")
+                ),
             );
             (range, frags)
         }
@@ -6047,7 +6711,10 @@ pub fn render_version_literal(source: &str, node: &VersionLiteral, depth: usize)
 
             frags.insert(
                 0,
-                " \u{25ba} (pragma_string_literal\u{a789} PragmaStringLiteral)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("pragma_string_literal", "PragmaStringLiteral")
+                ),
             );
             (range, frags)
         }
@@ -6065,7 +6732,10 @@ pub fn render_version_operator(
 
             frags.insert(
                 0,
-                " \u{25ba} (pragma_caret\u{a789} PragmaCaret)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("pragma_caret", "PragmaCaret")
+                ),
             );
             (range, frags)
         }
@@ -6075,7 +6745,10 @@ pub fn render_version_operator(
 
             frags.insert(
                 0,
-                " \u{25ba} (pragma_tilde\u{a789} PragmaTilde)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("pragma_tilde", "PragmaTilde")
+                ),
             );
             (range, frags)
         }
@@ -6085,7 +6758,10 @@ pub fn render_version_operator(
 
             frags.insert(
                 0,
-                " \u{25ba} (pragma_equal\u{a789} PragmaEqual)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("pragma_equal", "PragmaEqual")
+                ),
             );
             (range, frags)
         }
@@ -6095,7 +6771,10 @@ pub fn render_version_operator(
 
             frags.insert(
                 0,
-                " \u{25ba} (pragma_less_than\u{a789} PragmaLessThan)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("pragma_less_than", "PragmaLessThan")
+                ),
             );
             (range, frags)
         }
@@ -6105,7 +6784,10 @@ pub fn render_version_operator(
 
             frags.insert(
                 0,
-                " \u{25ba} (pragma_greater_than\u{a789} PragmaGreaterThan)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("pragma_greater_than", "PragmaGreaterThan")
+                ),
             );
             (range, frags)
         }
@@ -6115,7 +6797,10 @@ pub fn render_version_operator(
 
             frags.insert(
                 0,
-                " \u{25ba} (pragma_less_than_equal\u{a789} PragmaLessThanEqual)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("pragma_less_than_equal", "PragmaLessThanEqual")
+                ),
             );
             (range, frags)
         }
@@ -6125,7 +6810,10 @@ pub fn render_version_operator(
 
             frags.insert(
                 0,
-                " \u{25ba} (pragma_greater_than_equal\u{a789} PragmaGreaterThanEqual)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("pragma_greater_than_equal", "PragmaGreaterThanEqual")
+                ),
             );
             (range, frags)
         }
@@ -6139,8 +6827,10 @@ pub fn render_yul_expression(source: &str, node: &YulExpression, depth: usize) -
 
             frags.insert(
                 0,
-                " \u{25ba} (yul_function_call_expression\u{a789} YulFunctionCallExpression)"
-                    .to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("yul_function_call_expression", "YulFunctionCallExpression")
+                ),
             );
             (range, frags)
         }
@@ -6148,14 +6838,23 @@ pub fn render_yul_expression(source: &str, node: &YulExpression, depth: usize) -
         YulExpression::YulLiteral(ref element) => {
             let (range, mut frags) = render_yul_literal(source, element, depth);
 
-            frags.insert(0, " \u{25ba} (yul_literal\u{a789} YulLiteral)".to_string());
+            frags.insert(
+                0,
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("yul_literal", "YulLiteral")
+                ),
+            );
             (range, frags)
         }
 
         YulExpression::YulPath(ref element) => {
             let (range, mut frags) = render_yul_path(source, element, depth);
 
-            frags.insert(0, " \u{25ba} (yul_path\u{a789} YulPath)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("yul_path", "YulPath")),
+            );
             (range, frags)
         }
     }
@@ -6168,7 +6867,10 @@ pub fn render_yul_literal(source: &str, node: &YulLiteral, depth: usize) -> Rend
 
             frags.insert(
                 0,
-                " \u{25ba} (yul_true_keyword\u{a789} YulTrueKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("yul_true_keyword", "YulTrueKeyword")
+                ),
             );
             (range, frags)
         }
@@ -6178,7 +6880,10 @@ pub fn render_yul_literal(source: &str, node: &YulLiteral, depth: usize) -> Rend
 
             frags.insert(
                 0,
-                " \u{25ba} (yul_false_keyword\u{a789} YulFalseKeyword)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("yul_false_keyword", "YulFalseKeyword")
+                ),
             );
             (range, frags)
         }
@@ -6188,7 +6893,10 @@ pub fn render_yul_literal(source: &str, node: &YulLiteral, depth: usize) -> Rend
 
             frags.insert(
                 0,
-                " \u{25ba} (yul_decimal_literal\u{a789} YulDecimalLiteral)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("yul_decimal_literal", "YulDecimalLiteral")
+                ),
             );
             (range, frags)
         }
@@ -6198,7 +6906,10 @@ pub fn render_yul_literal(source: &str, node: &YulLiteral, depth: usize) -> Rend
 
             frags.insert(
                 0,
-                " \u{25ba} (yul_hex_literal\u{a789} YulHexLiteral)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("yul_hex_literal", "YulHexLiteral")
+                ),
             );
             (range, frags)
         }
@@ -6208,7 +6919,10 @@ pub fn render_yul_literal(source: &str, node: &YulLiteral, depth: usize) -> Rend
 
             frags.insert(
                 0,
-                " \u{25ba} (yul_hex_string_literal\u{a789} YulHexStringLiteral)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("yul_hex_string_literal", "YulHexStringLiteral")
+                ),
             );
             (range, frags)
         }
@@ -6218,7 +6932,10 @@ pub fn render_yul_literal(source: &str, node: &YulLiteral, depth: usize) -> Rend
 
             frags.insert(
                 0,
-                " \u{25ba} (yul_string_literal\u{a789} YulStringLiteral)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("yul_string_literal", "YulStringLiteral")
+                ),
             );
             (range, frags)
         }
@@ -6230,7 +6947,10 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
         YulStatement::YulBlock(ref element) => {
             let (range, mut frags) = render_yul_block(source, element, depth);
 
-            frags.insert(0, " \u{25ba} (yul_block\u{a789} YulBlock)".to_string());
+            frags.insert(
+                0,
+                format!(" \u{25ba} {}", format_label_kind("yul_block", "YulBlock")),
+            );
             (range, frags)
         }
 
@@ -6239,7 +6959,10 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
 
             frags.insert(
                 0,
-                " \u{25ba} (yul_function_definition\u{a789} YulFunctionDefinition)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("yul_function_definition", "YulFunctionDefinition")
+                ),
             );
             (range, frags)
         }
@@ -6249,7 +6972,10 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
 
             frags.insert(
                 0,
-                " \u{25ba} (yul_if_statement\u{a789} YulIfStatement)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("yul_if_statement", "YulIfStatement")
+                ),
             );
             (range, frags)
         }
@@ -6259,7 +6985,10 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
 
             frags.insert(
                 0,
-                " \u{25ba} (yul_for_statement\u{a789} YulForStatement)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("yul_for_statement", "YulForStatement")
+                ),
             );
             (range, frags)
         }
@@ -6269,7 +6998,10 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
 
             frags.insert(
                 0,
-                " \u{25ba} (yul_switch_statement\u{a789} YulSwitchStatement)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("yul_switch_statement", "YulSwitchStatement")
+                ),
             );
             (range, frags)
         }
@@ -6279,7 +7011,10 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
 
             frags.insert(
                 0,
-                " \u{25ba} (yul_leave_statement\u{a789} YulLeaveStatement)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("yul_leave_statement", "YulLeaveStatement")
+                ),
             );
             (range, frags)
         }
@@ -6289,7 +7024,10 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
 
             frags.insert(
                 0,
-                " \u{25ba} (yul_break_statement\u{a789} YulBreakStatement)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("yul_break_statement", "YulBreakStatement")
+                ),
             );
             (range, frags)
         }
@@ -6299,7 +7037,10 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
 
             frags.insert(
                 0,
-                " \u{25ba} (yul_continue_statement\u{a789} YulContinueStatement)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("yul_continue_statement", "YulContinueStatement")
+                ),
             );
             (range, frags)
         }
@@ -6308,7 +7049,16 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
             let (range, mut frags) =
                 render_yul_variable_assignment_statement(source, element, depth);
 
-            frags.insert(0, " \u{25ba} (yul_variable_assignment_statement\u{a789} YulVariableAssignmentStatement)".to_string());
+            frags.insert(
+                0,
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind(
+                        "yul_variable_assignment_statement",
+                        "YulVariableAssignmentStatement"
+                    )
+                ),
+            );
             (range, frags)
         }
 
@@ -6316,7 +7066,16 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
             let (range, mut frags) =
                 render_yul_variable_declaration_statement(source, element, depth);
 
-            frags.insert(0, " \u{25ba} (yul_variable_declaration_statement\u{a789} YulVariableDeclarationStatement)".to_string());
+            frags.insert(
+                0,
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind(
+                        "yul_variable_declaration_statement",
+                        "YulVariableDeclarationStatement"
+                    )
+                ),
+            );
             (range, frags)
         }
 
@@ -6325,7 +7084,10 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
 
             frags.insert(
                 0,
-                " \u{25ba} (yul_expression\u{a789} YulExpression)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("yul_expression", "YulExpression")
+                ),
             );
             (range, frags)
         }
@@ -6339,7 +7101,10 @@ pub fn render_yul_switch_case(source: &str, node: &YulSwitchCase, depth: usize) 
 
             frags.insert(
                 0,
-                " \u{25ba} (yul_default_case\u{a789} YulDefaultCase)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("yul_default_case", "YulDefaultCase")
+                ),
             );
             (range, frags)
         }
@@ -6349,7 +7114,10 @@ pub fn render_yul_switch_case(source: &str, node: &YulSwitchCase, depth: usize) 
 
             frags.insert(
                 0,
-                " \u{25ba} (yul_value_case\u{a789} YulValueCase)".to_string(),
+                format!(
+                    " \u{25ba} {}",
+                    format_label_kind("yul_value_case", "YulValueCase")
+                ),
             );
             (range, frags)
         }
