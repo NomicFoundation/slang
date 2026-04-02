@@ -7,6 +7,7 @@ use std::rc::Rc;
 use std::vec::Vec;
 
 use super::source::Source;
+use crate::interner::StringId;
 
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(transparent)]
@@ -1863,6 +1864,7 @@ pub type Identifier = Rc<IdentifierStruct>;
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct IdentifierStruct {
     pub range: Range<usize>,
+    pub string_id: StringId,
 }
 
 impl IdentifierStruct {
