@@ -59,10 +59,11 @@ impl<'a> Pass<'a> {
     }
 
     fn visit_interface_definition(&mut self, node: &ir::InterfaceDefinition, scope_id: ScopeId) {
-        let mut resolved_bases = vec![];
-        if let Some(inheritance_types) = &node.inheritance {
-            resolved_bases = self.resolve_inheritance_types(inheritance_types, scope_id);
-        }
+        let resolved_bases = if let Some(inheritance_types) = &node.inheritance {
+            self.resolve_inheritance_types(inheritance_types, scope_id)
+        } else {
+            Vec::new()
+        };
 
         let Definition::Interface(definition) = self.binder.get_definition_mut(node.id()) else {
             unreachable!("{node_id:?} should be an interface", node_id = node.id());
