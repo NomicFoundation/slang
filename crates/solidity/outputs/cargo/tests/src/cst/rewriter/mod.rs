@@ -19,7 +19,7 @@ fn rewrite_terminal_node() {
         fn rewrite_identifier(&mut self, terminal_node: &Rc<TerminalNode>) -> Option<Node> {
             Some(Node::terminal(
                 terminal_node.kind,
-                terminal_node.unparse().to_string() + "New",
+                terminal_node.unparse() + "New",
             ))
         }
     }
@@ -80,11 +80,8 @@ fn rewrite_nonterminal_node_deep() {
             if self.inside_contract {
                 self.inside_contract = false;
                 Some(
-                    TerminalNode::create(
-                        terminal_node.kind,
-                        terminal_node.unparse().to_string() + "New",
-                    )
-                    .into(),
+                    TerminalNode::create(terminal_node.kind, terminal_node.unparse() + "New")
+                        .into(),
                 )
             } else {
                 Some(Node::Terminal(Rc::clone(terminal_node)))

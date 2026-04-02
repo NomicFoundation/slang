@@ -401,14 +401,14 @@ fn operator_model_to_fields(
 
             fields.push(LALRPOPField {
                 capturing_name: capturing_name.clone().into(),
-                rule: RustCode(cur_name.clone().to_string()),
+                rule: RustCode(cur_name.clone()),
             });
             fields
         }
         OperatorModel::Postfix => {
             let mut fields = vec![LALRPOPField {
                 capturing_name: capturing_name.clone().into(),
-                rule: RustCode(cur_name.clone().to_string()),
+                rule: RustCode(cur_name.clone()),
             }];
 
             fields.extend(pre_processed_fields);
@@ -426,7 +426,7 @@ fn operator_model_to_fields(
 
             vec![
                 LALRPOPField {
-                    capturing_name: capturing_name.to_string().into(),
+                    capturing_name: capturing_name.clone().into(),
                     rule: RustCode(left_capture),
                 },
                 // We're assuming a single field is used here

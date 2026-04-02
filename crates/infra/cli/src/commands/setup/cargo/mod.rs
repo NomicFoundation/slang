@@ -13,14 +13,20 @@ pub fn setup_cargo() {
     // - 'rustc'
     //
     // Which are enough to run infra scripts.
-    // But we need these additional optional components for local development:
-    rustup_add_components(env!("RUST_STABLE_VERSION"), ["clippy"]);
-    if !GitHub::is_running_in_ci() {
-        rustup_add_components(
-            env!("RUST_STABLE_VERSION"),
-            ["rust-analyzer", "rust-docs", "rust-src"],
-        );
-    }
+    rustup_install_toolchain(env!("RUST_STABLE_VERSION"));
+
+    // But we need these additional optional components for development/linting:
+    rustup_add_components(
+        env!("RUST_STABLE_VERSION"),
+        if GitHub::is_running_in_ci() {
+            vec!["clippy"]
+        } else {
+            vec!["clippy", "rust-analyzer", "rust-docs", "rust-src"]
+        },
+    );
+
+    // We also need these for the TypeScript packages:
+    rustup_add_targets(env!("RUST_STABLE_VERSION"), [WASM_TARGET]);
 
     // Additionally, we also need the following nightly components:
     //
@@ -31,8 +37,10 @@ pub fn setup_cargo() {
     rustup_install_toolchain(env!("RUST_NIGHTLY_VERSION"));
     rustup_add_components(env!("RUST_NIGHTLY_VERSION"), ["rustfmt", "rust-docs"]);
 
-    // Needed for the TypeScript packages:
-    rustup_add_targets(env!("RUST_STABLE_VERSION"), [WASM_TARGET]);
+    // Make sure to set the default toolchain for any subsequent commands:
+    Command::new("rustup")
+        .args(["default", env!("RUST_STABLE_VERSION")])
+        .run();
 
     // Make sure we have the latest dependencies:
     run_cargo_fetch();

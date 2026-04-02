@@ -144,7 +144,7 @@ impl<'a> Pass<'a> {
             .expect("import directive must be visited in the context of a current file");
         current_file
             .resolved_import_by_node_id(import_path_node_id)
-            .map(|file_id| file_id.to_string())
+            .cloned()
 
         // TODO(validation): emit an error/warning if the file cannot be resolved
     }
