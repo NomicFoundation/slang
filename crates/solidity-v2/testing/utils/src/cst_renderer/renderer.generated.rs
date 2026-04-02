@@ -3533,6 +3533,7 @@ pub fn render_abicoder_version(
         AbicoderVersion::AbicoderV1Keyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3546,6 +3547,7 @@ pub fn render_abicoder_version(
         AbicoderVersion::AbicoderV2Keyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3568,6 +3570,7 @@ pub fn render_arguments_declaration(
             let (range, mut frags) =
                 render_positional_arguments_declaration(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3584,6 +3587,7 @@ pub fn render_arguments_declaration(
         ArgumentsDeclaration::NamedArgumentsDeclaration(ref element) => {
             let (range, mut frags) = render_named_arguments_declaration(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3605,6 +3609,7 @@ pub fn render_constructor_attribute(
         ConstructorAttribute::ModifierInvocation(ref element) => {
             let (range, mut frags) = render_modifier_invocation(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3618,6 +3623,7 @@ pub fn render_constructor_attribute(
         ConstructorAttribute::InternalKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3631,6 +3637,7 @@ pub fn render_constructor_attribute(
         ConstructorAttribute::PayableKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3644,6 +3651,7 @@ pub fn render_constructor_attribute(
         ConstructorAttribute::PublicKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3661,6 +3669,7 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
         ContractMember::UsingDirective(ref element) => {
             let (range, mut frags) = render_using_directive(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3674,6 +3683,7 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
         ContractMember::FunctionDefinition(ref element) => {
             let (range, mut frags) = render_function_definition(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3687,6 +3697,7 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
         ContractMember::ConstructorDefinition(ref element) => {
             let (range, mut frags) = render_constructor_definition(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3700,6 +3711,7 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
         ContractMember::ReceiveFunctionDefinition(ref element) => {
             let (range, mut frags) = render_receive_function_definition(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3713,6 +3725,7 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
         ContractMember::FallbackFunctionDefinition(ref element) => {
             let (range, mut frags) = render_fallback_function_definition(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3726,6 +3739,7 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
         ContractMember::ModifierDefinition(ref element) => {
             let (range, mut frags) = render_modifier_definition(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3739,6 +3753,7 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
         ContractMember::StructDefinition(ref element) => {
             let (range, mut frags) = render_struct_definition(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3752,6 +3767,7 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
         ContractMember::EnumDefinition(ref element) => {
             let (range, mut frags) = render_enum_definition(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3765,6 +3781,7 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
         ContractMember::EventDefinition(ref element) => {
             let (range, mut frags) = render_event_definition(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3778,6 +3795,7 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
         ContractMember::ErrorDefinition(ref element) => {
             let (range, mut frags) = render_error_definition(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3792,6 +3810,7 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
             let (range, mut frags) =
                 render_user_defined_value_type_definition(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3808,6 +3827,7 @@ pub fn render_contract_member(source: &str, node: &ContractMember, depth: usize)
         ContractMember::StateVariableDefinition(ref element) => {
             let (range, mut frags) = render_state_variable_definition(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3829,6 +3849,7 @@ pub fn render_contract_specifier(
         ContractSpecifier::InheritanceSpecifier(ref element) => {
             let (range, mut frags) = render_inheritance_specifier(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3842,6 +3863,7 @@ pub fn render_contract_specifier(
         ContractSpecifier::StorageLayoutSpecifier(ref element) => {
             let (range, mut frags) = render_storage_layout_specifier(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3859,6 +3881,7 @@ pub fn render_elementary_type(source: &str, node: &ElementaryType, depth: usize)
         ElementaryType::BoolKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3872,6 +3895,7 @@ pub fn render_elementary_type(source: &str, node: &ElementaryType, depth: usize)
         ElementaryType::StringKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3885,6 +3909,7 @@ pub fn render_elementary_type(source: &str, node: &ElementaryType, depth: usize)
         ElementaryType::AddressType(ref element) => {
             let (range, mut frags) = render_address_type(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3898,6 +3923,7 @@ pub fn render_elementary_type(source: &str, node: &ElementaryType, depth: usize)
         ElementaryType::BytesKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3911,6 +3937,7 @@ pub fn render_elementary_type(source: &str, node: &ElementaryType, depth: usize)
         ElementaryType::IntKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3924,6 +3951,7 @@ pub fn render_elementary_type(source: &str, node: &ElementaryType, depth: usize)
         ElementaryType::UintKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3937,6 +3965,7 @@ pub fn render_elementary_type(source: &str, node: &ElementaryType, depth: usize)
         ElementaryType::FixedKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3950,6 +3979,7 @@ pub fn render_elementary_type(source: &str, node: &ElementaryType, depth: usize)
         ElementaryType::UfixedKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3971,6 +4001,7 @@ pub fn render_experimental_feature(
         ExperimentalFeature::ABIEncoderV2Keyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3984,6 +4015,7 @@ pub fn render_experimental_feature(
         ExperimentalFeature::SMTCheckerKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -3997,6 +4029,7 @@ pub fn render_experimental_feature(
         ExperimentalFeature::PragmaStringLiteral(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4014,6 +4047,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::AssignmentExpression(ref element) => {
             let (range, mut frags) = render_assignment_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4027,6 +4061,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::ConditionalExpression(ref element) => {
             let (range, mut frags) = render_conditional_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4040,6 +4075,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::OrExpression(ref element) => {
             let (range, mut frags) = render_or_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4053,6 +4089,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::AndExpression(ref element) => {
             let (range, mut frags) = render_and_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4066,6 +4103,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::EqualityExpression(ref element) => {
             let (range, mut frags) = render_equality_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4079,6 +4117,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::InequalityExpression(ref element) => {
             let (range, mut frags) = render_inequality_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4092,6 +4131,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::BitwiseOrExpression(ref element) => {
             let (range, mut frags) = render_bitwise_or_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4105,6 +4145,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::BitwiseXorExpression(ref element) => {
             let (range, mut frags) = render_bitwise_xor_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4118,6 +4159,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::BitwiseAndExpression(ref element) => {
             let (range, mut frags) = render_bitwise_and_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4131,6 +4173,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::ShiftExpression(ref element) => {
             let (range, mut frags) = render_shift_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4144,6 +4187,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::AdditiveExpression(ref element) => {
             let (range, mut frags) = render_additive_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4157,6 +4201,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::MultiplicativeExpression(ref element) => {
             let (range, mut frags) = render_multiplicative_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4170,6 +4215,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::ExponentiationExpression(ref element) => {
             let (range, mut frags) = render_exponentiation_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4183,6 +4229,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::PostfixExpression(ref element) => {
             let (range, mut frags) = render_postfix_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4196,6 +4243,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::PrefixExpression(ref element) => {
             let (range, mut frags) = render_prefix_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4209,6 +4257,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::FunctionCallExpression(ref element) => {
             let (range, mut frags) = render_function_call_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4222,6 +4271,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::CallOptionsExpression(ref element) => {
             let (range, mut frags) = render_call_options_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4235,6 +4285,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::MemberAccessExpression(ref element) => {
             let (range, mut frags) = render_member_access_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4248,6 +4299,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::IndexAccessExpression(ref element) => {
             let (range, mut frags) = render_index_access_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4261,6 +4313,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::NewExpression(ref element) => {
             let (range, mut frags) = render_new_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4274,6 +4327,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::TupleExpression(ref element) => {
             let (range, mut frags) = render_tuple_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4287,6 +4341,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::TypeExpression(ref element) => {
             let (range, mut frags) = render_type_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4300,6 +4355,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::ArrayExpression(ref element) => {
             let (range, mut frags) = render_array_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4313,6 +4369,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::HexNumberExpression(ref element) => {
             let (range, mut frags) = render_hex_number_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4326,6 +4383,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::DecimalNumberExpression(ref element) => {
             let (range, mut frags) = render_decimal_number_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4339,6 +4397,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::StringExpression(ref element) => {
             let (range, mut frags) = render_string_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4352,6 +4411,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::ElementaryType(ref element) => {
             let (range, mut frags) = render_elementary_type(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4365,6 +4425,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::PayableKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4378,6 +4439,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::ThisKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4391,6 +4453,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::SuperKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4404,6 +4467,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::TrueKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4417,6 +4481,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::FalseKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4430,6 +4495,7 @@ pub fn render_expression(source: &str, node: &Expression, depth: usize) -> Rende
         Expression::Identifier(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4451,6 +4517,7 @@ pub fn render_expression_additive_expression_operator(
         Expression_AdditiveExpression_Operator::Minus(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("minus", "Minus")),
@@ -4461,6 +4528,7 @@ pub fn render_expression_additive_expression_operator(
         Expression_AdditiveExpression_Operator::Plus(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("plus", "Plus")),
@@ -4479,6 +4547,7 @@ pub fn render_expression_assignment_expression_operator(
         Expression_AssignmentExpression_Operator::AmpersandEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4492,6 +4561,7 @@ pub fn render_expression_assignment_expression_operator(
         Expression_AssignmentExpression_Operator::AsteriskEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4505,6 +4575,7 @@ pub fn render_expression_assignment_expression_operator(
         Expression_AssignmentExpression_Operator::BarEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("bar_equal", "BarEqual")),
@@ -4515,6 +4586,7 @@ pub fn render_expression_assignment_expression_operator(
         Expression_AssignmentExpression_Operator::CaretEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4528,6 +4600,7 @@ pub fn render_expression_assignment_expression_operator(
         Expression_AssignmentExpression_Operator::Equal(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("equal", "Equal")),
@@ -4538,6 +4611,7 @@ pub fn render_expression_assignment_expression_operator(
         Expression_AssignmentExpression_Operator::GreaterThanGreaterThanEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4556,6 +4630,7 @@ pub fn render_expression_assignment_expression_operator(
         ) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4572,6 +4647,7 @@ pub fn render_expression_assignment_expression_operator(
         Expression_AssignmentExpression_Operator::LessThanLessThanEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4585,6 +4661,7 @@ pub fn render_expression_assignment_expression_operator(
         Expression_AssignmentExpression_Operator::MinusEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4598,6 +4675,7 @@ pub fn render_expression_assignment_expression_operator(
         Expression_AssignmentExpression_Operator::PercentEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4611,6 +4689,7 @@ pub fn render_expression_assignment_expression_operator(
         Expression_AssignmentExpression_Operator::PlusEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("plus_equal", "PlusEqual")),
@@ -4621,6 +4700,7 @@ pub fn render_expression_assignment_expression_operator(
         Expression_AssignmentExpression_Operator::SlashEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4642,6 +4722,7 @@ pub fn render_expression_equality_expression_operator(
         Expression_EqualityExpression_Operator::BangEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("bang_equal", "BangEqual")),
@@ -4652,6 +4733,7 @@ pub fn render_expression_equality_expression_operator(
         Expression_EqualityExpression_Operator::EqualEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4673,6 +4755,7 @@ pub fn render_expression_inequality_expression_operator(
         Expression_InequalityExpression_Operator::GreaterThan(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4686,6 +4769,7 @@ pub fn render_expression_inequality_expression_operator(
         Expression_InequalityExpression_Operator::GreaterThanEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4699,6 +4783,7 @@ pub fn render_expression_inequality_expression_operator(
         Expression_InequalityExpression_Operator::LessThan(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("less_than", "LessThan")),
@@ -4709,6 +4794,7 @@ pub fn render_expression_inequality_expression_operator(
         Expression_InequalityExpression_Operator::LessThanEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4730,6 +4816,7 @@ pub fn render_expression_multiplicative_expression_operator(
         Expression_MultiplicativeExpression_Operator::Asterisk(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("asterisk", "Asterisk")),
@@ -4740,6 +4827,7 @@ pub fn render_expression_multiplicative_expression_operator(
         Expression_MultiplicativeExpression_Operator::Percent(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("percent", "Percent")),
@@ -4750,6 +4838,7 @@ pub fn render_expression_multiplicative_expression_operator(
         Expression_MultiplicativeExpression_Operator::Slash(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("slash", "Slash")),
@@ -4768,6 +4857,7 @@ pub fn render_expression_postfix_expression_operator(
         Expression_PostfixExpression_Operator::MinusMinus(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4781,6 +4871,7 @@ pub fn render_expression_postfix_expression_operator(
         Expression_PostfixExpression_Operator::PlusPlus(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("plus_plus", "PlusPlus")),
@@ -4799,6 +4890,7 @@ pub fn render_expression_prefix_expression_operator(
         Expression_PrefixExpression_Operator::Bang(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("bang", "Bang")),
@@ -4809,6 +4901,7 @@ pub fn render_expression_prefix_expression_operator(
         Expression_PrefixExpression_Operator::DeleteKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4822,6 +4915,7 @@ pub fn render_expression_prefix_expression_operator(
         Expression_PrefixExpression_Operator::Minus(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("minus", "Minus")),
@@ -4832,6 +4926,7 @@ pub fn render_expression_prefix_expression_operator(
         Expression_PrefixExpression_Operator::MinusMinus(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4845,6 +4940,7 @@ pub fn render_expression_prefix_expression_operator(
         Expression_PrefixExpression_Operator::PlusPlus(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("plus_plus", "PlusPlus")),
@@ -4855,6 +4951,7 @@ pub fn render_expression_prefix_expression_operator(
         Expression_PrefixExpression_Operator::Tilde(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("tilde", "Tilde")),
@@ -4873,6 +4970,7 @@ pub fn render_expression_shift_expression_operator(
         Expression_ShiftExpression_Operator::GreaterThanGreaterThan(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4886,6 +4984,7 @@ pub fn render_expression_shift_expression_operator(
         Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4902,6 +5001,7 @@ pub fn render_expression_shift_expression_operator(
         Expression_ShiftExpression_Operator::LessThanLessThan(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4923,6 +5023,7 @@ pub fn render_fallback_function_attribute(
         FallbackFunctionAttribute::ModifierInvocation(ref element) => {
             let (range, mut frags) = render_modifier_invocation(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4936,6 +5037,7 @@ pub fn render_fallback_function_attribute(
         FallbackFunctionAttribute::OverrideSpecifier(ref element) => {
             let (range, mut frags) = render_override_specifier(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4949,6 +5051,7 @@ pub fn render_fallback_function_attribute(
         FallbackFunctionAttribute::ExternalKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4962,6 +5065,7 @@ pub fn render_fallback_function_attribute(
         FallbackFunctionAttribute::PayableKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4975,6 +5079,7 @@ pub fn render_fallback_function_attribute(
         FallbackFunctionAttribute::PureKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -4988,6 +5093,7 @@ pub fn render_fallback_function_attribute(
         FallbackFunctionAttribute::ViewKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5001,6 +5107,7 @@ pub fn render_fallback_function_attribute(
         FallbackFunctionAttribute::VirtualKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5022,6 +5129,7 @@ pub fn render_for_statement_condition(
         ForStatementCondition::ExpressionStatement(ref element) => {
             let (range, mut frags) = render_expression_statement(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5035,6 +5143,7 @@ pub fn render_for_statement_condition(
         ForStatementCondition::Semicolon(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("semicolon", "Semicolon")),
@@ -5053,6 +5162,7 @@ pub fn render_for_statement_initialization(
         ForStatementInitialization::VariableDeclarationStatement(ref element) => {
             let (range, mut frags) = render_variable_declaration_statement(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5069,6 +5179,7 @@ pub fn render_for_statement_initialization(
         ForStatementInitialization::ExpressionStatement(ref element) => {
             let (range, mut frags) = render_expression_statement(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5082,6 +5193,7 @@ pub fn render_for_statement_initialization(
         ForStatementInitialization::Semicolon(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("semicolon", "Semicolon")),
@@ -5100,6 +5212,7 @@ pub fn render_function_attribute(
         FunctionAttribute::ModifierInvocation(ref element) => {
             let (range, mut frags) = render_modifier_invocation(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5113,6 +5226,7 @@ pub fn render_function_attribute(
         FunctionAttribute::OverrideSpecifier(ref element) => {
             let (range, mut frags) = render_override_specifier(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5126,6 +5240,7 @@ pub fn render_function_attribute(
         FunctionAttribute::ExternalKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5139,6 +5254,7 @@ pub fn render_function_attribute(
         FunctionAttribute::InternalKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5152,6 +5268,7 @@ pub fn render_function_attribute(
         FunctionAttribute::PayableKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5165,6 +5282,7 @@ pub fn render_function_attribute(
         FunctionAttribute::PrivateKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5178,6 +5296,7 @@ pub fn render_function_attribute(
         FunctionAttribute::PublicKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5191,6 +5310,7 @@ pub fn render_function_attribute(
         FunctionAttribute::PureKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5204,6 +5324,7 @@ pub fn render_function_attribute(
         FunctionAttribute::ViewKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5217,6 +5338,7 @@ pub fn render_function_attribute(
         FunctionAttribute::VirtualKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5234,6 +5356,7 @@ pub fn render_function_body(source: &str, node: &FunctionBody, depth: usize) -> 
         FunctionBody::Block(ref element) => {
             let (range, mut frags) = render_block(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("block", "Block")),
@@ -5244,6 +5367,7 @@ pub fn render_function_body(source: &str, node: &FunctionBody, depth: usize) -> 
         FunctionBody::Semicolon(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("semicolon", "Semicolon")),
@@ -5258,6 +5382,7 @@ pub fn render_function_name(source: &str, node: &FunctionName, depth: usize) -> 
         FunctionName::Identifier(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5271,6 +5396,7 @@ pub fn render_function_name(source: &str, node: &FunctionName, depth: usize) -> 
         FunctionName::FallbackKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5284,6 +5410,7 @@ pub fn render_function_name(source: &str, node: &FunctionName, depth: usize) -> 
         FunctionName::ReceiveKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5305,6 +5432,7 @@ pub fn render_function_type_attribute(
         FunctionTypeAttribute::InternalKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5318,6 +5446,7 @@ pub fn render_function_type_attribute(
         FunctionTypeAttribute::ExternalKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5331,6 +5460,7 @@ pub fn render_function_type_attribute(
         FunctionTypeAttribute::PrivateKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5344,6 +5474,7 @@ pub fn render_function_type_attribute(
         FunctionTypeAttribute::PublicKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5357,6 +5488,7 @@ pub fn render_function_type_attribute(
         FunctionTypeAttribute::PureKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5370,6 +5502,7 @@ pub fn render_function_type_attribute(
         FunctionTypeAttribute::ViewKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5383,6 +5516,7 @@ pub fn render_function_type_attribute(
         FunctionTypeAttribute::PayableKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5404,6 +5538,7 @@ pub fn render_identifier_path_element(
         IdentifierPathElement::Identifier(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5417,6 +5552,7 @@ pub fn render_identifier_path_element(
         IdentifierPathElement::AddressKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5434,6 +5570,7 @@ pub fn render_import_clause(source: &str, node: &ImportClause, depth: usize) -> 
         ImportClause::PathImport(ref element) => {
             let (range, mut frags) = render_path_import(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5447,6 +5584,7 @@ pub fn render_import_clause(source: &str, node: &ImportClause, depth: usize) -> 
         ImportClause::NamedImport(ref element) => {
             let (range, mut frags) = render_named_import(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5460,6 +5598,7 @@ pub fn render_import_clause(source: &str, node: &ImportClause, depth: usize) -> 
         ImportClause::ImportDeconstruction(ref element) => {
             let (range, mut frags) = render_import_deconstruction(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5481,6 +5620,7 @@ pub fn render_mapping_key_type(
         MappingKeyType::ElementaryType(ref element) => {
             let (range, mut frags) = render_elementary_type(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5494,6 +5634,7 @@ pub fn render_mapping_key_type(
         MappingKeyType::IdentifierPath(ref element) => {
             let (range, mut frags) = render_identifier_path(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5515,6 +5656,7 @@ pub fn render_modifier_attribute(
         ModifierAttribute::OverrideSpecifier(ref element) => {
             let (range, mut frags) = render_override_specifier(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5528,6 +5670,7 @@ pub fn render_modifier_attribute(
         ModifierAttribute::VirtualKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5545,6 +5688,7 @@ pub fn render_number_unit(source: &str, node: &NumberUnit, depth: usize) -> Rend
         NumberUnit::WeiKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5558,6 +5702,7 @@ pub fn render_number_unit(source: &str, node: &NumberUnit, depth: usize) -> Rend
         NumberUnit::GweiKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5571,6 +5716,7 @@ pub fn render_number_unit(source: &str, node: &NumberUnit, depth: usize) -> Rend
         NumberUnit::EtherKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5584,6 +5730,7 @@ pub fn render_number_unit(source: &str, node: &NumberUnit, depth: usize) -> Rend
         NumberUnit::SecondsKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5597,6 +5744,7 @@ pub fn render_number_unit(source: &str, node: &NumberUnit, depth: usize) -> Rend
         NumberUnit::MinutesKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5610,6 +5758,7 @@ pub fn render_number_unit(source: &str, node: &NumberUnit, depth: usize) -> Rend
         NumberUnit::HoursKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5623,6 +5772,7 @@ pub fn render_number_unit(source: &str, node: &NumberUnit, depth: usize) -> Rend
         NumberUnit::DaysKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5636,6 +5786,7 @@ pub fn render_number_unit(source: &str, node: &NumberUnit, depth: usize) -> Rend
         NumberUnit::WeeksKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5653,6 +5804,7 @@ pub fn render_pragma(source: &str, node: &Pragma, depth: usize) -> RenderedOutpu
         Pragma::VersionPragma(ref element) => {
             let (range, mut frags) = render_version_pragma(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5666,6 +5818,7 @@ pub fn render_pragma(source: &str, node: &Pragma, depth: usize) -> RenderedOutpu
         Pragma::AbicoderPragma(ref element) => {
             let (range, mut frags) = render_abicoder_pragma(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5679,6 +5832,7 @@ pub fn render_pragma(source: &str, node: &Pragma, depth: usize) -> RenderedOutpu
         Pragma::ExperimentalPragma(ref element) => {
             let (range, mut frags) = render_experimental_pragma(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5700,6 +5854,7 @@ pub fn render_receive_function_attribute(
         ReceiveFunctionAttribute::ModifierInvocation(ref element) => {
             let (range, mut frags) = render_modifier_invocation(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5713,6 +5868,7 @@ pub fn render_receive_function_attribute(
         ReceiveFunctionAttribute::OverrideSpecifier(ref element) => {
             let (range, mut frags) = render_override_specifier(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5726,6 +5882,7 @@ pub fn render_receive_function_attribute(
         ReceiveFunctionAttribute::ExternalKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5739,6 +5896,7 @@ pub fn render_receive_function_attribute(
         ReceiveFunctionAttribute::PayableKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5752,6 +5910,7 @@ pub fn render_receive_function_attribute(
         ReceiveFunctionAttribute::VirtualKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5773,6 +5932,7 @@ pub fn render_source_unit_member(
         SourceUnitMember::PragmaDirective(ref element) => {
             let (range, mut frags) = render_pragma_directive(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5786,6 +5946,7 @@ pub fn render_source_unit_member(
         SourceUnitMember::ImportDirective(ref element) => {
             let (range, mut frags) = render_import_directive(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5799,6 +5960,7 @@ pub fn render_source_unit_member(
         SourceUnitMember::ContractDefinition(ref element) => {
             let (range, mut frags) = render_contract_definition(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5812,6 +5974,7 @@ pub fn render_source_unit_member(
         SourceUnitMember::InterfaceDefinition(ref element) => {
             let (range, mut frags) = render_interface_definition(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5825,6 +5988,7 @@ pub fn render_source_unit_member(
         SourceUnitMember::LibraryDefinition(ref element) => {
             let (range, mut frags) = render_library_definition(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5838,6 +6002,7 @@ pub fn render_source_unit_member(
         SourceUnitMember::StructDefinition(ref element) => {
             let (range, mut frags) = render_struct_definition(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5851,6 +6016,7 @@ pub fn render_source_unit_member(
         SourceUnitMember::EnumDefinition(ref element) => {
             let (range, mut frags) = render_enum_definition(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5864,6 +6030,7 @@ pub fn render_source_unit_member(
         SourceUnitMember::FunctionDefinition(ref element) => {
             let (range, mut frags) = render_function_definition(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5877,6 +6044,7 @@ pub fn render_source_unit_member(
         SourceUnitMember::ErrorDefinition(ref element) => {
             let (range, mut frags) = render_error_definition(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5891,6 +6059,7 @@ pub fn render_source_unit_member(
             let (range, mut frags) =
                 render_user_defined_value_type_definition(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5907,6 +6076,7 @@ pub fn render_source_unit_member(
         SourceUnitMember::UsingDirective(ref element) => {
             let (range, mut frags) = render_using_directive(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5920,6 +6090,7 @@ pub fn render_source_unit_member(
         SourceUnitMember::EventDefinition(ref element) => {
             let (range, mut frags) = render_event_definition(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5933,6 +6104,7 @@ pub fn render_source_unit_member(
         SourceUnitMember::ConstantDefinition(ref element) => {
             let (range, mut frags) = render_constant_definition(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5954,6 +6126,7 @@ pub fn render_state_variable_attribute(
         StateVariableAttribute::OverrideSpecifier(ref element) => {
             let (range, mut frags) = render_override_specifier(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5967,6 +6140,7 @@ pub fn render_state_variable_attribute(
         StateVariableAttribute::ConstantKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5980,6 +6154,7 @@ pub fn render_state_variable_attribute(
         StateVariableAttribute::InternalKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -5993,6 +6168,7 @@ pub fn render_state_variable_attribute(
         StateVariableAttribute::PrivateKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6006,6 +6182,7 @@ pub fn render_state_variable_attribute(
         StateVariableAttribute::PublicKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6019,6 +6196,7 @@ pub fn render_state_variable_attribute(
         StateVariableAttribute::ImmutableKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6032,6 +6210,7 @@ pub fn render_state_variable_attribute(
         StateVariableAttribute::TransientKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6049,6 +6228,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
         Statement::IfStatement(ref element) => {
             let (range, mut frags) = render_if_statement(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6062,6 +6242,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
         Statement::ForStatement(ref element) => {
             let (range, mut frags) = render_for_statement(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6075,6 +6256,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
         Statement::WhileStatement(ref element) => {
             let (range, mut frags) = render_while_statement(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6088,6 +6270,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
         Statement::DoWhileStatement(ref element) => {
             let (range, mut frags) = render_do_while_statement(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6101,6 +6284,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
         Statement::ContinueStatement(ref element) => {
             let (range, mut frags) = render_continue_statement(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6114,6 +6298,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
         Statement::BreakStatement(ref element) => {
             let (range, mut frags) = render_break_statement(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6127,6 +6312,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
         Statement::ReturnStatement(ref element) => {
             let (range, mut frags) = render_return_statement(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6140,6 +6326,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
         Statement::EmitStatement(ref element) => {
             let (range, mut frags) = render_emit_statement(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6153,6 +6340,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
         Statement::TryStatement(ref element) => {
             let (range, mut frags) = render_try_statement(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6166,6 +6354,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
         Statement::RevertStatement(ref element) => {
             let (range, mut frags) = render_revert_statement(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6179,6 +6368,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
         Statement::AssemblyStatement(ref element) => {
             let (range, mut frags) = render_assembly_statement(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6192,6 +6382,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
         Statement::Block(ref element) => {
             let (range, mut frags) = render_block(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("block", "Block")),
@@ -6202,6 +6393,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
         Statement::UncheckedBlock(ref element) => {
             let (range, mut frags) = render_unchecked_block(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6215,6 +6407,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
         Statement::VariableDeclarationStatement(ref element) => {
             let (range, mut frags) = render_variable_declaration_statement(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6231,6 +6424,7 @@ pub fn render_statement(source: &str, node: &Statement, depth: usize) -> Rendere
         Statement::ExpressionStatement(ref element) => {
             let (range, mut frags) = render_expression_statement(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6252,6 +6446,7 @@ pub fn render_storage_location(
         StorageLocation::MemoryKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6265,6 +6460,7 @@ pub fn render_storage_location(
         StorageLocation::StorageKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6278,6 +6474,7 @@ pub fn render_storage_location(
         StorageLocation::CallDataKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6299,6 +6496,7 @@ pub fn render_string_expression(
         StringExpression::StringLiterals(ref element) => {
             let (range, mut frags) = render_string_literals(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6312,6 +6510,7 @@ pub fn render_string_expression(
         StringExpression::HexStringLiterals(ref element) => {
             let (range, mut frags) = render_hex_string_literals(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6325,6 +6524,7 @@ pub fn render_string_expression(
         StringExpression::UnicodeStringLiterals(ref element) => {
             let (range, mut frags) = render_unicode_string_literals(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6342,6 +6542,7 @@ pub fn render_type_name(source: &str, node: &TypeName, depth: usize) -> Rendered
         TypeName::ArrayTypeName(ref element) => {
             let (range, mut frags) = render_array_type_name(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6355,6 +6556,7 @@ pub fn render_type_name(source: &str, node: &TypeName, depth: usize) -> Rendered
         TypeName::FunctionType(ref element) => {
             let (range, mut frags) = render_function_type(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6368,6 +6570,7 @@ pub fn render_type_name(source: &str, node: &TypeName, depth: usize) -> Rendered
         TypeName::MappingType(ref element) => {
             let (range, mut frags) = render_mapping_type(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6381,6 +6584,7 @@ pub fn render_type_name(source: &str, node: &TypeName, depth: usize) -> Rendered
         TypeName::ElementaryType(ref element) => {
             let (range, mut frags) = render_elementary_type(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6394,6 +6598,7 @@ pub fn render_type_name(source: &str, node: &TypeName, depth: usize) -> Rendered
         TypeName::IdentifierPath(ref element) => {
             let (range, mut frags) = render_identifier_path(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6411,6 +6616,7 @@ pub fn render_using_clause(source: &str, node: &UsingClause, depth: usize) -> Re
         UsingClause::IdentifierPath(ref element) => {
             let (range, mut frags) = render_identifier_path(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6424,6 +6630,7 @@ pub fn render_using_clause(source: &str, node: &UsingClause, depth: usize) -> Re
         UsingClause::UsingDeconstruction(ref element) => {
             let (range, mut frags) = render_using_deconstruction(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6441,6 +6648,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
         UsingOperator::Ampersand(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("ampersand", "Ampersand")),
@@ -6451,6 +6659,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
         UsingOperator::Asterisk(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("asterisk", "Asterisk")),
@@ -6461,6 +6670,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
         UsingOperator::BangEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("bang_equal", "BangEqual")),
@@ -6471,6 +6681,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
         UsingOperator::Bar(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(0, format!(" \u{25ba} {}", format_label_kind("bar", "Bar")));
             (range, frags)
         }
@@ -6478,6 +6689,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
         UsingOperator::Caret(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("caret", "Caret")),
@@ -6488,6 +6700,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
         UsingOperator::EqualEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6501,6 +6714,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
         UsingOperator::GreaterThan(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6514,6 +6728,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
         UsingOperator::GreaterThanEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6527,6 +6742,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
         UsingOperator::LessThan(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("less_than", "LessThan")),
@@ -6537,6 +6753,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
         UsingOperator::LessThanEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6550,6 +6767,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
         UsingOperator::Minus(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("minus", "Minus")),
@@ -6560,6 +6778,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
         UsingOperator::Percent(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("percent", "Percent")),
@@ -6570,6 +6789,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
         UsingOperator::Plus(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("plus", "Plus")),
@@ -6580,6 +6800,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
         UsingOperator::Slash(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("slash", "Slash")),
@@ -6590,6 +6811,7 @@ pub fn render_using_operator(source: &str, node: &UsingOperator, depth: usize) -
         UsingOperator::Tilde(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("tilde", "Tilde")),
@@ -6604,6 +6826,7 @@ pub fn render_using_target(source: &str, node: &UsingTarget, depth: usize) -> Re
         UsingTarget::TypeName(ref element) => {
             let (range, mut frags) = render_type_name(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("type_name", "TypeName")),
@@ -6614,6 +6837,7 @@ pub fn render_using_target(source: &str, node: &UsingTarget, depth: usize) -> Re
         UsingTarget::Asterisk(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("asterisk", "Asterisk")),
@@ -6632,6 +6856,7 @@ pub fn render_variable_declaration_target(
         VariableDeclarationTarget::SingleTypedDeclaration(ref element) => {
             let (range, mut frags) = render_single_typed_declaration(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6645,6 +6870,7 @@ pub fn render_variable_declaration_target(
         VariableDeclarationTarget::MultiTypedDeclaration(ref element) => {
             let (range, mut frags) = render_multi_typed_declaration(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6666,6 +6892,7 @@ pub fn render_version_expression(
         VersionExpression::VersionRange(ref element) => {
             let (range, mut frags) = render_version_range(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6679,6 +6906,7 @@ pub fn render_version_expression(
         VersionExpression::VersionTerm(ref element) => {
             let (range, mut frags) = render_version_term(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6696,6 +6924,7 @@ pub fn render_version_literal(source: &str, node: &VersionLiteral, depth: usize)
         VersionLiteral::SimpleVersionLiteral(ref element) => {
             let (range, mut frags) = render_simple_version_literal(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6709,6 +6938,7 @@ pub fn render_version_literal(source: &str, node: &VersionLiteral, depth: usize)
         VersionLiteral::PragmaStringLiteral(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6730,6 +6960,7 @@ pub fn render_version_operator(
         VersionOperator::PragmaCaret(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6743,6 +6974,7 @@ pub fn render_version_operator(
         VersionOperator::PragmaTilde(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6756,6 +6988,7 @@ pub fn render_version_operator(
         VersionOperator::PragmaEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6769,6 +7002,7 @@ pub fn render_version_operator(
         VersionOperator::PragmaLessThan(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6782,6 +7016,7 @@ pub fn render_version_operator(
         VersionOperator::PragmaGreaterThan(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6795,6 +7030,7 @@ pub fn render_version_operator(
         VersionOperator::PragmaLessThanEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6808,6 +7044,7 @@ pub fn render_version_operator(
         VersionOperator::PragmaGreaterThanEqual(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6825,6 +7062,7 @@ pub fn render_yul_expression(source: &str, node: &YulExpression, depth: usize) -
         YulExpression::YulFunctionCallExpression(ref element) => {
             let (range, mut frags) = render_yul_function_call_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6838,6 +7076,7 @@ pub fn render_yul_expression(source: &str, node: &YulExpression, depth: usize) -
         YulExpression::YulLiteral(ref element) => {
             let (range, mut frags) = render_yul_literal(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6851,6 +7090,7 @@ pub fn render_yul_expression(source: &str, node: &YulExpression, depth: usize) -
         YulExpression::YulPath(ref element) => {
             let (range, mut frags) = render_yul_path(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("yul_path", "YulPath")),
@@ -6865,6 +7105,7 @@ pub fn render_yul_literal(source: &str, node: &YulLiteral, depth: usize) -> Rend
         YulLiteral::YulTrueKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6878,6 +7119,7 @@ pub fn render_yul_literal(source: &str, node: &YulLiteral, depth: usize) -> Rend
         YulLiteral::YulFalseKeyword(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6891,6 +7133,7 @@ pub fn render_yul_literal(source: &str, node: &YulLiteral, depth: usize) -> Rend
         YulLiteral::YulDecimalLiteral(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6904,6 +7147,7 @@ pub fn render_yul_literal(source: &str, node: &YulLiteral, depth: usize) -> Rend
         YulLiteral::YulHexLiteral(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6917,6 +7161,7 @@ pub fn render_yul_literal(source: &str, node: &YulLiteral, depth: usize) -> Rend
         YulLiteral::YulHexStringLiteral(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6930,6 +7175,7 @@ pub fn render_yul_literal(source: &str, node: &YulLiteral, depth: usize) -> Rend
         YulLiteral::YulStringLiteral(ref element) => {
             let (range, mut frags) = render_terminal(source, &element.range);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6947,6 +7193,7 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
         YulStatement::YulBlock(ref element) => {
             let (range, mut frags) = render_yul_block(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(" \u{25ba} {}", format_label_kind("yul_block", "YulBlock")),
@@ -6957,6 +7204,7 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
         YulStatement::YulFunctionDefinition(ref element) => {
             let (range, mut frags) = render_yul_function_definition(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6970,6 +7218,7 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
         YulStatement::YulIfStatement(ref element) => {
             let (range, mut frags) = render_yul_if_statement(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6983,6 +7232,7 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
         YulStatement::YulForStatement(ref element) => {
             let (range, mut frags) = render_yul_for_statement(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -6996,6 +7246,7 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
         YulStatement::YulSwitchStatement(ref element) => {
             let (range, mut frags) = render_yul_switch_statement(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -7009,6 +7260,7 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
         YulStatement::YulLeaveStatement(ref element) => {
             let (range, mut frags) = render_yul_leave_statement(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -7022,6 +7274,7 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
         YulStatement::YulBreakStatement(ref element) => {
             let (range, mut frags) = render_yul_break_statement(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -7035,6 +7288,7 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
         YulStatement::YulContinueStatement(ref element) => {
             let (range, mut frags) = render_yul_continue_statement(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -7049,6 +7303,7 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
             let (range, mut frags) =
                 render_yul_variable_assignment_statement(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -7066,6 +7321,7 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
             let (range, mut frags) =
                 render_yul_variable_declaration_statement(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -7082,6 +7338,7 @@ pub fn render_yul_statement(source: &str, node: &YulStatement, depth: usize) -> 
         YulStatement::YulExpression(ref element) => {
             let (range, mut frags) = render_yul_expression(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -7099,6 +7356,7 @@ pub fn render_yul_switch_case(source: &str, node: &YulSwitchCase, depth: usize) 
         YulSwitchCase::YulDefaultCase(ref element) => {
             let (range, mut frags) = render_yul_default_case(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
@@ -7112,6 +7370,7 @@ pub fn render_yul_switch_case(source: &str, node: &YulSwitchCase, depth: usize) 
         YulSwitchCase::YulValueCase(ref element) => {
             let (range, mut frags) = render_yul_value_case(source, element, depth);
 
+            // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
             frags.insert(
                 0,
                 format!(
