@@ -13,7 +13,19 @@ pub struct Lexeme {
 pub enum LexemeKind {
     UNRECOGNIZED,
 
-    {% for kind in model.parser.lexer.lexeme_kinds -%}
+    {% for kind in model.parser.lexer.all_lexeme_kinds -%}
         {{ kind }},
     {% endfor %}
+}
+
+impl LexemeKind {
+    pub fn is_trivia(&self) -> bool {
+        matches!(
+            self,
+            {% for kind in model.parser.lexer.trivia_lexeme_kinds -%}
+                Self::{{ kind }}
+                {% if not loop.last %} | {% endif %}
+            {% endfor %}
+        )
+    }
 }

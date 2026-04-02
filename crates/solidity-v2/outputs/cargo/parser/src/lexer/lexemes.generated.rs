@@ -248,3 +248,29 @@ pub enum LexemeKind {
     YulTrueKeyword_Reserved,
     YulWhitespace,
 }
+
+impl LexemeKind {
+    pub fn is_trivia(&self) -> bool {
+        matches!(
+            self,
+            Self::EndOfLine
+                | Self::MultiLineComment
+                | Self::MultiLineNatSpecComment
+                | Self::PragmaEndOfLine
+                | Self::PragmaMultiLineComment
+                | Self::PragmaMultiLineNatSpecComment
+                | Self::PragmaSingleLineComment
+                | Self::PragmaSingleLineNatSpecComment
+                | Self::PragmaWhitespace
+                | Self::SingleLineComment
+                | Self::SingleLineNatSpecComment
+                | Self::Whitespace
+                | Self::YulEndOfLine
+                | Self::YulMultiLineComment
+                | Self::YulMultiLineNatSpecComment
+                | Self::YulSingleLineComment
+                | Self::YulSingleLineNatSpecComment
+                | Self::YulWhitespace
+        )
+    }
+}

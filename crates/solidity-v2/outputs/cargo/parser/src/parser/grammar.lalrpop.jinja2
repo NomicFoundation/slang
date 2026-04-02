@@ -111,7 +111,7 @@ extern {
     type Error = ();
 
     enum LexemeKind {
-        {% for kind in model.parser.lexer.lexeme_kinds -%}
+        {% for kind in model.parser.lexer.all_lexeme_kinds -%}
             L_{{ kind }} => LexemeKind::{{ kind }},
         {% endfor %}
     }

@@ -121,8 +121,11 @@ impl<'a> ParserBuilder<'a> {
         for context in &lexer.contexts {
             for lexeme in &context.lexemes {
                 match lexeme {
-                    Lexeme::Trivia { kind, .. } | Lexeme::Token { kind, .. } => {
-                        // For Trivia and Token, the lexeme kind directly maps to the terminal
+                    Lexeme::Trivia { .. } => {
+                        // Trivia items are skipped by the parser.
+                    }
+                    Lexeme::Token { kind, .. } => {
+                        // For Token, the lexeme kind directly maps to the terminal
                         terminals
                             .entry(kind.clone())
                             .or_default()

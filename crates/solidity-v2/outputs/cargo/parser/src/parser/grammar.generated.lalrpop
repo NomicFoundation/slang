@@ -2056,12 +2056,6 @@ EmitKeyword: EmitKeyword = {
 
 };
 #[inline]
-EndOfLine: EndOfLine = {
-
-        <l:@L> L_EndOfLine <r:@L> => new_end_of_line(l..r, source),
-
-};
-#[inline]
 EnumKeyword: EnumKeyword = {
 
         <l:@L> L_EnumKeyword_Reserved <r:@L> => new_enum_keyword(l..r, source),
@@ -2420,18 +2414,6 @@ ModifierKeyword: ModifierKeyword = {
 
 };
 #[inline]
-MultiLineComment: MultiLineComment = {
-
-        <l:@L> L_MultiLineComment <r:@L> => new_multi_line_comment(l..r, source),
-
-};
-#[inline]
-MultiLineNatSpecComment: MultiLineNatSpecComment = {
-
-        <l:@L> L_MultiLineNatSpecComment <r:@L> => new_multi_line_nat_spec_comment(l..r, source),
-
-};
-#[inline]
 MutableKeyword: MutableKeyword = {
 
         <l:@L> L_MutableKeyword_Reserved <r:@L> => new_mutable_keyword(l..r, source),
@@ -2540,12 +2522,6 @@ PragmaCaret: PragmaCaret = {
 
 };
 #[inline]
-PragmaEndOfLine: PragmaEndOfLine = {
-
-        <l:@L> L_PragmaEndOfLine <r:@L> => new_pragma_end_of_line(l..r, source),
-
-};
-#[inline]
 PragmaEqual: PragmaEqual = {
 
         <l:@L> L_PragmaEqual <r:@L> => new_pragma_equal(l..r, source),
@@ -2588,18 +2564,6 @@ PragmaMinus: PragmaMinus = {
 
 };
 #[inline]
-PragmaMultiLineComment: PragmaMultiLineComment = {
-
-        <l:@L> L_PragmaMultiLineComment <r:@L> => new_pragma_multi_line_comment(l..r, source),
-
-};
-#[inline]
-PragmaMultiLineNatSpecComment: PragmaMultiLineNatSpecComment = {
-
-        <l:@L> L_PragmaMultiLineNatSpecComment <r:@L> => new_pragma_multi_line_nat_spec_comment(l..r, source),
-
-};
-#[inline]
 PragmaPeriod: PragmaPeriod = {
 
         <l:@L> L_PragmaPeriod <r:@L> => new_pragma_period(l..r, source),
@@ -2612,18 +2576,6 @@ PragmaSemicolon: PragmaSemicolon = {
 
 };
 #[inline]
-PragmaSingleLineComment: PragmaSingleLineComment = {
-
-        <l:@L> L_PragmaSingleLineComment <r:@L> => new_pragma_single_line_comment(l..r, source),
-
-};
-#[inline]
-PragmaSingleLineNatSpecComment: PragmaSingleLineNatSpecComment = {
-
-        <l:@L> L_PragmaSingleLineNatSpecComment <r:@L> => new_pragma_single_line_nat_spec_comment(l..r, source),
-
-};
-#[inline]
 PragmaStringLiteral: PragmaStringLiteral = {
 
         <l:@L> L_PragmaStringLiteral <r:@L> => new_pragma_string_literal(l..r, source),
@@ -2633,12 +2585,6 @@ PragmaStringLiteral: PragmaStringLiteral = {
 PragmaTilde: PragmaTilde = {
 
         <l:@L> L_PragmaTilde <r:@L> => new_pragma_tilde(l..r, source),
-
-};
-#[inline]
-PragmaWhitespace: PragmaWhitespace = {
-
-        <l:@L> L_PragmaWhitespace <r:@L> => new_pragma_whitespace(l..r, source),
 
 };
 #[inline]
@@ -2729,18 +2675,6 @@ SecondsKeyword: SecondsKeyword = {
 Semicolon: Semicolon = {
 
         <l:@L> L_Semicolon <r:@L> => new_semicolon(l..r, source),
-
-};
-#[inline]
-SingleLineComment: SingleLineComment = {
-
-        <l:@L> L_SingleLineComment <r:@L> => new_single_line_comment(l..r, source),
-
-};
-#[inline]
-SingleLineNatSpecComment: SingleLineNatSpecComment = {
-
-        <l:@L> L_SingleLineNatSpecComment <r:@L> => new_single_line_nat_spec_comment(l..r, source),
 
 };
 #[inline]
@@ -2942,12 +2876,6 @@ WhileKeyword: WhileKeyword = {
 
 };
 #[inline]
-Whitespace: Whitespace = {
-
-        <l:@L> L_Whitespace <r:@L> => new_whitespace(l..r, source),
-
-};
-#[inline]
 YearsKeyword: YearsKeyword = {
 
         <l:@L> L_YearsKeyword_Reserved <r:@L> => new_years_keyword(l..r, source),
@@ -3005,12 +2933,6 @@ YulDecimalLiteral: YulDecimalLiteral = {
 YulDefaultKeyword: YulDefaultKeyword = {
 
         <l:@L> L_YulDefaultKeyword_Reserved <r:@L> => new_yul_default_keyword(l..r, source),
-
-};
-#[inline]
-YulEndOfLine: YulEndOfLine = {
-
-        <l:@L> L_YulEndOfLine <r:@L> => new_yul_end_of_line(l..r, source),
 
 };
 #[inline]
@@ -3080,18 +3002,6 @@ YulMinusGreaterThan: YulMinusGreaterThan = {
 
 };
 #[inline]
-YulMultiLineComment: YulMultiLineComment = {
-
-        <l:@L> L_YulMultiLineComment <r:@L> => new_yul_multi_line_comment(l..r, source),
-
-};
-#[inline]
-YulMultiLineNatSpecComment: YulMultiLineNatSpecComment = {
-
-        <l:@L> L_YulMultiLineNatSpecComment <r:@L> => new_yul_multi_line_nat_spec_comment(l..r, source),
-
-};
-#[inline]
 YulOpenBrace: YulOpenBrace = {
 
         <l:@L> L_YulOpenBrace <r:@L> => new_yul_open_brace(l..r, source),
@@ -3107,18 +3017,6 @@ YulOpenParen: YulOpenParen = {
 YulPeriod: YulPeriod = {
 
         <l:@L> L_YulPeriod <r:@L> => new_yul_period(l..r, source),
-
-};
-#[inline]
-YulSingleLineComment: YulSingleLineComment = {
-
-        <l:@L> L_YulSingleLineComment <r:@L> => new_yul_single_line_comment(l..r, source),
-
-};
-#[inline]
-YulSingleLineNatSpecComment: YulSingleLineNatSpecComment = {
-
-        <l:@L> L_YulSingleLineNatSpecComment <r:@L> => new_yul_single_line_nat_spec_comment(l..r, source),
 
 };
 #[inline]
@@ -3149,12 +3047,6 @@ YulThisKeyword: YulThisKeyword = {
 YulTrueKeyword: YulTrueKeyword = {
 
         <l:@L> L_YulTrueKeyword_Reserved <r:@L> => new_yul_true_keyword(l..r, source),
-
-};
-#[inline]
-YulWhitespace: YulWhitespace = {
-
-        <l:@L> L_YulWhitespace <r:@L> => new_yul_whitespace(l..r, source),
 
 };
 

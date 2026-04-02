@@ -19,15 +19,17 @@ impl LexerModelBuilder {
             .map(LexicalContextBuilder::build)
             .collect();
 
-        let lexeme_kinds = Self::collect_lexeme_kinds(&contexts);
+        let all_lexeme_kinds = Self::collect_all_lexeme_kinds(&contexts);
+        let trivia_lexeme_kinds = Self::collect_trivia_lexeme_kinds(&contexts);
 
         LexerModel {
             contexts,
-            lexeme_kinds,
+            all_lexeme_kinds,
+            trivia_lexeme_kinds,
         }
     }
 
-    fn collect_lexeme_kinds(contexts: &[LexicalContext]) -> BTreeSet<String> {
+    fn collect_all_lexeme_kinds(contexts: &[LexicalContext]) -> BTreeSet<String> {
         let mut kinds = BTreeSet::new();
 
         for context in contexts {
@@ -60,6 +62,20 @@ impl LexerModelBuilder {
                             kinds.insert(format!("{kind}_Unreserved"));
                         }
                     }
+                }
+            }
+        }
+
+        kinds
+    }
+
+    fn collect_trivia_lexeme_kinds(contexts: &[LexicalContext]) -> BTreeSet<String> {
+        let mut kinds = BTreeSet::new();
+
+        for context in contexts {
+            for lexeme in &context.lexemes {
+                if let Lexeme::Trivia { kind, .. } = lexeme {
+                    kinds.insert(kind.clone());
                 }
             }
         }

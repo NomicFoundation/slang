@@ -49,26 +49,8 @@ impl Iterator for Lexer<'_> {
 
     fn next(&mut self) -> Option<Self::Item> {
         while let Some(lexeme) = self.next_lexeme() {
-            match lexeme.kind {
-                LexemeKind::Whitespace
-                | LexemeKind::EndOfLine
-                | LexemeKind::SingleLineComment
-                | LexemeKind::MultiLineComment
-                | LexemeKind::SingleLineNatSpecComment
-                | LexemeKind::MultiLineNatSpecComment
-                | LexemeKind::PragmaWhitespace
-                | LexemeKind::PragmaEndOfLine
-                | LexemeKind::PragmaSingleLineComment
-                | LexemeKind::PragmaMultiLineComment
-                | LexemeKind::PragmaSingleLineNatSpecComment
-                | LexemeKind::PragmaMultiLineNatSpecComment
-                | LexemeKind::YulWhitespace
-                | LexemeKind::YulEndOfLine
-                | LexemeKind::YulSingleLineComment
-                | LexemeKind::YulMultiLineComment
-                | LexemeKind::YulSingleLineNatSpecComment
-                | LexemeKind::YulMultiLineNatSpecComment => {}
-                _ => return Some(Ok((lexeme.range.start, lexeme.kind, lexeme.range.end))),
+            if !lexeme.kind.is_trivia() {
+                return Some(Ok((lexeme.range.start, lexeme.kind, lexeme.range.end)));
             }
         }
         None
