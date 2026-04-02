@@ -1,5 +1,5 @@
 error: A variant referencing 'Baz1' already exists.
-  --> src/fail/p1_definitions/duplicate_variant_name/test.rs:21:53
+  --> src/fail/p1_definitions/duplicate_variant_name/test.rs:19:53
    |
-21 | ...                   EnumVariant(reference = Baz1)
+19 | ...                   EnumVariant(reference = Baz1)
    |                                               ^^^^

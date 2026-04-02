@@ -20624,6 +20624,34 @@ impl NodeChecker for PragmaCaret {
 }
 
 /// Generic `NodeChecker` for terminals
+impl NodeChecker for PragmaEndOfLine {
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
+        let node_range = text_offset..(text_offset + node.text_len());
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "PragmaEndOfLine";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
+                    node_range,
+                ));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(
+                format!(
+                    "Expected node kind to be a terminal, but it was {}",
+                    node.kind()
+                ),
+                node_range,
+            ));
+        }
+        errors
+    }
+}
+
+/// Generic `NodeChecker` for terminals
 impl NodeChecker for PragmaEqual {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
@@ -20820,6 +20848,62 @@ impl NodeChecker for PragmaMinus {
 }
 
 /// Generic `NodeChecker` for terminals
+impl NodeChecker for PragmaMultiLineComment {
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
+        let node_range = text_offset..(text_offset + node.text_len());
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "PragmaMultiLineComment";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
+                    node_range,
+                ));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(
+                format!(
+                    "Expected node kind to be a terminal, but it was {}",
+                    node.kind()
+                ),
+                node_range,
+            ));
+        }
+        errors
+    }
+}
+
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for PragmaMultiLineNatSpecComment {
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
+        let node_range = text_offset..(text_offset + node.text_len());
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "PragmaMultiLineNatSpecComment";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
+                    node_range,
+                ));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(
+                format!(
+                    "Expected node kind to be a terminal, but it was {}",
+                    node.kind()
+                ),
+                node_range,
+            ));
+        }
+        errors
+    }
+}
+
+/// Generic `NodeChecker` for terminals
 impl NodeChecker for PragmaPeriod {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
@@ -20855,6 +20939,62 @@ impl NodeChecker for PragmaSemicolon {
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
             let v2_kind = "Semicolon";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
+                    node_range,
+                ));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(
+                format!(
+                    "Expected node kind to be a terminal, but it was {}",
+                    node.kind()
+                ),
+                node_range,
+            ));
+        }
+        errors
+    }
+}
+
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for PragmaSingleLineComment {
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
+        let node_range = text_offset..(text_offset + node.text_len());
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "PragmaSingleLineComment";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
+                    node_range,
+                ));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(
+                format!(
+                    "Expected node kind to be a terminal, but it was {}",
+                    node.kind()
+                ),
+                node_range,
+            ));
+        }
+        errors
+    }
+}
+
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for PragmaSingleLineNatSpecComment {
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
+        let node_range = text_offset..(text_offset + node.text_len());
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "PragmaSingleLineNatSpecComment";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
@@ -20933,6 +21073,34 @@ impl NodeChecker for PragmaTilde {
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
             let v2_kind = "Tilde";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
+                    node_range,
+                ));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(
+                format!(
+                    "Expected node kind to be a terminal, but it was {}",
+                    node.kind()
+                ),
+                node_range,
+            ));
+        }
+        errors
+    }
+}
+
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for PragmaWhitespace {
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
+        let node_range = text_offset..(text_offset + node.text_len());
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "PragmaWhitespace";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
@@ -22734,6 +22902,34 @@ impl NodeChecker for YulDefaultKeyword {
 }
 
 /// Generic `NodeChecker` for terminals
+impl NodeChecker for YulEndOfLine {
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
+        let node_range = text_offset..(text_offset + node.text_len());
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulEndOfLine";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
+                    node_range,
+                ));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(
+                format!(
+                    "Expected node kind to be a terminal, but it was {}",
+                    node.kind()
+                ),
+                node_range,
+            ));
+        }
+        errors
+    }
+}
+
+/// Generic `NodeChecker` for terminals
 impl NodeChecker for YulFalseKeyword {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
@@ -23064,6 +23260,62 @@ impl NodeChecker for YulMinusGreaterThan {
 }
 
 /// Generic `NodeChecker` for terminals
+impl NodeChecker for YulMultiLineComment {
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
+        let node_range = text_offset..(text_offset + node.text_len());
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulMultiLineComment";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
+                    node_range,
+                ));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(
+                format!(
+                    "Expected node kind to be a terminal, but it was {}",
+                    node.kind()
+                ),
+                node_range,
+            ));
+        }
+        errors
+    }
+}
+
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulMultiLineNatSpecComment {
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
+        let node_range = text_offset..(text_offset + node.text_len());
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulMultiLineNatSpecComment";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
+                    node_range,
+                ));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(
+                format!(
+                    "Expected node kind to be a terminal, but it was {}",
+                    node.kind()
+                ),
+                node_range,
+            ));
+        }
+        errors
+    }
+}
+
+/// Generic `NodeChecker` for terminals
 impl NodeChecker for YulOpenBrace {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         let node_range = text_offset..(text_offset + node.text_len());
@@ -23127,6 +23379,62 @@ impl NodeChecker for YulPeriod {
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
             let v2_kind = "Period";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
+                    node_range,
+                ));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(
+                format!(
+                    "Expected node kind to be a terminal, but it was {}",
+                    node.kind()
+                ),
+                node_range,
+            ));
+        }
+        errors
+    }
+}
+
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulSingleLineComment {
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
+        let node_range = text_offset..(text_offset + node.text_len());
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulSingleLineComment";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
+                    node_range,
+                ));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(
+                format!(
+                    "Expected node kind to be a terminal, but it was {}",
+                    node.kind()
+                ),
+                node_range,
+            ));
+        }
+        errors
+    }
+}
+
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulSingleLineNatSpecComment {
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
+        let node_range = text_offset..(text_offset + node.text_len());
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulSingleLineNatSpecComment";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(
@@ -23289,6 +23597,34 @@ impl NodeChecker for YulTrueKeyword {
         if let NodeKind::Terminal(terminal_kind) = node.kind() {
             let v1_kind = terminal_kind.as_ref();
             let v2_kind = "YulTrueKeyword";
+
+            if v1_kind != v2_kind {
+                errors.push(NodeCheckerError::new(
+                    format!("Expected node kind to be {v2_kind}, but it was {v1_kind}"),
+                    node_range,
+                ));
+            }
+        } else {
+            errors.push(NodeCheckerError::new(
+                format!(
+                    "Expected node kind to be a terminal, but it was {}",
+                    node.kind()
+                ),
+                node_range,
+            ));
+        }
+        errors
+    }
+}
+
+/// Generic `NodeChecker` for terminals
+impl NodeChecker for YulWhitespace {
+    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
+        let node_range = text_offset..(text_offset + node.text_len());
+        let mut errors = vec![];
+        if let NodeKind::Terminal(terminal_kind) = node.kind() {
+            let v1_kind = terminal_kind.as_ref();
+            let v2_kind = "YulWhitespace";
 
             if v1_kind != v2_kind {
                 errors.push(NodeCheckerError::new(

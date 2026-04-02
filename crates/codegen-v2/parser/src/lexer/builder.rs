@@ -1,6 +1,5 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::mem::discriminant;
-use std::rc::Rc;
 
 use indexmap::IndexMap;
 use language_v2_definition::model::{
@@ -14,26 +13,10 @@ pub struct LexerModelBuilder;
 
 impl LexerModelBuilder {
     pub fn build(language: &Language) -> LexerModel {
-        // TODO(v2):
-        // The existing v1 grammar had an inconsistency where it defined all trivia in the 'Default' context,
-        // and the v1 parser dealt with it by parsing trivia using that context (regardless of the current one).
-        // We should instead remove `Item::trivia` from individual topics, and move it to a separate `Language` field,
-        // along with the existing `leading_trivia` and `trailing_trivia` fields.
-        // For now, we just collect trivia and duplicate them into all contexts:
-        let mut common_trivia = Vec::<Rc<TriviaItem>>::new();
-
-        for item in language.items() {
-            if let Item::Trivia { item } = item {
-                common_trivia.push(Rc::clone(item));
-            }
-        }
-
         let contexts: Vec<LexicalContext> = language
             .contexts
             .iter()
-            .map(|language_context| {
-                LexicalContextBuilder::build(common_trivia.clone(), language_context)
-            })
+            .map(LexicalContextBuilder::build)
             .collect();
 
         let lexeme_kinds = Self::collect_lexeme_kinds(&contexts);
@@ -86,7 +69,6 @@ impl LexerModelBuilder {
 }
 
 struct LexicalContextBuilder {
-    common_trivia: Vec<Rc<TriviaItem>>,
     fragments: BTreeMap<Identifier, Scanner>,
 
     lexemes: Vec<Lexeme>,
@@ -94,10 +76,7 @@ struct LexicalContextBuilder {
 }
 
 impl LexicalContextBuilder {
-    fn build(
-        common_trivia: Vec<Rc<TriviaItem>>,
-        language_context: &LanguageContext,
-    ) -> LexicalContext {
+    fn build(language_context: &LanguageContext) -> LexicalContext {
         let fragments = language_context
             .items()
             .filter_map(|item| {
@@ -110,8 +89,8 @@ impl LexicalContextBuilder {
             .collect();
 
         let mut instance = Self {
-            common_trivia,
             fragments,
+
             lexemes: Vec::new(),
             subpatterns: IndexMap::new(),
         };
@@ -122,10 +101,12 @@ impl LexicalContextBuilder {
                 | Item::Enum { .. }
                 | Item::Repeated { .. }
                 | Item::Separated { .. }
-                | Item::Precedence { .. }
-                | Item::Trivia { .. }
-                | Item::Fragment { .. } => {}
+                | Item::Precedence { .. } => {}
 
+                Item::Trivia { item } => {
+                    let lexeme = instance.convert_trivia(item);
+                    instance.lexemes.push(lexeme);
+                }
                 Item::Keyword { item } => {
                     let lexeme =
                         Self::convert_keyword(item, language_context.identifier_token.as_ref());
@@ -135,13 +116,9 @@ impl LexicalContextBuilder {
                     let lexeme = instance.convert_token(item);
                     instance.lexemes.push(lexeme);
                 }
-            }
-        }
 
-        for i in 0..instance.common_trivia.len() {
-            let item = Rc::clone(&instance.common_trivia[i]);
-            let lexeme = instance.convert_trivia(&item);
-            instance.lexemes.push(lexeme);
+                Item::Fragment { .. } => {}
+            }
         }
 
         let Self {

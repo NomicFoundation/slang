@@ -55,7 +55,19 @@ impl Iterator for Lexer<'_> {
                 | LexemeKind::SingleLineComment
                 | LexemeKind::MultiLineComment
                 | LexemeKind::SingleLineNatSpecComment
-                | LexemeKind::MultiLineNatSpecComment => {}
+                | LexemeKind::MultiLineNatSpecComment
+                | LexemeKind::PragmaWhitespace
+                | LexemeKind::PragmaEndOfLine
+                | LexemeKind::PragmaSingleLineComment
+                | LexemeKind::PragmaMultiLineComment
+                | LexemeKind::PragmaSingleLineNatSpecComment
+                | LexemeKind::PragmaMultiLineNatSpecComment
+                | LexemeKind::YulWhitespace
+                | LexemeKind::YulEndOfLine
+                | LexemeKind::YulSingleLineComment
+                | LexemeKind::YulMultiLineComment
+                | LexemeKind::YulSingleLineNatSpecComment
+                | LexemeKind::YulMultiLineNatSpecComment => {}
                 _ => return Some(Ok((lexeme.range.start, lexeme.kind, lexeme.range.end))),
             }
         }

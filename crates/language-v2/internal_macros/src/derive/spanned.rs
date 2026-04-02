@@ -136,8 +136,7 @@ fn get_spanned_type(input: Type) -> Type {
         | "StructItem"
         | "TokenItem"
         | "Topic"
-        | "TriviaItem"
-        | "TriviaParser" => {
+        | "TriviaItem" => {
             let spanned_type = format_ident!("{}", add_spanned_prefix(type_name));
             parse_quote! {
                 crate::model::#spanned_type

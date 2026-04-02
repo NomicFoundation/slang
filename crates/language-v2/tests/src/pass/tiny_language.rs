@@ -1,14 +1,11 @@
 use language_v2_definition::model::{
     Field, Item, Language, LexicalContext, Scanner, Section, StructItem, TokenItem, Topic,
-    TriviaParser,
 };
 use semver::Version;
 
 language_v2_macros::compile!(Language(
     name = Tiny,
     root_item = Foo,
-    leading_trivia = Sequence([]),
-    trailing_trivia = Sequence([]),
     versions = ["1.0.0", "2.0.0", "3.0.0"],
     contexts = [LexicalContext(
         name = Tiny,
@@ -40,8 +37,6 @@ fn definition() {
         Language {
             name: "Tiny".into(),
             root_item: "Foo".into(),
-            leading_trivia: TriviaParser::Sequence { parsers: [].into() },
-            trailing_trivia: TriviaParser::Sequence { parsers: [].into() },
             versions: [
                 Version::parse("1.0.0").unwrap(),
                 Version::parse("2.0.0").unwrap(),

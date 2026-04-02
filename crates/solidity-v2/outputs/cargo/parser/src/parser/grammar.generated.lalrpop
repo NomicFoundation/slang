@@ -120,6 +120,9 @@ Repeated<T>: Vec<T> = {
 // Rules for topic Pragma String Literals
     
 
+// Rules for topic Pragma Trivia
+    
+
 
 
 
@@ -244,13 +247,13 @@ Repeated<T>: Vec<T> = {
     };
     
 
-// Rules for topic Trivia
-    
-
 // Rules for topic Keywords
     
 
 // Rules for topic Punctuation
+    
+
+// Rules for topic Trivia
     
 
 
@@ -1725,6 +1728,9 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
 // Rules for topic Yul Punctuation
     
 
+// Rules for topic Trivia
+    
+
 
 
 
@@ -2534,6 +2540,12 @@ PragmaCaret: PragmaCaret = {
 
 };
 #[inline]
+PragmaEndOfLine: PragmaEndOfLine = {
+
+        <l:@L> L_PragmaEndOfLine <r:@L> => new_pragma_end_of_line(l..r, source),
+
+};
+#[inline]
 PragmaEqual: PragmaEqual = {
 
         <l:@L> L_PragmaEqual <r:@L> => new_pragma_equal(l..r, source),
@@ -2576,6 +2588,18 @@ PragmaMinus: PragmaMinus = {
 
 };
 #[inline]
+PragmaMultiLineComment: PragmaMultiLineComment = {
+
+        <l:@L> L_PragmaMultiLineComment <r:@L> => new_pragma_multi_line_comment(l..r, source),
+
+};
+#[inline]
+PragmaMultiLineNatSpecComment: PragmaMultiLineNatSpecComment = {
+
+        <l:@L> L_PragmaMultiLineNatSpecComment <r:@L> => new_pragma_multi_line_nat_spec_comment(l..r, source),
+
+};
+#[inline]
 PragmaPeriod: PragmaPeriod = {
 
         <l:@L> L_PragmaPeriod <r:@L> => new_pragma_period(l..r, source),
@@ -2588,6 +2612,18 @@ PragmaSemicolon: PragmaSemicolon = {
 
 };
 #[inline]
+PragmaSingleLineComment: PragmaSingleLineComment = {
+
+        <l:@L> L_PragmaSingleLineComment <r:@L> => new_pragma_single_line_comment(l..r, source),
+
+};
+#[inline]
+PragmaSingleLineNatSpecComment: PragmaSingleLineNatSpecComment = {
+
+        <l:@L> L_PragmaSingleLineNatSpecComment <r:@L> => new_pragma_single_line_nat_spec_comment(l..r, source),
+
+};
+#[inline]
 PragmaStringLiteral: PragmaStringLiteral = {
 
         <l:@L> L_PragmaStringLiteral <r:@L> => new_pragma_string_literal(l..r, source),
@@ -2597,6 +2633,12 @@ PragmaStringLiteral: PragmaStringLiteral = {
 PragmaTilde: PragmaTilde = {
 
         <l:@L> L_PragmaTilde <r:@L> => new_pragma_tilde(l..r, source),
+
+};
+#[inline]
+PragmaWhitespace: PragmaWhitespace = {
+
+        <l:@L> L_PragmaWhitespace <r:@L> => new_pragma_whitespace(l..r, source),
 
 };
 #[inline]
@@ -2966,6 +3008,12 @@ YulDefaultKeyword: YulDefaultKeyword = {
 
 };
 #[inline]
+YulEndOfLine: YulEndOfLine = {
+
+        <l:@L> L_YulEndOfLine <r:@L> => new_yul_end_of_line(l..r, source),
+
+};
+#[inline]
 YulFalseKeyword: YulFalseKeyword = {
 
         <l:@L> L_YulFalseKeyword_Reserved <r:@L> => new_yul_false_keyword(l..r, source),
@@ -3032,6 +3080,18 @@ YulMinusGreaterThan: YulMinusGreaterThan = {
 
 };
 #[inline]
+YulMultiLineComment: YulMultiLineComment = {
+
+        <l:@L> L_YulMultiLineComment <r:@L> => new_yul_multi_line_comment(l..r, source),
+
+};
+#[inline]
+YulMultiLineNatSpecComment: YulMultiLineNatSpecComment = {
+
+        <l:@L> L_YulMultiLineNatSpecComment <r:@L> => new_yul_multi_line_nat_spec_comment(l..r, source),
+
+};
+#[inline]
 YulOpenBrace: YulOpenBrace = {
 
         <l:@L> L_YulOpenBrace <r:@L> => new_yul_open_brace(l..r, source),
@@ -3047,6 +3107,18 @@ YulOpenParen: YulOpenParen = {
 YulPeriod: YulPeriod = {
 
         <l:@L> L_YulPeriod <r:@L> => new_yul_period(l..r, source),
+
+};
+#[inline]
+YulSingleLineComment: YulSingleLineComment = {
+
+        <l:@L> L_YulSingleLineComment <r:@L> => new_yul_single_line_comment(l..r, source),
+
+};
+#[inline]
+YulSingleLineNatSpecComment: YulSingleLineNatSpecComment = {
+
+        <l:@L> L_YulSingleLineNatSpecComment <r:@L> => new_yul_single_line_nat_spec_comment(l..r, source),
 
 };
 #[inline]
@@ -3077,6 +3149,12 @@ YulThisKeyword: YulThisKeyword = {
 YulTrueKeyword: YulTrueKeyword = {
 
         <l:@L> L_YulTrueKeyword_Reserved <r:@L> => new_yul_true_keyword(l..r, source),
+
+};
+#[inline]
+YulWhitespace: YulWhitespace = {
+
+        <l:@L> L_YulWhitespace <r:@L> => new_yul_whitespace(l..r, source),
 
 };
 
@@ -3217,6 +3295,7 @@ extern {
         L_PlusPlus => LexemeKind::PlusPlus,
         L_PragmaBarBar => LexemeKind::PragmaBarBar,
         L_PragmaCaret => LexemeKind::PragmaCaret,
+        L_PragmaEndOfLine => LexemeKind::PragmaEndOfLine,
         L_PragmaEqual => LexemeKind::PragmaEqual,
         L_PragmaGreaterThan => LexemeKind::PragmaGreaterThan,
         L_PragmaGreaterThanEqual => LexemeKind::PragmaGreaterThanEqual,
@@ -3224,10 +3303,15 @@ extern {
         L_PragmaLessThan => LexemeKind::PragmaLessThan,
         L_PragmaLessThanEqual => LexemeKind::PragmaLessThanEqual,
         L_PragmaMinus => LexemeKind::PragmaMinus,
+        L_PragmaMultiLineComment => LexemeKind::PragmaMultiLineComment,
+        L_PragmaMultiLineNatSpecComment => LexemeKind::PragmaMultiLineNatSpecComment,
         L_PragmaPeriod => LexemeKind::PragmaPeriod,
         L_PragmaSemicolon => LexemeKind::PragmaSemicolon,
+        L_PragmaSingleLineComment => LexemeKind::PragmaSingleLineComment,
+        L_PragmaSingleLineNatSpecComment => LexemeKind::PragmaSingleLineNatSpecComment,
         L_PragmaStringLiteral => LexemeKind::PragmaStringLiteral,
         L_PragmaTilde => LexemeKind::PragmaTilde,
+        L_PragmaWhitespace => LexemeKind::PragmaWhitespace,
         L_PrivateKeyword_Reserved => LexemeKind::PrivateKeyword_Reserved,
         L_PromiseKeyword_Reserved => LexemeKind::PromiseKeyword_Reserved,
         L_PublicKeyword_Reserved => LexemeKind::PublicKeyword_Reserved,
@@ -3289,6 +3373,7 @@ extern {
         L_YulContinueKeyword_Reserved => LexemeKind::YulContinueKeyword_Reserved,
         L_YulDecimalLiteral => LexemeKind::YulDecimalLiteral,
         L_YulDefaultKeyword_Reserved => LexemeKind::YulDefaultKeyword_Reserved,
+        L_YulEndOfLine => LexemeKind::YulEndOfLine,
         L_YulFalseKeyword_Reserved => LexemeKind::YulFalseKeyword_Reserved,
         L_YulForKeyword_Reserved => LexemeKind::YulForKeyword_Reserved,
         L_YulFunctionKeyword_Reserved => LexemeKind::YulFunctionKeyword_Reserved,
@@ -3300,14 +3385,19 @@ extern {
         L_YulLeaveKeyword_Reserved => LexemeKind::YulLeaveKeyword_Reserved,
         L_YulLetKeyword_Reserved => LexemeKind::YulLetKeyword_Reserved,
         L_YulMinusGreaterThan => LexemeKind::YulMinusGreaterThan,
+        L_YulMultiLineComment => LexemeKind::YulMultiLineComment,
+        L_YulMultiLineNatSpecComment => LexemeKind::YulMultiLineNatSpecComment,
         L_YulOpenBrace => LexemeKind::YulOpenBrace,
         L_YulOpenParen => LexemeKind::YulOpenParen,
         L_YulPeriod => LexemeKind::YulPeriod,
+        L_YulSingleLineComment => LexemeKind::YulSingleLineComment,
+        L_YulSingleLineNatSpecComment => LexemeKind::YulSingleLineNatSpecComment,
         L_YulStringLiteral => LexemeKind::YulStringLiteral,
         L_YulSuperKeyword_Reserved => LexemeKind::YulSuperKeyword_Reserved,
         L_YulSwitchKeyword_Reserved => LexemeKind::YulSwitchKeyword_Reserved,
         L_YulThisKeyword_Reserved => LexemeKind::YulThisKeyword_Reserved,
         L_YulTrueKeyword_Reserved => LexemeKind::YulTrueKeyword_Reserved,
+        L_YulWhitespace => LexemeKind::YulWhitespace,
         
     }
 }

@@ -1,5 +1,5 @@
 error: First field in a context switch cannot be optional.
-  --> src/fail/p3_references/lexical_context_switch_optional/test.rs:21:62
+  --> src/fail/p3_references/lexical_context_switch_optional/test.rs:19:62
    |
-21 | ...                   entry = Optional(reference = Two, enabled = Always),
+19 | ...                   entry = Optional(reference = Two, enabled = Always),
    |                                                    ^^^

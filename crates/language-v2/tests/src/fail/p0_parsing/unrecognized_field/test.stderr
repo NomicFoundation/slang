@@ -1,5 +1,5 @@
 error: unexpected token, expected `)`
-  --> src/fail/p0_parsing/unrecognized_field/test.rs:16:17
+  --> src/fail/p0_parsing/unrecognized_field/test.rs:14:17
    |
-16 |                 unrecognized_field = true
+14 |                 unrecognized_field = true
    |                 ^^^^^^^^^^^^^^^^^^

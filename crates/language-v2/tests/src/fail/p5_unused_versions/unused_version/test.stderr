@@ -1,5 +1,5 @@
 error: Item 'Baz' is not used in versions: 1.0.0..2.0.0
-  --> src/fail/p5_unused_versions/unused_version/test.rs:20:34
+  --> src/fail/p5_unused_versions/unused_version/test.rs:18:34
    |
-20 |                     Token(name = Baz, scanner = Atom("baz"))
+18 |                     Token(name = Baz, scanner = Atom("baz"))
    |                                  ^^^

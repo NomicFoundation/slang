@@ -2,15 +2,19 @@ use std::collections::HashSet;
 use std::rc::Rc;
 
 use crate::compiler::analysis::Analysis;
-use crate::model::{Identifier, SpannedTriviaParser};
+use crate::model::{Identifier, SpannedItem};
 
 pub(crate) fn run(analysis: &mut Analysis) {
     let language = Rc::clone(&analysis.language);
 
     let mut queue = vec![&*language.root_item];
 
-    collect_trivia(&language.leading_trivia, &mut queue);
-    collect_trivia(&language.trailing_trivia, &mut queue);
+    // Seed the queue with all trivia item names so they are considered visited:
+    for item in language.items() {
+        if let SpannedItem::Trivia { item } = item {
+            queue.push(&item.name);
+        }
+    }
 
     let mut visited = queue.iter().copied().collect::<HashSet<_>>();
 
@@ -27,24 +31,6 @@ pub(crate) fn run(analysis: &mut Analysis) {
             analysis
                 .errors
                 .add(&metadata.name, &Errors::UnreachableItem(&metadata.name));
-        }
-    }
-}
-
-fn collect_trivia<'l>(parser: &'l SpannedTriviaParser, acc: &mut Vec<&'l Identifier>) {
-    match parser {
-        SpannedTriviaParser::Sequence { parsers } | SpannedTriviaParser::Choice { parsers } => {
-            for parser in parsers {
-                collect_trivia(parser, acc);
-            }
-        }
-        SpannedTriviaParser::OneOrMore { parser }
-        | SpannedTriviaParser::ZeroOrMore { parser }
-        | SpannedTriviaParser::Optional { parser } => {
-            collect_trivia(parser, acc);
-        }
-        SpannedTriviaParser::Trivia { reference } => {
-            acc.push(reference);
         }
     }
 }

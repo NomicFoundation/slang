@@ -5820,6 +5820,15 @@ pub fn new_pragma_caret(range: Range<usize>, _source: &str) -> PragmaCaret {
 }
 
 #[derive(Clone, Debug, PartialEq)]
+pub struct PragmaEndOfLine {
+    pub range: Range<usize>,
+}
+
+pub fn new_pragma_end_of_line(range: Range<usize>, _source: &str) -> PragmaEndOfLine {
+    PragmaEndOfLine { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
 pub struct PragmaEqual {
     pub range: Range<usize>,
 }
@@ -5883,6 +5892,27 @@ pub fn new_pragma_minus(range: Range<usize>, _source: &str) -> PragmaMinus {
 }
 
 #[derive(Clone, Debug, PartialEq)]
+pub struct PragmaMultiLineComment {
+    pub range: Range<usize>,
+}
+
+pub fn new_pragma_multi_line_comment(range: Range<usize>, _source: &str) -> PragmaMultiLineComment {
+    PragmaMultiLineComment { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct PragmaMultiLineNatSpecComment {
+    pub range: Range<usize>,
+}
+
+pub fn new_pragma_multi_line_nat_spec_comment(
+    range: Range<usize>,
+    _source: &str,
+) -> PragmaMultiLineNatSpecComment {
+    PragmaMultiLineNatSpecComment { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
 pub struct PragmaPeriod {
     pub range: Range<usize>,
 }
@@ -5901,6 +5931,30 @@ pub fn new_pragma_semicolon(range: Range<usize>, _source: &str) -> PragmaSemicol
 }
 
 #[derive(Clone, Debug, PartialEq)]
+pub struct PragmaSingleLineComment {
+    pub range: Range<usize>,
+}
+
+pub fn new_pragma_single_line_comment(
+    range: Range<usize>,
+    _source: &str,
+) -> PragmaSingleLineComment {
+    PragmaSingleLineComment { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct PragmaSingleLineNatSpecComment {
+    pub range: Range<usize>,
+}
+
+pub fn new_pragma_single_line_nat_spec_comment(
+    range: Range<usize>,
+    _source: &str,
+) -> PragmaSingleLineNatSpecComment {
+    PragmaSingleLineNatSpecComment { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
 pub struct PragmaStringLiteral {
     pub range: Range<usize>,
 }
@@ -5916,6 +5970,15 @@ pub struct PragmaTilde {
 
 pub fn new_pragma_tilde(range: Range<usize>, _source: &str) -> PragmaTilde {
     PragmaTilde { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct PragmaWhitespace {
+    pub range: Range<usize>,
+}
+
+pub fn new_pragma_whitespace(range: Range<usize>, _source: &str) -> PragmaWhitespace {
+    PragmaWhitespace { range }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -6471,6 +6534,15 @@ pub fn new_yul_default_keyword(range: Range<usize>, _source: &str) -> YulDefault
 }
 
 #[derive(Clone, Debug, PartialEq)]
+pub struct YulEndOfLine {
+    pub range: Range<usize>,
+}
+
+pub fn new_yul_end_of_line(range: Range<usize>, _source: &str) -> YulEndOfLine {
+    YulEndOfLine { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
 pub struct YulFalseKeyword {
     pub range: Range<usize>,
 }
@@ -6570,6 +6642,27 @@ pub fn new_yul_minus_greater_than(range: Range<usize>, _source: &str) -> YulMinu
 }
 
 #[derive(Clone, Debug, PartialEq)]
+pub struct YulMultiLineComment {
+    pub range: Range<usize>,
+}
+
+pub fn new_yul_multi_line_comment(range: Range<usize>, _source: &str) -> YulMultiLineComment {
+    YulMultiLineComment { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct YulMultiLineNatSpecComment {
+    pub range: Range<usize>,
+}
+
+pub fn new_yul_multi_line_nat_spec_comment(
+    range: Range<usize>,
+    _source: &str,
+) -> YulMultiLineNatSpecComment {
+    YulMultiLineNatSpecComment { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
 pub struct YulOpenBrace {
     pub range: Range<usize>,
 }
@@ -6594,6 +6687,27 @@ pub struct YulPeriod {
 
 pub fn new_yul_period(range: Range<usize>, _source: &str) -> YulPeriod {
     YulPeriod { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct YulSingleLineComment {
+    pub range: Range<usize>,
+}
+
+pub fn new_yul_single_line_comment(range: Range<usize>, _source: &str) -> YulSingleLineComment {
+    YulSingleLineComment { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct YulSingleLineNatSpecComment {
+    pub range: Range<usize>,
+}
+
+pub fn new_yul_single_line_nat_spec_comment(
+    range: Range<usize>,
+    _source: &str,
+) -> YulSingleLineNatSpecComment {
+    YulSingleLineNatSpecComment { range }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -6639,4 +6753,13 @@ pub struct YulTrueKeyword {
 
 pub fn new_yul_true_keyword(range: Range<usize>, _source: &str) -> YulTrueKeyword {
     YulTrueKeyword { range }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct YulWhitespace {
+    pub range: Range<usize>,
+}
+
+pub fn new_yul_whitespace(range: Range<usize>, _source: &str) -> YulWhitespace {
+    YulWhitespace { range }
 }

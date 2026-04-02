@@ -1,5 +1,5 @@
 error: Duplicate map key.
-  --> src/fail/p0_parsing/duplicate_map_key/test.rs:20:29
+  --> src/fail/p0_parsing/duplicate_map_key/test.rs:18:29
    |
-20 | ...                   field_1 = Required(Baz),
+18 | ...                   field_1 = Required(Baz),
    |                       ^^^^^^^
