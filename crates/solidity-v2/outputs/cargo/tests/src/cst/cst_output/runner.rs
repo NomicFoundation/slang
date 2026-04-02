@@ -5,7 +5,6 @@ use infra_utils::paths::PathExtensions;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_parser::Parser as V2Parser;
 use solidity_v2_language::SolidityDefinition;
-use solidity_v2_testing_utils::reporting::diagnostic;
 
 pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
     let test_dir = CargoWorkspace::locate_source_crate("solidity_v2_testing_snapshots")?

@@ -50,6 +50,7 @@ pub fn render_{{ parent_type | snake_case }}(source: &str, node: &{{ parent_type
         {% else %}
           let (range, mut frags) = render_{{ variant.name | snake_case }}(source, element, depth);
         {% endif %}
+        // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
         frags.insert(0, format!(" \u{25ba} {}", format_label_kind("{{ variant.name | snake_case }}", "{{ variant.name }}")));
         (range, frags)
       }

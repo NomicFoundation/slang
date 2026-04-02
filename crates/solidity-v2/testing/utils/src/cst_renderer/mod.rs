@@ -1,3 +1,23 @@
+//! Renders V2 CST parse results into a human-readable, YAML-like snapshot format.
+//!
+//! ## Output format
+//!
+//! - **`Source:`** — annotated source lines with byte ranges.
+//! - **`Tree:`** (success) — nested CST structure with inline previews and byte ranges.
+//! - **`Error:`** (failure) — rendered diagnostic output.
+//!
+//! ## Symbol legend
+//!
+//! - `꞉` (U+A789, MODIFIER LETTER COLON) — separates label from kind in node
+//!   entries, used instead of `:` to avoid YAML key-value syntax conflicts.
+//! - `►` (U+25BA, BLACK RIGHT-POINTING POINTER) — marks the selected variant of
+//!   a choice node, inlined on the same line as its parent.
+//! - `│` (U+2502, BOX DRAWINGS LIGHT VERTICAL) — column border in the `Source:`
+//!   section, used instead of `|` to avoid confusion with Solidity's bitwise OR.
+//!
+//! Files use the `.yml` extension by convention (matching V1) but are not
+//! machine-parseable YAML.
+
 use std::cmp::max;
 use std::fmt::Write;
 use std::ops::Range;
@@ -164,7 +184,14 @@ fn write_source(w: &mut String, source: &str) {
 }
 
 fn render_preview(source: &str, range: &Range<usize>) -> String {
-    let text = &source[range.start..range.end];
+    let text = source.get(range.start..range.end).unwrap_or_else(|| {
+        panic!(
+            "render_preview: byte range {}..{} out of bounds for source of length {}",
+            range.start,
+            range.end,
+            source.len()
+        )
+    });
     let char_count = text.chars().count();
 
     let max_length = 50;
