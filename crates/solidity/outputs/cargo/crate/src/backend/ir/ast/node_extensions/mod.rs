@@ -6,6 +6,8 @@ pub use contracts::ContractBase;
 mod definitions;
 pub use definitions::Definition;
 
+mod expressions;
+
 mod identifiers;
 pub(crate) use identifiers::{create_identifier, create_yul_identifier};
 pub use identifiers::{
