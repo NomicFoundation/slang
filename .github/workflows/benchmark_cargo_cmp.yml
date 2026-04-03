@@ -28,6 +28,8 @@ on:
       - "reopened"
       - "labeled"
 
+permissions: {}
+
 # Queue benchmark workflows for the same branch (main pushes queue for ordered results; PR runs cancel stale ones):
 concurrency:
   group: "${{ github.workflow }}-${{ github.ref_name }}"
@@ -36,6 +38,9 @@ concurrency:
 jobs:
   benchmark:
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+
+    permissions:
+      contents: "read"
 
     # Skip fork PRs (can't access BENCHER_API_TOKEN). For non-PR events, only run on the main repo.
     if: >-
@@ -46,7 +51,7 @@ jobs:
 
     steps:
       - name: "Checkout Repository"
-        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683" # v4.2.2
         with:
           persist-credentials: false
 
@@ -76,7 +81,7 @@ jobs:
 
       - name: "Benchmark > Upload Benchmarking Data"
         if: "${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
-        uses: "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+        uses: "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02" # v4.6.2
         with:
           name: "benchmarking-data"
           path: "target/iai"
