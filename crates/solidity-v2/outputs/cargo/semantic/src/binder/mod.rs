@@ -317,7 +317,7 @@ impl Binder {
         self.node_typing
             .get(&node_id)
             .cloned()
-            .expect("expected node to have typing information")
+            .unwrap_or(Typing::Unresolved)
     }
 
     pub(crate) fn mark_user_meta_type_node(&mut self, node_id: NodeId) {
