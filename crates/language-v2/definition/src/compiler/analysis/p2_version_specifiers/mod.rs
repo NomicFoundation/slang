@@ -202,14 +202,26 @@ fn check_version_specifier(
         return;
     };
 
+    let first_version = analysis.language.versions.first().unwrap().clone();
+
     match &**specifier {
-        SpannedVersionSpecifier::Always => {}
+        SpannedVersionSpecifier::Always => {
+            analysis.errors.add(specifier, &Errors::RedundantAlways);
+        }
         SpannedVersionSpecifier::Never => {}
         SpannedVersionSpecifier::From { from } => {
             check_version(analysis, from);
+
+            if **from == *first_version {
+                analysis.errors.add(from, &Errors::RedundantFrom(from));
+            }
         }
         SpannedVersionSpecifier::Till { till } => {
             check_version(analysis, till);
+
+            if **till == *first_version {
+                analysis.errors.add(till, &Errors::RedundantTill(till));
+            }
         }
         SpannedVersionSpecifier::Range { from, till } => {
             if from >= till {
@@ -221,6 +233,10 @@ fn check_version_specifier(
 
             check_version(analysis, from);
             check_version(analysis, till);
+
+            if **from == *first_version {
+                analysis.errors.add(from, &Errors::RedundantRangeFrom(from));
+            }
         }
     }
 }
@@ -239,4 +255,16 @@ enum Errors<'err> {
     VersionNotFound(&'err Version),
     #[error("Version '{0}' must be less than corresponding version '{1}'.")]
     UnorderedVersionPair(&'err Version, &'err Version),
+    #[error(
+        "Explicit 'Always' is redundant, since it is the default when 'enabled' is not specified."
+    )]
+    RedundantAlways,
+    #[error("'From' with the first supported version '{0}' is equivalent to 'Always', and can be removed.")]
+    RedundantFrom(&'err Version),
+    #[error("'Till' with the first supported version '{0}' is equivalent to 'Never'.")]
+    RedundantTill(&'err Version),
+    #[error(
+        "'Range' starting from the first supported version '{0}' can be simplified to 'Till'."
+    )]
+    RedundantRangeFrom(&'err Version),
 }

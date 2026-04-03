@@ -1,0 +1,5 @@
+error: 'From' with the first supported version '1.0.0' is equivalent to 'Always', and can be removed.
+  --> src/fail/p2_version_specifiers/redundant_from/test.rs:17:80
+   |
+17 | ...                   field_1 = Optional(reference = Two, enabled = From("1.0.0")),
+   |                                                                          ^^^^^^^

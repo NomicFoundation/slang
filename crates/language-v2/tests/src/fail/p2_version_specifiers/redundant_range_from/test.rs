@@ -3,7 +3,7 @@
 language_v2_macros::compile!(Language(
     name = Foo,
     root_item = One,
-    versions = ["1.0.0", "2.0.0", "3.0.0", "4.0.0", "5.0.0"],
+    versions = ["1.0.0", "2.0.0", "3.0.0"],
     contexts = [LexicalContext(
         name = Foo,
         sections = [Section(
@@ -16,17 +16,12 @@ language_v2_macros::compile!(Language(
                         fields = (
                             field_1 = Optional(
                                 reference = Two,
-                                enabled = Range(from = "3.0.0", till = "4.0.0")
+                                enabled = Range(from = "1.0.0", till = "2.0.0")
                             ),
-                            field_2 = Optional(reference = Three)
+                            field_2 = Optional(reference = Two)
                         )
                     ),
-                    Struct(
-                        name = Two,
-                        enabled = Range(from = "3.0.0", till = "4.0.0"),
-                        fields = (field_1 = Optional(reference = Three, enabled = From("2.0.0")))
-                    ),
-                    Token(name = Three, scanner = Atom("three"))
+                    Token(name = Two, scanner = Atom("two"))
                 ]
             )]
         )]
