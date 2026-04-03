@@ -10,8 +10,10 @@ runs:
         key: "cache-${{ github.ref_name }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('pnpm-lock.yaml') }}"
         path: |
           ~/.cache/hermit/
+          ~/.cargo/git/
+          ~/.cargo/registry/
+          ~/.local/share/pnpm/store/
           ~/.local/share/virtualenvs/
           .hermit/
-          ~/.cargo/registry/
-          ~/.cargo/git/
-          ~/.local/share/pnpm/store/
+          crates/infra/cli/target/
+          target/
