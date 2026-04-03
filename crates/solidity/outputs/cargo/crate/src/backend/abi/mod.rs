@@ -317,11 +317,7 @@ impl ContractDefinitionStruct {
         let mut ptr: usize = base_ptr;
         for state_variable in variables {
             let node_id = state_variable.ir_node.node_id;
-            let variable_type_id = self
-                .semantic
-                .binder
-                .try_node_typing(node_id)?
-                .as_type_id()?;
+            let variable_type_id = self.semantic.binder.node_typing(node_id).as_type_id()?;
             let variable_size = self.semantic.storage_size_of_type_id(variable_type_id)?;
 
             // check if we can pack the variable in the previous slot
@@ -421,11 +417,7 @@ impl ParametersStruct {
             let name = parameter.name.as_ref().map(|name| name.unparse());
             let indexed = parameter.indexed;
             // Bail out with `None` if any of the parameters fails typing
-            let type_id = self
-                .semantic
-                .binder
-                .try_node_typing(node_id)?
-                .as_type_id()?;
+            let type_id = self.semantic.binder.node_typing(node_id).as_type_id()?;
             let (r#type, components) = self.semantic.type_as_abi_parameter(type_id)?;
             result.push(AbiParameter {
                 node_id: Some(node_id),
@@ -443,11 +435,7 @@ impl ParametersStruct {
         for parameter in &self.ir_nodes {
             let node_id = parameter.node_id;
             // Bail out with `None` if any of the parameters fails typing
-            let type_id = self
-                .semantic
-                .binder
-                .try_node_typing(node_id)?
-                .as_type_id()?;
+            let type_id = self.semantic.binder.node_typing(node_id).as_type_id()?;
             result.push(self.semantic.type_canonical_name(type_id)?);
         }
         Some(result.join(","))
@@ -553,8 +541,7 @@ impl SemanticAnalysis {
                 let mut components = Vec::new();
                 for member in &definition.ir_node.members {
                     let name = member.name.unparse();
-                    let member_type_id =
-                        self.binder.try_node_typing(member.node_id)?.as_type_id()?;
+                    let member_type_id = self.binder.node_typing(member.node_id).as_type_id()?;
                     let (r#type, subcomponents) = self.type_as_abi_parameter(member_type_id)?;
                     components.push(ParameterComponent {
                         name,

@@ -9,12 +9,12 @@ impl FunctionCallExpressionStruct {
         match &self.ir_node.operand {
             input_ir::Expression::ElementaryType(_) | input_ir::Expression::PayableKeyword => true,
             input_ir::Expression::Identifier(terminal) => matches!(
-                self.semantic.binder.try_node_typing(terminal.id()),
-                Some(Typing::MetaType(_) | Typing::UserMetaType(_))
+                self.semantic.binder.node_typing(terminal.id()),
+                Typing::MetaType(_) | Typing::UserMetaType(_)
             ),
             input_ir::Expression::MemberAccessExpression(mae) => matches!(
-                self.semantic.binder.try_node_typing(mae.node_id),
-                Some(Typing::MetaType(_) | Typing::UserMetaType(_))
+                self.semantic.binder.node_typing(mae.node_id),
+                Typing::MetaType(_) | Typing::UserMetaType(_)
             ),
             _ => false,
         }
