@@ -40,6 +40,7 @@ impl<'a> Pass<'a> {
     }
 
     fn visit_file(&mut self, file: &'a File) {
+        assert!(self.scope_stack.is_empty());
         assert!(self.current_file.is_none());
 
         self.current_file = Some(file);
@@ -297,10 +298,11 @@ impl Visitor for Pass<'_> {
                     if enclosing_contract_name
                         .is_some_and(|contract_name| contract_name == name.unparse())
                     {
-                        // TODO(validation): for Solidity >= 0.5.0 there cannot be a
-                        // function with the same name as the enclosing contract. In any
-                        // case, if the names match we don't register the definition in
-                        // the current scope.
+                        // TODO(validation): there cannot be a function with the
+                        // same name as the enclosing contract (since Solidity
+                        // 0.5.0). Regardless, we skip registering the function
+                        // symbol in the current scope to avoid interference
+                        // with resolution.
                         self.binder.insert_definition_no_scope(definition);
                     } else {
                         self.insert_definition_in_current_scope(definition);

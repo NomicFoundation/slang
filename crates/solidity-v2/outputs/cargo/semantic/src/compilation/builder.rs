@@ -30,8 +30,8 @@ pub trait CompilationBuilderConfig {
     /// import {Foo} from "foo.sol";
     /// ```
     ///
-    /// Then the API will invoke the callback with a cursor pointing to the
-    /// `"foo.sol"` string literal.
+    /// Then the API will invoke the callback with the value of the `"foo.sol"`
+    /// string literal, including the surrounding quotes.
     ///
     /// The user is responsible for resolving it to a file in the compilation,
     /// and return its ID. If the callback returns `None`, the import will stay

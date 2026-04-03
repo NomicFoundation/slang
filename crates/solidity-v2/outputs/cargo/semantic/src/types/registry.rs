@@ -152,7 +152,7 @@ impl TypeRegistry {
                 ),
                 Type::Integer { .. },
             ) => {
-                // TODO(validation): check that the rational can fit in the given integer type
+                // TODO(validation): check that the literal can fit in the given integer type
                 true
             }
 
