@@ -16,7 +16,7 @@ language_v2_macros::compile!(Language(
                             name = One,
                             switch_lexical_context = ContextB,
                             fields = (
-                                entry = Optional(reference = Two, enabled = Always),
+                                entry = Optional(reference = Two),
                                 field_1 = Required(Three)
                             )
                         ),

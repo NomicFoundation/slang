@@ -1,0 +1,5 @@
+error: Explicit 'Always' is redundant, since it is the default when 'enabled' is not specified.
+  --> src/fail/p2_version_specifiers/redundant_always/test.rs:17:75
+   |
+17 | ...                   field_1 = Optional(reference = Two, enabled = Always),
+   |                                                                     ^^^^^^

@@ -1,0 +1,5 @@
+error: 'Range' starting from the first supported version '1.0.0' can be simplified to 'Till'.
+  --> src/fail/p2_version_specifiers/redundant_range_from/test.rs:19:56
+   |
+19 | ...                   enabled = Range(from = "1.0.0", till = "2.0.0")
+   |                                              ^^^^^^^
