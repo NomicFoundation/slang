@@ -132,13 +132,13 @@ language_v2_macros::compile!(Language(
                     Topic(
                         title = "Pragma Keywords",
                         items = [
-                            Keyword(name = AbicoderKeyword, value = Atom("abicoder")),
-                            Keyword(name = ExperimentalKeyword, value = Atom("experimental")),
-                            Keyword(name = AbicoderV1Keyword, value = Atom("v1")),
-                            Keyword(name = AbicoderV2Keyword, value = Atom("v2")),
-                            Keyword(name = ABIEncoderV2Keyword, value = Atom("ABIEncoderV2")),
-                            Keyword(name = SMTCheckerKeyword, value = Atom("SMTChecker")),
-                            Keyword(name = SolidityKeyword, value = Atom("solidity"))
+                            Keyword(name = AbicoderKeyword, scanner = Atom("abicoder")),
+                            Keyword(name = ExperimentalKeyword, scanner = Atom("experimental")),
+                            Keyword(name = AbicoderV1Keyword, scanner = Atom("v1")),
+                            Keyword(name = AbicoderV2Keyword, scanner = Atom("v2")),
+                            Keyword(name = ABIEncoderV2Keyword, scanner = Atom("ABIEncoderV2")),
+                            Keyword(name = SMTCheckerKeyword, scanner = Atom("SMTChecker")),
+                            Keyword(name = SolidityKeyword, scanner = Atom("solidity"))
                         ]
                     ),
                     Topic(
@@ -520,54 +520,54 @@ language_v2_macros::compile!(Language(
                         Topic(
                             title = "Keywords",
                             items = [
-                                Keyword(name = AbstractKeyword, value = Atom("abstract")),
+                                Keyword(name = AbstractKeyword, scanner = Atom("abstract")),
                                 Keyword(
                                     // `address` is a reserved keyword, but it can still be used as an identifier in some contexts,
                                     // in particular as a member access (e.g., `myPayload.address`) or as an identifier
                                     // path
                                     // See `IdentifierPathElement` for details
                                     name = AddressKeyword,
-                                    value = Atom("address")
+                                    scanner = Atom("address")
                                 ),
                                 Keyword(
                                     name = AfterKeyword,
                                     enabled = Never,
-                                    value = Atom("after")
+                                    scanner = Atom("after")
                                 ),
                                 Keyword(
                                     name = AliasKeyword,
                                     enabled = Never,
-                                    value = Atom("alias")
+                                    scanner = Atom("alias")
                                 ),
-                                Keyword(name = AnonymousKeyword, value = Atom("anonymous")),
+                                Keyword(name = AnonymousKeyword, scanner = Atom("anonymous")),
                                 Keyword(
                                     name = ApplyKeyword,
                                     enabled = Never,
-                                    value = Atom("apply")
+                                    scanner = Atom("apply")
                                 ),
-                                Keyword(name = AsKeyword, value = Atom("as")),
-                                Keyword(name = AssemblyKeyword, value = Atom("assembly")),
+                                Keyword(name = AsKeyword, scanner = Atom("as")),
+                                Keyword(name = AssemblyKeyword, scanner = Atom("assembly")),
                                 Keyword(
                                     name = AtKeyword,
                                     enabled = From("0.8.29"),
                                     reserved = Never,
-                                    value = Atom("at")
+                                    scanner = Atom("at")
                                 ),
                                 Keyword(
                                     name = AutoKeyword,
                                     enabled = Never,
-                                    value = Atom("auto")
+                                    scanner = Atom("auto")
                                 ),
-                                Keyword(name = BoolKeyword, value = Atom("bool")),
-                                Keyword(name = BreakKeyword, value = Atom("break")),
+                                Keyword(name = BoolKeyword, scanner = Atom("bool")),
+                                Keyword(name = BreakKeyword, scanner = Atom("break")),
                                 Keyword(
                                     name = ByteKeyword,
                                     enabled = Never,
-                                    value = Atom("byte")
+                                    scanner = Atom("byte")
                                 ),
                                 Keyword(
                                     name = BytesKeyword,
-                                    value = Sequence([
+                                    scanner = Sequence([
                                         Atom("bytes"),
                                         Optional(Choice([
                                             Atom("1"),
@@ -605,57 +605,57 @@ language_v2_macros::compile!(Language(
                                         ]))
                                     ])
                                 ),
-                                Keyword(name = CallDataKeyword, value = Atom("calldata")),
+                                Keyword(name = CallDataKeyword, scanner = Atom("calldata")),
                                 Keyword(
                                     name = CaseKeyword,
                                     enabled = Never,
-                                    value = Atom("case")
+                                    scanner = Atom("case")
                                 ),
-                                Keyword(name = CatchKeyword, value = Atom("catch")),
-                                Keyword(name = ConstantKeyword, value = Atom("constant")),
-                                Keyword(name = ConstructorKeyword, value = Atom("constructor")),
-                                Keyword(name = ContinueKeyword, value = Atom("continue")),
-                                Keyword(name = ContractKeyword, value = Atom("contract")),
+                                Keyword(name = CatchKeyword, scanner = Atom("catch")),
+                                Keyword(name = ConstantKeyword, scanner = Atom("constant")),
+                                Keyword(name = ConstructorKeyword, scanner = Atom("constructor")),
+                                Keyword(name = ContinueKeyword, scanner = Atom("continue")),
+                                Keyword(name = ContractKeyword, scanner = Atom("contract")),
                                 Keyword(
                                     name = CopyOfKeyword,
                                     enabled = Never,
-                                    value = Atom("copyof")
+                                    scanner = Atom("copyof")
                                 ),
-                                Keyword(name = DaysKeyword, value = Atom("days")),
+                                Keyword(name = DaysKeyword, scanner = Atom("days")),
                                 Keyword(
                                     name = DefaultKeyword,
                                     enabled = Never,
-                                    value = Atom("default")
+                                    scanner = Atom("default")
                                 ),
                                 Keyword(
                                     name = DefineKeyword,
                                     enabled = Never,
-                                    value = Atom("define")
+                                    scanner = Atom("define")
                                 ),
-                                Keyword(name = DeleteKeyword, value = Atom("delete")),
-                                Keyword(name = DoKeyword, value = Atom("do")),
-                                Keyword(name = ElseKeyword, value = Atom("else")),
-                                Keyword(name = EmitKeyword, value = Atom("emit")),
-                                Keyword(name = EnumKeyword, value = Atom("enum")),
+                                Keyword(name = DeleteKeyword, scanner = Atom("delete")),
+                                Keyword(name = DoKeyword, scanner = Atom("do")),
+                                Keyword(name = ElseKeyword, scanner = Atom("else")),
+                                Keyword(name = EmitKeyword, scanner = Atom("emit")),
+                                Keyword(name = EnumKeyword, scanner = Atom("enum")),
                                 Keyword(
                                     name = ErrorKeyword,
                                     enabled = From("0.8.4"),
                                     reserved = Never,
-                                    value = Atom("error")
+                                    scanner = Atom("error")
                                 ),
-                                Keyword(name = EtherKeyword, value = Atom("ether")),
-                                Keyword(name = EventKeyword, value = Atom("event")),
-                                Keyword(name = ExternalKeyword, value = Atom("external")),
-                                Keyword(name = FallbackKeyword, value = Atom("fallback")),
-                                Keyword(name = FalseKeyword, value = Atom("false")),
+                                Keyword(name = EtherKeyword, scanner = Atom("ether")),
+                                Keyword(name = EventKeyword, scanner = Atom("event")),
+                                Keyword(name = ExternalKeyword, scanner = Atom("external")),
+                                Keyword(name = FallbackKeyword, scanner = Atom("fallback")),
+                                Keyword(name = FalseKeyword, scanner = Atom("false")),
                                 Keyword(
                                     name = FinalKeyword,
                                     enabled = Never,
-                                    value = Atom("final")
+                                    scanner = Atom("final")
                                 ),
                                 Keyword(
                                     name = FixedKeyword,
-                                    value = Sequence([
+                                    scanner = Sequence([
                                         Atom("fixed"),
                                         Optional(Choice([
                                             Sequence([
@@ -914,50 +914,50 @@ language_v2_macros::compile!(Language(
                                         ]))
                                     ])
                                 ),
-                                Keyword(name = ForKeyword, value = Atom("for")),
+                                Keyword(name = ForKeyword, scanner = Atom("for")),
                                 Keyword(
                                     name = FromKeyword,
                                     reserved = Never,
-                                    value = Atom("from")
+                                    scanner = Atom("from")
                                 ),
-                                Keyword(name = FunctionKeyword, value = Atom("function")),
+                                Keyword(name = FunctionKeyword, scanner = Atom("function")),
                                 Keyword(
                                     name = GlobalKeyword,
                                     enabled = From("0.8.13"),
                                     reserved = Never,
-                                    value = Atom("global")
+                                    scanner = Atom("global")
                                 ),
-                                Keyword(name = GweiKeyword, value = Atom("gwei")),
+                                Keyword(name = GweiKeyword, scanner = Atom("gwei")),
                                 Keyword(
                                     name = HexKeyword,
                                     enabled = Never,
-                                    value = Atom("hex")
+                                    scanner = Atom("hex")
                                 ),
-                                Keyword(name = HoursKeyword, value = Atom("hours")),
-                                Keyword(name = IfKeyword, value = Atom("if")),
-                                Keyword(name = ImmutableKeyword, value = Atom("immutable")),
+                                Keyword(name = HoursKeyword, scanner = Atom("hours")),
+                                Keyword(name = IfKeyword, scanner = Atom("if")),
+                                Keyword(name = ImmutableKeyword, scanner = Atom("immutable")),
                                 Keyword(
                                     name = ImplementsKeyword,
                                     enabled = Never,
-                                    value = Atom("implements")
+                                    scanner = Atom("implements")
                                 ),
-                                Keyword(name = ImportKeyword, value = Atom("import")),
-                                Keyword(name = IndexedKeyword, value = Atom("indexed")),
+                                Keyword(name = ImportKeyword, scanner = Atom("import")),
+                                Keyword(name = IndexedKeyword, scanner = Atom("indexed")),
                                 Keyword(
                                     name = InKeyword,
                                     enabled = Never,
-                                    value = Atom("in")
+                                    scanner = Atom("in")
                                 ),
                                 Keyword(
                                     name = InlineKeyword,
                                     enabled = Never,
-                                    value = Atom("inline")
+                                    scanner = Atom("inline")
                                 ),
-                                Keyword(name = InterfaceKeyword, value = Atom("interface")),
-                                Keyword(name = InternalKeyword, value = Atom("internal")),
+                                Keyword(name = InterfaceKeyword, scanner = Atom("interface")),
+                                Keyword(name = InternalKeyword, scanner = Atom("internal")),
                                 Keyword(
                                     name = IntKeyword,
-                                    value = Sequence([
+                                    scanner = Sequence([
                                         Atom("int"),
                                         Optional(Choice([
                                             Atom("8"),
@@ -995,142 +995,142 @@ language_v2_macros::compile!(Language(
                                         ]))
                                     ])
                                 ),
-                                Keyword(name = IsKeyword, value = Atom("is")),
+                                Keyword(name = IsKeyword, scanner = Atom("is")),
                                 Keyword(
                                     name = LayoutKeyword,
                                     enabled = From("0.8.29"),
                                     reserved = Never,
-                                    value = Atom("layout")
+                                    scanner = Atom("layout")
                                 ),
                                 Keyword(
                                     name = LetKeyword,
                                     enabled = Never,
-                                    value = Atom("let")
+                                    scanner = Atom("let")
                                 ),
-                                Keyword(name = LibraryKeyword, value = Atom("library")),
+                                Keyword(name = LibraryKeyword, scanner = Atom("library")),
                                 Keyword(
                                     name = MacroKeyword,
                                     enabled = Never,
-                                    value = Atom("macro")
+                                    scanner = Atom("macro")
                                 ),
-                                Keyword(name = MappingKeyword, value = Atom("mapping")),
+                                Keyword(name = MappingKeyword, scanner = Atom("mapping")),
                                 Keyword(
                                     name = MatchKeyword,
                                     enabled = Never,
-                                    value = Atom("match")
+                                    scanner = Atom("match")
                                 ),
-                                Keyword(name = MemoryKeyword, value = Atom("memory")),
-                                Keyword(name = MinutesKeyword, value = Atom("minutes")),
-                                Keyword(name = ModifierKeyword, value = Atom("modifier")),
+                                Keyword(name = MemoryKeyword, scanner = Atom("memory")),
+                                Keyword(name = MinutesKeyword, scanner = Atom("minutes")),
+                                Keyword(name = ModifierKeyword, scanner = Atom("modifier")),
                                 Keyword(
                                     name = MutableKeyword,
                                     enabled = Never,
-                                    value = Atom("mutable")
+                                    scanner = Atom("mutable")
                                 ),
-                                Keyword(name = NewKeyword, value = Atom("new")),
+                                Keyword(name = NewKeyword, scanner = Atom("new")),
                                 Keyword(
                                     name = NullKeyword,
                                     enabled = Never,
-                                    value = Atom("null")
+                                    scanner = Atom("null")
                                 ),
                                 Keyword(
                                     name = OfKeyword,
                                     enabled = Never,
-                                    value = Atom("of")
+                                    scanner = Atom("of")
                                 ),
-                                Keyword(name = OverrideKeyword, value = Atom("override")),
+                                Keyword(name = OverrideKeyword, scanner = Atom("override")),
                                 Keyword(
                                     name = PartialKeyword,
                                     enabled = Never,
-                                    value = Atom("partial")
+                                    scanner = Atom("partial")
                                 ),
-                                Keyword(name = PayableKeyword, value = Atom("payable")),
-                                Keyword(name = PragmaKeyword, value = Atom("pragma")),
-                                Keyword(name = PrivateKeyword, value = Atom("private")),
+                                Keyword(name = PayableKeyword, scanner = Atom("payable")),
+                                Keyword(name = PragmaKeyword, scanner = Atom("pragma")),
+                                Keyword(name = PrivateKeyword, scanner = Atom("private")),
                                 Keyword(
                                     name = PromiseKeyword,
                                     enabled = Never,
-                                    value = Atom("promise")
+                                    scanner = Atom("promise")
                                 ),
-                                Keyword(name = PublicKeyword, value = Atom("public")),
-                                Keyword(name = PureKeyword, value = Atom("pure")),
-                                Keyword(name = ReceiveKeyword, value = Atom("receive")),
+                                Keyword(name = PublicKeyword, scanner = Atom("public")),
+                                Keyword(name = PureKeyword, scanner = Atom("pure")),
+                                Keyword(name = ReceiveKeyword, scanner = Atom("receive")),
                                 Keyword(
                                     name = ReferenceKeyword,
                                     enabled = Never,
-                                    value = Atom("reference")
+                                    scanner = Atom("reference")
                                 ),
                                 Keyword(
                                     name = RelocatableKeyword,
                                     enabled = Never,
-                                    value = Atom("relocatable")
+                                    scanner = Atom("relocatable")
                                 ),
-                                Keyword(name = ReturnKeyword, value = Atom("return")),
-                                Keyword(name = ReturnsKeyword, value = Atom("returns")),
+                                Keyword(name = ReturnKeyword, scanner = Atom("return")),
+                                Keyword(name = ReturnsKeyword, scanner = Atom("returns")),
                                 Keyword(
                                     name = RevertKeyword,
                                     enabled = From("0.8.4"),
                                     reserved = Never,
-                                    value = Atom("revert")
+                                    scanner = Atom("revert")
                                 ),
                                 Keyword(
                                     name = SealedKeyword,
                                     enabled = Never,
-                                    value = Atom("sealed")
+                                    scanner = Atom("sealed")
                                 ),
-                                Keyword(name = SecondsKeyword, value = Atom("seconds")),
+                                Keyword(name = SecondsKeyword, scanner = Atom("seconds")),
                                 Keyword(
                                     name = SizeOfKeyword,
                                     enabled = Never,
-                                    value = Atom("sizeof")
+                                    scanner = Atom("sizeof")
                                 ),
                                 Keyword(
                                     name = StaticKeyword,
                                     enabled = Never,
-                                    value = Atom("static")
+                                    scanner = Atom("static")
                                 ),
-                                Keyword(name = StorageKeyword, value = Atom("storage")),
-                                Keyword(name = StringKeyword, value = Atom("string")),
-                                Keyword(name = StructKeyword, value = Atom("struct")),
-                                Keyword(name = SuperKeyword, value = Atom("super")),
+                                Keyword(name = StorageKeyword, scanner = Atom("storage")),
+                                Keyword(name = StringKeyword, scanner = Atom("string")),
+                                Keyword(name = StructKeyword, scanner = Atom("struct")),
+                                Keyword(name = SuperKeyword, scanner = Atom("super")),
                                 Keyword(
                                     name = SupportsKeyword,
                                     enabled = Never,
-                                    value = Atom("supports")
+                                    scanner = Atom("supports")
                                 ),
                                 Keyword(
                                     name = SwitchKeyword,
                                     enabled = Never,
-                                    value = Atom("switch")
+                                    scanner = Atom("switch")
                                 ),
-                                Keyword(name = ThisKeyword, value = Atom("this")),
+                                Keyword(name = ThisKeyword, scanner = Atom("this")),
                                 Keyword(
                                     name = ThrowKeyword,
                                     enabled = Never,
-                                    value = Atom("throw")
+                                    scanner = Atom("throw")
                                 ),
                                 Keyword(
                                     name = TransientKeyword,
                                     enabled = From("0.8.27"),
                                     reserved = Never,
-                                    value = Atom("transient")
+                                    scanner = Atom("transient")
                                 ),
-                                Keyword(name = TrueKeyword, value = Atom("true")),
-                                Keyword(name = TryKeyword, value = Atom("try")),
+                                Keyword(name = TrueKeyword, scanner = Atom("true")),
+                                Keyword(name = TryKeyword, scanner = Atom("try")),
                                 Keyword(
                                     name = TypeDefKeyword,
                                     enabled = Never,
-                                    value = Atom("typedef")
+                                    scanner = Atom("typedef")
                                 ),
-                                Keyword(name = TypeKeyword, value = Atom("type")),
+                                Keyword(name = TypeKeyword, scanner = Atom("type")),
                                 Keyword(
                                     name = TypeOfKeyword,
                                     enabled = Never,
-                                    value = Atom("typeof")
+                                    scanner = Atom("typeof")
                                 ),
                                 Keyword(
                                     name = UfixedKeyword,
-                                    value = Sequence([
+                                    scanner = Sequence([
                                         Atom("ufixed"),
                                         Optional(Choice([
                                             Sequence([
@@ -1391,7 +1391,7 @@ language_v2_macros::compile!(Language(
                                 ),
                                 Keyword(
                                     name = UintKeyword,
-                                    value = Sequence([
+                                    scanner = Sequence([
                                         Atom("uint"),
                                         Optional(Choice([
                                             Atom("8"),
@@ -1429,22 +1429,22 @@ language_v2_macros::compile!(Language(
                                         ]))
                                     ])
                                 ),
-                                Keyword(name = UncheckedKeyword, value = Atom("unchecked")),
-                                Keyword(name = UsingKeyword, value = Atom("using")),
+                                Keyword(name = UncheckedKeyword, scanner = Atom("unchecked")),
+                                Keyword(name = UsingKeyword, scanner = Atom("using")),
                                 Keyword(
                                     name = VarKeyword,
                                     enabled = Never,
-                                    value = Atom("var")
+                                    scanner = Atom("var")
                                 ),
-                                Keyword(name = ViewKeyword, value = Atom("view")),
-                                Keyword(name = VirtualKeyword, value = Atom("virtual")),
-                                Keyword(name = WeeksKeyword, value = Atom("weeks")),
-                                Keyword(name = WeiKeyword, value = Atom("wei")),
-                                Keyword(name = WhileKeyword, value = Atom("while")),
+                                Keyword(name = ViewKeyword, scanner = Atom("view")),
+                                Keyword(name = VirtualKeyword, scanner = Atom("virtual")),
+                                Keyword(name = WeeksKeyword, scanner = Atom("weeks")),
+                                Keyword(name = WeiKeyword, scanner = Atom("wei")),
+                                Keyword(name = WhileKeyword, scanner = Atom("while")),
                                 Keyword(
                                     name = YearsKeyword,
                                     enabled = Never,
-                                    value = Atom("years")
+                                    scanner = Atom("years")
                                 )
                             ]
                         ),
@@ -4325,33 +4325,33 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                     Topic(
                         title = "Yul Keywords",
                         items = [
-                            Keyword(name = YulBreakKeyword, value = Atom("break")),
-                            Keyword(name = YulCaseKeyword, value = Atom("case")),
-                            Keyword(name = YulContinueKeyword, value = Atom("continue")),
-                            Keyword(name = YulDefaultKeyword, value = Atom("default")),
-                            Keyword(name = YulFalseKeyword, value = Atom("false")),
-                            Keyword(name = YulForKeyword, value = Atom("for")),
-                            Keyword(name = YulFunctionKeyword, value = Atom("function")),
+                            Keyword(name = YulBreakKeyword, scanner = Atom("break")),
+                            Keyword(name = YulCaseKeyword, scanner = Atom("case")),
+                            Keyword(name = YulContinueKeyword, scanner = Atom("continue")),
+                            Keyword(name = YulDefaultKeyword, scanner = Atom("default")),
+                            Keyword(name = YulFalseKeyword, scanner = Atom("false")),
+                            Keyword(name = YulForKeyword, scanner = Atom("for")),
+                            Keyword(name = YulFunctionKeyword, scanner = Atom("function")),
                             Keyword(
                                 name = YulHexKeyword,
                                 enabled = Never,
-                                value = Atom("hex")
+                                scanner = Atom("hex")
                             ),
-                            Keyword(name = YulIfKeyword, value = Atom("if")),
-                            Keyword(name = YulLeaveKeyword, value = Atom("leave")),
-                            Keyword(name = YulLetKeyword, value = Atom("let")),
+                            Keyword(name = YulIfKeyword, scanner = Atom("if")),
+                            Keyword(name = YulLeaveKeyword, scanner = Atom("leave")),
+                            Keyword(name = YulLetKeyword, scanner = Atom("let")),
                             Keyword(
                                 name = YulSuperKeyword,
                                 enabled = Never,
-                                value = Atom("super")
+                                scanner = Atom("super")
                             ),
-                            Keyword(name = YulSwitchKeyword, value = Atom("switch")),
+                            Keyword(name = YulSwitchKeyword, scanner = Atom("switch")),
                             Keyword(
                                 name = YulThisKeyword,
                                 enabled = Never,
-                                value = Atom("this")
+                                scanner = Atom("this")
                             ),
-                            Keyword(name = YulTrueKeyword, value = Atom("true"))
+                            Keyword(name = YulTrueKeyword, scanner = Atom("true"))
                         ]
                     ),
                     Topic(
