@@ -1,32 +1,83 @@
 name: "publish"
 
+# Three trigger flows:
+#
+#   push to main            — Full release flow: process changesets, publish docs,
+#                             and (when a version-bump PR just merged) build, validate,
+#                             and publish to npm/crates.io/GitHub Releases.
+#                             Requires manual approval via the slang-release environment.
+#
+#   workflow_dispatch       — Replays the push-to-main path (e.g. to retry a
+#                             flaky publish). Requires manual approval.
+#
+#   pull_request             — Build and validate only: exercises the full
+#                             build-and-validate pipeline (WASM build, cargo/npm
+#                             dry-run) but skips actual publishing. No approval needed.
+#
+# Execution paths:
+#
+#   Trigger          repo-check  changesets        build-and-validate  notify-deploy  publish
+#   ───────────────  ──────────  ────────────────  ──────────────────  ─────────────  ───────
+#   PR               ✓ gate      ⊘ skip (no push)  ✓ validate          ⊘ skip          ⊘ skip
+#   push (pending)   ✓ gate      ✓ has changesets   ✓ validate          ⊘ skip          ⊘ skip
+#   push (release)   ✓ gate      ✓ no changesets    ✓ validate          ✓ notify        ✓ publish
+#
+# Every job has an explicit 'if' condition — no job relies on implicit skip
+# propagation from needs. The one exception is build-and-validate, which uses
+# !cancelled() to override skip propagation from the changesets job (skipped
+# on PRs).
+
 on:
   # Run using manual triggers from GitHub UI:
   # https://docs.github.com/en/actions/managing-workflow-runs/manually-running-a-workflow
   workflow_dispatch: {}
 
-  # Run on pushes to 'main' branch':
+  # Run on pushes to 'main' branch:
   push:
     branches:
       - "main"
 
-# Wait for any other publish workflows in-progress to complete, before starting a new one:
+  # Run on PRs for build and validation:
+  pull_request: {}
+
+permissions: {}
+
+# Serialize runs for the same PR or branch. Different PRs/branches can run concurrently.
 concurrency:
-  group: "${{ github.workflow }}"
+  group: "${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref_name }}"
   cancel-in-progress: false
 
 jobs:
-  publish:
+  # ───────────────────────────────────────────────
+  # Gate: only run on the main repo (not forks).
+  # ───────────────────────────────────────────────
+
+  repo-check:
+    if: >-
+      (github.event_name == 'pull_request'
+       && github.event.pull_request.head.repo.full_name == github.repository)
+      || github.ref_name == 'main'
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    steps:
+      - run: "true"
 
-    # Only run on the main repo (not forks), and only on the 'main' branch:
-    if: "${{ github.repository == 'NomicFoundation/slang' && github.ref_name == 'main' }}"
+  # ───────────────────────────────────────────────
+  # Changesets: process version bumps and publish docs
+  # Runs on push to main and dispatch (not PRs)
+  # ───────────────────────────────────────────────
 
+  changesets:
+    needs:
+      - "repo-check"
+    if: >-
+      github.event_name == 'push'
+      || github.event_name == 'workflow_dispatch'
+    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
     permissions:
-      contents: "write" # to create new branches and releases
-      id-token: "write" # OIDC token (needed for trusted publishing)
+      contents: "write" # to create new branches
       pull-requests: "write" # to create new pull requests for changesets
-
+    outputs:
+      hasChangesets: "${{ steps.runChangesets.outputs.hasChangesets }}"
     steps:
       - name: "Checkout Repository"
         uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
@@ -70,8 +121,185 @@ jobs:
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
+  # ───────────────────────────────────────────────
+  # Build & Validate: build WASM and dry-run publish
+  # Runs on every trigger (PRs and pushes alike).
+  # ───────────────────────────────────────────────
+
+  build-and-validate:
+    needs:
+      - "repo-check"
+      - "changesets"
+    # !cancelled() overrides GitHub's default skip-propagation (needed because
+    # changesets is skipped on PRs). It also overrides failure-propagation,
+    # so repo-check and changesets must be re-asserted explicitly.
+    if: >-
+      !cancelled()
+      && needs.repo-check.result == 'success'
+      && (needs.changesets.result == 'success' || needs.changesets.result == 'skipped')
+    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    permissions:
+      contents: "read"
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+        with:
+          persist-credentials: false
+
+      - name: "Restore Cache"
+        uses: "./.github/actions/cache/restore"
+
+      - name: "infra setup"
+        run: "./scripts/bin/infra setup"
+
+      - name: "infra publish npm --dry-run"
+        run: "./scripts/bin/infra publish npm --dry-run"
+
+      - name: "infra publish cargo --dry-run"
+        run: "./scripts/bin/infra publish cargo --dry-run"
+
+      - name: "infra publish mkdocs --dry-run"
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          ./scripts/bin/infra publish mkdocs --target main-branch --dry-run
+
+      - name: "PR: publish summary"
+        if: "github.event_name == 'pull_request'"
+        run: |
+          VERSION=$(grep '^version = ' Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
+          echo "## Publish Validation Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Version:** \`${VERSION}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "The build-and-validate pipeline completed successfully." >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### What was validated" >> "$GITHUB_STEP_SUMMARY"
+          echo "- WASM package build" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`cargo publish --dry-run\` (skips crates whose version is already published)" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`pnpm publish --dry-run\` (skips if version is already published)" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Skipped (only on push/dispatch)" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Actual npm/cargo publishing" >> "$GITHUB_STEP_SUMMARY"
+          echo "- GitHub release creation" >> "$GITHUB_STEP_SUMMARY"
+
+  # ───────────────────────────────────────────────
+  # Notify: Slack notification that review is requested
+  # ───────────────────────────────────────────────
+
+  notify-deploy:
+    needs:
+      - "changesets"
+      - "build-and-validate"
+    if: >-
+      github.event_name != 'pull_request'
+      && needs.changesets.outputs.hasChangesets == 'false'
+    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    steps:
+      - name: "Notify review requested"
+        continue-on-error: true
+        uses: "slackapi/slack-github-action@af78098f536edbc4de71162a307590698245be95" # v3.0.1
+        with:
+          webhook: "${{ secrets.PUBLISHING_NOTIFICATIONS_SLACK_WEBHOOK_URL }}"
+          webhook-type: "incoming-webhook"
+          payload: |
+            {
+              "text": "Slang release — Review requested",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Slang release — Review requested"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Commit:* <${{ github.event.head_commit.url || format('{0}/{1}/commit/{2}', github.server_url, github.repository, github.sha) }}|View commit>\n*Approve:* <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Open workflow run>"
+                  }
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "Triggered by *${{ github.actor }}* via `${{ github.event_name }}`"
+                    }
+                  ]
+                }
+              ]
+            }
+
+  # ───────────────────────────────────────────────
+  # Publish: actual publishing with environment gate
+  # Only runs on push to main or dispatch (never PRs).
+  # ───────────────────────────────────────────────
+
+  publish:
+    needs:
+      - "changesets"
+      - "notify-deploy"
+    # Redundant with needs chain, but explicit for safety: never publish
+    # from PRs or when there are pending changesets.
+    if: >-
+      github.event_name != 'pull_request'
+      && needs.changesets.outputs.hasChangesets == 'false'
+    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    environment: "slang-release"
+    permissions:
+      contents: "write" # to create new releases
+      id-token: "write" # OIDC token (needed for trusted publishing)
+    steps:
+      - name: "Notify deployment starting"
+        continue-on-error: true
+        uses: "slackapi/slack-github-action@af78098f536edbc4de71162a307590698245be95" # v3.0.1
+        with:
+          webhook: "${{ secrets.PUBLISHING_NOTIFICATIONS_SLACK_WEBHOOK_URL }}"
+          webhook-type: "incoming-webhook"
+          payload: |
+            {
+              "text": "Slang release — Deployment starting",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Slang release — Deployment starting"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Run:* <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Open workflow run>"
+                  }
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "Triggered by *${{ github.actor }}*"
+                    }
+                  ]
+                }
+              ]
+            }
+
+      - name: "Checkout Repository"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+        with:
+          persist-credentials: false
+
+      - name: "Restore Cache"
+        uses: "./.github/actions/cache/restore"
+
+      - name: "infra setup"
+        run: "./scripts/bin/infra setup"
+
       - name: "infra publish npm"
-        if: "${{ steps.runChangesets.outputs.hasChangesets == 'false' }}"
         run: "./scripts/bin/infra publish npm"
 
       - name: "Exchange Cargo Token"
@@ -79,13 +307,11 @@ jobs:
         uses: "rust-lang/crates-io-auth-action@b7e9a28eded4986ec6b1fa40eeee8f8f165559ec"
 
       - name: "infra publish cargo"
-        if: "${{ steps.runChangesets.outputs.hasChangesets == 'false' }}"
         run: "./scripts/bin/infra publish cargo"
         env:
           CARGO_REGISTRY_TOKEN: "${{ steps.exchangeCargoToken.outputs.token }}"
 
       - name: "infra publish github-release"
-        if: "${{ steps.runChangesets.outputs.hasChangesets == 'false' }}"
         run: "./scripts/bin/infra publish github-release"
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
