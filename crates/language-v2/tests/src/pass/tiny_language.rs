@@ -1,5 +1,5 @@
 use language_v2_definition::model::{
-    Field, Item, Language, LexicalContext, Scanner, Section, StructItem, TokenItem, Topic,
+    Field, Item, Language, LexicalContext, Section, StructItem, TokenItem, TokenScanner, Topic,
 };
 use semver::Version;
 
@@ -86,7 +86,7 @@ fn definition() {
                                     name: "Bar".into(),
                                     enabled: None,
                                     not_followed_by: None,
-                                    scanner: Scanner::Atom { atom: "bar".into() }
+                                    scanner: TokenScanner::Atom { atom: "bar".into() }
                                 }
                                 .into()
                             },
@@ -95,7 +95,7 @@ fn definition() {
                                     name: "Baz".into(),
                                     enabled: None,
                                     not_followed_by: None,
-                                    scanner: Scanner::Atom { atom: "baz".into() }
+                                    scanner: TokenScanner::Atom { atom: "baz".into() }
                                 }
                                 .into()
                             }

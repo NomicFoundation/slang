@@ -3,8 +3,8 @@ use std::mem::discriminant;
 
 use indexmap::IndexMap;
 use language_v2_definition::model::{
-    Identifier, Item, KeywordItem, KeywordValue, Language, LexicalContext as LanguageContext,
-    Scanner, TokenItem, TriviaItem, VersionSpecifier,
+    Identifier, Item, KeywordItem, KeywordScanner, Language, LexicalContext as LanguageContext,
+    TokenItem, TokenScanner, TriviaItem, VersionSpecifier,
 };
 
 use crate::lexer::{Lexeme, LexerModel, LexicalContext};
@@ -85,7 +85,7 @@ impl LexerModelBuilder {
 }
 
 struct LexicalContextBuilder {
-    fragments: BTreeMap<Identifier, Scanner>,
+    fragments: BTreeMap<Identifier, TokenScanner>,
 
     lexemes: Vec<Lexeme>,
     subpatterns: IndexMap<Identifier, String>,
@@ -156,14 +156,14 @@ impl LexicalContextBuilder {
         }
 
         let scanner = self.fragments[name].clone();
-        let regex = self.convert_scanner(&scanner, false);
+        let regex = self.convert_token_scanner(&scanner, false);
         self.subpatterns.insert(name.clone(), regex);
     }
 
     fn convert_trivia(&mut self, item: &TriviaItem) -> Lexeme {
         Lexeme::Trivia {
             kind: item.name.to_string(),
-            regex: self.convert_scanner(&item.scanner, false),
+            regex: self.convert_token_scanner(&item.scanner, false),
         }
     }
 
@@ -171,7 +171,7 @@ impl LexicalContextBuilder {
         Lexeme::Keyword {
             kind: item.name.to_string(),
             identifier: identifier.map(|id| id.to_string()),
-            regex: Self::convert_keyword_value(&item.value),
+            regex: Self::convert_keyword_scanner(&item.scanner),
             reserved: item.reserved.clone().unwrap_or_default(),
         }
     }
@@ -180,97 +180,101 @@ impl LexicalContextBuilder {
         let not_followed_by = item
             .not_followed_by
             .as_ref()
-            .map(|scanner| self.convert_scanner(scanner, true));
+            .map(|scanner| self.convert_token_scanner(scanner, true));
 
         Lexeme::Token {
             kind: item.name.to_string(),
-            regex: self.convert_scanner(&item.scanner, false),
+            regex: self.convert_token_scanner(&item.scanner, false),
             not_followed_by,
         }
     }
 
-    fn convert_keyword_value(parent: &KeywordValue) -> String {
+    fn convert_keyword_scanner(parent: &KeywordScanner) -> String {
         match parent {
-            KeywordValue::Sequence { values } => values
+            KeywordScanner::Sequence { scanners } => scanners
                 .iter()
-                .map(|value| Self::convert_child_keyword_value(parent, value))
+                .map(|scanner| Self::convert_child_keyword_scanner(parent, scanner))
                 .collect(),
 
-            KeywordValue::Choice { values } => values
+            KeywordScanner::Choice { scanners } => scanners
                 .iter()
-                .map(|value| Self::convert_child_keyword_value(parent, value))
+                .map(|scanner| Self::convert_child_keyword_scanner(parent, scanner))
                 .collect::<Vec<_>>()
                 .join("|"),
 
-            KeywordValue::Optional { value } => {
-                format!("{}?", Self::convert_child_keyword_value(parent, value))
+            KeywordScanner::Optional { scanner } => {
+                format!("{}?", Self::convert_child_keyword_scanner(parent, scanner))
             }
 
-            KeywordValue::Atom { atom } => Self::convert_atom(atom),
+            KeywordScanner::Atom { atom } => Self::convert_atom(atom),
         }
     }
 
-    fn convert_child_keyword_value(parent: &KeywordValue, child: &KeywordValue) -> String {
+    fn convert_child_keyword_scanner(parent: &KeywordScanner, child: &KeywordScanner) -> String {
         if discriminant(parent) != discriminant(child)
-            && Self::keyword_value_precedence(child) <= Self::keyword_value_precedence(parent)
+            && Self::keyword_scanner_precedence(child) <= Self::keyword_scanner_precedence(parent)
         {
-            format!("({})", Self::convert_keyword_value(child))
+            format!("({})", Self::convert_keyword_scanner(child))
         } else {
-            Self::convert_keyword_value(child)
+            Self::convert_keyword_scanner(child)
         }
     }
 
-    fn keyword_value_precedence(value: &KeywordValue) -> u8 {
-        match value {
+    fn keyword_scanner_precedence(scanner: &KeywordScanner) -> u8 {
+        match scanner {
             // Binary:
-            KeywordValue::Sequence { .. } | KeywordValue::Choice { .. } => 1,
+            KeywordScanner::Sequence { .. } | KeywordScanner::Choice { .. } => 1,
             // Postfix:
-            KeywordValue::Optional { .. } => 2,
+            KeywordScanner::Optional { .. } => 2,
             // Primary:
-            KeywordValue::Atom { .. } => 3,
+            KeywordScanner::Atom { .. } => 3,
         }
     }
 
-    fn convert_scanner(&mut self, parent: &Scanner, inline_fragment: bool) -> String {
+    fn convert_token_scanner(&mut self, parent: &TokenScanner, inline_fragment: bool) -> String {
         match parent {
-            Scanner::Sequence { scanners } => {
+            TokenScanner::Sequence { scanners } => {
                 let mut result = String::new();
                 for scanner in scanners {
-                    result.push_str(&self.convert_child_scanner(parent, scanner, inline_fragment));
+                    result.push_str(&self.convert_child_token_scanner(
+                        parent,
+                        scanner,
+                        inline_fragment,
+                    ));
                 }
                 result
             }
 
-            Scanner::Choice { scanners } => {
+            TokenScanner::Choice { scanners } => {
                 let mut parts = Vec::new();
                 for scanner in scanners {
-                    parts.push(self.convert_child_scanner(parent, scanner, inline_fragment));
+                    parts.push(self.convert_child_token_scanner(parent, scanner, inline_fragment));
                 }
                 parts.join("|")
             }
 
-            Scanner::Optional { scanner } => {
+            TokenScanner::Optional { scanner } => {
                 format!(
                     "{}?",
-                    self.convert_child_scanner(parent, scanner, inline_fragment)
+                    self.convert_child_token_scanner(parent, scanner, inline_fragment)
                 )
             }
 
-            Scanner::ZeroOrMore { scanner } => {
+            TokenScanner::ZeroOrMore { scanner } => {
                 format!(
                     "{}*",
-                    self.convert_child_scanner(parent, scanner, inline_fragment)
+                    self.convert_child_token_scanner(parent, scanner, inline_fragment)
                 )
             }
 
-            Scanner::OneOrMore { scanner } => {
+            TokenScanner::OneOrMore { scanner } => {
                 format!(
                     "{}+",
-                    self.convert_child_scanner(parent, scanner, inline_fragment)
+                    self.convert_child_token_scanner(parent, scanner, inline_fragment)
                 )
             }
 
-            Scanner::Not { chars } => {
+            TokenScanner::Not { chars } => {
                 format!(
                     "[^{}]",
                     chars
@@ -280,7 +284,7 @@ impl LexicalContextBuilder {
                 )
             }
 
-            Scanner::Range {
+            TokenScanner::Range {
                 inclusive_start,
                 inclusive_end,
             } => format!(
@@ -289,12 +293,12 @@ impl LexicalContextBuilder {
                 Self::convert_char(*inclusive_end)
             ),
 
-            Scanner::Atom { atom } => Self::convert_atom(atom),
+            TokenScanner::Atom { atom } => Self::convert_atom(atom),
 
-            Scanner::Fragment { reference } => {
+            TokenScanner::Fragment { reference } => {
                 if inline_fragment {
                     let scanner = self.fragments[reference].clone();
-                    self.convert_child_scanner(parent, &scanner, inline_fragment)
+                    self.convert_child_token_scanner(parent, &scanner, inline_fragment)
                 } else {
                     self.add_subpattern(reference);
                     format!("(?&{reference})")
@@ -303,33 +307,35 @@ impl LexicalContextBuilder {
         }
     }
 
-    fn convert_child_scanner(
+    fn convert_child_token_scanner(
         &mut self,
-        parent: &Scanner,
-        child: &Scanner,
+        parent: &TokenScanner,
+        child: &TokenScanner,
         inline_fragment: bool,
     ) -> String {
         let needs_parens = discriminant(parent) != discriminant(child)
-            && Self::scanner_precedence(child) <= Self::scanner_precedence(parent);
+            && Self::token_scanner_precedence(child) <= Self::token_scanner_precedence(parent);
         if needs_parens {
-            let inner = self.convert_scanner(child, inline_fragment);
+            let inner = self.convert_token_scanner(child, inline_fragment);
             format!("({inner})")
         } else {
-            self.convert_scanner(child, inline_fragment)
+            self.convert_token_scanner(child, inline_fragment)
         }
     }
 
-    fn scanner_precedence(scanner: &Scanner) -> u8 {
+    fn token_scanner_precedence(scanner: &TokenScanner) -> u8 {
         match scanner {
             // Binary:
-            Scanner::Sequence { .. } | Scanner::Choice { .. } => 1,
+            TokenScanner::Sequence { .. } | TokenScanner::Choice { .. } => 1,
             // Postfix:
-            Scanner::Optional { .. } | Scanner::ZeroOrMore { .. } | Scanner::OneOrMore { .. } => 2,
+            TokenScanner::Optional { .. }
+            | TokenScanner::ZeroOrMore { .. }
+            | TokenScanner::OneOrMore { .. } => 2,
             // Primary:
-            Scanner::Not { .. }
-            | Scanner::Range { .. }
-            | Scanner::Atom { .. }
-            | Scanner::Fragment { .. } => 3,
+            TokenScanner::Not { .. }
+            | TokenScanner::Range { .. }
+            | TokenScanner::Atom { .. }
+            | TokenScanner::Fragment { .. } => 3,
         }
     }
 

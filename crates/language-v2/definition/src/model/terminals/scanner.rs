@@ -7,21 +7,21 @@ use crate::model::Identifier;
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 #[serde(tag = "type")]
-pub enum Scanner {
+pub enum TokenScanner {
     Sequence {
-        scanners: Vec<Scanner>,
+        scanners: Vec<TokenScanner>,
     },
     Choice {
-        scanners: Vec<Scanner>,
+        scanners: Vec<TokenScanner>,
     },
     Optional {
-        scanner: Box<Scanner>,
+        scanner: Box<TokenScanner>,
     },
     ZeroOrMore {
-        scanner: Box<Scanner>,
+        scanner: Box<TokenScanner>,
     },
     OneOrMore {
-        scanner: Box<Scanner>,
+        scanner: Box<TokenScanner>,
     },
     Not {
         chars: IndexSet<char>,
@@ -38,7 +38,7 @@ pub enum Scanner {
     },
 }
 
-impl Scanner {
+impl TokenScanner {
     pub fn is_unique(&self) -> bool {
         match self {
             Self::Sequence { scanners } => scanners.iter().all(|scanner| scanner.is_unique()),

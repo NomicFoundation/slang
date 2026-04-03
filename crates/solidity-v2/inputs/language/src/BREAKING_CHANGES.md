@@ -20,6 +20,7 @@
 
 - Removed `Scanner::TrailingContext` as the new lexer has no backtracking, and tries to scan the longest match by default. Terminals now have a priority (to resolve ambiguities), defined by their kind (`Trivia` < `Tokens` < `Keywords`), then by their order of declaration in the grammar. Later definitions like `SingleLineNatSpecComment` (`///`) have a higher priority than earlier definitions like `SingleLineComment` (`//`).
 - Removed `TokenDefinition` and `KeywordDefinition` and inlined their fields into `TokenItem` and `KeywordItem`, since no items had multiple definitions with different `enabled`/`reserved` status, the extra indirection was unnecessary.
+- Renamed `Scanner` to `TokenScanner` and `KeywordValue` to `KeywordScanner` to better reflect their roles: `TokenScanner` defines lexical patterns for tokens/fragments/trivia, while `KeywordScanner` defines keyword matching patterns.
 
 ## Nonterminals
 
