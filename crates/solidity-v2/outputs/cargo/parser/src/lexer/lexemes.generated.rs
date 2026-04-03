@@ -144,6 +144,7 @@ pub enum LexemeKind {
     PlusPlus,
     PragmaBarBar,
     PragmaCaret,
+    PragmaEndOfLine,
     PragmaEqual,
     PragmaGreaterThan,
     PragmaGreaterThanEqual,
@@ -151,10 +152,15 @@ pub enum LexemeKind {
     PragmaLessThan,
     PragmaLessThanEqual,
     PragmaMinus,
+    PragmaMultiLineComment,
+    PragmaMultiLineNatSpecComment,
     PragmaPeriod,
     PragmaSemicolon,
+    PragmaSingleLineComment,
+    PragmaSingleLineNatSpecComment,
     PragmaStringLiteral,
     PragmaTilde,
+    PragmaWhitespace,
     PrivateKeyword_Reserved,
     PromiseKeyword_Reserved,
     PublicKeyword_Reserved,
@@ -216,6 +222,7 @@ pub enum LexemeKind {
     YulContinueKeyword_Reserved,
     YulDecimalLiteral,
     YulDefaultKeyword_Reserved,
+    YulEndOfLine,
     YulFalseKeyword_Reserved,
     YulForKeyword_Reserved,
     YulFunctionKeyword_Reserved,
@@ -227,12 +234,43 @@ pub enum LexemeKind {
     YulLeaveKeyword_Reserved,
     YulLetKeyword_Reserved,
     YulMinusGreaterThan,
+    YulMultiLineComment,
+    YulMultiLineNatSpecComment,
     YulOpenBrace,
     YulOpenParen,
     YulPeriod,
+    YulSingleLineComment,
+    YulSingleLineNatSpecComment,
     YulStringLiteral,
     YulSuperKeyword_Reserved,
     YulSwitchKeyword_Reserved,
     YulThisKeyword_Reserved,
     YulTrueKeyword_Reserved,
+    YulWhitespace,
+}
+
+impl LexemeKind {
+    pub fn is_trivia(&self) -> bool {
+        matches!(
+            self,
+            Self::EndOfLine
+                | Self::MultiLineComment
+                | Self::MultiLineNatSpecComment
+                | Self::PragmaEndOfLine
+                | Self::PragmaMultiLineComment
+                | Self::PragmaMultiLineNatSpecComment
+                | Self::PragmaSingleLineComment
+                | Self::PragmaSingleLineNatSpecComment
+                | Self::PragmaWhitespace
+                | Self::SingleLineComment
+                | Self::SingleLineNatSpecComment
+                | Self::Whitespace
+                | Self::YulEndOfLine
+                | Self::YulMultiLineComment
+                | Self::YulMultiLineNatSpecComment
+                | Self::YulSingleLineComment
+                | Self::YulSingleLineNatSpecComment
+                | Self::YulWhitespace
+        )
+    }
 }

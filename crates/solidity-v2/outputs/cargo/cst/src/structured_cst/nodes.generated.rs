@@ -5115,15 +5115,6 @@ pub fn new_emit_keyword(range: Range<usize>, _source: &str) -> EmitKeyword {
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct EndOfLine {
-    pub range: Range<usize>,
-}
-
-pub fn new_end_of_line(range: Range<usize>, _source: &str) -> EndOfLine {
-    EndOfLine { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub struct EnumKeyword {
     pub range: Range<usize>,
 }
@@ -5637,27 +5628,6 @@ pub fn new_modifier_keyword(range: Range<usize>, _source: &str) -> ModifierKeywo
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct MultiLineComment {
-    pub range: Range<usize>,
-}
-
-pub fn new_multi_line_comment(range: Range<usize>, _source: &str) -> MultiLineComment {
-    MultiLineComment { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct MultiLineNatSpecComment {
-    pub range: Range<usize>,
-}
-
-pub fn new_multi_line_nat_spec_comment(
-    range: Range<usize>,
-    _source: &str,
-) -> MultiLineNatSpecComment {
-    MultiLineNatSpecComment { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub struct MutableKeyword {
     pub range: Range<usize>,
 }
@@ -6054,27 +6024,6 @@ pub fn new_semicolon(range: Range<usize>, _source: &str) -> Semicolon {
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct SingleLineComment {
-    pub range: Range<usize>,
-}
-
-pub fn new_single_line_comment(range: Range<usize>, _source: &str) -> SingleLineComment {
-    SingleLineComment { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct SingleLineNatSpecComment {
-    pub range: Range<usize>,
-}
-
-pub fn new_single_line_nat_spec_comment(
-    range: Range<usize>,
-    _source: &str,
-) -> SingleLineNatSpecComment {
-    SingleLineNatSpecComment { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub struct SizeOfKeyword {
     pub range: Range<usize>,
 }
@@ -6369,15 +6318,6 @@ pub struct WhileKeyword {
 
 pub fn new_while_keyword(range: Range<usize>, _source: &str) -> WhileKeyword {
     WhileKeyword { range }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct Whitespace {
-    pub range: Range<usize>,
-}
-
-pub fn new_whitespace(range: Range<usize>, _source: &str) -> Whitespace {
-    Whitespace { range }
 }
 
 #[derive(Clone, Debug, PartialEq)]

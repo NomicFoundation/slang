@@ -1,5 +1,5 @@
 error: Reference 'Two' of kind 'Token' is not valid. Expected: [Keyword]
-  --> src/fail/p3_references/lexical_context_switch_not_keyword/test.rs:20:56
+  --> src/fail/p3_references/lexical_context_switch_not_keyword/test.rs:18:56
    |
-20 | ...                   fields = (entry = Required(Two), field_1 = Required(Three))
+18 | ...                   fields = (entry = Required(Two), field_1 = Required(Three))
    |                                                  ^^^

@@ -11,7 +11,8 @@ use crate::lexer::builder::LexerModelBuilder;
 #[derive(Clone, Debug, Serialize)]
 pub struct LexerModel {
     pub contexts: Vec<LexicalContext>,
-    pub lexeme_kinds: BTreeSet<String>,
+    pub all_lexeme_kinds: BTreeSet<String>,
+    pub trivia_lexeme_kinds: BTreeSet<String>,
 }
 
 impl LexerModel {

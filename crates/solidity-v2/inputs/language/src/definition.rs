@@ -3,19 +3,6 @@ pub use solidity::SolidityDefinition;
 language_v2_macros::compile!(Language(
     name = Solidity,
     root_item = SourceUnit,
-    leading_trivia = OneOrMore(Choice([
-        Trivia(Whitespace),
-        Trivia(EndOfLine),
-        Trivia(SingleLineComment),
-        Trivia(MultiLineComment),
-        Trivia(SingleLineNatSpecComment),
-        Trivia(MultiLineNatSpecComment)
-    ])),
-    trailing_trivia = Sequence([
-        Optional(Trivia(Whitespace)),
-        Optional(Trivia(SingleLineComment)),
-        Trivia(EndOfLine)
-    ]),
     versions = [
         "0.8.0",  "0.8.1",  "0.8.2",  "0.8.3",  "0.8.4",  "0.8.5",  "0.8.6",  "0.8.7",  "0.8.8",  "0.8.9",
         "0.8.10", "0.8.11", "0.8.12", "0.8.13", "0.8.14", "0.8.15", "0.8.16", "0.8.17", "0.8.18", "0.8.19",
@@ -250,6 +237,64 @@ language_v2_macros::compile!(Language(
                                 ])
                             )
                         ]
+                    ),
+                    Topic(
+                        title = "Pragma Trivia",
+                        items = [
+                            Trivia(
+                                name = PragmaWhitespace,
+                                scanner = OneOrMore(Choice([Atom(" "), Atom("\t")]))
+                            ),
+                            Trivia(
+                                name = PragmaEndOfLine,
+                                scanner = Choice([
+                                    Atom("\n"),
+                                    Sequence([Atom("\r"), Optional(Atom("\n"))])
+                                ])
+                            ),
+                            Trivia(
+                                name = PragmaSingleLineComment,
+                                scanner = Sequence([Atom("//"), ZeroOrMore(Not(['\r', '\n']))])
+                            ),
+                            Trivia(
+                                name = PragmaMultiLineComment,
+                                // https://stackoverflow.com/a/36328890
+                                scanner = Sequence([
+                                    Atom("/*"),
+                                    ZeroOrMore(Not(['*'])),
+                                    OneOrMore(Atom("*")),
+                                    ZeroOrMore(Sequence([
+                                        Not(['/', '*']),
+                                        ZeroOrMore(Not(['*'])),
+                                        OneOrMore(Atom("*"))
+                                    ])),
+                                    Atom("/")
+                                ])
+                            ),
+                            Trivia(
+                                name = PragmaSingleLineNatSpecComment,
+                                scanner =
+                                    Sequence([Atom("///"), ZeroOrMore(Not(['\r', '\n']))])
+                            ),
+                            Trivia(
+                                name = PragmaMultiLineNatSpecComment,
+                                // https://stackoverflow.com/a/36328890
+                                scanner = Sequence([
+                                    Atom("/**"),
+                                    Optional(Sequence([
+                                        Not(['/', '*']),
+                                        ZeroOrMore(Not(['*']))
+                                    ])),
+                                    OneOrMore(Atom("*")),
+                                    ZeroOrMore(Sequence([
+                                        Not(['/', '*']),
+                                        ZeroOrMore(Not(['*'])),
+                                        OneOrMore(Atom("*"))
+                                    ])),
+                                    Atom("/")
+                                ])
+                            )
+                        ]
                     )
                 ]
             )]
@@ -469,64 +514,6 @@ language_v2_macros::compile!(Language(
                                         EnumVariant(reference = TypeName),
                                         EnumVariant(reference = Asterisk)
                                     ]
-                                )
-                            ]
-                        ),
-                        Topic(
-                            title = "Trivia",
-                            items = [
-                                Trivia(
-                                    name = Whitespace,
-                                    scanner = OneOrMore(Choice([Atom(" "), Atom("\t")]))
-                                ),
-                                Trivia(
-                                    name = EndOfLine,
-                                    scanner = Choice([
-                                        Atom("\n"),
-                                        Sequence([Atom("\r"), Optional(Atom("\n"))])
-                                    ])
-                                ),
-                                Trivia(
-                                    name = SingleLineComment,
-                                    scanner = Sequence([Atom("//"), ZeroOrMore(Not(['\r', '\n']))])
-                                ),
-                                Trivia(
-                                    name = MultiLineComment,
-                                    // https://stackoverflow.com/a/36328890
-                                    scanner = Sequence([
-                                        Atom("/*"),
-                                        ZeroOrMore(Not(['*'])),
-                                        OneOrMore(Atom("*")),
-                                        ZeroOrMore(Sequence([
-                                            Not(['/', '*']),
-                                            ZeroOrMore(Not(['*'])),
-                                            OneOrMore(Atom("*"))
-                                        ])),
-                                        Atom("/")
-                                    ])
-                                ),
-                                Trivia(
-                                    name = SingleLineNatSpecComment,
-                                    scanner =
-                                        Sequence([Atom("///"), ZeroOrMore(Not(['\r', '\n']))])
-                                ),
-                                Trivia(
-                                    name = MultiLineNatSpecComment,
-                                    // https://stackoverflow.com/a/36328890
-                                    scanner = Sequence([
-                                        Atom("/**"),
-                                        Optional(Sequence([
-                                            Not(['/', '*']),
-                                            ZeroOrMore(Not(['*']))
-                                        ])),
-                                        OneOrMore(Atom("*")),
-                                        ZeroOrMore(Sequence([
-                                            Not(['/', '*']),
-                                            ZeroOrMore(Not(['*'])),
-                                            OneOrMore(Atom("*"))
-                                        ])),
-                                        Atom("/")
-                                    ])
                                 )
                             ]
                         ),
@@ -1512,6 +1499,64 @@ language_v2_macros::compile!(Language(
                                 Token(name = Caret, scanner = Atom("^")),
                                 Token(name = CaretEqual, scanner = Atom("^=")),
                                 Token(name = Tilde, scanner = Atom("~"))
+                            ]
+                        ),
+                        Topic(
+                            title = "Trivia",
+                            items = [
+                                Trivia(
+                                    name = Whitespace,
+                                    scanner = OneOrMore(Choice([Atom(" "), Atom("\t")]))
+                                ),
+                                Trivia(
+                                    name = EndOfLine,
+                                    scanner = Choice([
+                                        Atom("\n"),
+                                        Sequence([Atom("\r"), Optional(Atom("\n"))])
+                                    ])
+                                ),
+                                Trivia(
+                                    name = SingleLineComment,
+                                    scanner = Sequence([Atom("//"), ZeroOrMore(Not(['\r', '\n']))])
+                                ),
+                                Trivia(
+                                    name = MultiLineComment,
+                                    // https://stackoverflow.com/a/36328890
+                                    scanner = Sequence([
+                                        Atom("/*"),
+                                        ZeroOrMore(Not(['*'])),
+                                        OneOrMore(Atom("*")),
+                                        ZeroOrMore(Sequence([
+                                            Not(['/', '*']),
+                                            ZeroOrMore(Not(['*'])),
+                                            OneOrMore(Atom("*"))
+                                        ])),
+                                        Atom("/")
+                                    ])
+                                ),
+                                Trivia(
+                                    name = SingleLineNatSpecComment,
+                                    scanner =
+                                        Sequence([Atom("///"), ZeroOrMore(Not(['\r', '\n']))])
+                                ),
+                                Trivia(
+                                    name = MultiLineNatSpecComment,
+                                    // https://stackoverflow.com/a/36328890
+                                    scanner = Sequence([
+                                        Atom("/**"),
+                                        Optional(Sequence([
+                                            Not(['/', '*']),
+                                            ZeroOrMore(Not(['*']))
+                                        ])),
+                                        OneOrMore(Atom("*")),
+                                        ZeroOrMore(Sequence([
+                                            Not(['/', '*']),
+                                            ZeroOrMore(Not(['*'])),
+                                            OneOrMore(Atom("*"))
+                                        ])),
+                                        Atom("/")
+                                    ])
+                                )
                             ]
                         )
                     ]
@@ -4320,6 +4365,64 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                             Token(name = YulOpenBrace, scanner = Atom("{")),
                             Token(name = YulOpenParen, scanner = Atom("(")),
                             Token(name = YulPeriod, scanner = Atom("."))
+                        ]
+                    ),
+                    Topic(
+                        title = "Trivia",
+                        items = [
+                            Trivia(
+                                name = YulWhitespace,
+                                scanner = OneOrMore(Choice([Atom(" "), Atom("\t")]))
+                            ),
+                            Trivia(
+                                name = YulEndOfLine,
+                                scanner = Choice([
+                                    Atom("\n"),
+                                    Sequence([Atom("\r"), Optional(Atom("\n"))])
+                                ])
+                            ),
+                            Trivia(
+                                name = YulSingleLineComment,
+                                scanner = Sequence([Atom("//"), ZeroOrMore(Not(['\r', '\n']))])
+                            ),
+                            Trivia(
+                                name = YulMultiLineComment,
+                                // https://stackoverflow.com/a/36328890
+                                scanner = Sequence([
+                                    Atom("/*"),
+                                    ZeroOrMore(Not(['*'])),
+                                    OneOrMore(Atom("*")),
+                                    ZeroOrMore(Sequence([
+                                        Not(['/', '*']),
+                                        ZeroOrMore(Not(['*'])),
+                                        OneOrMore(Atom("*"))
+                                    ])),
+                                    Atom("/")
+                                ])
+                            ),
+                            Trivia(
+                                name = YulSingleLineNatSpecComment,
+                                scanner =
+                                    Sequence([Atom("///"), ZeroOrMore(Not(['\r', '\n']))])
+                            ),
+                            Trivia(
+                                name = YulMultiLineNatSpecComment,
+                                // https://stackoverflow.com/a/36328890
+                                scanner = Sequence([
+                                    Atom("/**"),
+                                    Optional(Sequence([
+                                        Not(['/', '*']),
+                                        ZeroOrMore(Not(['*']))
+                                    ])),
+                                    OneOrMore(Atom("*")),
+                                    ZeroOrMore(Sequence([
+                                        Not(['/', '*']),
+                                        ZeroOrMore(Not(['*'])),
+                                        OneOrMore(Atom("*"))
+                                    ])),
+                                    Atom("/")
+                                ])
+                            )
                         ]
                     )
                 ]

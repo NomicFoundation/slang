@@ -1,5 +1,5 @@
 error: Unnecessary switch to the same lexical context.
-  --> src/fail/p3_references/unnecessary_lexical_context_switch/test.rs:18:50
+  --> src/fail/p3_references/unnecessary_lexical_context_switch/test.rs:16:50
    |
-18 |                         switch_lexical_context = ContextA,
+16 |                         switch_lexical_context = ContextA,
    |                                                  ^^^^^^^^

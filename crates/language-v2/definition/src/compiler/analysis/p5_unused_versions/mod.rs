@@ -1,10 +1,15 @@
 use crate::compiler::analysis::Analysis;
 use crate::compiler::utils::version_set::VersionSet;
-use crate::model::Identifier;
+use crate::model::{Identifier, SpannedItem};
 
 pub(crate) fn run(analysis: &mut Analysis) {
     for (name, metadata) in &analysis.metadata {
         if name == &*analysis.language.root_item {
+            continue;
+        }
+
+        // Trivia items are consumed by the lexer, not referenced by grammar rules:
+        if matches!(metadata.item, SpannedItem::Trivia { .. }) {
             continue;
         }
 

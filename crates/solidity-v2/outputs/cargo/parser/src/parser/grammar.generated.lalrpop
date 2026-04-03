@@ -120,6 +120,9 @@ Repeated<T>: Vec<T> = {
 // Rules for topic Pragma String Literals
     
 
+// Rules for topic Pragma Trivia
+    
+
 
 
 
@@ -244,13 +247,13 @@ Repeated<T>: Vec<T> = {
     };
     
 
-// Rules for topic Trivia
-    
-
 // Rules for topic Keywords
     
 
 // Rules for topic Punctuation
+    
+
+// Rules for topic Trivia
     
 
 
@@ -1725,6 +1728,9 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
 // Rules for topic Yul Punctuation
     
 
+// Rules for topic Trivia
+    
+
 
 
 
@@ -2047,12 +2053,6 @@ ElseKeyword: ElseKeyword = {
 EmitKeyword: EmitKeyword = {
 
         <l:@L> L_EmitKeyword_Reserved <r:@L> => new_emit_keyword(l..r, source),
-
-};
-#[inline]
-EndOfLine: EndOfLine = {
-
-        <l:@L> L_EndOfLine <r:@L> => new_end_of_line(l..r, source),
 
 };
 #[inline]
@@ -2414,18 +2414,6 @@ ModifierKeyword: ModifierKeyword = {
 
 };
 #[inline]
-MultiLineComment: MultiLineComment = {
-
-        <l:@L> L_MultiLineComment <r:@L> => new_multi_line_comment(l..r, source),
-
-};
-#[inline]
-MultiLineNatSpecComment: MultiLineNatSpecComment = {
-
-        <l:@L> L_MultiLineNatSpecComment <r:@L> => new_multi_line_nat_spec_comment(l..r, source),
-
-};
-#[inline]
 MutableKeyword: MutableKeyword = {
 
         <l:@L> L_MutableKeyword_Reserved <r:@L> => new_mutable_keyword(l..r, source),
@@ -2690,18 +2678,6 @@ Semicolon: Semicolon = {
 
 };
 #[inline]
-SingleLineComment: SingleLineComment = {
-
-        <l:@L> L_SingleLineComment <r:@L> => new_single_line_comment(l..r, source),
-
-};
-#[inline]
-SingleLineNatSpecComment: SingleLineNatSpecComment = {
-
-        <l:@L> L_SingleLineNatSpecComment <r:@L> => new_single_line_nat_spec_comment(l..r, source),
-
-};
-#[inline]
 SizeOfKeyword: SizeOfKeyword = {
 
         <l:@L> L_SizeOfKeyword_Reserved <r:@L> => new_size_of_keyword(l..r, source),
@@ -2897,12 +2873,6 @@ WeiKeyword: WeiKeyword = {
 WhileKeyword: WhileKeyword = {
 
         <l:@L> L_WhileKeyword_Reserved <r:@L> => new_while_keyword(l..r, source),
-
-};
-#[inline]
-Whitespace: Whitespace = {
-
-        <l:@L> L_Whitespace <r:@L> => new_whitespace(l..r, source),
 
 };
 #[inline]
@@ -3217,6 +3187,7 @@ extern {
         L_PlusPlus => LexemeKind::PlusPlus,
         L_PragmaBarBar => LexemeKind::PragmaBarBar,
         L_PragmaCaret => LexemeKind::PragmaCaret,
+        L_PragmaEndOfLine => LexemeKind::PragmaEndOfLine,
         L_PragmaEqual => LexemeKind::PragmaEqual,
         L_PragmaGreaterThan => LexemeKind::PragmaGreaterThan,
         L_PragmaGreaterThanEqual => LexemeKind::PragmaGreaterThanEqual,
@@ -3224,10 +3195,15 @@ extern {
         L_PragmaLessThan => LexemeKind::PragmaLessThan,
         L_PragmaLessThanEqual => LexemeKind::PragmaLessThanEqual,
         L_PragmaMinus => LexemeKind::PragmaMinus,
+        L_PragmaMultiLineComment => LexemeKind::PragmaMultiLineComment,
+        L_PragmaMultiLineNatSpecComment => LexemeKind::PragmaMultiLineNatSpecComment,
         L_PragmaPeriod => LexemeKind::PragmaPeriod,
         L_PragmaSemicolon => LexemeKind::PragmaSemicolon,
+        L_PragmaSingleLineComment => LexemeKind::PragmaSingleLineComment,
+        L_PragmaSingleLineNatSpecComment => LexemeKind::PragmaSingleLineNatSpecComment,
         L_PragmaStringLiteral => LexemeKind::PragmaStringLiteral,
         L_PragmaTilde => LexemeKind::PragmaTilde,
+        L_PragmaWhitespace => LexemeKind::PragmaWhitespace,
         L_PrivateKeyword_Reserved => LexemeKind::PrivateKeyword_Reserved,
         L_PromiseKeyword_Reserved => LexemeKind::PromiseKeyword_Reserved,
         L_PublicKeyword_Reserved => LexemeKind::PublicKeyword_Reserved,
@@ -3289,6 +3265,7 @@ extern {
         L_YulContinueKeyword_Reserved => LexemeKind::YulContinueKeyword_Reserved,
         L_YulDecimalLiteral => LexemeKind::YulDecimalLiteral,
         L_YulDefaultKeyword_Reserved => LexemeKind::YulDefaultKeyword_Reserved,
+        L_YulEndOfLine => LexemeKind::YulEndOfLine,
         L_YulFalseKeyword_Reserved => LexemeKind::YulFalseKeyword_Reserved,
         L_YulForKeyword_Reserved => LexemeKind::YulForKeyword_Reserved,
         L_YulFunctionKeyword_Reserved => LexemeKind::YulFunctionKeyword_Reserved,
@@ -3300,14 +3277,19 @@ extern {
         L_YulLeaveKeyword_Reserved => LexemeKind::YulLeaveKeyword_Reserved,
         L_YulLetKeyword_Reserved => LexemeKind::YulLetKeyword_Reserved,
         L_YulMinusGreaterThan => LexemeKind::YulMinusGreaterThan,
+        L_YulMultiLineComment => LexemeKind::YulMultiLineComment,
+        L_YulMultiLineNatSpecComment => LexemeKind::YulMultiLineNatSpecComment,
         L_YulOpenBrace => LexemeKind::YulOpenBrace,
         L_YulOpenParen => LexemeKind::YulOpenParen,
         L_YulPeriod => LexemeKind::YulPeriod,
+        L_YulSingleLineComment => LexemeKind::YulSingleLineComment,
+        L_YulSingleLineNatSpecComment => LexemeKind::YulSingleLineNatSpecComment,
         L_YulStringLiteral => LexemeKind::YulStringLiteral,
         L_YulSuperKeyword_Reserved => LexemeKind::YulSuperKeyword_Reserved,
         L_YulSwitchKeyword_Reserved => LexemeKind::YulSwitchKeyword_Reserved,
         L_YulThisKeyword_Reserved => LexemeKind::YulThisKeyword_Reserved,
         L_YulTrueKeyword_Reserved => LexemeKind::YulTrueKeyword_Reserved,
+        L_YulWhitespace => LexemeKind::YulWhitespace,
         
     }
 }

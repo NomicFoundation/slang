@@ -5,7 +5,7 @@ use language_v2_internal_macros::{derive_spanned_type, ParseInputTokens, WriteOu
 use semver::Version;
 use serde::{Deserialize, Serialize};
 
-use crate::model::{Field, Identifier, Item, TriviaParser, VersionSpecifier};
+use crate::model::{Field, Identifier, Item, VersionSpecifier};
 
 /// A representation of a Language definition
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -16,12 +16,6 @@ pub struct Language {
 
     /// Each language must have a single root item
     pub root_item: Identifier,
-
-    /// The leading trivia parser
-    pub leading_trivia: TriviaParser,
-
-    /// The trailing trivia parser
-    pub trailing_trivia: TriviaParser,
 
     /// The supported versions of the language
     pub versions: IndexSet<Version>,

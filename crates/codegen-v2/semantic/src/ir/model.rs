@@ -160,14 +160,8 @@ impl IrModelBuilder {
                 | model::Item::Precedence { .. } => {
                     // These items are nonterminals.
                 }
-                model::Item::Trivia { item } => {
-                    self.terminals.insert(
-                        item.name.clone(),
-                        Terminal {
-                            is_unique: false,
-                            is_identifier: false,
-                        },
-                    );
+                model::Item::Trivia { .. } => {
+                    // These items are skipped by the parser.
                 }
                 model::Item::Keyword { item } => {
                     self.terminals.insert(

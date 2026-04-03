@@ -5,14 +5,14 @@ use crate::compiler::analysis::Analysis;
 use crate::compiler::utils::version_set::VersionSet;
 use crate::internals::Spanned;
 use crate::model::SpannedItemDiscriminants::{
-    self, Enum, Fragment, Keyword, Precedence, Repeated, Separated, Struct, Token, Trivia,
+    self, Enum, Fragment, Keyword, Precedence, Repeated, Separated, Struct, Token,
 };
 use crate::model::{
     Identifier, SpannedEnumItem, SpannedEnumVariant, SpannedField, SpannedFragmentItem,
     SpannedItem, SpannedKeywordItem, SpannedPrecedenceExpression, SpannedPrecedenceItem,
     SpannedPrecedenceOperator, SpannedPrimaryExpression, SpannedRepeatedItem, SpannedScanner,
     SpannedSeparatedItem, SpannedStructItem, SpannedTokenItem, SpannedTriviaItem,
-    SpannedTriviaParser, SpannedVersionSpecifier,
+    SpannedVersionSpecifier,
 };
 
 pub(crate) fn run(analysis: &mut Analysis) {
@@ -29,9 +29,6 @@ pub(crate) fn run(analysis: &mut Analysis) {
         &[Struct, Enum, Repeated, Separated, Precedence],
         None,
     );
-
-    check_trivia_parser(analysis, &language.leading_trivia, &enablement);
-    check_trivia_parser(analysis, &language.trailing_trivia, &enablement);
 
     for lexical_context in &language.contexts {
         for section in &lexical_context.sections {
@@ -349,28 +346,6 @@ fn check_gateway_field(
             analysis
                 .errors
                 .add(reference, &Errors::OptionalGatewayField);
-        }
-    }
-}
-
-fn check_trivia_parser(
-    analysis: &mut Analysis,
-    parser: &SpannedTriviaParser,
-    enablement: &VersionSet,
-) {
-    match parser {
-        SpannedTriviaParser::Sequence { parsers } | SpannedTriviaParser::Choice { parsers } => {
-            for parser in parsers {
-                check_trivia_parser(analysis, parser, enablement);
-            }
-        }
-        SpannedTriviaParser::OneOrMore { parser }
-        | SpannedTriviaParser::ZeroOrMore { parser }
-        | SpannedTriviaParser::Optional { parser } => {
-            check_trivia_parser(analysis, parser, enablement);
-        }
-        SpannedTriviaParser::Trivia { reference } => {
-            check_reference(analysis, None, reference, enablement, &[Trivia], None);
         }
     }
 }

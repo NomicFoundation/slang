@@ -3,8 +3,6 @@
 language_v2_macros::compile!(Language(
     name = Foo,
     root_item = One,
-    leading_trivia = Sequence([]),
-    trailing_trivia = Sequence([]),
     versions = ["1.0.0", "2.0.0", "3.0.0"],
     contexts = [LexicalContext(
         name = Foo,

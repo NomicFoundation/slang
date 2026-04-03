@@ -160,8 +160,8 @@ impl StructuredCstModelBuilder {
                 | model::Item::Precedence { .. } => {
                     // These items are nonterminals.
                 }
-                model::Item::Trivia { item } => {
-                    self.terminals.insert(item.name.clone());
+                model::Item::Trivia { .. } => {
+                    // Trivia items are skipped by the parser.
                 }
                 model::Item::Keyword { item } => {
                     self.terminals.insert(item.name.clone());

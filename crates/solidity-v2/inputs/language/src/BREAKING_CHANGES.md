@@ -10,6 +10,12 @@
 
 - Group `Section` entries under a new top-level `Language::contexts` field, where each `LexicalContext` defines the `identifier_token` for its keywords (replacing `Keyword::identifier`).
 
+## Trivia
+
+- Trivia items are now defined per lexical context with context-prefixed names (e.g., `PragmaWhitespace`, `YulEndOfLine`) instead of being shared globally from a single context.
+- Removed `Language::leading_trivia` and `Language::trailing_trivia` fields.
+- Removed `TriviaParser` type.
+
 ## Terminals
 
 - Removed `Scanner::TrailingContext` as the new lexer has no backtracking, and tries to scan the longest match by default. Terminals now have a priority (to resolve ambiguities), defined by their kind (`Trivia` < `Tokens` < `Keywords`), then by their order of declaration in the grammar. Later definitions like `SingleLineNatSpecComment` (`///`) have a higher priority than earlier definitions like `SingleLineComment` (`//`).

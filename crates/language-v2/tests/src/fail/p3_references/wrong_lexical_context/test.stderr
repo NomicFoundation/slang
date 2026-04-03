@@ -1,5 +1,5 @@
 error: Reference 'Three' is in context 'ContextA', but expected context 'ContextB'.
-  --> src/fail/p3_references/wrong_lexical_context/test.rs:20:81
+  --> src/fail/p3_references/wrong_lexical_context/test.rs:18:81
    |
-20 | ...                   fields = (entry = Required(Two), field_1 = Required(Three))
+18 | ...                   fields = (entry = Required(Two), field_1 = Required(Three))
    |                                                                           ^^^^^
