@@ -5,8 +5,6 @@ use std::rc::Rc;
 use std::ops::Range;
 use std::vec::Vec;
 
-use super::source::Source;
-
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(transparent)]
 pub struct NodeId(usize);
@@ -58,7 +56,7 @@ pub struct NodeId(usize);
     {% endif %}
   {% endfor %}
   {% if all_unique_terminals -%}
-    #[derive(Clone, Debug, Eq, PartialEq)]
+    #[derive(Clone, Debug, Eq, Hash, PartialEq)]
   {%- else -%}
     #[derive(Clone, Debug)]
   {%- endif %}
@@ -91,34 +89,22 @@ pub struct NodeId(usize);
 
 {% for terminal_type, terminal in target.terminals %}
   {% if not terminal.is_unique %}
-    {% if terminal.is_identifier %}
-      pub type {{ terminal_type }} = Rc<{{ terminal_type }}Struct>;
+    pub type {{ terminal_type }} = Rc<{{ terminal_type }}Struct>;
 
-      #[derive(Clone, Debug, Eq, PartialEq)]
-      pub struct {{ terminal_type }}Struct {
-        pub range: Range<usize>,
+    #[derive(Clone, Debug, Eq, PartialEq)]
+    pub struct {{ terminal_type }}Struct {
+      pub range: Range<usize>,
+      pub text: String,
+    }
+
+    impl {{ terminal_type }}Struct {
+      pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
       }
 
-      impl {{ terminal_type }}Struct {
-        pub fn id(self: &Rc<Self>) -> NodeId {
-          NodeId(Rc::as_ptr(self) as usize)
-        }
-
-        pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-          source.text(self.range.clone())
-        }
+      pub fn unparse(&self) -> &str {
+        &self.text
       }
-    {% else %}
-      #[derive(Clone, Debug, Eq, PartialEq)]
-      pub struct {{ terminal_type }} {
-        pub range: Range<usize>,
-      }
-
-      impl {{ terminal_type }} {
-        pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-          source.text(self.range.clone())
-        }
-      }
-    {% endif %}
+    }
   {% endif %}
 {% endfor %}

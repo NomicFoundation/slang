@@ -6,8 +6,6 @@ use std::ops::Range;
 use std::rc::Rc;
 use std::vec::Vec;
 
-use super::source::Source;
-
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(transparent)]
 pub struct NodeId(usize);
@@ -1342,7 +1340,7 @@ impl YulVariableDeclarationValueStruct {
 // Choices
 //
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum AbicoderVersion {
     AbicoderV1Keyword,
     AbicoderV2Keyword,
@@ -1423,13 +1421,13 @@ pub enum Expression {
     FalseKeyword,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum Expression_AdditiveExpression_Operator {
     Minus,
     Plus,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum Expression_AssignmentExpression_Operator {
     AmpersandEqual,
     AsteriskEqual,
@@ -1445,13 +1443,13 @@ pub enum Expression_AssignmentExpression_Operator {
     SlashEqual,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum Expression_EqualityExpression_Operator {
     BangEqual,
     EqualEqual,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum Expression_InequalityExpression_Operator {
     GreaterThan,
     GreaterThanEqual,
@@ -1459,20 +1457,20 @@ pub enum Expression_InequalityExpression_Operator {
     LessThanEqual,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum Expression_MultiplicativeExpression_Operator {
     Asterisk,
     Percent,
     Slash,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum Expression_PostfixExpression_Operator {
     MinusMinus,
     PlusPlus,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum Expression_PrefixExpression_Operator {
     Bang,
     DeleteKeyword,
@@ -1482,7 +1480,7 @@ pub enum Expression_PrefixExpression_Operator {
     Tilde,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum Expression_ShiftExpression_Operator {
     GreaterThanGreaterThan,
     GreaterThanGreaterThanGreaterThan,
@@ -1502,17 +1500,16 @@ pub enum ForStatementInitialization {
     Semicolon,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum FunctionKind {
     Regular,
     Constructor,
-    Unnamed,
     Fallback,
     Receive,
     Modifier,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum FunctionMutability {
     Pure,
     View,
@@ -1520,7 +1517,7 @@ pub enum FunctionMutability {
     Payable,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum FunctionVisibility {
     Public,
     Private,
@@ -1534,7 +1531,7 @@ pub enum ImportClause {
     ImportDeconstruction(ImportDeconstruction),
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum NumberUnit {
     WeiKeyword,
     GweiKeyword,
@@ -1570,7 +1567,7 @@ pub enum SourceUnitMember {
     ConstantDefinition(ConstantDefinition),
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum StateVariableMutability {
     Mutable,
     Constant,
@@ -1578,7 +1575,7 @@ pub enum StateVariableMutability {
     Transient,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum StateVariableVisibility {
     Public,
     Private,
@@ -1604,7 +1601,7 @@ pub enum Statement {
     ExpressionStatement(ExpressionStatement),
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum StorageLocation {
     MemoryKeyword,
     StorageKeyword,
@@ -1633,7 +1630,7 @@ pub enum UsingClause {
     UsingDeconstruction(UsingDeconstruction),
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum UsingOperator {
     Ampersand,
     Asterisk,
@@ -1676,7 +1673,7 @@ pub enum VersionLiteral {
     StringLiteral(StringLiteral),
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum VersionOperator {
     PragmaCaret,
     PragmaTilde,
@@ -1803,58 +1800,93 @@ pub type YulVariableNames = Vec<Identifier>;
 // Non-unique Terminals
 //
 
+pub type BytesKeyword = Rc<BytesKeywordStruct>;
+
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct BytesKeyword {
+pub struct BytesKeywordStruct {
     pub range: Range<usize>,
+    pub text: String,
 }
 
-impl BytesKeyword {
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
+impl BytesKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+
+    pub fn unparse(&self) -> &str {
+        &self.text
     }
 }
 
+pub type DecimalLiteral = Rc<DecimalLiteralStruct>;
+
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct DecimalLiteral {
+pub struct DecimalLiteralStruct {
     pub range: Range<usize>,
+    pub text: String,
 }
 
-impl DecimalLiteral {
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
+impl DecimalLiteralStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+
+    pub fn unparse(&self) -> &str {
+        &self.text
     }
 }
 
+pub type FixedKeyword = Rc<FixedKeywordStruct>;
+
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct FixedKeyword {
+pub struct FixedKeywordStruct {
     pub range: Range<usize>,
+    pub text: String,
 }
 
-impl FixedKeyword {
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
+impl FixedKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+
+    pub fn unparse(&self) -> &str {
+        &self.text
     }
 }
 
+pub type HexLiteral = Rc<HexLiteralStruct>;
+
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct HexLiteral {
+pub struct HexLiteralStruct {
     pub range: Range<usize>,
+    pub text: String,
 }
 
-impl HexLiteral {
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
+impl HexLiteralStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+
+    pub fn unparse(&self) -> &str {
+        &self.text
     }
 }
 
+pub type HexStringLiteral = Rc<HexStringLiteralStruct>;
+
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct HexStringLiteral {
+pub struct HexStringLiteralStruct {
     pub range: Range<usize>,
+    pub text: String,
 }
 
-impl HexStringLiteral {
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
+impl HexStringLiteralStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+
+    pub fn unparse(&self) -> &str {
+        &self.text
     }
 }
 
@@ -1863,6 +1895,7 @@ pub type Identifier = Rc<IdentifierStruct>;
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct IdentifierStruct {
     pub range: Range<usize>,
+    pub text: String,
 }
 
 impl IdentifierStruct {
@@ -1870,73 +1903,115 @@ impl IdentifierStruct {
         NodeId(Rc::as_ptr(self) as usize)
     }
 
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
+    pub fn unparse(&self) -> &str {
+        &self.text
     }
 }
 
+pub type IntKeyword = Rc<IntKeywordStruct>;
+
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct IntKeyword {
+pub struct IntKeywordStruct {
     pub range: Range<usize>,
+    pub text: String,
 }
 
-impl IntKeyword {
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
+impl IntKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+
+    pub fn unparse(&self) -> &str {
+        &self.text
     }
 }
 
+pub type StringLiteral = Rc<StringLiteralStruct>;
+
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct StringLiteral {
+pub struct StringLiteralStruct {
     pub range: Range<usize>,
+    pub text: String,
 }
 
-impl StringLiteral {
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
+impl StringLiteralStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+
+    pub fn unparse(&self) -> &str {
+        &self.text
     }
 }
 
+pub type UfixedKeyword = Rc<UfixedKeywordStruct>;
+
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct UfixedKeyword {
+pub struct UfixedKeywordStruct {
     pub range: Range<usize>,
+    pub text: String,
 }
 
-impl UfixedKeyword {
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
+impl UfixedKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+
+    pub fn unparse(&self) -> &str {
+        &self.text
     }
 }
 
+pub type UintKeyword = Rc<UintKeywordStruct>;
+
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct UintKeyword {
+pub struct UintKeywordStruct {
     pub range: Range<usize>,
+    pub text: String,
 }
 
-impl UintKeyword {
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
+impl UintKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+
+    pub fn unparse(&self) -> &str {
+        &self.text
     }
 }
 
+pub type UnicodeStringLiteral = Rc<UnicodeStringLiteralStruct>;
+
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct UnicodeStringLiteral {
+pub struct UnicodeStringLiteralStruct {
     pub range: Range<usize>,
+    pub text: String,
 }
 
-impl UnicodeStringLiteral {
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
+impl UnicodeStringLiteralStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+
+    pub fn unparse(&self) -> &str {
+        &self.text
     }
 }
 
+pub type VersionSpecifier = Rc<VersionSpecifierStruct>;
+
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct VersionSpecifier {
+pub struct VersionSpecifierStruct {
     pub range: Range<usize>,
+    pub text: String,
 }
 
-impl VersionSpecifier {
-    pub fn unparse<'a>(&self, source: &'a (impl Source + ?Sized)) -> &'a str {
-        source.text(self.range.clone())
+impl VersionSpecifierStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
+    }
+
+    pub fn unparse(&self) -> &str {
+        &self.text
     }
 }

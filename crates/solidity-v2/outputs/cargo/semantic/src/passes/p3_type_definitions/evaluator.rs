@@ -1,0 +1,295 @@
+use std::str::FromStr;
+
+use num_bigint::BigInt;
+use num_traits::cast::ToPrimitive;
+use num_traits::Num;
+
+use crate::ir;
+
+pub(crate) fn evaluate_compile_time_uint_constant<Scope>(
+    expression: &ir::Expression,
+    start_scope: Scope,
+    identifier_resolver: &dyn ConstantIdentifierResolver<Scope>,
+) -> Option<usize> {
+    evaluate_compile_time_constant(expression, start_scope, identifier_resolver)
+        .and_then(|value| value.as_usize())
+}
+
+fn evaluate_compile_time_constant<Scope>(
+    expression: &ir::Expression,
+    start_scope: Scope,
+    identifier_resolver: &dyn ConstantIdentifierResolver<Scope>,
+) -> Option<ConstantValue> {
+    let mut evaluator = CompileConstantEvaluator {
+        identifier_resolver,
+        scope_stack: Vec::new(),
+    };
+    evaluator.evaluate_expression_in_scope(expression, start_scope)
+}
+
+#[derive(Clone, Debug, PartialEq)]
+enum ConstantValue {
+    Integer(BigInt),
+}
+
+impl ConstantValue {
+    fn as_usize(&self) -> Option<usize> {
+        let Self::Integer(value) = self;
+        value.to_usize()
+    }
+}
+
+pub(crate) trait ConstantIdentifierResolver<Scope> {
+    /// Resolve an identifier to a constant in the given context, returning the
+    /// value expression of the constant and the scope in which the value
+    /// expression should be resolved. Returns `None` if the identifier cannot
+    /// be resolved to a constant.
+    fn resolve_identifier_in_scope(
+        &self,
+        identifier: &str,
+        scope: &Scope,
+    ) -> Option<(ir::Expression, Scope)>;
+}
+
+struct CompileConstantEvaluator<'a, Scope> {
+    identifier_resolver: &'a dyn ConstantIdentifierResolver<Scope>,
+    scope_stack: Vec<Scope>,
+}
+
+impl<Scope> CompileConstantEvaluator<'_, Scope> {
+    const MAX_SCOPE_DEPTH: usize = 10;
+
+    fn evaluate_expression_in_scope(
+        &mut self,
+        expression: &ir::Expression,
+        scope: Scope,
+    ) -> Option<ConstantValue> {
+        if self.scope_stack.len() >= Self::MAX_SCOPE_DEPTH {
+            // TODO(validation): cyclic dependency in constant resolution or max depth reached
+            return None;
+        }
+        self.scope_stack.push(scope);
+        let result = self.evaluate_expression(expression);
+        self.scope_stack
+            .pop()
+            .expect("scope stack should not be empty");
+        result
+    }
+
+    fn evaluate_expression(&mut self, expression: &ir::Expression) -> Option<ConstantValue> {
+        match expression {
+            ir::Expression::BitwiseOrExpression(bitwise_or_expression) => {
+                self.evaluate_bitwise_or_expression(bitwise_or_expression)
+            }
+            ir::Expression::BitwiseXorExpression(bitwise_xor_expression) => {
+                self.evaluate_bitwise_xor_expression(bitwise_xor_expression)
+            }
+            ir::Expression::BitwiseAndExpression(bitwise_and_expression) => {
+                self.evaluate_bitwise_and_expression(bitwise_and_expression)
+            }
+            ir::Expression::ShiftExpression(shift_expression) => {
+                self.evaluate_shift_expression(shift_expression)
+            }
+            ir::Expression::AdditiveExpression(additive_expression) => {
+                self.evaluate_additive_expression(additive_expression)
+            }
+            ir::Expression::MultiplicativeExpression(multiplicative_expression) => {
+                self.evaluate_multiplicative_expression(multiplicative_expression)
+            }
+            ir::Expression::ExponentiationExpression(exponentiation_expression) => {
+                self.evaluate_exponentiation_expression(exponentiation_expression)
+            }
+            ir::Expression::PrefixExpression(prefix_expression) => {
+                self.evaluate_prefix_expression(prefix_expression)
+            }
+            ir::Expression::HexNumberExpression(hex_number_expression) => {
+                Self::evaluate_hex_number_expression(hex_number_expression)
+            }
+            ir::Expression::DecimalNumberExpression(decimal_number_expression) => {
+                Self::evaluate_decimal_number_expression(decimal_number_expression)
+            }
+            ir::Expression::Identifier(identifier) => self.evaluate_identifier(identifier),
+            ir::Expression::TupleExpression(tuple_expression) => {
+                self.evaluate_tuple_expression(tuple_expression)
+            }
+            _ => {
+                // all other variants of expression cannot be evaluated at
+                // compile time, or are not relevant for computing constant
+                // integers (eg. string literals)
+                None
+            }
+        }
+    }
+
+    fn evaluate_bitwise_or_expression(
+        &mut self,
+        bitwise_or_expression: &ir::BitwiseOrExpression,
+    ) -> Option<ConstantValue> {
+        let lhs = self.evaluate_expression(&bitwise_or_expression.left_operand)?;
+        let rhs = self.evaluate_expression(&bitwise_or_expression.right_operand)?;
+        match (lhs, rhs) {
+            (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
+                Some(ConstantValue::Integer(lhs | rhs))
+            }
+        }
+    }
+
+    fn evaluate_bitwise_xor_expression(
+        &mut self,
+        bitwise_xor_expression: &ir::BitwiseXorExpression,
+    ) -> Option<ConstantValue> {
+        let lhs = self.evaluate_expression(&bitwise_xor_expression.left_operand)?;
+        let rhs = self.evaluate_expression(&bitwise_xor_expression.right_operand)?;
+        match (lhs, rhs) {
+            (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
+                Some(ConstantValue::Integer(lhs ^ rhs))
+            }
+        }
+    }
+
+    fn evaluate_bitwise_and_expression(
+        &mut self,
+        bitwise_and_expression: &ir::BitwiseAndExpression,
+    ) -> Option<ConstantValue> {
+        let lhs = self.evaluate_expression(&bitwise_and_expression.left_operand)?;
+        let rhs = self.evaluate_expression(&bitwise_and_expression.right_operand)?;
+        match (lhs, rhs) {
+            (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
+                Some(ConstantValue::Integer(lhs & rhs))
+            }
+        }
+    }
+
+    fn evaluate_shift_expression(
+        &mut self,
+        shift_expression: &ir::ShiftExpression,
+    ) -> Option<ConstantValue> {
+        let lhs = self.evaluate_expression(&shift_expression.left_operand)?;
+        let rhs = self.evaluate_expression(&shift_expression.right_operand)?;
+        match &shift_expression.expression_shift_expression_operator {
+            ir::Expression_ShiftExpression_Operator::LessThanLessThan => match (lhs, rhs) {
+                (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
+                    Some(ConstantValue::Integer(lhs << rhs.to_u32()?))
+                }
+            },
+            ir::Expression_ShiftExpression_Operator::GreaterThanGreaterThan => match (lhs, rhs) {
+                (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
+                    Some(ConstantValue::Integer(lhs >> rhs.to_u32()?))
+                }
+            },
+            ir::Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan => None,
+        }
+    }
+
+    fn evaluate_additive_expression(
+        &mut self,
+        additive_expression: &ir::AdditiveExpression,
+    ) -> Option<ConstantValue> {
+        let lhs = self.evaluate_expression(&additive_expression.left_operand)?;
+        let rhs = self.evaluate_expression(&additive_expression.right_operand)?;
+        match &additive_expression.expression_additive_expression_operator {
+            ir::Expression_AdditiveExpression_Operator::Plus => match (lhs, rhs) {
+                (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
+                    Some(ConstantValue::Integer(lhs + rhs))
+                }
+            },
+            ir::Expression_AdditiveExpression_Operator::Minus => match (lhs, rhs) {
+                (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
+                    Some(ConstantValue::Integer(lhs - rhs))
+                }
+            },
+        }
+    }
+
+    fn evaluate_multiplicative_expression(
+        &mut self,
+        multiplicative_expression: &ir::MultiplicativeExpression,
+    ) -> Option<ConstantValue> {
+        let lhs = self.evaluate_expression(&multiplicative_expression.left_operand)?;
+        let rhs = self.evaluate_expression(&multiplicative_expression.right_operand)?;
+        match &multiplicative_expression.expression_multiplicative_expression_operator {
+            ir::Expression_MultiplicativeExpression_Operator::Asterisk => match (lhs, rhs) {
+                (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
+                    Some(ConstantValue::Integer(lhs * rhs))
+                }
+            },
+            ir::Expression_MultiplicativeExpression_Operator::Slash => match (lhs, rhs) {
+                (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
+                    Some(ConstantValue::Integer(lhs / rhs))
+                }
+            },
+            ir::Expression_MultiplicativeExpression_Operator::Percent => match (lhs, rhs) {
+                (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
+                    Some(ConstantValue::Integer(lhs % rhs))
+                }
+            },
+        }
+    }
+
+    fn evaluate_exponentiation_expression(
+        &mut self,
+        exponentiation_expression: &ir::ExponentiationExpression,
+    ) -> Option<ConstantValue> {
+        let lhs = self.evaluate_expression(&exponentiation_expression.left_operand)?;
+        let rhs = self.evaluate_expression(&exponentiation_expression.right_operand)?;
+        // v2 ExponentiationExpression has no explicit operator field (only `**` exists)
+        match (lhs, rhs) {
+            (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
+                Some(ConstantValue::Integer(lhs.pow(rhs.to_u32()?)))
+            }
+        }
+    }
+
+    fn evaluate_prefix_expression(
+        &mut self,
+        prefix_expression: &ir::PrefixExpression,
+    ) -> Option<ConstantValue> {
+        let operand = self.evaluate_expression(&prefix_expression.operand)?;
+        match &prefix_expression.expression_prefix_expression_operator {
+            ir::Expression_PrefixExpression_Operator::Minus => match operand {
+                ConstantValue::Integer(value) => Some(ConstantValue::Integer(BigInt::ZERO - value)),
+            },
+            // No unary plus in Solidity >= 0.5.0 (v2 only supports >= 0.8.0)
+            _ => None,
+        }
+    }
+
+    fn evaluate_hex_number_expression(
+        hex_number_expression: &ir::HexNumberExpression,
+    ) -> Option<ConstantValue> {
+        let hex = hex_number_expression.literal.unparse();
+        // skip `0x` prefix and parse the hexadecimal number
+        BigInt::from_str_radix(&hex[2..], 16)
+            .ok()
+            .map(ConstantValue::Integer)
+    }
+
+    fn evaluate_decimal_number_expression(
+        decimal_number_expression: &ir::DecimalNumberExpression,
+    ) -> Option<ConstantValue> {
+        // TODO: this only handles integers but not rational numbers
+        // TODO: handle number units
+        let decimal = decimal_number_expression.literal.unparse();
+        BigInt::from_str(decimal).ok().map(ConstantValue::Integer)
+    }
+
+    fn evaluate_identifier(&mut self, identifier: &ir::Identifier) -> Option<ConstantValue> {
+        let current_scope = self.scope_stack.last().expect("scope stack is empty");
+        let (target_expression, target_scope) = self
+            .identifier_resolver
+            .resolve_identifier_in_scope(identifier.unparse(), current_scope)?;
+        self.evaluate_expression_in_scope(&target_expression, target_scope)
+    }
+
+    fn evaluate_tuple_expression(
+        &mut self,
+        tuple_expression: &ir::TupleExpression,
+    ) -> Option<ConstantValue> {
+        if tuple_expression.items.len() == 1 {
+            let inner_expression = tuple_expression.items[0].expression.as_ref()?;
+            self.evaluate_expression(inner_expression)
+        } else {
+            None
+        }
+    }
+}
