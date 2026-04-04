@@ -1,0 +1,61 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                             │ 0..12
+  2  │     function f() {                                                                                       │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Statements/contextual_keywords/input.sol │ 32..136
+  4  │ uint256 error;                                                                                           │ 137..151
+  5  │ uint256 from;                                                                                            │ 152..165
+  6  │ uint256 revert;                                                                                          │ 166..181
+  7  │ uint256 global;                                                                                          │ 182..197
+  8  │                                                                                                          │ 198..198
+  9  │ // <<<                                                                                                   │ 199..205
+  10 │     }                                                                                                    │ 206..211
+  11 │ }                                                                                                        │ 212..213
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..213)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..213)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..213)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..211)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..211)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..211)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "uint256 error;\nuint256 from;\nuint256 revert;\nuint2..." (137..197)
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement): # "uint256 error;" (137..151)
+                                  - (target꞉ VariableDeclarationTarget) ► (single_typed_declaration꞉ SingleTypedDeclaration): # "uint256 error" (137..150)
+                                      - (declaration꞉ VariableDeclaration): # "uint256 error" (137..150)
+                                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (137..144)
+                                          - (name꞉ Identifier): "error" # (145..150)
+                                  - (semicolon꞉ Semicolon): ";" # (150..151)
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement): # "uint256 from;" (152..165)
+                                  - (target꞉ VariableDeclarationTarget) ► (single_typed_declaration꞉ SingleTypedDeclaration): # "uint256 from" (152..164)
+                                      - (declaration꞉ VariableDeclaration): # "uint256 from" (152..164)
+                                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (152..159)
+                                          - (name꞉ Identifier): "from" # (160..164)
+                                  - (semicolon꞉ Semicolon): ";" # (164..165)
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement): # "uint256 revert;" (166..181)
+                                  - (target꞉ VariableDeclarationTarget) ► (single_typed_declaration꞉ SingleTypedDeclaration): # "uint256 revert" (166..180)
+                                      - (declaration꞉ VariableDeclaration): # "uint256 revert" (166..180)
+                                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (166..173)
+                                          - (name꞉ Identifier): "revert" # (174..180)
+                                  - (semicolon꞉ Semicolon): ";" # (180..181)
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement): # "uint256 global;" (182..197)
+                                  - (target꞉ VariableDeclarationTarget) ► (single_typed_declaration꞉ SingleTypedDeclaration): # "uint256 global" (182..196)
+                                      - (declaration꞉ VariableDeclaration): # "uint256 global" (182..196)
+                                          - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (182..189)
+                                          - (name꞉ Identifier): "global" # (190..196)
+                                  - (semicolon꞉ Semicolon): ";" # (196..197)
+                          - (close_brace꞉ CloseBrace): "}" # (210..211)
+              - (close_brace꞉ CloseBrace): "}" # (212..213)

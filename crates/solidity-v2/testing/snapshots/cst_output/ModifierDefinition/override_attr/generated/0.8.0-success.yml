@@ -1,0 +1,40 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                               │ 0..12
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ModifierDefinition/override_attr/input.sol │ 13..119
+  3  │ modifier mod(uint a) override { _; }                                                                       │ 120..156
+  4  │                                                                                                            │ 157..157
+  5  │ // <<<                                                                                                     │ 158..164
+  6  │ }                                                                                                          │ 165..166
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..166)
+      - (members꞉ SourceUnitMembers): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..166)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..166)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "modifier mod(uint a) override { _; }" (120..156)
+                  - (item꞉ ContractMember) ► (modifier_definition꞉ ModifierDefinition): # "modifier mod(uint a) override { _; }" (120..156)
+                      - (modifier_keyword꞉ ModifierKeyword): "modifier" # (120..128)
+                      - (name꞉ Identifier): "mod" # (129..132)
+                      - (parameters꞉ ParametersDeclaration): # "(uint a)" (132..140)
+                          - (open_paren꞉ OpenParen): "(" # (132..133)
+                          - (parameters꞉ Parameters): # "uint a" (133..139)
+                              - (item꞉ Parameter): # "uint a" (133..139)
+                                  - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (133..137)
+                                  - (name꞉ Identifier): "a" # (138..139)
+                          - (close_paren꞉ CloseParen): ")" # (139..140)
+                      - (attributes꞉ ModifierAttributes): # "override" (141..149)
+                          - (item꞉ ModifierAttribute) ► (override_specifier꞉ OverrideSpecifier): # "override" (141..149)
+                              - (override_keyword꞉ OverrideKeyword): "override" # (141..149)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{ _; }" (150..156)
+                          - (open_brace꞉ OpenBrace): "{" # (150..151)
+                          - (statements꞉ Statements): # "_;" (152..154)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "_;" (152..154)
+                                  - (expression꞉ Expression) ► (identifier꞉ Identifier): "_" # (152..153)
+                                  - (semicolon꞉ Semicolon): ";" # (153..154)
+                          - (close_brace꞉ CloseBrace): "}" # (155..156)
+              - (close_brace꞉ CloseBrace): "}" # (165..166)

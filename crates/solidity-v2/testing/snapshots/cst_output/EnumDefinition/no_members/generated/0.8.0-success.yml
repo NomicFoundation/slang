@@ -1,0 +1,16 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/EnumDefinition/no_members/input.sol │ 0..99
+  2  │ enum Foo { }                                                                                        │ 100..112
+  3  │ // <<<                                                                                              │ 113..119
+
+Tree:
+  - (root꞉ SourceUnit): # "enum Foo { }" (100..112)
+      - (members꞉ SourceUnitMembers): # "enum Foo { }" (100..112)
+          - (item꞉ SourceUnitMember) ► (enum_definition꞉ EnumDefinition): # "enum Foo { }" (100..112)
+              - (enum_keyword꞉ EnumKeyword): "enum" # (100..104)
+              - (name꞉ Identifier): "Foo" # (105..108)
+              - (open_brace꞉ OpenBrace): "{" # (109..110)
+              - (members꞉ EnumMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (111..112)

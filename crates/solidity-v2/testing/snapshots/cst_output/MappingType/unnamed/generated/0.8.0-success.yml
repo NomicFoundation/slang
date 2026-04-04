@@ -1,0 +1,33 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                  │ 0..12
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/MappingType/unnamed/input.sol │ 13..106
+  3  │ mapping(string => bytes32)                                                                    │ 107..133
+  4  │ // <<<                                                                                        │ 134..140
+  5  │ x;                                                                                            │ 141..143
+  6  │ }                                                                                             │ 144..145
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..145)
+      - (members꞉ SourceUnitMembers): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..145)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..145)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "mapping(string => bytes32)\n// <<<\nx;" (107..143)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "mapping(string => bytes32)\n// <<<\nx;" (107..143)
+                      - (type_name꞉ TypeName) ► (mapping_type꞉ MappingType): # "mapping(string => bytes32)" (107..133)
+                          - (mapping_keyword꞉ MappingKeyword): "mapping" # (107..114)
+                          - (open_paren꞉ OpenParen): "(" # (114..115)
+                          - (key_type꞉ MappingKey): # "string" (115..121)
+                              - (key_type꞉ MappingKeyType) ► (elementary_type꞉ ElementaryType) ► (string_keyword꞉ StringKeyword): "string" # (115..121)
+                          - (equal_greater_than꞉ EqualGreaterThan): "=>" # (122..124)
+                          - (value_type꞉ MappingValue): # "bytes32" (125..132)
+                              - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (bytes_keyword꞉ BytesKeyword): "bytes32" # (125..132)
+                          - (close_paren꞉ CloseParen): ")" # (132..133)
+                      - (attributes꞉ StateVariableAttributes): []
+                      - (name꞉ Identifier): "x" # (141..142)
+                      - (semicolon꞉ Semicolon): ";" # (142..143)
+              - (close_brace꞉ CloseBrace): "}" # (144..145)

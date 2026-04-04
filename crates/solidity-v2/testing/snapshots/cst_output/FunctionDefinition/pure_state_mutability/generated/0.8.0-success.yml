@@ -1,0 +1,24 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/FunctionDefinition/pure_state_mutability/input.sol │ 0..114
+  2  │ function a() pure {}                                                                                               │ 115..135
+  3  │                                                                                                                    │ 136..136
+  4  │ // <<<                                                                                                             │ 137..143
+
+Tree:
+  - (root꞉ SourceUnit): # "function a() pure {}" (115..135)
+      - (members꞉ SourceUnitMembers): # "function a() pure {}" (115..135)
+          - (item꞉ SourceUnitMember) ► (function_definition꞉ FunctionDefinition): # "function a() pure {}" (115..135)
+              - (function_keyword꞉ FunctionKeyword): "function" # (115..123)
+              - (name꞉ FunctionName) ► (identifier꞉ Identifier): "a" # (124..125)
+              - (parameters꞉ ParametersDeclaration): # "()" (125..127)
+                  - (open_paren꞉ OpenParen): "(" # (125..126)
+                  - (parameters꞉ Parameters): []
+                  - (close_paren꞉ CloseParen): ")" # (126..127)
+              - (attributes꞉ FunctionAttributes): # "pure" (128..132)
+                  - (item꞉ FunctionAttribute) ► (pure_keyword꞉ PureKeyword): "pure" # (128..132)
+              - (body꞉ FunctionBody) ► (block꞉ Block): # "{}" (133..135)
+                  - (open_brace꞉ OpenBrace): "{" # (133..134)
+                  - (statements꞉ Statements): []
+                  - (close_brace꞉ CloseBrace): "}" # (134..135)

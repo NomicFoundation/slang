@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ErrorDefinition/top_level/input.sol │ 0..99
+  2  │ error MyError();                                                                                    │ 100..116
+  3  │ // <<<                                                                                              │ 117..123
+
+Tree:
+  - (root꞉ SourceUnit): # "error MyError();" (100..116)
+      - (members꞉ SourceUnitMembers): # "error MyError();" (100..116)
+          - (item꞉ SourceUnitMember) ► (error_definition꞉ ErrorDefinition): # "error MyError();" (100..116)
+              - (error_keyword꞉ ErrorKeyword): "error" # (100..105)
+              - (name꞉ Identifier): "MyError" # (106..113)
+              - (members꞉ ErrorParametersDeclaration): # "()" (113..115)
+                  - (open_paren꞉ OpenParen): "(" # (113..114)
+                  - (parameters꞉ ErrorParameters): []
+                  - (close_paren꞉ CloseParen): ")" # (114..115)
+              - (semicolon꞉ Semicolon): ";" # (115..116)

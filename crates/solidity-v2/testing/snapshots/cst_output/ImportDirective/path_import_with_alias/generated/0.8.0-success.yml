@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ImportDirective/path_import_with_alias/input.sol │ 0..112
+  2  │ import "foo" as bar;                                                                                             │ 113..133
+  3  │ // <<<                                                                                                           │ 134..140
+
+Tree:
+  - (root꞉ SourceUnit): # 'import "foo" as bar;' (113..133)
+      - (members꞉ SourceUnitMembers): # 'import "foo" as bar;' (113..133)
+          - (item꞉ SourceUnitMember) ► (import_directive꞉ ImportDirective): # 'import "foo" as bar;' (113..133)
+              - (import_keyword꞉ ImportKeyword): "import" # (113..119)
+              - (clause꞉ ImportClause) ► (path_import꞉ PathImport): # '"foo" as bar' (120..132)
+                  - (path꞉ StringLiteral): '"foo"' # (120..125)
+                  - (alias꞉ ImportAlias): # "as bar" (126..132)
+                      - (as_keyword꞉ AsKeyword): "as" # (126..128)
+                      - (identifier꞉ Identifier): "bar" # (129..132)
+              - (semicolon꞉ Semicolon): ";" # (132..133)

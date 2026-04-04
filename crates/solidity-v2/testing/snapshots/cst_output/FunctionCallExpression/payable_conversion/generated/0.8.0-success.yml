@@ -1,0 +1,47 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                        │ 0..12
+  2  │     function f() {                                                                                                  │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/FunctionCallExpression/payable_conversion/input.sol │ 32..147
+  4  │ payable(msg.sender)                                                                                                 │ 148..167
+  5  │                                                                                                                     │ 168..168
+  6  │ // <<<                                                                                                              │ 169..175
+  7  │ ;                                                                                                                   │ 176..177
+  8  │     }                                                                                                               │ 178..183
+  9  │ }                                                                                                                   │ 184..185
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..185)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..185)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..185)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..183)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..183)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "contract C {\n    function f() {\n// >>> Copied from..." (0..183)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "contract C {\n    function f() {\n// >>> Copied from..." (0..177)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "contract C {\n    function f() {\n// >>> Copied from..." (0..177)
+                                  - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "contract C {\n    function f() {\n// >>> Copied from..." (0..167)
+                                      - (operand꞉ Expression) ► (payable_keyword꞉ PayableKeyword): "payable" # (148..155)
+                                      - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "contract C {\n    function f() {\n// >>> Copied from..." (0..167)
+                                          - (open_paren꞉ OpenParen): "(" # (155..156)
+                                          - (arguments꞉ PositionalArguments): # "contract C {\n    function f() {\n// >>> Copied from..." (0..166)
+                                              - (item꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "contract C {\n    function f() {\n// >>> Copied from..." (0..166)
+                                                  - (operand꞉ Expression) ► (identifier꞉ Identifier): "msg" # (156..159)
+                                                  - (period꞉ Period): "" # (0..0)
+                                                  - (member꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "sender" # (160..166)
+                                          - (close_paren꞉ CloseParen): ")" # (166..167)
+                                  - (semicolon꞉ Semicolon): ";" # (176..177)
+                          - (close_brace꞉ CloseBrace): "}" # (182..183)
+              - (close_brace꞉ CloseBrace): "}" # (184..185)

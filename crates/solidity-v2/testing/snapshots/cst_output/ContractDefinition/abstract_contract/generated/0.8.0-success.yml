@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/abstract_contract/input.sol │ 0..110
+  2  │ abstract contract Sample {}                                                                                    │ 111..138
+  3  │                                                                                                                │ 139..139
+  4  │ // <<<                                                                                                         │ 140..146
+
+Tree:
+  - (root꞉ SourceUnit): # "abstract contract Sample {}" (111..138)
+      - (members꞉ SourceUnitMembers): # "abstract contract Sample {}" (111..138)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "abstract contract Sample {}" (111..138)
+              - (abstract_keyword꞉ AbstractKeyword): "abstract" # (111..119)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (120..128)
+              - (name꞉ Identifier): "Sample" # (129..135)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (136..137)
+              - (members꞉ ContractMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (137..138)

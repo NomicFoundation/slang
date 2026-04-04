@@ -1,0 +1,42 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                                 │ 0..12
+  2  │     function f() {                                                                                                           │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/DecimalNumberExpression/integer_ident_after_period/input.sol │ 32..156
+  4  │ 1.a                                                                                                                          │ 157..160
+  5  │                                                                                                                              │ 161..161
+  6  │ // <<<                                                                                                                       │ 162..168
+  7  │ ;                                                                                                                            │ 169..170
+  8  │     }                                                                                                                        │ 171..176
+  9  │ }                                                                                                                            │ 177..178
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..178)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..178)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..178)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..176)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..176)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..176)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "1.a\n\n// <<<\n;" (157..170)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "1.a\n\n// <<<\n;" (157..170)
+                                  - (expression꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "1.a" (157..160)
+                                      - (operand꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "1" (157..158)
+                                          - (literal꞉ DecimalLiteral): "1" # (157..158)
+                                      - (period꞉ Period): "." # (158..159)
+                                      - (member꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "a" # (159..160)
+                                  - (semicolon꞉ Semicolon): ";" # (169..170)
+                          - (close_brace꞉ CloseBrace): "}" # (175..176)
+              - (close_brace꞉ CloseBrace): "}" # (177..178)

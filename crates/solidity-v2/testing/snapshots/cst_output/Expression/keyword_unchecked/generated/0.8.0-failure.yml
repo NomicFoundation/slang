@@ -1,0 +1,20 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                           │ 0..12
+  2  │     function f() {                                                                                     │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/keyword_unchecked/input.sol │ 32..134
+  4  │ unchecked                                                                                              │ 135..144
+  5  │ // <<<                                                                                                 │ 145..151
+  6  │ ;                                                                                                      │ 152..153
+  7  │     }                                                                                                  │ 154..159
+  8  │ }                                                                                                      │ 160..161
+
+Error: >
+  Error: Unexpected Semicolon. One of OpenBrace was expected
+     ╭─[crates/solidity-v2/testing/snapshots/cst_output/Expression/keyword_unchecked/input.sol:6:1]
+     │
+   6 │ ;
+     │ ┬  
+     │ ╰── Error occurred here.
+  ───╯

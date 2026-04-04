@@ -1,0 +1,24 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/emit_contextual/input.sol │ 0..108
+  2  │ // Emitting events introduced syntactically in 0.4.21 but `emit` was usable as identifier until 0.5.0        │ 109..210
+  3  │                                                                                                              │ 211..211
+  4  │ contract ClientReceipt {                                                                                     │ 212..236
+  5  │     event Deposit();                                                                                         │ 237..257
+  6  │     function deposit() public payable {                                                                      │ 258..297
+  7  │         uint256 emit;                                                                                        │ 298..319
+  8  │         emit Deposit();                                                                                      │ 320..343
+  9  │     }                                                                                                        │ 344..349
+  10 │ }                                                                                                            │ 350..351
+  11 │                                                                                                              │ 352..352
+  12 │ // <<<                                                                                                       │ 353..359
+
+Error: >
+  Error: Unexpected EmitKeyword_Reserved. One of Ampersand, AmpersandAmpersand, AmpersandEqual, Asterisk, AsteriskAsterisk, AsteriskEqual, AtKeyword_Unreserved, BangEqual, Bar, BarBar, BarEqual, CallDataKeyword_Reserved, Caret, CaretEqual, Equal, EqualEqual, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, GreaterThan, GreaterThanEqual, GreaterThanGreaterThan, GreaterThanGreaterThanEqual, GreaterThanGreaterThanGreaterThan, GreaterThanGreaterThanGreaterThanEqual, Identifier, LayoutKeyword_Unreserved, LessThan, LessThanEqual, LessThanLessThan, LessThanLessThanEqual, MemoryKeyword_Reserved, Minus, MinusEqual, MinusMinus, OpenBrace, OpenBracket, OpenParen, Percent, PercentEqual, Period, Plus, PlusEqual, PlusPlus, QuestionMark, RevertKeyword_Unreserved, Semicolon, Slash, SlashEqual, StorageKeyword_Reserved, TransientKeyword_Unreserved was expected
+     ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/emit_contextual/input.sol:7:17]
+     │
+   7 │         uint256 emit;
+     │                 ──┬─  
+     │                   ╰─── Error occurred here.
+  ───╯

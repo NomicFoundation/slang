@@ -1,0 +1,37 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                   │ 0..12
+  2  │     function f() {                                                                             │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/BreakStatement/valid/input.sol │ 32..126
+  4  │ break ;                                                                                        │ 127..134
+  5  │                                                                                                │ 135..135
+  6  │ // <<<                                                                                         │ 136..142
+  7  │     }                                                                                          │ 143..148
+  8  │ }                                                                                              │ 149..150
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..150)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..150)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..150)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..148)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..148)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..148)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "break ;" (127..134)
+                              - (item꞉ Statement) ► (break_statement꞉ BreakStatement): # "break ;" (127..134)
+                                  - (break_keyword꞉ BreakKeyword): "break" # (127..132)
+                                  - (semicolon꞉ Semicolon): ";" # (133..134)
+                          - (close_brace꞉ CloseBrace): "}" # (147..148)
+              - (close_brace꞉ CloseBrace): "}" # (149..150)

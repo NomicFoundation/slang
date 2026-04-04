@@ -1,0 +1,26 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/trailing_trivia_multi_line_without_newline/input.sol │ 0..127
+  2  │ contract A {} /* some comment */                                                                                                │ 128..160
+  3  │ contract B {}                                                                                                                   │ 161..174
+  4  │                                                                                                                                 │ 175..175
+  5  │ // <<<                                                                                                                          │ 176..182
+
+Tree:
+  - (root꞉ SourceUnit): # "contract A {} /* some comment */\ncontract B {}" (128..174)
+      - (members꞉ SourceUnitMembers): # "contract A {} /* some comment */\ncontract B {}" (128..174)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract A {}" (128..141)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (128..136)
+              - (name꞉ Identifier): "A" # (137..138)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (139..140)
+              - (members꞉ ContractMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (140..141)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract B {}" (161..174)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (161..169)
+              - (name꞉ Identifier): "B" # (170..171)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (172..173)
+              - (members꞉ ContractMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (173..174)

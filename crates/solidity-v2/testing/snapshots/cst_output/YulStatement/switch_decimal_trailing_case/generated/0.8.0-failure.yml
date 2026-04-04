@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                        │ 0..12
+  2  │     function f() {                                                                                                  │ 13..31
+  3  │         assembly {                                                                                                  │ 32..50
+  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulStatement/switch_decimal_trailing_case/input.sol │ 51..166
+  5  │ switch 1case 0 {} default {}                                                                                        │ 167..195
+  6  │ // <<<                                                                                                              │ 196..202
+  7  │         }                                                                                                           │ 203..212
+  8  │     }                                                                                                               │ 213..218
+  9  │ }                                                                                                                   │ 219..220
+
+Error: >
+  Error: Unexpected UNRECOGNIZED. One of YulDecimalLiteral, YulFalseKeyword_Reserved, YulHexLiteral, YulHexStringLiteral, YulIdentifier, YulStringLiteral, YulTrueKeyword_Reserved was expected
+     ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulStatement/switch_decimal_trailing_case/input.sol:5:8]
+     │
+   5 │ switch 1case 0 {} default {}
+     │        ──┬──  
+     │          ╰──── Error occurred here.
+  ───╯

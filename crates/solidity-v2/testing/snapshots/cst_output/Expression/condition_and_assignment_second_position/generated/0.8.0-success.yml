@@ -1,0 +1,46 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                                  │ 0..12
+  2  │     function f() {                                                                                                            │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/condition_and_assignment_second_position/input.sol │ 32..157
+  4  │ a ? b = c : d // (a ? (b = c) : d)                                                                                            │ 158..192
+  5  │                                                                                                                               │ 193..193
+  6  │ // <<<                                                                                                                        │ 194..200
+  7  │ ;                                                                                                                             │ 201..202
+  8  │     }                                                                                                                         │ 203..208
+  9  │ }                                                                                                                             │ 209..210
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..210)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..210)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..210)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..208)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..208)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..208)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "a ? b = c : d // (a ? (b = c) : d)\n\n// <<<\n;" (158..202)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a ? b = c : d // (a ? (b = c) : d)\n\n// <<<\n;" (158..202)
+                                  - (expression꞉ Expression) ► (conditional_expression꞉ ConditionalExpression): # "a ? b = c : d" (158..171)
+                                      - (operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (158..159)
+                                      - (question_mark꞉ QuestionMark): "?" # (160..161)
+                                      - (true_expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "b = c" (162..167)
+                                          - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (162..163)
+                                          - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (equal꞉ Equal): "=" # (164..165)
+                                          - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "c" # (166..167)
+                                      - (colon꞉ Colon): ":" # (168..169)
+                                      - (false_expression꞉ Expression) ► (identifier꞉ Identifier): "d" # (170..171)
+                                  - (semicolon꞉ Semicolon): ";" # (201..202)
+                          - (close_brace꞉ CloseBrace): "}" # (207..208)
+              - (close_brace꞉ CloseBrace): "}" # (209..210)

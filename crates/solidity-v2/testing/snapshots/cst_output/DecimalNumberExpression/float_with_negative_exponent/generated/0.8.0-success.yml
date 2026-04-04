@@ -1,0 +1,16 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ uint constant x = 1.2e-3;                                                        │ 0..25
+
+Tree:
+  - (root꞉ SourceUnit): # "uint constant x = 1.2e-3;" (0..25)
+      - (members꞉ SourceUnitMembers): # "uint constant x = 1.2e-3;" (0..25)
+          - (item꞉ SourceUnitMember) ► (constant_definition꞉ ConstantDefinition): # "uint constant x = 1.2e-3;" (0..25)
+              - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (0..4)
+              - (constant_keyword꞉ ConstantKeyword): "constant" # (5..13)
+              - (name꞉ Identifier): "x" # (14..15)
+              - (equal꞉ Equal): "=" # (16..17)
+              - (value꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "1.2e-3" (18..24)
+                  - (literal꞉ DecimalLiteral): "1.2e-3" # (18..24)
+              - (semicolon꞉ Semicolon): ";" # (24..25)

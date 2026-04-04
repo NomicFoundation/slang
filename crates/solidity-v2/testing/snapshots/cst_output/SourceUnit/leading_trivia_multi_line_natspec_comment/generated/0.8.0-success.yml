@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/leading_trivia_multi_line_natspec_comment/input.sol │ 0..126
+  2  │ /**                                                                                                                            │ 127..130
+  3  │  * @foo bar                                                                                                                    │ 131..142
+  4  │  */                                                                                                                            │ 143..146
+  5  │                                                                                                                                │ 147..147
+  6  │ // <<<                                                                                                                         │ 148..154
+
+Tree:
+  - (root꞉ SourceUnit):
+      - (members꞉ SourceUnitMembers): []

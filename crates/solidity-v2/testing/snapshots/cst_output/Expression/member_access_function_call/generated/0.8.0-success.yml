@@ -1,0 +1,45 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                     │ 0..12
+  2  │     function f() {                                                                                               │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/member_access_function_call/input.sol │ 32..144
+  4  │ x.y()                                                                                                            │ 145..150
+  5  │ // <<<                                                                                                           │ 151..157
+  6  │ ;                                                                                                                │ 158..159
+  7  │     }                                                                                                            │ 160..165
+  8  │ }                                                                                                                │ 166..167
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..167)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..167)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..167)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..165)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..165)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "contract C {\n    function f() {\n// >>> Copied from..." (0..165)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "contract C {\n    function f() {\n// >>> Copied from..." (0..159)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "contract C {\n    function f() {\n// >>> Copied from..." (0..159)
+                                  - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "contract C {\n    function f() {\n// >>> Copied from..." (0..150)
+                                      - (operand꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "contract C {\n    function f() {\n// >>> Copied from..." (0..148)
+                                          - (operand꞉ Expression) ► (identifier꞉ Identifier): "x" # (145..146)
+                                          - (period꞉ Period): "" # (0..0)
+                                          - (member꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "y" # (147..148)
+                                      - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "()" (148..150)
+                                          - (open_paren꞉ OpenParen): "(" # (148..149)
+                                          - (arguments꞉ PositionalArguments): []
+                                          - (close_paren꞉ CloseParen): ")" # (149..150)
+                                  - (semicolon꞉ Semicolon): ";" # (158..159)
+                          - (close_brace꞉ CloseBrace): "}" # (164..165)
+              - (close_brace꞉ CloseBrace): "}" # (166..167)

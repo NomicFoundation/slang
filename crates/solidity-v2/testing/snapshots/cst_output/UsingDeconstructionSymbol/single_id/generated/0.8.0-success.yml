@@ -1,0 +1,24 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ using {                                                                                                       │ 0..7
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/UsingDeconstructionSymbol/single_id/input.sol │ 8..117
+  3  │ foo                                                                                                           │ 118..121
+  4  │ // <<<                                                                                                        │ 122..128
+  5  │ } for uint;                                                                                                   │ 129..140
+
+Tree:
+  - (root꞉ SourceUnit): # "using {\n// >>> Copied from crates/solidity/testing..." (0..140)
+      - (members꞉ SourceUnitMembers): # "using {\n// >>> Copied from crates/solidity/testing..." (0..140)
+          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective): # "using {\n// >>> Copied from crates/solidity/testing..." (0..140)
+              - (using_keyword꞉ UsingKeyword): "using" # (0..5)
+              - (clause꞉ UsingClause) ► (using_deconstruction꞉ UsingDeconstruction): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (6..130)
+                  - (open_brace꞉ OpenBrace): "{" # (6..7)
+                  - (symbols꞉ UsingDeconstructionSymbols): # "foo" (118..121)
+                      - (item꞉ UsingDeconstructionSymbol): # "foo" (118..121)
+                          - (name꞉ IdentifierPath): # "foo" (118..121)
+                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "foo" # (118..121)
+                  - (close_brace꞉ CloseBrace): "}" # (129..130)
+              - (for_keyword꞉ ForKeyword): "for" # (131..134)
+              - (target꞉ UsingTarget) ► (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (135..139)
+              - (semicolon꞉ Semicolon): ";" # (139..140)

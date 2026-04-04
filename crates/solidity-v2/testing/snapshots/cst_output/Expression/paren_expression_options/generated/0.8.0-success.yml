@@ -1,0 +1,60 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                  │ 0..12
+  2  │     function f() {                                                                                            │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/paren_expression_options/input.sol │ 32..141
+  4  │  (new FooBar){value: 5}()                                                                                     │ 142..167
+  5  │                                                                                                               │ 168..168
+  6  │ // <<<                                                                                                        │ 169..175
+  7  │ ;                                                                                                             │ 176..177
+  8  │     }                                                                                                         │ 178..183
+  9  │ }                                                                                                             │ 184..185
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..185)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..185)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..185)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..183)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..183)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..183)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "(new FooBar){value: 5}()\n\n// <<<\n;" (143..177)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "(new FooBar){value: 5}()\n\n// <<<\n;" (143..177)
+                                  - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "(new FooBar){value: 5}()" (143..167)
+                                      - (operand꞉ Expression) ► (call_options_expression꞉ CallOptionsExpression): # "(new FooBar){value: 5}" (143..165)
+                                          - (operand꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "(new FooBar)" (143..155)
+                                              - (open_paren꞉ OpenParen): "(" # (143..144)
+                                              - (items꞉ TupleValues): # "new FooBar" (144..154)
+                                                  - (item꞉ TupleValue): # "new FooBar" (144..154)
+                                                      - (expression꞉ Expression) ► (new_expression꞉ NewExpression): # "new FooBar" (144..154)
+                                                          - (new_keyword꞉ NewKeyword): "new" # (144..147)
+                                                          - (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath): # "FooBar" (148..154)
+                                                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "FooBar" # (148..154)
+                                              - (close_paren꞉ CloseParen): ")" # (154..155)
+                                          - (open_brace꞉ OpenBrace): "{" # (155..156)
+                                          - (options꞉ CallOptions): # "value: 5" (156..164)
+                                              - (item꞉ NamedArgument): # "value: 5" (156..164)
+                                                  - (name꞉ Identifier): "value" # (156..161)
+                                                  - (colon꞉ Colon): ":" # (161..162)
+                                                  - (value꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "5" (163..164)
+                                                      - (literal꞉ DecimalLiteral): "5" # (163..164)
+                                          - (close_brace꞉ CloseBrace): "}" # (164..165)
+                                      - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "()" (165..167)
+                                          - (open_paren꞉ OpenParen): "(" # (165..166)
+                                          - (arguments꞉ PositionalArguments): []
+                                          - (close_paren꞉ CloseParen): ")" # (166..167)
+                                  - (semicolon꞉ Semicolon): ";" # (176..177)
+                          - (close_brace꞉ CloseBrace): "}" # (182..183)
+              - (close_brace꞉ CloseBrace): "}" # (184..185)

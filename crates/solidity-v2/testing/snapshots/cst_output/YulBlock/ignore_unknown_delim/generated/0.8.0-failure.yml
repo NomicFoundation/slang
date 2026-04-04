@@ -1,0 +1,26 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                            │ 0..12
+  2  │     function f() {                                                                                      │ 13..31
+  3  │         assembly                                                                                        │ 32..48
+  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulBlock/ignore_unknown_delim/input.sol │ 49..152
+  5  │ {                                                                                                       │ 153..154
+  6  │ 	function mult(a, b) -> result {                                                                        │ 155..187
+  7  │ 		result := mul(a, b)                                                                                   │ 188..209
+  8  │ 		result := [mul(a, b)                                                                                  │ 210..232
+  9  │ 	}                                                                                                      │ 233..235
+  10 │ }                                                                                                       │ 236..237
+  11 │                                                                                                         │ 238..238
+  12 │ // <<<                                                                                                  │ 239..245
+  13 │     }                                                                                                   │ 246..251
+  14 │ }                                                                                                       │ 252..253
+
+Error: >
+  Error: Unexpected UNRECOGNIZED. One of YulDecimalLiteral, YulFalseKeyword_Reserved, YulHexLiteral, YulHexStringLiteral, YulIdentifier, YulStringLiteral, YulTrueKeyword_Reserved was expected
+     ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulBlock/ignore_unknown_delim/input.sol:8:13]
+     │
+   8 │        result := [mul(a, b)
+     │                  ┬  
+     │                  ╰── Error occurred here.
+  ───╯

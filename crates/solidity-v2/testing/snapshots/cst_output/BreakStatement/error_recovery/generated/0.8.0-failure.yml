@@ -1,0 +1,20 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                            │ 0..12
+  2  │     function f() {                                                                                      │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/BreakStatement/error_recovery/input.sol │ 32..135
+  4  │ break invalid ;                                                                                         │ 136..151
+  5  │                                                                                                         │ 152..152
+  6  │ // <<<                                                                                                  │ 153..159
+  7  │     }                                                                                                   │ 160..165
+  8  │ }                                                                                                       │ 166..167
+
+Error: >
+  Error: Unexpected Identifier. One of Semicolon was expected
+     ╭─[crates/solidity-v2/testing/snapshots/cst_output/BreakStatement/error_recovery/input.sol:4:7]
+     │
+   4 │ break invalid ;
+     │       ───┬───  
+     │          ╰───── Error occurred here.
+  ───╯

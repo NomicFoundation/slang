@@ -1,0 +1,48 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                           │ 0..12
+  2  │     function f() {                                                                                                     │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/TupleDeconstructionStatement/ignored_members/input.sol │ 32..150
+  4  │ (, second, , fourth) = rhs;                                                                                            │ 151..178
+  5  │ // <<<                                                                                                                 │ 179..185
+  6  │     }                                                                                                                  │ 186..191
+  7  │ }                                                                                                                      │ 192..193
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..193)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..193)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..193)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..191)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..191)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..191)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "(, second, , fourth) = rhs;" (151..178)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "(, second, , fourth) = rhs;" (151..178)
+                                  - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "(, second, , fourth) = rhs" (151..177)
+                                      - (left_operand꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "(, second, , fourth)" (151..171)
+                                          - (open_paren꞉ OpenParen): "(" # (151..152)
+                                          - (items꞉ TupleValues): # "second, , fourth" (154..170)
+                                              - (item꞉ TupleValue): []
+                                              - (item꞉ TupleValue): # "second" (154..160)
+                                                  - (expression꞉ Expression) ► (identifier꞉ Identifier): "second" # (154..160)
+                                              - (item꞉ TupleValue): []
+                                              - (item꞉ TupleValue): # "fourth" (164..170)
+                                                  - (expression꞉ Expression) ► (identifier꞉ Identifier): "fourth" # (164..170)
+                                          - (close_paren꞉ CloseParen): ")" # (170..171)
+                                      - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (equal꞉ Equal): "=" # (172..173)
+                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "rhs" # (174..177)
+                                  - (semicolon꞉ Semicolon): ";" # (177..178)
+                          - (close_brace꞉ CloseBrace): "}" # (190..191)
+              - (close_brace꞉ CloseBrace): "}" # (192..193)

@@ -1,0 +1,24 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ pragma                                                                                                │ 0..6
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/VersionPragma/exact_version/input.sol │ 7..108
+  3  │ solidity 0.8.0                                                                                        │ 109..123
+  4  │ // <<<                                                                                                │ 124..130
+  5  │ ;                                                                                                     │ 131..132
+
+Tree:
+  - (root꞉ SourceUnit): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..132)
+      - (members꞉ SourceUnitMembers): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..132)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..132)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity 0.8.0" (109..123)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (109..117)
+                  - (sets꞉ VersionExpressionSets): # "0.8.0" (118..123)
+                      - (item꞉ VersionExpressionSet): # "0.8.0" (118..123)
+                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm): # "0.8.0" (118..123)
+                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral): # "0.8.0" (118..123)
+                                  - (item꞉ VersionSpecifier): "0" # (118..119)
+                                  - (item꞉ VersionSpecifier): "8" # (120..121)
+                                  - (item꞉ VersionSpecifier): "0" # (122..123)
+              - (semicolon꞉ PragmaSemicolon): ";" # (131..132)

@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                               │ 0..12
+  2  │     function f() {                                                                                                         │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/TupleDeconstructionStatement/invalid_termination/input.sol │ 32..154
+  4  │ (a, b) = (123, 135)                                                                                                        │ 155..174
+  5  │ /**/                                                                                                                       │ 175..179
+  6  │ { throw;                                                                                                                   │ 180..189
+  7  │                                                                                                                            │ 190..190
+  8  │ // <<<                                                                                                                     │ 191..197
+  9  │     }                                                                                                                      │ 198..203
+  10 │ }                                                                                                                          │ 204..205
+
+Error: >
+  Error: Unexpected ThrowKeyword_Reserved. One of AtKeyword_Unreserved, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, LayoutKeyword_Unreserved, RevertKeyword_Unreserved, TransientKeyword_Unreserved was expected
+     ╭─[crates/solidity-v2/testing/snapshots/cst_output/TupleDeconstructionStatement/invalid_termination/input.sol:6:3]
+     │
+   6 │ { throw;
+     │   ──┬──  
+     │     ╰──── Error occurred here.
+  ───╯

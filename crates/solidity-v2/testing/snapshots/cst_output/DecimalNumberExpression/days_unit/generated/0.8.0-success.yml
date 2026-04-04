@@ -1,0 +1,39 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                │ 0..12
+  2  │     function f() {                                                                                          │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/DecimalNumberExpression/days_unit/input.sol │ 32..139
+  4  │ 10 days                                                                                                     │ 140..147
+  5  │ // <<<                                                                                                      │ 148..154
+  6  │ ;                                                                                                           │ 155..156
+  7  │     }                                                                                                       │ 157..162
+  8  │ }                                                                                                           │ 163..164
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..164)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..164)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..164)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..162)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..162)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..162)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "10 days\n// <<<\n;" (140..156)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "10 days\n// <<<\n;" (140..156)
+                                  - (expression꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "10 days" (140..147)
+                                      - (literal꞉ DecimalLiteral): "10" # (140..142)
+                                      - (unit꞉ NumberUnit) ► (days_keyword꞉ DaysKeyword): "days" # (143..147)
+                                  - (semicolon꞉ Semicolon): ";" # (155..156)
+                          - (close_brace꞉ CloseBrace): "}" # (161..162)
+              - (close_brace꞉ CloseBrace): "}" # (163..164)

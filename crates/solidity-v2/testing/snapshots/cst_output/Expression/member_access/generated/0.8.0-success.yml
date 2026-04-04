@@ -1,0 +1,40 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                       │ 0..12
+  2  │     function f() {                                                                                 │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/member_access/input.sol │ 32..130
+  4  │ x.y                                                                                                │ 131..134
+  5  │ // <<<                                                                                             │ 135..141
+  6  │ ;                                                                                                  │ 142..143
+  7  │     }                                                                                              │ 144..149
+  8  │ }                                                                                                  │ 150..151
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..151)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..151)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..151)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..149)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..149)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "contract C {\n    function f() {\n// >>> Copied from..." (0..149)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "contract C {\n    function f() {\n// >>> Copied from..." (0..143)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "contract C {\n    function f() {\n// >>> Copied from..." (0..143)
+                                  - (expression꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "contract C {\n    function f() {\n// >>> Copied from..." (0..134)
+                                      - (operand꞉ Expression) ► (identifier꞉ Identifier): "x" # (131..132)
+                                      - (period꞉ Period): "" # (0..0)
+                                      - (member꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "y" # (133..134)
+                                  - (semicolon꞉ Semicolon): ";" # (142..143)
+                          - (close_brace꞉ CloseBrace): "}" # (148..149)
+              - (close_brace꞉ CloseBrace): "}" # (150..151)

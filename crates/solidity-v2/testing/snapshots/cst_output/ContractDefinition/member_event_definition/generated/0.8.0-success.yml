@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_event_definition/input.sol │ 0..116
+  2  │ contract Sample {                                                                                                    │ 117..134
+  3  │   event Log(uint256 indexed a, uint256 indexed b);                                                                   │ 135..185
+  4  │ }                                                                                                                    │ 186..187
+  5  │ // <<<                                                                                                               │ 188..194
+
+Tree:
+  - (root꞉ SourceUnit): # "contract Sample {\n  event Log(uint256 indexed a, u..." (117..187)
+      - (members꞉ SourceUnitMembers): # "contract Sample {\n  event Log(uint256 indexed a, u..." (117..187)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  event Log(uint256 indexed a, u..." (117..187)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (117..125)
+              - (name꞉ Identifier): "Sample" # (126..132)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (133..134)
+              - (members꞉ ContractMembers): # "event Log(uint256 indexed a, uint256 indexed b);" (137..185)
+                  - (item꞉ ContractMember) ► (event_definition꞉ EventDefinition): # "event Log(uint256 indexed a, uint256 indexed b);" (137..185)
+                      - (event_keyword꞉ EventKeyword): "event" # (137..142)
+                      - (name꞉ Identifier): "Log" # (143..146)
+                      - (parameters꞉ EventParametersDeclaration): # "(uint256 indexed a, uint256 indexed b)" (146..184)
+                          - (open_paren꞉ OpenParen): "(" # (146..147)
+                          - (parameters꞉ EventParameters): # "uint256 indexed a, uint256 indexed b" (147..183)
+                              - (item꞉ EventParameter): # "uint256 indexed a" (147..164)
+                                  - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (147..154)
+                                  - (indexed_keyword꞉ IndexedKeyword): "indexed" # (155..162)
+                                  - (name꞉ Identifier): "a" # (163..164)
+                              - (item꞉ EventParameter): # "uint256 indexed b" (166..183)
+                                  - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (166..173)
+                                  - (indexed_keyword꞉ IndexedKeyword): "indexed" # (174..181)
+                                  - (name꞉ Identifier): "b" # (182..183)
+                          - (close_paren꞉ CloseParen): ")" # (183..184)
+                      - (semicolon꞉ Semicolon): ";" # (184..185)
+              - (close_brace꞉ CloseBrace): "}" # (186..187)

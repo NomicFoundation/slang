@@ -1,0 +1,32 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                           │ 0..12
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractMembers/state_variable_view_function/input.sol │ 13..131
+  3  │ function() view foo;                                                                                                   │ 132..152
+  4  │                                                                                                                        │ 153..153
+  5  │ // <<<                                                                                                                 │ 154..160
+  6  │ }                                                                                                                      │ 161..162
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..162)
+      - (members꞉ SourceUnitMembers): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..162)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..162)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function() view foo;" (132..152)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function() view foo;" (132..152)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function() view" (132..147)
+                          - (function_keyword꞉ FunctionKeyword): "function" # (132..140)
+                          - (parameters꞉ ParametersDeclaration): # "()" (140..142)
+                              - (open_paren꞉ OpenParen): "(" # (140..141)
+                              - (parameters꞉ Parameters): []
+                              - (close_paren꞉ CloseParen): ")" # (141..142)
+                          - (attributes꞉ FunctionTypeAttributes): # "view" (143..147)
+                              - (item꞉ FunctionTypeAttribute) ► (view_keyword꞉ ViewKeyword): "view" # (143..147)
+                      - (attributes꞉ StateVariableAttributes): []
+                      - (name꞉ Identifier): "foo" # (148..151)
+                      - (semicolon꞉ Semicolon): ";" # (151..152)
+              - (close_brace꞉ CloseBrace): "}" # (161..162)

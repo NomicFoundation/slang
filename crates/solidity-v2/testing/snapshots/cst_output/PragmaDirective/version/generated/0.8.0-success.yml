@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/PragmaDirective/version/input.sol │ 0..97
+  2  │ pragma solidity 1.0.0;                                                                            │ 98..120
+  3  │ // <<<                                                                                            │ 121..127
+
+Tree:
+  - (root꞉ SourceUnit): # "pragma solidity 1.0.0;" (98..120)
+      - (members꞉ SourceUnitMembers): # "pragma solidity 1.0.0;" (98..120)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma solidity 1.0.0;" (98..120)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (98..104)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity 1.0.0" (105..119)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (105..113)
+                  - (sets꞉ VersionExpressionSets): # "1.0.0" (114..119)
+                      - (item꞉ VersionExpressionSet): # "1.0.0" (114..119)
+                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm): # "1.0.0" (114..119)
+                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral): # "1.0.0" (114..119)
+                                  - (item꞉ VersionSpecifier): "1" # (114..115)
+                                  - (item꞉ VersionSpecifier): "0" # (116..117)
+                                  - (item꞉ VersionSpecifier): "0" # (118..119)
+              - (semicolon꞉ PragmaSemicolon): ";" # (119..120)

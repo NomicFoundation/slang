@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/unicode_in_doc_comments/input.sol │ 0..116
+  2  │ // ╒════════════════════════════════════════════════════════════════╕                                                │ 117..318
+  3  │ // │ More Info: https://github.com/NomicFoundation/slang/issues/742 │                                                │ 319..392
+  4  │ // ╘════════════════════════════════════════════════════════════════╛                                                │ 393..594
+  5  │ unexpected                                                                                                           │ 595..605
+  6  │                                                                                                                      │ 606..606
+  7  │ // <<<                                                                                                               │ 607..613
+
+Error: >
+  Error: Unexpected end of file. One of ConstantKeyword_Reserved, OpenBracket, Period was expected
+     ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/unicode_in_doc_comments/input.sol:5:11]
+     │
+   5 │ unexpected
+     │           │ 
+     │           ╰─ Error occurred here.
+  ───╯

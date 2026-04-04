@@ -1,0 +1,47 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                │ 0..12
+  2  │     function f() {                                                                                          │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/member_access_rational/input.sol │ 32..139
+  4  │ 5.1.fromUint()                                                                                              │ 140..154
+  5  │                                                                                                             │ 155..155
+  6  │ // <<<                                                                                                      │ 156..162
+  7  │ ;                                                                                                           │ 163..164
+  8  │     }                                                                                                       │ 165..170
+  9  │ }                                                                                                           │ 171..172
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..172)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..172)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..172)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..170)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..170)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..170)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "5.1.fromUint()\n\n// <<<\n;" (140..164)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "5.1.fromUint()\n\n// <<<\n;" (140..164)
+                                  - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "5.1.fromUint()" (140..154)
+                                      - (operand꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "5.1.fromUint" (140..152)
+                                          - (operand꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "5.1" (140..143)
+                                              - (literal꞉ DecimalLiteral): "5.1" # (140..143)
+                                          - (period꞉ Period): "." # (143..144)
+                                          - (member꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "fromUint" # (144..152)
+                                      - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "()" (152..154)
+                                          - (open_paren꞉ OpenParen): "(" # (152..153)
+                                          - (arguments꞉ PositionalArguments): []
+                                          - (close_paren꞉ CloseParen): ")" # (153..154)
+                                  - (semicolon꞉ Semicolon): ";" # (163..164)
+                          - (close_brace꞉ CloseBrace): "}" # (169..170)
+              - (close_brace꞉ CloseBrace): "}" # (171..172)

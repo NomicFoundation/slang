@@ -1,0 +1,46 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                 │ 0..12
+  2  │     function f() {                                                                           │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/add_mul/input.sol │ 32..124
+  4  │ a * b + c * d                                                                                │ 125..138
+  5  │ // <<<                                                                                       │ 139..145
+  6  │ ;                                                                                            │ 146..147
+  7  │     }                                                                                        │ 148..153
+  8  │ }                                                                                            │ 154..155
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..155)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..155)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..155)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..153)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..153)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..153)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "a * b + c * d\n// <<<\n;" (125..147)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a * b + c * d\n// <<<\n;" (125..147)
+                                  - (expression꞉ Expression) ► (additive_expression꞉ AdditiveExpression): # "a * b + c * d" (125..138)
+                                      - (left_operand꞉ Expression) ► (multiplicative_expression꞉ MultiplicativeExpression): # "a * b" (125..130)
+                                          - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (125..126)
+                                          - (expression_multiplicative_expression_operator꞉ Expression_MultiplicativeExpression_Operator) ► (asterisk꞉ Asterisk): "*" # (127..128)
+                                          - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (129..130)
+                                      - (expression_additive_expression_operator꞉ Expression_AdditiveExpression_Operator) ► (plus꞉ Plus): "+" # (131..132)
+                                      - (right_operand꞉ Expression) ► (multiplicative_expression꞉ MultiplicativeExpression): # "c * d" (133..138)
+                                          - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "c" # (133..134)
+                                          - (expression_multiplicative_expression_operator꞉ Expression_MultiplicativeExpression_Operator) ► (asterisk꞉ Asterisk): "*" # (135..136)
+                                          - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "d" # (137..138)
+                                  - (semicolon꞉ Semicolon): ";" # (146..147)
+                          - (close_brace꞉ CloseBrace): "}" # (152..153)
+              - (close_brace꞉ CloseBrace): "}" # (154..155)

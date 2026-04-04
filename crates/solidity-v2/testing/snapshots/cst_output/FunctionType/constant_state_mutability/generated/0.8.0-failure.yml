@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                     │ 0..12
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/FunctionType/constant_state_mutability/input.sol │ 13..125
+  3  │ function () constant internal returns (uint)                                                                     │ 126..170
+  4  │                                                                                                                  │ 171..171
+  5  │ // <<<                                                                                                           │ 172..178
+  6  │ x;                                                                                                               │ 179..181
+  7  │ }                                                                                                                │ 182..183
+
+Error: >
+  Error: Unexpected ReturnsKeyword_Reserved. One of AtKeyword_Unreserved, ConstantKeyword_Reserved, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, ImmutableKeyword_Reserved, InternalKeyword_Reserved, LayoutKeyword_Unreserved, OverrideKeyword_Reserved, PrivateKeyword_Reserved, PublicKeyword_Reserved, RevertKeyword_Unreserved, TransientKeyword_Unreserved was expected
+     ╭─[crates/solidity-v2/testing/snapshots/cst_output/FunctionType/constant_state_mutability/input.sol:3:31]
+     │
+   3 │ function () constant internal returns (uint)
+     │                               ───┬───  
+     │                                  ╰───── Error occurred here.
+  ───╯

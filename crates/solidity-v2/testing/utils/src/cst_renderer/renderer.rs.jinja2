@@ -1,0 +1,83 @@
+{%- set target = model.structured_cst_model -%}
+#![allow(clippy::too_many_lines)]
+#![allow(unused_variables)]
+
+#[allow(clippy::wildcard_imports)]
+use slang_solidity_v2_cst::structured_cst::nodes::*;
+
+use crate::cst_renderer::{format_label_kind, render_terminal, ChildrenAccumulator, RenderedOutput};
+
+//
+// Sequences:
+//
+
+{% for parent_type, sequence in target.sequences %}
+pub fn render_{{ parent_type | snake_case }}(source: &str, node: &{{ parent_type }}, depth: usize) -> RenderedOutput {
+  let mut acc = ChildrenAccumulator::new(source, depth + 1);
+  {% for field in sequence.fields %}
+    {% if field.is_optional %}
+      if let Some(ref {{ field.label | snake_case }}) = node.{{ field.label | snake_case }} {
+        {% if field.type.is_terminal %}
+          acc.add("{{ field.label | snake_case }}", "{{ field.type.name }}", render_terminal(source, &{{ field.label | snake_case }}.range));
+        {% else %}
+          acc.add("{{ field.label | snake_case }}", "{{ field.type.name }}", render_{{ field.type.name | snake_case }}(source, {{ field.label | snake_case }}, depth + 1));
+        {% endif %}
+      }
+    {% else %}
+      {% if field.type.is_terminal %}
+        acc.add("{{ field.label | snake_case }}", "{{ field.type.name }}", render_terminal(source, &node.{{ field.label | snake_case }}.range));
+      {% else %}
+        acc.add("{{ field.label | snake_case }}", "{{ field.type.name }}", render_{{ field.type.name | snake_case }}(source, &node.{{ field.label | snake_case }}, depth + 1));
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+  acc.finish()
+}
+
+{% endfor %}
+
+//
+// Choices:
+//
+
+{% for parent_type, choice in target.choices %}
+pub fn render_{{ parent_type | snake_case }}(source: &str, node: &{{ parent_type }}, depth: usize) -> RenderedOutput {
+  match node {
+    {% for variant in choice.variants %}
+      {{ parent_type }}::{{ variant.name }}(ref element) => {
+        {% if variant.is_terminal %}
+          let (range, mut frags) = render_terminal(source, &element.range);
+        {% else %}
+          let (range, mut frags) = render_{{ variant.name | snake_case }}(source, element, depth);
+        {% endif %}
+        // U+25BA (►) marks the selected variant of this choice node (see mod.rs legend).
+        frags.insert(0, format!(" \u{25ba} {}", format_label_kind("{{ variant.name | snake_case }}", "{{ variant.name }}")));
+        (range, frags)
+      }
+    {% endfor %}
+  }
+}
+
+{% endfor %}
+
+//
+// Repeated & Separated
+//
+
+{% for parent_type, collection in target.collections %}
+pub fn render_{{ parent_type | snake_case }}(source: &str, node: &{{ parent_type }}, depth: usize) -> RenderedOutput {
+  if node.elements.is_empty() {
+    return (None, vec![": []\n".to_string()]);
+  }
+  let mut acc = ChildrenAccumulator::new(source, depth + 1);
+  for element in &node.elements {
+    {% if collection.item_type.is_terminal %}
+      acc.add("item", "{{ collection.item_type.name }}", render_terminal(source, &element.range));
+    {% else %}
+      acc.add("item", "{{ collection.item_type.name }}", render_{{ collection.item_type.name | snake_case }}(source, element, depth + 1));
+    {% endif %}
+  }
+  acc.finish()
+}
+
+{% endfor %}

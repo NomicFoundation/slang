@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ using {                                                                                                                   │ 0..7
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/UsingDeconstructionSymbol/single_id_as_operator/input.sol │ 8..129
+  3  │ foo as /                                                                                                                  │ 130..138
+  4  │ // <<<                                                                                                                    │ 139..145
+  5  │ } for uint;                                                                                                               │ 146..157
+
+Tree:
+  - (root꞉ SourceUnit): # "using {\n// >>> Copied from crates/solidity/testing..." (0..157)
+      - (members꞉ SourceUnitMembers): # "using {\n// >>> Copied from crates/solidity/testing..." (0..157)
+          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective): # "using {\n// >>> Copied from crates/solidity/testing..." (0..157)
+              - (using_keyword꞉ UsingKeyword): "using" # (0..5)
+              - (clause꞉ UsingClause) ► (using_deconstruction꞉ UsingDeconstruction): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (6..147)
+                  - (open_brace꞉ OpenBrace): "{" # (6..7)
+                  - (symbols꞉ UsingDeconstructionSymbols): # "foo as /" (130..138)
+                      - (item꞉ UsingDeconstructionSymbol): # "foo as /" (130..138)
+                          - (name꞉ IdentifierPath): # "foo" (130..133)
+                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "foo" # (130..133)
+                          - (alias꞉ UsingAlias): # "as /" (134..138)
+                              - (as_keyword꞉ AsKeyword): "as" # (134..136)
+                              - (operator꞉ UsingOperator) ► (slash꞉ Slash): "/" # (137..138)
+                  - (close_brace꞉ CloseBrace): "}" # (146..147)
+              - (for_keyword꞉ ForKeyword): "for" # (148..151)
+              - (target꞉ UsingTarget) ► (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (152..156)
+              - (semicolon꞉ Semicolon): ";" # (156..157)

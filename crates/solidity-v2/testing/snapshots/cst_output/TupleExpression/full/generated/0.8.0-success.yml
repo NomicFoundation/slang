@@ -1,0 +1,48 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                   │ 0..12
+  2  │     function f() {                                                                             │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/TupleExpression/full/input.sol │ 32..126
+  4  │ (first, second, third, fourth)                                                                 │ 127..157
+  5  │ // <<<                                                                                         │ 158..164
+  6  │ ;                                                                                              │ 165..166
+  7  │     }                                                                                          │ 167..172
+  8  │ }                                                                                              │ 173..174
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..174)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..174)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..174)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..172)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..172)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..172)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "(first, second, third, fourth)\n// <<<\n;" (127..166)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "(first, second, third, fourth)\n// <<<\n;" (127..166)
+                                  - (expression꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "(first, second, third, fourth)" (127..157)
+                                      - (open_paren꞉ OpenParen): "(" # (127..128)
+                                      - (items꞉ TupleValues): # "first, second, third, fourth" (128..156)
+                                          - (item꞉ TupleValue): # "first" (128..133)
+                                              - (expression꞉ Expression) ► (identifier꞉ Identifier): "first" # (128..133)
+                                          - (item꞉ TupleValue): # "second" (135..141)
+                                              - (expression꞉ Expression) ► (identifier꞉ Identifier): "second" # (135..141)
+                                          - (item꞉ TupleValue): # "third" (143..148)
+                                              - (expression꞉ Expression) ► (identifier꞉ Identifier): "third" # (143..148)
+                                          - (item꞉ TupleValue): # "fourth" (150..156)
+                                              - (expression꞉ Expression) ► (identifier꞉ Identifier): "fourth" # (150..156)
+                                      - (close_paren꞉ CloseParen): ")" # (156..157)
+                                  - (semicolon꞉ Semicolon): ";" # (165..166)
+                          - (close_brace꞉ CloseBrace): "}" # (171..172)
+              - (close_brace꞉ CloseBrace): "}" # (173..174)
