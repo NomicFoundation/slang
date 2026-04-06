@@ -1,18 +1,31 @@
 use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit as InputSourceUnit;
 use slang_solidity_v2_semantic::ir::{self, SourceUnit, SourceUnitMember};
 
-pub fn setup(project: &str) -> Vec<InputSourceUnit> {
-    super::parser::test(super::parser::setup(project))
+use crate::dataset::SolidityProject;
+
+pub fn setup(project: &str) -> (&'static SolidityProject, Vec<(String, InputSourceUnit)>) {
+    let project = super::parser::setup(project);
+    let parsed = super::parser::test(project);
+    (project, parsed)
 }
 
-pub fn run(input: Vec<InputSourceUnit>) {
-    test(input);
+pub fn run(project: &'static SolidityProject, sources: Vec<(String, InputSourceUnit)>) {
+    test(project, sources);
 }
 
-pub fn test(input: Vec<InputSourceUnit>) -> Vec<SourceUnit> {
+pub fn test(
+    project: &'static SolidityProject,
+    sources: Vec<(String, InputSourceUnit)>,
+) -> Vec<SourceUnit> {
     let mut ir_source_units = Vec::new();
-    for source in input {
-        ir_source_units.push(ir::build(&source));
+    for (name, source) in sources {
+        ir_source_units.push(ir::build(
+            &source,
+            project
+                .sources
+                .get(&name)
+                .expect("Source not found in project"),
+        ));
     }
     ir_source_units
 }

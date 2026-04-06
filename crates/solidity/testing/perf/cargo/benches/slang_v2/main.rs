@@ -12,12 +12,20 @@ use solidity_testing_perf_cargo::dataset::SolidityProject;
 use solidity_testing_perf_cargo::tests_v2;
 
 mod __dependencies_used_in_lib__ {
-    use {
-        anyhow as _, infra_utils as _, semver as _, serde as _, serde_json as _,
-        slang_solidity as _, slang_solidity_v2_common as _, slang_solidity_v2_parser as _,
-        slang_solidity_v2_semantic as _, solar as _, solidity_testing_utils as _,
-        streaming_iterator as _, tree_sitter as _, tree_sitter_solidity as _,
-    };
+    use anyhow as _;
+    use infra_utils as _;
+    use semver as _;
+    use serde as _;
+    use serde_json as _;
+    use slang_solidity as _;
+    use slang_solidity_v2_common as _;
+    use slang_solidity_v2_parser as _;
+    use slang_solidity_v2_semantic as _;
+    use solar as _;
+    use solidity_testing_utils as _;
+    use streaming_iterator as _;
+    use tree_sitter as _;
+    use tree_sitter_solidity as _;
 }
 
 macro_rules! slang_v2_define_tests {
@@ -39,8 +47,8 @@ macro_rules! slang_v2_define_tests {
 
             #[library_benchmark(setup = tests_v2::ir_builder::setup)]
             #[bench::test(stringify!($prj))]
-            pub fn [< $prj _ir_builder >](source_units: Vec<SourceUnit>) {
-                black_box(tests_v2::ir_builder::run(source_units))
+            pub fn [< $prj _ir_builder >]((project, source_units): (&'static SolidityProject, Vec<(String, SourceUnit)>)) {
+                black_box(tests_v2::ir_builder::run(project, source_units))
             }
 
 

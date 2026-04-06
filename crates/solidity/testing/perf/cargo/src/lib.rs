@@ -5,9 +5,9 @@ pub mod tests;
 pub mod tests_v2;
 
 mod __dependencies_used_in_benches__ {
-     use iai_callgrind as _;
-     use infra_utils as _;
-     use paste as _;
+    use iai_callgrind as _;
+    use infra_utils as _;
+    use paste as _;
 }
 
 #[cfg(test)]
@@ -62,7 +62,7 @@ mod unit_tests {
             let contract_count = crate::tests_v2::parser::count_contracts(&source_units);
             assert_eq!(contract_count, super::CONTRACT_COUNT);
 
-            let ir_source_units = crate::tests_v2::ir_builder::test(source_units);
+            let ir_source_units = crate::tests_v2::ir_builder::test(payload, source_units);
             let ir_contract_count = crate::tests_v2::ir_builder::count_contracts(&ir_source_units);
             assert_eq!(ir_contract_count, super::CONTRACT_COUNT);
         }
