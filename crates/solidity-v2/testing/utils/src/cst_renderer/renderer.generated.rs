@@ -17,17 +17,21 @@ use crate::cst_renderer::{
 pub fn render_abicoder_pragma(source: &str, node: &AbicoderPragma, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "abicoder_keyword",
-        "AbicoderKeyword",
-        render_terminal(source, &node.abicoder_keyword.range),
-    );
+    {
+        let abicoder_keyword = &node.abicoder_keyword;
 
-    acc.add(
-        "version",
-        "AbicoderVersion",
-        render_abicoder_version(source, &node.version, depth + 1),
-    );
+        let rendered = render_terminal(source, &abicoder_keyword.range);
+
+        acc.add("abicoder_keyword", "AbicoderKeyword", rendered);
+    }
+
+    {
+        let version = &node.version;
+
+        let rendered = render_abicoder_version(source, version, depth + 1);
+
+        acc.add("version", "AbicoderVersion", rendered);
+    }
 
     acc.finish()
 }
@@ -39,27 +43,37 @@ pub fn render_additive_expression(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "left_operand",
-        "Expression",
-        render_expression(source, &node.left_operand, depth + 1),
-    );
+    {
+        let left_operand = &node.left_operand;
 
-    acc.add(
-        "expression_additive_expression_operator",
-        "Expression_AdditiveExpression_Operator",
-        render_expression_additive_expression_operator(
+        let rendered = render_expression(source, left_operand, depth + 1);
+
+        acc.add("left_operand", "Expression", rendered);
+    }
+
+    {
+        let expression_additive_expression_operator = &node.expression_additive_expression_operator;
+
+        let rendered = render_expression_additive_expression_operator(
             source,
-            &node.expression_additive_expression_operator,
+            expression_additive_expression_operator,
             depth + 1,
-        ),
-    );
+        );
 
-    acc.add(
-        "right_operand",
-        "Expression",
-        render_expression(source, &node.right_operand, depth + 1),
-    );
+        acc.add(
+            "expression_additive_expression_operator",
+            "Expression_AdditiveExpression_Operator",
+            rendered,
+        );
+    }
+
+    {
+        let right_operand = &node.right_operand;
+
+        let rendered = render_expression(source, right_operand, depth + 1);
+
+        acc.add("right_operand", "Expression", rendered);
+    }
 
     acc.finish()
 }
@@ -67,18 +81,18 @@ pub fn render_additive_expression(
 pub fn render_address_type(source: &str, node: &AddressType, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "address_keyword",
-        "AddressKeyword",
-        render_terminal(source, &node.address_keyword.range),
-    );
+    {
+        let address_keyword = &node.address_keyword;
+
+        let rendered = render_terminal(source, &address_keyword.range);
+
+        acc.add("address_keyword", "AddressKeyword", rendered);
+    }
 
     if let Some(ref payable_keyword) = node.payable_keyword {
-        acc.add(
-            "payable_keyword",
-            "PayableKeyword",
-            render_terminal(source, &payable_keyword.range),
-        );
+        let rendered = render_terminal(source, &payable_keyword.range);
+
+        acc.add("payable_keyword", "PayableKeyword", rendered);
     }
 
     acc.finish()
@@ -87,23 +101,29 @@ pub fn render_address_type(source: &str, node: &AddressType, depth: usize) -> Re
 pub fn render_and_expression(source: &str, node: &AndExpression, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "left_operand",
-        "Expression",
-        render_expression(source, &node.left_operand, depth + 1),
-    );
+    {
+        let left_operand = &node.left_operand;
 
-    acc.add(
-        "operator",
-        "AmpersandAmpersand",
-        render_terminal(source, &node.operator.range),
-    );
+        let rendered = render_expression(source, left_operand, depth + 1);
 
-    acc.add(
-        "right_operand",
-        "Expression",
-        render_expression(source, &node.right_operand, depth + 1),
-    );
+        acc.add("left_operand", "Expression", rendered);
+    }
+
+    {
+        let operator = &node.operator;
+
+        let rendered = render_terminal(source, &operator.range);
+
+        acc.add("operator", "AmpersandAmpersand", rendered);
+    }
+
+    {
+        let right_operand = &node.right_operand;
+
+        let rendered = render_expression(source, right_operand, depth + 1);
+
+        acc.add("right_operand", "Expression", rendered);
+    }
 
     acc.finish()
 }
@@ -115,23 +135,29 @@ pub fn render_array_expression(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "open_bracket",
-        "OpenBracket",
-        render_terminal(source, &node.open_bracket.range),
-    );
+    {
+        let open_bracket = &node.open_bracket;
 
-    acc.add(
-        "items",
-        "ArrayValues",
-        render_array_values(source, &node.items, depth + 1),
-    );
+        let rendered = render_terminal(source, &open_bracket.range);
 
-    acc.add(
-        "close_bracket",
-        "CloseBracket",
-        render_terminal(source, &node.close_bracket.range),
-    );
+        acc.add("open_bracket", "OpenBracket", rendered);
+    }
+
+    {
+        let items = &node.items;
+
+        let rendered = render_array_values(source, items, depth + 1);
+
+        acc.add("items", "ArrayValues", rendered);
+    }
+
+    {
+        let close_bracket = &node.close_bracket;
+
+        let rendered = render_terminal(source, &close_bracket.range);
+
+        acc.add("close_bracket", "CloseBracket", rendered);
+    }
 
     acc.finish()
 }
@@ -139,31 +165,35 @@ pub fn render_array_expression(
 pub fn render_array_type_name(source: &str, node: &ArrayTypeName, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "operand",
-        "TypeName",
-        render_type_name(source, &node.operand, depth + 1),
-    );
+    {
+        let operand = &node.operand;
 
-    acc.add(
-        "open_bracket",
-        "OpenBracket",
-        render_terminal(source, &node.open_bracket.range),
-    );
+        let rendered = render_type_name(source, operand, depth + 1);
 
-    if let Some(ref index) = node.index {
-        acc.add(
-            "index",
-            "Expression",
-            render_expression(source, index, depth + 1),
-        );
+        acc.add("operand", "TypeName", rendered);
     }
 
-    acc.add(
-        "close_bracket",
-        "CloseBracket",
-        render_terminal(source, &node.close_bracket.range),
-    );
+    {
+        let open_bracket = &node.open_bracket;
+
+        let rendered = render_terminal(source, &open_bracket.range);
+
+        acc.add("open_bracket", "OpenBracket", rendered);
+    }
+
+    if let Some(ref index) = node.index {
+        let rendered = render_expression(source, index, depth + 1);
+
+        acc.add("index", "Expression", rendered);
+    }
+
+    {
+        let close_bracket = &node.close_bracket;
+
+        let rendered = render_terminal(source, &close_bracket.range);
+
+        acc.add("close_bracket", "CloseBracket", rendered);
+    }
 
     acc.finish()
 }
@@ -175,33 +205,33 @@ pub fn render_assembly_statement(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "assembly_keyword",
-        "AssemblyKeyword",
-        render_terminal(source, &node.assembly_keyword.range),
-    );
+    {
+        let assembly_keyword = &node.assembly_keyword;
+
+        let rendered = render_terminal(source, &assembly_keyword.range);
+
+        acc.add("assembly_keyword", "AssemblyKeyword", rendered);
+    }
 
     if let Some(ref label) = node.label {
-        acc.add(
-            "label",
-            "YulStringLiteral",
-            render_terminal(source, &label.range),
-        );
+        let rendered = render_terminal(source, &label.range);
+
+        acc.add("label", "YulStringLiteral", rendered);
     }
 
     if let Some(ref flags) = node.flags {
-        acc.add(
-            "flags",
-            "YulFlagsDeclaration",
-            render_yul_flags_declaration(source, flags, depth + 1),
-        );
+        let rendered = render_yul_flags_declaration(source, flags, depth + 1);
+
+        acc.add("flags", "YulFlagsDeclaration", rendered);
     }
 
-    acc.add(
-        "body",
-        "YulBlock",
-        render_yul_block(source, &node.body, depth + 1),
-    );
+    {
+        let body = &node.body;
+
+        let rendered = render_yul_block(source, body, depth + 1);
+
+        acc.add("body", "YulBlock", rendered);
+    }
 
     acc.finish()
 }
@@ -213,27 +243,38 @@ pub fn render_assignment_expression(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "left_operand",
-        "Expression",
-        render_expression(source, &node.left_operand, depth + 1),
-    );
+    {
+        let left_operand = &node.left_operand;
 
-    acc.add(
-        "expression_assignment_expression_operator",
-        "Expression_AssignmentExpression_Operator",
-        render_expression_assignment_expression_operator(
+        let rendered = render_expression(source, left_operand, depth + 1);
+
+        acc.add("left_operand", "Expression", rendered);
+    }
+
+    {
+        let expression_assignment_expression_operator =
+            &node.expression_assignment_expression_operator;
+
+        let rendered = render_expression_assignment_expression_operator(
             source,
-            &node.expression_assignment_expression_operator,
+            expression_assignment_expression_operator,
             depth + 1,
-        ),
-    );
+        );
 
-    acc.add(
-        "right_operand",
-        "Expression",
-        render_expression(source, &node.right_operand, depth + 1),
-    );
+        acc.add(
+            "expression_assignment_expression_operator",
+            "Expression_AssignmentExpression_Operator",
+            rendered,
+        );
+    }
+
+    {
+        let right_operand = &node.right_operand;
+
+        let rendered = render_expression(source, right_operand, depth + 1);
+
+        acc.add("right_operand", "Expression", rendered);
+    }
 
     acc.finish()
 }
@@ -245,23 +286,29 @@ pub fn render_bitwise_and_expression(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "left_operand",
-        "Expression",
-        render_expression(source, &node.left_operand, depth + 1),
-    );
+    {
+        let left_operand = &node.left_operand;
 
-    acc.add(
-        "operator",
-        "Ampersand",
-        render_terminal(source, &node.operator.range),
-    );
+        let rendered = render_expression(source, left_operand, depth + 1);
 
-    acc.add(
-        "right_operand",
-        "Expression",
-        render_expression(source, &node.right_operand, depth + 1),
-    );
+        acc.add("left_operand", "Expression", rendered);
+    }
+
+    {
+        let operator = &node.operator;
+
+        let rendered = render_terminal(source, &operator.range);
+
+        acc.add("operator", "Ampersand", rendered);
+    }
+
+    {
+        let right_operand = &node.right_operand;
+
+        let rendered = render_expression(source, right_operand, depth + 1);
+
+        acc.add("right_operand", "Expression", rendered);
+    }
 
     acc.finish()
 }
@@ -273,23 +320,29 @@ pub fn render_bitwise_or_expression(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "left_operand",
-        "Expression",
-        render_expression(source, &node.left_operand, depth + 1),
-    );
+    {
+        let left_operand = &node.left_operand;
 
-    acc.add(
-        "operator",
-        "Bar",
-        render_terminal(source, &node.operator.range),
-    );
+        let rendered = render_expression(source, left_operand, depth + 1);
 
-    acc.add(
-        "right_operand",
-        "Expression",
-        render_expression(source, &node.right_operand, depth + 1),
-    );
+        acc.add("left_operand", "Expression", rendered);
+    }
+
+    {
+        let operator = &node.operator;
+
+        let rendered = render_terminal(source, &operator.range);
+
+        acc.add("operator", "Bar", rendered);
+    }
+
+    {
+        let right_operand = &node.right_operand;
+
+        let rendered = render_expression(source, right_operand, depth + 1);
+
+        acc.add("right_operand", "Expression", rendered);
+    }
 
     acc.finish()
 }
@@ -301,23 +354,29 @@ pub fn render_bitwise_xor_expression(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "left_operand",
-        "Expression",
-        render_expression(source, &node.left_operand, depth + 1),
-    );
+    {
+        let left_operand = &node.left_operand;
 
-    acc.add(
-        "operator",
-        "Caret",
-        render_terminal(source, &node.operator.range),
-    );
+        let rendered = render_expression(source, left_operand, depth + 1);
 
-    acc.add(
-        "right_operand",
-        "Expression",
-        render_expression(source, &node.right_operand, depth + 1),
-    );
+        acc.add("left_operand", "Expression", rendered);
+    }
+
+    {
+        let operator = &node.operator;
+
+        let rendered = render_terminal(source, &operator.range);
+
+        acc.add("operator", "Caret", rendered);
+    }
+
+    {
+        let right_operand = &node.right_operand;
+
+        let rendered = render_expression(source, right_operand, depth + 1);
+
+        acc.add("right_operand", "Expression", rendered);
+    }
 
     acc.finish()
 }
@@ -325,23 +384,29 @@ pub fn render_bitwise_xor_expression(
 pub fn render_block(source: &str, node: &Block, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "open_brace",
-        "OpenBrace",
-        render_terminal(source, &node.open_brace.range),
-    );
+    {
+        let open_brace = &node.open_brace;
 
-    acc.add(
-        "statements",
-        "Statements",
-        render_statements(source, &node.statements, depth + 1),
-    );
+        let rendered = render_terminal(source, &open_brace.range);
 
-    acc.add(
-        "close_brace",
-        "CloseBrace",
-        render_terminal(source, &node.close_brace.range),
-    );
+        acc.add("open_brace", "OpenBrace", rendered);
+    }
+
+    {
+        let statements = &node.statements;
+
+        let rendered = render_statements(source, statements, depth + 1);
+
+        acc.add("statements", "Statements", rendered);
+    }
+
+    {
+        let close_brace = &node.close_brace;
+
+        let rendered = render_terminal(source, &close_brace.range);
+
+        acc.add("close_brace", "CloseBrace", rendered);
+    }
 
     acc.finish()
 }
@@ -349,17 +414,21 @@ pub fn render_block(source: &str, node: &Block, depth: usize) -> RenderedOutput 
 pub fn render_break_statement(source: &str, node: &BreakStatement, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "break_keyword",
-        "BreakKeyword",
-        render_terminal(source, &node.break_keyword.range),
-    );
+    {
+        let break_keyword = &node.break_keyword;
 
-    acc.add(
-        "semicolon",
-        "Semicolon",
-        render_terminal(source, &node.semicolon.range),
-    );
+        let rendered = render_terminal(source, &break_keyword.range);
+
+        acc.add("break_keyword", "BreakKeyword", rendered);
+    }
+
+    {
+        let semicolon = &node.semicolon;
+
+        let rendered = render_terminal(source, &semicolon.range);
+
+        acc.add("semicolon", "Semicolon", rendered);
+    }
 
     acc.finish()
 }
@@ -371,29 +440,37 @@ pub fn render_call_options_expression(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "operand",
-        "Expression",
-        render_expression(source, &node.operand, depth + 1),
-    );
+    {
+        let operand = &node.operand;
 
-    acc.add(
-        "open_brace",
-        "OpenBrace",
-        render_terminal(source, &node.open_brace.range),
-    );
+        let rendered = render_expression(source, operand, depth + 1);
 
-    acc.add(
-        "options",
-        "CallOptions",
-        render_call_options(source, &node.options, depth + 1),
-    );
+        acc.add("operand", "Expression", rendered);
+    }
 
-    acc.add(
-        "close_brace",
-        "CloseBrace",
-        render_terminal(source, &node.close_brace.range),
-    );
+    {
+        let open_brace = &node.open_brace;
+
+        let rendered = render_terminal(source, &open_brace.range);
+
+        acc.add("open_brace", "OpenBrace", rendered);
+    }
+
+    {
+        let options = &node.options;
+
+        let rendered = render_call_options(source, options, depth + 1);
+
+        acc.add("options", "CallOptions", rendered);
+    }
+
+    {
+        let close_brace = &node.close_brace;
+
+        let rendered = render_terminal(source, &close_brace.range);
+
+        acc.add("close_brace", "CloseBrace", rendered);
+    }
 
     acc.finish()
 }
@@ -401,21 +478,27 @@ pub fn render_call_options_expression(
 pub fn render_catch_clause(source: &str, node: &CatchClause, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "catch_keyword",
-        "CatchKeyword",
-        render_terminal(source, &node.catch_keyword.range),
-    );
+    {
+        let catch_keyword = &node.catch_keyword;
 
-    if let Some(ref error) = node.error {
-        acc.add(
-            "error",
-            "CatchClauseError",
-            render_catch_clause_error(source, error, depth + 1),
-        );
+        let rendered = render_terminal(source, &catch_keyword.range);
+
+        acc.add("catch_keyword", "CatchKeyword", rendered);
     }
 
-    acc.add("body", "Block", render_block(source, &node.body, depth + 1));
+    if let Some(ref error) = node.error {
+        let rendered = render_catch_clause_error(source, error, depth + 1);
+
+        acc.add("error", "CatchClauseError", rendered);
+    }
+
+    {
+        let body = &node.body;
+
+        let rendered = render_block(source, body, depth + 1);
+
+        acc.add("body", "Block", rendered);
+    }
 
     acc.finish()
 }
@@ -428,14 +511,18 @@ pub fn render_catch_clause_error(
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     if let Some(ref name) = node.name {
-        acc.add("name", "Identifier", render_terminal(source, &name.range));
+        let rendered = render_terminal(source, &name.range);
+
+        acc.add("name", "Identifier", rendered);
     }
 
-    acc.add(
-        "parameters",
-        "ParametersDeclaration",
-        render_parameters_declaration(source, &node.parameters, depth + 1),
-    );
+    {
+        let parameters = &node.parameters;
+
+        let rendered = render_parameters_declaration(source, parameters, depth + 1);
+
+        acc.add("parameters", "ParametersDeclaration", rendered);
+    }
 
     acc.finish()
 }
@@ -447,31 +534,45 @@ pub fn render_conditional_expression(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "operand",
-        "Expression",
-        render_expression(source, &node.operand, depth + 1),
-    );
+    {
+        let operand = &node.operand;
 
-    acc.add(
-        "question_mark",
-        "QuestionMark",
-        render_terminal(source, &node.question_mark.range),
-    );
+        let rendered = render_expression(source, operand, depth + 1);
 
-    acc.add(
-        "true_expression",
-        "Expression",
-        render_expression(source, &node.true_expression, depth + 1),
-    );
+        acc.add("operand", "Expression", rendered);
+    }
 
-    acc.add("colon", "Colon", render_terminal(source, &node.colon.range));
+    {
+        let question_mark = &node.question_mark;
 
-    acc.add(
-        "false_expression",
-        "Expression",
-        render_expression(source, &node.false_expression, depth + 1),
-    );
+        let rendered = render_terminal(source, &question_mark.range);
+
+        acc.add("question_mark", "QuestionMark", rendered);
+    }
+
+    {
+        let true_expression = &node.true_expression;
+
+        let rendered = render_expression(source, true_expression, depth + 1);
+
+        acc.add("true_expression", "Expression", rendered);
+    }
+
+    {
+        let colon = &node.colon;
+
+        let rendered = render_terminal(source, &colon.range);
+
+        acc.add("colon", "Colon", rendered);
+    }
+
+    {
+        let false_expression = &node.false_expression;
+
+        let rendered = render_expression(source, false_expression, depth + 1);
+
+        acc.add("false_expression", "Expression", rendered);
+    }
 
     acc.finish()
 }
@@ -483,37 +584,53 @@ pub fn render_constant_definition(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "type_name",
-        "TypeName",
-        render_type_name(source, &node.type_name, depth + 1),
-    );
+    {
+        let type_name = &node.type_name;
 
-    acc.add(
-        "constant_keyword",
-        "ConstantKeyword",
-        render_terminal(source, &node.constant_keyword.range),
-    );
+        let rendered = render_type_name(source, type_name, depth + 1);
 
-    acc.add(
-        "name",
-        "Identifier",
-        render_terminal(source, &node.name.range),
-    );
+        acc.add("type_name", "TypeName", rendered);
+    }
 
-    acc.add("equal", "Equal", render_terminal(source, &node.equal.range));
+    {
+        let constant_keyword = &node.constant_keyword;
 
-    acc.add(
-        "value",
-        "Expression",
-        render_expression(source, &node.value, depth + 1),
-    );
+        let rendered = render_terminal(source, &constant_keyword.range);
 
-    acc.add(
-        "semicolon",
-        "Semicolon",
-        render_terminal(source, &node.semicolon.range),
-    );
+        acc.add("constant_keyword", "ConstantKeyword", rendered);
+    }
+
+    {
+        let name = &node.name;
+
+        let rendered = render_terminal(source, &name.range);
+
+        acc.add("name", "Identifier", rendered);
+    }
+
+    {
+        let equal = &node.equal;
+
+        let rendered = render_terminal(source, &equal.range);
+
+        acc.add("equal", "Equal", rendered);
+    }
+
+    {
+        let value = &node.value;
+
+        let rendered = render_expression(source, value, depth + 1);
+
+        acc.add("value", "Expression", rendered);
+    }
+
+    {
+        let semicolon = &node.semicolon;
+
+        let rendered = render_terminal(source, &semicolon.range);
+
+        acc.add("semicolon", "Semicolon", rendered);
+    }
 
     acc.finish()
 }
@@ -525,25 +642,37 @@ pub fn render_constructor_definition(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "constructor_keyword",
-        "ConstructorKeyword",
-        render_terminal(source, &node.constructor_keyword.range),
-    );
+    {
+        let constructor_keyword = &node.constructor_keyword;
 
-    acc.add(
-        "parameters",
-        "ParametersDeclaration",
-        render_parameters_declaration(source, &node.parameters, depth + 1),
-    );
+        let rendered = render_terminal(source, &constructor_keyword.range);
 
-    acc.add(
-        "attributes",
-        "ConstructorAttributes",
-        render_constructor_attributes(source, &node.attributes, depth + 1),
-    );
+        acc.add("constructor_keyword", "ConstructorKeyword", rendered);
+    }
 
-    acc.add("body", "Block", render_block(source, &node.body, depth + 1));
+    {
+        let parameters = &node.parameters;
+
+        let rendered = render_parameters_declaration(source, parameters, depth + 1);
+
+        acc.add("parameters", "ParametersDeclaration", rendered);
+    }
+
+    {
+        let attributes = &node.attributes;
+
+        let rendered = render_constructor_attributes(source, attributes, depth + 1);
+
+        acc.add("attributes", "ConstructorAttributes", rendered);
+    }
+
+    {
+        let body = &node.body;
+
+        let rendered = render_block(source, body, depth + 1);
+
+        acc.add("body", "Block", rendered);
+    }
 
     acc.finish()
 }
@@ -555,17 +684,21 @@ pub fn render_continue_statement(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "continue_keyword",
-        "ContinueKeyword",
-        render_terminal(source, &node.continue_keyword.range),
-    );
+    {
+        let continue_keyword = &node.continue_keyword;
 
-    acc.add(
-        "semicolon",
-        "Semicolon",
-        render_terminal(source, &node.semicolon.range),
-    );
+        let rendered = render_terminal(source, &continue_keyword.range);
+
+        acc.add("continue_keyword", "ContinueKeyword", rendered);
+    }
+
+    {
+        let semicolon = &node.semicolon;
+
+        let rendered = render_terminal(source, &semicolon.range);
+
+        acc.add("semicolon", "Semicolon", rendered);
+    }
 
     acc.finish()
 }
@@ -578,48 +711,58 @@ pub fn render_contract_definition(
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     if let Some(ref abstract_keyword) = node.abstract_keyword {
-        acc.add(
-            "abstract_keyword",
-            "AbstractKeyword",
-            render_terminal(source, &abstract_keyword.range),
-        );
+        let rendered = render_terminal(source, &abstract_keyword.range);
+
+        acc.add("abstract_keyword", "AbstractKeyword", rendered);
     }
 
-    acc.add(
-        "contract_keyword",
-        "ContractKeyword",
-        render_terminal(source, &node.contract_keyword.range),
-    );
+    {
+        let contract_keyword = &node.contract_keyword;
 
-    acc.add(
-        "name",
-        "Identifier",
-        render_terminal(source, &node.name.range),
-    );
+        let rendered = render_terminal(source, &contract_keyword.range);
 
-    acc.add(
-        "specifiers",
-        "ContractSpecifiers",
-        render_contract_specifiers(source, &node.specifiers, depth + 1),
-    );
+        acc.add("contract_keyword", "ContractKeyword", rendered);
+    }
 
-    acc.add(
-        "open_brace",
-        "OpenBrace",
-        render_terminal(source, &node.open_brace.range),
-    );
+    {
+        let name = &node.name;
 
-    acc.add(
-        "members",
-        "ContractMembers",
-        render_contract_members(source, &node.members, depth + 1),
-    );
+        let rendered = render_terminal(source, &name.range);
 
-    acc.add(
-        "close_brace",
-        "CloseBrace",
-        render_terminal(source, &node.close_brace.range),
-    );
+        acc.add("name", "Identifier", rendered);
+    }
+
+    {
+        let specifiers = &node.specifiers;
+
+        let rendered = render_contract_specifiers(source, specifiers, depth + 1);
+
+        acc.add("specifiers", "ContractSpecifiers", rendered);
+    }
+
+    {
+        let open_brace = &node.open_brace;
+
+        let rendered = render_terminal(source, &open_brace.range);
+
+        acc.add("open_brace", "OpenBrace", rendered);
+    }
+
+    {
+        let members = &node.members;
+
+        let rendered = render_contract_members(source, members, depth + 1);
+
+        acc.add("members", "ContractMembers", rendered);
+    }
+
+    {
+        let close_brace = &node.close_brace;
+
+        let rendered = render_terminal(source, &close_brace.range);
+
+        acc.add("close_brace", "CloseBrace", rendered);
+    }
 
     acc.finish()
 }
@@ -631,18 +774,18 @@ pub fn render_decimal_number_expression(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "literal",
-        "DecimalLiteral",
-        render_terminal(source, &node.literal.range),
-    );
+    {
+        let literal = &node.literal;
+
+        let rendered = render_terminal(source, &literal.range);
+
+        acc.add("literal", "DecimalLiteral", rendered);
+    }
 
     if let Some(ref unit) = node.unit {
-        acc.add(
-            "unit",
-            "NumberUnit",
-            render_number_unit(source, unit, depth + 1),
-        );
+        let rendered = render_number_unit(source, unit, depth + 1);
+
+        acc.add("unit", "NumberUnit", rendered);
     }
 
     acc.finish()
@@ -655,47 +798,61 @@ pub fn render_do_while_statement(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "do_keyword",
-        "DoKeyword",
-        render_terminal(source, &node.do_keyword.range),
-    );
+    {
+        let do_keyword = &node.do_keyword;
 
-    acc.add(
-        "body",
-        "Statement",
-        render_statement(source, &node.body, depth + 1),
-    );
+        let rendered = render_terminal(source, &do_keyword.range);
 
-    acc.add(
-        "while_keyword",
-        "WhileKeyword",
-        render_terminal(source, &node.while_keyword.range),
-    );
+        acc.add("do_keyword", "DoKeyword", rendered);
+    }
 
-    acc.add(
-        "open_paren",
-        "OpenParen",
-        render_terminal(source, &node.open_paren.range),
-    );
+    {
+        let body = &node.body;
 
-    acc.add(
-        "condition",
-        "Expression",
-        render_expression(source, &node.condition, depth + 1),
-    );
+        let rendered = render_statement(source, body, depth + 1);
 
-    acc.add(
-        "close_paren",
-        "CloseParen",
-        render_terminal(source, &node.close_paren.range),
-    );
+        acc.add("body", "Statement", rendered);
+    }
 
-    acc.add(
-        "semicolon",
-        "Semicolon",
-        render_terminal(source, &node.semicolon.range),
-    );
+    {
+        let while_keyword = &node.while_keyword;
+
+        let rendered = render_terminal(source, &while_keyword.range);
+
+        acc.add("while_keyword", "WhileKeyword", rendered);
+    }
+
+    {
+        let open_paren = &node.open_paren;
+
+        let rendered = render_terminal(source, &open_paren.range);
+
+        acc.add("open_paren", "OpenParen", rendered);
+    }
+
+    {
+        let condition = &node.condition;
+
+        let rendered = render_expression(source, condition, depth + 1);
+
+        acc.add("condition", "Expression", rendered);
+    }
+
+    {
+        let close_paren = &node.close_paren;
+
+        let rendered = render_terminal(source, &close_paren.range);
+
+        acc.add("close_paren", "CloseParen", rendered);
+    }
+
+    {
+        let semicolon = &node.semicolon;
+
+        let rendered = render_terminal(source, &semicolon.range);
+
+        acc.add("semicolon", "Semicolon", rendered);
+    }
 
     acc.finish()
 }
@@ -703,17 +860,21 @@ pub fn render_do_while_statement(
 pub fn render_else_branch(source: &str, node: &ElseBranch, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "else_keyword",
-        "ElseKeyword",
-        render_terminal(source, &node.else_keyword.range),
-    );
+    {
+        let else_keyword = &node.else_keyword;
 
-    acc.add(
-        "body",
-        "Statement",
-        render_statement(source, &node.body, depth + 1),
-    );
+        let rendered = render_terminal(source, &else_keyword.range);
+
+        acc.add("else_keyword", "ElseKeyword", rendered);
+    }
+
+    {
+        let body = &node.body;
+
+        let rendered = render_statement(source, body, depth + 1);
+
+        acc.add("body", "Statement", rendered);
+    }
 
     acc.finish()
 }
@@ -721,29 +882,37 @@ pub fn render_else_branch(source: &str, node: &ElseBranch, depth: usize) -> Rend
 pub fn render_emit_statement(source: &str, node: &EmitStatement, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "emit_keyword",
-        "EmitKeyword",
-        render_terminal(source, &node.emit_keyword.range),
-    );
+    {
+        let emit_keyword = &node.emit_keyword;
 
-    acc.add(
-        "event",
-        "IdentifierPath",
-        render_identifier_path(source, &node.event, depth + 1),
-    );
+        let rendered = render_terminal(source, &emit_keyword.range);
 
-    acc.add(
-        "arguments",
-        "ArgumentsDeclaration",
-        render_arguments_declaration(source, &node.arguments, depth + 1),
-    );
+        acc.add("emit_keyword", "EmitKeyword", rendered);
+    }
 
-    acc.add(
-        "semicolon",
-        "Semicolon",
-        render_terminal(source, &node.semicolon.range),
-    );
+    {
+        let event = &node.event;
+
+        let rendered = render_identifier_path(source, event, depth + 1);
+
+        acc.add("event", "IdentifierPath", rendered);
+    }
+
+    {
+        let arguments = &node.arguments;
+
+        let rendered = render_arguments_declaration(source, arguments, depth + 1);
+
+        acc.add("arguments", "ArgumentsDeclaration", rendered);
+    }
+
+    {
+        let semicolon = &node.semicolon;
+
+        let rendered = render_terminal(source, &semicolon.range);
+
+        acc.add("semicolon", "Semicolon", rendered);
+    }
 
     acc.finish()
 }
@@ -751,35 +920,45 @@ pub fn render_emit_statement(source: &str, node: &EmitStatement, depth: usize) -
 pub fn render_enum_definition(source: &str, node: &EnumDefinition, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "enum_keyword",
-        "EnumKeyword",
-        render_terminal(source, &node.enum_keyword.range),
-    );
+    {
+        let enum_keyword = &node.enum_keyword;
 
-    acc.add(
-        "name",
-        "Identifier",
-        render_terminal(source, &node.name.range),
-    );
+        let rendered = render_terminal(source, &enum_keyword.range);
 
-    acc.add(
-        "open_brace",
-        "OpenBrace",
-        render_terminal(source, &node.open_brace.range),
-    );
+        acc.add("enum_keyword", "EnumKeyword", rendered);
+    }
 
-    acc.add(
-        "members",
-        "EnumMembers",
-        render_enum_members(source, &node.members, depth + 1),
-    );
+    {
+        let name = &node.name;
 
-    acc.add(
-        "close_brace",
-        "CloseBrace",
-        render_terminal(source, &node.close_brace.range),
-    );
+        let rendered = render_terminal(source, &name.range);
+
+        acc.add("name", "Identifier", rendered);
+    }
+
+    {
+        let open_brace = &node.open_brace;
+
+        let rendered = render_terminal(source, &open_brace.range);
+
+        acc.add("open_brace", "OpenBrace", rendered);
+    }
+
+    {
+        let members = &node.members;
+
+        let rendered = render_enum_members(source, members, depth + 1);
+
+        acc.add("members", "EnumMembers", rendered);
+    }
+
+    {
+        let close_brace = &node.close_brace;
+
+        let rendered = render_terminal(source, &close_brace.range);
+
+        acc.add("close_brace", "CloseBrace", rendered);
+    }
 
     acc.finish()
 }
@@ -791,27 +970,37 @@ pub fn render_equality_expression(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "left_operand",
-        "Expression",
-        render_expression(source, &node.left_operand, depth + 1),
-    );
+    {
+        let left_operand = &node.left_operand;
 
-    acc.add(
-        "expression_equality_expression_operator",
-        "Expression_EqualityExpression_Operator",
-        render_expression_equality_expression_operator(
+        let rendered = render_expression(source, left_operand, depth + 1);
+
+        acc.add("left_operand", "Expression", rendered);
+    }
+
+    {
+        let expression_equality_expression_operator = &node.expression_equality_expression_operator;
+
+        let rendered = render_expression_equality_expression_operator(
             source,
-            &node.expression_equality_expression_operator,
+            expression_equality_expression_operator,
             depth + 1,
-        ),
-    );
+        );
 
-    acc.add(
-        "right_operand",
-        "Expression",
-        render_expression(source, &node.right_operand, depth + 1),
-    );
+        acc.add(
+            "expression_equality_expression_operator",
+            "Expression_EqualityExpression_Operator",
+            rendered,
+        );
+    }
+
+    {
+        let right_operand = &node.right_operand;
+
+        let rendered = render_expression(source, right_operand, depth + 1);
+
+        acc.add("right_operand", "Expression", rendered);
+    }
 
     acc.finish()
 }
@@ -823,29 +1012,37 @@ pub fn render_error_definition(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "error_keyword",
-        "ErrorKeyword",
-        render_terminal(source, &node.error_keyword.range),
-    );
+    {
+        let error_keyword = &node.error_keyword;
 
-    acc.add(
-        "name",
-        "Identifier",
-        render_terminal(source, &node.name.range),
-    );
+        let rendered = render_terminal(source, &error_keyword.range);
 
-    acc.add(
-        "members",
-        "ErrorParametersDeclaration",
-        render_error_parameters_declaration(source, &node.members, depth + 1),
-    );
+        acc.add("error_keyword", "ErrorKeyword", rendered);
+    }
 
-    acc.add(
-        "semicolon",
-        "Semicolon",
-        render_terminal(source, &node.semicolon.range),
-    );
+    {
+        let name = &node.name;
+
+        let rendered = render_terminal(source, &name.range);
+
+        acc.add("name", "Identifier", rendered);
+    }
+
+    {
+        let members = &node.members;
+
+        let rendered = render_error_parameters_declaration(source, members, depth + 1);
+
+        acc.add("members", "ErrorParametersDeclaration", rendered);
+    }
+
+    {
+        let semicolon = &node.semicolon;
+
+        let rendered = render_terminal(source, &semicolon.range);
+
+        acc.add("semicolon", "Semicolon", rendered);
+    }
 
     acc.finish()
 }
@@ -853,14 +1050,18 @@ pub fn render_error_definition(
 pub fn render_error_parameter(source: &str, node: &ErrorParameter, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "type_name",
-        "TypeName",
-        render_type_name(source, &node.type_name, depth + 1),
-    );
+    {
+        let type_name = &node.type_name;
+
+        let rendered = render_type_name(source, type_name, depth + 1);
+
+        acc.add("type_name", "TypeName", rendered);
+    }
 
     if let Some(ref name) = node.name {
-        acc.add("name", "Identifier", render_terminal(source, &name.range));
+        let rendered = render_terminal(source, &name.range);
+
+        acc.add("name", "Identifier", rendered);
     }
 
     acc.finish()
@@ -873,23 +1074,29 @@ pub fn render_error_parameters_declaration(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "open_paren",
-        "OpenParen",
-        render_terminal(source, &node.open_paren.range),
-    );
+    {
+        let open_paren = &node.open_paren;
 
-    acc.add(
-        "parameters",
-        "ErrorParameters",
-        render_error_parameters(source, &node.parameters, depth + 1),
-    );
+        let rendered = render_terminal(source, &open_paren.range);
 
-    acc.add(
-        "close_paren",
-        "CloseParen",
-        render_terminal(source, &node.close_paren.range),
-    );
+        acc.add("open_paren", "OpenParen", rendered);
+    }
+
+    {
+        let parameters = &node.parameters;
+
+        let rendered = render_error_parameters(source, parameters, depth + 1);
+
+        acc.add("parameters", "ErrorParameters", rendered);
+    }
+
+    {
+        let close_paren = &node.close_paren;
+
+        let rendered = render_terminal(source, &close_paren.range);
+
+        acc.add("close_paren", "CloseParen", rendered);
+    }
 
     acc.finish()
 }
@@ -901,37 +1108,43 @@ pub fn render_event_definition(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "event_keyword",
-        "EventKeyword",
-        render_terminal(source, &node.event_keyword.range),
-    );
+    {
+        let event_keyword = &node.event_keyword;
 
-    acc.add(
-        "name",
-        "Identifier",
-        render_terminal(source, &node.name.range),
-    );
+        let rendered = render_terminal(source, &event_keyword.range);
 
-    acc.add(
-        "parameters",
-        "EventParametersDeclaration",
-        render_event_parameters_declaration(source, &node.parameters, depth + 1),
-    );
-
-    if let Some(ref anonymous_keyword) = node.anonymous_keyword {
-        acc.add(
-            "anonymous_keyword",
-            "AnonymousKeyword",
-            render_terminal(source, &anonymous_keyword.range),
-        );
+        acc.add("event_keyword", "EventKeyword", rendered);
     }
 
-    acc.add(
-        "semicolon",
-        "Semicolon",
-        render_terminal(source, &node.semicolon.range),
-    );
+    {
+        let name = &node.name;
+
+        let rendered = render_terminal(source, &name.range);
+
+        acc.add("name", "Identifier", rendered);
+    }
+
+    {
+        let parameters = &node.parameters;
+
+        let rendered = render_event_parameters_declaration(source, parameters, depth + 1);
+
+        acc.add("parameters", "EventParametersDeclaration", rendered);
+    }
+
+    if let Some(ref anonymous_keyword) = node.anonymous_keyword {
+        let rendered = render_terminal(source, &anonymous_keyword.range);
+
+        acc.add("anonymous_keyword", "AnonymousKeyword", rendered);
+    }
+
+    {
+        let semicolon = &node.semicolon;
+
+        let rendered = render_terminal(source, &semicolon.range);
+
+        acc.add("semicolon", "Semicolon", rendered);
+    }
 
     acc.finish()
 }
@@ -939,22 +1152,24 @@ pub fn render_event_definition(
 pub fn render_event_parameter(source: &str, node: &EventParameter, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "type_name",
-        "TypeName",
-        render_type_name(source, &node.type_name, depth + 1),
-    );
+    {
+        let type_name = &node.type_name;
+
+        let rendered = render_type_name(source, type_name, depth + 1);
+
+        acc.add("type_name", "TypeName", rendered);
+    }
 
     if let Some(ref indexed_keyword) = node.indexed_keyword {
-        acc.add(
-            "indexed_keyword",
-            "IndexedKeyword",
-            render_terminal(source, &indexed_keyword.range),
-        );
+        let rendered = render_terminal(source, &indexed_keyword.range);
+
+        acc.add("indexed_keyword", "IndexedKeyword", rendered);
     }
 
     if let Some(ref name) = node.name {
-        acc.add("name", "Identifier", render_terminal(source, &name.range));
+        let rendered = render_terminal(source, &name.range);
+
+        acc.add("name", "Identifier", rendered);
     }
 
     acc.finish()
@@ -967,23 +1182,29 @@ pub fn render_event_parameters_declaration(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "open_paren",
-        "OpenParen",
-        render_terminal(source, &node.open_paren.range),
-    );
+    {
+        let open_paren = &node.open_paren;
 
-    acc.add(
-        "parameters",
-        "EventParameters",
-        render_event_parameters(source, &node.parameters, depth + 1),
-    );
+        let rendered = render_terminal(source, &open_paren.range);
 
-    acc.add(
-        "close_paren",
-        "CloseParen",
-        render_terminal(source, &node.close_paren.range),
-    );
+        acc.add("open_paren", "OpenParen", rendered);
+    }
+
+    {
+        let parameters = &node.parameters;
+
+        let rendered = render_event_parameters(source, parameters, depth + 1);
+
+        acc.add("parameters", "EventParameters", rendered);
+    }
+
+    {
+        let close_paren = &node.close_paren;
+
+        let rendered = render_terminal(source, &close_paren.range);
+
+        acc.add("close_paren", "CloseParen", rendered);
+    }
 
     acc.finish()
 }
@@ -995,17 +1216,21 @@ pub fn render_experimental_pragma(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "experimental_keyword",
-        "ExperimentalKeyword",
-        render_terminal(source, &node.experimental_keyword.range),
-    );
+    {
+        let experimental_keyword = &node.experimental_keyword;
 
-    acc.add(
-        "feature",
-        "ExperimentalFeature",
-        render_experimental_feature(source, &node.feature, depth + 1),
-    );
+        let rendered = render_terminal(source, &experimental_keyword.range);
+
+        acc.add("experimental_keyword", "ExperimentalKeyword", rendered);
+    }
+
+    {
+        let feature = &node.feature;
+
+        let rendered = render_experimental_feature(source, feature, depth + 1);
+
+        acc.add("feature", "ExperimentalFeature", rendered);
+    }
 
     acc.finish()
 }
@@ -1017,23 +1242,29 @@ pub fn render_exponentiation_expression(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "left_operand",
-        "Expression",
-        render_expression(source, &node.left_operand, depth + 1),
-    );
+    {
+        let left_operand = &node.left_operand;
 
-    acc.add(
-        "operator",
-        "AsteriskAsterisk",
-        render_terminal(source, &node.operator.range),
-    );
+        let rendered = render_expression(source, left_operand, depth + 1);
 
-    acc.add(
-        "right_operand",
-        "Expression",
-        render_expression(source, &node.right_operand, depth + 1),
-    );
+        acc.add("left_operand", "Expression", rendered);
+    }
+
+    {
+        let operator = &node.operator;
+
+        let rendered = render_terminal(source, &operator.range);
+
+        acc.add("operator", "AsteriskAsterisk", rendered);
+    }
+
+    {
+        let right_operand = &node.right_operand;
+
+        let rendered = render_expression(source, right_operand, depth + 1);
+
+        acc.add("right_operand", "Expression", rendered);
+    }
 
     acc.finish()
 }
@@ -1045,17 +1276,21 @@ pub fn render_expression_statement(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "expression",
-        "Expression",
-        render_expression(source, &node.expression, depth + 1),
-    );
+    {
+        let expression = &node.expression;
 
-    acc.add(
-        "semicolon",
-        "Semicolon",
-        render_terminal(source, &node.semicolon.range),
-    );
+        let rendered = render_expression(source, expression, depth + 1);
+
+        acc.add("expression", "Expression", rendered);
+    }
+
+    {
+        let semicolon = &node.semicolon;
+
+        let rendered = render_terminal(source, &semicolon.range);
+
+        acc.add("semicolon", "Semicolon", rendered);
+    }
 
     acc.finish()
 }
@@ -1067,37 +1302,43 @@ pub fn render_fallback_function_definition(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "fallback_keyword",
-        "FallbackKeyword",
-        render_terminal(source, &node.fallback_keyword.range),
-    );
+    {
+        let fallback_keyword = &node.fallback_keyword;
 
-    acc.add(
-        "parameters",
-        "ParametersDeclaration",
-        render_parameters_declaration(source, &node.parameters, depth + 1),
-    );
+        let rendered = render_terminal(source, &fallback_keyword.range);
 
-    acc.add(
-        "attributes",
-        "FallbackFunctionAttributes",
-        render_fallback_function_attributes(source, &node.attributes, depth + 1),
-    );
-
-    if let Some(ref returns) = node.returns {
-        acc.add(
-            "returns",
-            "ReturnsDeclaration",
-            render_returns_declaration(source, returns, depth + 1),
-        );
+        acc.add("fallback_keyword", "FallbackKeyword", rendered);
     }
 
-    acc.add(
-        "body",
-        "FunctionBody",
-        render_function_body(source, &node.body, depth + 1),
-    );
+    {
+        let parameters = &node.parameters;
+
+        let rendered = render_parameters_declaration(source, parameters, depth + 1);
+
+        acc.add("parameters", "ParametersDeclaration", rendered);
+    }
+
+    {
+        let attributes = &node.attributes;
+
+        let rendered = render_fallback_function_attributes(source, attributes, depth + 1);
+
+        acc.add("attributes", "FallbackFunctionAttributes", rendered);
+    }
+
+    if let Some(ref returns) = node.returns {
+        let rendered = render_returns_declaration(source, returns, depth + 1);
+
+        acc.add("returns", "ReturnsDeclaration", rendered);
+    }
+
+    {
+        let body = &node.body;
+
+        let rendered = render_function_body(source, body, depth + 1);
+
+        acc.add("body", "FunctionBody", rendered);
+    }
 
     acc.finish()
 }
@@ -1105,49 +1346,59 @@ pub fn render_fallback_function_definition(
 pub fn render_for_statement(source: &str, node: &ForStatement, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "for_keyword",
-        "ForKeyword",
-        render_terminal(source, &node.for_keyword.range),
-    );
+    {
+        let for_keyword = &node.for_keyword;
 
-    acc.add(
-        "open_paren",
-        "OpenParen",
-        render_terminal(source, &node.open_paren.range),
-    );
+        let rendered = render_terminal(source, &for_keyword.range);
 
-    acc.add(
-        "initialization",
-        "ForStatementInitialization",
-        render_for_statement_initialization(source, &node.initialization, depth + 1),
-    );
-
-    acc.add(
-        "condition",
-        "ForStatementCondition",
-        render_for_statement_condition(source, &node.condition, depth + 1),
-    );
-
-    if let Some(ref iterator) = node.iterator {
-        acc.add(
-            "iterator",
-            "Expression",
-            render_expression(source, iterator, depth + 1),
-        );
+        acc.add("for_keyword", "ForKeyword", rendered);
     }
 
-    acc.add(
-        "close_paren",
-        "CloseParen",
-        render_terminal(source, &node.close_paren.range),
-    );
+    {
+        let open_paren = &node.open_paren;
 
-    acc.add(
-        "body",
-        "Statement",
-        render_statement(source, &node.body, depth + 1),
-    );
+        let rendered = render_terminal(source, &open_paren.range);
+
+        acc.add("open_paren", "OpenParen", rendered);
+    }
+
+    {
+        let initialization = &node.initialization;
+
+        let rendered = render_for_statement_initialization(source, initialization, depth + 1);
+
+        acc.add("initialization", "ForStatementInitialization", rendered);
+    }
+
+    {
+        let condition = &node.condition;
+
+        let rendered = render_for_statement_condition(source, condition, depth + 1);
+
+        acc.add("condition", "ForStatementCondition", rendered);
+    }
+
+    if let Some(ref iterator) = node.iterator {
+        let rendered = render_expression(source, iterator, depth + 1);
+
+        acc.add("iterator", "Expression", rendered);
+    }
+
+    {
+        let close_paren = &node.close_paren;
+
+        let rendered = render_terminal(source, &close_paren.range);
+
+        acc.add("close_paren", "CloseParen", rendered);
+    }
+
+    {
+        let body = &node.body;
+
+        let rendered = render_statement(source, body, depth + 1);
+
+        acc.add("body", "Statement", rendered);
+    }
 
     acc.finish()
 }
@@ -1159,17 +1410,21 @@ pub fn render_function_call_expression(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "operand",
-        "Expression",
-        render_expression(source, &node.operand, depth + 1),
-    );
+    {
+        let operand = &node.operand;
 
-    acc.add(
-        "arguments",
-        "ArgumentsDeclaration",
-        render_arguments_declaration(source, &node.arguments, depth + 1),
-    );
+        let rendered = render_expression(source, operand, depth + 1);
+
+        acc.add("operand", "Expression", rendered);
+    }
+
+    {
+        let arguments = &node.arguments;
+
+        let rendered = render_arguments_declaration(source, arguments, depth + 1);
+
+        acc.add("arguments", "ArgumentsDeclaration", rendered);
+    }
 
     acc.finish()
 }
@@ -1181,43 +1436,51 @@ pub fn render_function_definition(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "function_keyword",
-        "FunctionKeyword",
-        render_terminal(source, &node.function_keyword.range),
-    );
+    {
+        let function_keyword = &node.function_keyword;
 
-    acc.add(
-        "name",
-        "FunctionName",
-        render_function_name(source, &node.name, depth + 1),
-    );
+        let rendered = render_terminal(source, &function_keyword.range);
 
-    acc.add(
-        "parameters",
-        "ParametersDeclaration",
-        render_parameters_declaration(source, &node.parameters, depth + 1),
-    );
-
-    acc.add(
-        "attributes",
-        "FunctionAttributes",
-        render_function_attributes(source, &node.attributes, depth + 1),
-    );
-
-    if let Some(ref returns) = node.returns {
-        acc.add(
-            "returns",
-            "ReturnsDeclaration",
-            render_returns_declaration(source, returns, depth + 1),
-        );
+        acc.add("function_keyword", "FunctionKeyword", rendered);
     }
 
-    acc.add(
-        "body",
-        "FunctionBody",
-        render_function_body(source, &node.body, depth + 1),
-    );
+    {
+        let name = &node.name;
+
+        let rendered = render_function_name(source, name, depth + 1);
+
+        acc.add("name", "FunctionName", rendered);
+    }
+
+    {
+        let parameters = &node.parameters;
+
+        let rendered = render_parameters_declaration(source, parameters, depth + 1);
+
+        acc.add("parameters", "ParametersDeclaration", rendered);
+    }
+
+    {
+        let attributes = &node.attributes;
+
+        let rendered = render_function_attributes(source, attributes, depth + 1);
+
+        acc.add("attributes", "FunctionAttributes", rendered);
+    }
+
+    if let Some(ref returns) = node.returns {
+        let rendered = render_returns_declaration(source, returns, depth + 1);
+
+        acc.add("returns", "ReturnsDeclaration", rendered);
+    }
+
+    {
+        let body = &node.body;
+
+        let rendered = render_function_body(source, body, depth + 1);
+
+        acc.add("body", "FunctionBody", rendered);
+    }
 
     acc.finish()
 }
@@ -1225,30 +1488,34 @@ pub fn render_function_definition(
 pub fn render_function_type(source: &str, node: &FunctionType, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "function_keyword",
-        "FunctionKeyword",
-        render_terminal(source, &node.function_keyword.range),
-    );
+    {
+        let function_keyword = &node.function_keyword;
 
-    acc.add(
-        "parameters",
-        "ParametersDeclaration",
-        render_parameters_declaration(source, &node.parameters, depth + 1),
-    );
+        let rendered = render_terminal(source, &function_keyword.range);
 
-    acc.add(
-        "attributes",
-        "FunctionTypeAttributes",
-        render_function_type_attributes(source, &node.attributes, depth + 1),
-    );
+        acc.add("function_keyword", "FunctionKeyword", rendered);
+    }
+
+    {
+        let parameters = &node.parameters;
+
+        let rendered = render_parameters_declaration(source, parameters, depth + 1);
+
+        acc.add("parameters", "ParametersDeclaration", rendered);
+    }
+
+    {
+        let attributes = &node.attributes;
+
+        let rendered = render_function_type_attributes(source, attributes, depth + 1);
+
+        acc.add("attributes", "FunctionTypeAttributes", rendered);
+    }
 
     if let Some(ref returns) = node.returns {
-        acc.add(
-            "returns",
-            "ReturnsDeclaration",
-            render_returns_declaration(source, returns, depth + 1),
-        );
+        let rendered = render_returns_declaration(source, returns, depth + 1);
+
+        acc.add("returns", "ReturnsDeclaration", rendered);
     }
 
     acc.finish()
@@ -1261,11 +1528,13 @@ pub fn render_hex_number_expression(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "literal",
-        "HexLiteral",
-        render_terminal(source, &node.literal.range),
-    );
+    {
+        let literal = &node.literal;
+
+        let rendered = render_terminal(source, &literal.range);
+
+        acc.add("literal", "HexLiteral", rendered);
+    }
 
     acc.finish()
 }
@@ -1273,42 +1542,50 @@ pub fn render_hex_number_expression(
 pub fn render_if_statement(source: &str, node: &IfStatement, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "if_keyword",
-        "IfKeyword",
-        render_terminal(source, &node.if_keyword.range),
-    );
+    {
+        let if_keyword = &node.if_keyword;
 
-    acc.add(
-        "open_paren",
-        "OpenParen",
-        render_terminal(source, &node.open_paren.range),
-    );
+        let rendered = render_terminal(source, &if_keyword.range);
 
-    acc.add(
-        "condition",
-        "Expression",
-        render_expression(source, &node.condition, depth + 1),
-    );
+        acc.add("if_keyword", "IfKeyword", rendered);
+    }
 
-    acc.add(
-        "close_paren",
-        "CloseParen",
-        render_terminal(source, &node.close_paren.range),
-    );
+    {
+        let open_paren = &node.open_paren;
 
-    acc.add(
-        "body",
-        "Statement",
-        render_statement(source, &node.body, depth + 1),
-    );
+        let rendered = render_terminal(source, &open_paren.range);
+
+        acc.add("open_paren", "OpenParen", rendered);
+    }
+
+    {
+        let condition = &node.condition;
+
+        let rendered = render_expression(source, condition, depth + 1);
+
+        acc.add("condition", "Expression", rendered);
+    }
+
+    {
+        let close_paren = &node.close_paren;
+
+        let rendered = render_terminal(source, &close_paren.range);
+
+        acc.add("close_paren", "CloseParen", rendered);
+    }
+
+    {
+        let body = &node.body;
+
+        let rendered = render_statement(source, body, depth + 1);
+
+        acc.add("body", "Statement", rendered);
+    }
 
     if let Some(ref else_branch) = node.else_branch {
-        acc.add(
-            "else_branch",
-            "ElseBranch",
-            render_else_branch(source, else_branch, depth + 1),
-        );
+        let rendered = render_else_branch(source, else_branch, depth + 1);
+
+        acc.add("else_branch", "ElseBranch", rendered);
     }
 
     acc.finish()
@@ -1317,17 +1594,21 @@ pub fn render_if_statement(source: &str, node: &IfStatement, depth: usize) -> Re
 pub fn render_import_alias(source: &str, node: &ImportAlias, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "as_keyword",
-        "AsKeyword",
-        render_terminal(source, &node.as_keyword.range),
-    );
+    {
+        let as_keyword = &node.as_keyword;
 
-    acc.add(
-        "identifier",
-        "Identifier",
-        render_terminal(source, &node.identifier.range),
-    );
+        let rendered = render_terminal(source, &as_keyword.range);
+
+        acc.add("as_keyword", "AsKeyword", rendered);
+    }
+
+    {
+        let identifier = &node.identifier;
+
+        let rendered = render_terminal(source, &identifier.range);
+
+        acc.add("identifier", "Identifier", rendered);
+    }
 
     acc.finish()
 }
@@ -1339,35 +1620,45 @@ pub fn render_import_deconstruction(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "open_brace",
-        "OpenBrace",
-        render_terminal(source, &node.open_brace.range),
-    );
+    {
+        let open_brace = &node.open_brace;
 
-    acc.add(
-        "symbols",
-        "ImportDeconstructionSymbols",
-        render_import_deconstruction_symbols(source, &node.symbols, depth + 1),
-    );
+        let rendered = render_terminal(source, &open_brace.range);
 
-    acc.add(
-        "close_brace",
-        "CloseBrace",
-        render_terminal(source, &node.close_brace.range),
-    );
+        acc.add("open_brace", "OpenBrace", rendered);
+    }
 
-    acc.add(
-        "from_keyword",
-        "FromKeyword",
-        render_terminal(source, &node.from_keyword.range),
-    );
+    {
+        let symbols = &node.symbols;
 
-    acc.add(
-        "path",
-        "StringLiteral",
-        render_terminal(source, &node.path.range),
-    );
+        let rendered = render_import_deconstruction_symbols(source, symbols, depth + 1);
+
+        acc.add("symbols", "ImportDeconstructionSymbols", rendered);
+    }
+
+    {
+        let close_brace = &node.close_brace;
+
+        let rendered = render_terminal(source, &close_brace.range);
+
+        acc.add("close_brace", "CloseBrace", rendered);
+    }
+
+    {
+        let from_keyword = &node.from_keyword;
+
+        let rendered = render_terminal(source, &from_keyword.range);
+
+        acc.add("from_keyword", "FromKeyword", rendered);
+    }
+
+    {
+        let path = &node.path;
+
+        let rendered = render_terminal(source, &path.range);
+
+        acc.add("path", "StringLiteral", rendered);
+    }
 
     acc.finish()
 }
@@ -1379,18 +1670,18 @@ pub fn render_import_deconstruction_symbol(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "name",
-        "Identifier",
-        render_terminal(source, &node.name.range),
-    );
+    {
+        let name = &node.name;
+
+        let rendered = render_terminal(source, &name.range);
+
+        acc.add("name", "Identifier", rendered);
+    }
 
     if let Some(ref alias) = node.alias {
-        acc.add(
-            "alias",
-            "ImportAlias",
-            render_import_alias(source, alias, depth + 1),
-        );
+        let rendered = render_import_alias(source, alias, depth + 1);
+
+        acc.add("alias", "ImportAlias", rendered);
     }
 
     acc.finish()
@@ -1403,23 +1694,29 @@ pub fn render_import_directive(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "import_keyword",
-        "ImportKeyword",
-        render_terminal(source, &node.import_keyword.range),
-    );
+    {
+        let import_keyword = &node.import_keyword;
 
-    acc.add(
-        "clause",
-        "ImportClause",
-        render_import_clause(source, &node.clause, depth + 1),
-    );
+        let rendered = render_terminal(source, &import_keyword.range);
 
-    acc.add(
-        "semicolon",
-        "Semicolon",
-        render_terminal(source, &node.semicolon.range),
-    );
+        acc.add("import_keyword", "ImportKeyword", rendered);
+    }
+
+    {
+        let clause = &node.clause;
+
+        let rendered = render_import_clause(source, clause, depth + 1);
+
+        acc.add("clause", "ImportClause", rendered);
+    }
+
+    {
+        let semicolon = &node.semicolon;
+
+        let rendered = render_terminal(source, &semicolon.range);
+
+        acc.add("semicolon", "Semicolon", rendered);
+    }
 
     acc.finish()
 }
@@ -1431,14 +1728,18 @@ pub fn render_index_access_end(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add("colon", "Colon", render_terminal(source, &node.colon.range));
+    {
+        let colon = &node.colon;
+
+        let rendered = render_terminal(source, &colon.range);
+
+        acc.add("colon", "Colon", rendered);
+    }
 
     if let Some(ref end) = node.end {
-        acc.add(
-            "end",
-            "Expression",
-            render_expression(source, end, depth + 1),
-        );
+        let rendered = render_expression(source, end, depth + 1);
+
+        acc.add("end", "Expression", rendered);
     }
 
     acc.finish()
@@ -1451,39 +1752,41 @@ pub fn render_index_access_expression(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "operand",
-        "Expression",
-        render_expression(source, &node.operand, depth + 1),
-    );
+    {
+        let operand = &node.operand;
 
-    acc.add(
-        "open_bracket",
-        "OpenBracket",
-        render_terminal(source, &node.open_bracket.range),
-    );
+        let rendered = render_expression(source, operand, depth + 1);
+
+        acc.add("operand", "Expression", rendered);
+    }
+
+    {
+        let open_bracket = &node.open_bracket;
+
+        let rendered = render_terminal(source, &open_bracket.range);
+
+        acc.add("open_bracket", "OpenBracket", rendered);
+    }
 
     if let Some(ref start) = node.start {
-        acc.add(
-            "start",
-            "Expression",
-            render_expression(source, start, depth + 1),
-        );
+        let rendered = render_expression(source, start, depth + 1);
+
+        acc.add("start", "Expression", rendered);
     }
 
     if let Some(ref end) = node.end {
-        acc.add(
-            "end",
-            "IndexAccessEnd",
-            render_index_access_end(source, end, depth + 1),
-        );
+        let rendered = render_index_access_end(source, end, depth + 1);
+
+        acc.add("end", "IndexAccessEnd", rendered);
     }
 
-    acc.add(
-        "close_bracket",
-        "CloseBracket",
-        render_terminal(source, &node.close_bracket.range),
-    );
+    {
+        let close_bracket = &node.close_bracket;
+
+        let rendered = render_terminal(source, &close_bracket.range);
+
+        acc.add("close_bracket", "CloseBracket", rendered);
+    }
 
     acc.finish()
 }
@@ -1495,27 +1798,38 @@ pub fn render_inequality_expression(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "left_operand",
-        "Expression",
-        render_expression(source, &node.left_operand, depth + 1),
-    );
+    {
+        let left_operand = &node.left_operand;
 
-    acc.add(
-        "expression_inequality_expression_operator",
-        "Expression_InequalityExpression_Operator",
-        render_expression_inequality_expression_operator(
+        let rendered = render_expression(source, left_operand, depth + 1);
+
+        acc.add("left_operand", "Expression", rendered);
+    }
+
+    {
+        let expression_inequality_expression_operator =
+            &node.expression_inequality_expression_operator;
+
+        let rendered = render_expression_inequality_expression_operator(
             source,
-            &node.expression_inequality_expression_operator,
+            expression_inequality_expression_operator,
             depth + 1,
-        ),
-    );
+        );
 
-    acc.add(
-        "right_operand",
-        "Expression",
-        render_expression(source, &node.right_operand, depth + 1),
-    );
+        acc.add(
+            "expression_inequality_expression_operator",
+            "Expression_InequalityExpression_Operator",
+            rendered,
+        );
+    }
+
+    {
+        let right_operand = &node.right_operand;
+
+        let rendered = render_expression(source, right_operand, depth + 1);
+
+        acc.add("right_operand", "Expression", rendered);
+    }
 
     acc.finish()
 }
@@ -1527,17 +1841,21 @@ pub fn render_inheritance_specifier(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "is_keyword",
-        "IsKeyword",
-        render_terminal(source, &node.is_keyword.range),
-    );
+    {
+        let is_keyword = &node.is_keyword;
 
-    acc.add(
-        "types",
-        "InheritanceTypes",
-        render_inheritance_types(source, &node.types, depth + 1),
-    );
+        let rendered = render_terminal(source, &is_keyword.range);
+
+        acc.add("is_keyword", "IsKeyword", rendered);
+    }
+
+    {
+        let types = &node.types;
+
+        let rendered = render_inheritance_types(source, types, depth + 1);
+
+        acc.add("types", "InheritanceTypes", rendered);
+    }
 
     acc.finish()
 }
@@ -1549,18 +1867,18 @@ pub fn render_inheritance_type(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "type_name",
-        "IdentifierPath",
-        render_identifier_path(source, &node.type_name, depth + 1),
-    );
+    {
+        let type_name = &node.type_name;
+
+        let rendered = render_identifier_path(source, type_name, depth + 1);
+
+        acc.add("type_name", "IdentifierPath", rendered);
+    }
 
     if let Some(ref arguments) = node.arguments {
-        acc.add(
-            "arguments",
-            "ArgumentsDeclaration",
-            render_arguments_declaration(source, arguments, depth + 1),
-        );
+        let rendered = render_arguments_declaration(source, arguments, depth + 1);
+
+        acc.add("arguments", "ArgumentsDeclaration", rendered);
     }
 
     acc.finish()
@@ -1573,43 +1891,51 @@ pub fn render_interface_definition(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "interface_keyword",
-        "InterfaceKeyword",
-        render_terminal(source, &node.interface_keyword.range),
-    );
+    {
+        let interface_keyword = &node.interface_keyword;
 
-    acc.add(
-        "name",
-        "Identifier",
-        render_terminal(source, &node.name.range),
-    );
+        let rendered = render_terminal(source, &interface_keyword.range);
 
-    if let Some(ref inheritance) = node.inheritance {
-        acc.add(
-            "inheritance",
-            "InheritanceSpecifier",
-            render_inheritance_specifier(source, inheritance, depth + 1),
-        );
+        acc.add("interface_keyword", "InterfaceKeyword", rendered);
     }
 
-    acc.add(
-        "open_brace",
-        "OpenBrace",
-        render_terminal(source, &node.open_brace.range),
-    );
+    {
+        let name = &node.name;
 
-    acc.add(
-        "members",
-        "InterfaceMembers",
-        render_interface_members(source, &node.members, depth + 1),
-    );
+        let rendered = render_terminal(source, &name.range);
 
-    acc.add(
-        "close_brace",
-        "CloseBrace",
-        render_terminal(source, &node.close_brace.range),
-    );
+        acc.add("name", "Identifier", rendered);
+    }
+
+    if let Some(ref inheritance) = node.inheritance {
+        let rendered = render_inheritance_specifier(source, inheritance, depth + 1);
+
+        acc.add("inheritance", "InheritanceSpecifier", rendered);
+    }
+
+    {
+        let open_brace = &node.open_brace;
+
+        let rendered = render_terminal(source, &open_brace.range);
+
+        acc.add("open_brace", "OpenBrace", rendered);
+    }
+
+    {
+        let members = &node.members;
+
+        let rendered = render_interface_members(source, members, depth + 1);
+
+        acc.add("members", "InterfaceMembers", rendered);
+    }
+
+    {
+        let close_brace = &node.close_brace;
+
+        let rendered = render_terminal(source, &close_brace.range);
+
+        acc.add("close_brace", "CloseBrace", rendered);
+    }
 
     acc.finish()
 }
@@ -1621,35 +1947,45 @@ pub fn render_library_definition(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "library_keyword",
-        "LibraryKeyword",
-        render_terminal(source, &node.library_keyword.range),
-    );
+    {
+        let library_keyword = &node.library_keyword;
 
-    acc.add(
-        "name",
-        "Identifier",
-        render_terminal(source, &node.name.range),
-    );
+        let rendered = render_terminal(source, &library_keyword.range);
 
-    acc.add(
-        "open_brace",
-        "OpenBrace",
-        render_terminal(source, &node.open_brace.range),
-    );
+        acc.add("library_keyword", "LibraryKeyword", rendered);
+    }
 
-    acc.add(
-        "members",
-        "LibraryMembers",
-        render_library_members(source, &node.members, depth + 1),
-    );
+    {
+        let name = &node.name;
 
-    acc.add(
-        "close_brace",
-        "CloseBrace",
-        render_terminal(source, &node.close_brace.range),
-    );
+        let rendered = render_terminal(source, &name.range);
+
+        acc.add("name", "Identifier", rendered);
+    }
+
+    {
+        let open_brace = &node.open_brace;
+
+        let rendered = render_terminal(source, &open_brace.range);
+
+        acc.add("open_brace", "OpenBrace", rendered);
+    }
+
+    {
+        let members = &node.members;
+
+        let rendered = render_library_members(source, members, depth + 1);
+
+        acc.add("members", "LibraryMembers", rendered);
+    }
+
+    {
+        let close_brace = &node.close_brace;
+
+        let rendered = render_terminal(source, &close_brace.range);
+
+        acc.add("close_brace", "CloseBrace", rendered);
+    }
 
     acc.finish()
 }
@@ -1657,14 +1993,18 @@ pub fn render_library_definition(
 pub fn render_mapping_key(source: &str, node: &MappingKey, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "key_type",
-        "MappingKeyType",
-        render_mapping_key_type(source, &node.key_type, depth + 1),
-    );
+    {
+        let key_type = &node.key_type;
+
+        let rendered = render_mapping_key_type(source, key_type, depth + 1);
+
+        acc.add("key_type", "MappingKeyType", rendered);
+    }
 
     if let Some(ref name) = node.name {
-        acc.add("name", "Identifier", render_terminal(source, &name.range));
+        let rendered = render_terminal(source, &name.range);
+
+        acc.add("name", "Identifier", rendered);
     }
 
     acc.finish()
@@ -1673,41 +2013,53 @@ pub fn render_mapping_key(source: &str, node: &MappingKey, depth: usize) -> Rend
 pub fn render_mapping_type(source: &str, node: &MappingType, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "mapping_keyword",
-        "MappingKeyword",
-        render_terminal(source, &node.mapping_keyword.range),
-    );
+    {
+        let mapping_keyword = &node.mapping_keyword;
 
-    acc.add(
-        "open_paren",
-        "OpenParen",
-        render_terminal(source, &node.open_paren.range),
-    );
+        let rendered = render_terminal(source, &mapping_keyword.range);
 
-    acc.add(
-        "key_type",
-        "MappingKey",
-        render_mapping_key(source, &node.key_type, depth + 1),
-    );
+        acc.add("mapping_keyword", "MappingKeyword", rendered);
+    }
 
-    acc.add(
-        "equal_greater_than",
-        "EqualGreaterThan",
-        render_terminal(source, &node.equal_greater_than.range),
-    );
+    {
+        let open_paren = &node.open_paren;
 
-    acc.add(
-        "value_type",
-        "MappingValue",
-        render_mapping_value(source, &node.value_type, depth + 1),
-    );
+        let rendered = render_terminal(source, &open_paren.range);
 
-    acc.add(
-        "close_paren",
-        "CloseParen",
-        render_terminal(source, &node.close_paren.range),
-    );
+        acc.add("open_paren", "OpenParen", rendered);
+    }
+
+    {
+        let key_type = &node.key_type;
+
+        let rendered = render_mapping_key(source, key_type, depth + 1);
+
+        acc.add("key_type", "MappingKey", rendered);
+    }
+
+    {
+        let equal_greater_than = &node.equal_greater_than;
+
+        let rendered = render_terminal(source, &equal_greater_than.range);
+
+        acc.add("equal_greater_than", "EqualGreaterThan", rendered);
+    }
+
+    {
+        let value_type = &node.value_type;
+
+        let rendered = render_mapping_value(source, value_type, depth + 1);
+
+        acc.add("value_type", "MappingValue", rendered);
+    }
+
+    {
+        let close_paren = &node.close_paren;
+
+        let rendered = render_terminal(source, &close_paren.range);
+
+        acc.add("close_paren", "CloseParen", rendered);
+    }
 
     acc.finish()
 }
@@ -1715,14 +2067,18 @@ pub fn render_mapping_type(source: &str, node: &MappingType, depth: usize) -> Re
 pub fn render_mapping_value(source: &str, node: &MappingValue, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "type_name",
-        "TypeName",
-        render_type_name(source, &node.type_name, depth + 1),
-    );
+    {
+        let type_name = &node.type_name;
+
+        let rendered = render_type_name(source, type_name, depth + 1);
+
+        acc.add("type_name", "TypeName", rendered);
+    }
 
     if let Some(ref name) = node.name {
-        acc.add("name", "Identifier", render_terminal(source, &name.range));
+        let rendered = render_terminal(source, &name.range);
+
+        acc.add("name", "Identifier", rendered);
     }
 
     acc.finish()
@@ -1735,23 +2091,29 @@ pub fn render_member_access_expression(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "operand",
-        "Expression",
-        render_expression(source, &node.operand, depth + 1),
-    );
+    {
+        let operand = &node.operand;
 
-    acc.add(
-        "period",
-        "Period",
-        render_terminal(source, &node.period.range),
-    );
+        let rendered = render_expression(source, operand, depth + 1);
 
-    acc.add(
-        "member",
-        "IdentifierPathElement",
-        render_identifier_path_element(source, &node.member, depth + 1),
-    );
+        acc.add("operand", "Expression", rendered);
+    }
+
+    {
+        let period = &node.period;
+
+        let rendered = render_terminal(source, &period.range);
+
+        acc.add("period", "Period", rendered);
+    }
+
+    {
+        let member = &node.member;
+
+        let rendered = render_identifier_path_element(source, member, depth + 1);
+
+        acc.add("member", "IdentifierPathElement", rendered);
+    }
 
     acc.finish()
 }
@@ -1763,37 +2125,43 @@ pub fn render_modifier_definition(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "modifier_keyword",
-        "ModifierKeyword",
-        render_terminal(source, &node.modifier_keyword.range),
-    );
+    {
+        let modifier_keyword = &node.modifier_keyword;
 
-    acc.add(
-        "name",
-        "Identifier",
-        render_terminal(source, &node.name.range),
-    );
+        let rendered = render_terminal(source, &modifier_keyword.range);
 
-    if let Some(ref parameters) = node.parameters {
-        acc.add(
-            "parameters",
-            "ParametersDeclaration",
-            render_parameters_declaration(source, parameters, depth + 1),
-        );
+        acc.add("modifier_keyword", "ModifierKeyword", rendered);
     }
 
-    acc.add(
-        "attributes",
-        "ModifierAttributes",
-        render_modifier_attributes(source, &node.attributes, depth + 1),
-    );
+    {
+        let name = &node.name;
 
-    acc.add(
-        "body",
-        "FunctionBody",
-        render_function_body(source, &node.body, depth + 1),
-    );
+        let rendered = render_terminal(source, &name.range);
+
+        acc.add("name", "Identifier", rendered);
+    }
+
+    if let Some(ref parameters) = node.parameters {
+        let rendered = render_parameters_declaration(source, parameters, depth + 1);
+
+        acc.add("parameters", "ParametersDeclaration", rendered);
+    }
+
+    {
+        let attributes = &node.attributes;
+
+        let rendered = render_modifier_attributes(source, attributes, depth + 1);
+
+        acc.add("attributes", "ModifierAttributes", rendered);
+    }
+
+    {
+        let body = &node.body;
+
+        let rendered = render_function_body(source, body, depth + 1);
+
+        acc.add("body", "FunctionBody", rendered);
+    }
 
     acc.finish()
 }
@@ -1805,18 +2173,18 @@ pub fn render_modifier_invocation(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "name",
-        "IdentifierPath",
-        render_identifier_path(source, &node.name, depth + 1),
-    );
+    {
+        let name = &node.name;
+
+        let rendered = render_identifier_path(source, name, depth + 1);
+
+        acc.add("name", "IdentifierPath", rendered);
+    }
 
     if let Some(ref arguments) = node.arguments {
-        acc.add(
-            "arguments",
-            "ArgumentsDeclaration",
-            render_arguments_declaration(source, arguments, depth + 1),
-        );
+        let rendered = render_arguments_declaration(source, arguments, depth + 1);
+
+        acc.add("arguments", "ArgumentsDeclaration", rendered);
     }
 
     acc.finish()
@@ -1829,29 +2197,37 @@ pub fn render_multi_typed_declaration(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "open_paren",
-        "OpenParen",
-        render_terminal(source, &node.open_paren.range),
-    );
+    {
+        let open_paren = &node.open_paren;
 
-    acc.add(
-        "elements",
-        "MultiTypedDeclarationElements",
-        render_multi_typed_declaration_elements(source, &node.elements, depth + 1),
-    );
+        let rendered = render_terminal(source, &open_paren.range);
 
-    acc.add(
-        "close_paren",
-        "CloseParen",
-        render_terminal(source, &node.close_paren.range),
-    );
+        acc.add("open_paren", "OpenParen", rendered);
+    }
 
-    acc.add(
-        "value",
-        "VariableDeclarationValue",
-        render_variable_declaration_value(source, &node.value, depth + 1),
-    );
+    {
+        let elements = &node.elements;
+
+        let rendered = render_multi_typed_declaration_elements(source, elements, depth + 1);
+
+        acc.add("elements", "MultiTypedDeclarationElements", rendered);
+    }
+
+    {
+        let close_paren = &node.close_paren;
+
+        let rendered = render_terminal(source, &close_paren.range);
+
+        acc.add("close_paren", "CloseParen", rendered);
+    }
+
+    {
+        let value = &node.value;
+
+        let rendered = render_variable_declaration_value(source, value, depth + 1);
+
+        acc.add("value", "VariableDeclarationValue", rendered);
+    }
 
     acc.finish()
 }
@@ -1864,11 +2240,9 @@ pub fn render_multi_typed_declaration_element(
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     if let Some(ref member) = node.member {
-        acc.add(
-            "member",
-            "VariableDeclaration",
-            render_variable_declaration(source, member, depth + 1),
-        );
+        let rendered = render_variable_declaration(source, member, depth + 1);
+
+        acc.add("member", "VariableDeclaration", rendered);
     }
 
     acc.finish()
@@ -1881,27 +2255,38 @@ pub fn render_multiplicative_expression(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "left_operand",
-        "Expression",
-        render_expression(source, &node.left_operand, depth + 1),
-    );
+    {
+        let left_operand = &node.left_operand;
 
-    acc.add(
-        "expression_multiplicative_expression_operator",
-        "Expression_MultiplicativeExpression_Operator",
-        render_expression_multiplicative_expression_operator(
+        let rendered = render_expression(source, left_operand, depth + 1);
+
+        acc.add("left_operand", "Expression", rendered);
+    }
+
+    {
+        let expression_multiplicative_expression_operator =
+            &node.expression_multiplicative_expression_operator;
+
+        let rendered = render_expression_multiplicative_expression_operator(
             source,
-            &node.expression_multiplicative_expression_operator,
+            expression_multiplicative_expression_operator,
             depth + 1,
-        ),
-    );
+        );
 
-    acc.add(
-        "right_operand",
-        "Expression",
-        render_expression(source, &node.right_operand, depth + 1),
-    );
+        acc.add(
+            "expression_multiplicative_expression_operator",
+            "Expression_MultiplicativeExpression_Operator",
+            rendered,
+        );
+    }
+
+    {
+        let right_operand = &node.right_operand;
+
+        let rendered = render_expression(source, right_operand, depth + 1);
+
+        acc.add("right_operand", "Expression", rendered);
+    }
 
     acc.finish()
 }
@@ -1909,19 +2294,29 @@ pub fn render_multiplicative_expression(
 pub fn render_named_argument(source: &str, node: &NamedArgument, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "name",
-        "Identifier",
-        render_terminal(source, &node.name.range),
-    );
+    {
+        let name = &node.name;
 
-    acc.add("colon", "Colon", render_terminal(source, &node.colon.range));
+        let rendered = render_terminal(source, &name.range);
 
-    acc.add(
-        "value",
-        "Expression",
-        render_expression(source, &node.value, depth + 1),
-    );
+        acc.add("name", "Identifier", rendered);
+    }
+
+    {
+        let colon = &node.colon;
+
+        let rendered = render_terminal(source, &colon.range);
+
+        acc.add("colon", "Colon", rendered);
+    }
+
+    {
+        let value = &node.value;
+
+        let rendered = render_expression(source, value, depth + 1);
+
+        acc.add("value", "Expression", rendered);
+    }
 
     acc.finish()
 }
@@ -1933,23 +2328,29 @@ pub fn render_named_argument_group(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "open_brace",
-        "OpenBrace",
-        render_terminal(source, &node.open_brace.range),
-    );
+    {
+        let open_brace = &node.open_brace;
 
-    acc.add(
-        "arguments",
-        "NamedArguments",
-        render_named_arguments(source, &node.arguments, depth + 1),
-    );
+        let rendered = render_terminal(source, &open_brace.range);
 
-    acc.add(
-        "close_brace",
-        "CloseBrace",
-        render_terminal(source, &node.close_brace.range),
-    );
+        acc.add("open_brace", "OpenBrace", rendered);
+    }
+
+    {
+        let arguments = &node.arguments;
+
+        let rendered = render_named_arguments(source, arguments, depth + 1);
+
+        acc.add("arguments", "NamedArguments", rendered);
+    }
+
+    {
+        let close_brace = &node.close_brace;
+
+        let rendered = render_terminal(source, &close_brace.range);
+
+        acc.add("close_brace", "CloseBrace", rendered);
+    }
 
     acc.finish()
 }
@@ -1961,23 +2362,29 @@ pub fn render_named_arguments_declaration(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "open_paren",
-        "OpenParen",
-        render_terminal(source, &node.open_paren.range),
-    );
+    {
+        let open_paren = &node.open_paren;
 
-    acc.add(
-        "arguments",
-        "NamedArgumentGroup",
-        render_named_argument_group(source, &node.arguments, depth + 1),
-    );
+        let rendered = render_terminal(source, &open_paren.range);
 
-    acc.add(
-        "close_paren",
-        "CloseParen",
-        render_terminal(source, &node.close_paren.range),
-    );
+        acc.add("open_paren", "OpenParen", rendered);
+    }
+
+    {
+        let arguments = &node.arguments;
+
+        let rendered = render_named_argument_group(source, arguments, depth + 1);
+
+        acc.add("arguments", "NamedArgumentGroup", rendered);
+    }
+
+    {
+        let close_paren = &node.close_paren;
+
+        let rendered = render_terminal(source, &close_paren.range);
+
+        acc.add("close_paren", "CloseParen", rendered);
+    }
 
     acc.finish()
 }
@@ -1985,29 +2392,37 @@ pub fn render_named_arguments_declaration(
 pub fn render_named_import(source: &str, node: &NamedImport, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "asterisk",
-        "Asterisk",
-        render_terminal(source, &node.asterisk.range),
-    );
+    {
+        let asterisk = &node.asterisk;
 
-    acc.add(
-        "alias",
-        "ImportAlias",
-        render_import_alias(source, &node.alias, depth + 1),
-    );
+        let rendered = render_terminal(source, &asterisk.range);
 
-    acc.add(
-        "from_keyword",
-        "FromKeyword",
-        render_terminal(source, &node.from_keyword.range),
-    );
+        acc.add("asterisk", "Asterisk", rendered);
+    }
 
-    acc.add(
-        "path",
-        "StringLiteral",
-        render_terminal(source, &node.path.range),
-    );
+    {
+        let alias = &node.alias;
+
+        let rendered = render_import_alias(source, alias, depth + 1);
+
+        acc.add("alias", "ImportAlias", rendered);
+    }
+
+    {
+        let from_keyword = &node.from_keyword;
+
+        let rendered = render_terminal(source, &from_keyword.range);
+
+        acc.add("from_keyword", "FromKeyword", rendered);
+    }
+
+    {
+        let path = &node.path;
+
+        let rendered = render_terminal(source, &path.range);
+
+        acc.add("path", "StringLiteral", rendered);
+    }
 
     acc.finish()
 }
@@ -2015,17 +2430,21 @@ pub fn render_named_import(source: &str, node: &NamedImport, depth: usize) -> Re
 pub fn render_new_expression(source: &str, node: &NewExpression, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "new_keyword",
-        "NewKeyword",
-        render_terminal(source, &node.new_keyword.range),
-    );
+    {
+        let new_keyword = &node.new_keyword;
 
-    acc.add(
-        "type_name",
-        "TypeName",
-        render_type_name(source, &node.type_name, depth + 1),
-    );
+        let rendered = render_terminal(source, &new_keyword.range);
+
+        acc.add("new_keyword", "NewKeyword", rendered);
+    }
+
+    {
+        let type_name = &node.type_name;
+
+        let rendered = render_type_name(source, type_name, depth + 1);
+
+        acc.add("type_name", "TypeName", rendered);
+    }
 
     acc.finish()
 }
@@ -2033,23 +2452,29 @@ pub fn render_new_expression(source: &str, node: &NewExpression, depth: usize) -
 pub fn render_or_expression(source: &str, node: &OrExpression, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "left_operand",
-        "Expression",
-        render_expression(source, &node.left_operand, depth + 1),
-    );
+    {
+        let left_operand = &node.left_operand;
 
-    acc.add(
-        "operator",
-        "BarBar",
-        render_terminal(source, &node.operator.range),
-    );
+        let rendered = render_expression(source, left_operand, depth + 1);
 
-    acc.add(
-        "right_operand",
-        "Expression",
-        render_expression(source, &node.right_operand, depth + 1),
-    );
+        acc.add("left_operand", "Expression", rendered);
+    }
+
+    {
+        let operator = &node.operator;
+
+        let rendered = render_terminal(source, &operator.range);
+
+        acc.add("operator", "BarBar", rendered);
+    }
+
+    {
+        let right_operand = &node.right_operand;
+
+        let rendered = render_expression(source, right_operand, depth + 1);
+
+        acc.add("right_operand", "Expression", rendered);
+    }
 
     acc.finish()
 }
@@ -2061,23 +2486,29 @@ pub fn render_override_paths_declaration(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "open_paren",
-        "OpenParen",
-        render_terminal(source, &node.open_paren.range),
-    );
+    {
+        let open_paren = &node.open_paren;
 
-    acc.add(
-        "paths",
-        "OverridePaths",
-        render_override_paths(source, &node.paths, depth + 1),
-    );
+        let rendered = render_terminal(source, &open_paren.range);
 
-    acc.add(
-        "close_paren",
-        "CloseParen",
-        render_terminal(source, &node.close_paren.range),
-    );
+        acc.add("open_paren", "OpenParen", rendered);
+    }
+
+    {
+        let paths = &node.paths;
+
+        let rendered = render_override_paths(source, paths, depth + 1);
+
+        acc.add("paths", "OverridePaths", rendered);
+    }
+
+    {
+        let close_paren = &node.close_paren;
+
+        let rendered = render_terminal(source, &close_paren.range);
+
+        acc.add("close_paren", "CloseParen", rendered);
+    }
 
     acc.finish()
 }
@@ -2089,18 +2520,18 @@ pub fn render_override_specifier(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "override_keyword",
-        "OverrideKeyword",
-        render_terminal(source, &node.override_keyword.range),
-    );
+    {
+        let override_keyword = &node.override_keyword;
+
+        let rendered = render_terminal(source, &override_keyword.range);
+
+        acc.add("override_keyword", "OverrideKeyword", rendered);
+    }
 
     if let Some(ref overridden) = node.overridden {
-        acc.add(
-            "overridden",
-            "OverridePathsDeclaration",
-            render_override_paths_declaration(source, overridden, depth + 1),
-        );
+        let rendered = render_override_paths_declaration(source, overridden, depth + 1);
+
+        acc.add("overridden", "OverridePathsDeclaration", rendered);
     }
 
     acc.finish()
@@ -2109,22 +2540,24 @@ pub fn render_override_specifier(
 pub fn render_parameter(source: &str, node: &Parameter, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "type_name",
-        "TypeName",
-        render_type_name(source, &node.type_name, depth + 1),
-    );
+    {
+        let type_name = &node.type_name;
+
+        let rendered = render_type_name(source, type_name, depth + 1);
+
+        acc.add("type_name", "TypeName", rendered);
+    }
 
     if let Some(ref storage_location) = node.storage_location {
-        acc.add(
-            "storage_location",
-            "StorageLocation",
-            render_storage_location(source, storage_location, depth + 1),
-        );
+        let rendered = render_storage_location(source, storage_location, depth + 1);
+
+        acc.add("storage_location", "StorageLocation", rendered);
     }
 
     if let Some(ref name) = node.name {
-        acc.add("name", "Identifier", render_terminal(source, &name.range));
+        let rendered = render_terminal(source, &name.range);
+
+        acc.add("name", "Identifier", rendered);
     }
 
     acc.finish()
@@ -2137,23 +2570,29 @@ pub fn render_parameters_declaration(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "open_paren",
-        "OpenParen",
-        render_terminal(source, &node.open_paren.range),
-    );
+    {
+        let open_paren = &node.open_paren;
 
-    acc.add(
-        "parameters",
-        "Parameters",
-        render_parameters(source, &node.parameters, depth + 1),
-    );
+        let rendered = render_terminal(source, &open_paren.range);
 
-    acc.add(
-        "close_paren",
-        "CloseParen",
-        render_terminal(source, &node.close_paren.range),
-    );
+        acc.add("open_paren", "OpenParen", rendered);
+    }
+
+    {
+        let parameters = &node.parameters;
+
+        let rendered = render_parameters(source, parameters, depth + 1);
+
+        acc.add("parameters", "Parameters", rendered);
+    }
+
+    {
+        let close_paren = &node.close_paren;
+
+        let rendered = render_terminal(source, &close_paren.range);
+
+        acc.add("close_paren", "CloseParen", rendered);
+    }
 
     acc.finish()
 }
@@ -2161,18 +2600,18 @@ pub fn render_parameters_declaration(
 pub fn render_path_import(source: &str, node: &PathImport, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "path",
-        "StringLiteral",
-        render_terminal(source, &node.path.range),
-    );
+    {
+        let path = &node.path;
+
+        let rendered = render_terminal(source, &path.range);
+
+        acc.add("path", "StringLiteral", rendered);
+    }
 
     if let Some(ref alias) = node.alias {
-        acc.add(
-            "alias",
-            "ImportAlias",
-            render_import_alias(source, alias, depth + 1),
-        );
+        let rendered = render_import_alias(source, alias, depth + 1);
+
+        acc.add("alias", "ImportAlias", rendered);
     }
 
     acc.finish()
@@ -2185,23 +2624,29 @@ pub fn render_positional_arguments_declaration(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "open_paren",
-        "OpenParen",
-        render_terminal(source, &node.open_paren.range),
-    );
+    {
+        let open_paren = &node.open_paren;
 
-    acc.add(
-        "arguments",
-        "PositionalArguments",
-        render_positional_arguments(source, &node.arguments, depth + 1),
-    );
+        let rendered = render_terminal(source, &open_paren.range);
 
-    acc.add(
-        "close_paren",
-        "CloseParen",
-        render_terminal(source, &node.close_paren.range),
-    );
+        acc.add("open_paren", "OpenParen", rendered);
+    }
+
+    {
+        let arguments = &node.arguments;
+
+        let rendered = render_positional_arguments(source, arguments, depth + 1);
+
+        acc.add("arguments", "PositionalArguments", rendered);
+    }
+
+    {
+        let close_paren = &node.close_paren;
+
+        let rendered = render_terminal(source, &close_paren.range);
+
+        acc.add("close_paren", "CloseParen", rendered);
+    }
 
     acc.finish()
 }
@@ -2213,21 +2658,29 @@ pub fn render_postfix_expression(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "operand",
-        "Expression",
-        render_expression(source, &node.operand, depth + 1),
-    );
+    {
+        let operand = &node.operand;
 
-    acc.add(
-        "expression_postfix_expression_operator",
-        "Expression_PostfixExpression_Operator",
-        render_expression_postfix_expression_operator(
+        let rendered = render_expression(source, operand, depth + 1);
+
+        acc.add("operand", "Expression", rendered);
+    }
+
+    {
+        let expression_postfix_expression_operator = &node.expression_postfix_expression_operator;
+
+        let rendered = render_expression_postfix_expression_operator(
             source,
-            &node.expression_postfix_expression_operator,
+            expression_postfix_expression_operator,
             depth + 1,
-        ),
-    );
+        );
+
+        acc.add(
+            "expression_postfix_expression_operator",
+            "Expression_PostfixExpression_Operator",
+            rendered,
+        );
+    }
 
     acc.finish()
 }
@@ -2239,23 +2692,29 @@ pub fn render_pragma_directive(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "pragma_keyword",
-        "PragmaKeyword",
-        render_terminal(source, &node.pragma_keyword.range),
-    );
+    {
+        let pragma_keyword = &node.pragma_keyword;
 
-    acc.add(
-        "pragma",
-        "Pragma",
-        render_pragma(source, &node.pragma, depth + 1),
-    );
+        let rendered = render_terminal(source, &pragma_keyword.range);
 
-    acc.add(
-        "semicolon",
-        "PragmaSemicolon",
-        render_terminal(source, &node.semicolon.range),
-    );
+        acc.add("pragma_keyword", "PragmaKeyword", rendered);
+    }
+
+    {
+        let pragma = &node.pragma;
+
+        let rendered = render_pragma(source, pragma, depth + 1);
+
+        acc.add("pragma", "Pragma", rendered);
+    }
+
+    {
+        let semicolon = &node.semicolon;
+
+        let rendered = render_terminal(source, &semicolon.range);
+
+        acc.add("semicolon", "PragmaSemicolon", rendered);
+    }
 
     acc.finish()
 }
@@ -2267,21 +2726,29 @@ pub fn render_prefix_expression(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "expression_prefix_expression_operator",
-        "Expression_PrefixExpression_Operator",
-        render_expression_prefix_expression_operator(
-            source,
-            &node.expression_prefix_expression_operator,
-            depth + 1,
-        ),
-    );
+    {
+        let expression_prefix_expression_operator = &node.expression_prefix_expression_operator;
 
-    acc.add(
-        "operand",
-        "Expression",
-        render_expression(source, &node.operand, depth + 1),
-    );
+        let rendered = render_expression_prefix_expression_operator(
+            source,
+            expression_prefix_expression_operator,
+            depth + 1,
+        );
+
+        acc.add(
+            "expression_prefix_expression_operator",
+            "Expression_PrefixExpression_Operator",
+            rendered,
+        );
+    }
+
+    {
+        let operand = &node.operand;
+
+        let rendered = render_expression(source, operand, depth + 1);
+
+        acc.add("operand", "Expression", rendered);
+    }
 
     acc.finish()
 }
@@ -2293,29 +2760,37 @@ pub fn render_receive_function_definition(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "receive_keyword",
-        "ReceiveKeyword",
-        render_terminal(source, &node.receive_keyword.range),
-    );
+    {
+        let receive_keyword = &node.receive_keyword;
 
-    acc.add(
-        "parameters",
-        "ParametersDeclaration",
-        render_parameters_declaration(source, &node.parameters, depth + 1),
-    );
+        let rendered = render_terminal(source, &receive_keyword.range);
 
-    acc.add(
-        "attributes",
-        "ReceiveFunctionAttributes",
-        render_receive_function_attributes(source, &node.attributes, depth + 1),
-    );
+        acc.add("receive_keyword", "ReceiveKeyword", rendered);
+    }
 
-    acc.add(
-        "body",
-        "FunctionBody",
-        render_function_body(source, &node.body, depth + 1),
-    );
+    {
+        let parameters = &node.parameters;
+
+        let rendered = render_parameters_declaration(source, parameters, depth + 1);
+
+        acc.add("parameters", "ParametersDeclaration", rendered);
+    }
+
+    {
+        let attributes = &node.attributes;
+
+        let rendered = render_receive_function_attributes(source, attributes, depth + 1);
+
+        acc.add("attributes", "ReceiveFunctionAttributes", rendered);
+    }
+
+    {
+        let body = &node.body;
+
+        let rendered = render_function_body(source, body, depth + 1);
+
+        acc.add("body", "FunctionBody", rendered);
+    }
 
     acc.finish()
 }
@@ -2327,25 +2802,27 @@ pub fn render_return_statement(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "return_keyword",
-        "ReturnKeyword",
-        render_terminal(source, &node.return_keyword.range),
-    );
+    {
+        let return_keyword = &node.return_keyword;
 
-    if let Some(ref expression) = node.expression {
-        acc.add(
-            "expression",
-            "Expression",
-            render_expression(source, expression, depth + 1),
-        );
+        let rendered = render_terminal(source, &return_keyword.range);
+
+        acc.add("return_keyword", "ReturnKeyword", rendered);
     }
 
-    acc.add(
-        "semicolon",
-        "Semicolon",
-        render_terminal(source, &node.semicolon.range),
-    );
+    if let Some(ref expression) = node.expression {
+        let rendered = render_expression(source, expression, depth + 1);
+
+        acc.add("expression", "Expression", rendered);
+    }
+
+    {
+        let semicolon = &node.semicolon;
+
+        let rendered = render_terminal(source, &semicolon.range);
+
+        acc.add("semicolon", "Semicolon", rendered);
+    }
 
     acc.finish()
 }
@@ -2357,17 +2834,21 @@ pub fn render_returns_declaration(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "returns_keyword",
-        "ReturnsKeyword",
-        render_terminal(source, &node.returns_keyword.range),
-    );
+    {
+        let returns_keyword = &node.returns_keyword;
 
-    acc.add(
-        "variables",
-        "ParametersDeclaration",
-        render_parameters_declaration(source, &node.variables, depth + 1),
-    );
+        let rendered = render_terminal(source, &returns_keyword.range);
+
+        acc.add("returns_keyword", "ReturnsKeyword", rendered);
+    }
+
+    {
+        let variables = &node.variables;
+
+        let rendered = render_parameters_declaration(source, variables, depth + 1);
+
+        acc.add("variables", "ParametersDeclaration", rendered);
+    }
 
     acc.finish()
 }
@@ -2379,29 +2860,37 @@ pub fn render_revert_statement(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "revert_keyword",
-        "RevertKeyword",
-        render_terminal(source, &node.revert_keyword.range),
-    );
+    {
+        let revert_keyword = &node.revert_keyword;
 
-    acc.add(
-        "error",
-        "IdentifierPath",
-        render_identifier_path(source, &node.error, depth + 1),
-    );
+        let rendered = render_terminal(source, &revert_keyword.range);
 
-    acc.add(
-        "arguments",
-        "ArgumentsDeclaration",
-        render_arguments_declaration(source, &node.arguments, depth + 1),
-    );
+        acc.add("revert_keyword", "RevertKeyword", rendered);
+    }
 
-    acc.add(
-        "semicolon",
-        "Semicolon",
-        render_terminal(source, &node.semicolon.range),
-    );
+    {
+        let error = &node.error;
+
+        let rendered = render_identifier_path(source, error, depth + 1);
+
+        acc.add("error", "IdentifierPath", rendered);
+    }
+
+    {
+        let arguments = &node.arguments;
+
+        let rendered = render_arguments_declaration(source, arguments, depth + 1);
+
+        acc.add("arguments", "ArgumentsDeclaration", rendered);
+    }
+
+    {
+        let semicolon = &node.semicolon;
+
+        let rendered = render_terminal(source, &semicolon.range);
+
+        acc.add("semicolon", "Semicolon", rendered);
+    }
 
     acc.finish()
 }
@@ -2413,27 +2902,37 @@ pub fn render_shift_expression(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "left_operand",
-        "Expression",
-        render_expression(source, &node.left_operand, depth + 1),
-    );
+    {
+        let left_operand = &node.left_operand;
 
-    acc.add(
-        "expression_shift_expression_operator",
-        "Expression_ShiftExpression_Operator",
-        render_expression_shift_expression_operator(
+        let rendered = render_expression(source, left_operand, depth + 1);
+
+        acc.add("left_operand", "Expression", rendered);
+    }
+
+    {
+        let expression_shift_expression_operator = &node.expression_shift_expression_operator;
+
+        let rendered = render_expression_shift_expression_operator(
             source,
-            &node.expression_shift_expression_operator,
+            expression_shift_expression_operator,
             depth + 1,
-        ),
-    );
+        );
 
-    acc.add(
-        "right_operand",
-        "Expression",
-        render_expression(source, &node.right_operand, depth + 1),
-    );
+        acc.add(
+            "expression_shift_expression_operator",
+            "Expression_ShiftExpression_Operator",
+            rendered,
+        );
+    }
+
+    {
+        let right_operand = &node.right_operand;
+
+        let rendered = render_expression(source, right_operand, depth + 1);
+
+        acc.add("right_operand", "Expression", rendered);
+    }
 
     acc.finish()
 }
@@ -2445,18 +2944,18 @@ pub fn render_single_typed_declaration(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "declaration",
-        "VariableDeclaration",
-        render_variable_declaration(source, &node.declaration, depth + 1),
-    );
+    {
+        let declaration = &node.declaration;
+
+        let rendered = render_variable_declaration(source, declaration, depth + 1);
+
+        acc.add("declaration", "VariableDeclaration", rendered);
+    }
 
     if let Some(ref value) = node.value {
-        acc.add(
-            "value",
-            "VariableDeclarationValue",
-            render_variable_declaration_value(source, value, depth + 1),
-        );
+        let rendered = render_variable_declaration_value(source, value, depth + 1);
+
+        acc.add("value", "VariableDeclarationValue", rendered);
     }
 
     acc.finish()
@@ -2465,11 +2964,13 @@ pub fn render_single_typed_declaration(
 pub fn render_source_unit(source: &str, node: &SourceUnit, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "members",
-        "SourceUnitMembers",
-        render_source_unit_members(source, &node.members, depth + 1),
-    );
+    {
+        let members = &node.members;
+
+        let rendered = render_source_unit_members(source, members, depth + 1);
+
+        acc.add("members", "SourceUnitMembers", rendered);
+    }
 
     acc.finish()
 }
@@ -2481,37 +2982,43 @@ pub fn render_state_variable_definition(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "type_name",
-        "TypeName",
-        render_type_name(source, &node.type_name, depth + 1),
-    );
+    {
+        let type_name = &node.type_name;
 
-    acc.add(
-        "attributes",
-        "StateVariableAttributes",
-        render_state_variable_attributes(source, &node.attributes, depth + 1),
-    );
+        let rendered = render_type_name(source, type_name, depth + 1);
 
-    acc.add(
-        "name",
-        "Identifier",
-        render_terminal(source, &node.name.range),
-    );
-
-    if let Some(ref value) = node.value {
-        acc.add(
-            "value",
-            "StateVariableDefinitionValue",
-            render_state_variable_definition_value(source, value, depth + 1),
-        );
+        acc.add("type_name", "TypeName", rendered);
     }
 
-    acc.add(
-        "semicolon",
-        "Semicolon",
-        render_terminal(source, &node.semicolon.range),
-    );
+    {
+        let attributes = &node.attributes;
+
+        let rendered = render_state_variable_attributes(source, attributes, depth + 1);
+
+        acc.add("attributes", "StateVariableAttributes", rendered);
+    }
+
+    {
+        let name = &node.name;
+
+        let rendered = render_terminal(source, &name.range);
+
+        acc.add("name", "Identifier", rendered);
+    }
+
+    if let Some(ref value) = node.value {
+        let rendered = render_state_variable_definition_value(source, value, depth + 1);
+
+        acc.add("value", "StateVariableDefinitionValue", rendered);
+    }
+
+    {
+        let semicolon = &node.semicolon;
+
+        let rendered = render_terminal(source, &semicolon.range);
+
+        acc.add("semicolon", "Semicolon", rendered);
+    }
 
     acc.finish()
 }
@@ -2523,13 +3030,21 @@ pub fn render_state_variable_definition_value(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add("equal", "Equal", render_terminal(source, &node.equal.range));
+    {
+        let equal = &node.equal;
 
-    acc.add(
-        "value",
-        "Expression",
-        render_expression(source, &node.value, depth + 1),
-    );
+        let rendered = render_terminal(source, &equal.range);
+
+        acc.add("equal", "Equal", rendered);
+    }
+
+    {
+        let value = &node.value;
+
+        let rendered = render_expression(source, value, depth + 1);
+
+        acc.add("value", "Expression", rendered);
+    }
 
     acc.finish()
 }
@@ -2541,23 +3056,29 @@ pub fn render_storage_layout_specifier(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "layout_keyword",
-        "LayoutKeyword",
-        render_terminal(source, &node.layout_keyword.range),
-    );
+    {
+        let layout_keyword = &node.layout_keyword;
 
-    acc.add(
-        "at_keyword",
-        "AtKeyword",
-        render_terminal(source, &node.at_keyword.range),
-    );
+        let rendered = render_terminal(source, &layout_keyword.range);
 
-    acc.add(
-        "expression",
-        "Expression",
-        render_expression(source, &node.expression, depth + 1),
-    );
+        acc.add("layout_keyword", "LayoutKeyword", rendered);
+    }
+
+    {
+        let at_keyword = &node.at_keyword;
+
+        let rendered = render_terminal(source, &at_keyword.range);
+
+        acc.add("at_keyword", "AtKeyword", rendered);
+    }
+
+    {
+        let expression = &node.expression;
+
+        let rendered = render_expression(source, expression, depth + 1);
+
+        acc.add("expression", "Expression", rendered);
+    }
 
     acc.finish()
 }
@@ -2569,35 +3090,45 @@ pub fn render_struct_definition(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "struct_keyword",
-        "StructKeyword",
-        render_terminal(source, &node.struct_keyword.range),
-    );
+    {
+        let struct_keyword = &node.struct_keyword;
 
-    acc.add(
-        "name",
-        "Identifier",
-        render_terminal(source, &node.name.range),
-    );
+        let rendered = render_terminal(source, &struct_keyword.range);
 
-    acc.add(
-        "open_brace",
-        "OpenBrace",
-        render_terminal(source, &node.open_brace.range),
-    );
+        acc.add("struct_keyword", "StructKeyword", rendered);
+    }
 
-    acc.add(
-        "members",
-        "StructMembers",
-        render_struct_members(source, &node.members, depth + 1),
-    );
+    {
+        let name = &node.name;
 
-    acc.add(
-        "close_brace",
-        "CloseBrace",
-        render_terminal(source, &node.close_brace.range),
-    );
+        let rendered = render_terminal(source, &name.range);
+
+        acc.add("name", "Identifier", rendered);
+    }
+
+    {
+        let open_brace = &node.open_brace;
+
+        let rendered = render_terminal(source, &open_brace.range);
+
+        acc.add("open_brace", "OpenBrace", rendered);
+    }
+
+    {
+        let members = &node.members;
+
+        let rendered = render_struct_members(source, members, depth + 1);
+
+        acc.add("members", "StructMembers", rendered);
+    }
+
+    {
+        let close_brace = &node.close_brace;
+
+        let rendered = render_terminal(source, &close_brace.range);
+
+        acc.add("close_brace", "CloseBrace", rendered);
+    }
 
     acc.finish()
 }
@@ -2605,23 +3136,29 @@ pub fn render_struct_definition(
 pub fn render_struct_member(source: &str, node: &StructMember, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "type_name",
-        "TypeName",
-        render_type_name(source, &node.type_name, depth + 1),
-    );
+    {
+        let type_name = &node.type_name;
 
-    acc.add(
-        "name",
-        "Identifier",
-        render_terminal(source, &node.name.range),
-    );
+        let rendered = render_type_name(source, type_name, depth + 1);
 
-    acc.add(
-        "semicolon",
-        "Semicolon",
-        render_terminal(source, &node.semicolon.range),
-    );
+        acc.add("type_name", "TypeName", rendered);
+    }
+
+    {
+        let name = &node.name;
+
+        let rendered = render_terminal(source, &name.range);
+
+        acc.add("name", "Identifier", rendered);
+    }
+
+    {
+        let semicolon = &node.semicolon;
+
+        let rendered = render_terminal(source, &semicolon.range);
+
+        acc.add("semicolon", "Semicolon", rendered);
+    }
 
     acc.finish()
 }
@@ -2629,33 +3166,43 @@ pub fn render_struct_member(source: &str, node: &StructMember, depth: usize) -> 
 pub fn render_try_statement(source: &str, node: &TryStatement, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "try_keyword",
-        "TryKeyword",
-        render_terminal(source, &node.try_keyword.range),
-    );
+    {
+        let try_keyword = &node.try_keyword;
 
-    acc.add(
-        "expression",
-        "Expression",
-        render_expression(source, &node.expression, depth + 1),
-    );
+        let rendered = render_terminal(source, &try_keyword.range);
 
-    if let Some(ref returns) = node.returns {
-        acc.add(
-            "returns",
-            "ReturnsDeclaration",
-            render_returns_declaration(source, returns, depth + 1),
-        );
+        acc.add("try_keyword", "TryKeyword", rendered);
     }
 
-    acc.add("body", "Block", render_block(source, &node.body, depth + 1));
+    {
+        let expression = &node.expression;
 
-    acc.add(
-        "catch_clauses",
-        "CatchClauses",
-        render_catch_clauses(source, &node.catch_clauses, depth + 1),
-    );
+        let rendered = render_expression(source, expression, depth + 1);
+
+        acc.add("expression", "Expression", rendered);
+    }
+
+    if let Some(ref returns) = node.returns {
+        let rendered = render_returns_declaration(source, returns, depth + 1);
+
+        acc.add("returns", "ReturnsDeclaration", rendered);
+    }
+
+    {
+        let body = &node.body;
+
+        let rendered = render_block(source, body, depth + 1);
+
+        acc.add("body", "Block", rendered);
+    }
+
+    {
+        let catch_clauses = &node.catch_clauses;
+
+        let rendered = render_catch_clauses(source, catch_clauses, depth + 1);
+
+        acc.add("catch_clauses", "CatchClauses", rendered);
+    }
 
     acc.finish()
 }
@@ -2667,23 +3214,29 @@ pub fn render_tuple_expression(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "open_paren",
-        "OpenParen",
-        render_terminal(source, &node.open_paren.range),
-    );
+    {
+        let open_paren = &node.open_paren;
 
-    acc.add(
-        "items",
-        "TupleValues",
-        render_tuple_values(source, &node.items, depth + 1),
-    );
+        let rendered = render_terminal(source, &open_paren.range);
 
-    acc.add(
-        "close_paren",
-        "CloseParen",
-        render_terminal(source, &node.close_paren.range),
-    );
+        acc.add("open_paren", "OpenParen", rendered);
+    }
+
+    {
+        let items = &node.items;
+
+        let rendered = render_tuple_values(source, items, depth + 1);
+
+        acc.add("items", "TupleValues", rendered);
+    }
+
+    {
+        let close_paren = &node.close_paren;
+
+        let rendered = render_terminal(source, &close_paren.range);
+
+        acc.add("close_paren", "CloseParen", rendered);
+    }
 
     acc.finish()
 }
@@ -2692,11 +3245,9 @@ pub fn render_tuple_value(source: &str, node: &TupleValue, depth: usize) -> Rend
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     if let Some(ref expression) = node.expression {
-        acc.add(
-            "expression",
-            "Expression",
-            render_expression(source, expression, depth + 1),
-        );
+        let rendered = render_expression(source, expression, depth + 1);
+
+        acc.add("expression", "Expression", rendered);
     }
 
     acc.finish()
@@ -2705,29 +3256,37 @@ pub fn render_tuple_value(source: &str, node: &TupleValue, depth: usize) -> Rend
 pub fn render_type_expression(source: &str, node: &TypeExpression, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "type_keyword",
-        "TypeKeyword",
-        render_terminal(source, &node.type_keyword.range),
-    );
+    {
+        let type_keyword = &node.type_keyword;
 
-    acc.add(
-        "open_paren",
-        "OpenParen",
-        render_terminal(source, &node.open_paren.range),
-    );
+        let rendered = render_terminal(source, &type_keyword.range);
 
-    acc.add(
-        "type_name",
-        "TypeName",
-        render_type_name(source, &node.type_name, depth + 1),
-    );
+        acc.add("type_keyword", "TypeKeyword", rendered);
+    }
 
-    acc.add(
-        "close_paren",
-        "CloseParen",
-        render_terminal(source, &node.close_paren.range),
-    );
+    {
+        let open_paren = &node.open_paren;
+
+        let rendered = render_terminal(source, &open_paren.range);
+
+        acc.add("open_paren", "OpenParen", rendered);
+    }
+
+    {
+        let type_name = &node.type_name;
+
+        let rendered = render_type_name(source, type_name, depth + 1);
+
+        acc.add("type_name", "TypeName", rendered);
+    }
+
+    {
+        let close_paren = &node.close_paren;
+
+        let rendered = render_terminal(source, &close_paren.range);
+
+        acc.add("close_paren", "CloseParen", rendered);
+    }
 
     acc.finish()
 }
@@ -2735,17 +3294,21 @@ pub fn render_type_expression(source: &str, node: &TypeExpression, depth: usize)
 pub fn render_unchecked_block(source: &str, node: &UncheckedBlock, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "unchecked_keyword",
-        "UncheckedKeyword",
-        render_terminal(source, &node.unchecked_keyword.range),
-    );
+    {
+        let unchecked_keyword = &node.unchecked_keyword;
 
-    acc.add(
-        "block",
-        "Block",
-        render_block(source, &node.block, depth + 1),
-    );
+        let rendered = render_terminal(source, &unchecked_keyword.range);
+
+        acc.add("unchecked_keyword", "UncheckedKeyword", rendered);
+    }
+
+    {
+        let block = &node.block;
+
+        let rendered = render_block(source, block, depth + 1);
+
+        acc.add("block", "Block", rendered);
+    }
 
     acc.finish()
 }
@@ -2757,35 +3320,45 @@ pub fn render_user_defined_value_type_definition(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "type_keyword",
-        "TypeKeyword",
-        render_terminal(source, &node.type_keyword.range),
-    );
+    {
+        let type_keyword = &node.type_keyword;
 
-    acc.add(
-        "name",
-        "Identifier",
-        render_terminal(source, &node.name.range),
-    );
+        let rendered = render_terminal(source, &type_keyword.range);
 
-    acc.add(
-        "is_keyword",
-        "IsKeyword",
-        render_terminal(source, &node.is_keyword.range),
-    );
+        acc.add("type_keyword", "TypeKeyword", rendered);
+    }
 
-    acc.add(
-        "value_type",
-        "ElementaryType",
-        render_elementary_type(source, &node.value_type, depth + 1),
-    );
+    {
+        let name = &node.name;
 
-    acc.add(
-        "semicolon",
-        "Semicolon",
-        render_terminal(source, &node.semicolon.range),
-    );
+        let rendered = render_terminal(source, &name.range);
+
+        acc.add("name", "Identifier", rendered);
+    }
+
+    {
+        let is_keyword = &node.is_keyword;
+
+        let rendered = render_terminal(source, &is_keyword.range);
+
+        acc.add("is_keyword", "IsKeyword", rendered);
+    }
+
+    {
+        let value_type = &node.value_type;
+
+        let rendered = render_elementary_type(source, value_type, depth + 1);
+
+        acc.add("value_type", "ElementaryType", rendered);
+    }
+
+    {
+        let semicolon = &node.semicolon;
+
+        let rendered = render_terminal(source, &semicolon.range);
+
+        acc.add("semicolon", "Semicolon", rendered);
+    }
 
     acc.finish()
 }
@@ -2793,17 +3366,21 @@ pub fn render_user_defined_value_type_definition(
 pub fn render_using_alias(source: &str, node: &UsingAlias, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "as_keyword",
-        "AsKeyword",
-        render_terminal(source, &node.as_keyword.range),
-    );
+    {
+        let as_keyword = &node.as_keyword;
 
-    acc.add(
-        "operator",
-        "UsingOperator",
-        render_using_operator(source, &node.operator, depth + 1),
-    );
+        let rendered = render_terminal(source, &as_keyword.range);
+
+        acc.add("as_keyword", "AsKeyword", rendered);
+    }
+
+    {
+        let operator = &node.operator;
+
+        let rendered = render_using_operator(source, operator, depth + 1);
+
+        acc.add("operator", "UsingOperator", rendered);
+    }
 
     acc.finish()
 }
@@ -2815,23 +3392,29 @@ pub fn render_using_deconstruction(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "open_brace",
-        "OpenBrace",
-        render_terminal(source, &node.open_brace.range),
-    );
+    {
+        let open_brace = &node.open_brace;
 
-    acc.add(
-        "symbols",
-        "UsingDeconstructionSymbols",
-        render_using_deconstruction_symbols(source, &node.symbols, depth + 1),
-    );
+        let rendered = render_terminal(source, &open_brace.range);
 
-    acc.add(
-        "close_brace",
-        "CloseBrace",
-        render_terminal(source, &node.close_brace.range),
-    );
+        acc.add("open_brace", "OpenBrace", rendered);
+    }
+
+    {
+        let symbols = &node.symbols;
+
+        let rendered = render_using_deconstruction_symbols(source, symbols, depth + 1);
+
+        acc.add("symbols", "UsingDeconstructionSymbols", rendered);
+    }
+
+    {
+        let close_brace = &node.close_brace;
+
+        let rendered = render_terminal(source, &close_brace.range);
+
+        acc.add("close_brace", "CloseBrace", rendered);
+    }
 
     acc.finish()
 }
@@ -2843,18 +3426,18 @@ pub fn render_using_deconstruction_symbol(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "name",
-        "IdentifierPath",
-        render_identifier_path(source, &node.name, depth + 1),
-    );
+    {
+        let name = &node.name;
+
+        let rendered = render_identifier_path(source, name, depth + 1);
+
+        acc.add("name", "IdentifierPath", rendered);
+    }
 
     if let Some(ref alias) = node.alias {
-        acc.add(
-            "alias",
-            "UsingAlias",
-            render_using_alias(source, alias, depth + 1),
-        );
+        let rendered = render_using_alias(source, alias, depth + 1);
+
+        acc.add("alias", "UsingAlias", rendered);
     }
 
     acc.finish()
@@ -2863,43 +3446,51 @@ pub fn render_using_deconstruction_symbol(
 pub fn render_using_directive(source: &str, node: &UsingDirective, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "using_keyword",
-        "UsingKeyword",
-        render_terminal(source, &node.using_keyword.range),
-    );
+    {
+        let using_keyword = &node.using_keyword;
 
-    acc.add(
-        "clause",
-        "UsingClause",
-        render_using_clause(source, &node.clause, depth + 1),
-    );
+        let rendered = render_terminal(source, &using_keyword.range);
 
-    acc.add(
-        "for_keyword",
-        "ForKeyword",
-        render_terminal(source, &node.for_keyword.range),
-    );
-
-    acc.add(
-        "target",
-        "UsingTarget",
-        render_using_target(source, &node.target, depth + 1),
-    );
-
-    if let Some(ref global_keyword) = node.global_keyword {
-        acc.add(
-            "global_keyword",
-            "GlobalKeyword",
-            render_terminal(source, &global_keyword.range),
-        );
+        acc.add("using_keyword", "UsingKeyword", rendered);
     }
 
-    acc.add(
-        "semicolon",
-        "Semicolon",
-        render_terminal(source, &node.semicolon.range),
-    );
+    {
+        let clause = &node.clause;
+
+        let rendered = render_using_clause(source, clause, depth + 1);
+
+        acc.add("clause", "UsingClause", rendered);
+    }
+
+    {
+        let for_keyword = &node.for_keyword;
+
+        let rendered = render_terminal(source, &for_keyword.range);
+
+        acc.add("for_keyword", "ForKeyword", rendered);
+    }
+
+    {
+        let target = &node.target;
+
+        let rendered = render_using_target(source, target, depth + 1);
+
+        acc.add("target", "UsingTarget", rendered);
+    }
+
+    if let Some(ref global_keyword) = node.global_keyword {
+        let rendered = render_terminal(source, &global_keyword.range);
+
+        acc.add("global_keyword", "GlobalKeyword", rendered);
+    }
+
+    {
+        let semicolon = &node.semicolon;
+
+        let rendered = render_terminal(source, &semicolon.range);
+
+        acc.add("semicolon", "Semicolon", rendered);
+    }
 
     acc.finish()
 }
@@ -2911,25 +3502,27 @@ pub fn render_variable_declaration(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "type_name",
-        "TypeName",
-        render_type_name(source, &node.type_name, depth + 1),
-    );
+    {
+        let type_name = &node.type_name;
 
-    if let Some(ref storage_location) = node.storage_location {
-        acc.add(
-            "storage_location",
-            "StorageLocation",
-            render_storage_location(source, storage_location, depth + 1),
-        );
+        let rendered = render_type_name(source, type_name, depth + 1);
+
+        acc.add("type_name", "TypeName", rendered);
     }
 
-    acc.add(
-        "name",
-        "Identifier",
-        render_terminal(source, &node.name.range),
-    );
+    if let Some(ref storage_location) = node.storage_location {
+        let rendered = render_storage_location(source, storage_location, depth + 1);
+
+        acc.add("storage_location", "StorageLocation", rendered);
+    }
+
+    {
+        let name = &node.name;
+
+        let rendered = render_terminal(source, &name.range);
+
+        acc.add("name", "Identifier", rendered);
+    }
 
     acc.finish()
 }
@@ -2941,17 +3534,21 @@ pub fn render_variable_declaration_statement(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "target",
-        "VariableDeclarationTarget",
-        render_variable_declaration_target(source, &node.target, depth + 1),
-    );
+    {
+        let target = &node.target;
 
-    acc.add(
-        "semicolon",
-        "Semicolon",
-        render_terminal(source, &node.semicolon.range),
-    );
+        let rendered = render_variable_declaration_target(source, target, depth + 1);
+
+        acc.add("target", "VariableDeclarationTarget", rendered);
+    }
+
+    {
+        let semicolon = &node.semicolon;
+
+        let rendered = render_terminal(source, &semicolon.range);
+
+        acc.add("semicolon", "Semicolon", rendered);
+    }
 
     acc.finish()
 }
@@ -2963,13 +3560,21 @@ pub fn render_variable_declaration_value(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add("equal", "Equal", render_terminal(source, &node.equal.range));
+    {
+        let equal = &node.equal;
 
-    acc.add(
-        "expression",
-        "Expression",
-        render_expression(source, &node.expression, depth + 1),
-    );
+        let rendered = render_terminal(source, &equal.range);
+
+        acc.add("equal", "Equal", rendered);
+    }
+
+    {
+        let expression = &node.expression;
+
+        let rendered = render_expression(source, expression, depth + 1);
+
+        acc.add("expression", "Expression", rendered);
+    }
 
     acc.finish()
 }
@@ -2977,17 +3582,21 @@ pub fn render_variable_declaration_value(
 pub fn render_version_pragma(source: &str, node: &VersionPragma, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "solidity_keyword",
-        "SolidityKeyword",
-        render_terminal(source, &node.solidity_keyword.range),
-    );
+    {
+        let solidity_keyword = &node.solidity_keyword;
 
-    acc.add(
-        "sets",
-        "VersionExpressionSets",
-        render_version_expression_sets(source, &node.sets, depth + 1),
-    );
+        let rendered = render_terminal(source, &solidity_keyword.range);
+
+        acc.add("solidity_keyword", "SolidityKeyword", rendered);
+    }
+
+    {
+        let sets = &node.sets;
+
+        let rendered = render_version_expression_sets(source, sets, depth + 1);
+
+        acc.add("sets", "VersionExpressionSets", rendered);
+    }
 
     acc.finish()
 }
@@ -2995,23 +3604,29 @@ pub fn render_version_pragma(source: &str, node: &VersionPragma, depth: usize) -
 pub fn render_version_range(source: &str, node: &VersionRange, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "start",
-        "VersionLiteral",
-        render_version_literal(source, &node.start, depth + 1),
-    );
+    {
+        let start = &node.start;
 
-    acc.add(
-        "minus",
-        "PragmaMinus",
-        render_terminal(source, &node.minus.range),
-    );
+        let rendered = render_version_literal(source, start, depth + 1);
 
-    acc.add(
-        "end",
-        "VersionLiteral",
-        render_version_literal(source, &node.end, depth + 1),
-    );
+        acc.add("start", "VersionLiteral", rendered);
+    }
+
+    {
+        let minus = &node.minus;
+
+        let rendered = render_terminal(source, &minus.range);
+
+        acc.add("minus", "PragmaMinus", rendered);
+    }
+
+    {
+        let end = &node.end;
+
+        let rendered = render_version_literal(source, end, depth + 1);
+
+        acc.add("end", "VersionLiteral", rendered);
+    }
 
     acc.finish()
 }
@@ -3020,18 +3635,18 @@ pub fn render_version_term(source: &str, node: &VersionTerm, depth: usize) -> Re
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
     if let Some(ref operator) = node.operator {
-        acc.add(
-            "operator",
-            "VersionOperator",
-            render_version_operator(source, operator, depth + 1),
-        );
+        let rendered = render_version_operator(source, operator, depth + 1);
+
+        acc.add("operator", "VersionOperator", rendered);
     }
 
-    acc.add(
-        "literal",
-        "VersionLiteral",
-        render_version_literal(source, &node.literal, depth + 1),
-    );
+    {
+        let literal = &node.literal;
+
+        let rendered = render_version_literal(source, literal, depth + 1);
+
+        acc.add("literal", "VersionLiteral", rendered);
+    }
 
     acc.finish()
 }
@@ -3039,35 +3654,45 @@ pub fn render_version_term(source: &str, node: &VersionTerm, depth: usize) -> Re
 pub fn render_while_statement(source: &str, node: &WhileStatement, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "while_keyword",
-        "WhileKeyword",
-        render_terminal(source, &node.while_keyword.range),
-    );
+    {
+        let while_keyword = &node.while_keyword;
 
-    acc.add(
-        "open_paren",
-        "OpenParen",
-        render_terminal(source, &node.open_paren.range),
-    );
+        let rendered = render_terminal(source, &while_keyword.range);
 
-    acc.add(
-        "condition",
-        "Expression",
-        render_expression(source, &node.condition, depth + 1),
-    );
+        acc.add("while_keyword", "WhileKeyword", rendered);
+    }
 
-    acc.add(
-        "close_paren",
-        "CloseParen",
-        render_terminal(source, &node.close_paren.range),
-    );
+    {
+        let open_paren = &node.open_paren;
 
-    acc.add(
-        "body",
-        "Statement",
-        render_statement(source, &node.body, depth + 1),
-    );
+        let rendered = render_terminal(source, &open_paren.range);
+
+        acc.add("open_paren", "OpenParen", rendered);
+    }
+
+    {
+        let condition = &node.condition;
+
+        let rendered = render_expression(source, condition, depth + 1);
+
+        acc.add("condition", "Expression", rendered);
+    }
+
+    {
+        let close_paren = &node.close_paren;
+
+        let rendered = render_terminal(source, &close_paren.range);
+
+        acc.add("close_paren", "CloseParen", rendered);
+    }
+
+    {
+        let body = &node.body;
+
+        let rendered = render_statement(source, body, depth + 1);
+
+        acc.add("body", "Statement", rendered);
+    }
 
     acc.finish()
 }
@@ -3075,23 +3700,29 @@ pub fn render_while_statement(source: &str, node: &WhileStatement, depth: usize)
 pub fn render_yul_block(source: &str, node: &YulBlock, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "open_brace",
-        "YulOpenBrace",
-        render_terminal(source, &node.open_brace.range),
-    );
+    {
+        let open_brace = &node.open_brace;
 
-    acc.add(
-        "statements",
-        "YulStatements",
-        render_yul_statements(source, &node.statements, depth + 1),
-    );
+        let rendered = render_terminal(source, &open_brace.range);
 
-    acc.add(
-        "close_brace",
-        "YulCloseBrace",
-        render_terminal(source, &node.close_brace.range),
-    );
+        acc.add("open_brace", "YulOpenBrace", rendered);
+    }
+
+    {
+        let statements = &node.statements;
+
+        let rendered = render_yul_statements(source, statements, depth + 1);
+
+        acc.add("statements", "YulStatements", rendered);
+    }
+
+    {
+        let close_brace = &node.close_brace;
+
+        let rendered = render_terminal(source, &close_brace.range);
+
+        acc.add("close_brace", "YulCloseBrace", rendered);
+    }
 
     acc.finish()
 }
@@ -3103,11 +3734,13 @@ pub fn render_yul_break_statement(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "break_keyword",
-        "YulBreakKeyword",
-        render_terminal(source, &node.break_keyword.range),
-    );
+    {
+        let break_keyword = &node.break_keyword;
+
+        let rendered = render_terminal(source, &break_keyword.range);
+
+        acc.add("break_keyword", "YulBreakKeyword", rendered);
+    }
 
     acc.finish()
 }
@@ -3119,11 +3752,13 @@ pub fn render_yul_continue_statement(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "continue_keyword",
-        "YulContinueKeyword",
-        render_terminal(source, &node.continue_keyword.range),
-    );
+    {
+        let continue_keyword = &node.continue_keyword;
+
+        let rendered = render_terminal(source, &continue_keyword.range);
+
+        acc.add("continue_keyword", "YulContinueKeyword", rendered);
+    }
 
     acc.finish()
 }
@@ -3135,17 +3770,21 @@ pub fn render_yul_default_case(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "default_keyword",
-        "YulDefaultKeyword",
-        render_terminal(source, &node.default_keyword.range),
-    );
+    {
+        let default_keyword = &node.default_keyword;
 
-    acc.add(
-        "body",
-        "YulBlock",
-        render_yul_block(source, &node.body, depth + 1),
-    );
+        let rendered = render_terminal(source, &default_keyword.range);
+
+        acc.add("default_keyword", "YulDefaultKeyword", rendered);
+    }
+
+    {
+        let body = &node.body;
+
+        let rendered = render_yul_block(source, body, depth + 1);
+
+        acc.add("body", "YulBlock", rendered);
+    }
 
     acc.finish()
 }
@@ -3157,23 +3796,29 @@ pub fn render_yul_flags_declaration(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "open_paren",
-        "YulOpenParen",
-        render_terminal(source, &node.open_paren.range),
-    );
+    {
+        let open_paren = &node.open_paren;
 
-    acc.add(
-        "flags",
-        "YulFlags",
-        render_yul_flags(source, &node.flags, depth + 1),
-    );
+        let rendered = render_terminal(source, &open_paren.range);
 
-    acc.add(
-        "close_paren",
-        "YulCloseParen",
-        render_terminal(source, &node.close_paren.range),
-    );
+        acc.add("open_paren", "YulOpenParen", rendered);
+    }
+
+    {
+        let flags = &node.flags;
+
+        let rendered = render_yul_flags(source, flags, depth + 1);
+
+        acc.add("flags", "YulFlags", rendered);
+    }
+
+    {
+        let close_paren = &node.close_paren;
+
+        let rendered = render_terminal(source, &close_paren.range);
+
+        acc.add("close_paren", "YulCloseParen", rendered);
+    }
 
     acc.finish()
 }
@@ -3185,35 +3830,45 @@ pub fn render_yul_for_statement(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "for_keyword",
-        "YulForKeyword",
-        render_terminal(source, &node.for_keyword.range),
-    );
+    {
+        let for_keyword = &node.for_keyword;
 
-    acc.add(
-        "initialization",
-        "YulBlock",
-        render_yul_block(source, &node.initialization, depth + 1),
-    );
+        let rendered = render_terminal(source, &for_keyword.range);
 
-    acc.add(
-        "condition",
-        "YulExpression",
-        render_yul_expression(source, &node.condition, depth + 1),
-    );
+        acc.add("for_keyword", "YulForKeyword", rendered);
+    }
 
-    acc.add(
-        "iterator",
-        "YulBlock",
-        render_yul_block(source, &node.iterator, depth + 1),
-    );
+    {
+        let initialization = &node.initialization;
 
-    acc.add(
-        "body",
-        "YulBlock",
-        render_yul_block(source, &node.body, depth + 1),
-    );
+        let rendered = render_yul_block(source, initialization, depth + 1);
+
+        acc.add("initialization", "YulBlock", rendered);
+    }
+
+    {
+        let condition = &node.condition;
+
+        let rendered = render_yul_expression(source, condition, depth + 1);
+
+        acc.add("condition", "YulExpression", rendered);
+    }
+
+    {
+        let iterator = &node.iterator;
+
+        let rendered = render_yul_block(source, iterator, depth + 1);
+
+        acc.add("iterator", "YulBlock", rendered);
+    }
+
+    {
+        let body = &node.body;
+
+        let rendered = render_yul_block(source, body, depth + 1);
+
+        acc.add("body", "YulBlock", rendered);
+    }
 
     acc.finish()
 }
@@ -3225,29 +3880,37 @@ pub fn render_yul_function_call_expression(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "operand",
-        "YulExpression",
-        render_yul_expression(source, &node.operand, depth + 1),
-    );
+    {
+        let operand = &node.operand;
 
-    acc.add(
-        "open_paren",
-        "YulOpenParen",
-        render_terminal(source, &node.open_paren.range),
-    );
+        let rendered = render_yul_expression(source, operand, depth + 1);
 
-    acc.add(
-        "arguments",
-        "YulArguments",
-        render_yul_arguments(source, &node.arguments, depth + 1),
-    );
+        acc.add("operand", "YulExpression", rendered);
+    }
 
-    acc.add(
-        "close_paren",
-        "YulCloseParen",
-        render_terminal(source, &node.close_paren.range),
-    );
+    {
+        let open_paren = &node.open_paren;
+
+        let rendered = render_terminal(source, &open_paren.range);
+
+        acc.add("open_paren", "YulOpenParen", rendered);
+    }
+
+    {
+        let arguments = &node.arguments;
+
+        let rendered = render_yul_arguments(source, arguments, depth + 1);
+
+        acc.add("arguments", "YulArguments", rendered);
+    }
+
+    {
+        let close_paren = &node.close_paren;
+
+        let rendered = render_terminal(source, &close_paren.range);
+
+        acc.add("close_paren", "YulCloseParen", rendered);
+    }
 
     acc.finish()
 }
@@ -3259,37 +3922,43 @@ pub fn render_yul_function_definition(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "function_keyword",
-        "YulFunctionKeyword",
-        render_terminal(source, &node.function_keyword.range),
-    );
+    {
+        let function_keyword = &node.function_keyword;
 
-    acc.add(
-        "name",
-        "YulIdentifier",
-        render_terminal(source, &node.name.range),
-    );
+        let rendered = render_terminal(source, &function_keyword.range);
 
-    acc.add(
-        "parameters",
-        "YulParametersDeclaration",
-        render_yul_parameters_declaration(source, &node.parameters, depth + 1),
-    );
-
-    if let Some(ref returns) = node.returns {
-        acc.add(
-            "returns",
-            "YulReturnsDeclaration",
-            render_yul_returns_declaration(source, returns, depth + 1),
-        );
+        acc.add("function_keyword", "YulFunctionKeyword", rendered);
     }
 
-    acc.add(
-        "body",
-        "YulBlock",
-        render_yul_block(source, &node.body, depth + 1),
-    );
+    {
+        let name = &node.name;
+
+        let rendered = render_terminal(source, &name.range);
+
+        acc.add("name", "YulIdentifier", rendered);
+    }
+
+    {
+        let parameters = &node.parameters;
+
+        let rendered = render_yul_parameters_declaration(source, parameters, depth + 1);
+
+        acc.add("parameters", "YulParametersDeclaration", rendered);
+    }
+
+    if let Some(ref returns) = node.returns {
+        let rendered = render_yul_returns_declaration(source, returns, depth + 1);
+
+        acc.add("returns", "YulReturnsDeclaration", rendered);
+    }
+
+    {
+        let body = &node.body;
+
+        let rendered = render_yul_block(source, body, depth + 1);
+
+        acc.add("body", "YulBlock", rendered);
+    }
 
     acc.finish()
 }
@@ -3301,23 +3970,29 @@ pub fn render_yul_if_statement(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "if_keyword",
-        "YulIfKeyword",
-        render_terminal(source, &node.if_keyword.range),
-    );
+    {
+        let if_keyword = &node.if_keyword;
 
-    acc.add(
-        "condition",
-        "YulExpression",
-        render_yul_expression(source, &node.condition, depth + 1),
-    );
+        let rendered = render_terminal(source, &if_keyword.range);
 
-    acc.add(
-        "body",
-        "YulBlock",
-        render_yul_block(source, &node.body, depth + 1),
-    );
+        acc.add("if_keyword", "YulIfKeyword", rendered);
+    }
+
+    {
+        let condition = &node.condition;
+
+        let rendered = render_yul_expression(source, condition, depth + 1);
+
+        acc.add("condition", "YulExpression", rendered);
+    }
+
+    {
+        let body = &node.body;
+
+        let rendered = render_yul_block(source, body, depth + 1);
+
+        acc.add("body", "YulBlock", rendered);
+    }
 
     acc.finish()
 }
@@ -3329,11 +4004,13 @@ pub fn render_yul_leave_statement(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "leave_keyword",
-        "YulLeaveKeyword",
-        render_terminal(source, &node.leave_keyword.range),
-    );
+    {
+        let leave_keyword = &node.leave_keyword;
+
+        let rendered = render_terminal(source, &leave_keyword.range);
+
+        acc.add("leave_keyword", "YulLeaveKeyword", rendered);
+    }
 
     acc.finish()
 }
@@ -3345,23 +4022,29 @@ pub fn render_yul_parameters_declaration(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "open_paren",
-        "YulOpenParen",
-        render_terminal(source, &node.open_paren.range),
-    );
+    {
+        let open_paren = &node.open_paren;
 
-    acc.add(
-        "parameters",
-        "YulParameters",
-        render_yul_parameters(source, &node.parameters, depth + 1),
-    );
+        let rendered = render_terminal(source, &open_paren.range);
 
-    acc.add(
-        "close_paren",
-        "YulCloseParen",
-        render_terminal(source, &node.close_paren.range),
-    );
+        acc.add("open_paren", "YulOpenParen", rendered);
+    }
+
+    {
+        let parameters = &node.parameters;
+
+        let rendered = render_yul_parameters(source, parameters, depth + 1);
+
+        acc.add("parameters", "YulParameters", rendered);
+    }
+
+    {
+        let close_paren = &node.close_paren;
+
+        let rendered = render_terminal(source, &close_paren.range);
+
+        acc.add("close_paren", "YulCloseParen", rendered);
+    }
 
     acc.finish()
 }
@@ -3373,17 +4056,21 @@ pub fn render_yul_returns_declaration(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "minus_greater_than",
-        "YulMinusGreaterThan",
-        render_terminal(source, &node.minus_greater_than.range),
-    );
+    {
+        let minus_greater_than = &node.minus_greater_than;
 
-    acc.add(
-        "variables",
-        "YulVariableNames",
-        render_yul_variable_names(source, &node.variables, depth + 1),
-    );
+        let rendered = render_terminal(source, &minus_greater_than.range);
+
+        acc.add("minus_greater_than", "YulMinusGreaterThan", rendered);
+    }
+
+    {
+        let variables = &node.variables;
+
+        let rendered = render_yul_variable_names(source, variables, depth + 1);
+
+        acc.add("variables", "YulVariableNames", rendered);
+    }
 
     acc.finish()
 }
@@ -3395,23 +4082,29 @@ pub fn render_yul_switch_statement(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "switch_keyword",
-        "YulSwitchKeyword",
-        render_terminal(source, &node.switch_keyword.range),
-    );
+    {
+        let switch_keyword = &node.switch_keyword;
 
-    acc.add(
-        "expression",
-        "YulExpression",
-        render_yul_expression(source, &node.expression, depth + 1),
-    );
+        let rendered = render_terminal(source, &switch_keyword.range);
 
-    acc.add(
-        "cases",
-        "YulSwitchCases",
-        render_yul_switch_cases(source, &node.cases, depth + 1),
-    );
+        acc.add("switch_keyword", "YulSwitchKeyword", rendered);
+    }
+
+    {
+        let expression = &node.expression;
+
+        let rendered = render_yul_expression(source, expression, depth + 1);
+
+        acc.add("expression", "YulExpression", rendered);
+    }
+
+    {
+        let cases = &node.cases;
+
+        let rendered = render_yul_switch_cases(source, cases, depth + 1);
+
+        acc.add("cases", "YulSwitchCases", rendered);
+    }
 
     acc.finish()
 }
@@ -3419,23 +4112,29 @@ pub fn render_yul_switch_statement(
 pub fn render_yul_value_case(source: &str, node: &YulValueCase, depth: usize) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "case_keyword",
-        "YulCaseKeyword",
-        render_terminal(source, &node.case_keyword.range),
-    );
+    {
+        let case_keyword = &node.case_keyword;
 
-    acc.add(
-        "value",
-        "YulLiteral",
-        render_yul_literal(source, &node.value, depth + 1),
-    );
+        let rendered = render_terminal(source, &case_keyword.range);
 
-    acc.add(
-        "body",
-        "YulBlock",
-        render_yul_block(source, &node.body, depth + 1),
-    );
+        acc.add("case_keyword", "YulCaseKeyword", rendered);
+    }
+
+    {
+        let value = &node.value;
+
+        let rendered = render_yul_literal(source, value, depth + 1);
+
+        acc.add("value", "YulLiteral", rendered);
+    }
+
+    {
+        let body = &node.body;
+
+        let rendered = render_yul_block(source, body, depth + 1);
+
+        acc.add("body", "YulBlock", rendered);
+    }
 
     acc.finish()
 }
@@ -3447,23 +4146,29 @@ pub fn render_yul_variable_assignment_statement(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "variables",
-        "YulPaths",
-        render_yul_paths(source, &node.variables, depth + 1),
-    );
+    {
+        let variables = &node.variables;
 
-    acc.add(
-        "assignment",
-        "YulColonEqual",
-        render_terminal(source, &node.assignment.range),
-    );
+        let rendered = render_yul_paths(source, variables, depth + 1);
 
-    acc.add(
-        "expression",
-        "YulExpression",
-        render_yul_expression(source, &node.expression, depth + 1),
-    );
+        acc.add("variables", "YulPaths", rendered);
+    }
+
+    {
+        let assignment = &node.assignment;
+
+        let rendered = render_terminal(source, &assignment.range);
+
+        acc.add("assignment", "YulColonEqual", rendered);
+    }
+
+    {
+        let expression = &node.expression;
+
+        let rendered = render_yul_expression(source, expression, depth + 1);
+
+        acc.add("expression", "YulExpression", rendered);
+    }
 
     acc.finish()
 }
@@ -3475,24 +4180,26 @@ pub fn render_yul_variable_declaration_statement(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "let_keyword",
-        "YulLetKeyword",
-        render_terminal(source, &node.let_keyword.range),
-    );
+    {
+        let let_keyword = &node.let_keyword;
 
-    acc.add(
-        "variables",
-        "YulVariableNames",
-        render_yul_variable_names(source, &node.variables, depth + 1),
-    );
+        let rendered = render_terminal(source, &let_keyword.range);
+
+        acc.add("let_keyword", "YulLetKeyword", rendered);
+    }
+
+    {
+        let variables = &node.variables;
+
+        let rendered = render_yul_variable_names(source, variables, depth + 1);
+
+        acc.add("variables", "YulVariableNames", rendered);
+    }
 
     if let Some(ref value) = node.value {
-        acc.add(
-            "value",
-            "YulVariableDeclarationValue",
-            render_yul_variable_declaration_value(source, value, depth + 1),
-        );
+        let rendered = render_yul_variable_declaration_value(source, value, depth + 1);
+
+        acc.add("value", "YulVariableDeclarationValue", rendered);
     }
 
     acc.finish()
@@ -3505,17 +4212,21 @@ pub fn render_yul_variable_declaration_value(
 ) -> RenderedOutput {
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
 
-    acc.add(
-        "assignment",
-        "YulColonEqual",
-        render_terminal(source, &node.assignment.range),
-    );
+    {
+        let assignment = &node.assignment;
 
-    acc.add(
-        "expression",
-        "YulExpression",
-        render_yul_expression(source, &node.expression, depth + 1),
-    );
+        let rendered = render_terminal(source, &assignment.range);
+
+        acc.add("assignment", "YulColonEqual", rendered);
+    }
+
+    {
+        let expression = &node.expression;
+
+        let rendered = render_yul_expression(source, expression, depth + 1);
+
+        acc.add("expression", "YulExpression", rendered);
+    }
 
     acc.finish()
 }
@@ -7393,11 +8104,9 @@ pub fn render_array_values(source: &str, node: &ArrayValues, depth: usize) -> Re
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "Expression",
-            render_expression(source, element, depth + 1),
-        );
+        let rendered = render_expression(source, element, depth + 1);
+
+        acc.add("item", "Expression", rendered);
     }
     acc.finish()
 }
@@ -7408,11 +8117,9 @@ pub fn render_call_options(source: &str, node: &CallOptions, depth: usize) -> Re
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "NamedArgument",
-            render_named_argument(source, element, depth + 1),
-        );
+        let rendered = render_named_argument(source, element, depth + 1);
+
+        acc.add("item", "NamedArgument", rendered);
     }
     acc.finish()
 }
@@ -7423,11 +8130,9 @@ pub fn render_catch_clauses(source: &str, node: &CatchClauses, depth: usize) -> 
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "CatchClause",
-            render_catch_clause(source, element, depth + 1),
-        );
+        let rendered = render_catch_clause(source, element, depth + 1);
+
+        acc.add("item", "CatchClause", rendered);
     }
     acc.finish()
 }
@@ -7442,11 +8147,9 @@ pub fn render_constructor_attributes(
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "ConstructorAttribute",
-            render_constructor_attribute(source, element, depth + 1),
-        );
+        let rendered = render_constructor_attribute(source, element, depth + 1);
+
+        acc.add("item", "ConstructorAttribute", rendered);
     }
     acc.finish()
 }
@@ -7461,11 +8164,9 @@ pub fn render_contract_members(
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "ContractMember",
-            render_contract_member(source, element, depth + 1),
-        );
+        let rendered = render_contract_member(source, element, depth + 1);
+
+        acc.add("item", "ContractMember", rendered);
     }
     acc.finish()
 }
@@ -7480,11 +8181,9 @@ pub fn render_contract_specifiers(
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "ContractSpecifier",
-            render_contract_specifier(source, element, depth + 1),
-        );
+        let rendered = render_contract_specifier(source, element, depth + 1);
+
+        acc.add("item", "ContractSpecifier", rendered);
     }
     acc.finish()
 }
@@ -7495,11 +8194,9 @@ pub fn render_enum_members(source: &str, node: &EnumMembers, depth: usize) -> Re
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "Identifier",
-            render_terminal(source, &element.range),
-        );
+        let rendered = render_terminal(source, &element.range);
+
+        acc.add("item", "Identifier", rendered);
     }
     acc.finish()
 }
@@ -7514,11 +8211,9 @@ pub fn render_error_parameters(
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "ErrorParameter",
-            render_error_parameter(source, element, depth + 1),
-        );
+        let rendered = render_error_parameter(source, element, depth + 1);
+
+        acc.add("item", "ErrorParameter", rendered);
     }
     acc.finish()
 }
@@ -7533,11 +8228,9 @@ pub fn render_event_parameters(
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "EventParameter",
-            render_event_parameter(source, element, depth + 1),
-        );
+        let rendered = render_event_parameter(source, element, depth + 1);
+
+        acc.add("item", "EventParameter", rendered);
     }
     acc.finish()
 }
@@ -7552,11 +8245,9 @@ pub fn render_fallback_function_attributes(
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "FallbackFunctionAttribute",
-            render_fallback_function_attribute(source, element, depth + 1),
-        );
+        let rendered = render_fallback_function_attribute(source, element, depth + 1);
+
+        acc.add("item", "FallbackFunctionAttribute", rendered);
     }
     acc.finish()
 }
@@ -7571,11 +8262,9 @@ pub fn render_function_attributes(
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "FunctionAttribute",
-            render_function_attribute(source, element, depth + 1),
-        );
+        let rendered = render_function_attribute(source, element, depth + 1);
+
+        acc.add("item", "FunctionAttribute", rendered);
     }
     acc.finish()
 }
@@ -7590,11 +8279,9 @@ pub fn render_function_type_attributes(
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "FunctionTypeAttribute",
-            render_function_type_attribute(source, element, depth + 1),
-        );
+        let rendered = render_function_type_attribute(source, element, depth + 1);
+
+        acc.add("item", "FunctionTypeAttribute", rendered);
     }
     acc.finish()
 }
@@ -7609,11 +8296,9 @@ pub fn render_hex_string_literals(
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "HexStringLiteral",
-            render_terminal(source, &element.range),
-        );
+        let rendered = render_terminal(source, &element.range);
+
+        acc.add("item", "HexStringLiteral", rendered);
     }
     acc.finish()
 }
@@ -7624,11 +8309,9 @@ pub fn render_identifier_path(source: &str, node: &IdentifierPath, depth: usize)
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "IdentifierPathElement",
-            render_identifier_path_element(source, element, depth + 1),
-        );
+        let rendered = render_identifier_path_element(source, element, depth + 1);
+
+        acc.add("item", "IdentifierPathElement", rendered);
     }
     acc.finish()
 }
@@ -7643,11 +8326,9 @@ pub fn render_import_deconstruction_symbols(
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "ImportDeconstructionSymbol",
-            render_import_deconstruction_symbol(source, element, depth + 1),
-        );
+        let rendered = render_import_deconstruction_symbol(source, element, depth + 1);
+
+        acc.add("item", "ImportDeconstructionSymbol", rendered);
     }
     acc.finish()
 }
@@ -7662,11 +8343,9 @@ pub fn render_inheritance_types(
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "InheritanceType",
-            render_inheritance_type(source, element, depth + 1),
-        );
+        let rendered = render_inheritance_type(source, element, depth + 1);
+
+        acc.add("item", "InheritanceType", rendered);
     }
     acc.finish()
 }
@@ -7681,11 +8360,9 @@ pub fn render_interface_members(
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "ContractMember",
-            render_contract_member(source, element, depth + 1),
-        );
+        let rendered = render_contract_member(source, element, depth + 1);
+
+        acc.add("item", "ContractMember", rendered);
     }
     acc.finish()
 }
@@ -7696,11 +8373,9 @@ pub fn render_library_members(source: &str, node: &LibraryMembers, depth: usize)
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "ContractMember",
-            render_contract_member(source, element, depth + 1),
-        );
+        let rendered = render_contract_member(source, element, depth + 1);
+
+        acc.add("item", "ContractMember", rendered);
     }
     acc.finish()
 }
@@ -7715,11 +8390,9 @@ pub fn render_modifier_attributes(
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "ModifierAttribute",
-            render_modifier_attribute(source, element, depth + 1),
-        );
+        let rendered = render_modifier_attribute(source, element, depth + 1);
+
+        acc.add("item", "ModifierAttribute", rendered);
     }
     acc.finish()
 }
@@ -7734,11 +8407,9 @@ pub fn render_multi_typed_declaration_elements(
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "MultiTypedDeclarationElement",
-            render_multi_typed_declaration_element(source, element, depth + 1),
-        );
+        let rendered = render_multi_typed_declaration_element(source, element, depth + 1);
+
+        acc.add("item", "MultiTypedDeclarationElement", rendered);
     }
     acc.finish()
 }
@@ -7749,11 +8420,9 @@ pub fn render_named_arguments(source: &str, node: &NamedArguments, depth: usize)
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "NamedArgument",
-            render_named_argument(source, element, depth + 1),
-        );
+        let rendered = render_named_argument(source, element, depth + 1);
+
+        acc.add("item", "NamedArgument", rendered);
     }
     acc.finish()
 }
@@ -7764,11 +8433,9 @@ pub fn render_override_paths(source: &str, node: &OverridePaths, depth: usize) -
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "IdentifierPath",
-            render_identifier_path(source, element, depth + 1),
-        );
+        let rendered = render_identifier_path(source, element, depth + 1);
+
+        acc.add("item", "IdentifierPath", rendered);
     }
     acc.finish()
 }
@@ -7779,11 +8446,9 @@ pub fn render_parameters(source: &str, node: &Parameters, depth: usize) -> Rende
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "Parameter",
-            render_parameter(source, element, depth + 1),
-        );
+        let rendered = render_parameter(source, element, depth + 1);
+
+        acc.add("item", "Parameter", rendered);
     }
     acc.finish()
 }
@@ -7798,11 +8463,9 @@ pub fn render_positional_arguments(
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "Expression",
-            render_expression(source, element, depth + 1),
-        );
+        let rendered = render_expression(source, element, depth + 1);
+
+        acc.add("item", "Expression", rendered);
     }
     acc.finish()
 }
@@ -7817,11 +8480,9 @@ pub fn render_receive_function_attributes(
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "ReceiveFunctionAttribute",
-            render_receive_function_attribute(source, element, depth + 1),
-        );
+        let rendered = render_receive_function_attribute(source, element, depth + 1);
+
+        acc.add("item", "ReceiveFunctionAttribute", rendered);
     }
     acc.finish()
 }
@@ -7836,11 +8497,9 @@ pub fn render_simple_version_literal(
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "VersionSpecifier",
-            render_terminal(source, &element.range),
-        );
+        let rendered = render_terminal(source, &element.range);
+
+        acc.add("item", "VersionSpecifier", rendered);
     }
     acc.finish()
 }
@@ -7855,11 +8514,9 @@ pub fn render_source_unit_members(
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "SourceUnitMember",
-            render_source_unit_member(source, element, depth + 1),
-        );
+        let rendered = render_source_unit_member(source, element, depth + 1);
+
+        acc.add("item", "SourceUnitMember", rendered);
     }
     acc.finish()
 }
@@ -7874,11 +8531,9 @@ pub fn render_state_variable_attributes(
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "StateVariableAttribute",
-            render_state_variable_attribute(source, element, depth + 1),
-        );
+        let rendered = render_state_variable_attribute(source, element, depth + 1);
+
+        acc.add("item", "StateVariableAttribute", rendered);
     }
     acc.finish()
 }
@@ -7889,11 +8544,9 @@ pub fn render_statements(source: &str, node: &Statements, depth: usize) -> Rende
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "Statement",
-            render_statement(source, element, depth + 1),
-        );
+        let rendered = render_statement(source, element, depth + 1);
+
+        acc.add("item", "Statement", rendered);
     }
     acc.finish()
 }
@@ -7904,11 +8557,9 @@ pub fn render_string_literals(source: &str, node: &StringLiterals, depth: usize)
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "StringLiteral",
-            render_terminal(source, &element.range),
-        );
+        let rendered = render_terminal(source, &element.range);
+
+        acc.add("item", "StringLiteral", rendered);
     }
     acc.finish()
 }
@@ -7919,11 +8570,9 @@ pub fn render_struct_members(source: &str, node: &StructMembers, depth: usize) -
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "StructMember",
-            render_struct_member(source, element, depth + 1),
-        );
+        let rendered = render_struct_member(source, element, depth + 1);
+
+        acc.add("item", "StructMember", rendered);
     }
     acc.finish()
 }
@@ -7934,11 +8583,9 @@ pub fn render_tuple_values(source: &str, node: &TupleValues, depth: usize) -> Re
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "TupleValue",
-            render_tuple_value(source, element, depth + 1),
-        );
+        let rendered = render_tuple_value(source, element, depth + 1);
+
+        acc.add("item", "TupleValue", rendered);
     }
     acc.finish()
 }
@@ -7953,11 +8600,9 @@ pub fn render_unicode_string_literals(
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "UnicodeStringLiteral",
-            render_terminal(source, &element.range),
-        );
+        let rendered = render_terminal(source, &element.range);
+
+        acc.add("item", "UnicodeStringLiteral", rendered);
     }
     acc.finish()
 }
@@ -7972,11 +8617,9 @@ pub fn render_using_deconstruction_symbols(
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "UsingDeconstructionSymbol",
-            render_using_deconstruction_symbol(source, element, depth + 1),
-        );
+        let rendered = render_using_deconstruction_symbol(source, element, depth + 1);
+
+        acc.add("item", "UsingDeconstructionSymbol", rendered);
     }
     acc.finish()
 }
@@ -7991,11 +8634,9 @@ pub fn render_version_expression_set(
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "VersionExpression",
-            render_version_expression(source, element, depth + 1),
-        );
+        let rendered = render_version_expression(source, element, depth + 1);
+
+        acc.add("item", "VersionExpression", rendered);
     }
     acc.finish()
 }
@@ -8010,11 +8651,9 @@ pub fn render_version_expression_sets(
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "VersionExpressionSet",
-            render_version_expression_set(source, element, depth + 1),
-        );
+        let rendered = render_version_expression_set(source, element, depth + 1);
+
+        acc.add("item", "VersionExpressionSet", rendered);
     }
     acc.finish()
 }
@@ -8025,11 +8664,9 @@ pub fn render_yul_arguments(source: &str, node: &YulArguments, depth: usize) -> 
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "YulExpression",
-            render_yul_expression(source, element, depth + 1),
-        );
+        let rendered = render_yul_expression(source, element, depth + 1);
+
+        acc.add("item", "YulExpression", rendered);
     }
     acc.finish()
 }
@@ -8040,11 +8677,9 @@ pub fn render_yul_flags(source: &str, node: &YulFlags, depth: usize) -> Rendered
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "YulStringLiteral",
-            render_terminal(source, &element.range),
-        );
+        let rendered = render_terminal(source, &element.range);
+
+        acc.add("item", "YulStringLiteral", rendered);
     }
     acc.finish()
 }
@@ -8055,11 +8690,9 @@ pub fn render_yul_parameters(source: &str, node: &YulParameters, depth: usize) -
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "YulIdentifier",
-            render_terminal(source, &element.range),
-        );
+        let rendered = render_terminal(source, &element.range);
+
+        acc.add("item", "YulIdentifier", rendered);
     }
     acc.finish()
 }
@@ -8070,11 +8703,9 @@ pub fn render_yul_path(source: &str, node: &YulPath, depth: usize) -> RenderedOu
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "YulIdentifier",
-            render_terminal(source, &element.range),
-        );
+        let rendered = render_terminal(source, &element.range);
+
+        acc.add("item", "YulIdentifier", rendered);
     }
     acc.finish()
 }
@@ -8085,11 +8716,9 @@ pub fn render_yul_paths(source: &str, node: &YulPaths, depth: usize) -> Rendered
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "YulPath",
-            render_yul_path(source, element, depth + 1),
-        );
+        let rendered = render_yul_path(source, element, depth + 1);
+
+        acc.add("item", "YulPath", rendered);
     }
     acc.finish()
 }
@@ -8100,11 +8729,9 @@ pub fn render_yul_statements(source: &str, node: &YulStatements, depth: usize) -
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "YulStatement",
-            render_yul_statement(source, element, depth + 1),
-        );
+        let rendered = render_yul_statement(source, element, depth + 1);
+
+        acc.add("item", "YulStatement", rendered);
     }
     acc.finish()
 }
@@ -8119,11 +8746,9 @@ pub fn render_yul_switch_cases(
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "YulSwitchCase",
-            render_yul_switch_case(source, element, depth + 1),
-        );
+        let rendered = render_yul_switch_case(source, element, depth + 1);
+
+        acc.add("item", "YulSwitchCase", rendered);
     }
     acc.finish()
 }
@@ -8138,11 +8763,9 @@ pub fn render_yul_variable_names(
     }
     let mut acc = ChildrenAccumulator::new(source, depth + 1);
     for element in &node.elements {
-        acc.add(
-            "item",
-            "YulIdentifier",
-            render_terminal(source, &element.range),
-        );
+        let rendered = render_terminal(source, &element.range);
+
+        acc.add("item", "YulIdentifier", rendered);
     }
     acc.finish()
 }

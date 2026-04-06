@@ -17,19 +17,18 @@ pub fn render_{{ parent_type | snake_case }}(source: &str, node: &{{ parent_type
   {% for field in sequence.fields %}
     {% if field.is_optional %}
       if let Some(ref {{ field.label | snake_case }}) = node.{{ field.label | snake_case }} {
-        {% if field.field_type.is_terminal %}
-          acc.add("{{ field.label | snake_case }}", "{{ field.field_type.name }}", render_terminal(source, &{{ field.label | snake_case }}.range));
-        {% else %}
-          acc.add("{{ field.label | snake_case }}", "{{ field.field_type.name }}", render_{{ field.field_type.name | snake_case }}(source, {{ field.label | snake_case }}, depth + 1));
-        {% endif %}
-      }
     {% else %}
-      {% if field.field_type.is_terminal %}
-        acc.add("{{ field.label | snake_case }}", "{{ field.field_type.name }}", render_terminal(source, &node.{{ field.label | snake_case }}.range));
-      {% else %}
-        acc.add("{{ field.label | snake_case }}", "{{ field.field_type.name }}", render_{{ field.field_type.name | snake_case }}(source, &node.{{ field.label | snake_case }}, depth + 1));
-      {% endif %}
+      {
+      let {{ field.label | snake_case }} = &node.{{ field.label | snake_case }};
     {% endif %}
+       {% if field.field_type.is_terminal %}
+        let rendered = render_terminal(source, &{{ field.label | snake_case }}.range);
+      {% else %}
+        let rendered = render_{{ field.field_type.name | snake_case }}(source, {{ field.label | snake_case }}, depth + 1);
+      {% endif %}
+        acc.add("{{ field.label | snake_case }}", "{{ field.field_type.name }}", rendered);
+
+      }
   {% endfor %}
   acc.finish()
 }
@@ -72,10 +71,11 @@ pub fn render_{{ parent_type | snake_case }}(source: &str, node: &{{ parent_type
   let mut acc = ChildrenAccumulator::new(source, depth + 1);
   for element in &node.elements {
     {% if collection.item_type.is_terminal %}
-      acc.add("item", "{{ collection.item_type.name }}", render_terminal(source, &element.range));
+      let rendered = render_terminal(source, &element.range);
     {% else %}
-      acc.add("item", "{{ collection.item_type.name }}", render_{{ collection.item_type.name | snake_case }}(source, element, depth + 1));
+      let rendered = render_{{ collection.item_type.name | snake_case }}(source, element, depth + 1);
     {% endif %}
+      acc.add("item", "{{ collection.item_type.name }}", rendered);
   }
   acc.finish()
 }

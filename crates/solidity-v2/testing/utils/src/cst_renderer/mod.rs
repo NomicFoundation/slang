@@ -1,4 +1,4 @@
-//! Renders V2 CST parse results into a human-readable, YAML-like snapshot format.
+//! Renders V2 CST parse results into a human-readable, YAML snapshot format.
 //!
 //! ## Output format
 //!
@@ -9,14 +9,11 @@
 //! ## Symbol legend
 //!
 //! - `꞉` (U+A789, MODIFIER LETTER COLON) — separates label from kind in node
-//!   entries, used instead of `:` to avoid YAML key-value syntax conflicts.
+//!   entries, used instead of `:` (regular colon) to avoid YAML key-value syntax conflicts.
 //! - `►` (U+25BA, BLACK RIGHT-POINTING POINTER) — marks the selected variant of
 //!   a choice node, inlined on the same line as its parent.
 //! - `│` (U+2502, BOX DRAWINGS LIGHT VERTICAL) — column border in the `Source:`
 //!   section, used instead of `|` to avoid confusion with Solidity's bitwise OR.
-//!
-//! Files use the `.yml` extension by convention (matching V1) but are not
-//! machine-parseable YAML.
 
 use std::cmp::max;
 use std::fmt::Write;
@@ -33,6 +30,9 @@ mod renderer;
 
 /// The output of a render function: an optional byte range and a vec of string
 /// fragments that are concatenated directly (no separators) to form the output.
+///
+/// We return the byte range since it's not included in the non terminal nodes.
+/// It's optional since a non terminal may not be present (like an empty sequence).
 pub(crate) type RenderedOutput = (Option<Range<usize>>, Vec<String>);
 
 /// Format a label-kind pair for YAML output.
@@ -44,13 +44,11 @@ pub(crate) fn format_label_kind(label: &str, kind: &str) -> String {
 }
 
 /// Render a parse result (success or failure) to YAML format.
-///
-/// Returns `(status, content)` where status is `"success"` or `"failure"`.
 pub fn render(
     source: &str,
     source_id: &str,
     result: &(Result<SourceUnit, ParserError>, Vec<SyntaxVersionError>),
-) -> (&'static str, String) {
+) -> String {
     let mut w = String::new();
 
     write_source(&mut w, source);
@@ -64,8 +62,6 @@ pub fn render(
             for frag in root_frags {
                 w.push_str(&frag);
             }
-
-            ("success", w)
         }
         (Ok(cst), validation_errors) => {
             // Print validation errors, followed by the structured CST:
@@ -83,8 +79,6 @@ pub fn render(
             for frag in root_frags {
                 w.push_str(&frag);
             }
-
-            ("failure", w)
         }
         (Err(err), _) => {
             let rendered = diagnostic::render(err, source_id, source, false);
@@ -92,10 +86,9 @@ pub fn render(
             for line in rendered.lines() {
                 writeln!(&mut w, "  {line}").unwrap();
             }
-
-            ("failure", w)
         }
     }
+    w
 }
 
 /// Helper to accumulate rendered children, merge their ranges,
