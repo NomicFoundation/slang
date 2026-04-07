@@ -18,6 +18,9 @@ on:
           - "v1"
           - "v2"
           - "compare"
+
+permissions: {}
+
 jobs:
   run_tests:
     uses: "./.github/workflows/sourcify_single_chain.yml"

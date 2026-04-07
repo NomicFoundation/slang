@@ -42,12 +42,19 @@ on:
         type: "string"
         required: false
         default: null
+
+permissions: {}
+
 jobs:
   buildSlang:
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+
+    permissions:
+      contents: "read"
+
     steps:
       - name: "Checkout Repository"
-        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683" # v4.2.2
         with:
           persist-credentials: false
       - name: "Restore Cache"
@@ -65,6 +72,9 @@ jobs:
   singleShard:
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
     needs: "buildSlang"
+
+    permissions:
+      contents: "read"
     outputs:
       __SLANG_SOURCIFY_SHARD_RESULTS__0: "${{ steps.output-shard-results.outputs.__SLANG_SOURCIFY_SHARD_RESULTS__0 }}"
       __SLANG_SOURCIFY_SHARD_RESULTS__1: "${{ steps.output-shard-results.outputs.__SLANG_SOURCIFY_SHARD_RESULTS__1 }}"
@@ -141,7 +151,7 @@ jobs:
 
     steps:
       - name: "Checkout Repository"
-        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683" # v4.2.2
         with:
           persist-credentials: false
 
@@ -170,13 +180,17 @@ jobs:
 
   combinedResults:
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+
+    permissions:
+      contents: "read"
+
     needs:
       - "buildSlang"
       - "singleShard"
     if: "!cancelled()"
     steps:
       - name: "Checkout Repository"
-        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683" # v4.2.2
         with:
           persist-credentials: false
 
