@@ -144,13 +144,15 @@ fn render_bindings_for_file(
     definitions_by_id: &HashMap<NodeId, usize>,
 ) -> Result<()> {
     let contents = file.tree().unparse();
-    let mut builder: BuilderType<'_> =
-        Report::build(ReportKind::Custom("Bindings", Color::Primary), (file.id(), 0..0))
-            .with_config(
-                Config::default()
-                    .with_color(false)
-                    .with_index_type(IndexType::Byte),
-            );
+    let mut builder: BuilderType<'_> = Report::build(
+        ReportKind::Custom("Bindings", Color::Primary),
+        (file.id(), 0..0),
+    )
+    .with_config(
+        Config::default()
+            .with_color(false)
+            .with_index_type(IndexType::Byte),
+    );
 
     let new_label = |cursor: &Cursor, message: &str| -> Label<Span<'_>> {
         let range = cursor.text_range();

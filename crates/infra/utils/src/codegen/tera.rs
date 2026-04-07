@@ -109,9 +109,7 @@ impl TeraWrapper {
         let label = ariadne::Label::new((source_id, start..end)).with_message(message);
 
         ariadne::Report::build(ariadne::ReportKind::Error, (source_id, start..end))
-            .with_config(
-                ariadne::Config::default().with_index_type(ariadne::IndexType::Byte),
-            )
+            .with_config(ariadne::Config::default().with_index_type(ariadne::IndexType::Byte))
             .with_message(message)
             .with_label(label)
             .finish()

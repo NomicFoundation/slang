@@ -3,7 +3,9 @@ use std::ops::Range;
 use std::rc::Rc;
 
 use anyhow::Result;
-use ariadne::{Color, Config, FnCache, IndexType, Label, Report, ReportBuilder, ReportKind, Source};
+use ariadne::{
+    Color, Config, FnCache, IndexType, Label, Report, ReportBuilder, ReportKind, Source,
+};
 use slang_solidity::bindings::{BindingGraph, Definition, Reference};
 use slang_solidity::cst::{NodeKind, TerminalKindExtensions};
 use slang_solidity::diagnostic;
@@ -57,14 +59,13 @@ fn write_part_report<'a>(
     report: &Report<'a, ReportSpan<'a>>,
     buffer: &'a mut Vec<u8>,
 ) -> Result<()> {
-    let file_cache = FnCache::new(
-        (move |id| Err(format!("Failed to fetch source '{id}'"))) as fn(&_) -> _,
-    )
-    .with_sources(
-        once(part)
-            .map(|part| (part.path, Source::from(part.contents)))
-            .collect(),
-    );
+    let file_cache =
+        FnCache::new((move |id| Err(format!("Failed to fetch source '{id}'"))) as fn(&_) -> _)
+            .with_sources(
+                once(part)
+                    .map(|part| (part.path, Source::from(part.contents)))
+                    .collect(),
+            );
     report.write(file_cache, buffer)?;
     Ok(())
 }
@@ -215,13 +216,15 @@ fn build_definiens_report<'a>(
     part: &'a ParsedPart<'a>,
     all_definitions: &'a [Definition],
 ) -> Report<'a, ReportSpan<'a>> {
-    let mut builder: ReportBuilder<'_, ReportSpan<'_>> =
-        Report::build(ReportKind::Custom("Definiens", Color::Primary), (part.path, 0..0))
-            .with_config(
-                Config::default()
-                    .with_color(false)
-                    .with_index_type(IndexType::Byte),
-            );
+    let mut builder: ReportBuilder<'_, ReportSpan<'_>> = Report::build(
+        ReportKind::Custom("Definiens", Color::Primary),
+        (part.path, 0..0),
+    )
+    .with_config(
+        Config::default()
+            .with_color(false)
+            .with_index_type(IndexType::Byte),
+    );
 
     for (index, definition) in all_definitions.iter().enumerate() {
         if !definition.get_file().is_user_path(part.path) {
