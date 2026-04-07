@@ -3,14 +3,14 @@ use std::collections::BTreeMap;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeId};
 use slang_solidity_v2_parser::{Parser, ParserError};
-
-use super::file::File;
-use super::unit::CompilationUnit;
-use crate::binder::Binder;
-use crate::passes::{
+use slang_solidity_v2_semantic::binder::Binder;
+use slang_solidity_v2_semantic::compilation::file::File;
+use slang_solidity_v2_semantic::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_resolve_references,
 };
-use crate::types::TypeRegistry;
+use slang_solidity_v2_semantic::types::TypeRegistry;
+
+use super::unit::CompilationUnit;
 
 #[doc(hidden)]
 pub struct InternalCompilationBuilder {
@@ -80,7 +80,7 @@ impl InternalCompilationBuilder {
     }
 
     pub fn build(self) -> CompilationUnit {
-        let mut binder = Binder::new();
+        let mut binder = Binder::default();
         let mut types = TypeRegistry::default();
         let files: Vec<File> = self.files.into_values().collect();
 

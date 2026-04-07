@@ -3,8 +3,8 @@ use std::collections::HashSet;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_parser::ParserError;
 
+use super::internal_builder::{AddFileResponse, InternalCompilationBuilder};
 use super::unit::CompilationUnit;
-use crate::compilation::internal_builder::{AddFileResponse, InternalCompilationBuilder};
 
 pub enum CompilationBuilderError<E> {
     ParserError(ParserError),

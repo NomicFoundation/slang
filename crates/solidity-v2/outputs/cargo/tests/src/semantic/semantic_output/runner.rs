@@ -6,10 +6,10 @@ use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_parser::ParserError;
-use slang_solidity_v2_semantic::compilation::builder::{
+use slang_solidity_v2_main::compilation::builder::{
     CompilationBuilder, CompilationBuilderConfig, CompilationBuilderError,
 };
+use slang_solidity_v2_parser::ParserError;
 use solidity_v2_language::SolidityDefinition;
 
 use super::report::binder_report;

@@ -2,10 +2,9 @@ use std::collections::BTreeMap;
 use std::rc::Rc;
 
 use slang_solidity_v2_common::versions::LanguageVersion;
-
-use super::file::File;
-use crate::binder::Binder;
-use crate::types::TypeRegistry;
+use slang_solidity_v2_semantic::binder::Binder;
+use slang_solidity_v2_semantic::compilation::file::File;
+use slang_solidity_v2_semantic::types::TypeRegistry;
 
 pub struct CompilationUnit {
     language_version: LanguageVersion,

@@ -3822,6 +3822,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "slang_solidity_v2_main"
+version = "1.3.4"
+dependencies = [
+ "slang_solidity_v2_common",
+ "slang_solidity_v2_ir",
+ "slang_solidity_v2_parser",
+ "slang_solidity_v2_semantic",
+ "thiserror 2.0.12",
+]
+
+[[package]]
 name = "slang_solidity_v2_parser"
 version = "1.3.4"
 dependencies = [
@@ -3846,7 +3857,6 @@ dependencies = [
  "slang_solidity_v2_common",
  "slang_solidity_v2_ir",
  "slang_solidity_v2_parser",
- "thiserror 2.0.12",
 ]
 
 [[package]]
@@ -4209,6 +4219,7 @@ dependencies = [
  "slang_solidity_v2_common",
  "slang_solidity_v2_cst",
  "slang_solidity_v2_ir",
+ "slang_solidity_v2_main",
  "slang_solidity_v2_parser",
  "slang_solidity_v2_semantic",
  "solidity_v2_language",

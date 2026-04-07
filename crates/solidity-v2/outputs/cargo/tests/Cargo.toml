@@ -14,6 +14,7 @@ regex = { workspace = true }
 slang_solidity_v2_common = { workspace = true }
 slang_solidity_v2_cst = { workspace = true }
 slang_solidity_v2_ir = { workspace = true }
+slang_solidity_v2_main = { workspace = true }
 slang_solidity_v2_parser = { workspace = true }
 slang_solidity_v2_semantic = { workspace = true }
 solidity_v2_language = { workspace = true }

@@ -84,6 +84,7 @@ impl Typing {
 /// The `Binder` contains binding information for all definitions and references
 /// in the `CompilationUnit`, typing information for relevant AST nodes, as well
 /// as other semantic information (such as scopes and linearisations).
+#[derive(Default)]
 pub struct Binder {
     /// Index of `Scope` objects. The `ScopeId` is an opaque index into this vector
     scopes: Vec<Scope>,
@@ -128,21 +129,6 @@ pub(crate) enum ResolveOptions {
 }
 
 impl Binder {
-    pub(crate) fn new() -> Self {
-        Self {
-            scopes: Vec::new(),
-            scopes_by_node_id: HashMap::new(),
-            scopes_by_file_id: HashMap::new(),
-            global_using_directives: Vec::new(),
-            definitions: HashMap::new(),
-            definitions_by_identifier: HashMap::new(),
-            references: HashMap::new(),
-            node_typing: HashMap::new(),
-            linearisations: HashMap::new(),
-            definitions_to_references: HashMap::new(),
-        }
-    }
-
     pub(crate) fn get_scope_by_id(&self, scope_id: ScopeId) -> &Scope {
         self.scopes.get(scope_id.0).unwrap()
     }

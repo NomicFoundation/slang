@@ -28,7 +28,7 @@ contract Test is Base layout at 0 {}
     let file = build_file("test.sol", CONTENTS)?;
 
     let files = [file];
-    let mut binder = Binder::new();
+    let mut binder = Binder::default();
     p1_collect_definitions::run(&files, &mut binder);
     p2_linearise_contracts::run(&files, &mut binder);
 
@@ -70,7 +70,7 @@ contract Test is Base {
     let file = build_file("test.sol", CONTENTS)?;
 
     let files = [file];
-    let mut binder = Binder::new();
+    let mut binder = Binder::default();
     let mut types = TypeRegistry::default();
 
     p1_collect_definitions::run(&files, &mut binder);
@@ -124,7 +124,7 @@ contract Test is Base {
     let file = build_file("test.sol", CONTENTS)?;
 
     let files = [file];
-    let mut binder = Binder::new();
+    let mut binder = Binder::default();
     let mut types = TypeRegistry::default();
     let language_version = LanguageVersion::V0_8_30;
 
