@@ -20,7 +20,8 @@ name: "publish"
 #   ───────────────  ──────────  ────────────────  ──────────────────  ─────────────  ───────
 #   PR               ✓ gate      ⊘ skip (no push)  ✓ validate          ⊘ skip          ⊘ skip
 #   push (pending)   ✓ gate      ✓ has changesets   ✓ validate          ⊘ skip          ⊘ skip
-#   push (release)   ✓ gate      ✓ no changesets    ✓ validate          ✓ notify        ✓ publish
+#   push (no-op)     ✓ gate      ✓ no new version   ✓ validate          ⊘ skip          ⊘ skip
+#   push (release)   ✓ gate      ✓ new version      ✓ validate          ✓ notify        ✓ publish
 #
 # Every job has an explicit 'if' condition — no job relies on implicit skip
 # propagation from needs. The one exception is build-and-validate, which uses
@@ -78,6 +79,7 @@ jobs:
       pull-requests: "write" # to create new pull requests for changesets
     outputs:
       hasChangesets: "${{ steps.runChangesets.outputs.hasChangesets }}"
+      publishNeeded: "${{ steps.checkVersion.outputs.publishNeeded }}"
     steps:
       - name: "Checkout Repository"
         uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
@@ -109,6 +111,13 @@ jobs:
           version: "git stash pop" # Stash created by 'infra publish changesets'
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: "infra publish check"
+        id: "checkVersion"
+        if: "${{ steps.runChangesets.outputs.hasChangesets == 'false' }}"
+        run: |
+          RESULT=$(./scripts/bin/infra publish check | tail -1)
+          echo "${RESULT}" >> "${GITHUB_OUTPUT}"
 
       - name: "infra publish mkdocs --target main-branch"
         run: "./scripts/bin/infra publish mkdocs --target main-branch"
@@ -194,6 +203,7 @@ jobs:
     if: >-
       github.event_name != 'pull_request'
       && needs.changesets.outputs.hasChangesets == 'false'
+      && needs.changesets.outputs.publishNeeded == 'true'
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
     steps:
       - name: "Notify review requested"
@@ -242,10 +252,12 @@ jobs:
       - "changesets"
       - "notify-deploy"
     # Redundant with needs chain, but explicit for safety: never publish
-    # from PRs or when there are pending changesets.
+    # from PRs, when there are pending changesets, or when the version is
+    # already published.
     if: >-
       github.event_name != 'pull_request'
       && needs.changesets.outputs.hasChangesets == 'false'
+      && needs.changesets.outputs.publishNeeded == 'true'
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
     environment: "slang-release"
     permissions:
