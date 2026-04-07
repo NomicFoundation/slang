@@ -5,9 +5,9 @@ use std::ops::Range;
 use anyhow::Result;
 use ariadne::{Color, Config, Label, Report, ReportBuilder, ReportKind, Source};
 use slang_solidity_v2_ir::ir::NodeId;
-use slang_solidity_v2_main::compilation::unit::CompilationUnit;
 use slang_solidity_v2_parser::ParserError;
 use slang_solidity_v2_semantic::binder::Resolution;
+use slang_solidity_v2_semantic::context::SemanticContext;
 use solidity_v2_testing_utils::reporting::diagnostic;
 
 use super::report_data::{
@@ -38,7 +38,7 @@ pub(crate) fn binder_report(report_data: &'_ ReportData<'_>) -> Result<String> {
         writeln!(report, "{SEPARATOR}")?;
     }
 
-    report_all_definitions(&mut report, all_definitions, compilation)?;
+    report_all_definitions(&mut report, all_definitions, compilation.semantic())?;
 
     writeln!(report, "{SEPARATOR}")?;
 
@@ -71,7 +71,7 @@ pub(crate) fn binder_report(report_data: &'_ ReportData<'_>) -> Result<String> {
 fn report_all_definitions(
     report: &mut String,
     all_definitions: &[CollectedDefinition],
-    compilation: &CompilationUnit,
+    semantic: &SemanticContext,
 ) -> Result<()> {
     writeln!(
         report,
@@ -82,7 +82,7 @@ fn report_all_definitions(
         writeln!(
             report,
             "- {definition}",
-            definition = definition.display(compilation)
+            definition = definition.display(semantic)
         )?;
     }
     Ok(())

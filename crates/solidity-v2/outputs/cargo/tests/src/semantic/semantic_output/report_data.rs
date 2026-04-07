@@ -7,6 +7,7 @@ use slang_solidity_v2_ir::ir::{Identifier, NodeId};
 use slang_solidity_v2_main::compilation::unit::CompilationUnit;
 use slang_solidity_v2_parser::ParserError;
 use slang_solidity_v2_semantic::binder::{Definition, Resolution, Typing};
+use slang_solidity_v2_semantic::context::SemanticContext;
 use slang_solidity_v2_semantic::types::{DataLocation, FunctionType, LiteralKind, Type, TypeId};
 
 // Types
@@ -162,7 +163,7 @@ fn classify_identifiers(
     let mut all_references = Vec::new();
     let mut unbound_identifiers = Vec::new();
 
-    let binder = compilation.binder();
+    let binder = compilation.semantic().binder();
 
     // Walk all identifiers in file/source order and classify each one
     for identifier in all_identifiers {
@@ -198,18 +199,18 @@ fn classify_identifiers(
 impl CollectedDefinition {
     pub(crate) fn display<'a>(
         &'a self,
-        compilation: &'a CompilationUnit,
+        semantic: &'a SemanticContext,
     ) -> CollectedDefinitionDisplay<'a> {
         CollectedDefinitionDisplay {
             definition: self,
-            compilation,
+            semantic,
         }
     }
 }
 
 pub(crate) struct CollectedDefinitionDisplay<'a> {
     definition: &'a CollectedDefinition,
-    compilation: &'a CompilationUnit,
+    semantic: &'a SemanticContext,
 }
 
 impl Display for CollectedDefinitionDisplay<'_> {
@@ -231,7 +232,7 @@ impl Display for CollectedDefinitionDisplay<'_> {
 impl CollectedDefinitionDisplay<'_> {
     fn definition_type(&self) -> String {
         if let Some(definition) = self
-            .compilation
+            .semantic
             .binder()
             .find_definition_by_id(self.definition.definition_node_id)
         {
@@ -282,7 +283,7 @@ impl CollectedDefinitionDisplay<'_> {
 
     fn definition_type_display(&self) -> String {
         let node_id = self.definition.definition_node_id;
-        let typing = self.compilation.binder().node_typing(node_id);
+        let typing = self.semantic.binder().node_typing(node_id);
         match typing {
             Typing::Unresolved => "unresolved".to_string(),
             Typing::Resolved(type_id) => self.type_display(type_id),
@@ -300,7 +301,7 @@ impl CollectedDefinitionDisplay<'_> {
 
     #[allow(clippy::too_many_lines)]
     fn type_display(&self, type_id: TypeId) -> String {
-        match self.compilation.types().get_type_by_id(type_id) {
+        match self.semantic.types().get_type_by_id(type_id) {
             Type::Address { payable } => {
                 if *payable {
                     "address payable".to_string()
@@ -415,7 +416,7 @@ impl CollectedDefinitionDisplay<'_> {
     }
 
     fn definition_name(&self, definition_id: NodeId) -> String {
-        self.compilation
+        self.semantic
             .binder()
             .find_definition_by_id(definition_id)
             .unwrap()

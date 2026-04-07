@@ -2,23 +2,20 @@ use std::collections::BTreeMap;
 use std::rc::Rc;
 
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_semantic::binder::Binder;
 use slang_solidity_v2_semantic::compilation::file::File;
-use slang_solidity_v2_semantic::types::TypeRegistry;
+use slang_solidity_v2_semantic::context::SemanticContext;
 
 pub struct CompilationUnit {
     language_version: LanguageVersion,
     files: BTreeMap<String, Rc<File>>,
-    binder: Binder,
-    types: TypeRegistry,
+    semantic: Rc<SemanticContext>,
 }
 
 impl CompilationUnit {
     pub(super) fn create(
         language_version: LanguageVersion,
         files: Vec<File>,
-        binder: Binder,
-        types: TypeRegistry,
+        semantic: Rc<SemanticContext>,
     ) -> Self {
         let files: BTreeMap<String, Rc<File>> = files
             .into_iter()
@@ -27,8 +24,7 @@ impl CompilationUnit {
         Self {
             language_version,
             files,
-            binder,
-            types,
+            semantic,
         }
     }
 
@@ -47,13 +43,7 @@ impl CompilationUnit {
         self.files.get(id).cloned()
     }
 
-    // TODO: this should not be public
-    pub fn binder(&self) -> &Binder {
-        &self.binder
-    }
-
-    // TODO: this should not be public
-    pub fn types(&self) -> &TypeRegistry {
-        &self.types
+    pub fn semantic(&self) -> &Rc<SemanticContext> {
+        &self.semantic
     }
 }

@@ -1,14 +1,11 @@
 use std::collections::BTreeMap;
+use std::rc::Rc;
 
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeId};
 use slang_solidity_v2_parser::{Parser, ParserError};
-use slang_solidity_v2_semantic::binder::Binder;
 use slang_solidity_v2_semantic::compilation::file::File;
-use slang_solidity_v2_semantic::passes::{
-    p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_resolve_references,
-};
-use slang_solidity_v2_semantic::types::TypeRegistry;
+use slang_solidity_v2_semantic::context::SemanticContext;
 
 use super::unit::CompilationUnit;
 
@@ -80,16 +77,10 @@ impl InternalCompilationBuilder {
     }
 
     pub fn build(self) -> CompilationUnit {
-        let mut binder = Binder::default();
-        let mut types = TypeRegistry::default();
         let files: Vec<File> = self.files.into_values().collect();
+        let semantic = SemanticContext::build_from(self.language_version, &files);
 
-        p1_collect_definitions::run(&files, &mut binder);
-        p2_linearise_contracts::run(&files, &mut binder);
-        p3_type_definitions::run(&files, &mut binder, &mut types);
-        p4_resolve_references::run(&files, &mut binder, &mut types, self.language_version);
-
-        CompilationUnit::create(self.language_version, files, binder, types)
+        CompilationUnit::create(self.language_version, files, Rc::new(semantic))
     }
 }
 
