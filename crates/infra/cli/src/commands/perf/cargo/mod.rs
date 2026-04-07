@@ -7,7 +7,7 @@ use infra_utils::commands::Command;
 use infra_utils::github::GitHub;
 use infra_utils::paths::{FileWalker, PathExtensions};
 
-use crate::toolchains::bencher::run_bench;
+use crate::toolchains::bencher::{run_bench, BencherThreshold};
 use crate::toolchains::pipenv::PipEnv;
 use crate::utils::DryRun;
 
@@ -151,26 +151,27 @@ impl CargoController {
 
         // 1% threshold: iai-callgrind uses deterministic hardware counters (not wall clock),
         // so any change reflects a real code change, not noise.
+        let base_threshold = BencherThreshold::default().with_upper_boundary("0.01");
         run_bench(
             self.dry_run.get(),
             self.pr_benchmark,
             bencher_project,
             "rust_iai_callgrind",
             &[
-                ("estimated-cycles", "0.01"),
-                ("instructions", "0.01"),
-                ("l1-hits", "0.01"),
-                ("l2-hits", "0.01"),
-                ("ram-hits", "0.01"),
-                ("total-read-write", "0.01"),
-                ("total-bytes", "0.01"),
-                ("total-blocks", "0.01"),
-                ("at-t-gmax-bytes", "0.01"),
-                ("at-t-gmax-blocks", "0.01"),
-                ("at-t-end-bytes", "0.01"),
-                ("at-t-end-blocks", "0.01"),
-                ("reads-bytes", "0.01"),
-                ("writes-bytes", "0.01"),
+                base_threshold.clone().with_measure("estimated-cycles"),
+                base_threshold.clone().with_measure("instructions"),
+                base_threshold.clone().with_measure("l1-hits"),
+                base_threshold.clone().with_measure("l2-hits"),
+                base_threshold.clone().with_measure("ram-hits"),
+                base_threshold.clone().with_measure("total-read-write"),
+                base_threshold.clone().with_measure("total-bytes"),
+                base_threshold.clone().with_measure("total-blocks"),
+                base_threshold.clone().with_measure("at-t-gmax-bytes"),
+                base_threshold.clone().with_measure("at-t-gmax-blocks"),
+                base_threshold.clone().with_measure("at-t-end-bytes"),
+                base_threshold.clone().with_measure("at-t-end-blocks"),
+                base_threshold.clone().with_measure("reads-bytes"),
+                base_threshold.clone().with_measure("writes-bytes"),
             ],
             &test_runner,
         );
