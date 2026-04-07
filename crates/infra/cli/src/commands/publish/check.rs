@@ -4,9 +4,10 @@ use infra_utils::cargo::CargoWorkspace;
 use infra_utils::github::GitHub;
 
 #[derive(Clone, Debug, Parser)]
-pub struct CheckController {}
+pub struct CheckController;
 
 impl CheckController {
+    #[allow(clippy::unused_self)] // Keep consistent with other controllers' fn execute(&self) signature.
     pub fn execute(&self) -> Result<()> {
         let local_version = CargoWorkspace::local_version()?;
         println!("Local version: {local_version}");
