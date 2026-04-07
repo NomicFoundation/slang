@@ -38,8 +38,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Base {
     │          ──┬─  
@@ -49,17 +49,11 @@ Bindings:
     │                       ╰────── name: 2
     │ 
   5 │ contract Test is Base {
-    │          ──┬─    ──┬─  
-    │            ╰─────────── name: 3
-    │                    │   
-    │                    ╰─── ref: 1
+    │          ──┬─  
+    │            ╰─── name: 3
   6 │     uint constant TEST_SIZE = 4;
     │                   ────┬────  
     │                       ╰────── name: 4
-    │ 
-  8 │     using Lib for uint[4];
-    │           ─┬─  
-    │            ╰─── ref: 10
     │ 
  10 │     function test() internal {
     │              ──┬─  
@@ -68,22 +62,45 @@ Bindings:
     │                        ┬  
     │                        ╰── name: 6
  12 │         uint[TEST_SIZE] memory b;
-    │              ────┬────         ┬  
-    │                  ╰──────────────── ref: 4
-    │                                │  
+    │                                ┬  
     │                                ╰── name: 7
  13 │         uint[BASE_SIZE] memory c;
-    │              ────┬────         ┬  
-    │                  ╰──────────────── ref: 2
-    │                                │  
+    │                                ┬  
     │                                ╰── name: 8
  14 │         uint[(BASE_SIZE + TEST_SIZE) / 2] memory d;
-    │               ────┬────   ────┬────              ┬  
-    │                   ╰───────────────────────────────── ref: 2
-    │                               │                  │  
-    │                               ╰───────────────────── ref: 4
-    │                                                  │  
+    │                                                  ┬  
     │                                                  ╰── name: 9
+    │ 
+ 22 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 10
+ 23 │     function nop(uint[4] memory self) internal {}
+    │              ─┬─                ──┬─  
+    │               ╰─────────────────────── name: 11
+    │                                   │   
+    │                                   ╰─── name: 12
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  5 │ contract Test is Base {
+    │                  ──┬─  
+    │                    ╰─── ref: 1
+    │ 
+  8 │     using Lib for uint[4];
+    │           ─┬─  
+    │            ╰─── ref: 10
+    │ 
+ 12 │         uint[TEST_SIZE] memory b;
+    │              ────┬────  
+    │                  ╰────── ref: 4
+ 13 │         uint[BASE_SIZE] memory c;
+    │              ────┬────  
+    │                  ╰────── ref: 2
+ 14 │         uint[(BASE_SIZE + TEST_SIZE) / 2] memory d;
+    │               ────┬────   ────┬────  
+    │                   ╰────────────────── ref: 2
+    │                               │      
+    │                               ╰────── ref: 4
  15 │         a.nop();
     │         ┬ ─┬─  
     │         ╰────── ref: 6
@@ -104,13 +121,4 @@ Bindings:
     │         ╰────── ref: 9
     │            │   
     │            ╰─── ref: 11
-    │ 
- 22 │ library Lib {
-    │         ─┬─  
-    │          ╰─── name: 10
- 23 │     function nop(uint[4] memory self) internal {}
-    │              ─┬─                ──┬─  
-    │               ╰─────────────────────── name: 11
-    │                                   │   
-    │                                   ╰─── name: 12
 ────╯

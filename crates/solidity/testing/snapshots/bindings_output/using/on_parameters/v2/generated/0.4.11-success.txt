@@ -24,8 +24,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ library Lib {
    │         ─┬─  
@@ -39,9 +39,7 @@ Bindings:
  4 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 4
- 5 │     using Lib for uint256;
-   │           ─┬─  
-   │            ╰─── ref: 1
+   │ 
  6 │     function test(uint256 x) public returns (uint256 y) {
    │              ──┬─         ┬                          ┬  
    │                ╰──────────────────────────────────────── name: 5
@@ -49,6 +47,13 @@ Bindings:
    │                           ╰───────────────────────────── name: 6
    │                                                      │  
    │                                                      ╰── name: 7
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 5 │     using Lib for uint256;
+   │           ─┬─  
+   │            ╰─── ref: 1
+   │ 
  7 │         x.nop();
    │         ┬ ─┬─  
    │         ╰────── ref: 6

@@ -1,17 +1,13 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-   ╭─[main.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ main.sol:1:1 ]
    │
  1 │ import {Foo} from "lib/foo.sol";
    │         ─┬─  
    │          ╰─── name: 1
-   │          │   
-   │          ╰─── ref: 5
  2 │ import {Bar as LocalBar} from "lib/bar.sol";
-   │         ─┬─    ────┬───  
-   │          ╰─────────────── ref: 7
-   │                    │     
+   │                ────┬───  
    │                    ╰───── name: 2
    │ 
  4 │ contract Sample {
@@ -20,6 +16,16 @@ References and definitions:
  5 │     function test() returns (int) {
    │              ──┬─  
    │                ╰─── name: 4
+   │
+   ├─[ main.sol:1:1 ]
+   │
+ 1 │ import {Foo} from "lib/foo.sol";
+   │         ─┬─  
+   │          ╰─── ref: 5
+ 2 │ import {Bar as LocalBar} from "lib/bar.sol";
+   │         ─┬─  
+   │          ╰─── ref: 7
+   │ 
  6 │         return Foo.foo() + LocalBar.bar();
    │                ─┬─ ─┬─     ────┬─── ─┬─  
    │                 ╰──────────────────────── refs: 1, 5
@@ -30,28 +36,31 @@ References and definitions:
    │                                      │   
    │                                      ╰─── ref: 8
 ───╯
-Definiens: 
-   ╭─[main.sol:1:1]
+[39mDefiniens:[0m 
+   ╭─[ main.sol:1:1 ]
    │
- 1 │       import {Foo} from "lib/foo.sol";
-   │               ─┬─  
-   │                ╰─── definiens: 1
- 2 │ │     import {Bar as LocalBar} from "lib/bar.sol";
-   │ │             ───────┬───────  
-   │ │                    ╰───────── definiens: 2
- 3 │ ╭───▶ 
-   ┆ ┆ ┆   
- 5 │ │ ╭─▶     function test() returns (int) {
-   ┆ ┆ ┆   
- 7 │ │ ├─▶     }
-   │ │ │           
-   │ │ ╰─────────── definiens: 4
- 8 │ ├───▶ }
-   │ │         
-   │ ╰───────── definiens: 3
+ 1 │     import {Foo} from "lib/foo.sol";
+   │             ─┬─  
+   │              ╰─── definiens: 1
+ 2 │ │   import {Bar as LocalBar} from "lib/bar.sol";
+   │ │           ───────┬───────  
+   │ │                  ╰───────── definiens: 2
+ 3 │ ╭─▶ 
+   ┆ ┆   
+ 8 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 3
+   │
+   ├─[ main.sol:1:1 ]
+   │
+ 5 │ ╭─▶     function test() returns (int) {
+   ┆ ┆   
+ 7 │ ├─▶     }
+   │ │           
+   │ ╰─────────── definiens: 4
 ───╯
-References and definitions: 
-   ╭─[lib/foo.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ lib/foo.sol:1:1 ]
    │
  1 │ library Foo {
    │         ─┬─  
@@ -60,21 +69,25 @@ References and definitions:
    │              ─┬─  
    │               ╰─── name: 6
 ───╯
-Definiens: 
-   ╭─[lib/foo.sol:1:1]
+[39mDefiniens:[0m 
+   ╭─[ lib/foo.sol:1:1 ]
    │
- 1 │ ╭─│ ▶ library Foo {
- 2 │ │ ╭─▶     function foo() returns (int) {
-   ┆ ┆ ┆   
- 4 │ │ ├─▶     }
-   │ │ │           
-   │ │ ╰─────────── definiens: 6
- 5 │ ├───▶ }
-   │ │         
-   │ ╰───────── definiens: 5
+ 1 │ ╭─▶ library Foo {
+   ┆ ┆   
+ 5 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 5
+   │
+   ├─[ lib/foo.sol:1:1 ]
+   │
+ 2 │ ╭─▶     function foo() returns (int) {
+   ┆ ┆   
+ 4 │ ├─▶     }
+   │ │           
+   │ ╰─────────── definiens: 6
 ───╯
-References and definitions: 
-   ╭─[lib/bar.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ lib/bar.sol:1:1 ]
    │
  1 │ library Bar {
    │         ─┬─  
@@ -83,16 +96,20 @@ References and definitions:
    │              ─┬─  
    │               ╰─── name: 8
 ───╯
-Definiens: 
-   ╭─[lib/bar.sol:1:1]
+[39mDefiniens:[0m 
+   ╭─[ lib/bar.sol:1:1 ]
    │
- 1 │ ╭─│ ▶ library Bar {
- 2 │ │ ╭─▶     function bar() returns (int) {
-   ┆ ┆ ┆   
- 4 │ │ ├─▶     }
-   │ │ │           
-   │ │ ╰─────────── definiens: 8
- 5 │ ├───▶ }
-   │ │         
-   │ ╰───────── definiens: 7
+ 1 │ ╭─▶ library Bar {
+   ┆ ┆   
+ 5 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 7
+   │
+   ├─[ lib/bar.sol:1:1 ]
+   │
+ 2 │ ╭─▶     function bar() returns (int) {
+   ┆ ┆   
+ 4 │ ├─▶     }
+   │ │           
+   │ ╰─────────── definiens: 8
 ───╯

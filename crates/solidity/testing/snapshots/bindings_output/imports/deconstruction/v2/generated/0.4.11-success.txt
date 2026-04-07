@@ -26,8 +26,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[lib/bar.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ lib/bar.sol:1:1 ]
    │
  1 │ library Bar {
    │         ─┬─  
@@ -39,8 +39,8 @@ Bindings:
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[lib/foo.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ lib/foo.sol:1:1 ]
    │
  1 │ library Foo {
    │         ─┬─  
@@ -52,18 +52,14 @@ Bindings:
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[main.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ main.sol:1:1 ]
    │
  1 │ import {Foo} from "lib/foo.sol";
    │         ─┬─  
    │          ╰─── name: 5
-   │          │   
-   │          ╰─── ref: 3
  2 │ import {Bar as LocalBar} from "lib/bar.sol";
-   │         ─┬─    ────┬───  
-   │          ╰─────────────── ref: 1
-   │                    │     
+   │                ────┬───  
    │                    ╰───── name: 6
    │ 
  4 │ contract Sample {
@@ -72,6 +68,16 @@ Bindings:
  5 │     function test() returns (int) {
    │              ──┬─  
    │                ╰─── name: 8
+   │
+   ├─[ main.sol:1:1 ]
+   │
+ 1 │ import {Foo} from "lib/foo.sol";
+   │         ─┬─  
+   │          ╰─── ref: 3
+ 2 │ import {Bar as LocalBar} from "lib/bar.sol";
+   │         ─┬─  
+   │          ╰─── ref: 1
+   │ 
  6 │         return Foo.foo() + LocalBar.bar();
    │                ─┬─ ─┬─     ────┬─── ─┬─  
    │                 ╰──────────────────────── ref: 5

@@ -2,14 +2,14 @@
 
 Parse errors:
 Error: Expected Equal or Semicolon.
-    ╭─[input.sol:10:25]
+    ╭─[ input.sol:10:25 ]
     │
  10 │     Bar public override foo;
     │                         ─┬─  
     │                          ╰─── Error occurred here.
 ────╯
 Error: Expected CloseBrace or OpenBrace or ReturnsKeyword or Semicolon.
-    ╭─[input.sol:12:5]
+    ╭─[ input.sol:12:5 ]
     │
  12 │ ╭─▶     function test() internal view {
     ┆ ┆   
@@ -41,8 +41,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ interface IFoo {
     │           ──┬─  
@@ -52,10 +52,8 @@ Bindings:
     │               ╰─── name: 2
     │ 
   5 │ contract Test is IFoo {
-    │          ──┬─    ──┬─  
-    │            ╰─────────── name: 3
-    │                    │   
-    │                    ╰─── ref: 1
+    │          ──┬─  
+    │            ╰─── name: 3
   6 │     struct Bar {
     │            ─┬─  
     │             ╰─── name: 4
@@ -67,8 +65,16 @@ Bindings:
     │              ╰── name: 6
     │ 
  10 │     Bar public override foo;
-    │     ─┬─        ────┬───  
-    │      ╰─────────────────── ref: 4
-    │                    │     
+    │                ────┬───  
     │                    ╰───── name: 7
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  5 │ contract Test is IFoo {
+    │                  ──┬─  
+    │                    ╰─── ref: 1
+    │ 
+ 10 │     Bar public override foo;
+    │     ─┬─  
+    │      ╰─── ref: 4
 ────╯

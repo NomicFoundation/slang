@@ -22,33 +22,41 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ library Lib {
    │         ─┬─  
    │          ╰─── name: 1
  2 │     function nop(uint256 x) returns (uint256) { return x; }
-   │              ─┬─         ┬                             ┬  
-   │               ╰─────────────────────────────────────────── name: 2
-   │                          │                             │  
-   │                          ╰──────────────────────────────── name: 3
-   │                                                        │  
-   │                                                        ╰── ref: 3
+   │              ─┬─         ┬  
+   │               ╰───────────── name: 2
+   │                          │  
+   │                          ╰── name: 3
    │ 
  4 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 4
- 5 │     using Lib for uint256;
-   │           ─┬─  
-   │            ╰─── ref: 1
+   │ 
  6 │     uint256 private v1 = 1;
    │                     ─┬  
    │                      ╰── name: 5
  7 │     uint256 private v2 = v1.nop();
-   │                     ─┬   ─┬ ─┬─  
-   │                      ╰─────────── name: 6
-   │                           │  │   
+   │                     ─┬  
+   │                      ╰── name: 6
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 2 │     function nop(uint256 x) returns (uint256) { return x; }
+   │                                                        ┬  
+   │                                                        ╰── ref: 3
+   │ 
+ 5 │     using Lib for uint256;
+   │           ─┬─  
+   │            ╰─── ref: 1
+   │ 
+ 7 │     uint256 private v2 = v1.nop();
+   │                          ─┬ ─┬─  
    │                           ╰────── ref: 5
    │                              │   
    │                              ╰─── ref: 2

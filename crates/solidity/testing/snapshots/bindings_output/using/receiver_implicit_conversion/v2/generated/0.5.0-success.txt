@@ -33,8 +33,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library Lib {
     │         ─┬─  
@@ -49,9 +49,7 @@ Bindings:
   6 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 4
-  7 │     using Lib for bytes;
-    │           ─┬─  
-    │            ╰─── ref: 1
+    │ 
   8 │     bytes s;
     │           ┬  
     │           ╰── name: 5
@@ -63,6 +61,13 @@ Bindings:
  10 │         bytes memory m;
     │                      ┬  
     │                      ╰── name: 8
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  7 │     using Lib for bytes;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
  11 │         m.nopCalldata();
     │         ┬ ─────┬─────  
     │         ╰────────────── ref: 8

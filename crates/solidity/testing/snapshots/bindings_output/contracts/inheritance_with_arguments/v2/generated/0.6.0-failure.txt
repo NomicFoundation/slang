@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
-   ╭─[input.sol:1:1]
+   ╭─[ input.sol:1:1 ]
    │
  1 │ ╭─▶ uint constant BASE = 42;
    ┆ ┆   
@@ -25,4 +25,4 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
+[39mBindings:[0m 

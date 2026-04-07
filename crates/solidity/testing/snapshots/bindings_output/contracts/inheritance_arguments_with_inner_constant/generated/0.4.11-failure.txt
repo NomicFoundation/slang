@@ -2,35 +2,40 @@
 
 Parse errors:
 Error: Expected ConstantKeyword or Identifier or InternalKeyword or PrivateKeyword or PublicKeyword.
-   ╭─[input.sol:2:16]
+   ╭─[ input.sol:2:16 ]
    │
  2 │     constructor(uint) {}
    │                ─────┬────  
    │                     ╰────── Error occurred here.
 ───╯
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract Base {
    │          ──┬─  
    │            ╰─── name: 1
+   │ 
+ 5 │ contract Derived is Base(OTHER) { // the initializer expression should NOT bind
+   │          ───┬───  
+   │             ╰───── name: 2
+ 6 │     uint constant OTHER = 33;
+   │                   ──┬──  
+   │                     ╰──── name: 3
+   │
+   ├─[ input.sol:1:1 ]
+   │
  2 │     constructor(uint) {}
    │     ─────┬─────  
    │          ╰─────── unresolved
    │ 
  5 │ contract Derived is Base(OTHER) { // the initializer expression should NOT bind
-   │          ───┬───    ──┬─ ──┬──  
-   │             ╰─────────────────── name: 2
-   │                       │    │    
+   │                     ──┬─ ──┬──  
    │                       ╰───────── ref: 1
    │                            │    
    │                            ╰──── unresolved
- 6 │     uint constant OTHER = 33;
-   │                   ──┬──  
-   │                     ╰──── name: 3
 ───╯
-Definiens: 
-   ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │   ╭─▶ contract Base {
    ┆   ┆   
@@ -39,10 +44,13 @@ Definiens:
    │ │ ╰─────── definiens: 1
  4 │ ╭───▶ 
    ┆ ┆     
- 6 │ │         uint constant OTHER = 33;
-   │ │     ───────────────┬──────────────  
-   │ │                    ╰──────────────── definiens: 3
  7 │ ├───▶ }
    │ │         
    │ ╰───────── definiens: 2
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 6 │     uint constant OTHER = 33;
+   │ ───────────────┬──────────────  
+   │                ╰──────────────── definiens: 3
 ───╯

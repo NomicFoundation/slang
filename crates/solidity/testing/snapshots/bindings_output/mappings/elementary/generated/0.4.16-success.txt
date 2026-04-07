@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Mapping {
     │          ───┬───  
@@ -15,11 +15,6 @@ References and definitions:
     │               ╰───────────────── name: 3
     │                            │    
     │                            ╰──── name: 4
-  5 │         return myMap[_addr];
-    │                ──┬── ──┬──  
-    │                  ╰────────── ref: 2
-    │                        │    
-    │                        ╰──── ref: 4
     │ 
   8 │     function set(address _addr, uint256 _i) public {
     │              ─┬─         ──┬──          ─┬  
@@ -28,6 +23,21 @@ References and definitions:
     │                            ╰──────────────── name: 6
     │                                          │  
     │                                          ╰── name: 7
+    │ 
+ 12 │     function remove(address _addr) public {
+    │              ───┬──         ──┬──  
+    │                 ╰────────────────── name: 8
+    │                               │    
+    │                               ╰──── name: 9
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  5 │         return myMap[_addr];
+    │                ──┬── ──┬──  
+    │                  ╰────────── ref: 2
+    │                        │    
+    │                        ╰──── ref: 4
+    │ 
   9 │         myMap[_addr] = _i;
     │         ──┬── ──┬──    ─┬  
     │           ╰──────────────── ref: 2
@@ -36,51 +46,61 @@ References and definitions:
     │                         │  
     │                         ╰── ref: 7
     │ 
- 12 │     function remove(address _addr) public {
-    │              ───┬──         ──┬──  
-    │                 ╰────────────────── name: 8
-    │                               │    
-    │                               ╰──── name: 9
  13 │         delete myMap[_addr];
     │                ──┬── ──┬──  
     │                  ╰────────── ref: 2
     │                        │    
     │                        ╰──── ref: 9
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │ ╭───────▶ contract Mapping {
-  2 │ │ │           mapping(address => uint256) public myMap;
-    │ │ │       ───────────────────────┬──────────────────────  
-    │ │ │                              ╰──────────────────────── definiens: 2
-  3 │ │ ╭─────▶ 
-  4 │ │ │           function get(address _addr) public view returns (uint256) {
-    │ │ │                        ──────┬──────  
-    │ │ │                              ╰──────── definiens: 4
-    ┆ ┆ ┆       
-  6 │ │ ├─│ ──▶     }
-    │ │ │ │             
-    │ │ ╰─────────────── definiens: 3
-  7 │ │   ╭───▶ 
-  8 │ │   │         function set(address _addr, uint256 _i) public {
-    │ │   │                      ──────┬────── ─────┬─────  
-    │ │   │                            ╰──────────────────── definiens: 6
-    │ │   │                                         │       
-    │ │   │                                         ╰─────── definiens: 7
-    ┆ ┆   ┆     
- 10 │ │   ├─│ ▶     }
-    │ │   │ │           
-    │ │   ╰───────────── definiens: 5
- 11 │ │     ╭─▶ 
- 12 │ │     │       function remove(address _addr) public {
-    │ │     │                       ──────┬──────  
-    │ │     │                             ╰──────── definiens: 9
-    ┆ ┆     ┆   
- 14 │ │     ├─▶     }
-    │ │     │           
-    │ │     ╰─────────── definiens: 8
- 15 │ ├───────▶ }
-    │ │             
-    │ ╰───────────── definiens: 1
+  1 │ ╭─▶ contract Mapping {
+    ┆ ┆   
+ 15 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │ │       mapping(address => uint256) public myMap;
+    │ │   ───────────────────────┬──────────────────────  
+    │ │                          ╰──────────────────────── definiens: 2
+  3 │ ╭─▶ 
+    ┆ ┆   
+  6 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 3
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  4 │         function get(address _addr) public view returns (uint256) {
+    │                      ──────┬──────  
+    │                            ╰──────── definiens: 4
+    │ 
+  7 │ ╭─▶ 
+    ┆ ┆   
+ 10 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  8 │         function set(address _addr, uint256 _i) public {
+    │                      ──────┬────── ─────┬─────  
+    │                            ╰──────────────────── definiens: 6
+    │                                         │       
+    │                                         ╰─────── definiens: 7
+    │ 
+ 11 │ ╭─▶ 
+    ┆ ┆   
+ 14 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 8
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 12 │     function remove(address _addr) public {
+    │                     ──────┬──────  
+    │                           ╰──────── definiens: 9
 ────╯

@@ -24,8 +24,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library Lib {
     │         ─┬─  
@@ -39,9 +39,6 @@ Bindings:
   5 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 4
-  6 │     using Lib for bytes;
-    │           ─┬─  
-    │            ╰─── ref: 1
     │ 
   8 │     bytes b;
     │           ┬  
@@ -50,6 +47,13 @@ Bindings:
  10 │     function test() internal {
     │              ──┬─  
     │                ╰─── name: 6
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │     using Lib for bytes;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
  11 │         b.push(1).push(2);
     │         ┬ ──┬─    ──┬─  
     │         ╰─────────────── ref: 5

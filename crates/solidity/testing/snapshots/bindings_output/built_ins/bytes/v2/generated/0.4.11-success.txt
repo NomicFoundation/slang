@@ -29,8 +29,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Test {
     │          ──┬─  
@@ -45,19 +45,8 @@ Bindings:
     │                      ─┬  
     │                       ╰── name: 4
   5 │         bytes memory b3 = bytes.concat(b1, b2);
-    │                      ─┬         ───┬── ─┬  ─┬  
-    │                       ╰──────────────────────── name: 5
-    │                                    │    │   │  
-    │                                    ╰─────────── built-in
-    │                                         │   │  
-    │                                         ╰────── ref: 3
-    │                                             │  
-    │                                             ╰── ref: 4
-  6 │         b1.length;
-    │         ─┬ ───┬──  
-    │          ╰───────── ref: 3
-    │               │    
-    │               ╰──── built-in
+    │                      ─┬  
+    │                       ╰── name: 5
     │ 
   9 │     function testString() public {
     │              ─────┬────  
@@ -69,9 +58,26 @@ Bindings:
     │                       ─┬  
     │                        ╰── name: 8
  12 │         string memory s3 = string.concat(s1, s2);
-    │                       ─┬          ───┬── ─┬  ─┬  
-    │                        ╰───────────────────────── name: 9
-    │                                      │    │   │  
+    │                       ─┬  
+    │                        ╰── name: 9
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  5 │         bytes memory b3 = bytes.concat(b1, b2);
+    │                                 ───┬── ─┬  ─┬  
+    │                                    ╰─────────── built-in
+    │                                         │   │  
+    │                                         ╰────── ref: 3
+    │                                             │  
+    │                                             ╰── ref: 4
+  6 │         b1.length;
+    │         ─┬ ───┬──  
+    │          ╰───────── ref: 3
+    │               │    
+    │               ╰──── built-in
+    │ 
+ 12 │         string memory s3 = string.concat(s1, s2);
+    │                                   ───┬── ─┬  ─┬  
     │                                      ╰─────────── built-in
     │                                           │   │  
     │                                           ╰────── ref: 7

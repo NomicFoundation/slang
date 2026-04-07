@@ -2,14 +2,14 @@
 
 Parse errors:
 Error: Expected OpenBrace or ReturnsKeyword or Semicolon.
-   ╭─[input.sol:2:27]
+   ╭─[ input.sol:2:27 ]
    │
  2 │     function x() external view returns (uint);
    │                           ──────────┬──────────  
    │                                     ╰──────────── Error occurred here.
 ───╯
 Error: Expected Equal or Semicolon.
-   ╭─[input.sol:6:26]
+   ╭─[ input.sol:6:26 ]
    │
  6 │     uint public override x;
    │                          ┬  
@@ -38,21 +38,16 @@ Unbound identifiers (1):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ interface Face {
    │           ──┬─  
    │             ╰─── name: 1
- 2 │     function x() external view returns (uint);
-   │              ┬  
-   │              ╰── ???
    │ 
  5 │ contract Test is Face {
-   │          ──┬─    ──┬─  
-   │            ╰─────────── name: 2
-   │                    │   
-   │                    ╰─── ref: 1
+   │          ──┬─  
+   │            ╰─── name: 2
  6 │     uint public override x;
    │                 ────┬───  
    │                     ╰───── name: 3
@@ -60,9 +55,22 @@ Bindings:
  8 │     function test() internal {
    │              ──┬─  
    │                ╰─── name: 4
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 5 │ contract Test is Face {
+   │                  ──┬─  
+   │                    ╰─── ref: 1
+   │ 
  9 │         this.x.selector;
    │              ┬ ────┬───  
    │              ╰─────────── unresolved
    │                    │     
    │                    ╰───── unresolved
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 2 │     function x() external view returns (uint);
+   │              ┬  
+   │              ╰── ???
 ───╯

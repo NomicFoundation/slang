@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
-    ╭─[input.sol:1:1]
+    ╭─[ input.sol:1:1 ]
     │
   1 │ ╭─▶ enum Answer {
     ┆ ┆   
@@ -25,4 +25,4 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
+[39mBindings:[0m 

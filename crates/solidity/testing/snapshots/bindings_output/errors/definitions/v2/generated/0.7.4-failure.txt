@@ -2,14 +2,14 @@
 
 Parse errors:
 Error: Expected ConstantKeyword or OpenBracket.
-   ╭─[input.sol:1:7]
+   ╭─[ input.sol:1:7 ]
    │
  1 │ error TopLevelError(int x, int y);
    │       ─────────────┬─────────────  
    │                    ╰─────────────── Error occurred here.
 ───╯
 Error: Expected Equal or Semicolon.
-   ╭─[input.sol:4:24]
+   ╭─[ input.sol:4:24 ]
    │
  4 │     error ContractError(int x, int y);
    │                        ───────┬──────  
@@ -34,13 +34,9 @@ Unbound identifiers (1):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
- 1 │ error TopLevelError(int x, int y);
-   │ ──┬──  
-   │   ╰──── ???
-   │ 
  3 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 1
@@ -49,4 +45,10 @@ Bindings:
    │       ╰────────────────── unresolved
    │                 │        
    │                 ╰──────── name: 2
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 1 │ error TopLevelError(int x, int y);
+   │ ──┬──  
+   │   ╰──── ???
 ───╯

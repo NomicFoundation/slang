@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
-   ╭─[counter.sol:1:1]
+   ╭─[ counter.sol:1:1 ]
    │
  1 │ ╭─▶ struct Counter {
    ┆ ┆   
@@ -33,29 +33,35 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
+[39mBindings:[0m 
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[main.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ main.sol:1:1 ]
    │
  1 │ import {Counter} from "counter.sol";
    │         ───┬───  
    │            ╰───── name: 1
-   │            │     
-   │            ╰───── unresolved
    │ 
  3 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 2
  4 │     function test(Counter memory c) public {
-   │              ──┬─ ───┬───        ┬  
+   │              ──┬─                ┬  
    │                ╰──────────────────── name: 3
-   │                      │           │  
-   │                      ╰────────────── ref: 1
    │                                  │  
    │                                  ╰── name: 4
+   │
+   ├─[ main.sol:1:1 ]
+   │
+ 1 │ import {Counter} from "counter.sol";
+   │         ───┬───  
+   │            ╰───── unresolved
+   │ 
+ 4 │     function test(Counter memory c) public {
+   │                   ───┬───  
+   │                      ╰───── ref: 1
  5 │         c.increment();
    │         ┬ ────┬────  
    │         ╰──────────── ref: 4

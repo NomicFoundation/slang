@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ abstract contract Utils {
     │                   ──┬──  
@@ -11,63 +11,84 @@ References and definitions:
     │                                 ╰─── name: 2
     │ 
   5 │ contract Test is Utils {
-    │          ──┬─    ──┬──  
-    │            ╰──────────── name: 3
-    │                    │    
-    │                    ╰──── ref: 1
+    │          ──┬─  
+    │            ╰─── name: 3
   6 │     function test() public pure {
     │              ──┬─  
     │                ╰─── name: 4
     │ 
   8 │             let x := add(1, _FOO)
-    │                 ┬    ─┬─    ──┬─  
-    │                 ╰───────────────── name: 5
-    │                       │       │   
-    │                       ╰─────────── ref: built-in
-    │                               │   
-    │                               ╰─── ref: 2
+    │                 ┬  
+    │                 ╰── name: 5
     │ 
  10 │             function foo() {
     │                      ─┬─  
     │                       ╰─── name: 6
  11 │                 let x1 := add(1, _FOO)
-    │                     ─┬    ─┬─    ──┬─  
-    │                      ╰───────────────── name: 7
-    │                            │       │   
+    │                     ─┬  
+    │                      ╰── name: 7
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  5 │ contract Test is Utils {
+    │                  ──┬──  
+    │                    ╰──── ref: 1
+    │ 
+  8 │             let x := add(1, _FOO)
+    │                      ─┬─    ──┬─  
+    │                       ╰─────────── ref: built-in
+    │                               │   
+    │                               ╰─── ref: 2
+    │ 
+ 11 │                 let x1 := add(1, _FOO)
+    │                           ─┬─    ──┬─  
     │                            ╰─────────── ref: built-in
     │                                    │   
     │                                    ╰─── ref: 2
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │       ╭─▶ abstract contract Utils {
-  2 │       │       uint256 internal constant _FOO = 1;
-    │       │   ────────────────────┬───────────────────  
-    │       │                       ╰───────────────────── definiens: 2
-  3 │ │     ├─▶ }
-    │ │     │       
-    │ │     ╰─────── definiens: 1
-  4 │ ╭───────▶ 
-    ┆ ┆ ┆       
-  6 │ │ ╭─────▶     function test() public pure {
-    ┆ ┆ ┆       
-  8 │ │ │ │                 let x := add(1, _FOO)
-    │ │ │ │                     ┬  
-    │ │ │ │                     ╰── definiens: 5
-  9 │ │ │ ╭───▶ 
-    ┆ ┆ ┆ ┆     
- 11 │ │ │ │                     let x1 := add(1, _FOO)
-    │ │ │ │                         ─┬  
-    │ │ │ │                          ╰── definiens: 7
- 12 │ │ │ ├───▶             }
-    │ │ │ │                     
-    │ │ │ ╰───────────────────── definiens: 6
-    ┆ ┆ ┆       
- 14 │ │ ├─────▶     }
-    │ │ │               
-    │ │ ╰─────────────── definiens: 4
- 15 │ ├───────▶ }
-    │ │             
-    │ ╰───────────── definiens: 3
+  1 │ ╭─▶ abstract contract Utils {
+    ┆ ┆   
+  3 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │         uint256 internal constant _FOO = 1;
+    │     ────────────────────┬───────────────────  
+    │                         ╰───────────────────── definiens: 2
+    │ 
+  4 │ ╭─▶ 
+    ┆ ┆   
+ 15 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 3
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │ ╭─▶     function test() public pure {
+    ┆ ┆   
+ 14 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 4
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  8 │ │               let x := add(1, _FOO)
+    │ │                   ┬  
+    │ │                   ╰── definiens: 5
+  9 │ ╭─▶ 
+    ┆ ┆   
+ 12 │ ├─▶             }
+    │ │                   
+    │ ╰─────────────────── definiens: 6
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 11 │                 let x1 := add(1, _FOO)
+    │                     ─┬  
+    │                      ╰── definiens: 7
 ────╯

@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected CloseParen or Comma.
-   ╭─[input.sol:7:47]
+   ╭─[ input.sol:7:47 ]
    │
  7 │ ╭─▶                                bytes calldata data
  8 │ ├─▶     ) external returns (bytes4);
@@ -10,7 +10,7 @@ Error: Expected CloseParen or Comma.
    │ ╰────────────────────────────────────── Error occurred here.
 ───╯
 Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
-    ╭─[input.sol:11:1]
+    ╭─[ input.sol:11:1 ]
     │
  11 │ ╭─▶ abstract contract ERC1155Holder is IERC1155Receiver {
     ┆ ┆   
@@ -40,8 +40,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ interface IERC1155Receiver {
    │           ────────┬───────  

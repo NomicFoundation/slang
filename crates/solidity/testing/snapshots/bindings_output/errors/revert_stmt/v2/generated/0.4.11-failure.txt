@@ -2,28 +2,28 @@
 
 Parse errors:
 Error: Expected Equal or Semicolon.
-   ╭─[input.sol:2:23]
+   ╭─[ input.sol:2:23 ]
    │
  2 │     error InvalidState();
    │                       ─┬  
    │                        ╰── Error occurred here.
 ───╯
 Error: Expected Equal or Semicolon.
-   ╭─[input.sol:5:28]
+   ╭─[ input.sol:5:28 ]
    │
  5 │         revert InvalidState();
    │                            ─┬  
    │                             ╰── Error occurred here.
 ───╯
 Error: Expected Equal or Semicolon.
-    ╭─[input.sol:10:21]
+    ╭─[ input.sol:10:21 ]
     │
  10 │         revert Utils.GenericError(code);
     │                     ─────────┬─────────  
     │                              ╰─────────── Error occurred here.
 ────╯
 Error: Expected Equal or Semicolon.
-    ╭─[input.sol:15:23]
+    ╭─[ input.sol:15:23 ]
     │
  15 │     error GenericError(int code);
     │                       ─────┬────  
@@ -57,25 +57,21 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 1
   2 │     error InvalidState();
-    │     ──┬── ──────┬─────  
-    │       ╰───────────────── unresolved
-    │                 │       
+    │           ──────┬─────  
     │                 ╰─────── name: 2
     │ 
   4 │     function testRevert() public {
     │              ─────┬────  
     │                   ╰────── name: 3
   5 │         revert InvalidState();
-    │         ───┬── ──────┬─────  
-    │            ╰───────────────── unresolved
-    │                      │       
+    │                ──────┬─────  
     │                      ╰─────── name: 4
     │ 
   8 │     function testOtherRevert() public {
@@ -85,17 +81,31 @@ Bindings:
     │             ──┬─  
     │               ╰─── name: 6
  10 │         revert Utils.GenericError(code);
-    │         ───┬── ──┬──  
-    │            ╰────────── unresolved
-    │                  │    
+    │                ──┬──  
     │                  ╰──── name: 7
     │ 
  14 │ library Utils {
     │         ──┬──  
     │           ╰──── name: 8
  15 │     error GenericError(int code);
-    │     ──┬── ──────┬─────  
-    │       ╰───────────────── unresolved
-    │                 │       
+    │           ──────┬─────  
     │                 ╰─────── name: 9
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │     error InvalidState();
+    │     ──┬──  
+    │       ╰──── unresolved
+    │ 
+  5 │         revert InvalidState();
+    │         ───┬──  
+    │            ╰──── unresolved
+    │ 
+ 10 │         revert Utils.GenericError(code);
+    │         ───┬──  
+    │            ╰──── unresolved
+    │ 
+ 15 │     error GenericError(int code);
+    │     ──┬──  
+    │       ╰──── unresolved
 ────╯

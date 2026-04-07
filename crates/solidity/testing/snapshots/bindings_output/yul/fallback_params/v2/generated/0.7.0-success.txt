@@ -22,8 +22,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract Test {
    │          ──┬─  
@@ -35,18 +35,23 @@ Bindings:
    │                                                                              ╰──── name: 3
    │ 
  4 │             let x := add(input.length, 1)
-   │                 ┬    ─┬─ ──┬── ───┬──  
-   │                 ╰────────────────────── name: 4
-   │                       │    │      │    
+   │                 ┬  
+   │                 ╰── name: 4
+ 5 │             let y := add(output, 1)
+   │                 ┬  
+   │                 ╰── name: 5
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 4 │             let x := add(input.length, 1)
+   │                      ─┬─ ──┬── ───┬──  
    │                       ╰──────────────── built-in
    │                            │      │    
    │                            ╰─────────── ref: 2
    │                                   │    
    │                                   ╰──── built-in
  5 │             let y := add(output, 1)
-   │                 ┬    ─┬─ ───┬──  
-   │                 ╰──────────────── name: 5
-   │                       │     │    
+   │                      ─┬─ ───┬──  
    │                       ╰────────── built-in
    │                             │    
    │                             ╰──── ref: 3

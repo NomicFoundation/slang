@@ -18,8 +18,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract Base {
    │          ──┬─  
@@ -29,13 +29,18 @@ Bindings:
    │                  ╰────── name: 2
    │ 
  7 │ contract Derived is Base {
-   │          ───┬───    ──┬─  
-   │             ╰───────────── name: 3
-   │                       │   
-   │                       ╰─── ref: 1
+   │          ───┬───  
+   │             ╰───── name: 3
  8 │     function some_func() returns (int) {
    │              ────┬────  
    │                  ╰────── name: 4
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 7 │ contract Derived is Base {
+   │                     ──┬─  
+   │                       ╰─── ref: 1
+   │ 
  9 │         return 1 + base_func();
    │                    ────┬────  
    │                        ╰────── ref: 2

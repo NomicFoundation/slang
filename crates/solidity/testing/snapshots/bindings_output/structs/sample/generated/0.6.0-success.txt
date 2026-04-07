@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ struct Funder {
     │        ───┬──  
@@ -32,18 +32,14 @@ References and definitions:
     │              ───┬──  
     │                 ╰──── name: 9
  12 │         mapping(uint => Funder) funders;
-    │                         ───┬──  ───┬───  
-    │                            ╰───────────── ref: 1
-    │                                    │     
+    │                                 ───┬───  
     │                                    ╰───── name: 10
     │ 
  15 │     uint numCampaigns;
     │          ──────┬─────  
     │                ╰─────── name: 11
  16 │     mapping(uint => Campaign) campaigns;
-    │                     ────┬───  ────┬────  
-    │                         ╰──────────────── ref: 5
-    │                                   │      
+    │                               ────┬────  
     │                                   ╰────── name: 12
     │ 
  18 │     function newCampaign(address payable beneficiary, uint goal) public returns (uint campaignID) {
@@ -55,16 +51,53 @@ References and definitions:
     │                                                              ╰──────────────────────────────────── name: 15
     │                                                                                            │      
     │                                                                                            ╰────── name: 16
+    │ 
+ 20 │         Campaign storage c = campaigns[campaignID];
+    │                          ┬  
+    │                          ╰── name: 17
+    │ 
+ 25 │     function contribute(uint campaignID) public payable {
+    │              ─────┬────      ─────┬────  
+    │                   ╰────────────────────── name: 18
+    │                                   │      
+    │                                   ╰────── name: 19
+ 26 │         Campaign storage c = campaigns[campaignID];
+    │                          ┬  
+    │                          ╰── name: 20
+    │ 
+ 31 │     function checkGoalReached(uint campaignID) public returns (bool reached) {
+    │              ────────┬───────      ─────┬────                       ───┬───  
+    │                      ╰─────────────────────────────────────────────────────── name: 21
+    │                                         │                              │     
+    │                                         ╰──────────────────────────────────── name: 22
+    │                                                                        │     
+    │                                                                        ╰───── name: 23
+ 32 │         Campaign storage c = campaigns[campaignID];
+    │                          ┬  
+    │                          ╰── name: 24
+    │ 
+ 35 │         uint amount = c.amount;
+    │              ───┬──  
+    │                 ╰──── name: 25
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 12 │         mapping(uint => Funder) funders;
+    │                         ───┬──  
+    │                            ╰──── ref: 1
+    │ 
+ 16 │     mapping(uint => Campaign) campaigns;
+    │                     ────┬───  
+    │                         ╰───── ref: 5
+    │ 
  19 │         campaignID = numCampaigns++;
     │         ─────┬────   ──────┬─────  
     │              ╰───────────────────── ref: 16
     │                            │       
     │                            ╰─────── ref: 11
  20 │         Campaign storage c = campaigns[campaignID];
-    │         ────┬───         ┬   ────┬──── ─────┬────  
+    │         ────┬───             ────┬──── ─────┬────  
     │             ╰────────────────────────────────────── ref: 5
-    │                          │       │          │      
-    │                          ╰───────────────────────── name: 17
     │                                  │          │      
     │                                  ╰───────────────── ref: 12
     │                                             │      
@@ -84,16 +117,9 @@ References and definitions:
     │                           │   
     │                           ╰─── ref: 15
     │ 
- 25 │     function contribute(uint campaignID) public payable {
-    │              ─────┬────      ─────┬────  
-    │                   ╰────────────────────── name: 18
-    │                                   │      
-    │                                   ╰────── name: 19
  26 │         Campaign storage c = campaigns[campaignID];
-    │         ────┬───         ┬   ────┬──── ─────┬────  
+    │         ────┬───             ────┬──── ─────┬────  
     │             ╰────────────────────────────────────── ref: 5
-    │                          │       │          │      
-    │                          ╰───────────────────────── name: 20
     │                                  │          │      
     │                                  ╰───────────────── ref: 12
     │                                             │      
@@ -131,18 +157,9 @@ References and definitions:
     │                           │    
     │                           ╰──── ref: built-in
     │ 
- 31 │     function checkGoalReached(uint campaignID) public returns (bool reached) {
-    │              ────────┬───────      ─────┬────                       ───┬───  
-    │                      ╰─────────────────────────────────────────────────────── name: 21
-    │                                         │                              │     
-    │                                         ╰──────────────────────────────────── name: 22
-    │                                                                        │     
-    │                                                                        ╰───── name: 23
  32 │         Campaign storage c = campaigns[campaignID];
-    │         ────┬───         ┬   ────┬──── ─────┬────  
+    │         ────┬───             ────┬──── ─────┬────  
     │             ╰────────────────────────────────────── ref: 5
-    │                          │       │          │      
-    │                          ╰───────────────────────── name: 24
     │                                  │          │      
     │                                  ╰───────────────── ref: 12
     │                                             │      
@@ -158,9 +175,7 @@ References and definitions:
     │                               ╰─────── ref: 7
     │ 
  35 │         uint amount = c.amount;
-    │              ───┬──   ┬ ───┬──  
-    │                 ╰─────────────── name: 25
-    │                       │    │    
+    │                       ┬ ───┬──  
     │                       ╰───────── ref: 24
     │                            │    
     │                            ╰──── ref: 9
@@ -179,92 +194,116 @@ References and definitions:
     │                                   │    
     │                                   ╰──── ref: 25
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │           ╭───▶ struct Funder {
-  2 │           │         address addr;
-    │           │     ─────────┬────────  
-    │           │              ╰────────── definiens: 2
-  3 │           │         uint amount;
-    │           │     ────────┬────────  
-    │           │             ╰────────── definiens: 3
-  4 │ │         ├───▶ }
-    │ │         │         
-    │ │         ╰───────── definiens: 1
-  5 │ ╭─────────────▶ 
-    ┆ ┆       ┆       
-  7 │ │       ╭─────▶     struct Campaign {
-  8 │ │       │               address payable beneficiary;
-    │ │       │       ──────────────────┬──────────────────  
-    │ │       │                         ╰──────────────────── definiens: 6
-  9 │ │       │               uint fundingGoal;
-    │ │       │       ─────────────┬────────────  
-    │ │       │                    ╰────────────── definiens: 7
- 10 │ │       │               uint numFunders;
-    │ │       │       ────────────┬────────────  
-    │ │       │                   ╰────────────── definiens: 8
- 11 │ │       │               uint amount;
-    │ │       │       ──────────┬──────────  
-    │ │       │                 ╰──────────── definiens: 9
- 12 │ │       │               mapping(uint => Funder) funders;
-    │ │       │       ────────────────────┬────────────────────  
-    │ │       │                           ╰────────────────────── definiens: 10
- 13 │ │       ├───│ ▶     }
-    │ │       │   │           
-    │ │       ╰─────────────── definiens: 5
- 14 │ │           ╭─▶ 
- 15 │ │           ├─▶     uint numCampaigns;
-    │ │           │                            
-    │ │           ╰──────────────────────────── definiens: 11
- 16 │ │   │               mapping(uint => Campaign) campaigns;
-    │ │   │           ────────────────────┬────────────────────  
-    │ │   │                               ╰────────────────────── definiens: 12
- 17 │ │   ╭─────────▶ 
- 18 │ │   │               function newCampaign(address payable beneficiary, uint goal) public returns (uint campaignID) {
-    │ │   │                                    ─────────────┬───────────── ─────┬────                  ───────┬───────  
-    │ │   │                                                 ╰─────────────────────────────────────────────────────────── definiens: 14
-    │ │   │                                                                     │                             │         
-    │ │   │                                                                     ╰─────────────────────────────────────── definiens: 15
-    │ │   │                                                                                                   │         
-    │ │   │                                                                                                   ╰───────── definiens: 16
-    ┆ ┆   ┆           
- 20 │ │   │                   Campaign storage c = campaigns[campaignID];
-    │ │   │           ──────────────────────────┬─────────────────────────  
-    │ │   │                                     ╰─────────────────────────── definiens: 17
-    ┆ ┆   ┆           
- 23 │ │   ├─│ ──────▶     }
-    │ │   │ │                 
-    │ │   ╰─────────────────── definiens: 13
- 24 │ │     ╭───────▶ 
- 25 │ │     │             function contribute(uint campaignID) public payable {
-    │ │     │                                 ───────┬───────  
-    │ │     │                                        ╰───────── definiens: 19
- 26 │ │     │                 Campaign storage c = campaigns[campaignID];
-    │ │     │         ──────────────────────────┬─────────────────────────  
-    │ │     │                                   ╰─────────────────────────── definiens: 20
-    ┆ ┆     ┆         
- 29 │ │ │   ├───────▶     }
-    │ │ │   │                 
-    │ │ │   ╰───────────────── definiens: 18
- 30 │ │ ╭───────────▶ 
- 31 │ │ │                 function checkGoalReached(uint campaignID) public returns (bool reached) {
-    │ │ │                                           ───────┬───────                  ──────┬─────  
-    │ │ │                                                  ╰─────────────────────────────────────── definiens: 22
-    │ │ │                                                                                  │       
-    │ │ │                                                                                  ╰─────── definiens: 23
- 32 │ │ │                     Campaign storage c = campaigns[campaignID];
-    │ │ │             ──────────────────────────┬─────────────────────────  
-    │ │ │                                       ╰─────────────────────────── definiens: 24
-    ┆ ┆ ┆             
- 35 │ │ │                     uint amount = c.amount;
-    │ │ │             ────────────────┬───────────────  
-    │ │ │                             ╰───────────────── definiens: 25
-    ┆ ┆ ┆             
- 39 │ │ ├───────────▶     }
-    │ │ │                     
-    │ │ ╰───────────────────── definiens: 21
- 40 │ ├─────────────▶ }
-    │ │                   
-    │ ╰─────────────────── definiens: 4
+  1 │ ╭─▶ struct Funder {
+    ┆ ┆   
+  4 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │         address addr;
+    │     ─────────┬────────  
+    │              ╰────────── definiens: 2
+  3 │         uint amount;
+    │     ────────┬────────  
+    │             ╰────────── definiens: 3
+    │ 
+  5 │ ╭─▶ 
+    ┆ ┆   
+ 40 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 4
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  7 │ ╭─▶     struct Campaign {
+    ┆ ┆   
+ 13 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  8 │               address payable beneficiary;
+    │       ──────────────────┬──────────────────  
+    │                         ╰──────────────────── definiens: 6
+  9 │               uint fundingGoal;
+    │       ─────────────┬────────────  
+    │                    ╰────────────── definiens: 7
+ 10 │               uint numFunders;
+    │       ────────────┬────────────  
+    │                   ╰────────────── definiens: 8
+ 11 │               uint amount;
+    │       ──────────┬──────────  
+    │                 ╰──────────── definiens: 9
+ 12 │               mapping(uint => Funder) funders;
+    │       ────────────────────┬────────────────────  
+    │                           ╰────────────────────── definiens: 10
+    │ 
+ 14 │   ╭─▶ 
+ 15 │   ├─▶     uint numCampaigns;
+    │   │                            
+    │   ╰──────────────────────────── definiens: 11
+ 16 │ │         mapping(uint => Campaign) campaigns;
+    │ │     ────────────────────┬────────────────────  
+    │ │                         ╰────────────────────── definiens: 12
+ 17 │ ╭───▶ 
+    ┆ ┆     
+ 23 │ ├───▶     }
+    │ │             
+    │ ╰───────────── definiens: 13
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 18 │         function newCampaign(address payable beneficiary, uint goal) public returns (uint campaignID) {
+    │                              ─────────────┬───────────── ─────┬────                  ───────┬───────  
+    │                                           ╰─────────────────────────────────────────────────────────── definiens: 14
+    │                                                               │                             │         
+    │                                                               ╰─────────────────────────────────────── definiens: 15
+    │                                                                                             │         
+    │                                                                                             ╰───────── definiens: 16
+    │ 
+ 20 │             Campaign storage c = campaigns[campaignID];
+    │     ──────────────────────────┬─────────────────────────  
+    │                               ╰─────────────────────────── definiens: 17
+    │ 
+ 24 │ ╭─▶ 
+    ┆ ┆   
+ 29 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 18
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 25 │         function contribute(uint campaignID) public payable {
+    │                             ───────┬───────  
+    │                                    ╰───────── definiens: 19
+ 26 │             Campaign storage c = campaigns[campaignID];
+    │     ──────────────────────────┬─────────────────────────  
+    │                               ╰─────────────────────────── definiens: 20
+    │ 
+ 30 │ ╭─▶ 
+    ┆ ┆   
+ 39 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 21
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 31 │     function checkGoalReached(uint campaignID) public returns (bool reached) {
+    │                               ───────┬───────                  ──────┬─────  
+    │                                      ╰─────────────────────────────────────── definiens: 22
+    │                                                                      │       
+    │                                                                      ╰─────── definiens: 23
+ 32 │         Campaign storage c = campaigns[campaignID];
+    │ ──────────────────────────┬─────────────────────────  
+    │                           ╰─────────────────────────── definiens: 24
+    │ 
+ 35 │         uint amount = c.amount;
+    │ ────────────────┬───────────────  
+    │                 ╰───────────────── definiens: 25
 ────╯

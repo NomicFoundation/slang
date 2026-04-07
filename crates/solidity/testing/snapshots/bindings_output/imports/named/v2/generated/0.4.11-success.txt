@@ -24,8 +24,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[lib/foo.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ lib/foo.sol:1:1 ]
    │
  1 │ library Foo {
    │         ─┬─  
@@ -42,8 +42,8 @@ Bindings:
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[main.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ main.sol:1:1 ]
    │
  1 │ import * as foo from "lib/foo.sol";
    │             ─┬─  

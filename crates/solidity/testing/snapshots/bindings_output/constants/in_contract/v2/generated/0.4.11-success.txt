@@ -35,8 +35,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Constants {
     │          ────┬────  
@@ -60,18 +60,23 @@ Bindings:
     │                             ───┬───  
     │                                ╰───── name: 8
   6 │     Direction public constant MY_DIRECTION = Direction.EAST;
-    │     ────┬────                 ──────┬─────   ────┬──── ──┬─  
+    │                               ──────┬─────  
+    │                                     ╰─────── name: 9
+    │ 
+  8 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 10
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │     Direction public constant MY_DIRECTION = Direction.EAST;
+    │     ────┬────                                ────┬──── ──┬─  
     │         ╰──────────────────────────────────────────────────── ref: 2
-    │                                     │            │       │   
-    │                                     ╰──────────────────────── name: 9
     │                                                  │       │   
     │                                                  ╰─────────── ref: 2
     │                                                          │   
     │                                                          ╰─── ref: 5
     │ 
-  8 │     function test() public {
-    │              ──┬─  
-    │                ╰─── name: 10
   9 │         assert(MY_DIRECTION != Direction.NORTH);
     │         ───┬── ──────┬─────    ────┬──── ──┬──  
     │            ╰──────────────────────────────────── built-in

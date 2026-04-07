@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
-    ╭─[input.sol:27:1]
+    ╭─[ input.sol:27:1 ]
     │
  27 │ uint256 constant TOP_LEVEL_CONST = 0;
     │ ───────────────────┬──────────────────  
@@ -45,8 +45,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract InContracts {
     │          ─────┬─────  
@@ -64,20 +64,6 @@ Bindings:
     │                        ╰──────────── name: 4
     │                               │     
     │                               ╰───── name: 5
-  7 │                 mstore(emptyPtr, CONTRACT_CONST)
-    │                 ───┬── ────┬───  ───────┬──────  
-    │                    ╰───────────────────────────── built-in
-    │                            │            │        
-    │                            ╰───────────────────── ref: 5
-    │                                         │        
-    │                                         ╰──────── ref: 2
-  8 │                 mstore(emptyPtr, TOP_LEVEL_CONST)
-    │                 ───┬── ────┬───  ───────┬───────  
-    │                    ╰────────────────────────────── built-in
-    │                            │            │         
-    │                            ╰────────────────────── ref: 5
-    │                                         │         
-    │                                         ╰───────── unresolved
     │ 
  14 │ library InLibraries {
     │         ─────┬─────  
@@ -95,6 +81,24 @@ Bindings:
     │                        ╰──────────── name: 9
     │                               │     
     │                               ╰───── name: 10
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  7 │                 mstore(emptyPtr, CONTRACT_CONST)
+    │                 ───┬── ────┬───  ───────┬──────  
+    │                    ╰───────────────────────────── built-in
+    │                            │            │        
+    │                            ╰───────────────────── ref: 5
+    │                                         │        
+    │                                         ╰──────── ref: 2
+  8 │                 mstore(emptyPtr, TOP_LEVEL_CONST)
+    │                 ───┬── ────┬───  ───────┬───────  
+    │                    ╰────────────────────────────── built-in
+    │                            │            │         
+    │                            ╰────────────────────── ref: 5
+    │                                         │         
+    │                                         ╰───────── unresolved
+    │ 
  20 │                 mstore(emptyPtr, LIB_CONST)
     │                 ───┬── ────┬───  ────┬────  
     │                    ╰──────────────────────── built-in

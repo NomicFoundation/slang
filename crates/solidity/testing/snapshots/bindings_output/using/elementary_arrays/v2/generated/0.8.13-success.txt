@@ -20,14 +20,23 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ function first(uint[] memory values) returns (uint) {
    │          ──┬──               ───┬──  
    │            ╰───────────────────────── name: 1
    │                                 │    
    │                                 ╰──── name: 2
+   │ 
+ 7 │ function test(uint[] memory values) returns (uint) {
+   │          ──┬─               ───┬──  
+   │            ╰──────────────────────── name: 3
+   │                                │    
+   │                                ╰──── name: 4
+   │
+   ├─[ input.sol:1:1 ]
+   │
  2 │     return values[0];
    │            ───┬──  
    │               ╰──── ref: 2
@@ -36,11 +45,6 @@ Bindings:
    │        ──┬──  
    │          ╰──── ref: 1
    │ 
- 7 │ function test(uint[] memory values) returns (uint) {
-   │          ──┬─               ───┬──  
-   │            ╰──────────────────────── name: 3
-   │                                │    
-   │                                ╰──── name: 4
  8 │     return values.first();
    │            ───┬── ──┬──  
    │               ╰────────── ref: 4

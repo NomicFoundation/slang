@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ struct TopLevelStruct {
     │        ───────┬──────  
@@ -20,9 +20,7 @@ References and definitions:
     │         ┬  
     │         ╰── name: 5
   8 │     TopLevelStruct top_level_struct;
-    │     ───────┬────── ────────┬───────  
-    │            ╰───────────────────────── ref: 1
-    │                            │         
+    │                    ────────┬───────  
     │                            ╰───────── name: 6
     │ 
  12 │ contract MyContract {
@@ -35,51 +33,79 @@ References and definitions:
     │         ┬  
     │         ╰── name: 9
  15 │     SomeLib.LibStruct lib_struct;
-    │     ───┬─── ────┬──── ─────┬────  
-    │        ╰────────────────────────── ref: 3
-    │                 │          │      
-    │                 ╰───────────────── ref: 4
-    │                            │      
+    │                       ─────┬────  
     │                            ╰────── name: 10
-────╯
-Definiens: 
-    ╭─[input.sol:1:1]
     │
-  1 │         ╭─▶ struct TopLevelStruct {
-  2 │         │     int x;
-    │         │   ────┬────  
-    │         │       ╰────── definiens: 2
-  3 │   │     ├─▶ }
-    │   │     │       
-    │   │     ╰─────── definiens: 1
-  4 │   ╭───────▶ 
-    ┆   ┆   ┆     
-  6 │   │   ╭───▶   struct LibStruct {
-  7 │   │   │         int y;
-    │   │   │     ─────┬─────  
-    │   │   │          ╰─────── definiens: 5
-  8 │   │   │         TopLevelStruct top_level_struct;
-    │   │   │     ──────────────────┬──────────────────  
-    │   │   │                       ╰──────────────────── definiens: 6
-  9 │   │   ├───▶   }
-    │   │   │           
-    │   │   ╰─────────── definiens: 4
- 10 │ │ ├───────▶ }
-    │ │ │             
-    │ │ ╰───────────── definiens: 3
- 11 │ ╭─────────▶ 
-    ┆ ┆   ┆       
- 13 │ │   ╭─────▶   struct ContractStruct {
- 14 │ │   │           int z;
-    │ │   │       ─────┬─────  
-    │ │   │            ╰─────── definiens: 9
- 15 │ │   │           SomeLib.LibStruct lib_struct;
-    │ │   │       ─────────────────┬────────────────  
-    │ │   │                        ╰────────────────── definiens: 10
- 16 │ │   ├─────▶   }
-    │ │   │             
-    │ │   ╰───────────── definiens: 8
- 17 │ ├─────────▶ }
-    │ │               
-    │ ╰─────────────── definiens: 7
+    ├─[ input.sol:1:1 ]
+    │
+  8 │     TopLevelStruct top_level_struct;
+    │     ───────┬──────  
+    │            ╰──────── ref: 1
+    │ 
+ 15 │     SomeLib.LibStruct lib_struct;
+    │     ───┬─── ────┬────  
+    │        ╰─────────────── ref: 3
+    │                 │      
+    │                 ╰────── ref: 4
+────╯
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
+    │
+  1 │ ╭─▶ struct TopLevelStruct {
+    ┆ ┆   
+  3 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │       int x;
+    │     ────┬────  
+    │         ╰────── definiens: 2
+    │ 
+  4 │ ╭─▶ 
+    ┆ ┆   
+ 10 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 3
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │ ╭─▶   struct LibStruct {
+    ┆ ┆   
+  9 │ ├─▶   }
+    │ │         
+    │ ╰───────── definiens: 4
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  7 │         int y;
+    │     ─────┬─────  
+    │          ╰─────── definiens: 5
+  8 │         TopLevelStruct top_level_struct;
+    │     ──────────────────┬──────────────────  
+    │                       ╰──────────────────── definiens: 6
+    │ 
+ 11 │ ╭─▶ 
+    ┆ ┆   
+ 17 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 7
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 13 │ ╭─▶   struct ContractStruct {
+    ┆ ┆   
+ 16 │ ├─▶   }
+    │ │         
+    │ ╰───────── definiens: 8
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 14 │     int z;
+    │ ─────┬─────  
+    │      ╰─────── definiens: 9
+ 15 │     SomeLib.LibStruct lib_struct;
+    │ ─────────────────┬────────────────  
+    │                  ╰────────────────── definiens: 10
 ────╯

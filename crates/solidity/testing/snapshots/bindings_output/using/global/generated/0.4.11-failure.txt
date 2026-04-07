@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
-   ╭─[counter.sol:1:1]
+   ╭─[ counter.sol:1:1 ]
    │
  1 │ ╭─▶ struct Counter {
    ┆ ┆   
@@ -10,49 +10,62 @@ Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryK
    │ │      
    │ ╰────── Error occurred here.
 ───╯
-References and definitions: 
-Definiens: 
-References and definitions: 
-   ╭─[main.sol:1:1]
+[39mReferences and definitions:[0m 
+[39mDefiniens:[0m 
+[39mReferences and definitions:[0m 
+   ╭─[ main.sol:1:1 ]
    │
  1 │ import {Counter} from "counter.sol";
    │         ───┬───  
    │            ╰───── name: 1
-   │            │     
-   │            ╰───── unresolved
    │ 
  3 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 2
  4 │     function test(Counter memory c) public {
-   │              ──┬─ ───┬───        ┬  
+   │              ──┬─                ┬  
    │                ╰──────────────────── name: 3
-   │                      │           │  
-   │                      ╰────────────── ref: 1
    │                                  │  
    │                                  ╰── name: 4
+   │
+   ├─[ main.sol:1:1 ]
+   │
+ 1 │ import {Counter} from "counter.sol";
+   │         ───┬───  
+   │            ╰───── unresolved
+   │ 
+ 4 │     function test(Counter memory c) public {
+   │                   ───┬───  
+   │                      ╰───── ref: 1
  5 │         c.increment();
    │         ┬ ────┬────  
    │         ╰──────────── ref: 4
    │               │      
    │               ╰────── unresolved
 ───╯
-Definiens: 
-   ╭─[main.sol:1:1]
+[39mDefiniens:[0m 
+   ╭─[ main.sol:1:1 ]
    │
- 1 │ │     import {Counter} from "counter.sol";
-   │ │             ───┬───  
-   │ │                ╰───── definiens: 1
- 2 │ ╭───▶ 
-   ┆ ┆ ┆   
- 4 │ │ ╭─▶     function test(Counter memory c) public {
-   │ │ │                     ────────┬───────  
-   │ │ │                             ╰───────── definiens: 4
-   ┆ ┆ ┆   
- 6 │ │ ├─▶     }
-   │ │ │           
-   │ │ ╰─────────── definiens: 3
- 7 │ ├───▶ }
-   │ │         
-   │ ╰───────── definiens: 2
+ 1 │ │   import {Counter} from "counter.sol";
+   │ │           ───┬───  
+   │ │              ╰───── definiens: 1
+ 2 │ ╭─▶ 
+   ┆ ┆   
+ 7 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 2
+   │
+   ├─[ main.sol:1:1 ]
+   │
+ 4 │ ╭─▶     function test(Counter memory c) public {
+   ┆ ┆   
+ 6 │ ├─▶     }
+   │ │           
+   │ ╰─────────── definiens: 3
+   │
+   ├─[ main.sol:1:1 ]
+   │
+ 4 │     function test(Counter memory c) public {
+   │                   ────────┬───────  
+   │                           ╰───────── definiens: 4
 ───╯

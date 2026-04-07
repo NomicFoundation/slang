@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ interface IFoo {
     │           ──┬─  
@@ -11,10 +11,8 @@ References and definitions:
     │               ╰─── name: 2
     │ 
   5 │ contract Test is IFoo {
-    │          ──┬─    ──┬─  
-    │            ╰─────────── name: 3
-    │                    │   
-    │                    ╰─── ref: 1
+    │          ──┬─  
+    │            ╰─── name: 3
   6 │     struct Bar {
     │            ─┬─  
     │             ╰─── name: 4
@@ -26,14 +24,23 @@ References and definitions:
     │              ╰── name: 6
     │ 
  10 │     Bar public override foo;
-    │     ─┬─                 ─┬─  
-    │      ╰─────────────────────── ref: 4
-    │                          │   
+    │                         ─┬─  
     │                          ╰─── name: 7
     │ 
  12 │     function test() internal view {
     │              ──┬─  
     │                ╰─── name: 8
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  5 │ contract Test is IFoo {
+    │                  ──┬─  
+    │                    ╰─── ref: 1
+    │ 
+ 10 │     Bar public override foo;
+    │     ─┬─  
+    │      ╰─── ref: 4
+    │ 
  13 │         foo.x;
     │         ─┬─ ┬  
     │          ╰───── refs: 7, 2
@@ -46,37 +53,50 @@ References and definitions:
     │              ─┬─  
     │               ╰─── refs: 7, 2
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │     ╭───▶ interface IFoo {
-  2 │     │         function foo() external returns (uint, uint);
-    │     │     ─────────────────────────┬────────────────────────  
-    │     │                              ╰────────────────────────── definiens: 2
-  3 │ │   ├───▶ }
-    │ │   │         
-    │ │   ╰───────── definiens: 1
-  4 │ ╭───────▶ 
-    ┆ ┆     ┆   
-  6 │ │     ╭─▶     struct Bar {
-  7 │ │     │           uint x;
-    │ │     │   ────────┬───────  
-    │ │     │           ╰───────── definiens: 5
-  8 │ │     │           uint y;
-    │ │     │   ────────┬───────  
-    │ │     │           ╰───────── definiens: 6
-  9 │ │     ├─▶     }
-    │ │     │           
-    │ │     ╰─────────── definiens: 4
- 10 │ │ │           Bar public override foo;
-    │ │ │       ──────────────┬──────────────  
-    │ │ │                     ╰──────────────── definiens: 7
- 11 │ │ ╭─────▶ 
-    ┆ ┆ ┆       
- 16 │ │ ├─────▶     }
-    │ │ │               
-    │ │ ╰─────────────── definiens: 8
- 17 │ ├───────▶ }
-    │ │             
-    │ ╰───────────── definiens: 3
+  1 │ ╭─▶ interface IFoo {
+    ┆ ┆   
+  3 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │         function foo() external returns (uint, uint);
+    │     ─────────────────────────┬────────────────────────  
+    │                              ╰────────────────────────── definiens: 2
+    │ 
+  4 │ ╭─▶ 
+    ┆ ┆   
+ 17 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 3
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │ ╭─▶     struct Bar {
+    ┆ ┆   
+  9 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 4
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  7 │             uint x;
+    │     ────────┬───────  
+    │             ╰───────── definiens: 5
+  8 │             uint y;
+    │     ────────┬───────  
+    │             ╰───────── definiens: 6
+    │ 
+ 10 │ │       Bar public override foo;
+    │ │   ──────────────┬──────────────  
+    │ │                 ╰──────────────── definiens: 7
+ 11 │ ╭─▶ 
+    ┆ ┆   
+ 16 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 8
 ────╯

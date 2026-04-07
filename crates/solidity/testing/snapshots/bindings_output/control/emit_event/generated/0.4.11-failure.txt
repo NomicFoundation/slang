@@ -2,14 +2,14 @@
 
 Parse errors:
 Error: Expected Equal or Semicolon.
-   ╭─[input.sol:7:23]
+   ╭─[ input.sol:7:23 ]
    │
  7 │         emit TestEvent(x);
    │                       ─┬─  
    │                        ╰─── Error occurred here.
 ───╯
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract Test {
    │          ──┬─  
@@ -33,28 +33,35 @@ References and definitions:
    │                  │      
    │                  ╰────── name: 6
 ───╯
-Definiens: 
-   ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+   ╭─[ input.sol:1:1 ]
    │
- 1 │ ╭─────▶ contract Test {
- 2 │ │ │         event TestEvent(int id);
-   │ │ │     ──────────────┬────────┬─────  
-   │ │ │                   ╰──────────────── definiens: 2
-   │ │ │                            │       
-   │ │ │                            ╰─────── definiens: 3
- 3 │ │ ╭───▶ 
-   ┆ ┆ ┆     
- 5 │ │ │ │           int x = 1;
-   │ │ │ │   ─────────┬─────────  
-   │ │ │ │            ╰─────────── definiens: 5
- 6 │ │ │ ╭─▶ 
- 7 │ │ │ ├─▶         emit TestEvent(x);
-   │ │ │ │                                
-   │ │ │ ╰──────────────────────────────── definiens: 6
- 8 │ │ ├───▶     }
-   │ │ │             
-   │ │ ╰───────────── definiens: 4
- 9 │ ├─────▶ }
+ 1 │ ╭─▶ contract Test {
+   ┆ ┆   
+ 9 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 1
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 2 │ │       event TestEvent(int id);
+   │ │   ──────────────┬────────┬─────  
+   │ │                 ╰──────────────── definiens: 2
+   │ │                          │       
+   │ │                          ╰─────── definiens: 3
+ 3 │ ╭─▶ 
+   ┆ ┆   
+ 8 │ ├─▶     }
    │ │           
-   │ ╰─────────── definiens: 1
+   │ ╰─────────── definiens: 4
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 5 │ │           int x = 1;
+   │ │   ─────────┬─────────  
+   │ │            ╰─────────── definiens: 5
+ 6 │ ╭─▶ 
+ 7 │ ├─▶         emit TestEvent(x);
+   │ │                                
+   │ ╰──────────────────────────────── definiens: 6
 ───╯

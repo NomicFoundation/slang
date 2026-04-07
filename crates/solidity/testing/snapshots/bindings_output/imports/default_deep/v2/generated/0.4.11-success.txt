@@ -17,8 +17,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[base.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ base.sol:1:1 ]
    │
  2 │ contract Base {}
    │          ──┬─  
@@ -27,8 +27,8 @@ Bindings:
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[main.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ main.sol:1:1 ]
    │
  2 │ contract Test is Base, Service {}
    │          ──┬─    ──┬─  ───┬───  
@@ -41,8 +41,8 @@ Bindings:
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[service.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ service.sol:1:1 ]
    │
  1 │ interface Service {}
    │           ───┬───  

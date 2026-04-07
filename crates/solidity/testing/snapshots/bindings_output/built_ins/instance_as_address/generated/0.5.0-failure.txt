@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Test {
     │          ──┬─  
@@ -11,26 +11,12 @@ References and definitions:
     │                ╰─── name: 2
     │ 
   4 │         Foo foo;
-    │         ─┬─ ─┬─  
-    │          ╰─────── ref: 5
-    │              │   
+    │             ─┬─  
     │              ╰─── name: 3
-  5 │         foo.balance;
-    │         ─┬─ ───┬───  
-    │          ╰─────────── ref: 3
-    │                │     
-    │                ╰───── unresolved
     │ 
   7 │         Bar bar;
-    │         ─┬─ ─┬─  
-    │          ╰─────── ref: 6
-    │              │   
+    │             ─┬─  
     │              ╰─── name: 4
-  8 │         bar.balance;
-    │         ─┬─ ───┬───  
-    │          ╰─────────── ref: 4
-    │                │     
-    │                ╰───── unresolved
     │ 
  12 │ contract Foo {}
     │          ─┬─  
@@ -38,33 +24,61 @@ References and definitions:
  13 │ interface Bar {}
     │           ─┬─  
     │            ╰─── name: 6
-────╯
-Definiens: 
-    ╭─[input.sol:1:1]
     │
-  1 │ ╭─│ ──────▶ contract Test {
-  2 │ │ ╭─│ ────▶     function test() public {
-  3 │ │ │ ╭─────▶         // This was valid before 0.5.0
-  4 │ │ │ ├─────▶         Foo foo;
-    │ │ │ │                          
-    │ │ │ ╰────────────────────────── definiens: 3
-    ┆ ┆ ┆   ┆     
-  6 │ │ │   ╭───▶ 
-  7 │ │ │   ├───▶         Bar bar;
-    │ │ │   │                        
-    │ │ │   ╰──────────────────────── definiens: 4
-    ┆ ┆ ┆         
-  9 │ │ ├───────▶     }
-    │ │ │                 
-    │ │ ╰───────────────── definiens: 2
- 10 │ ├───────│ ▶ }
-    │ │       │       
-    │ ╰─────────────── definiens: 1
- 11 │         ╭─▶ 
- 12 │         ├─▶ contract Foo {}
-    │         │                     
-    │         ╰───────────────────── definiens: 5
- 13 │             interface Bar {}
-    │             ────────┬────────  
-    │                     ╰────────── definiens: 6
+    ├─[ input.sol:1:1 ]
+    │
+  4 │         Foo foo;
+    │         ─┬─  
+    │          ╰─── ref: 5
+  5 │         foo.balance;
+    │         ─┬─ ───┬───  
+    │          ╰─────────── ref: 3
+    │                │     
+    │                ╰───── unresolved
+    │ 
+  7 │         Bar bar;
+    │         ─┬─  
+    │          ╰─── ref: 6
+  8 │         bar.balance;
+    │         ─┬─ ───┬───  
+    │          ╰─────────── ref: 4
+    │                │     
+    │                ╰───── unresolved
+────╯
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
+    │
+  1 │ ╭─▶ contract Test {
+    ┆ ┆   
+ 10 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │ ╭─▶     function test() public {
+    ┆ ┆   
+  9 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 2
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  3 │ ╭─────▶         // This was valid before 0.5.0
+  4 │ ├─────▶         Foo foo;
+    │ │                          
+    │ ╰────────────────────────── definiens: 3
+    │ 
+  6 │   ╭───▶ 
+  7 │   ├───▶         Bar bar;
+    │   │                        
+    │   ╰──────────────────────── definiens: 4
+    │ 
+ 11 │     ╭─▶ 
+ 12 │     ├─▶ contract Foo {}
+    │     │                     
+    │     ╰───────────────────── definiens: 5
+ 13 │         interface Bar {}
+    │         ────────┬────────  
+    │                 ╰────────── definiens: 6
 ────╯

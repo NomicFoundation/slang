@@ -24,8 +24,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ interface IERC1155Receiver {
     │           ────────┬───────  
@@ -50,13 +50,17 @@ Bindings:
     │                                                 ╰─── name: 7
     │ 
  11 │ abstract contract ERC1155Holder is IERC1155Receiver {
-    │                   ──────┬──────    ────────┬───────  
-    │                         ╰──────────────────────────── name: 8
-    │                                            │         
-    │                                            ╰───────── ref: 1
+    │                   ──────┬──────  
+    │                         ╰──────── name: 8
  12 │     function onERC1155Received(
     │              ────────┬────────  
     │                      ╰────────── name: 9
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 11 │ abstract contract ERC1155Holder is IERC1155Receiver {
+    │                                    ────────┬───────  
+    │                                            ╰───────── ref: 1
     │ 
  19 │         return this.onERC1155Received.selector;
     │                     ────────┬──────── ────┬───  

@@ -2,14 +2,14 @@
 
 Parse errors:
 Error: Expected CallDataKeyword or Identifier or MemoryKeyword or StorageKeyword.
-    ╭─[input.sol:13:17]
+    ╭─[ input.sol:13:17 ]
     │
  13 │     x.overloaded{ value: 10, gas: 1000 }();
     │                 ─────────────┬────────────  
     │                              ╰────────────── Error occurred here.
 ────╯
 Error: Expected CallDataKeyword or Identifier or MemoryKeyword or StorageKeyword.
-    ╭─[input.sol:14:17]
+    ╭─[ input.sol:14:17 ]
     │
  14 │     x.overloaded{ value: 10, gas: 1000 }(y);
     │                 ─────────────┬─────────────  
@@ -43,8 +43,8 @@ Unbound identifiers (4):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Other {
     │          ──┬──  

@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected OpenBrace or ReturnsKeyword or Semicolon.
-   ╭─[input.sol:5:27]
+   ╭─[ input.sol:5:27 ]
    │
  5 │ ╭─▶     function foo() public pure virtual returns (string memory) {
    ┆ ┆   
@@ -11,7 +11,7 @@ Error: Expected OpenBrace or ReturnsKeyword or Semicolon.
    │ ╰─────────── Error occurred here.
 ───╯
 Error: Expected OpenBrace or ReturnsKeyword or Semicolon.
-    ╭─[input.sol:12:27]
+    ╭─[ input.sol:12:27 ]
     │
  12 │ ╭─▶     function foo() public pure virtual override(A) returns (string memory) {
     ┆ ┆   
@@ -39,21 +39,24 @@ Unbound identifiers (2):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   4 │ contract A {
     │          ┬  
     │          ╰── name: 1
-  5 │     function foo() public pure virtual returns (string memory) {
-    │              ─┬─  
-    │               ╰─── ???
     │ 
  10 │ contract B is A {
     │          ┬    ┬  
     │          ╰─────── name: 2
     │               │  
     │               ╰── ref: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  5 │     function foo() public pure virtual returns (string memory) {
+    │              ─┬─  
+    │               ╰─── ???
     │ 
  12 │     function foo() public pure virtual override(A) returns (string memory) {
     │              ─┬─  

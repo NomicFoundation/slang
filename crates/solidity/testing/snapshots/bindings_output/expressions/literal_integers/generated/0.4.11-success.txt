@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ library Lib {
    │         ─┬─  
@@ -15,12 +15,17 @@ References and definitions:
  4 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 4
- 5 │     using Lib for uint256;
-   │           ─┬─  
-   │            ╰─── ref: 1
+   │ 
  6 │     function test() public {
    │              ──┬─  
    │                ╰─── name: 5
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 5 │     using Lib for uint256;
+   │           ─┬─  
+   │            ╰─── ref: 1
+   │ 
  7 │         (50 * 10**uint(4)).nop();
    │                            ─┬─  
    │                             ╰─── ref: 2
@@ -28,26 +33,34 @@ References and definitions:
    │                          ─┬─  
    │                           ╰─── ref: 2
 ───╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │     ╭─▶ library Lib {
-  2 │     │       function nop(uint256 x) internal {}
-    │     │   ────────────────────┬┬──────────────────  
-    │     │                       ╰───────────────────── definiens: 2
-    │     │                        │                    
-    │     │                        ╰──────────────────── definiens: 3
-  3 │ │   ├─▶ }
-    │ │   │       
-    │ │   ╰─────── definiens: 1
-  4 │ ╭─────▶ contract Test {
-    ┆ ┆ ┆     
-  6 │ │ ╭───▶     function test() public {
-    ┆ ┆ ┆     
-  9 │ │ ├───▶     }
-    │ │ │             
-    │ │ ╰───────────── definiens: 5
- 10 │ ├─────▶ }
+  1 │ ╭─▶ library Lib {
+    ┆ ┆   
+  3 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │         function nop(uint256 x) internal {}
+    │     ────────────────────┬┬──────────────────  
+    │                         ╰───────────────────── definiens: 2
+    │                          │                    
+    │                          ╰──────────────────── definiens: 3
+    │ 
+  4 │ ╭─▶ contract Test {
+    ┆ ┆   
+ 10 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 4
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │ ╭─▶     function test() public {
+    ┆ ┆   
+  9 │ ├─▶     }
     │ │           
-    │ ╰─────────── definiens: 4
+    │ ╰─────────── definiens: 5
 ────╯

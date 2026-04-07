@@ -1,46 +1,29 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library Lib {
     │         ─┬─  
     │          ╰─── name: 1
   2 │     function add(uint256 x, uint256 y) internal returns (uint256) { return x + y; }
-    │              ─┬─         ┬          ┬                                      ┬   ┬  
-    │               ╰─────────────────────────────────────────────────────────────────── name: 2
-    │                          │          │                                      │   │  
-    │                          ╰──────────────────────────────────────────────────────── name: 3
-    │                                     │                                      │   │  
-    │                                     ╰───────────────────────────────────────────── name: 4
-    │                                                                            │   │  
-    │                                                                            ╰────── ref: 3
-    │                                                                                │  
-    │                                                                                ╰── ref: 4
+    │              ─┬─         ┬          ┬  
+    │               ╰──────────────────────── name: 2
+    │                          │          │  
+    │                          ╰───────────── name: 3
+    │                                     │  
+    │                                     ╰── name: 4
   3 │     function add(int256 x, int256 y) internal returns (int256) { return x + y; }
-    │              ─┬─        ┬         ┬                                     ┬   ┬  
-    │               ╰──────────────────────────────────────────────────────────────── name: 5
-    │                         │         │                                     │   │  
-    │                         ╰────────────────────────────────────────────────────── name: 6
-    │                                   │                                     │   │  
-    │                                   ╰──────────────────────────────────────────── name: 7
-    │                                                                         │   │  
-    │                                                                         ╰────── ref: 6
-    │                                                                             │  
-    │                                                                             ╰── ref: 7
+    │              ─┬─        ┬         ┬  
+    │               ╰────────────────────── name: 5
+    │                         │         │  
+    │                         ╰──────────── name: 6
+    │                                   │  
+    │                                   ╰── name: 7
     │ 
   6 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 8
-  7 │     using Lib for uint256;
-    │           ─┬─  
-    │            ╰─── ref: 1
-  8 │     using Lib for int256;
-    │           ─┬─  
-    │            ╰─── ref: 1
-  9 │     using Lib for uint160;
-    │           ─┬─  
-    │            ╰─── ref: 1
     │ 
  11 │     function testUsing(uint256 ux, uint256 uy, int256 ix, int256 iy) internal {
     │              ────┬────         ─┬          ─┬         ─┬         ─┬  
@@ -53,6 +36,38 @@ References and definitions:
     │                                                        ╰───────────── name: 12
     │                                                                   │  
     │                                                                   ╰── name: 13
+    │ 
+ 16 │     function testConvertible(uint160 ux, uint160 uy) internal {
+    │              ───────┬───────         ─┬          ─┬  
+    │                     ╰──────────────────────────────── name: 14
+    │                                       │           │  
+    │                                       ╰────────────── name: 15
+    │                                                   │  
+    │                                                   ╰── name: 16
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │     function add(uint256 x, uint256 y) internal returns (uint256) { return x + y; }
+    │                                                                            ┬   ┬  
+    │                                                                            ╰────── ref: 3
+    │                                                                                │  
+    │                                                                                ╰── ref: 4
+  3 │     function add(int256 x, int256 y) internal returns (int256) { return x + y; }
+    │                                                                         ┬   ┬  
+    │                                                                         ╰────── ref: 6
+    │                                                                             │  
+    │                                                                             ╰── ref: 7
+    │ 
+  7 │     using Lib for uint256;
+    │           ─┬─  
+    │            ╰─── ref: 1
+  8 │     using Lib for int256;
+    │           ─┬─  
+    │            ╰─── ref: 1
+  9 │     using Lib for uint160;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
  12 │         ux.add(uy).add(ux);
     │         ─┬ ─┬─ ─┬  ─┬─ ─┬  
     │          ╰───────────────── ref: 10
@@ -76,13 +91,6 @@ References and definitions:
     │                         │  
     │                         ╰── ref: 12
     │ 
- 16 │     function testConvertible(uint160 ux, uint160 uy) internal {
-    │              ───────┬───────         ─┬          ─┬  
-    │                     ╰──────────────────────────────── name: 14
-    │                                       │           │  
-    │                                       ╰────────────── name: 15
-    │                                                   │  
-    │                                                   ╰── name: 16
  17 │         Lib.add(ux, uy);
     │         ─┬─ ─┬─ ─┬  ─┬  
     │          ╰────────────── ref: 1
@@ -104,54 +112,69 @@ References and definitions:
     │                         │  
     │                         ╰── ref: 15
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │   ╭─────▶ library Lib {
-  2 │   │           function add(uint256 x, uint256 y) internal returns (uint256) { return x + y; }
-    │   │       ─────────────────────┬──────────┬─────────┬─────────────────────────────────────────  
-    │   │                            ╰──────────────────────────────────────────────────────────────── definiens: 3
-    │   │                                       │         │                                           
-    │   │                                       ╰───────────────────────────────────────────────────── definiens: 4
-    │   │                                                 │                                           
-    │   │                                                 ╰─────────────────────────────────────────── definiens: 2
-  3 │   │           function add(int256 x, int256 y) internal returns (int256) { return x + y; }
-    │   │       ─────────────────────┬────────┬─────────┬────────────────────────────────────────  
-    │   │                            ╰───────────────────────────────────────────────────────────── definiens: 6
-    │   │                                     │         │                                          
-    │   │                                     ╰──────────────────────────────────────────────────── definiens: 7
-    │   │                                               │                                          
-    │   │                                               ╰────────────────────────────────────────── definiens: 5
-  4 │ │ ├─────▶ }
-    │ │ │           
-    │ │ ╰─────────── definiens: 1
-  5 │ ╭───────▶ 
-    ┆ ┆         
- 10 │ │   ╭───▶ 
- 11 │ │   │         function testUsing(uint256 ux, uint256 uy, int256 ix, int256 iy) internal {
-    │ │   │                            ─────┬──── ─────┬───── ─────┬──── ─────┬────  
-    │ │   │                                 ╰──────────────────────────────────────── definiens: 10
-    │ │   │                                            │           │          │      
-    │ │   │                                            ╰───────────────────────────── definiens: 11
-    │ │   │                                                        │          │      
-    │ │   │                                                        ╰───────────────── definiens: 12
-    │ │   │                                                                   │      
-    │ │   │                                                                   ╰────── definiens: 13
-    ┆ ┆   ┆     
- 14 │ │   ├─│ ▶     }
-    │ │   │ │           
-    │ │   ╰───────────── definiens: 9
- 15 │ │     ╭─▶ 
- 16 │ │     │       function testConvertible(uint160 ux, uint160 uy) internal {
-    │ │     │                                ─────┬──── ─────┬─────  
-    │ │     │                                     ╰────────────────── definiens: 15
-    │ │     │                                                │       
-    │ │     │                                                ╰─────── definiens: 16
-    ┆ ┆     ┆   
- 19 │ │     ├─▶     }
-    │ │     │           
-    │ │     ╰─────────── definiens: 14
- 20 │ ├───────▶ }
-    │ │             
-    │ ╰───────────── definiens: 8
+  1 │ ╭─▶ library Lib {
+    ┆ ┆   
+  4 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │         function add(uint256 x, uint256 y) internal returns (uint256) { return x + y; }
+    │     ─────────────────────┬──────────┬─────────┬─────────────────────────────────────────  
+    │                          ╰──────────────────────────────────────────────────────────────── definiens: 3
+    │                                     │         │                                           
+    │                                     ╰───────────────────────────────────────────────────── definiens: 4
+    │                                               │                                           
+    │                                               ╰─────────────────────────────────────────── definiens: 2
+  3 │         function add(int256 x, int256 y) internal returns (int256) { return x + y; }
+    │     ─────────────────────┬────────┬─────────┬────────────────────────────────────────  
+    │                          ╰───────────────────────────────────────────────────────────── definiens: 6
+    │                                   │         │                                          
+    │                                   ╰──────────────────────────────────────────────────── definiens: 7
+    │                                             │                                          
+    │                                             ╰────────────────────────────────────────── definiens: 5
+    │ 
+  5 │ ╭─▶ 
+    ┆ ┆   
+ 20 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 8
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 10 │ ╭─▶ 
+    ┆ ┆   
+ 14 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 9
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 11 │         function testUsing(uint256 ux, uint256 uy, int256 ix, int256 iy) internal {
+    │                            ─────┬──── ─────┬───── ─────┬──── ─────┬────  
+    │                                 ╰──────────────────────────────────────── definiens: 10
+    │                                            │           │          │      
+    │                                            ╰───────────────────────────── definiens: 11
+    │                                                        │          │      
+    │                                                        ╰───────────────── definiens: 12
+    │                                                                   │      
+    │                                                                   ╰────── definiens: 13
+    │ 
+ 15 │ ╭─▶ 
+    ┆ ┆   
+ 19 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 14
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 16 │     function testConvertible(uint160 ux, uint160 uy) internal {
+    │                              ─────┬──── ─────┬─────  
+    │                                   ╰────────────────── definiens: 15
+    │                                              │       
+    │                                              ╰─────── definiens: 16
 ────╯

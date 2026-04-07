@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected ConstantKeyword or Identifier or InternalKeyword or PrivateKeyword or PublicKeyword.
-   ╭─[input.sol:2:13]
+   ╭─[ input.sol:2:13 ]
    │
  2 │ ╭─▶     fallback(bytes calldata input) external payable returns (bytes memory output) {
    ┆ ┆   
@@ -27,8 +27,8 @@ Unbound identifiers (1):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract Test {
    │          ──┬─  

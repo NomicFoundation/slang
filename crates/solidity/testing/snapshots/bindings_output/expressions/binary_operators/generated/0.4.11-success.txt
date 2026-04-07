@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library Lib {
     │         ─┬─  
@@ -20,12 +20,7 @@ References and definitions:
   6 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 6
-  7 │     using Lib for uint;
-    │           ─┬─  
-    │            ╰─── ref: 1
-  8 │     using Lib for bool;
-    │           ─┬─  
-    │            ╰─── ref: 1
+    │ 
   9 │     function test(uint a, uint b) public {
     │              ──┬─      ┬       ┬  
     │                ╰────────────────── name: 7
@@ -33,6 +28,16 @@ References and definitions:
     │                        ╰────────── name: 8
     │                                │  
     │                                ╰── name: 9
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  7 │     using Lib for uint;
+    │           ─┬─  
+    │            ╰─── ref: 1
+  8 │     using Lib for bool;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
  10 │         (a += b).nop_uint();
     │          ┬    ┬  ────┬───  
     │          ╰───────────────── ref: 8
@@ -98,35 +103,47 @@ References and definitions:
     │                   │     
     │                   ╰───── ref: 2
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │     ╭─▶ library Lib {
-  2 │     │       function nop_uint(uint x) public returns (uint) {}
-    │     │   ─────────────────────────┬─┬───────────────────────────  
-    │     │                            ╰─────────────────────────────── definiens: 3
-    │     │                              │                             
-    │     │                              ╰───────────────────────────── definiens: 2
-  3 │     │       function nop_bool(bool x) public returns (bool) {}
-    │     │   ─────────────────────────┬─┬───────────────────────────  
-    │     │                            ╰─────────────────────────────── definiens: 5
-    │     │                              │                             
-    │     │                              ╰───────────────────────────── definiens: 4
-  4 │ │   ├─▶ }
-    │ │   │       
-    │ │   ╰─────── definiens: 1
-  5 │ ╭─────▶ 
-    ┆ ┆       
-  9 │ │ ╭───▶     function test(uint a, uint b) public {
-    │ │ │                       ───┬── ───┬───  
-    │ │ │                          ╰──────────── definiens: 8
-    │ │ │                                 │     
-    │ │ │                                 ╰───── definiens: 9
-    ┆ ┆ ┆     
- 20 │ │ ├───▶     }
-    │ │ │             
-    │ │ ╰───────────── definiens: 7
- 21 │ ├─────▶ }
+  1 │ ╭─▶ library Lib {
+    ┆ ┆   
+  4 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │         function nop_uint(uint x) public returns (uint) {}
+    │     ─────────────────────────┬─┬───────────────────────────  
+    │                              ╰─────────────────────────────── definiens: 3
+    │                                │                             
+    │                                ╰───────────────────────────── definiens: 2
+  3 │         function nop_bool(bool x) public returns (bool) {}
+    │     ─────────────────────────┬─┬───────────────────────────  
+    │                              ╰─────────────────────────────── definiens: 5
+    │                                │                             
+    │                                ╰───────────────────────────── definiens: 4
+    │ 
+  5 │ ╭─▶ 
+    ┆ ┆   
+ 21 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 6
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  9 │ ╭─▶     function test(uint a, uint b) public {
+    ┆ ┆   
+ 20 │ ├─▶     }
     │ │           
-    │ ╰─────────── definiens: 6
+    │ ╰─────────── definiens: 7
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  9 │     function test(uint a, uint b) public {
+    │                   ───┬── ───┬───  
+    │                      ╰──────────── definiens: 8
+    │                             │     
+    │                             ╰───── definiens: 9
 ────╯

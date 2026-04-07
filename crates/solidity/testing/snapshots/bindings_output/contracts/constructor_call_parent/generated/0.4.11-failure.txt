@@ -2,15 +2,15 @@
 
 Parse errors:
 Error: Expected ConstantKeyword or Identifier or InternalKeyword or PrivateKeyword or PublicKeyword.
-   ╭─[input.sol:4:16]
+   ╭─[ input.sol:4:16 ]
    │
  4 │ ╭─▶     constructor() Base() {
  5 │ ├─▶     }
    │ │           
    │ ╰─────────── Error occurred here.
 ───╯
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract Base {}
    │          ──┬─  
@@ -25,8 +25,8 @@ References and definitions:
    │     ─────┬─────  
    │          ╰─────── unresolved
 ───╯
-Definiens: 
-   ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ │   contract Base {}
    │ │   ────────┬────────  

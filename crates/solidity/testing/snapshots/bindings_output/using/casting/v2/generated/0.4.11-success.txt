@@ -25,8 +25,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ interface IERC20 {
    │           ───┬──  
@@ -36,26 +36,33 @@ Bindings:
    │         ────┬────  
    │             ╰────── name: 2
  4 │     function safeApprove(IERC20 token) internal {}
-   │              ─────┬───── ───┬── ──┬──  
+   │              ─────┬─────        ──┬──  
    │                   ╰──────────────────── name: 3
-   │                             │     │    
-   │                             ╰────────── ref: 1
    │                                   │    
    │                                   ╰──── name: 4
    │ 
  6 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 5
- 7 │     using SafeERC20 for IERC20;
-   │           ────┬────     ───┬──  
-   │               ╰───────────────── ref: 2
-   │                            │    
-   │                            ╰──── ref: 1
+   │ 
  8 │     function test(address token) public {
    │              ──┬─         ──┬──  
    │                ╰───────────────── name: 6
    │                             │    
    │                             ╰──── name: 7
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 4 │     function safeApprove(IERC20 token) internal {}
+   │                          ───┬──  
+   │                             ╰──── ref: 1
+   │ 
+ 7 │     using SafeERC20 for IERC20;
+   │           ────┬────     ───┬──  
+   │               ╰───────────────── ref: 2
+   │                            │    
+   │                            ╰──── ref: 1
+   │ 
  9 │         IERC20(token).safeApprove();
    │         ───┬── ──┬──  ─────┬─────  
    │            ╰─────────────────────── ref: 1

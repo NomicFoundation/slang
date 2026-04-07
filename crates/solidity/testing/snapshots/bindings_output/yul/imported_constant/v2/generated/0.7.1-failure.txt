@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected ContractKeyword or EnumKeyword or FunctionKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
-   ╭─[constants.sol:1:1]
+   ╭─[ constants.sol:1:1 ]
    │
  1 │ uint256 constant FOO = 1;
    │ ─────────────┬────────────  
@@ -28,12 +28,12 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
+[39mBindings:[0m 
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[main.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ main.sol:1:1 ]
    │
  3 │ contract Test {
    │          ──┬─  

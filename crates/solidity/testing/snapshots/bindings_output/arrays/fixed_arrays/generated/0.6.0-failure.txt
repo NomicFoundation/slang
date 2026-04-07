@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
-   ╭─[input.sol:1:1]
+   ╭─[ input.sol:1:1 ]
    │
  1 │ ╭─▶ function test() {
    ┆ ┆   
@@ -10,5 +10,5 @@ Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyw
    │ │       
    │ ╰─────── Error occurred here.
 ───╯
-References and definitions: 
-Definiens: 
+[39mReferences and definitions:[0m 
+[39mDefiniens:[0m 

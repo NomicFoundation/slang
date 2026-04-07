@@ -24,8 +24,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Test {
     │          ──┬─  
@@ -44,9 +44,7 @@ Bindings:
     │           ───┬───  
     │              ╰───── name: 5
   8 │         Severity severity,
-    │         ────┬─── ────┬───  
-    │             ╰────────────── ref: 2
-    │                      │     
+    │                  ────┬───  
     │                      ╰───── name: 6
   9 │         string cause
     │                ──┬──  
@@ -55,6 +53,13 @@ Bindings:
  12 │     function test() public {
     │              ──┬─  
     │                ╰─── name: 8
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  8 │         Severity severity,
+    │         ────┬───  
+    │             ╰───── ref: 2
+    │ 
  13 │         revert Failure(Severity.ERROR, "Testing");
     │                ───┬─── ────┬─── ──┬──  
     │                   ╰──────────────────── ref: 5

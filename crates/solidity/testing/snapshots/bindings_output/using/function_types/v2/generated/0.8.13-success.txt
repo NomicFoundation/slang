@@ -25,21 +25,14 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │ using {invoke} for function(uint);
-    │        ───┬──  
-    │           ╰──── ref: 1
-    │ 
   3 │ function invoke(function(uint) x) {
     │          ───┬──                ┬  
     │             ╰───────────────────── name: 1
     │                                │  
     │                                ╰── name: 2
-  4 │     x(1);
-    │     ┬  
-    │     ╰── ref: 2
     │ 
   7 │ function foo(uint x) {}
     │          ─┬─      ┬  
@@ -50,6 +43,21 @@ Bindings:
   9 │ function test() {
     │          ──┬─  
     │            ╰─── name: 5
+    │ 
+ 12 │     function (uint) bar = foo;
+    │                     ─┬─  
+    │                      ╰─── name: 6
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  1 │ using {invoke} for function(uint);
+    │        ───┬──  
+    │           ╰──── ref: 1
+    │ 
+  4 │     x(1);
+    │     ┬  
+    │     ╰── ref: 2
+    │ 
  10 │     foo.invoke();
     │     ─┬─ ───┬──  
     │      ╰────────── ref: 3
@@ -57,9 +65,7 @@ Bindings:
     │            ╰──── ref: 1
     │ 
  12 │     function (uint) bar = foo;
-    │                     ─┬─   ─┬─  
-    │                      ╰───────── name: 6
-    │                            │   
+    │                           ─┬─  
     │                            ╰─── ref: 3
  13 │     bar.invoke();
     │     ─┬─ ───┬──  

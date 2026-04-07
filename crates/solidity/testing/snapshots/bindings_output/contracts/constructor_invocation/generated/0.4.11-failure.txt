@@ -2,14 +2,14 @@
 
 Parse errors:
 Error: Expected ConstantKeyword or Identifier or InternalKeyword or PrivateKeyword or PublicKeyword.
-   ╭─[input.sol:4:16]
+   ╭─[ input.sol:4:16 ]
    │
  4 │     constructor(int _x) {}
    │                ──────┬─────  
    │                      ╰─────── Error occurred here.
 ───╯
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract A {
    │          ┬  
@@ -20,43 +20,53 @@ References and definitions:
    │                     │  
    │                     ╰── name: 3
    │ 
- 4 │     constructor(int _x) {}
-   │     ─────┬─────  
-   │          ╰─────── unresolved
-   │ 
  7 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 4
  8 │     function foo() public {
    │              ─┬─  
    │               ╰─── name: 5
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 4 │     constructor(int _x) {}
+   │     ─────┬─────  
+   │          ╰─────── unresolved
+   │ 
  9 │         new A({_x: 2});
    │             ┬  ─┬  
    │             ╰────── ref: 1
    │                 │  
    │                 ╰── ref: 3
 ───╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │   ╭───▶ contract A {
-  2 │   │         function A(int _x) {}
-    │   │     ─────────────┬────┬───────  
-    │   │                  ╰────────────── definiens: 2
-    │   │                       │         
-    │   │                       ╰───────── definiens: 3
-    ┆   ┆     
-  5 │ │ ├───▶ }
-    │ │ │         
-    │ │ ╰───────── definiens: 1
-  6 │ ╭─────▶ 
-    ┆ ┆   ┆   
-  8 │ │   ╭─▶     function foo() public {
-    ┆ ┆   ┆   
- 10 │ │   ├─▶     }
-    │ │   │           
-    │ │   ╰─────────── definiens: 5
- 11 │ ├─────▶ }
+  1 │ ╭─▶ contract A {
+    ┆ ┆   
+  5 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │         function A(int _x) {}
+    │     ─────────────┬────┬───────  
+    │                  ╰────────────── definiens: 2
+    │                       │         
+    │                       ╰───────── definiens: 3
+    │ 
+  6 │ ╭─▶ 
+    ┆ ┆   
+ 11 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 4
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  8 │ ╭─▶     function foo() public {
+    ┆ ┆   
+ 10 │ ├─▶     }
     │ │           
-    │ ╰─────────── definiens: 4
+    │ ╰─────────── definiens: 5
 ────╯

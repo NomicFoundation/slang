@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library Lib {
     │         ─┬─  
@@ -26,9 +26,6 @@ References and definitions:
   6 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 9
-  7 │     using Lib for uint256;
-    │           ─┬─  
-    │            ╰─── ref: 1
     │ 
   9 │     function test(uint256 x, uint256 y, uint256 z) internal {
     │              ──┬─         ┬          ┬          ┬  
@@ -39,6 +36,13 @@ References and definitions:
     │                                      ╰───────────── name: 12
     │                                                 │  
     │                                                 ╰── name: 13
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  7 │     using Lib for uint256;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
  10 │         x.nop(y, z);
     │         ┬ ─┬─ ┬  ┬  
     │         ╰─────────── ref: 11
@@ -49,44 +53,55 @@ References and definitions:
     │                  │  
     │                  ╰── ref: 13
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │   ╭───▶ library Lib {
-  2 │   │         function nop(uint256 a, uint256 b) internal {}
-    │   │     ─────────────────────┬───┬──────┬──────────────────  
-    │   │                          ╰─────────────────────────────── definiens: 3
-    │   │                              │      │                    
-    │   │                              ╰─────────────────────────── definiens: 2
-    │   │                                     │                    
-    │   │                                     ╰──────────────────── definiens: 4
-  3 │   │         function nop(uint256 a, uint256 b, uint256 c) internal {}
-    │   │     ─────────────────────┬─────────┬┬──────────┬──────────────────  
-    │   │                          ╰────────────────────────────────────────── definiens: 6
-    │   │                                    ││          │                    
-    │   │                                    ╰──────────────────────────────── definiens: 5
-    │   │                                     │          │                    
-    │   │                                     ╰─────────────────────────────── definiens: 7
-    │   │                                                │                    
-    │   │                                                ╰──────────────────── definiens: 8
-  4 │ │ ├───▶ }
-    │ │ │         
-    │ │ ╰───────── definiens: 1
-  5 │ ╭─────▶ 
-    ┆ ┆       
-  8 │ │   ╭─▶ 
-  9 │ │   │       function test(uint256 x, uint256 y, uint256 z) internal {
-    │ │   │                     ────┬──── ─────┬──── ─────┬────  
-    │ │   │                         ╰──────────────────────────── definiens: 11
-    │ │   │                                    │          │      
-    │ │   │                                    ╰───────────────── definiens: 12
-    │ │   │                                               │      
-    │ │   │                                               ╰────── definiens: 13
-    ┆ ┆   ┆   
- 11 │ │   ├─▶     }
-    │ │   │           
-    │ │   ╰─────────── definiens: 10
- 12 │ ├─────▶ }
+  1 │ ╭─▶ library Lib {
+    ┆ ┆   
+  4 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │         function nop(uint256 a, uint256 b) internal {}
+    │     ─────────────────────┬───┬──────┬──────────────────  
+    │                          ╰─────────────────────────────── definiens: 3
+    │                              │      │                    
+    │                              ╰─────────────────────────── definiens: 2
+    │                                     │                    
+    │                                     ╰──────────────────── definiens: 4
+  3 │         function nop(uint256 a, uint256 b, uint256 c) internal {}
+    │     ─────────────────────┬─────────┬┬──────────┬──────────────────  
+    │                          ╰────────────────────────────────────────── definiens: 6
+    │                                    ││          │                    
+    │                                    ╰──────────────────────────────── definiens: 5
+    │                                     │          │                    
+    │                                     ╰─────────────────────────────── definiens: 7
+    │                                                │                    
+    │                                                ╰──────────────────── definiens: 8
+    │ 
+  5 │ ╭─▶ 
+    ┆ ┆   
+ 12 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 9
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  8 │ ╭─▶ 
+    ┆ ┆   
+ 11 │ ├─▶     }
     │ │           
-    │ ╰─────────── definiens: 9
+    │ ╰─────────── definiens: 10
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  9 │     function test(uint256 x, uint256 y, uint256 z) internal {
+    │                   ────┬──── ─────┬──── ─────┬────  
+    │                       ╰──────────────────────────── definiens: 11
+    │                                  │          │      
+    │                                  ╰───────────────── definiens: 12
+    │                                             │      
+    │                                             ╰────── definiens: 13
 ────╯

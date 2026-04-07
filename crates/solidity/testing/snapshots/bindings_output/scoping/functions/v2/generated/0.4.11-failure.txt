@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
-    ╭─[input.sol:16:1]
+    ╭─[ input.sol:16:1 ]
     │
  16 │ ╭─▶ function top_level() returns (int) {
     ┆ ┆   
@@ -34,8 +34,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Sample {
     │          ───┬──  
@@ -43,15 +43,6 @@ Bindings:
   2 │     function test() returns (int) {
     │              ──┬─  
     │                ╰─── name: 2
-  3 │         return from_sample() + top_level() + MyLib.from_lib();
-    │                ─────┬─────     ────┬────     ──┬── ────┬───  
-    │                     ╰──────────────────────────────────────── ref: 3
-    │                                    │           │       │     
-    │                                    ╰───────────────────────── unresolved
-    │                                                │       │     
-    │                                                ╰───────────── ref: 4
-    │                                                        │     
-    │                                                        ╰───── ref: 5
     │ 
   5 │     function from_sample() returns (int) {
     │              ─────┬─────  
@@ -63,4 +54,16 @@ Bindings:
  11 │     function from_lib() returns (int) {
     │              ────┬───  
     │                  ╰───── name: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  3 │         return from_sample() + top_level() + MyLib.from_lib();
+    │                ─────┬─────     ────┬────     ──┬── ────┬───  
+    │                     ╰──────────────────────────────────────── ref: 3
+    │                                    │           │       │     
+    │                                    ╰───────────────────────── unresolved
+    │                                                │       │     
+    │                                                ╰───────────── ref: 4
+    │                                                        │     
+    │                                                        ╰───── ref: 5
 ────╯

@@ -1,18 +1,31 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 1
-  2 │     using Utils for uint;
-    │           ──┬──  
-    │             ╰──── ref: 3
     │ 
   4 │     function test() {
     │              ──┬─  
     │                ╰─── name: 2
+    │ 
+ 10 │ library Utils {
+    │         ──┬──  
+    │           ╰──── name: 3
+ 11 │     function nop(uint x) internal {
+    │              ─┬─      ┬  
+    │               ╰────────── name: 4
+    │                       │  
+    │                       ╰── name: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │     using Utils for uint;
+    │           ──┬──  
+    │             ╰──── ref: 3
+    │ 
   5 │         type(uint).min.nop();
     │                    ─┬─ ─┬─  
     │                     ╰─────── ref: built-in
@@ -24,41 +37,44 @@ References and definitions:
     │                         │   
     │                         ╰─── ref: 4
     │ 
- 10 │ library Utils {
-    │         ──┬──  
-    │           ╰──── name: 3
- 11 │     function nop(uint x) internal {
-    │              ─┬─      ┬  
-    │               ╰────────── name: 4
-    │                       │  
-    │                       ╰── name: 5
  12 │         return x;
     │                ┬  
     │                ╰── ref: 5
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │ ╭───────▶ contract Test {
-    ┆ ┆ ┆       
-  3 │ │ ╭─────▶ 
-    ┆ ┆ ┆       
-  7 │ │ ├─────▶     }
-    │ │ │               
-    │ │ ╰─────────────── definiens: 2
-  8 │ ├───│ ──▶ }
-    │ │   │         
-    │ ╰───────────── definiens: 1
-  9 │     ╭───▶ 
-    ┆     ┆ ┆   
- 11 │     │ ╭─▶     function nop(uint x) internal {
-    │     │ │                    ───┬──  
-    │     │ │                       ╰──── definiens: 5
-    ┆     ┆ ┆   
- 13 │     │ ├─▶     }
-    │     │ │           
-    │     │ ╰─────────── definiens: 4
- 14 │     ├───▶ }
-    │     │         
-    │     ╰───────── definiens: 3
+  1 │ ╭─▶ contract Test {
+    ┆ ┆   
+  8 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  3 │ ╭───▶ 
+    ┆ ┆     
+  7 │ ├───▶     }
+    │ │             
+    │ ╰───────────── definiens: 2
+    │ 
+  9 │   ╭─▶ 
+    ┆   ┆   
+ 14 │   ├─▶ }
+    │   │       
+    │   ╰─────── definiens: 3
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 11 │ ╭─▶     function nop(uint x) internal {
+    ┆ ┆   
+ 13 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 4
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 11 │     function nop(uint x) internal {
+    │                  ───┬──  
+    │                     ╰──── definiens: 5
 ────╯

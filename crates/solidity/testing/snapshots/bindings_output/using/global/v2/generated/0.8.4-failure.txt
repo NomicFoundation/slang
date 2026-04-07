@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected AddressKeyword or BoolKeyword or BytesKeyword or ContractKeyword or EnumKeyword or ErrorKeyword or FixedKeyword or FunctionKeyword or Identifier or ImportKeyword or IntKeyword or InterfaceKeyword or LibraryKeyword or MappingKeyword or PragmaKeyword or StringKeyword or StructKeyword or UfixedKeyword or UintKeyword.
-   ╭─[counter.sol:7:1]
+   ╭─[ counter.sol:7:1 ]
    │
  7 │ ╭─▶ using {increment} for Counter global;
  8 │ ├─▶ 
@@ -37,8 +37,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[counter.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ counter.sol:1:1 ]
    │
  1 │ struct Counter {
    │        ───┬───  
@@ -58,25 +58,31 @@ Bindings:
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[main.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ main.sol:1:1 ]
    │
  1 │ import {Counter} from "counter.sol";
    │         ───┬───  
    │            ╰───── name: 5
-   │            │     
-   │            ╰───── ref: 1
    │ 
  3 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 6
  4 │     function test(Counter memory c) public {
-   │              ──┬─ ───┬───        ┬  
+   │              ──┬─                ┬  
    │                ╰──────────────────── name: 7
-   │                      │           │  
-   │                      ╰────────────── ref: 5
    │                                  │  
    │                                  ╰── name: 8
+   │
+   ├─[ main.sol:1:1 ]
+   │
+ 1 │ import {Counter} from "counter.sol";
+   │         ───┬───  
+   │            ╰───── ref: 1
+   │ 
+ 4 │     function test(Counter memory c) public {
+   │                   ───┬───  
+   │                      ╰───── ref: 5
  5 │         c.increment();
    │         ┬ ────┬────  
    │         ╰──────────── ref: 8

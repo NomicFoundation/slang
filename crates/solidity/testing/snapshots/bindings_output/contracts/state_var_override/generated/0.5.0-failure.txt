@@ -2,14 +2,14 @@
 
 Parse errors:
 Error: Expected ConstantKeyword or Identifier or InternalKeyword or PrivateKeyword or PublicKeyword.
-    ╭─[input.sol:10:16]
+    ╭─[ input.sol:10:16 ]
     │
  10 │     Bar public override foo;
     │                ──────┬─────  
     │                      ╰─────── Error occurred here.
 ────╯
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ interface IFoo {
     │           ──┬─  
@@ -19,10 +19,8 @@ References and definitions:
     │               ╰─── name: 2
     │ 
   5 │ contract Test is IFoo {
-    │          ──┬─    ──┬─  
-    │            ╰─────────── name: 3
-    │                    │   
-    │                    ╰─── ref: 1
+    │          ──┬─  
+    │            ╰─── name: 3
   6 │     struct Bar {
     │            ─┬─  
     │             ╰─── name: 4
@@ -33,13 +31,20 @@ References and definitions:
     │              ┬  
     │              ╰── name: 6
     │ 
+ 12 │     function test() internal view {
+    │              ──┬─  
+    │                ╰─── name: 7
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  5 │ contract Test is IFoo {
+    │                  ──┬─  
+    │                    ╰─── ref: 1
+    │ 
  10 │     Bar public override foo;
     │     ─┬─  
     │      ╰─── unresolved
     │ 
- 12 │     function test() internal view {
-    │              ──┬─  
-    │                ╰─── name: 7
  13 │         foo.x;
     │         ─┬─ ┬  
     │          ╰───── ref: 2
@@ -52,35 +57,47 @@ References and definitions:
     │              ─┬─  
     │               ╰─── ref: 2
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │     ╭───▶ interface IFoo {
-  2 │     │         function foo() external returns (uint, uint);
-    │     │     ─────────────────────────┬────────────────────────  
-    │     │                              ╰────────────────────────── definiens: 2
-  3 │ │   ├───▶ }
-    │ │   │         
-    │ │   ╰───────── definiens: 1
-  4 │ ╭───────▶ 
-    ┆ ┆     ┆   
-  6 │ │     ╭─▶     struct Bar {
-  7 │ │     │           uint x;
-    │ │     │   ────────┬───────  
-    │ │     │           ╰───────── definiens: 5
-  8 │ │     │           uint y;
-    │ │     │   ────────┬───────  
-    │ │     │           ╰───────── definiens: 6
-  9 │ │     ├─▶     }
-    │ │     │           
-    │ │     ╰─────────── definiens: 4
-    ┆ ┆ ┆       
- 11 │ │ ╭─────▶ 
-    ┆ ┆ ┆       
- 16 │ │ ├─────▶     }
-    │ │ │               
-    │ │ ╰─────────────── definiens: 7
- 17 │ ├───────▶ }
-    │ │             
-    │ ╰───────────── definiens: 3
+  1 │ ╭─▶ interface IFoo {
+    ┆ ┆   
+  3 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │         function foo() external returns (uint, uint);
+    │     ─────────────────────────┬────────────────────────  
+    │                              ╰────────────────────────── definiens: 2
+    │ 
+  4 │ ╭─▶ 
+    ┆ ┆   
+ 17 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 3
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │ ╭─▶     struct Bar {
+    ┆ ┆   
+  9 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 4
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  7 │             uint x;
+    │     ────────┬───────  
+    │             ╰───────── definiens: 5
+  8 │             uint y;
+    │     ────────┬───────  
+    │             ╰───────── definiens: 6
+    │ 
+ 11 │ ╭─▶ 
+    ┆ ┆   
+ 16 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 7
 ────╯

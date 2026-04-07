@@ -35,8 +35,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Constants {
     │          ────┬────  
@@ -44,6 +44,31 @@ Bindings:
   2 │     function test() public {
     │              ──┬─  
     │                ╰─── name: 2
+    │ 
+  9 │ enum Direction { NORTH, SOUTH, EAST, WEST }
+    │      ────┬────   ──┬──  ──┬──  ──┬─  ──┬─  
+    │          ╰───────────────────────────────── name: 3
+    │                    │      │      │     │   
+    │                    ╰─────────────────────── name: 4
+    │                           │      │     │   
+    │                           ╰──────────────── name: 5
+    │                                  │     │   
+    │                                  ╰───────── name: 6
+    │                                        │   
+    │                                        ╰─── name: 7
+    │ 
+ 11 │ address constant MY_ADDRESS = 0x777788889999AaAAbBbbCcccddDdeeeEfFFfCcCc;
+    │                  ─────┬────  
+    │                       ╰────── name: 8
+ 12 │ uint256 constant MY_UINT = 123;
+    │                  ───┬───  
+    │                     ╰───── name: 9
+ 13 │ Direction constant MY_DIRECTION = Direction.EAST;
+    │                    ──────┬─────  
+    │                          ╰─────── name: 10
+    │
+    ├─[ input.sol:1:1 ]
+    │
   3 │         assert(MY_DIRECTION != Direction.NORTH);
     │         ───┬── ──────┬─────    ────┬──── ──┬──  
     │            ╰──────────────────────────────────── built-in
@@ -68,29 +93,9 @@ Bindings:
     │                                    │      
     │                                    ╰────── ref: 8
     │ 
-  9 │ enum Direction { NORTH, SOUTH, EAST, WEST }
-    │      ────┬────   ──┬──  ──┬──  ──┬─  ──┬─  
-    │          ╰───────────────────────────────── name: 3
-    │                    │      │      │     │   
-    │                    ╰─────────────────────── name: 4
-    │                           │      │     │   
-    │                           ╰──────────────── name: 5
-    │                                  │     │   
-    │                                  ╰───────── name: 6
-    │                                        │   
-    │                                        ╰─── name: 7
-    │ 
- 11 │ address constant MY_ADDRESS = 0x777788889999AaAAbBbbCcccddDdeeeEfFFfCcCc;
-    │                  ─────┬────  
-    │                       ╰────── name: 8
- 12 │ uint256 constant MY_UINT = 123;
-    │                  ───┬───  
-    │                     ╰───── name: 9
  13 │ Direction constant MY_DIRECTION = Direction.EAST;
-    │ ────┬────          ──────┬─────   ────┬──── ──┬─  
+    │ ────┬────                         ────┬──── ──┬─  
     │     ╰───────────────────────────────────────────── ref: 3
-    │                          │            │       │   
-    │                          ╰──────────────────────── name: 10
     │                                       │       │   
     │                                       ╰─────────── ref: 3
     │                                               │   

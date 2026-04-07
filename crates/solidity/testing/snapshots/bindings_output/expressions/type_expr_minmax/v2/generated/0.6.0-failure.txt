@@ -30,8 +30,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ enum Answer {
     │      ───┬──  
@@ -44,30 +44,35 @@ Bindings:
     │         ─┬  
     │          ╰── name: 3
   6 │     function id(Answer ans) returns (Answer) {
-    │              ─┬ ───┬── ─┬─           ───┬──  
-    │               ╰────────────────────────────── name: 4
-    │                    │    │               │    
+    │              ─┬        ─┬─  
+    │               ╰───────────── name: 4
+    │                         │   
+    │                         ╰─── name: 5
+    │ 
+ 11 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 6
+    │ 
+ 14 │     function testFunc() {
+    │              ────┬───  
+    │                  ╰───── name: 7
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │     function id(Answer ans) returns (Answer) {
+    │                 ───┬──               ───┬──  
     │                    ╰───────────────────────── ref: 1
-    │                         │               │    
-    │                         ╰──────────────────── name: 5
     │                                         │    
     │                                         ╰──── ref: 1
   7 │         return ans;
     │                ─┬─  
     │                 ╰─── ref: 5
     │ 
- 11 │ contract Test {
-    │          ──┬─  
-    │            ╰─── name: 6
  12 │     using Id for Answer;
     │           ─┬     ───┬──  
     │            ╰───────────── ref: 3
     │                     │    
     │                     ╰──── ref: 1
-    │ 
- 14 │     function testFunc() {
-    │              ────┬───  
-    │                  ╰───── name: 7
     │ 
  16 │         type(Answer).min.id();
     │              ───┬──  ─┬─ ─┬  

@@ -2,28 +2,28 @@
 
 Parse errors:
 Error: Expected Equal or Semicolon.
-   ╭─[input.sol:6:17]
+   ╭─[ input.sol:6:17 ]
    │
  6 │         emit Foo(1, 2);
    │                 ───┬──  
    │                    ╰──── Error occurred here.
 ───╯
 Error: Expected Equal or Semicolon.
-   ╭─[input.sol:7:17]
+   ╭─[ input.sol:7:17 ]
    │
  7 │         emit Foo(false);
    │                 ───┬───  
    │                    ╰───── Error occurred here.
 ───╯
 Error: Expected Equal or Semicolon.
-   ╭─[input.sol:9:17]
+   ╭─[ input.sol:9:17 ]
    │
  9 │         emit Foo({ x: 1, y: 2 });
    │                 ────────┬───────  
    │                         ╰───────── Error occurred here.
 ───╯
 Error: Expected Equal or Semicolon.
-    ╭─[input.sol:10:17]
+    ╭─[ input.sol:10:17 ]
     │
  10 │         emit Foo({ flag: true });
     │                 ────────┬───────  
@@ -59,8 +59,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Test {
     │          ──┬─  
@@ -82,24 +82,32 @@ Bindings:
     │              ──┬─  
     │                ╰─── name: 7
   6 │         emit Foo(1, 2);
-    │         ──┬─ ─┬─  
-    │           ╰─────── unresolved
-    │               │   
+    │              ─┬─  
     │               ╰─── name: 8
   7 │         emit Foo(false);
-    │         ──┬─ ─┬─  
-    │           ╰─────── unresolved
-    │               │   
+    │              ─┬─  
     │               ╰─── name: 9
     │ 
   9 │         emit Foo({ x: 1, y: 2 });
-    │         ──┬─ ─┬─  
-    │           ╰─────── unresolved
-    │               │   
+    │              ─┬─  
     │               ╰─── name: 10
  10 │         emit Foo({ flag: true });
-    │         ──┬─ ─┬─  
-    │           ╰─────── unresolved
-    │               │   
+    │              ─┬─  
     │               ╰─── name: 11
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │         emit Foo(1, 2);
+    │         ──┬─  
+    │           ╰─── unresolved
+  7 │         emit Foo(false);
+    │         ──┬─  
+    │           ╰─── unresolved
+    │ 
+  9 │         emit Foo({ x: 1, y: 2 });
+    │         ──┬─  
+    │           ╰─── unresolved
+ 10 │         emit Foo({ flag: true });
+    │         ──┬─  
+    │           ╰─── unresolved
 ────╯

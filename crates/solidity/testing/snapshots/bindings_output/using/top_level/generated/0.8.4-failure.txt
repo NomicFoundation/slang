@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected AddressKeyword or BoolKeyword or BytesKeyword or ContractKeyword or EnumKeyword or ErrorKeyword or FixedKeyword or FunctionKeyword or Identifier or ImportKeyword or IntKeyword or InterfaceKeyword or LibraryKeyword or MappingKeyword or PragmaKeyword or StringKeyword or StructKeyword or UfixedKeyword or UintKeyword.
-    ╭─[input.sol:7:1]
+    ╭─[ input.sol:7:1 ]
     │
   7 │ ╭─▶ using {increment} for Counter;
     ┆ ┆   
@@ -10,8 +10,8 @@ Error: Expected AddressKeyword or BoolKeyword or BytesKeyword or ContractKeyword
     │ │       
     │ ╰─────── Error occurred here.
 ────╯
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ struct Counter {
    │        ───┬───  
@@ -28,20 +28,25 @@ References and definitions:
    │                                       │     
    │                                       ╰───── name: 4
 ───╯
-Definiens: 
-   ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+   ╭─[ input.sol:1:1 ]
    │
- 1 │   ╭─▶ struct Counter {
- 2 │   │       uint value;
-   │   │   ────────┬───────  
-   │   │           ╰───────── definiens: 2
- 3 │ │ ├─▶ }
-   │ │ │       
-   │ │ ╰─────── definiens: 1
- 4 │ ╭───▶ 
- 5 │ ├───▶ function increment(Counter memory _counter) public {}
-   │ │                        ───────────┬───────────              
-   │ │                                   ╰───────────────────────── definiens: 4
-   │ │                                                             
-   │ ╰───────────────────────────────────────────────────────────── definiens: 3
+ 1 │ ╭─▶ struct Counter {
+   ┆ ┆   
+ 3 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 1
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 2 │         uint value;
+   │     ────────┬───────  
+   │             ╰───────── definiens: 2
+   │ 
+ 4 │ ╭─▶ 
+ 5 │ ├─▶ function increment(Counter memory _counter) public {}
+   │ │                      ───────────┬───────────              
+   │ │                                 ╰───────────────────────── definiens: 4
+   │ │                                                           
+   │ ╰─────────────────────────────────────────────────────────── definiens: 3
 ───╯

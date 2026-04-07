@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract NamedMapping {
    │          ──────┬─────  
@@ -26,30 +26,34 @@ References and definitions:
    │                                                       │      
    │                                                       ╰────── name: 6
 ───╯
-Definiens: 
-   ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+   ╭─[ input.sol:1:1 ]
    │
- 1 │ ╭─────▶ contract NamedMapping {
- 2 │ │ │       mapping(address name => uint256) public justNameInKey;
-   │ │ │     ────────────────┬───────────┬────────────────────────────  
-   │ │ │                     ╰────────────────────────────────────────── definiens: 3
-   │ │ │                                 │                              
-   │ │ │                                 ╰────────────────────────────── definiens: 2
- 3 │ │ ╭───▶ 
- 4 │ │ ├─│ ▶   mapping(address => uint256 amount) public justNameInValue;
-   │ │ │ │                       ───────┬───────                            
-   │ │ │ │                              ╰─────────────────────────────────── definiens: 5
-   │ │ │ │                                                                  
-   │ │ ╰──────────────────────────────────────────────────────────────────── definiens: 4
- 5 │ │   ╭─▶ 
- 6 │ │   ├─▶   mapping(address name => uint256 amount) public nameInBoth;
-   │ │   │             ──────┬─────   ───────┬───────                       
-   │ │   │                   ╰────────────────────────────────────────────── definiens: 7
-   │ │   │                                   │                              
-   │ │   │                                   ╰────────────────────────────── definiens: 8
-   │ │   │                                                                  
-   │ │   ╰────────────────────────────────────────────────────────────────── definiens: 6
- 7 │ ├─────▶ }
-   │ │           
-   │ ╰─────────── definiens: 1
+ 1 │ ╭─▶ contract NamedMapping {
+   ┆ ┆   
+ 7 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 1
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 2 │ │       mapping(address name => uint256) public justNameInKey;
+   │ │     ────────────────┬───────────┬────────────────────────────  
+   │ │                     ╰────────────────────────────────────────── definiens: 3
+   │ │                                 │                              
+   │ │                                 ╰────────────────────────────── definiens: 2
+ 3 │ ╭───▶ 
+ 4 │ ├─│ ▶   mapping(address => uint256 amount) public justNameInValue;
+   │ │ │                       ───────┬───────                            
+   │ │ │                              ╰─────────────────────────────────── definiens: 5
+   │ │ │                                                                  
+   │ ╰──────────────────────────────────────────────────────────────────── definiens: 4
+ 5 │   ╭─▶ 
+ 6 │   ├─▶   mapping(address name => uint256 amount) public nameInBoth;
+   │   │             ──────┬─────   ───────┬───────                       
+   │   │                   ╰────────────────────────────────────────────── definiens: 7
+   │   │                                   │                              
+   │   │                                   ╰────────────────────────────── definiens: 8
+   │   │                                                                  
+   │   ╰────────────────────────────────────────────────────────────────── definiens: 6
 ───╯

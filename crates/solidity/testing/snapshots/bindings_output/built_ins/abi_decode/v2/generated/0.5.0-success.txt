@@ -44,8 +44,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library Lib {
     │         ─┬─  
@@ -57,9 +57,6 @@ Bindings:
   5 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 3
-  6 │     using Lib for uint256;
-    │           ─┬─  
-    │            ╰─── ref: 1
     │ 
   8 │     struct Point {
     │            ──┬──  
@@ -76,6 +73,13 @@ Bindings:
     │                ╰────────────────────── name: 7
     │                                  │    
     │                                  ╰──── name: 8
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │     using Lib for uint256;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
  14 │         abi.decode(input, (uint256)).nop();
     │         ─┬─ ───┬── ──┬──             ─┬─  
     │          ╰──────────────────────────────── built-in

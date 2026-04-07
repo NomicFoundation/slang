@@ -2,21 +2,21 @@
 
 Parse errors:
 Error: Expected EqualGreaterThan or PayableKeyword.
-   ╭─[input.sol:2:19]
+   ╭─[ input.sol:2:19 ]
    │
  2 │   mapping(address name => uint256) public justNameInKey;
    │                   ───────┬───────  
    │                          ╰───────── Error occurred here.
 ───╯
 Error: Expected CloseParen or OpenBracket.
-   ╭─[input.sol:4:30]
+   ╭─[ input.sol:4:30 ]
    │
  4 │   mapping(address => uint256 amount) public justNameInValue;
    │                              ───┬──  
    │                                 ╰──── Error occurred here.
 ───╯
 Error: Expected EqualGreaterThan or PayableKeyword.
-   ╭─[input.sol:6:19]
+   ╭─[ input.sol:6:19 ]
    │
  6 │   mapping(address name => uint256 amount) public nameInBoth;
    │                   ───────────┬──────────  
@@ -41,19 +41,22 @@ Unbound identifiers (2):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract NamedMapping {
    │          ──────┬─────  
    │                ╰─────── name: 1
- 2 │   mapping(address name => uint256) public justNameInKey;
-   │                                           ──────┬──────  
-   │                                                 ╰──────── ???
    │ 
  4 │   mapping(address => uint256 amount) public justNameInValue;
    │                                             ───────┬───────  
    │                                                    ╰───────── name: 2
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 2 │   mapping(address name => uint256) public justNameInKey;
+   │                                           ──────┬──────  
+   │                                                 ╰──────── ???
    │ 
  6 │   mapping(address name => uint256 amount) public nameInBoth;
    │                                                  ─────┬────  

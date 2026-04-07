@@ -28,8 +28,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ interface IERC20Upgradable {
     │           ────────┬───────  
@@ -52,17 +52,22 @@ Bindings:
   7 │ library Test {
     │         ──┬─  
     │           ╰─── name: 7
+    │ 
+ 10 │     function test(IERC20Upgradable token) internal {
+    │              ──┬─                  ──┬──  
+    │                ╰────────────────────────── name: 8
+    │                                      │    
+    │                                      ╰──── name: 9
+    │
+    ├─[ input.sol:1:1 ]
+    │
   8 │     using Math for uint256;
     │           ──┬─  
     │             ╰─── ref: 4
     │ 
  10 │     function test(IERC20Upgradable token) internal {
-    │              ──┬─ ────────┬─────── ──┬──  
-    │                ╰────────────────────────── name: 8
-    │                           │          │    
-    │                           ╰─────────────── ref: 1
-    │                                      │    
-    │                                      ╰──── name: 9
+    │                   ────────┬───────  
+    │                           ╰───────── ref: 1
  11 │         token.allowance(msg.sender).nop();
     │         ──┬── ────┬──── ─┬─ ───┬──  ─┬─  
     │           ╰────────────────────────────── ref: 9

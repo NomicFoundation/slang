@@ -28,36 +28,44 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ interface Overloaded {
    │           ─────┬────  
    │                ╰────── name: 1
  2 │     function add(int64, int64) external returns (Overloaded);
-   │              ─┬─                                 ─────┬────  
-   │               ╰────────────────────────────────────────────── name: 2
-   │                                                       │      
-   │                                                       ╰────── ref: 1
+   │              ─┬─  
+   │               ╰─── name: 2
    │ 
  4 │     function add(int64) external returns (Overloaded);
-   │              ─┬─                          ─────┬────  
-   │               ╰─────────────────────────────────────── name: 3
-   │                                                │      
-   │                                                ╰────── ref: 1
+   │              ─┬─  
+   │               ╰─── name: 3
    │ 
  7 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 4
  8 │     function someFunc(Overloaded x, int64 y) internal {
-   │              ────┬─── ─────┬──── ┬        ┬  
+   │              ────┬───            ┬        ┬  
    │                  ╰─────────────────────────── name: 5
-   │                            │     │        │  
-   │                            ╰───────────────── ref: 1
    │                                  │        │  
    │                                  ╰─────────── name: 6
    │                                           │  
    │                                           ╰── name: 7
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 2 │     function add(int64, int64) external returns (Overloaded);
+   │                                                  ─────┬────  
+   │                                                       ╰────── ref: 1
+   │ 
+ 4 │     function add(int64) external returns (Overloaded);
+   │                                           ─────┬────  
+   │                                                ╰────── ref: 1
+   │ 
+ 8 │     function someFunc(Overloaded x, int64 y) internal {
+   │                       ─────┬────  
+   │                            ╰────── ref: 1
  9 │         x.add(y).add(y, y);
    │         ┬ ─┬─ ┬  ─┬─ ┬  ┬  
    │         ╰────────────────── ref: 6

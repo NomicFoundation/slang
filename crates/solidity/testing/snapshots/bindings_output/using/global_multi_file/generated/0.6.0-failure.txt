@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
-    ╭─[main.sol:7:1]
+    ╭─[ main.sol:7:1 ]
     │
   7 │ ╭─▶ using Lib for uint;
     ┆ ┆   
@@ -10,14 +10,12 @@ Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyw
     │ │      
     │ ╰────── Error occurred here.
 ────╯
-References and definitions: 
-   ╭─[main.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ main.sol:1:1 ]
    │
  1 │ import {foo} from "other.sol";
    │         ─┬─  
    │          ╰─── name: 1
-   │          │   
-   │          ╰─── unresolved
    │ 
  3 │ library Lib {
    │         ─┬─  
@@ -27,27 +25,36 @@ References and definitions:
    │               ╰────────── name: 3
    │                       │  
    │                       ╰── name: 4
+   │
+   ├─[ main.sol:1:1 ]
+   │
+ 1 │ import {foo} from "other.sol";
+   │         ─┬─  
+   │          ╰─── unresolved
 ───╯
-Definiens: 
-   ╭─[main.sol:1:1]
+[39mDefiniens:[0m 
+   ╭─[ main.sol:1:1 ]
    │
  1 │ │   import {foo} from "other.sol";
    │ │           ─┬─  
    │ │            ╰─── definiens: 1
  2 │ ╭─▶ 
    ┆ ┆   
- 4 │ │       function nop(uint x) public {}
-   │ │   ─────────────────┬──┬──────────────  
-   │ │                    ╰─────────────────── definiens: 3
-   │ │                       │                
-   │ │                       ╰──────────────── definiens: 4
  5 │ ├─▶ }
    │ │       
    │ ╰─────── definiens: 2
+   │
+   ├─[ main.sol:1:1 ]
+   │
+ 4 │     function nop(uint x) public {}
+   │ ─────────────────┬──┬──────────────  
+   │                  ╰─────────────────── definiens: 3
+   │                     │                
+   │                     ╰──────────────── definiens: 4
 ───╯
 Parse errors:
 Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
-   ╭─[other.sol:1:1]
+   ╭─[ other.sol:1:1 ]
    │
  1 │ ╭─▶ function foo(uint a) pure returns (uint) {
    ┆ ┆   
@@ -55,5 +62,5 @@ Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyw
    │ │       
    │ ╰─────── Error occurred here.
 ───╯
-References and definitions: 
-Definiens: 
+[39mReferences and definitions:[0m 
+[39mDefiniens:[0m 

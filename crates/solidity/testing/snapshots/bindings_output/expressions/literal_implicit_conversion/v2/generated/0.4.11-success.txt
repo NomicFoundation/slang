@@ -28,8 +28,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library Lib {
     │         ─┬─  
@@ -44,9 +44,7 @@ Bindings:
   6 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 4
-  7 │     using Lib for uint;
-    │           ─┬─  
-    │            ╰─── ref: 1
+    │ 
   8 │     function test(uint x) internal {
     │              ──┬─      ┬  
     │                ╰────────── name: 5
@@ -55,6 +53,13 @@ Bindings:
   9 │         string memory s;
     │                       ┬  
     │                       ╰── name: 7
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  7 │     using Lib for uint;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
  10 │         x.sig(0x10203040).sig(s);
     │         ┬ ─┬─             ─┬─ ┬  
     │         ╰──────────────────────── ref: 6

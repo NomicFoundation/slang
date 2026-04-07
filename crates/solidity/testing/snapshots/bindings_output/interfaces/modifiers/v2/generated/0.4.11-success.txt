@@ -24,8 +24,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ interface IOwnable {
     │           ────┬───  
@@ -37,6 +37,16 @@ Bindings:
   5 │     modifier onlyOwner() {
     │              ────┬────  
     │                  ╰────── name: 3
+    │ 
+ 11 │ contract Test is IOwnable {
+    │          ──┬─  
+    │            ╰─── name: 4
+ 12 │     function test() public onlyOwner {}
+    │              ──┬─  
+    │                ╰─── name: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
   6 │         require(this.owner() == msg.sender, "not owner");
     │         ───┬───      ──┬──      ─┬─ ───┬──  
     │            ╰──────────────────────────────── built-in
@@ -51,13 +61,9 @@ Bindings:
     │         ╰── built-in
     │ 
  11 │ contract Test is IOwnable {
-    │          ──┬─    ────┬───  
-    │            ╰─────────────── name: 4
-    │                      │     
+    │                  ────┬───  
     │                      ╰───── ref: 1
  12 │     function test() public onlyOwner {}
-    │              ──┬─          ────┬────  
-    │                ╰────────────────────── name: 5
-    │                                │      
+    │                            ────┬────  
     │                                ╰────── ref: 3
 ────╯

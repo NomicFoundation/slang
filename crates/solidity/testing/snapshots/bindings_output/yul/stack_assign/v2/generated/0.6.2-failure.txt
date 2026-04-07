@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected CloseBrace or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or OpenBrace or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or YulBreakKeyword or YulContinueKeyword or YulDecimalLiteral or YulFalseKeyword or YulForKeyword or YulFunctionKeyword or YulHexLiteral or YulIdentifier or YulIfKeyword or YulLeaveKeyword or YulLetKeyword or YulSwitchKeyword or YulTrueKeyword.
-   ╭─[input.sol:6:13]
+   ╭─[ input.sol:6:13 ]
    │
  6 │ ╭─▶             =: x
  7 │ ├─▶         }
@@ -28,8 +28,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract YulStackAssignment {
    │          ─────────┬────────  

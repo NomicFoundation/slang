@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ library Lib {
    │         ─┬─  
@@ -15,12 +15,17 @@ References and definitions:
  5 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 4
- 6 │     using Lib for bytes;
-   │           ─┬─  
-   │            ╰─── ref: 1
+   │ 
  7 │     function test() internal {
    │              ──┬─  
    │                ╰─── name: 5
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 6 │     using Lib for bytes;
+   │           ─┬─  
+   │            ╰─── ref: 1
+   │ 
  8 │         msg.data.nop();
    │         ─┬─ ──┬─ ─┬─  
    │          ╰──────────── ref: built-in
@@ -29,26 +34,34 @@ References and definitions:
    │                   │   
    │                   ╰─── ref: 2
 ───╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │   ╭───▶ library Lib {
-  2 │   │         function nop(bytes calldata) internal {}
-    │   │     ──────────────────────┬─┬────────────────────  
-    │   │                           ╰──────────────────────── definiens: 2
-    │   │                             │                      
-    │   │                             ╰────────────────────── definiens: 3
-  3 │ │ ├───▶ }
-    │ │ │         
-    │ │ ╰───────── definiens: 1
-  4 │ ╭─────▶ 
-    ┆ ┆       
-  7 │ │   ╭─▶     function test() internal {
-    ┆ ┆   ┆   
-  9 │ │   ├─▶     }
-    │ │   │           
-    │ │   ╰─────────── definiens: 5
- 10 │ ├─────▶ }
+  1 │ ╭─▶ library Lib {
+    ┆ ┆   
+  3 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │         function nop(bytes calldata) internal {}
+    │     ──────────────────────┬─┬────────────────────  
+    │                           ╰──────────────────────── definiens: 2
+    │                             │                      
+    │                             ╰────────────────────── definiens: 3
+    │ 
+  4 │ ╭─▶ 
+    ┆ ┆   
+ 10 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 4
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  7 │ ╭─▶     function test() internal {
+    ┆ ┆   
+  9 │ ├─▶     }
     │ │           
-    │ ╰─────────── definiens: 4
+    │ ╰─────────── definiens: 5
 ────╯

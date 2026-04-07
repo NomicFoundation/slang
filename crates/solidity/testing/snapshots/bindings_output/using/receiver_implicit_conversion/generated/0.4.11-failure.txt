@@ -2,14 +2,14 @@
 
 Parse errors:
 Error: Expected CloseParen or Comma.
-   ╭─[input.sol:9:34]
+   ╭─[ input.sol:9:34 ]
    │
  9 │     function test(bytes calldata c) public {
    │                                  ┬  
    │                                  ╰── Error occurred here.
 ───╯
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library Lib {
     │         ─┬─  
@@ -26,9 +26,7 @@ References and definitions:
   6 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 5
-  7 │     using Lib for bytes;
-    │           ─┬─  
-    │            ╰─── ref: 1
+    │ 
   8 │     bytes s;
     │           ┬  
     │           ╰── name: 6
@@ -40,6 +38,13 @@ References and definitions:
  10 │         bytes memory m;
     │                      ┬  
     │                      ╰── name: 9
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  7 │     using Lib for bytes;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
  11 │         m.nopCalldata();
     │         ┬ ─────┬─────  
     │         ╰────────────── ref: 9
@@ -71,37 +76,49 @@ References and definitions:
     │               │      
     │               ╰────── ref: 4
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │     ╭─▶ library Lib {
-  2 │     │       function nopCalldata(bytes calldata) external {}
-    │     │   ──────────────────────────┬─────┬────────────────────  
-    │     │                             ╰──────────────────────────── definiens: 2
-    │     │                                   │                      
-    │     │                                   ╰────────────────────── definiens: 3
-  3 │     │       function nopMemory(bytes memory) external {}
-    │     │   ────────────────────────┬────────────────────────  
-    │     │                           ╰────────────────────────── definiens: 4
-  4 │ │   ├─▶ }
-    │ │   │       
-    │ │   ╰─────── definiens: 1
-  5 │ ╭─────▶ 
-    ┆ ┆       
-  8 │ │ │         bytes s;
-    │ │ │     ──────┬──────  
-    │ │ │           ╰──────── definiens: 6
-  9 │ │ ╭───▶     function test(bytes calldata c) public {
-    │ │ │                       ───────┬──────  
-    │ │ │                              ╰──────── definiens: 8
- 10 │ │ │             bytes memory m;
-    │ │ │     ────────────┬───────────  
-    │ │ │                 ╰───────────── definiens: 9
-    ┆ ┆ ┆     
- 17 │ │ ├───▶     }
-    │ │ │             
-    │ │ ╰───────────── definiens: 7
- 18 │ ├─────▶ }
+  1 │ ╭─▶ library Lib {
+    ┆ ┆   
+  4 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │         function nopCalldata(bytes calldata) external {}
+    │     ──────────────────────────┬─────┬────────────────────  
+    │                               ╰──────────────────────────── definiens: 2
+    │                                     │                      
+    │                                     ╰────────────────────── definiens: 3
+  3 │         function nopMemory(bytes memory) external {}
+    │     ────────────────────────┬────────────────────────  
+    │                             ╰────────────────────────── definiens: 4
+    │ 
+  5 │ ╭─▶ 
+    ┆ ┆   
+ 18 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  8 │ │       bytes s;
+    │ │   ──────┬──────  
+    │ │         ╰──────── definiens: 6
+  9 │ ╭─▶     function test(bytes calldata c) public {
+    ┆ ┆   
+ 17 │ ├─▶     }
     │ │           
-    │ ╰─────────── definiens: 5
+    │ ╰─────────── definiens: 7
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  9 │     function test(bytes calldata c) public {
+    │                   ───────┬──────  
+    │                          ╰──────── definiens: 8
+ 10 │         bytes memory m;
+    │ ────────────┬───────────  
+    │             ╰───────────── definiens: 9
 ────╯

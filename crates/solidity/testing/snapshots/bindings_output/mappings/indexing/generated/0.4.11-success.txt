@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract Test {
    │          ──┬─  
@@ -14,9 +14,7 @@ References and definitions:
    │                ╰──── name: 3
    │ 
  5 │     mapping(uint => Value) values;
-   │                     ──┬──  ───┬──  
-   │                       ╰──────────── ref: 2
-   │                               │    
+   │                            ───┬──  
    │                               ╰──── name: 4
    │ 
  7 │     function test(uint _id) public returns (uint) {
@@ -24,6 +22,13 @@ References and definitions:
    │                ╰──────────── name: 5
    │                         │   
    │                         ╰─── name: 6
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 5 │     mapping(uint => Value) values;
+   │                     ──┬──  
+   │                       ╰──── ref: 2
+   │ 
  8 │         return values[_id].value;
    │                ───┬── ─┬─  ──┬──  
    │                   ╰─────────────── ref: 4
@@ -32,29 +37,41 @@ References and definitions:
    │                              │    
    │                              ╰──── ref: 3
 ───╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │ ╭───│ ▶ contract Test {
-  2 │ │   ╭─▶     struct Value {
-  3 │ │   │           uint value;
-    │ │   │   ──────────┬─────────  
-    │ │   │             ╰─────────── definiens: 3
-  4 │ │   ├─▶     }
-    │ │   │           
-    │ │   ╰─────────── definiens: 2
-  5 │ │ │         mapping(uint => Value) values;
-    │ │ │     ─────────────────┬─────────────────  
-    │ │ │                      ╰─────────────────── definiens: 4
-  6 │ │ ╭───▶ 
-  7 │ │ │         function test(uint _id) public returns (uint) {
-    │ │ │                       ────┬───  
-    │ │ │                           ╰───── definiens: 6
-    ┆ ┆ ┆     
-  9 │ │ ├───▶     }
-    │ │ │             
-    │ │ ╰───────────── definiens: 5
- 10 │ ├─────▶ }
+  1 │ ╭─▶ contract Test {
+    ┆ ┆   
+ 10 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │ ╭─▶     struct Value {
+    ┆ ┆   
+  4 │ ├─▶     }
     │ │           
-    │ ╰─────────── definiens: 1
+    │ ╰─────────── definiens: 2
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  3 │             uint value;
+    │     ──────────┬─────────  
+    │               ╰─────────── definiens: 3
+    │ 
+  5 │ │       mapping(uint => Value) values;
+    │ │   ─────────────────┬─────────────────  
+    │ │                    ╰─────────────────── definiens: 4
+  6 │ ╭─▶ 
+    ┆ ┆   
+  9 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  7 │     function test(uint _id) public returns (uint) {
+    │                   ────┬───  
+    │                       ╰───── definiens: 6
 ────╯

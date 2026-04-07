@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ struct Counter {
     │        ───┬───  
@@ -11,12 +11,25 @@ References and definitions:
     │            ╰──── name: 2
     │ 
   5 │ function increment(Counter memory _counter) public {}
-    │          ────┬──── ───┬───        ────┬───  
+    │          ────┬────                ────┬───  
     │              ╰────────────────────────────── name: 3
-    │                       │               │     
-    │                       ╰───────────────────── ref: 1
     │                                       │     
     │                                       ╰───── name: 4
+    │ 
+  9 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 5
+ 10 │     function test(Counter memory c) public {
+    │              ──┬─                ┬  
+    │                ╰──────────────────── name: 6
+    │                                  │  
+    │                                  ╰── name: 7
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  5 │ function increment(Counter memory _counter) public {}
+    │                    ───┬───  
+    │                       ╰───── ref: 1
     │ 
   7 │ using {increment} for Counter;
     │        ────┬────      ───┬───  
@@ -24,49 +37,54 @@ References and definitions:
     │                          │     
     │                          ╰───── ref: 1
     │ 
-  9 │ contract Test {
-    │          ──┬─  
-    │            ╰─── name: 5
  10 │     function test(Counter memory c) public {
-    │              ──┬─ ───┬───        ┬  
-    │                ╰──────────────────── name: 6
-    │                      │           │  
-    │                      ╰────────────── ref: 1
-    │                                  │  
-    │                                  ╰── name: 7
+    │                   ───┬───  
+    │                      ╰───── ref: 1
  11 │         c.increment();
     │         ┬ ────┬────  
     │         ╰──────────── ref: 7
     │               │      
     │               ╰────── ref: 3
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │       ╭─▶ struct Counter {
-  2 │       │       uint value;
-    │       │   ────────┬───────  
-    │       │           ╰───────── definiens: 2
-  3 │     │ ├─▶ }
-    │     │ │       
-    │     │ ╰─────── definiens: 1
-  4 │     ╭───▶ 
-  5 │     ├───▶ function increment(Counter memory _counter) public {}
-    │     │                        ───────────┬───────────              
-    │     │                                   ╰───────────────────────── definiens: 4
-    │     │                                                             
-    │     ╰───────────────────────────────────────────────────────────── definiens: 3
+  1 │ ╭─▶ struct Counter {
+    ┆ ┆   
+  3 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │           uint value;
+    │       ────────┬───────  
+    │               ╰───────── definiens: 2
     │ 
-  8 │ ╭───────▶ 
-    ┆ ┆ ┆       
- 10 │ │ ╭─────▶     function test(Counter memory c) public {
-    │ │ │                         ────────┬───────  
-    │ │ │                                 ╰───────── definiens: 7
-    ┆ ┆ ┆       
- 12 │ │ ├─────▶     }
-    │ │ │               
-    │ │ ╰─────────────── definiens: 6
- 13 │ ├───────▶ }
-    │ │             
-    │ ╰───────────── definiens: 5
+  4 │   ╭─▶ 
+  5 │   ├─▶ function increment(Counter memory _counter) public {}
+    │   │                      ───────────┬───────────              
+    │   │                                 ╰───────────────────────── definiens: 4
+    │   │                                                           
+    │   ╰─────────────────────────────────────────────────────────── definiens: 3
+    │ 
+  8 │ ╭───▶ 
+    ┆ ┆     
+ 13 │ ├───▶ }
+    │ │         
+    │ ╰───────── definiens: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 10 │ ╭─▶     function test(Counter memory c) public {
+    ┆ ┆   
+ 12 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 6
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 10 │     function test(Counter memory c) public {
+    │                   ────────┬───────  
+    │                           ╰───────── definiens: 7
 ────╯

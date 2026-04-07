@@ -27,17 +27,15 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library LibFoo {
     │         ───┬──  
     │            ╰──── name: 1
   2 │     function use_foo(IFoo x) public returns (int) {}
-    │              ───┬─── ──┬─ ┬  
+    │              ───┬───      ┬  
     │                 ╰──────────── name: 2
-    │                        │  │  
-    │                        ╰───── ref: 4
     │                           │  
     │                           ╰── name: 3
     │ 
@@ -48,6 +46,22 @@ Bindings:
   6 │ contract Base {
     │          ──┬─  
     │            ╰─── name: 5
+    │ 
+  9 │ contract Test is Base {
+    │          ──┬─  
+    │            ╰─── name: 6
+ 10 │     function test(address x) public {
+    │              ──┬─         ┬  
+    │                ╰───────────── name: 7
+    │                           │  
+    │                           ╰── name: 8
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │     function use_foo(IFoo x) public returns (int) {}
+    │                      ──┬─  
+    │                        ╰─── ref: 4
+    │ 
   7 │     using LibFoo for IFoo;
     │           ───┬──     ──┬─  
     │              ╰───────────── ref: 1
@@ -55,15 +69,8 @@ Bindings:
     │                        ╰─── ref: 4
     │ 
   9 │ contract Test is Base {
-    │          ──┬─    ──┬─  
-    │            ╰─────────── name: 6
-    │                    │   
+    │                  ──┬─  
     │                    ╰─── ref: 5
- 10 │     function test(address x) public {
-    │              ──┬─         ┬  
-    │                ╰───────────── name: 7
-    │                           │  
-    │                           ╰── name: 8
     │ 
  12 │         IFoo(x).use_foo();
     │         ──┬─ ┬  ───┬───  

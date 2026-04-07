@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library Lib {
     │         ─┬─  
@@ -15,14 +15,25 @@ References and definitions:
   5 │ contract Base {
     │          ──┬─  
     │            ╰─── name: 4
+    │ 
+  9 │ contract Test is Base {
+    │          ──┬─  
+    │            ╰─── name: 5
+    │ 
+ 13 │     function test(uint x) internal {
+    │              ──┬─      ┬  
+    │                ╰────────── name: 6
+    │                        │  
+    │                        ╰── name: 7
+    │
+    ├─[ input.sol:1:1 ]
+    │
   6 │     using Lib for uint;
     │           ─┬─  
     │            ╰─── ref: 1
     │ 
   9 │ contract Test is Base {
-    │          ──┬─    ──┬─  
-    │            ╰─────────── name: 5
-    │                    │   
+    │                  ──┬─  
     │                    ╰─── ref: 4
  10 │     using Lib for uint;
     │           ─┬─  
@@ -31,45 +42,51 @@ References and definitions:
     │           ─┬─  
     │            ╰─── ref: 1
     │ 
- 13 │     function test(uint x) internal {
-    │              ──┬─      ┬  
-    │                ╰────────── name: 6
-    │                        │  
-    │                        ╰── name: 7
  14 │         x.nop();
     │         ┬ ─┬─  
     │         ╰────── ref: 7
     │            │   
     │            ╰─── ref: 2
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │     ╭───▶ library Lib {
-  2 │     │         function nop(uint x) internal {}
-    │     │     ──────────────────┬─┬────────────────  
-    │     │                       ╰──────────────────── definiens: 2
-    │     │                         │                  
-    │     │                         ╰────────────────── definiens: 3
-  3 │     ├─│ ▶ }
-    │     │ │       
-    │     ╰───────── definiens: 1
-  4 │       ╭─▶ 
-    ┆       ┆   
-  7 │ │     ├─▶ }
-    │ │     │       
-    │ │     ╰─────── definiens: 4
-  8 │ ╭───────▶ 
-    ┆ ┆         
- 12 │ │ ╭─────▶ 
- 13 │ │ │           function test(uint x) internal {
-    │ │ │                         ───┬──  
-    │ │ │                            ╰──── definiens: 7
-    ┆ ┆ ┆       
- 15 │ │ ├─────▶     }
-    │ │ │               
-    │ │ ╰─────────────── definiens: 6
- 16 │ ├───────▶ }
-    │ │             
-    │ ╰───────────── definiens: 5
+  1 │ ╭─▶ library Lib {
+    ┆ ┆   
+  3 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │           function nop(uint x) internal {}
+    │       ──────────────────┬─┬────────────────  
+    │                         ╰──────────────────── definiens: 2
+    │                           │                  
+    │                           ╰────────────────── definiens: 3
+    │ 
+  4 │   ╭─▶ 
+    ┆   ┆   
+  7 │ │ ├─▶ }
+    │ │ │       
+    │ │ ╰─────── definiens: 4
+  8 │ ╭───▶ 
+    ┆ ┆     
+ 16 │ ├───▶ }
+    │ │         
+    │ ╰───────── definiens: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 12 │ ╭─▶ 
+    ┆ ┆   
+ 15 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 6
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 13 │     function test(uint x) internal {
+    │                   ───┬──  
+    │                      ╰──── definiens: 7
 ────╯

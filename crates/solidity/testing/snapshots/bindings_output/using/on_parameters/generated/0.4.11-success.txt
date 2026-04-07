@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ library Lib {
    │         ─┬─  
@@ -15,9 +15,7 @@ References and definitions:
  4 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 4
- 5 │     using Lib for uint256;
-   │           ─┬─  
-   │            ╰─── ref: 1
+   │ 
  6 │     function test(uint256 x) public returns (uint256 y) {
    │              ──┬─         ┬                          ┬  
    │                ╰──────────────────────────────────────── name: 5
@@ -25,6 +23,13 @@ References and definitions:
    │                           ╰───────────────────────────── name: 6
    │                                                      │  
    │                                                      ╰── name: 7
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 5 │     using Lib for uint256;
+   │           ─┬─  
+   │            ╰─── ref: 1
+   │ 
  7 │         x.nop();
    │         ┬ ─┬─  
    │         ╰────── ref: 6
@@ -36,30 +41,42 @@ References and definitions:
    │            │   
    │            ╰─── ref: 2
 ───╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │     ╭─▶ library Lib {
-  2 │     │       function nop(uint256 x) internal {}
-    │     │   ────────────────────┬┬──────────────────  
-    │     │                       ╰───────────────────── definiens: 2
-    │     │                        │                    
-    │     │                        ╰──────────────────── definiens: 3
-  3 │ │   ├─▶ }
-    │ │   │       
-    │ │   ╰─────── definiens: 1
-  4 │ ╭─────▶ contract Test {
-    ┆ ┆ ┆     
-  6 │ │ ╭───▶     function test(uint256 x) public returns (uint256 y) {
-    │ │ │                       ────┬────                  ────┬────  
-    │ │ │                           ╰───────────────────────────────── definiens: 6
-    │ │ │                                                      │      
-    │ │ │                                                      ╰────── definiens: 7
-    ┆ ┆ ┆     
-  9 │ │ ├───▶     }
-    │ │ │             
-    │ │ ╰───────────── definiens: 5
- 10 │ ├─────▶ }
+  1 │ ╭─▶ library Lib {
+    ┆ ┆   
+  3 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │         function nop(uint256 x) internal {}
+    │     ────────────────────┬┬──────────────────  
+    │                         ╰───────────────────── definiens: 2
+    │                          │                    
+    │                          ╰──────────────────── definiens: 3
+    │ 
+  4 │ ╭─▶ contract Test {
+    ┆ ┆   
+ 10 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 4
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │ ╭─▶     function test(uint256 x) public returns (uint256 y) {
+    ┆ ┆   
+  9 │ ├─▶     }
     │ │           
-    │ ╰─────────── definiens: 4
+    │ ╰─────────── definiens: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │     function test(uint256 x) public returns (uint256 y) {
+    │                   ────┬────                  ────┬────  
+    │                       ╰───────────────────────────────── definiens: 6
+    │                                                  │      
+    │                                                  ╰────── definiens: 7
 ────╯

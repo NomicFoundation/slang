@@ -1,13 +1,22 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ function first(uint[] memory values) returns (uint) {
    │          ──┬──               ───┬──  
    │            ╰───────────────────────── name: 1
    │                                 │    
    │                                 ╰──── name: 2
+   │ 
+ 7 │ function test(uint[] memory values) returns (uint) {
+   │          ──┬─               ───┬──  
+   │            ╰──────────────────────── name: 3
+   │                                │    
+   │                                ╰──── name: 4
+   │
+   ├─[ input.sol:1:1 ]
+   │
  2 │     return values[0];
    │            ───┬──  
    │               ╰──── ref: 2
@@ -16,34 +25,36 @@ References and definitions:
    │        ──┬──  
    │          ╰──── ref: 1
    │ 
- 7 │ function test(uint[] memory values) returns (uint) {
-   │          ──┬─               ───┬──  
-   │            ╰──────────────────────── name: 3
-   │                                │    
-   │                                ╰──── name: 4
  8 │     return values.first();
    │            ───┬── ──┬──  
    │               ╰────────── ref: 4
    │                     │    
    │                     ╰──── ref: 1
 ───╯
-Definiens: 
-   ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+   ╭─[ input.sol:1:1 ]
    │
- 1 │   ╭─▶ function first(uint[] memory values) returns (uint) {
-   │   │                  ──────────┬─────────  
-   │   │                            ╰─────────── definiens: 2
-   ┆   ┆   
- 3 │   ├─▶ }
-   │   │       
-   │   ╰─────── definiens: 1
+ 1 │ ╭─▶ function first(uint[] memory values) returns (uint) {
+   ┆ ┆   
+ 3 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 1
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 1 │     function first(uint[] memory values) returns (uint) {
+   │                    ──────────┬─────────  
+   │                              ╰─────────── definiens: 2
    │ 
- 6 │ ╭───▶ 
- 7 │ │     function test(uint[] memory values) returns (uint) {
-   │ │                   ──────────┬─────────  
-   │ │                             ╰─────────── definiens: 4
-   ┆ ┆     
- 9 │ ├───▶ }
-   │ │         
-   │ ╰───────── definiens: 3
+ 6 │ ╭─▶ 
+   ┆ ┆   
+ 9 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 3
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 7 │ function test(uint[] memory values) returns (uint) {
+   │               ──────────┬─────────  
+   │                         ╰─────────── definiens: 4
 ───╯

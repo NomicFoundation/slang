@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected AddressKeyword or BoolKeyword or BytesKeyword or ContractKeyword or EnumKeyword or ErrorKeyword or FixedKeyword or FunctionKeyword or Identifier or ImportKeyword or IntKeyword or InterfaceKeyword or LibraryKeyword or MappingKeyword or PragmaKeyword or StringKeyword or StructKeyword or TypeKeyword or UfixedKeyword or UintKeyword.
-   ╭─[input.sol:5:1]
+   ╭─[ input.sol:5:1 ]
    │
  5 │ ╭─▶ using {first} for uint[];
    ┆ ┆   
@@ -10,8 +10,8 @@ Error: Expected AddressKeyword or BoolKeyword or BytesKeyword or ContractKeyword
    │ │       
    │ ╰─────── Error occurred here.
 ───╯
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ function first(uint[] memory values) returns (uint) {
    │          ──┬──               ───┬──  
@@ -22,14 +22,18 @@ References and definitions:
    │            ───┬──  
    │               ╰──── ref: 2
 ───╯
-Definiens: 
-   ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ ╭─▶ function first(uint[] memory values) returns (uint) {
-   │ │                  ──────────┬─────────  
-   │ │                            ╰─────────── definiens: 2
    ┆ ┆   
  3 │ ├─▶ }
    │ │       
    │ ╰─────── definiens: 1
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 1 │ function first(uint[] memory values) returns (uint) {
+   │                ──────────┬─────────  
+   │                          ╰─────────── definiens: 2
 ───╯

@@ -2,21 +2,21 @@
 
 Parse errors:
 Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
-   ╭─[input.sol:4:23]
+   ╭─[ input.sol:4:23 ]
    │
  4 │         string name = type(Test).name;
    │                       ───────┬───────  
    │                              ╰───────── Error occurred here.
 ───╯
 Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or UfixedKeyword or UintKeyword.
-   ╭─[input.sol:5:24]
+   ╭─[ input.sol:5:24 ]
    │
  5 │         Answer first = type(Answer).min;
    │                        ────────┬───────  
    │                                ╰───────── Error occurred here.
 ───╯
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract Test {
    │          ──┬─  
@@ -40,28 +40,36 @@ References and definitions:
    │                  │    
    │                  ╰──── name: 7
 ───╯
-Definiens: 
-   ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+   ╭─[ input.sol:1:1 ]
    │
- 1 │ ╭───▶ contract Test {
- 2 │ │ │       enum Answer { Yes, No }
-   │ │ │   ──────────────┬────┬────┬───  
-   │ │ │                 ╰─────────────── definiens: 2
-   │ │ │                      │    │     
-   │ │ │                      ╰────────── definiens: 3
-   │ │ │                           │     
-   │ │ │                           ╰───── definiens: 4
- 3 │ │ ╭─▶     function testFunc() {
- 4 │ │ │           string name = type(Test).name;
-   │ │ │   ───────────────────┬───────────────────  
-   │ │ │                      ╰───────────────────── definiens: 6
- 5 │ │ │           Answer first = type(Answer).min;
-   │ │ │   ────────────────────┬────────────────────  
-   │ │ │                       ╰────────────────────── definiens: 7
- 6 │ │ ├─▶     }
-   │ │ │           
-   │ │ ╰─────────── definiens: 5
- 7 │ ├───▶ }
-   │ │         
-   │ ╰───────── definiens: 1
+ 1 │ ╭─▶ contract Test {
+   ┆ ┆   
+ 7 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 1
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 2 │ │       enum Answer { Yes, No }
+   │ │   ──────────────┬────┬────┬───  
+   │ │                 ╰─────────────── definiens: 2
+   │ │                      │    │     
+   │ │                      ╰────────── definiens: 3
+   │ │                           │     
+   │ │                           ╰───── definiens: 4
+ 3 │ ╭─▶     function testFunc() {
+   ┆ ┆   
+ 6 │ ├─▶     }
+   │ │           
+   │ ╰─────────── definiens: 5
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 4 │         string name = type(Test).name;
+   │ ───────────────────┬───────────────────  
+   │                    ╰───────────────────── definiens: 6
+ 5 │         Answer first = type(Answer).min;
+   │ ────────────────────┬────────────────────  
+   │                     ╰────────────────────── definiens: 7
 ───╯

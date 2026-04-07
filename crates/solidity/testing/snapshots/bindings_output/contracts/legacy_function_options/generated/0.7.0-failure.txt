@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract RefundVault {
    │          ─────┬─────  
@@ -38,28 +38,41 @@ References and definitions:
    │                          │    
    │                          ╰──── unresolved
 ───╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │   ╭───▶ contract RefundVault {
-  2 │   │         function deposit() public payable;
-    │   │     ───────────────────┬───────────────────  
-    │   │                        ╰───────────────────── definiens: 2
-  3 │   │         function deposit2() payable; // valid in Solidity < 0.5.0
-    │   │     ───────────────────────────────┬──────────────────────────────  
-    │   │                                    ╰──────────────────────────────── definiens: 3
-  4 │ │ ├───▶ }
-    │ │ │         
-    │ │ ╰───────── definiens: 1
-  5 │ ╭───│ ▶ contract Test {
-  6 │ │   ╭─▶     function test(RefundVault vault) internal {
-    │ │   │                     ────────┬────────  
-    │ │   │                             ╰────────── definiens: 6
-    ┆ ┆   ┆   
-  9 │ │   ├─▶     }
-    │ │   │           
-    │ │   ╰─────────── definiens: 5
- 10 │ ├─────▶ }
+  1 │ ╭─▶ contract RefundVault {
+    ┆ ┆   
+  4 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │         function deposit() public payable;
+    │     ───────────────────┬───────────────────  
+    │                        ╰───────────────────── definiens: 2
+  3 │         function deposit2() payable; // valid in Solidity < 0.5.0
+    │     ───────────────────────────────┬──────────────────────────────  
+    │                                    ╰──────────────────────────────── definiens: 3
+    │ 
+  5 │ ╭─▶ contract Test {
+    ┆ ┆   
+ 10 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 4
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │ ╭─▶     function test(RefundVault vault) internal {
+    ┆ ┆   
+  9 │ ├─▶     }
     │ │           
-    │ ╰─────────── definiens: 4
+    │ ╰─────────── definiens: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │     function test(RefundVault vault) internal {
+    │                   ────────┬────────  
+    │                           ╰────────── definiens: 6
 ────╯

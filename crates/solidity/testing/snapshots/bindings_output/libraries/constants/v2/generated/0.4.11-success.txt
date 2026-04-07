@@ -21,8 +21,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library Lib {
     │         ─┬─  
@@ -37,9 +37,6 @@ Bindings:
   5 │     function test() public returns (uint) {
     │              ──┬─  
     │                ╰─── name: 4
-  6 │         return X;
-    │                ┬  
-    │                ╰── ref: 2
     │ 
  10 │ contract Test {
     │          ──┬─  
@@ -47,6 +44,13 @@ Bindings:
  11 │     function test() public {
     │              ──┬─  
     │                ╰─── name: 6
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │         return X;
+    │                ┬  
+    │                ╰── ref: 2
+    │ 
  12 │         Lib.Y;
     │         ─┬─ ┬  
     │          ╰───── ref: 1

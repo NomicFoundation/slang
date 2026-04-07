@@ -1,57 +1,74 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract Base {
    │          ──┬─  
    │            ╰─── name: 1
  2 │     modifier foo { _; }
-   │              ─┬─   ┬  
-   │               ╰─────── name: 2
-   │                    │  
+   │              ─┬─  
+   │               ╰─── name: 2
+   │ 
+ 5 │ contract Test is Base {
+   │          ──┬─  
+   │            ╰─── name: 3
+ 6 │     function testUnqualified() public foo {
+   │              ───────┬───────  
+   │                     ╰───────── name: 4
+   │ 
+ 8 │     function testQualified() public Base.foo {
+   │              ──────┬──────  
+   │                    ╰──────── name: 5
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 2 │     modifier foo { _; }
+   │                    ┬  
    │                    ╰── ref: built-in
    │ 
  5 │ contract Test is Base {
-   │          ──┬─    ──┬─  
-   │            ╰─────────── name: 3
-   │                    │   
+   │                  ──┬─  
    │                    ╰─── ref: 1
  6 │     function testUnqualified() public foo {
-   │              ───────┬───────          ─┬─  
-   │                     ╰────────────────────── name: 4
-   │                                        │   
+   │                                       ─┬─  
    │                                        ╰─── ref: 2
    │ 
  8 │     function testQualified() public Base.foo {
-   │              ──────┬──────          ──┬─ ─┬─  
-   │                    ╰────────────────────────── name: 5
-   │                                       │   │   
+   │                                     ──┬─ ─┬─  
    │                                       ╰─────── ref: 1
    │                                           │   
    │                                           ╰─── ref: 2
 ───╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │       ╭─▶ contract Base {
-  2 │       │       modifier foo { _; }
-    │       │   ────────────┬───────────  
-    │       │               ╰───────────── definiens: 2
-  3 │ │     ├─▶ }
-    │ │     │       
-    │ │     ╰─────── definiens: 1
-  4 │ ╭───────▶ 
-    ┆ ┆   ┆     
-  6 │ │   ╭───▶     function testUnqualified() public foo {
-  7 │ │ │ ├───▶     }
-    │ │ │ │             
-    │ │ │ ╰───────────── definiens: 4
-  8 │ │ ╭─────▶     function testQualified() public Base.foo {
-  9 │ │ ├─────▶     }
-    │ │ │               
-    │ │ ╰─────────────── definiens: 5
- 10 │ ├───────▶ }
+  1 │ ╭─▶ contract Base {
+    ┆ ┆   
+  3 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │         modifier foo { _; }
+    │     ────────────┬───────────  
+    │                 ╰───────────── definiens: 2
+    │ 
+  4 │ ╭─▶ 
+    ┆ ┆   
+ 10 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 3
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │   ╭─▶     function testUnqualified() public foo {
+  7 │ │ ├─▶     }
+    │ │ │           
+    │ │ ╰─────────── definiens: 4
+  8 │ ╭───▶     function testQualified() public Base.foo {
+  9 │ ├───▶     }
     │ │             
-    │ ╰───────────── definiens: 3
+    │ ╰───────────── definiens: 5
 ────╯

@@ -1,35 +1,43 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ interface Overloaded {
    │           ─────┬────  
    │                ╰────── name: 1
  2 │     function add(int64, int64) external returns (Overloaded);
-   │              ─┬─                                 ─────┬────  
-   │               ╰────────────────────────────────────────────── name: 2
-   │                                                       │      
-   │                                                       ╰────── ref: 1
+   │              ─┬─  
+   │               ╰─── name: 2
    │ 
  4 │     function add(int64) external returns (Overloaded);
-   │              ─┬─                          ─────┬────  
-   │               ╰─────────────────────────────────────── name: 3
-   │                                                │      
-   │                                                ╰────── ref: 1
+   │              ─┬─  
+   │               ╰─── name: 3
    │ 
  7 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 4
  8 │     function someFunc(Overloaded x, int64 y) internal {
-   │              ────┬─── ─────┬──── ┬        ┬  
+   │              ────┬───            ┬        ┬  
    │                  ╰─────────────────────────── name: 5
-   │                            │     │        │  
-   │                            ╰───────────────── ref: 1
    │                                  │        │  
    │                                  ╰─────────── name: 6
    │                                           │  
    │                                           ╰── name: 7
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 2 │     function add(int64, int64) external returns (Overloaded);
+   │                                                  ─────┬────  
+   │                                                       ╰────── ref: 1
+   │ 
+ 4 │     function add(int64) external returns (Overloaded);
+   │                                           ─────┬────  
+   │                                                ╰────── ref: 1
+   │ 
+ 8 │     function someFunc(Overloaded x, int64 y) internal {
+   │                       ─────┬────  
+   │                            ╰────── ref: 1
  9 │         x.add(y).add(y, y);
    │         ┬ ─┬─ ┬  ─┬─ ┬  ┬  
    │         ╰────────────────── ref: 6
@@ -44,32 +52,44 @@ References and definitions:
    │                         │  
    │                         ╰── ref: 7
 ───╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │ ╭───────▶ interface Overloaded {
-  2 │ │     │       function add(int64, int64) external returns (Overloaded);
-    │ │     │   ───────────────────────────────┬──────────────────────────────  
-    │ │     │                                  ╰──────────────────────────────── definiens: 2
-  3 │ │     ╭─▶ 
-  4 │ │     ├─▶     function add(int64) external returns (Overloaded);
-    │ │     │                                                            
-    │ │     ╰──────────────────────────────────────────────────────────── definiens: 3
-  5 │ ├─│ ────▶ }
-    │ │ │           
-    │ ╰───────────── definiens: 1
-  6 │   ╭─────▶ 
-    ┆   ┆ ┆     
-  8 │   │ ╭───▶     function someFunc(Overloaded x, int64 y) internal {
-    │   │ │                           ──────┬───── ────┬───  
-    │   │ │                                 ╰──────────────── definiens: 6
-    │   │ │                                            │     
-    │   │ │                                            ╰───── definiens: 7
-    ┆   ┆ ┆     
- 10 │   │ ├───▶     }
-    │   │ │             
-    │   │ ╰───────────── definiens: 5
- 11 │   ├─────▶ }
-    │   │           
-    │   ╰─────────── definiens: 4
+  1 │ ╭─▶ interface Overloaded {
+    ┆ ┆   
+  5 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │   │       function add(int64, int64) external returns (Overloaded);
+    │   │   ───────────────────────────────┬──────────────────────────────  
+    │   │                                  ╰──────────────────────────────── definiens: 2
+  3 │   ╭─▶ 
+  4 │   ├─▶     function add(int64) external returns (Overloaded);
+    │   │                                                            
+    │   ╰──────────────────────────────────────────────────────────── definiens: 3
+    │ 
+  6 │ ╭───▶ 
+    ┆ ┆     
+ 11 │ ├───▶ }
+    │ │         
+    │ ╰───────── definiens: 4
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  8 │ ╭─▶     function someFunc(Overloaded x, int64 y) internal {
+    ┆ ┆   
+ 10 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  8 │     function someFunc(Overloaded x, int64 y) internal {
+    │                       ──────┬───── ────┬───  
+    │                             ╰──────────────── definiens: 6
+    │                                        │     
+    │                                        ╰───── definiens: 7
 ────╯

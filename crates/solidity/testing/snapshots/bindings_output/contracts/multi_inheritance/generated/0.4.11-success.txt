@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Base1 {
     │          ──┬──  
@@ -20,6 +20,13 @@ References and definitions:
   9 │ contract Derived is
     │          ───┬───  
     │             ╰───── name: 5
+    │ 
+ 13 │     function test() returns (int) {
+    │              ──┬─  
+    │                ╰─── name: 6
+    │
+    ├─[ input.sol:1:1 ]
+    │
  10 │     Base1,
     │     ──┬──  
     │       ╰──── ref: 1
@@ -27,41 +34,50 @@ References and definitions:
     │     ──┬──  
     │       ╰──── ref: 3
     │ 
- 13 │     function test() returns (int) {
-    │              ──┬─  
-    │                ╰─── name: 6
  14 │         return base1() + base2();
     │                ──┬──     ──┬──  
     │                  ╰────────────── ref: 2
     │                            │    
     │                            ╰──── ref: 4
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │       ╭─▶ contract Base1 {
-  2 │       │       function base1() returns (int) { return 1; }
-    │       │   ────────────────────────┬────────────────────────  
-    │       │                           ╰────────────────────────── definiens: 2
-  3 │     │ ├─▶ }
-    │     │ │       
-    │     │ ╰─────── definiens: 1
-  4 │     ╭───▶ 
-    ┆     ┆     
-  6 │     │         function base2() returns (int) { return 2; }
-    │     │     ────────────────────────┬────────────────────────  
-    │     │                             ╰────────────────────────── definiens: 4
-  7 │ │   ├───▶ }
-    │ │   │         
-    │ │   ╰───────── definiens: 3
-  8 │ ╭───────▶ 
-    ┆ ┆         
- 13 │ │ ╭─────▶     function test() returns (int) {
-    ┆ ┆ ┆       
- 15 │ │ ├─────▶     }
-    │ │ │               
-    │ │ ╰─────────────── definiens: 6
- 16 │ ├───────▶ }
-    │ │             
-    │ ╰───────────── definiens: 5
+  1 │ ╭─▶ contract Base1 {
+    ┆ ┆   
+  3 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │         function base1() returns (int) { return 1; }
+    │     ────────────────────────┬────────────────────────  
+    │                             ╰────────────────────────── definiens: 2
+    │ 
+  4 │ ╭─▶ 
+    ┆ ┆   
+  7 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 3
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │         function base2() returns (int) { return 2; }
+    │     ────────────────────────┬────────────────────────  
+    │                             ╰────────────────────────── definiens: 4
+    │ 
+  8 │ ╭─▶ 
+    ┆ ┆   
+ 16 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 13 │ ╭─▶     function test() returns (int) {
+    ┆ ┆   
+ 15 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 6
 ────╯

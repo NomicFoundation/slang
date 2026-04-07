@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ type ShortString is bytes32;
     │      ─────┬─────  
@@ -10,6 +10,36 @@ References and definitions:
   3 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 2
+    │ 
+  7 │     function test(bytes32 data) public {
+    │              ──┬─         ──┬─  
+    │                ╰──────────────── name: 3
+    │                             │   
+    │                             ╰─── name: 4
+  8 │         ShortString s;
+    │                     ┬  
+    │                     ╰── name: 5
+    │ 
+ 15 │ library ShortStringLib {
+    │         ───────┬──────  
+    │                ╰──────── name: 6
+ 16 │     function nop(ShortString x) internal {}
+    │              ─┬─             ┬  
+    │               ╰───────────────── name: 7
+    │                              │  
+    │                              ╰── name: 8
+    │ 
+ 19 │ library BytesLib {
+    │         ────┬───  
+    │             ╰───── name: 9
+ 20 │     function pon(bytes32 x) internal {}
+    │              ─┬─         ┬  
+    │               ╰───────────── name: 10
+    │                          │  
+    │                          ╰── name: 11
+    │
+    ├─[ input.sol:1:1 ]
+    │
   4 │     using ShortStringLib for ShortString;
     │           ───────┬──────     ─────┬─────  
     │                  ╰──────────────────────── ref: 6
@@ -19,16 +49,9 @@ References and definitions:
     │           ────┬───  
     │               ╰───── ref: 9
     │ 
-  7 │     function test(bytes32 data) public {
-    │              ──┬─         ──┬─  
-    │                ╰──────────────── name: 3
-    │                             │   
-    │                             ╰─── name: 4
   8 │         ShortString s;
-    │         ─────┬───── ┬  
-    │              ╰───────── ref: 1
-    │                     │  
-    │                     ╰── name: 5
+    │         ─────┬─────  
+    │              ╰─────── ref: 1
     │ 
  10 │         ShortString.wrap(data).nop();
     │         ─────┬───── ──┬─ ──┬─  ─┬─  
@@ -49,66 +72,64 @@ References and definitions:
     │                                │   
     │                                ╰─── ref: 10
     │ 
- 15 │ library ShortStringLib {
-    │         ───────┬──────  
-    │                ╰──────── name: 6
  16 │     function nop(ShortString x) internal {}
-    │              ─┬─ ─────┬───── ┬  
-    │               ╰───────────────── name: 7
-    │                       │      │  
-    │                       ╰───────── ref: 1
-    │                              │  
-    │                              ╰── name: 8
-    │ 
- 19 │ library BytesLib {
-    │         ────┬───  
-    │             ╰───── name: 9
- 20 │     function pon(bytes32 x) internal {}
-    │              ─┬─         ┬  
-    │               ╰───────────── name: 10
-    │                          │  
-    │                          ╰── name: 11
+    │                  ─────┬─────  
+    │                       ╰─────── ref: 1
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │ │         type ShortString is bytes32;
-    │ │         ──────────────┬──────────────  
-    │ │                       ╰──────────────── definiens: 1
-  2 │ ╭───────▶ 
-    ┆ ┆         
-  6 │ │ ╭─────▶ 
-  7 │ │ │           function test(bytes32 data) public {
-    │ │ │                         ──────┬─────  
-    │ │ │                               ╰─────── definiens: 4
-  8 │ │ │               ShortString s;
-    │ │ │       ───────────┬───────────  
-    │ │ │                  ╰───────────── definiens: 5
-    ┆ ┆ ┆       
- 12 │ │ ├─────▶     }
-    │ │ │               
-    │ │ ╰─────────────── definiens: 3
- 13 │ ├───│ ──▶ }
-    │ │   │         
-    │ ╰───────────── definiens: 2
- 14 │     ╭───▶ 
-    ┆     ┆     
- 16 │     │         function nop(ShortString x) internal {}
-    │     │     ──────────────────────┬┬────────────────────  
-    │     │                           ╰─────────────────────── definiens: 7
-    │     │                            │                      
-    │     │                            ╰────────────────────── definiens: 8
- 17 │     ├─│ ▶ }
-    │     │ │       
-    │     ╰───────── definiens: 6
- 18 │       ╭─▶ 
-    ┆       ┆   
- 20 │       │       function pon(bytes32 x) internal {}
-    │       │   ────────────────────┬┬──────────────────  
-    │       │                       ╰───────────────────── definiens: 10
-    │       │                        │                    
-    │       │                        ╰──────────────────── definiens: 11
- 21 │       ├─▶ }
-    │       │       
-    │       ╰─────── definiens: 9
+  1 │ │   type ShortString is bytes32;
+    │ │   ──────────────┬──────────────  
+    │ │                 ╰──────────────── definiens: 1
+  2 │ ╭─▶ 
+    ┆ ┆   
+ 13 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 2
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │ ╭─▶ 
+    ┆ ┆   
+ 12 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 3
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  7 │         function test(bytes32 data) public {
+    │                       ──────┬─────  
+    │                             ╰─────── definiens: 4
+  8 │             ShortString s;
+    │     ───────────┬───────────  
+    │                ╰───────────── definiens: 5
+    │ 
+ 14 │ ╭─▶ 
+    ┆ ┆   
+ 17 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 6
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 16 │         function nop(ShortString x) internal {}
+    │     ──────────────────────┬┬────────────────────  
+    │                           ╰─────────────────────── definiens: 7
+    │                            │                      
+    │                            ╰────────────────────── definiens: 8
+    │ 
+ 18 │ ╭─▶ 
+    ┆ ┆   
+ 21 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 9
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 20 │     function pon(bytes32 x) internal {}
+    │ ────────────────────┬┬──────────────────  
+    │                     ╰───────────────────── definiens: 10
+    │                      │                    
+    │                      ╰──────────────────── definiens: 11
 ────╯

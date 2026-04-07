@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected Equal or Semicolon.
-   ╭─[input.sol:3:19]
+   ╭─[ input.sol:3:19 ]
    │
  3 │ ╭─▶     error Failure (
    ┆ ┆   
@@ -11,7 +11,7 @@ Error: Expected Equal or Semicolon.
    │ ╰──────────── Error occurred here.
 ───╯
 Error: Expected Equal or Semicolon.
-   ╭─[input.sol:8:23]
+   ╭─[ input.sol:8:23 ]
    │
  8 │         revert Failure({cause: Cause.NotAuthorized, details: "not owner"});
    │                       ──────────────────────────┬─────────────────────────  
@@ -42,8 +42,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract Test {
    │          ──┬─  
@@ -58,17 +58,23 @@ Bindings:
    │                                                        │       
    │                                                        ╰─────── name: 5
  3 │     error Failure (
-   │     ──┬── ───┬───  
-   │       ╰──────────── unresolved
-   │              │     
+   │           ───┬───  
    │              ╰───── name: 6
    │ 
  7 │     function test() public {
    │              ──┬─  
    │                ╰─── name: 7
  8 │         revert Failure({cause: Cause.NotAuthorized, details: "not owner"});
-   │         ───┬── ───┬───  
-   │            ╰──────────── unresolved
-   │                   │     
+   │                ───┬───  
    │                   ╰───── name: 8
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 3 │     error Failure (
+   │     ──┬──  
+   │       ╰──── unresolved
+   │ 
+ 8 │         revert Failure({cause: Cause.NotAuthorized, details: "not owner"});
+   │         ───┬──  
+   │            ╰──── unresolved
 ───╯

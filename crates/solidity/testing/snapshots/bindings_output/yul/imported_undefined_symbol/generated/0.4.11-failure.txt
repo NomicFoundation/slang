@@ -1,13 +1,11 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ import { slot } from "./slots.sol";  // even if undefined, the local def should have 2 references
     │          ──┬─  
     │            ╰─── name: 1
-    │            │   
-    │            ╰─── unresolved
     │ 
   3 │ contract Foo {
     │          ─┬─  
@@ -19,6 +17,19 @@ References and definitions:
     │              ──┬──  
     │                ╰──── name: 4
     │ 
+ 11 │     function useSlotInSolidity() public {
+    │              ────────┬────────  
+    │                      ╰────────── name: 5
+ 12 │         uint value = slot;
+    │              ──┬──  
+    │                ╰──── name: 6
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  1 │ import { slot } from "./slots.sol";  // even if undefined, the local def should have 2 references
+    │          ──┬─  
+    │            ╰─── unresolved
+    │ 
   7 │             value := sload(slot)
     │             ──┬──    ──┬── ──┬─  
     │               ╰────────────────── ref: 4
@@ -27,40 +38,45 @@ References and definitions:
     │                              │   
     │                              ╰─── ref: 1
     │ 
- 11 │     function useSlotInSolidity() public {
-    │              ────────┬────────  
-    │                      ╰────────── name: 5
  12 │         uint value = slot;
-    │              ──┬──   ──┬─  
-    │                ╰─────────── name: 6
-    │                        │   
+    │                      ──┬─  
     │                        ╰─── ref: 1
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │ │       import { slot } from "./slots.sol";  // even if undefined, the local def should have 2 references
-    │ │               ──┬──  
-    │ │                 ╰──── definiens: 1
-  2 │ ╭─────▶ 
-    ┆ ┆ ┆     
-  4 │ │ ╭───▶     function useSlotInAssembly() public {
-  5 │ │ │             uint value;
-    │ │ │     ──────────┬─────────  
-    │ │ │               ╰─────────── definiens: 4
-    ┆ ┆ ┆     
-  9 │ │ ├─│ ▶     }
-    │ │ │ │           
-    │ │ ╰───────────── definiens: 3
- 10 │ │   ╭─▶ 
-    ┆ ┆   ┆   
- 12 │ │   │           uint value = slot;
-    │ │   │   ─────────────┬─────────────  
-    │ │   │                ╰─────────────── definiens: 6
- 13 │ │   ├─▶     }
-    │ │   │           
-    │ │   ╰─────────── definiens: 5
- 14 │ ├─────▶ }
+  1 │ │   import { slot } from "./slots.sol";  // even if undefined, the local def should have 2 references
+    │ │           ──┬──  
+    │ │             ╰──── definiens: 1
+  2 │ ╭─▶ 
+    ┆ ┆   
+ 14 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 2
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  4 │ ╭─▶     function useSlotInAssembly() public {
+    ┆ ┆   
+  9 │ ├─▶     }
     │ │           
-    │ ╰─────────── definiens: 2
+    │ ╰─────────── definiens: 3
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  5 │             uint value;
+    │     ──────────┬─────────  
+    │               ╰─────────── definiens: 4
+    │ 
+ 10 │ ╭─▶ 
+    ┆ ┆   
+ 13 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 12 │         uint value = slot;
+    │ ─────────────┬─────────────  
+    │              ╰─────────────── definiens: 6
 ────╯

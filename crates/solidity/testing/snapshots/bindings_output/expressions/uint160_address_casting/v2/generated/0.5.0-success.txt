@@ -21,8 +21,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ library Utils {
    │         ──┬──  
@@ -36,15 +36,19 @@ Bindings:
  5 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 4
- 6 │     using Utils for address payable;
-   │           ──┬──  
-   │             ╰──── ref: 1
    │ 
  8 │     function test(address _to) internal {
    │              ──┬─         ─┬─  
    │                ╰─────────────── name: 5
    │                            │   
    │                            ╰─── name: 6
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 6 │     using Utils for address payable;
+   │           ──┬──  
+   │             ╰──── ref: 1
+   │ 
  9 │         address(uint160(_to)).foo();  // should bind in >= 0.5.0 and < 0.8.0
    │                         ─┬─   ─┬─  
    │                          ╰───────── ref: 6

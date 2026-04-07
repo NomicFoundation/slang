@@ -27,8 +27,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library SafeMath {
     │         ────┬───  
@@ -45,10 +45,8 @@ Bindings:
     │                  ╰────── name: 4
     │ 
   9 │ contract Token is ERC20Basic {
-    │          ──┬──    ─────┬────  
-    │            ╰────────────────── name: 5
-    │                        │      
-    │                        ╰────── ref: 3
+    │          ──┬──  
+    │            ╰──── name: 5
  10 │     function balanceOf(address) public returns (uint);
     │              ────┬────  
     │                  ╰────── name: 6
@@ -56,18 +54,28 @@ Bindings:
  13 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 7
- 14 │     using SafeMath for uint256;
-    │           ────┬───  
-    │               ╰───── ref: 1
+    │ 
  15 │     Token token;
-    │     ──┬── ──┬──  
-    │       ╰────────── ref: 5
-    │             │    
+    │           ──┬──  
     │             ╰──── name: 8
     │ 
  17 │     function test() public {
     │              ──┬─  
     │                ╰─── name: 9
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  9 │ contract Token is ERC20Basic {
+    │                   ─────┬────  
+    │                        ╰────── ref: 3
+    │ 
+ 14 │     using SafeMath for uint256;
+    │           ────┬───  
+    │               ╰───── ref: 1
+ 15 │     Token token;
+    │     ──┬──  
+    │       ╰──── ref: 5
+    │ 
  18 │         token.balanceOf(this).add(1);
     │         ──┬── ────┬────       ─┬─  
     │           ╰──────────────────────── ref: 8

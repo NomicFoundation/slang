@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected CloseParen or Comma.
-    ╭─[input.sol:15:40]
+    ╭─[ input.sol:15:40 ]
     │
  15 │     function test(Utils.Point calldata x) public {
     │                                        ┬  
@@ -49,8 +49,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library Utils {
     │         ──┬──  
@@ -66,14 +66,8 @@ Bindings:
     │              ╰── name: 4
     │ 
   7 │     function add(Point memory, Point memory) internal returns (Point memory) {}
-    │              ─┬─ ──┬──         ──┬──                           ──┬──  
-    │               ╰─────────────────────────────────────────────────────── name: 5
-    │                    │             │                               │    
-    │                    ╰────────────────────────────────────────────────── ref: 2
-    │                                  │                               │    
-    │                                  ╰──────────────────────────────────── ref: 2
-    │                                                                  │    
-    │                                                                  ╰──── ref: 2
+    │              ─┬─  
+    │               ╰─── name: 5
   8 │     function add(uint, uint) internal returns (uint) {}
     │              ─┬─  
     │               ╰─── name: 6
@@ -81,6 +75,26 @@ Bindings:
  11 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 7
+    │ 
+ 15 │     function test(Utils.Point calldata x) public {
+    │              ──┬─             ────┬───  
+    │                ╰──────────────────────── name: 8
+    │                                   │     
+    │                                   ╰───── name: 9
+ 16 │         Utils.Point memory p;
+    │                            ┬  
+    │                            ╰── name: 10
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  7 │     function add(Point memory, Point memory) internal returns (Point memory) {}
+    │                  ──┬──         ──┬──                           ──┬──  
+    │                    ╰────────────────────────────────────────────────── ref: 2
+    │                                  │                               │    
+    │                                  ╰──────────────────────────────────── ref: 2
+    │                                                                  │    
+    │                                                                  ╰──── ref: 2
+    │ 
  12 │     using Utils for uint;
     │           ──┬──  
     │             ╰──── ref: 1
@@ -93,21 +107,15 @@ Bindings:
     │                             ╰──── ref: 2
     │ 
  15 │     function test(Utils.Point calldata x) public {
-    │              ──┬─ ──┬── ──┬── ────┬───  
-    │                ╰──────────────────────── name: 8
-    │                     │     │       │     
-    │                     ╰─────────────────── ref: 1
-    │                           │       │     
-    │                           ╰───────────── ref: 2
-    │                                   │     
-    │                                   ╰───── name: 9
+    │                   ──┬── ──┬──  
+    │                     ╰────────── ref: 1
+    │                           │    
+    │                           ╰──── ref: 2
  16 │         Utils.Point memory p;
-    │         ──┬── ──┬──        ┬  
-    │           ╰─────────────────── ref: 1
-    │                 │          │  
-    │                 ╰───────────── ref: 2
-    │                            │  
-    │                            ╰── name: 10
+    │         ──┬── ──┬──  
+    │           ╰────────── ref: 1
+    │                 │    
+    │                 ╰──── ref: 2
  17 │         p.add(x).add(x);
     │         ┬ ─┬─ ┬  ─┬─ ┬  
     │         ╰─────────────── ref: 10

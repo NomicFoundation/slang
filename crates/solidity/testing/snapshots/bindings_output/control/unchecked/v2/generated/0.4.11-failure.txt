@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected Identifier or MemoryKeyword or StorageKeyword.
-   ╭─[input.sol:4:19]
+   ╭─[ input.sol:4:19 ]
    │
  4 │ ╭─▶         unchecked { return c - b; }
  5 │ ├─▶     }
@@ -31,8 +31,8 @@ Unbound identifiers (1):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract Test {
    │          ──┬─  

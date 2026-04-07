@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ interface IERC20Upgradable {
     │           ────────┬───────  
@@ -24,17 +24,22 @@ References and definitions:
   7 │ library Test {
     │         ──┬─  
     │           ╰─── name: 7
+    │ 
+ 10 │     function test(IERC20Upgradable token) internal {
+    │              ──┬─                  ──┬──  
+    │                ╰────────────────────────── name: 8
+    │                                      │    
+    │                                      ╰──── name: 9
+    │
+    ├─[ input.sol:1:1 ]
+    │
   8 │     using Math for uint256;
     │           ──┬─  
     │             ╰─── ref: 4
     │ 
  10 │     function test(IERC20Upgradable token) internal {
-    │              ──┬─ ────────┬─────── ──┬──  
-    │                ╰────────────────────────── name: 8
-    │                           │          │    
-    │                           ╰─────────────── ref: 1
-    │                                      │    
-    │                                      ╰──── name: 9
+    │                   ────────┬───────  
+    │                           ╰───────── ref: 1
  11 │         token.allowance(msg.sender).nop();
     │         ──┬── ────┬──── ─┬─ ───┬──  ─┬─  
     │           ╰────────────────────────────── ref: 9
@@ -47,38 +52,54 @@ References and definitions:
     │                                      │   
     │                                      ╰─── ref: 5
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │     ╭───▶ interface IERC20Upgradable {
-  2 │     │         function allowance(address owner) external returns (uint256);
-    │     │     ─────────────────────────────┬───┬────────────────────────────────  
-    │     │                                  ╰────────────────────────────────────── definiens: 3
-    │     │                                      │                                  
-    │     │                                      ╰────────────────────────────────── definiens: 2
-  3 │     ├─│ ▶ }
-    │     │ │       
-    │     ╰───────── definiens: 1
-  4 │       ╭─▶ library Math {
-  5 │       │       function nop(uint256 x) public {}
-    │       │   ───────────────────┬─┬────────────────  
-    │       │                      ╰──────────────────── definiens: 5
-    │       │                        │                  
-    │       │                        ╰────────────────── definiens: 6
-  6 │ │     ├─▶ }
-    │ │     │       
-    │ │     ╰─────── definiens: 4
-  7 │ ╭───────▶ library Test {
-    ┆ ┆ ┆       
-  9 │ │ ╭─────▶ 
- 10 │ │ │           function test(IERC20Upgradable token) internal {
-    │ │ │                         ───────────┬──────────  
-    │ │ │                                    ╰──────────── definiens: 9
-    ┆ ┆ ┆       
- 12 │ │ ├─────▶     }
-    │ │ │               
-    │ │ ╰─────────────── definiens: 8
- 13 │ ├───────▶ }
-    │ │             
-    │ ╰───────────── definiens: 7
+  1 │ ╭─▶ interface IERC20Upgradable {
+    ┆ ┆   
+  3 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │         function allowance(address owner) external returns (uint256);
+    │     ─────────────────────────────┬───┬────────────────────────────────  
+    │                                  ╰────────────────────────────────────── definiens: 3
+    │                                      │                                  
+    │                                      ╰────────────────────────────────── definiens: 2
+    │ 
+  4 │ ╭─▶ library Math {
+    ┆ ┆   
+  6 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 4
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  5 │         function nop(uint256 x) public {}
+    │     ───────────────────┬─┬────────────────  
+    │                        ╰──────────────────── definiens: 5
+    │                          │                  
+    │                          ╰────────────────── definiens: 6
+    │ 
+  7 │ ╭─▶ library Test {
+    ┆ ┆   
+ 13 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 7
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  9 │ ╭─▶ 
+    ┆ ┆   
+ 12 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 8
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 10 │     function test(IERC20Upgradable token) internal {
+    │                   ───────────┬──────────  
+    │                              ╰──────────── definiens: 9
 ────╯

@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   4 │ contract A {
     │          ┬  
@@ -11,37 +11,48 @@ References and definitions:
     │               ╰─── name: 2
     │ 
  10 │ contract B is A {
-    │          ┬    ┬  
-    │          ╰─────── name: 3
-    │               │  
-    │               ╰── ref: 1
+    │          ┬  
+    │          ╰── name: 3
  11 │     function foo() public pure virtual override(A) returns (string memory) {
-    │              ─┬─                                ┬  
-    │               ╰──────────────────────────────────── name: 4
-    │                                                 │  
-    │                                                 ╰── ref: 1
+    │              ─┬─  
+    │               ╰─── name: 4
     │ 
  16 │ contract C is A {
-    │          ┬    ┬  
-    │          ╰─────── name: 5
-    │               │  
-    │               ╰── ref: 1
+    │          ┬  
+    │          ╰── name: 5
  17 │     function foo() public pure virtual override returns (string memory) {
     │              ─┬─  
     │               ╰─── name: 6
     │ 
  22 │ contract D is B, C {
-    │          ┬    ┬  ┬  
-    │          ╰────────── name: 7
-    │               │  │  
+    │          ┬  
+    │          ╰── name: 7
+    │ 
+ 24 │     function foo() public pure override(B, C) returns (string memory) {
+    │              ─┬─  
+    │               ╰─── name: 8
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 10 │ contract B is A {
+    │               ┬  
+    │               ╰── ref: 1
+ 11 │     function foo() public pure virtual override(A) returns (string memory) {
+    │                                                 ┬  
+    │                                                 ╰── ref: 1
+    │ 
+ 16 │ contract C is A {
+    │               ┬  
+    │               ╰── ref: 1
+    │ 
+ 22 │ contract D is B, C {
+    │               ┬  ┬  
     │               ╰───── ref: 3
     │                  │  
     │                  ╰── ref: 5
     │ 
  24 │     function foo() public pure override(B, C) returns (string memory) {
-    │              ─┬─                        ┬  ┬  
-    │               ╰─────────────────────────────── name: 8
-    │                                         │  │  
+    │                                         ┬  ┬  
     │                                         ╰───── ref: 3
     │                                            │  
     │                                            ╰── ref: 5
@@ -49,47 +60,62 @@ References and definitions:
     │                      ─┬─  
     │                       ╰─── refs: 4, 6, 2
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  3 │         ╭───────▶ 
-    ┆         ┆     ┆   
-  5 │         │     ╭─▶     function foo() public pure virtual returns (string memory) {
-    ┆         ┆     ┆   
-  7 │         │     ├─▶     }
-    │         │     │           
-    │         │     ╰─────────── definiens: 2
-  8 │     │   ├───────▶ }
-    │     │   │             
-    │     │   ╰───────────── definiens: 1
-  9 │     ╭───────────▶ 
-    ┆     ┆     ┆       
- 11 │     │     ╭─────▶     function foo() public pure virtual override(A) returns (string memory) {
-    ┆     ┆     ┆       
- 13 │     │     ├─────▶     }
-    │     │     │               
-    │     │     ╰─────────────── definiens: 4
- 14 │     ├─│ ────────▶ }
-    │     │ │               
-    │     ╰───────────────── definiens: 3
- 15 │       ╭─────────▶ 
-    ┆       ┆     ┆     
- 17 │       │     ╭───▶     function foo() public pure virtual override returns (string memory) {
-    ┆       ┆     ┆     
- 19 │       │     ├───▶     }
-    │       │     │             
-    │       │     ╰───────────── definiens: 6
- 20 │ │     ├─────────▶ }
-    │ │     │               
-    │ │     ╰─────────────── definiens: 5
- 21 │ ╭───────────────▶ 
-    ┆ ┆ ┆               
- 23 │ │ ╭─────────────▶     // D.foo() returns "C"
-    ┆ ┆ ┆               
- 26 │ │ ├─────────────▶     }
-    │ │ │                       
-    │ │ ╰─────────────────────── definiens: 8
- 27 │ ├───────────────▶ }
-    │ │                     
-    │ ╰───────────────────── definiens: 7
+  3 │ ╭─▶ 
+    ┆ ┆   
+  8 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  5 │   ╭─▶     function foo() public pure virtual returns (string memory) {
+    ┆   ┆   
+  7 │   ├─▶     }
+    │   │           
+    │   ╰─────────── definiens: 2
+    │ 
+  9 │ ╭───▶ 
+    ┆ ┆     
+ 14 │ ├───▶ }
+    │ │         
+    │ ╰───────── definiens: 3
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 11 │   ╭─▶     function foo() public pure virtual override(A) returns (string memory) {
+    ┆   ┆   
+ 13 │   ├─▶     }
+    │   │           
+    │   ╰─────────── definiens: 4
+    │ 
+ 15 │ ╭───▶ 
+    ┆ ┆     
+ 20 │ ├───▶ }
+    │ │         
+    │ ╰───────── definiens: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 17 │   ╭─▶     function foo() public pure virtual override returns (string memory) {
+    ┆   ┆   
+ 19 │   ├─▶     }
+    │   │           
+    │   ╰─────────── definiens: 6
+    │ 
+ 21 │ ╭───▶ 
+    ┆ ┆     
+ 27 │ ├───▶ }
+    │ │         
+    │ ╰───────── definiens: 7
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 23 │ ╭─▶     // D.foo() returns "C"
+    ┆ ┆   
+ 26 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 8
 ────╯

@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ function top_level(int x, int y) public returns(int z) {}
    │          ────┬────     ┬      ┬                     ┬  
@@ -26,8 +26,8 @@ References and definitions:
    │                                                           │  
    │                                                           ╰── name: 9
 ───╯
-Definiens: 
-   ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ │   function top_level(int x, int y) public returns(int z) {}
    │ │   ─────────────────────┬──────┬┬────────────────────┬───────  
@@ -40,16 +40,19 @@ Definiens:
    │ │                                                     ╰───────── definiens: 4
  2 │ ╭─▶ 
    ┆ ┆   
- 4 │ │       function in_contract(int x, int y) public returns(int z) {}
-   │ │   ───────────────────────────┬────┬─┬─────────────────────┬───────  
-   │ │                              ╰────────────────────────────────────── definiens: 7
-   │ │                                   │ │                     │         
-   │ │                                   ╰───────────────────────────────── definiens: 6
-   │ │                                     │                     │         
-   │ │                                     ╰─────────────────────────────── definiens: 8
-   │ │                                                           │         
-   │ │                                                           ╰───────── definiens: 9
  5 │ ├─▶ }
    │ │       
    │ ╰─────── definiens: 5
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 4 │     function in_contract(int x, int y) public returns(int z) {}
+   │ ───────────────────────────┬────┬─┬─────────────────────┬───────  
+   │                            ╰────────────────────────────────────── definiens: 7
+   │                                 │ │                     │         
+   │                                 ╰───────────────────────────────── definiens: 6
+   │                                   │                     │         
+   │                                   ╰─────────────────────────────── definiens: 8
+   │                                                         │         
+   │                                                         ╰───────── definiens: 9
 ───╯

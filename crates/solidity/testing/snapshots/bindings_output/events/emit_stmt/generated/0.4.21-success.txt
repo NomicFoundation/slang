@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Test {
     │          ──┬─  
@@ -19,6 +19,17 @@ References and definitions:
     │             ┬  
     │             ╰── name: 5
     │ 
+ 12 │ library Utils {
+    │         ──┬──  
+    │           ╰──── name: 6
+ 13 │     event Debug(int subject);
+    │           ──┬──     ───┬───  
+    │             ╰──────────────── name: 7
+    │                        │     
+    │                        ╰───── name: 8
+    │
+    ├─[ input.sol:1:1 ]
+    │
   7 │         emit TestEvent(x);
     │              ────┬──── ┬  
     │                  ╰──────── ref: 2
@@ -31,45 +42,46 @@ References and definitions:
     │                      ╰────── ref: 7
     │                          │  
     │                          ╰── ref: 5
-    │ 
- 12 │ library Utils {
-    │         ──┬──  
-    │           ╰──── name: 6
- 13 │     event Debug(int subject);
-    │           ──┬──     ───┬───  
-    │             ╰──────────────── name: 7
-    │                        │     
-    │                        ╰───── name: 8
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │ ╭─────▶ contract Test {
-  2 │ │ │         event TestEvent(int id);
-    │ │ │     ──────────────┬────────┬─────  
-    │ │ │                   ╰──────────────── definiens: 2
-    │ │ │                            │       
-    │ │ │                            ╰─────── definiens: 3
-  3 │ │ ╭───▶ 
-    ┆ ┆ ┆     
-  5 │ │ │             int x = 1;
-    │ │ │     ─────────┬─────────  
-    │ │ │              ╰─────────── definiens: 5
-    ┆ ┆ ┆     
-  9 │ │ ├───▶     }
-    │ │ │             
-    │ │ ╰───────────── definiens: 4
- 10 │ ├───│ ▶ }
-    │ │   │       
-    │ ╰─────────── definiens: 1
- 11 │     ╭─▶ 
-    ┆     ┆   
- 13 │     │       event Debug(int subject);
-    │     │   ───────────────┬─────┬────────  
-    │     │                  ╰──────────────── definiens: 7
-    │     │                        │          
-    │     │                        ╰────────── definiens: 8
- 14 │     ├─▶ }
-    │     │       
-    │     ╰─────── definiens: 6
+  1 │ ╭─▶ contract Test {
+    ┆ ┆   
+ 10 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │ │       event TestEvent(int id);
+    │ │   ──────────────┬────────┬─────  
+    │ │                 ╰──────────────── definiens: 2
+    │ │                          │       
+    │ │                          ╰─────── definiens: 3
+  3 │ ╭─▶ 
+    ┆ ┆   
+  9 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 4
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  5 │             int x = 1;
+    │     ─────────┬─────────  
+    │              ╰─────────── definiens: 5
+    │ 
+ 11 │ ╭─▶ 
+    ┆ ┆   
+ 14 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 6
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 13 │     event Debug(int subject);
+    │ ───────────────┬─────┬────────  
+    │                ╰──────────────── definiens: 7
+    │                      │          
+    │                      ╰────────── definiens: 8
 ────╯

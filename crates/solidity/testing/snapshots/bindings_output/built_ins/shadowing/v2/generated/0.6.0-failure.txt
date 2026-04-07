@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
-    ╭─[input.sol:14:1]
+    ╭─[ input.sol:14:1 ]
     │
  14 │ ╭─▶ function sha256() {}
     ┆ ┆   
@@ -33,8 +33,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Test {
     │          ──┬─  
@@ -49,6 +49,13 @@ Bindings:
   5 │         int block;
     │             ──┬──  
     │               ╰──── name: 4
+    │ 
+ 11 │     function sha256() public {}
+    │              ───┬──  
+    │                 ╰──── name: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
   6 │         block;
     │         ──┬──  
     │           ╰──── ref: 4
@@ -58,8 +65,4 @@ Bindings:
   8 │         sha256();
     │         ───┬──  
     │            ╰──── ref: 5
-    │ 
- 11 │     function sha256() public {}
-    │              ───┬──  
-    │                 ╰──── name: 5
 ────╯

@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ struct Foo {
    │        ─┬─  
@@ -22,24 +22,32 @@ References and definitions:
    │                         │    
    │                         ╰──── ref: built-in
 ───╯
-Definiens: 
-   ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+   ╭─[ input.sol:1:1 ]
    │
- 1 │     ╭─▶ struct Foo {
- 2 │     │       uint x;
-   │     │   ──────┬─────  
-   │     │         ╰─────── definiens: 2
- 3 │ │   ├─▶ }
-   │ │   │       
-   │ │   ╰─────── definiens: 1
- 4 │ ╭─────▶ 
-   ┆ ┆ ┆     
- 6 │ │ ╭───▶     function test() internal pure {
-   ┆ ┆ ┆     
- 8 │ │ ├───▶     }
-   │ │ │             
-   │ │ ╰───────────── definiens: 4
- 9 │ ├─────▶ }
+ 1 │ ╭─▶ struct Foo {
+   ┆ ┆   
+ 3 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 1
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 2 │         uint x;
+   │     ──────┬─────  
+   │           ╰─────── definiens: 2
+   │ 
+ 4 │ ╭─▶ 
+   ┆ ┆   
+ 9 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 3
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 6 │ ╭─▶     function test() internal pure {
+   ┆ ┆   
+ 8 │ ├─▶     }
    │ │           
-   │ ╰─────────── definiens: 3
+   │ ╰─────────── definiens: 4
 ───╯

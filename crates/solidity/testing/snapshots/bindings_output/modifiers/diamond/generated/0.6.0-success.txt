@@ -1,84 +1,113 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Base {
     │          ──┬─  
     │            ╰─── name: 1
   2 │     modifier foo virtual { _; }
-    │              ─┬─           ┬  
-    │               ╰─────────────── name: 2
-    │                            │  
+    │              ─┬─  
+    │               ╰─── name: 2
+    │ 
+  5 │ contract A is Base {
+    │          ┬  
+    │          ╰── name: 3
+  6 │     modifier foo virtual override { _; }
+    │              ─┬─  
+    │               ╰─── name: 4
+    │ 
+  9 │ contract B is Base {
+    │          ┬  
+    │          ╰── name: 5
+ 10 │     modifier foo virtual override { _; }
+    │              ─┬─  
+    │               ╰─── name: 6
+    │ 
+ 13 │ contract Test is B, A {
+    │          ──┬─  
+    │            ╰─── name: 7
+ 14 │     function test() public foo {}
+    │              ──┬─  
+    │                ╰─── name: 8
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │     modifier foo virtual { _; }
+    │                            ┬  
     │                            ╰── ref: built-in
     │ 
   5 │ contract A is Base {
-    │          ┬    ──┬─  
-    │          ╰────────── name: 3
-    │                 │   
+    │               ──┬─  
     │                 ╰─── ref: 1
   6 │     modifier foo virtual override { _; }
-    │              ─┬─                    ┬  
-    │               ╰──────────────────────── name: 4
-    │                                     │  
+    │                                     ┬  
     │                                     ╰── ref: built-in
     │ 
   9 │ contract B is Base {
-    │          ┬    ──┬─  
-    │          ╰────────── name: 5
-    │                 │   
+    │               ──┬─  
     │                 ╰─── ref: 1
  10 │     modifier foo virtual override { _; }
-    │              ─┬─                    ┬  
-    │               ╰──────────────────────── name: 6
-    │                                     │  
+    │                                     ┬  
     │                                     ╰── ref: built-in
     │ 
  13 │ contract Test is B, A {
-    │          ──┬─    ┬  ┬  
-    │            ╰─────────── name: 7
-    │                  │  │  
+    │                  ┬  ┬  
     │                  ╰───── ref: 5
     │                     │  
     │                     ╰── ref: 3
  14 │     function test() public foo {}
-    │              ──┬─          ─┬─  
-    │                ╰──────────────── name: 8
-    │                             │   
+    │                            ─┬─  
     │                             ╰─── refs: 6, 4, 2
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │       ╭─▶ contract Base {
-  2 │       │       modifier foo virtual { _; }
-    │       │   ────────────────┬───────────────  
-    │       │                   ╰───────────────── definiens: 2
-  3 │ │     ├─▶ }
-    │ │     │       
-    │ │     ╰─────── definiens: 1
-  4 │ ╭───────▶ 
-    ┆ ┆         
-  6 │ │             modifier foo virtual override { _; }
-    │ │         ────────────────────┬────────────────────  
-    │ │                             ╰────────────────────── definiens: 4
-  7 │ ├─│ ────▶ }
-    │ │ │           
-    │ ╰───────────── definiens: 3
-  8 │   ╭─────▶ 
-    ┆   ┆       
- 10 │   │           modifier foo virtual override { _; }
-    │   │       ────────────────────┬────────────────────  
-    │   │                           ╰────────────────────── definiens: 6
- 11 │   ├─│ ──▶ }
-    │   │ │         
-    │   ╰─────────── definiens: 5
- 12 │     ╭───▶ 
-    ┆     ┆     
- 14 │     │         function test() public foo {}
-    │     │     ─────────────────┬────────────────  
-    │     │                      ╰────────────────── definiens: 8
- 15 │     ├───▶ }
-    │     │         
-    │     ╰───────── definiens: 7
+  1 │ ╭─▶ contract Base {
+    ┆ ┆   
+  3 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │         modifier foo virtual { _; }
+    │     ────────────────┬───────────────  
+    │                     ╰───────────────── definiens: 2
+    │ 
+  4 │ ╭─▶ 
+    ┆ ┆   
+  7 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 3
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │         modifier foo virtual override { _; }
+    │     ────────────────────┬────────────────────  
+    │                         ╰────────────────────── definiens: 4
+    │ 
+  8 │ ╭─▶ 
+    ┆ ┆   
+ 11 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 10 │         modifier foo virtual override { _; }
+    │     ────────────────────┬────────────────────  
+    │                         ╰────────────────────── definiens: 6
+    │ 
+ 12 │ ╭─▶ 
+    ┆ ┆   
+ 15 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 7
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 14 │     function test() public foo {}
+    │ ─────────────────┬────────────────  
+    │                  ╰────────────────── definiens: 8
 ────╯

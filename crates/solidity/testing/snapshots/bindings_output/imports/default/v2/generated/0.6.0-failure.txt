@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
-   ╭─[input.sol:3:1]
+   ╭─[ input.sol:3:1 ]
    │
  3 │ ╭─▶ function foo() returns (int) {
    ┆ ┆   
@@ -11,7 +11,7 @@ Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyw
    │ ╰────── Error occurred here.
 ───╯
 Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
-   ╭─[other.sol:1:1]
+   ╭─[ other.sol:1:1 ]
    │
  1 │ ╭─▶ function bar() pure returns (int) {
    ┆ ┆   
@@ -34,8 +34,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
+[39mBindings:[0m 
 
 ------------------------------------------------------------------------
 
-Bindings: 
+[39mBindings:[0m 

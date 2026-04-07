@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
-    ╭─[main.sol:7:1]
+    ╭─[ main.sol:7:1 ]
     │
   7 │ ╭─▶ using Lib for uint;
     ┆ ┆   
@@ -11,7 +11,7 @@ Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryK
     │ ╰────── Error occurred here.
 ────╯
 Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
-   ╭─[other.sol:1:1]
+   ╭─[ other.sol:1:1 ]
    │
  1 │ ╭─▶ function foo(uint a) pure returns (uint) {
    ┆ ┆   
@@ -39,14 +39,12 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[main.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ main.sol:1:1 ]
    │
  1 │ import {foo} from "other.sol";
    │         ─┬─  
    │          ╰─── name: 1
-   │          │   
-   │          ╰─── unresolved
    │ 
  3 │ library Lib {
    │         ─┬─  
@@ -56,8 +54,14 @@ Bindings:
    │               ╰────────── name: 3
    │                       │  
    │                       ╰── name: 4
+   │
+   ├─[ main.sol:1:1 ]
+   │
+ 1 │ import {foo} from "other.sol";
+   │         ─┬─  
+   │          ╰─── unresolved
 ───╯
 
 ------------------------------------------------------------------------
 
-Bindings: 
+[39mBindings:[0m 

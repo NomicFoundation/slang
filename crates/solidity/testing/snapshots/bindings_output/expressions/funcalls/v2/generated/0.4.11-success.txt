@@ -20,8 +20,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract Test {
    │          ──┬─  
@@ -34,6 +34,13 @@ Bindings:
    │                  ╰─────────── name: 3
    │                           │  
    │                           ╰── name: 4
+   │ 
+ 6 │     function add(int, int) returns (int);
+   │              ─┬─  
+   │               ╰─── name: 5
+   │
+   ├─[ input.sol:1:1 ]
+   │
  4 │         return add(x, y);
    │                ─┬─ ┬  ┬  
    │                 ╰──────── ref: 5
@@ -41,8 +48,4 @@ Bindings:
    │                    ╰───── ref: 4
    │                       │  
    │                       ╰── ref: 2
-   │ 
- 6 │     function add(int, int) returns (int);
-   │              ─┬─  
-   │               ╰─── name: 5
 ───╯

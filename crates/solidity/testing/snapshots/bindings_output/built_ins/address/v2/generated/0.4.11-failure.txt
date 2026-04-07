@@ -36,8 +36,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract Test {
    │          ──┬─  
@@ -51,33 +51,46 @@ Bindings:
    │                      ─┬  
    │                       ╰── name: 4
  4 │         (bool v1, bytes memory v2) = recipient.call(x1);
-   │               ─┬               ─┬    ────┬──── ──┬─ ─┬  
-   │                ╰──────────────────────────────────────── name: 5
-   │                                 │        │       │   │  
-   │                                 ╰─────────────────────── name: 6
-   │                                          │       │   │  
+   │               ─┬               ─┬  
+   │                ╰─────────────────── name: 5
+   │                                 │  
+   │                                 ╰── name: 6
+ 5 │         (bool v5, bytes memory v6) = recipient.delegatecall(x1);
+   │               ─┬               ─┬  
+   │                ╰─────────────────── name: 7
+   │                                 │  
+   │                                 ╰── name: 8
+ 6 │         (bool v7, bytes memory v8) = recipient.staticcall(x1);
+   │               ─┬               ─┬  
+   │                ╰─────────────────── name: 9
+   │                                 │  
+   │                                 ╰── name: 10
+   │ 
+ 8 │         bool v9 = recipient.send(1);
+   │              ─┬  
+   │               ╰── name: 11
+ 9 │         uint256 v10 = address(this).balance;
+   │                 ─┬─  
+   │                  ╰─── name: 12
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 4 │         (bool v1, bytes memory v2) = recipient.call(x1);
+   │                                      ────┬──── ──┬─ ─┬  
    │                                          ╰────────────── ref: 3
    │                                                  │   │  
    │                                                  ╰────── built-in
    │                                                      │  
    │                                                      ╰── ref: 4
  5 │         (bool v5, bytes memory v6) = recipient.delegatecall(x1);
-   │               ─┬               ─┬    ────┬──── ──────┬───── ─┬  
-   │                ╰──────────────────────────────────────────────── name: 7
-   │                                 │        │           │       │  
-   │                                 ╰─────────────────────────────── name: 8
-   │                                          │           │       │  
+   │                                      ────┬──── ──────┬───── ─┬  
    │                                          ╰────────────────────── ref: 3
    │                                                      │       │  
    │                                                      ╰────────── built-in
    │                                                              │  
    │                                                              ╰── ref: 4
  6 │         (bool v7, bytes memory v8) = recipient.staticcall(x1);
-   │               ─┬               ─┬    ────┬──── ─────┬──── ─┬  
-   │                ╰────────────────────────────────────────────── name: 9
-   │                                 │        │          │      │  
-   │                                 ╰───────────────────────────── name: 10
-   │                                          │          │      │  
+   │                                      ────┬──── ─────┬──── ─┬  
    │                                          ╰──────────────────── ref: 3
    │                                                     │      │  
    │                                                     ╰───────── unresolved
@@ -85,15 +98,11 @@ Bindings:
    │                                                            ╰── ref: 4
    │ 
  8 │         bool v9 = recipient.send(1);
-   │              ─┬   ────┬──── ──┬─  
-   │               ╰─────────────────── name: 11
-   │                       │       │   
+   │                   ────┬──── ──┬─  
    │                       ╰─────────── ref: 3
    │                               │   
    │                               ╰─── built-in
  9 │         uint256 v10 = address(this).balance;
-   │                 ─┬─                 ───┬───  
-   │                  ╰─────────────────────────── name: 12
-   │                                        │     
+   │                                     ───┬───  
    │                                        ╰───── built-in
 ───╯

@@ -32,8 +32,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract First {
     │          ──┬──  
@@ -50,42 +50,53 @@ Bindings:
     │         ┬  
     │         ╰── name: 5
   5 │     Choice choice;
-    │     ───┬── ───┬──  
-    │        ╰─────────── ref: 2
-    │               │    
+    │            ───┬──  
     │               ╰──── name: 6
     │ 
   7 │     function get_x() public returns (int) {
     │              ──┬──  
     │                ╰──── name: 7
-  8 │         return x;
-    │                ┬  
-    │                ╰── ref: 5
     │ 
  11 │     function get_choice() public returns (Choice) {
-    │              ─────┬────                   ───┬──  
-    │                   ╰─────────────────────────────── name: 8
-    │                                              │    
-    │                                              ╰──── ref: 2
- 12 │         return choice;
-    │                ───┬──  
-    │                   ╰──── ref: 6
+    │              ─────┬────  
+    │                   ╰────── name: 8
     │ 
  16 │ contract Second {
     │          ───┬──  
     │             ╰──── name: 9
  17 │     First.Choice choice;
-    │     ──┬── ───┬── ───┬──  
-    │       ╰────────────────── ref: 1
-    │              │      │    
-    │              ╰─────────── ref: 2
-    │                     │    
+    │                  ───┬──  
     │                     ╰──── name: 10
     │ 
  19 │     function get_choice() public returns (First.Choice) {
-    │              ─────┬────                   ──┬── ───┬──  
-    │                   ╰───────────────────────────────────── name: 11
-    │                                             │      │    
+    │              ─────┬────  
+    │                   ╰────── name: 11
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  5 │     Choice choice;
+    │     ───┬──  
+    │        ╰──── ref: 2
+    │ 
+  8 │         return x;
+    │                ┬  
+    │                ╰── ref: 5
+    │ 
+ 11 │     function get_choice() public returns (Choice) {
+    │                                           ───┬──  
+    │                                              ╰──── ref: 2
+ 12 │         return choice;
+    │                ───┬──  
+    │                   ╰──── ref: 6
+    │ 
+ 17 │     First.Choice choice;
+    │     ──┬── ───┬──  
+    │       ╰─────────── ref: 1
+    │              │    
+    │              ╰──── ref: 2
+    │ 
+ 19 │     function get_choice() public returns (First.Choice) {
+    │                                           ──┬── ───┬──  
     │                                             ╰─────────── ref: 1
     │                                                    │    
     │                                                    ╰──── ref: 2

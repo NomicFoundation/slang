@@ -2,29 +2,25 @@
 
 Parse errors:
 Error: Expected Equal or Semicolon.
-   ╭─[input.sol:6:26]
+   ╭─[ input.sol:6:26 ]
    │
  6 │     uint public override x;
    │                          ┬  
    │                          ╰── Error occurred here.
 ───╯
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Base {
     │          ──┬─  
     │            ╰─── name: 1
   2 │     function x() public view virtual returns (uint) {}
-    │              ┬               ───┬───  
-    │              ╰──────────────────────── name: 2
-    │                                 │     
-    │                                 ╰───── unresolved
+    │              ┬  
+    │              ╰── name: 2
     │ 
   5 │ contract Test is Base {
-    │          ──┬─    ──┬─  
-    │            ╰─────────── name: 3
-    │                    │   
-    │                    ╰─── ref: 1
+    │          ──┬─  
+    │            ╰─── name: 3
   6 │     uint public override x;
     │                 ────┬───  
     │                     ╰───── name: 4
@@ -34,38 +30,60 @@ References and definitions:
     │                ╰─── name: 5
     │ 
  10 │             let a := x.slot
-    │                 ┬    ┬ ──┬─  
-    │                 ╰──────────── name: 6
-    │                      │   │   
+    │                 ┬  
+    │                 ╰── name: 6
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │     function x() public view virtual returns (uint) {}
+    │                              ───┬───  
+    │                                 ╰───── unresolved
+    │ 
+  5 │ contract Test is Base {
+    │                  ──┬─  
+    │                    ╰─── ref: 1
+    │ 
+ 10 │             let a := x.slot
+    │                      ┬ ──┬─  
     │                      ╰─────── unresolved
     │                          │   
     │                          ╰─── ref: built-in
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │     ╭─▶ contract Base {
-  2 │     │       function x() public view virtual returns (uint) {}
-    │     │   ───────────────────────────┬───────────────────────────  
-    │     │                              ╰───────────────────────────── definiens: 2
-  3 │ │   ├─▶ }
-    │ │   │       
-    │ │   ╰─────── definiens: 1
-  4 │ ╭─────▶ 
-    ┆ ┆       
-  6 │ │ │         uint public override x;
-    │ │ │     ──────────────┬─────────────  
-    │ │ │                   ╰─────────────── definiens: 4
-  7 │ │ ╭───▶ 
-    ┆ ┆ ┆     
- 10 │ │ │                 let a := x.slot
-    │ │ │                     ┬  
-    │ │ │                     ╰── definiens: 6
-    ┆ ┆ ┆     
- 12 │ │ ├───▶     }
-    │ │ │             
-    │ │ ╰───────────── definiens: 5
- 13 │ ├─────▶ }
+  1 │ ╭─▶ contract Base {
+    ┆ ┆   
+  3 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │         function x() public view virtual returns (uint) {}
+    │     ───────────────────────────┬───────────────────────────  
+    │                                ╰───────────────────────────── definiens: 2
+    │ 
+  4 │ ╭─▶ 
+    ┆ ┆   
+ 13 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 3
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │ │       uint public override x;
+    │ │   ──────────────┬─────────────  
+    │ │                 ╰─────────────── definiens: 4
+  7 │ ╭─▶ 
+    ┆ ┆   
+ 12 │ ├─▶     }
     │ │           
-    │ ╰─────────── definiens: 3
+    │ ╰─────────── definiens: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 10 │             let a := x.slot
+    │                 ┬  
+    │                 ╰── definiens: 6
 ────╯

@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
-    ╭─[input.sol:13:1]
+    ╭─[ input.sol:13:1 ]
     │
  13 │ enum ActionChoices { GoLeft, GoRight, GoStraight, SitStill }
     │ ──────────────────────────────┬──────────────────────────────  
@@ -35,8 +35,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Test {
     │          ──┬─  

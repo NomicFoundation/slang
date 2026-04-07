@@ -21,8 +21,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ library Address {
    │         ───┬───  
@@ -36,14 +36,19 @@ Bindings:
  4 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 4
- 5 │     using Address for address payable;
-   │           ───┬───  
-   │              ╰───── ref: 1
+   │ 
  6 │     function test(address _rcpt) public {
    │              ──┬─         ──┬──  
    │                ╰───────────────── name: 5
    │                             │    
    │                             ╰──── name: 6
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 5 │     using Address for address payable;
+   │           ───┬───  
+   │              ╰───── ref: 1
+   │ 
  7 │         payable(_rcpt).sendValue();
    │                 ──┬──  ────┬────  
    │                   ╰─────────────── ref: 6

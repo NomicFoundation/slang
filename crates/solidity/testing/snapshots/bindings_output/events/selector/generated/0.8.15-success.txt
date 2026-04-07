@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ library Utils {
    │         ──┬──  
@@ -21,21 +21,25 @@ References and definitions:
    │                 │     
    │                 ╰───── ref: built-in
 ───╯
-Definiens: 
-   ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+   ╭─[ input.sol:1:1 ]
    │
- 1 │ ╭───▶ library Utils {
- 2 │ │ │       event Foo(uint x);
-   │ │ │   ───────────┬─────┬─────  
-   │ │ │              ╰───────────── definiens: 2
-   │ │ │                    │       
-   │ │ │                    ╰─────── definiens: 3
- 3 │ │ ╭─▶ 
-   ┆ ┆ ┆   
- 6 │ │ ├─▶     }
-   │ │ │           
-   │ │ ╰─────────── definiens: 4
- 7 │ ├───▶ }
-   │ │         
-   │ ╰───────── definiens: 1
+ 1 │ ╭─▶ library Utils {
+   ┆ ┆   
+ 7 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 1
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 2 │ │       event Foo(uint x);
+   │ │   ───────────┬─────┬─────  
+   │ │              ╰───────────── definiens: 2
+   │ │                    │       
+   │ │                    ╰─────── definiens: 3
+ 3 │ ╭─▶ 
+   ┆ ┆   
+ 6 │ ├─▶     }
+   │ │           
+   │ ╰─────────── definiens: 4
 ───╯

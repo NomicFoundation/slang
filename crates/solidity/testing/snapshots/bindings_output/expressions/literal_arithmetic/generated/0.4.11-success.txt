@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library Lib {
     │         ─┬─  
@@ -13,9 +13,6 @@ References and definitions:
   5 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 3
-  6 │     using Lib for uint256;
-    │           ─┬─  
-    │            ╰─── ref: 1
     │ 
   8 │     function test() internal {
     │              ──┬─  
@@ -23,6 +20,13 @@ References and definitions:
   9 │         uint256 ratio;
     │                 ──┬──  
     │                   ╰──── name: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │     using Lib for uint256;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
  10 │         ((ratio >> 32) + (ratio % (1 << 32) == 0 ? 0 : 1)).to160();
     │           ──┬──           ──┬──                            ──┬──  
     │             ╰───────────────────────────────────────────────────── ref: 5
@@ -31,28 +35,38 @@ References and definitions:
     │                                                              │    
     │                                                              ╰──── ref: 2
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │     ╭─▶ library Lib {
-  2 │     │       function to160(uint256) internal returns (uint160) {}
-    │     │   ─────────────────────────────┬────────────────────────────  
-    │     │                                ╰────────────────────────────── definiens: 2
-  3 │ │   ├─▶ }
-    │ │   │       
-    │ │   ╰─────── definiens: 1
-  4 │ ╭─────▶ 
-    ┆ ┆       
-  7 │ │ ╭───▶ 
-    ┆ ┆ ┆     
-  9 │ │ │             uint256 ratio;
-    │ │ │     ───────────┬───────────  
-    │ │ │                ╰───────────── definiens: 5
-    ┆ ┆ ┆     
- 11 │ │ ├───▶     }
-    │ │ │             
-    │ │ ╰───────────── definiens: 4
- 12 │ ├─────▶ }
+  1 │ ╭─▶ library Lib {
+    ┆ ┆   
+  3 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │         function to160(uint256) internal returns (uint160) {}
+    │     ─────────────────────────────┬────────────────────────────  
+    │                                  ╰────────────────────────────── definiens: 2
+    │ 
+  4 │ ╭─▶ 
+    ┆ ┆   
+ 12 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 3
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  7 │ ╭─▶ 
+    ┆ ┆   
+ 11 │ ├─▶     }
     │ │           
-    │ ╰─────────── definiens: 3
+    │ ╰─────────── definiens: 4
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  9 │         uint256 ratio;
+    │ ───────────┬───────────  
+    │            ╰───────────── definiens: 5
 ────╯

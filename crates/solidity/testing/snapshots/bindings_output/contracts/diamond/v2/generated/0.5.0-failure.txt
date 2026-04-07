@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected OpenBrace or ReturnsKeyword or Semicolon.
-   ╭─[input.sol:7:35]
+   ╭─[ input.sol:7:35 ]
    │
  7 │ ╭─▶     function foo() public virtual override {
  8 │ ├─▶     }
@@ -10,7 +10,7 @@ Error: Expected OpenBrace or ReturnsKeyword or Semicolon.
    │ ╰─────────── Error occurred here.
 ───╯
 Error: Expected OpenBrace or ReturnsKeyword or Semicolon.
-    ╭─[input.sol:15:35]
+    ╭─[ input.sol:15:35 ]
     │
  15 │ ╭─▶     function foo() public virtual override {
     ┆ ┆   
@@ -47,42 +47,56 @@ Unbound identifiers (4):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract A {
     │          ┬  
     │          ╰── name: 1
   2 │     function foo() public virtual {
-    │              ─┬─          ───┬───  
-    │               ╰──────────────────── name: 2
-    │                              │     
+    │              ─┬─  
+    │               ╰─── name: 2
+    │ 
+  6 │ contract B is A {
+    │          ┬  
+    │          ╰── name: 3
+    │ 
+ 11 │ contract C is A {
+    │          ┬  
+    │          ╰── name: 4
+    │ 
+ 14 │ contract D is B, C {
+    │          ┬  
+    │          ╰── name: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │     function foo() public virtual {
+    │                           ───┬───  
     │                              ╰───── unresolved
     │ 
   6 │ contract B is A {
-    │          ┬    ┬  
-    │          ╰─────── name: 3
-    │               │  
+    │               ┬  
     │               ╰── ref: 1
+    │ 
+ 11 │ contract C is A {
+    │               ┬  
+    │               ╰── ref: 1
+    │ 
+ 14 │ contract D is B, C {
+    │               ┬  ┬  
+    │               ╰───── ref: 3
+    │                  │  
+    │                  ╰── ref: 4
+    │
+    ├─[ input.sol:1:1 ]
+    │
   7 │     function foo() public virtual override {
     │              ─┬─          ───┬───  
     │               ╰──────────────────── ???
     │                              │     
     │                              ╰───── ???
     │ 
- 11 │ contract C is A {
-    │          ┬    ┬  
-    │          ╰─────── name: 4
-    │               │  
-    │               ╰── ref: 1
-    │ 
- 14 │ contract D is B, C {
-    │          ┬    ┬  ┬  
-    │          ╰────────── name: 5
-    │               │  │  
-    │               ╰───── ref: 3
-    │                  │  
-    │                  ╰── ref: 4
  15 │     function foo() public virtual override {
     │              ─┬─          ───┬───  
     │               ╰──────────────────── ???

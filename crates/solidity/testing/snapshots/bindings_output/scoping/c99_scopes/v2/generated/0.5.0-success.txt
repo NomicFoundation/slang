@@ -21,8 +21,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract Foo {
    │          ─┬─  
@@ -38,14 +38,19 @@ Bindings:
    │                          ╰── name: 4
    │ 
  6 │         uint y = x + 1;
-   │              ┬   ┬  
-   │              ╰────── name: 5
-   │                  │  
-   │                  ╰── ref: 4
+   │              ┬  
+   │              ╰── name: 5
    │ 
  8 │             uint x = 20;
    │                  ┬  
    │                  ╰── name: 6
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 6 │         uint y = x + 1;
+   │                  ┬  
+   │                  ╰── ref: 4
+   │ 
  9 │             return x + y;
    │                    ┬   ┬  
    │                    ╰────── ref: 6

@@ -29,8 +29,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ interface IPool {
     │           ──┬──  
@@ -52,23 +52,30 @@ Bindings:
     │                          ╰── name: 6
     │ 
   9 │ contract Test is IPool {
-    │          ──┬─    ──┬──  
-    │            ╰──────────── name: 7
-    │                    │    
-    │                    ╰──── ref: 1
+    │          ──┬─  
+    │            ╰─── name: 7
  10 │     mapping(uint256 => Info) infos;
-    │                        ──┬─  ──┬──  
-    │                          ╰────────── ref: 2
-    │                                │    
+    │                              ──┬──  
     │                                ╰──── name: 8
- 11 │     using Math for uint256;
-    │           ──┬─  
-    │             ╰─── ref: 4
+    │ 
  12 │     function test(uint256 x) public {
     │              ──┬─         ┬  
     │                ╰───────────── name: 9
     │                           │  
     │                           ╰── name: 10
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  9 │ contract Test is IPool {
+    │                  ──┬──  
+    │                    ╰──── ref: 1
+ 10 │     mapping(uint256 => Info) infos;
+    │                        ──┬─  
+    │                          ╰─── ref: 2
+ 11 │     using Math for uint256;
+    │           ──┬─  
+    │             ╰─── ref: 4
+    │ 
  13 │         infos[x].amount.nop();
     │         ──┬── ┬  ───┬── ─┬─  
     │           ╰────────────────── ref: 8

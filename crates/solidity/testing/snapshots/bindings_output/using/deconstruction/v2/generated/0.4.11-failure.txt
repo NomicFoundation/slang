@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected Identifier.
-    ╭─[input.sol:10:11]
+    ╭─[ input.sol:10:11 ]
     │
  10 │     using {Lib.increment} for Lib.Counter;
     │           ───────────────┬───────────────  
@@ -36,8 +36,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library Lib {
     │         ─┬─  
@@ -50,10 +50,8 @@ Bindings:
     │                ╰──── name: 3
     │ 
   6 │     function increment(Counter memory _counter) public {}
-    │              ────┬──── ───┬───        ────┬───  
+    │              ────┬────                ────┬───  
     │                  ╰────────────────────────────── name: 4
-    │                           │               │     
-    │                           ╰───────────────────── ref: 2
     │                                           │     
     │                                           ╰───── name: 5
     │ 
@@ -62,14 +60,22 @@ Bindings:
     │            ╰─── name: 6
     │ 
  12 │     function test(Lib.Counter memory c) public {
-    │              ──┬─ ─┬─ ───┬───        ┬  
+    │              ──┬─                    ┬  
     │                ╰──────────────────────── name: 7
-    │                    │     │           │  
-    │                    ╰──────────────────── ref: 1
-    │                          │           │  
-    │                          ╰────────────── ref: 2
     │                                      │  
     │                                      ╰── name: 8
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │     function increment(Counter memory _counter) public {}
+    │                        ───┬───  
+    │                           ╰───── ref: 2
+    │ 
+ 12 │     function test(Lib.Counter memory c) public {
+    │                   ─┬─ ───┬───  
+    │                    ╰─────────── ref: 1
+    │                          │     
+    │                          ╰───── ref: 2
  13 │         c.increment();
     │         ┬ ────┬────  
     │         ╰──────────── ref: 8

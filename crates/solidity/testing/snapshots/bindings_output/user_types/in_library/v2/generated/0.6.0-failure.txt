@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or CloseBrace or ConstructorKeyword or EnumKeyword or EventKeyword or FallbackKeyword or FixedKeyword or FunctionKeyword or Identifier or IntKeyword or MappingKeyword or ModifierKeyword or ReceiveKeyword or StringKeyword or StructKeyword or UfixedKeyword or UintKeyword or UsingKeyword.
-    ╭─[input.sol:8:5]
+    ╭─[ input.sol:8:5 ]
     │
   8 │ ╭─▶     type LibType is int32;
     ┆ ┆   
@@ -33,8 +33,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract Test {
    │          ──┬─  
@@ -42,6 +42,13 @@ Bindings:
  2 │     function test() public returns (int32) {
    │              ──┬─  
    │                ╰─── name: 2
+   │ 
+ 7 │ library MyLib {
+   │         ──┬──  
+   │           ╰──── name: 3
+   │
+   ├─[ input.sol:1:1 ]
+   │
  3 │         return MyLib.LibType.unwrap(MyLib.create());
    │                ──┬── ───┬─── ───┬── ──┬── ───┬──  
    │                  ╰──────────────────────────────── ref: 3
@@ -53,8 +60,4 @@ Bindings:
    │                                       ╰─────────── ref: 3
    │                                              │    
    │                                              ╰──── unresolved
-   │ 
- 7 │ library MyLib {
-   │         ──┬──  
-   │           ╰──── name: 3
 ───╯

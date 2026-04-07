@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Test {
     │          ──┬─  
@@ -22,6 +22,13 @@ References and definitions:
     │                             ╰─────────── name: 5
     │                                      │  
     │                                      ╰── name: 6
+    │ 
+ 10 │                 let x := inner1()
+    │                     ┬  
+    │                     ╰── name: 7
+    │
+    ├─[ input.sol:1:1 ]
+    │
   8 │                     a := add(FOO, 0x40)
     │                     ┬    ─┬─ ─┬─  
     │                     ╰───────────── ref: 6
@@ -31,43 +38,56 @@ References and definitions:
     │                               ╰─── ref: 2
     │ 
  10 │                 let x := inner1()
-    │                     ┬    ───┬──  
-    │                     ╰──────────── name: 7
-    │                             │    
+    │                          ───┬──  
     │                             ╰──── ref: 5
     │ 
  12 │             outer()
     │             ──┬──  
     │               ╰──── ref: 4
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │ ╭───────▶ contract Test {
-  2 │ │ │           uint constant FOO = 1;
-    │ │ │       ─────────────┬─────────────  
-    │ │ │                    ╰─────────────── definiens: 2
-  3 │ │ ╭─────▶ 
-    ┆ ┆ ┆       
-  6 │ │ │ ╭─│ ▶             function outer() {
-  7 │ │ │ │ ╭─▶                 function inner1() -> a {
-    │ │ │ │ │                                        ┬  
-    │ │ │ │ │                                        ╰── definiens: 6
-    ┆ ┆ ┆ ┆ ┆   
-  9 │ │ │ │ ├─▶                 }
-    │ │ │ │ │                       
-    │ │ │ │ ╰─────────────────────── definiens: 5
- 10 │ │ │ │                     let x := inner1()
-    │ │ │ │                         ┬  
-    │ │ │ │                         ╰── definiens: 7
- 11 │ │ │ ├───▶             }
-    │ │ │ │                     
-    │ │ │ ╰───────────────────── definiens: 4
-    ┆ ┆ ┆       
- 14 │ │ ├─────▶     }
-    │ │ │               
-    │ │ ╰─────────────── definiens: 3
- 15 │ ├───────▶ }
-    │ │             
-    │ ╰───────────── definiens: 1
+  1 │ ╭─▶ contract Test {
+    ┆ ┆   
+ 15 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │ │       uint constant FOO = 1;
+    │ │   ─────────────┬─────────────  
+    │ │                ╰─────────────── definiens: 2
+  3 │ ╭─▶ 
+    ┆ ┆   
+ 14 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 3
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │ ╭─▶             function outer() {
+    ┆ ┆   
+ 11 │ ├─▶             }
+    │ │                   
+    │ ╰─────────────────── definiens: 4
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  7 │ ╭─▶                 function inner1() -> a {
+    ┆ ┆   
+  9 │ ├─▶                 }
+    │ │                       
+    │ ╰─────────────────────── definiens: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  7 │                 function inner1() -> a {
+    │                                      ┬  
+    │                                      ╰── definiens: 6
+    │ 
+ 10 │                 let x := inner1()
+    │                     ┬  
+    │                     ╰── definiens: 7
 ────╯

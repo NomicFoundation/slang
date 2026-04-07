@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ interface IFoo {
     │           ──┬─  
@@ -14,14 +14,25 @@ References and definitions:
     │         ───┬──  
     │            ╰──── name: 3
   6 │     function foo(IFoo, uint) external {}
-    │              ─┬─ ──┬─  
-    │               ╰──────── name: 4
-    │                    │   
-    │                    ╰─── ref: 1
+    │              ─┬─  
+    │               ╰─── name: 4
     │ 
   9 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 5
+    │ 
+ 12 │     function test(IFoo f) internal {
+    │              ──┬─      ┬  
+    │                ╰────────── name: 6
+    │                        │  
+    │                        ╰── name: 7
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │     function foo(IFoo, uint) external {}
+    │                  ──┬─  
+    │                    ╰─── ref: 1
+    │ 
  10 │     using LibFoo for IFoo;
     │           ───┬──     ──┬─  
     │              ╰───────────── ref: 3
@@ -29,12 +40,8 @@ References and definitions:
     │                        ╰─── ref: 1
     │ 
  12 │     function test(IFoo f) internal {
-    │              ──┬─ ──┬─ ┬  
-    │                ╰────────── name: 6
-    │                     │  │  
-    │                     ╰───── ref: 1
-    │                        │  
-    │                        ╰── name: 7
+    │                   ──┬─  
+    │                     ╰─── ref: 1
  13 │         f.foo(1); // invokes the attached function
     │         ┬ ─┬─  
     │         ╰────── ref: 7
@@ -50,35 +57,50 @@ References and definitions:
     │                      │    
     │                      ╰──── ref: built-in
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │     ╭───▶ interface IFoo {
-  2 │     │         function foo(address, uint) external;
-    │     │     ─────────────────────┬────────────────────  
-    │     │                          ╰────────────────────── definiens: 2
-  3 │     ├─│ ▶ }
-    │     │ │       
-    │     ╰───────── definiens: 1
-  4 │       ╭─▶ 
-    ┆       ┆   
-  6 │       │       function foo(IFoo, uint) external {}
-    │       │   ────────────────────┬────────────────────  
-    │       │                       ╰────────────────────── definiens: 4
-  7 │ │     ├─▶ }
-    │ │     │       
-    │ │     ╰─────── definiens: 3
-  8 │ ╭───────▶ 
-    ┆ ┆         
- 11 │ │ ╭─────▶ 
- 12 │ │ │           function test(IFoo f) internal {
-    │ │ │                         ───┬──  
-    │ │ │                            ╰──── definiens: 7
-    ┆ ┆ ┆       
- 15 │ │ ├─────▶     }
-    │ │ │               
-    │ │ ╰─────────────── definiens: 6
- 16 │ ├───────▶ }
-    │ │             
-    │ ╰───────────── definiens: 5
+  1 │ ╭─▶ interface IFoo {
+    ┆ ┆   
+  3 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │         function foo(address, uint) external;
+    │     ─────────────────────┬────────────────────  
+    │                          ╰────────────────────── definiens: 2
+    │ 
+  4 │ ╭─▶ 
+    ┆ ┆   
+  7 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 3
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │         function foo(IFoo, uint) external {}
+    │     ────────────────────┬────────────────────  
+    │                         ╰────────────────────── definiens: 4
+    │ 
+  8 │ ╭─▶ 
+    ┆ ┆   
+ 16 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 11 │ ╭─▶ 
+    ┆ ┆   
+ 15 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 6
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 12 │     function test(IFoo f) internal {
+    │                   ───┬──  
+    │                      ╰──── definiens: 7
 ────╯

@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract Test {
    │          ──┬─  
@@ -11,6 +11,17 @@ References and definitions:
    │                  ╰─────────── name: 2
    │                           │  
    │                           ╰── name: 3
+   │ 
+ 5 │     function divide(int dividend, int divisor) returns (int);
+   │              ───┬──     ────┬───      ───┬───  
+   │                 ╰────────────────────────────── name: 4
+   │                             │            │     
+   │                             ╰────────────────── name: 5
+   │                                          │     
+   │                                          ╰───── name: 6
+   │
+   ├─[ input.sol:1:1 ]
+   │
  3 │         return divide({ dividend: x, divisor: 3 });
    │                ───┬──   ────┬───  ┬  ───┬───  
    │                   ╰─────────────────────────── ref: 4
@@ -20,34 +31,35 @@ References and definitions:
    │                                   ╰─────────── ref: 3
    │                                         │     
    │                                         ╰───── ref: 6
+───╯
+[39mDefiniens:[0m 
+   ╭─[ input.sol:1:1 ]
+   │
+ 1 │ ╭─▶ contract Test {
+   ┆ ┆   
+ 6 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 1
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 2 │ ╭─▶     function someFunc(int x) returns (int) {
+   ┆ ┆   
+ 4 │ ├─▶     }
+   │ │           
+   │ ╰─────────── definiens: 2
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 2 │     function someFunc(int x) returns (int) {
+   │                       ──┬──  
+   │                         ╰──── definiens: 3
    │ 
  5 │     function divide(int dividend, int divisor) returns (int);
-   │              ───┬──     ────┬───      ───┬───  
-   │                 ╰────────────────────────────── name: 4
-   │                             │            │     
-   │                             ╰────────────────── name: 5
-   │                                          │     
-   │                                          ╰───── name: 6
-───╯
-Definiens: 
-   ╭─[input.sol:1:1]
-   │
- 1 │ ╭─│ ▶ contract Test {
- 2 │ │ ╭─▶     function someFunc(int x) returns (int) {
-   │ │ │                         ──┬──  
-   │ │ │                           ╰──── definiens: 3
-   ┆ ┆ ┆   
- 4 │ │ ├─▶     }
-   │ │ │           
-   │ │ ╰─────────── definiens: 2
- 5 │ │         function divide(int dividend, int divisor) returns (int);
-   │ │     ──────────────────────────┬────┬───────┬──────────────────────  
-   │ │                               ╰───────────────────────────────────── definiens: 5
-   │ │                                    │       │                        
-   │ │                                    ╰──────────────────────────────── definiens: 4
-   │ │                                            │                        
-   │ │                                            ╰──────────────────────── definiens: 6
- 6 │ ├───▶ }
-   │ │         
-   │ ╰───────── definiens: 1
+   │ ──────────────────────────┬────┬───────┬──────────────────────  
+   │                           ╰───────────────────────────────────── definiens: 5
+   │                                │       │                        
+   │                                ╰──────────────────────────────── definiens: 4
+   │                                        │                        
+   │                                        ╰──────────────────────── definiens: 6
 ───╯

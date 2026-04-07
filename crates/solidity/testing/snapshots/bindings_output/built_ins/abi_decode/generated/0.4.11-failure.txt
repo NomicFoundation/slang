@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library Lib {
     │         ─┬─  
@@ -13,9 +13,6 @@ References and definitions:
   5 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 3
-  6 │     using Lib for uint256;
-    │           ─┬─  
-    │            ╰─── ref: 1
     │ 
   8 │     struct Point {
     │            ──┬──  
@@ -32,6 +29,13 @@ References and definitions:
     │                ╰────────────────────── name: 7
     │                                  │    
     │                                  ╰──── name: 8
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │     using Lib for uint256;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
  14 │         abi.decode(input, (uint256)).nop();
     │         ─┬─ ───┬── ──┬──             ─┬─  
     │          ╰──────────────────────────────── ref: built-in
@@ -84,38 +88,53 @@ References and definitions:
     │                      │    
     │                      ╰──── ref: 8
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │       ╭─▶ library Lib {
-  2 │       │       function nop(uint256) internal {}
-    │       │   ───────────────────┬──────────────────  
-    │       │                      ╰──────────────────── definiens: 2
-  3 │ │     ├─▶ }
-    │ │     │       
-    │ │     ╰─────── definiens: 1
-  4 │ ╭───────▶ 
-    ┆ ┆         
-  7 │ │   ╭───▶ 
-    ┆ ┆   ┆     
-  9 │ │   │             uint256 x;
-    │ │   │     ─────────┬─────────  
-    │ │   │              ╰─────────── definiens: 5
- 10 │ │   │             uint256 y;
-    │ │   │     ─────────┬─────────  
-    │ │   │              ╰─────────── definiens: 6
- 11 │ │ │ ├───▶     }
-    │ │ │ │             
-    │ │ │ ╰───────────── definiens: 4
- 12 │ │ ╭─────▶ 
- 13 │ │ │           function test(bytes memory input) internal {
-    │ │ │                         ─────────┬────────  
-    │ │ │                                  ╰────────── definiens: 8
-    ┆ ┆ ┆       
- 19 │ │ ├─────▶     }
-    │ │ │               
-    │ │ ╰─────────────── definiens: 7
- 20 │ ├───────▶ }
-    │ │             
-    │ ╰───────────── definiens: 3
+  1 │ ╭─▶ library Lib {
+    ┆ ┆   
+  3 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │         function nop(uint256) internal {}
+    │     ───────────────────┬──────────────────  
+    │                        ╰──────────────────── definiens: 2
+    │ 
+  4 │ ╭─▶ 
+    ┆ ┆   
+ 20 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 3
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  7 │ ╭─▶ 
+    ┆ ┆   
+ 11 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 4
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  9 │             uint256 x;
+    │     ─────────┬─────────  
+    │              ╰─────────── definiens: 5
+ 10 │             uint256 y;
+    │     ─────────┬─────────  
+    │              ╰─────────── definiens: 6
+    │ 
+ 12 │ ╭─▶ 
+    ┆ ┆   
+ 19 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 7
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 13 │     function test(bytes memory input) internal {
+    │                   ─────────┬────────  
+    │                            ╰────────── definiens: 8
 ────╯

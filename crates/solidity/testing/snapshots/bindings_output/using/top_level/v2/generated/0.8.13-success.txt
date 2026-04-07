@@ -25,8 +25,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ struct Counter {
     │        ───┬───  
@@ -36,12 +36,25 @@ Bindings:
     │            ╰──── name: 2
     │ 
   5 │ function increment(Counter memory _counter) public {}
-    │          ────┬──── ───┬───        ────┬───  
+    │          ────┬────                ────┬───  
     │              ╰────────────────────────────── name: 3
-    │                       │               │     
-    │                       ╰───────────────────── ref: 1
     │                                       │     
     │                                       ╰───── name: 4
+    │ 
+  9 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 5
+ 10 │     function test(Counter memory c) public {
+    │              ──┬─                ┬  
+    │                ╰──────────────────── name: 6
+    │                                  │  
+    │                                  ╰── name: 7
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  5 │ function increment(Counter memory _counter) public {}
+    │                    ───┬───  
+    │                       ╰───── ref: 1
     │ 
   7 │ using {increment} for Counter;
     │        ────┬────      ───┬───  
@@ -49,16 +62,9 @@ Bindings:
     │                          │     
     │                          ╰───── ref: 1
     │ 
-  9 │ contract Test {
-    │          ──┬─  
-    │            ╰─── name: 5
  10 │     function test(Counter memory c) public {
-    │              ──┬─ ───┬───        ┬  
-    │                ╰──────────────────── name: 6
-    │                      │           │  
-    │                      ╰────────────── ref: 1
-    │                                  │  
-    │                                  ╰── name: 7
+    │                   ───┬───  
+    │                      ╰───── ref: 1
  11 │         c.increment();
     │         ┬ ────┬────  
     │         ╰──────────── ref: 7

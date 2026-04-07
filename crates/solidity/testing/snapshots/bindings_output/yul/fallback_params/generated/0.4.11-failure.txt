@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected ConstantKeyword or Identifier or InternalKeyword or PrivateKeyword or PublicKeyword.
-   ╭─[input.sol:2:13]
+   ╭─[ input.sol:2:13 ]
    │
  2 │ ╭─▶     fallback(bytes calldata input) external payable returns (bytes memory output) {
    ┆ ┆   
@@ -10,8 +10,8 @@ Error: Expected ConstantKeyword or Identifier or InternalKeyword or PrivateKeywo
    │ │           
    │ ╰─────────── Error occurred here.
 ───╯
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract Test {
    │          ──┬─  
@@ -20,8 +20,8 @@ References and definitions:
    │     ────┬───  
    │         ╰───── unresolved
 ───╯
-Definiens: 
-   ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ ╭─▶ contract Test {
    ┆ ┆   

@@ -21,8 +21,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract Test {
    │          ──┬─  
@@ -33,13 +33,18 @@ Bindings:
    │                          │    
    │                          ╰──── name: 3
  3 │     Data[] values;
-   │     ──┬─   ───┬──  
-   │       ╰──────────── ref: 2
-   │               │    
+   │            ───┬──  
    │               ╰──── name: 4
  4 │     function test() public {
    │              ──┬─  
    │                ╰─── name: 5
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 3 │     Data[] values;
+   │     ──┬─  
+   │       ╰─── ref: 2
+   │ 
  5 │         values.push().value = 1;
    │         ───┬── ──┬─   ──┬──  
    │            ╰───────────────── ref: 4

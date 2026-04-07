@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected Equal or Semicolon.
-    ╭─[input.sol:13:17]
+    ╭─[ input.sol:13:17 ]
     │
  13 │         emit Log(Severity.INFO, "Testing");
     │                 ─────────────┬────────────  
@@ -34,8 +34,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Test {
     │          ──┬─  
@@ -54,9 +54,7 @@ Bindings:
     │           ─┬─  
     │            ╰─── name: 5
   8 │         Severity level,
-    │         ────┬─── ──┬──  
-    │             ╰─────────── ref: 2
-    │                    │    
+    │                  ──┬──  
     │                    ╰──── name: 6
   9 │         string name
     │                ──┬─  
@@ -66,8 +64,16 @@ Bindings:
     │              ──┬─  
     │                ╰─── name: 8
  13 │         emit Log(Severity.INFO, "Testing");
-    │         ──┬─ ─┬─  
-    │           ╰─────── unresolved
-    │               │   
+    │              ─┬─  
     │               ╰─── name: 9
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  8 │         Severity level,
+    │         ────┬───  
+    │             ╰───── ref: 2
+    │ 
+ 13 │         emit Log(Severity.INFO, "Testing");
+    │         ──┬─  
+    │           ╰─── unresolved
 ────╯

@@ -26,8 +26,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library Utils {
     │         ──┬──  
@@ -46,6 +46,15 @@ Bindings:
   6 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 6
+    │ 
+ 10 │     function test(bytes calldata name) public {
+    │              ──┬─                ──┬─  
+    │                ╰─────────────────────── name: 7
+    │                                    │   
+    │                                    ╰─── name: 8
+    │
+    ├─[ input.sol:1:1 ]
+    │
   7 │     using Utils for bytes;
     │           ──┬──  
     │             ╰──── ref: 1
@@ -53,11 +62,6 @@ Bindings:
     │           ──┬──  
     │             ╰──── ref: 1
     │ 
- 10 │     function test(bytes calldata name) public {
-    │              ──┬─                ──┬─  
-    │                ╰─────────────────────── name: 7
-    │                                    │   
-    │                                    ╰─── name: 8
  11 │         bytes(name[0:16]).foo();
     │               ──┬─        ─┬─  
     │                 ╰────────────── ref: 8

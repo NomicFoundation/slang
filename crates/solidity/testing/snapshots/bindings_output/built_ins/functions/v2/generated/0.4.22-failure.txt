@@ -74,8 +74,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract BuiltInsTest {
     │          ──────┬─────  
@@ -83,23 +83,14 @@ Bindings:
   2 │     function testRequire() public {
     │              ─────┬─────  
     │                   ╰─────── name: 2
-  3 │         require(true, "should always succeed");
-    │         ───┬───  
-    │            ╰───── built-in
     │ 
   6 │     function testRevert() public {
     │              ─────┬────  
     │                   ╰────── name: 3
-  7 │         revert("testing revert");
-    │         ───┬──  
-    │            ╰──── built-in
     │ 
  10 │     function testAssert() public {
     │              ─────┬────  
     │                   ╰────── name: 4
- 11 │         assert(2 + 2 == 4);
-    │         ───┬──  
-    │            ╰──── built-in
     │ 
  14 │     function testMath() public {
     │              ────┬───  
@@ -109,69 +100,36 @@ Bindings:
     │                       ╰── name: 6
     │ 
  17 │         uint v1 = addmod(1, 2, 3);
-    │              ─┬   ───┬──  
-    │               ╰─────────── name: 7
-    │                      │    
-    │                      ╰──── built-in
+    │              ─┬  
+    │               ╰── name: 7
  18 │         bytes32 v2 = blockhash(1);
-    │                 ─┬   ────┬────  
-    │                  ╰────────────── name: 8
-    │                          │      
-    │                          ╰────── built-in
+    │                 ─┬  
+    │                  ╰── name: 8
  19 │         bytes32 v3 = blobhash(2);
-    │                 ─┬   ────┬───  
-    │                  ╰───────────── name: 9
-    │                          │     
-    │                          ╰───── unresolved
+    │                 ─┬  
+    │                  ╰── name: 9
  20 │         address v4 = ecrecover(v2, 1, v2, v2);
-    │                 ─┬   ────┬──── ─┬     ─┬  ─┬  
-    │                  ╰──────────────────────────── name: 10
-    │                          │      │      │   │  
-    │                          ╰──────────────────── built-in
-    │                                 │      │   │  
-    │                                 ╰───────────── ref: 8
-    │                                        │   │  
-    │                                        ╰────── ref: 8
-    │                                            │  
-    │                                            ╰── ref: 8
+    │                 ─┬  
+    │                  ╰── name: 10
  21 │         uint256 v5 = gasleft();
-    │                 ─┬   ───┬───  
-    │                  ╰──────────── name: 11
-    │                         │     
-    │                         ╰───── built-in
+    │                 ─┬  
+    │                  ╰── name: 11
  22 │         bytes32 v6 = keccak256(x1);
-    │                 ─┬   ────┬──── ─┬  
-    │                  ╰───────────────── name: 12
-    │                          │      │  
-    │                          ╰───────── built-in
-    │                                 │  
-    │                                 ╰── ref: 6
+    │                 ─┬  
+    │                  ╰── name: 12
  23 │         uint v7 = mulmod(1, 2, 3);
-    │              ─┬   ───┬──  
-    │               ╰─────────── name: 13
-    │                      │    
-    │                      ╰──── built-in
+    │              ─┬  
+    │               ╰── name: 13
  24 │         bytes20 v8 = ripemd160(x1);
-    │                 ─┬   ────┬──── ─┬  
-    │                  ╰───────────────── name: 14
-    │                          │      │  
-    │                          ╰───────── built-in
-    │                                 │  
-    │                                 ╰── ref: 6
+    │                 ─┬  
+    │                  ╰── name: 14
  25 │         bytes32 v9 = sha256(x1);
-    │                 ─┬   ───┬── ─┬  
-    │                  ╰────────────── name: 15
-    │                         │    │  
-    │                         ╰─────── built-in
-    │                              │  
-    │                              ╰── ref: 6
+    │                 ─┬  
+    │                  ╰── name: 15
     │ 
  28 │     function testSelfDestruct() public {
     │              ────────┬───────  
     │                      ╰───────── name: 16
- 29 │         selfdestruct(address(0x0));
-    │         ──────┬─────  
-    │               ╰─────── built-in
     │ 
  32 │     function testAbiFunctions() public {
     │              ────────┬───────  
@@ -180,43 +138,113 @@ Bindings:
     │                      ─┬  
     │                       ╰── name: 18
  34 │         uint v1 = abi.decode(x1, (uint));
-    │              ─┬   ─┬─ ───┬── ─┬  
-    │               ╰────────────────── name: 19
-    │                    │     │    │  
+    │              ─┬  
+    │               ╰── name: 19
+ 35 │         bytes memory v2 = abi.encode(v1);
+    │                      ─┬  
+    │                       ╰── name: 20
+ 36 │         bytes memory v3 = abi.encodeCall(this.testMath, (1, 2, 3));
+    │                      ─┬  
+    │                       ╰── name: 21
+ 37 │         bytes memory v4 = abi.encodePacked(10, 20);
+    │                      ─┬  
+    │                       ╰── name: 22
+ 38 │         bytes memory v5 = abi.encodeWithSelector(this.testMath.selector, (1, 2, 3));
+    │                      ─┬  
+    │                       ╰── name: 23
+ 39 │         string memory x2;
+    │                       ─┬  
+    │                        ╰── name: 24
+ 40 │         bytes memory v6 = abi.encodeWithSignature(x2, (1, 2, 3));
+    │                      ─┬  
+    │                       ╰── name: 25
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  3 │         require(true, "should always succeed");
+    │         ───┬───  
+    │            ╰───── built-in
+    │ 
+  7 │         revert("testing revert");
+    │         ───┬──  
+    │            ╰──── built-in
+    │ 
+ 11 │         assert(2 + 2 == 4);
+    │         ───┬──  
+    │            ╰──── built-in
+    │ 
+ 17 │         uint v1 = addmod(1, 2, 3);
+    │                   ───┬──  
+    │                      ╰──── built-in
+ 18 │         bytes32 v2 = blockhash(1);
+    │                      ────┬────  
+    │                          ╰────── built-in
+ 19 │         bytes32 v3 = blobhash(2);
+    │                      ────┬───  
+    │                          ╰───── unresolved
+ 20 │         address v4 = ecrecover(v2, 1, v2, v2);
+    │                      ────┬──── ─┬     ─┬  ─┬  
+    │                          ╰──────────────────── built-in
+    │                                 │      │   │  
+    │                                 ╰───────────── ref: 8
+    │                                        │   │  
+    │                                        ╰────── ref: 8
+    │                                            │  
+    │                                            ╰── ref: 8
+ 21 │         uint256 v5 = gasleft();
+    │                      ───┬───  
+    │                         ╰───── built-in
+ 22 │         bytes32 v6 = keccak256(x1);
+    │                      ────┬──── ─┬  
+    │                          ╰───────── built-in
+    │                                 │  
+    │                                 ╰── ref: 6
+ 23 │         uint v7 = mulmod(1, 2, 3);
+    │                   ───┬──  
+    │                      ╰──── built-in
+ 24 │         bytes20 v8 = ripemd160(x1);
+    │                      ────┬──── ─┬  
+    │                          ╰───────── built-in
+    │                                 │  
+    │                                 ╰── ref: 6
+ 25 │         bytes32 v9 = sha256(x1);
+    │                      ───┬── ─┬  
+    │                         ╰─────── built-in
+    │                              │  
+    │                              ╰── ref: 6
+    │ 
+ 29 │         selfdestruct(address(0x0));
+    │         ──────┬─────  
+    │               ╰─────── built-in
+    │ 
+ 34 │         uint v1 = abi.decode(x1, (uint));
+    │                   ─┬─ ───┬── ─┬  
     │                    ╰───────────── built-in
     │                          │    │  
     │                          ╰─────── unresolved
     │                               │  
     │                               ╰── ref: 18
  35 │         bytes memory v2 = abi.encode(v1);
-    │                      ─┬   ─┬─ ───┬── ─┬  
-    │                       ╰────────────────── name: 20
-    │                            │     │    │  
+    │                           ─┬─ ───┬── ─┬  
     │                            ╰───────────── built-in
     │                                  │    │  
     │                                  ╰─────── built-in
     │                                       │  
     │                                       ╰── ref: 19
  36 │         bytes memory v3 = abi.encodeCall(this.testMath, (1, 2, 3));
-    │                      ─┬   ─┬─ ─────┬────      ────┬───  
-    │                       ╰───────────────────────────────── name: 21
-    │                            │       │              │     
+    │                           ─┬─ ─────┬────      ────┬───  
     │                            ╰──────────────────────────── built-in
     │                                    │              │     
     │                                    ╰──────────────────── unresolved
     │                                                   │     
     │                                                   ╰───── ref: 5
  37 │         bytes memory v4 = abi.encodePacked(10, 20);
-    │                      ─┬   ─┬─ ──────┬─────  
-    │                       ╰───────────────────── name: 22
-    │                            │        │       
+    │                           ─┬─ ──────┬─────  
     │                            ╰──────────────── built-in
     │                                     │       
     │                                     ╰─────── built-in
  38 │         bytes memory v5 = abi.encodeWithSelector(this.testMath.selector, (1, 2, 3));
-    │                      ─┬   ─┬─ ─────────┬────────      ────┬─── ────┬───  
-    │                       ╰────────────────────────────────────────────────── name: 23
-    │                            │           │                  │        │     
+    │                           ─┬─ ─────────┬────────      ────┬─── ────┬───  
     │                            ╰───────────────────────────────────────────── built-in
     │                                        │                  │        │     
     │                                        ╰───────────────────────────────── built-in
@@ -224,13 +252,9 @@ Bindings:
     │                                                           ╰────────────── ref: 5
     │                                                                    │     
     │                                                                    ╰───── built-in
- 39 │         string memory x2;
-    │                       ─┬  
-    │                        ╰── name: 24
+    │ 
  40 │         bytes memory v6 = abi.encodeWithSignature(x2, (1, 2, 3));
-    │                      ─┬   ─┬─ ─────────┬───────── ─┬  
-    │                       ╰─────────────────────────────── name: 25
-    │                            │           │           │  
+    │                           ─┬─ ─────────┬───────── ─┬  
     │                            ╰────────────────────────── built-in
     │                                        │           │  
     │                                        ╰────────────── built-in

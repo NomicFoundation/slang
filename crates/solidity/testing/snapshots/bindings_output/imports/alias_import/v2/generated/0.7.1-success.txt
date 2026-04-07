@@ -17,8 +17,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[main.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ main.sol:1:1 ]
    │
  1 │ import "./other.sol" as other;
    │                         ──┬──  
@@ -36,8 +36,8 @@ Bindings:
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[other.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ other.sol:1:1 ]
    │
  1 │ function bar() pure returns (int) {
    │          ─┬─  

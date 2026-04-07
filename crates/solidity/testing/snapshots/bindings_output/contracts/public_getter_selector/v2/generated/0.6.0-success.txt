@@ -20,8 +20,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ interface Face {
    │           ──┬─  
@@ -31,10 +31,8 @@ Bindings:
    │              ╰── name: 2
    │ 
  5 │ contract Test is Face {
-   │          ──┬─    ──┬─  
-   │            ╰─────────── name: 3
-   │                    │   
-   │                    ╰─── ref: 1
+   │          ──┬─  
+   │            ╰─── name: 3
  6 │     uint public override x;
    │                          ┬  
    │                          ╰── name: 4
@@ -42,6 +40,13 @@ Bindings:
  8 │     function test() internal {
    │              ──┬─  
    │                ╰─── name: 5
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 5 │ contract Test is Face {
+   │                  ──┬─  
+   │                    ╰─── ref: 1
+   │ 
  9 │         this.x.selector;
    │              ┬ ────┬───  
    │              ╰─────────── ref: 4

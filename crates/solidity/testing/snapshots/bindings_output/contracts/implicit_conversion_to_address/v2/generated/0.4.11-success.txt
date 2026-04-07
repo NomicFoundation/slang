@@ -23,8 +23,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library FooUtils {
     │         ────┬───  
@@ -40,6 +40,15 @@ Bindings:
   7 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 4
+    │ 
+ 10 │     function test(Foo f) internal {
+    │              ──┬─     ┬  
+    │                ╰───────── name: 5
+    │                       │  
+    │                       ╰── name: 6
+    │
+    ├─[ input.sol:1:1 ]
+    │
   8 │     using FooUtils for Foo;
     │           ────┬───     ─┬─  
     │               ╰───────────── ref: 1
@@ -47,12 +56,8 @@ Bindings:
     │                         ╰─── ref: 3
     │ 
  10 │     function test(Foo f) internal {
-    │              ──┬─ ─┬─ ┬  
-    │                ╰───────── name: 5
-    │                    │  │  
-    │                    ╰───── ref: 3
-    │                       │  
-    │                       ╰── name: 6
+    │                   ─┬─  
+    │                    ╰─── ref: 3
  11 │         f.nop(); // in Solidity <0.5.0 contract references are convertible to address
     │         ┬ ─┬─  
     │         ╰────── ref: 6

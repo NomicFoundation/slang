@@ -18,8 +18,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Test {
     │          ──┬─  
@@ -28,16 +28,18 @@ Bindings:
     │              ──┬─  
     │                ╰─── name: 2
     │ 
-  4 │         this.balance;
-    │              ───┬───  
-    │                 ╰───── built-in
-    │ 
   8 │ library Utils {
     │         ──┬──  
     │           ╰──── name: 3
   9 │     function test() internal {
     │              ──┬─  
     │                ╰─── name: 4
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  4 │         this.balance;
+    │              ───┬───  
+    │                 ╰───── built-in
     │ 
  11 │         this.balance;
     │              ───┬───  

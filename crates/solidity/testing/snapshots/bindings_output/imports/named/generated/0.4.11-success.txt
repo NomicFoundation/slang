@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-   ╭─[main.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ main.sol:1:1 ]
    │
  1 │ import * as foo from "lib/foo.sol";
    │             ─┬─  
@@ -25,27 +25,34 @@ References and definitions:
    │                             │  
    │                             ╰── ref: 4
 ───╯
-Definiens: 
-   ╭─[main.sol:1:1]
+[39mDefiniens:[0m 
+   ╭─[ main.sol:1:1 ]
    │
- 1 │ │     import * as foo from "lib/foo.sol";
-   │ │           ──────────────┬─────────────  
-   │ │                         ╰─────────────── definiens: 1
- 2 │ ╭───▶ 
-   ┆ ┆ ┆   
- 4 │ │ ╭─▶     function test(int x) returns (int) {
-   │ │ │                     ──┬──  
-   │ │ │                       ╰──── definiens: 4
-   ┆ ┆ ┆   
- 6 │ │ ├─▶     }
-   │ │ │           
-   │ │ ╰─────────── definiens: 3
- 7 │ ├───▶ }
-   │ │         
-   │ ╰───────── definiens: 2
+ 1 │ │   import * as foo from "lib/foo.sol";
+   │ │         ──────────────┬─────────────  
+   │ │                       ╰─────────────── definiens: 1
+ 2 │ ╭─▶ 
+   ┆ ┆   
+ 7 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 2
+   │
+   ├─[ main.sol:1:1 ]
+   │
+ 4 │ ╭─▶     function test(int x) returns (int) {
+   ┆ ┆   
+ 6 │ ├─▶     }
+   │ │           
+   │ ╰─────────── definiens: 3
+   │
+   ├─[ main.sol:1:1 ]
+   │
+ 4 │     function test(int x) returns (int) {
+   │                   ──┬──  
+   │                     ╰──── definiens: 4
 ───╯
-References and definitions: 
-   ╭─[lib/foo.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ lib/foo.sol:1:1 ]
    │
  1 │ library Foo {
    │         ─┬─  
@@ -59,18 +66,26 @@ References and definitions:
    │                ┬  
    │                ╰── ref: 7
 ───╯
-Definiens: 
-   ╭─[lib/foo.sol:1:1]
+[39mDefiniens:[0m 
+   ╭─[ lib/foo.sol:1:1 ]
    │
- 1 │ ╭─│ ▶ library Foo {
- 2 │ │ ╭─▶     function test(int x) returns (int) {
-   │ │ │                     ──┬──  
-   │ │ │                       ╰──── definiens: 7
-   ┆ ┆ ┆   
- 4 │ │ ├─▶     }
-   │ │ │           
-   │ │ ╰─────────── definiens: 6
- 5 │ ├───▶ }
-   │ │         
-   │ ╰───────── definiens: 5
+ 1 │ ╭─▶ library Foo {
+   ┆ ┆   
+ 5 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 5
+   │
+   ├─[ lib/foo.sol:1:1 ]
+   │
+ 2 │ ╭─▶     function test(int x) returns (int) {
+   ┆ ┆   
+ 4 │ ├─▶     }
+   │ │           
+   │ ╰─────────── definiens: 6
+   │
+   ├─[ lib/foo.sol:1:1 ]
+   │
+ 2 │     function test(int x) returns (int) {
+   │                   ──┬──  
+   │                     ╰──── definiens: 7
 ───╯

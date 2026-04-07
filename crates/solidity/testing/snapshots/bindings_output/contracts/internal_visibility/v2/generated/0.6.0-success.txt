@@ -24,8 +24,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ abstract contract Ownable {
     │                   ───┬───  
@@ -41,13 +41,18 @@ Bindings:
     │                     ╰──────── name: 4
     │ 
   6 │ contract Test is Ownable {
-    │          ──┬─    ───┬───  
-    │            ╰────────────── name: 5
-    │                     │     
-    │                     ╰───── ref: 1
+    │          ──┬─  
+    │            ╰─── name: 5
   7 │     function test() public {
     │              ──┬─  
     │                ╰─── name: 6
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │ contract Test is Ownable {
+    │                  ───┬───  
+    │                     ╰───── ref: 1
+    │ 
   8 │         owner;
     │         ──┬──  
     │           ╰──── ref: 2

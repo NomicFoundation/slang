@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract A {
     │          ┬  
@@ -11,78 +11,108 @@ References and definitions:
     │               ╰─── name: 2
     │ 
   4 │ contract B is A {
-    │          ┬    ┬  
-    │          ╰─────── name: 3
-    │               │  
-    │               ╰── ref: 1
+    │          ┬  
+    │          ╰── name: 3
   5 │     function foo() public {
     │              ─┬─  
     │               ╰─── name: 4
+    │ 
+  9 │ contract C is A {
+    │          ┬  
+    │          ╰── name: 5
+ 10 │     function foo() public {
+    │              ─┬─  
+    │               ╰─── name: 6
+    │ 
+ 14 │ contract D is B, C {
+    │          ┬  
+    │          ╰── name: 7
+ 15 │     function foo() public {
+    │              ─┬─  
+    │               ╰─── name: 8
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  4 │ contract B is A {
+    │               ┬  
+    │               ╰── ref: 1
+    │ 
   6 │         super.foo();
     │               ─┬─  
     │                ╰─── ref: 2
     │ 
   9 │ contract C is A {
-    │          ┬    ┬  
-    │          ╰─────── name: 5
-    │               │  
+    │               ┬  
     │               ╰── ref: 1
- 10 │     function foo() public {
-    │              ─┬─  
-    │               ╰─── name: 6
+    │ 
  11 │         super.foo();
     │               ─┬─  
     │                ╰─── ref: 2
     │ 
  14 │ contract D is B, C {
-    │          ┬    ┬  ┬  
-    │          ╰────────── name: 7
-    │               │  │  
+    │               ┬  ┬  
     │               ╰───── ref: 3
     │                  │  
     │                  ╰── ref: 5
- 15 │     function foo() public {
-    │              ─┬─  
-    │               ╰─── name: 8
+    │ 
  16 │         super.foo();
     │               ─┬─  
     │                ╰─── refs: 4, 6, 2
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │             ╭─▶ contract A {
-  2 │             │       function foo() public {}
-    │             │   ──────────────┬──────────────  
-    │             │                 ╰──────────────── definiens: 2
-  3 │   │         ├─▶ }
-    │   │         │       
-    │   │         ╰─────── definiens: 1
-  4 │   ╭───│ ──────▶ contract B is A {
-  5 │   │   ╭───────▶     function foo() public {
-    ┆   ┆   ┆         
-  7 │   │   ├───────▶     }
-    │   │   │                 
-    │   │   ╰───────────────── definiens: 4
-  8 │   ├─│ ────────▶ }
-    │   │ │               
-    │   ╰───────────────── definiens: 3
-  9 │     ╭───│ ────▶ contract C is A {
- 10 │     │   ╭─────▶     function foo() public {
-    ┆     ┆   ┆       
- 12 │     │   ├─────▶     }
-    │     │   │               
-    │     │   ╰─────────────── definiens: 6
- 13 │ │   ├─────────▶ }
-    │ │   │               
-    │ │   ╰─────────────── definiens: 5
- 14 │ ╭─────────│ ──▶ contract D is B, C {
- 15 │ │         ╭───▶     function foo() public {
-    ┆ ┆         ┆     
- 17 │ │         ├───▶     }
-    │ │         │             
-    │ │         ╰───────────── definiens: 8
- 18 │ ├─────────────▶ }
-    │ │                   
-    │ ╰─────────────────── definiens: 7
+  1 │ ╭─▶ contract A {
+    ┆ ┆   
+  3 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │         function foo() public {}
+    │     ──────────────┬──────────────  
+    │                   ╰──────────────── definiens: 2
+    │ 
+  4 │ ╭─▶ contract B is A {
+    ┆ ┆   
+  8 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 3
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  5 │   ╭─▶     function foo() public {
+    ┆   ┆   
+  7 │   ├─▶     }
+    │   │           
+    │   ╰─────────── definiens: 4
+    │ 
+  9 │ ╭───▶ contract C is A {
+    ┆ ┆     
+ 13 │ ├───▶ }
+    │ │         
+    │ ╰───────── definiens: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 10 │   ╭─▶     function foo() public {
+    ┆   ┆   
+ 12 │   ├─▶     }
+    │   │           
+    │   ╰─────────── definiens: 6
+    │ 
+ 14 │ ╭───▶ contract D is B, C {
+    ┆ ┆     
+ 18 │ ├───▶ }
+    │ │         
+    │ ╰───────── definiens: 7
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 15 │ ╭─▶     function foo() public {
+    ┆ ┆   
+ 17 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 8
 ────╯

@@ -21,8 +21,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library Lib {
     │         ─┬─  
@@ -34,9 +34,6 @@ Bindings:
   5 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 3
-  6 │     using Lib for uint256;
-    │           ─┬─  
-    │            ╰─── ref: 1
     │ 
   8 │     function test() internal {
     │              ──┬─  
@@ -44,6 +41,13 @@ Bindings:
   9 │         uint256 ratio;
     │                 ──┬──  
     │                   ╰──── name: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │     using Lib for uint256;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
  10 │         ((ratio >> 32) + (ratio % (1 << 32) == 0 ? 0 : 1)).to160();
     │           ──┬──           ──┬──                            ──┬──  
     │             ╰───────────────────────────────────────────────────── ref: 5

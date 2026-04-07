@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library Foo {
     │         ─┬─  
@@ -19,33 +19,41 @@ References and definitions:
     │                        │  
     │                        ╰── name: 5
   6 │     function bar(uint x) public returns (Bar memory) {}
-    │              ─┬─      ┬                  ─┬─  
-    │               ╰─────────────────────────────── name: 6
-    │                       │                   │   
-    │                       ╰─────────────────────── name: 7
-    │                                           │   
-    │                                           ╰─── ref: 2
+    │              ─┬─      ┬  
+    │               ╰────────── name: 6
+    │                       │  
+    │                       ╰── name: 7
     │ 
   9 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 8
- 10 │     using Foo for uint;
-    │           ─┬─  
-    │            ╰─── ref: 1
+    │ 
  11 │     function test(uint a, Foo.Bar memory b) public {
-    │              ──┬─      ┬  ─┬─ ─┬─        ┬  
+    │              ──┬─      ┬                 ┬  
     │                ╰──────────────────────────── name: 9
-    │                        │   │   │         │  
+    │                        │                 │  
     │                        ╰──────────────────── name: 10
-    │                            │   │         │  
-    │                            ╰──────────────── ref: 1
-    │                                │         │  
-    │                                ╰──────────── ref: 2
     │                                          │  
     │                                          ╰── name: 11
  12 │         uint[] memory xs;
     │                       ─┬  
     │                        ╰── name: 12
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │     function bar(uint x) public returns (Bar memory) {}
+    │                                          ─┬─  
+    │                                           ╰─── ref: 2
+    │ 
+ 10 │     using Foo for uint;
+    │           ─┬─  
+    │            ╰─── ref: 1
+ 11 │     function test(uint a, Foo.Bar memory b) public {
+    │                           ─┬─ ─┬─  
+    │                            ╰─────── ref: 1
+    │                                │   
+    │                                ╰─── ref: 2
+    │ 
  13 │         a.noop().noop().noop();
     │         ┬ ──┬─   ──┬─   ──┬─  
     │         ╰───────────────────── ref: 10
@@ -76,45 +84,62 @@ References and definitions:
     │                        │   
     │                        ╰─── ref: 4
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │     ╭─│ ▶ library Foo {
-  2 │     │ ╭─▶     struct Bar {
-  3 │     │ │           uint value;
-    │     │ │   ──────────┬─────────  
-    │     │ │             ╰─────────── definiens: 3
-  4 │     │ ├─▶     }
-    │     │ │           
-    │     │ ╰─────────── definiens: 2
-  5 │     │         function noop(uint x) public returns (uint) {}
-    │     │     ─────────────────────┬───┬─────────────────────────  
-    │     │                          ╰─────────────────────────────── definiens: 5
-    │     │                              │                           
-    │     │                              ╰─────────────────────────── definiens: 4
-  6 │     │         function bar(uint x) public returns (Bar memory) {}
-    │     │     ────────────────────┬───────┬───────────────────────────  
-    │     │                         ╰───────────────────────────────────── definiens: 7
-    │     │                                 │                             
-    │     │                                 ╰───────────────────────────── definiens: 6
-  7 │ │   ├───▶ }
-    │ │   │         
-    │ │   ╰───────── definiens: 1
-  8 │ ╭───────▶ 
-    ┆ ┆         
- 11 │ │ ╭─────▶     function test(uint a, Foo.Bar memory b) public {
-    │ │ │                         ───┬── ────────┬────────  
-    │ │ │                            ╰────────────────────── definiens: 10
-    │ │ │                                        │          
-    │ │ │                                        ╰────────── definiens: 11
- 12 │ │ │               uint[] memory xs;
-    │ │ │       ─────────────┬────────────  
-    │ │ │                    ╰────────────── definiens: 12
-    ┆ ┆ ┆       
- 16 │ │ ├─────▶     }
-    │ │ │               
-    │ │ ╰─────────────── definiens: 9
- 17 │ ├───────▶ }
-    │ │             
-    │ ╰───────────── definiens: 8
+  1 │ ╭─▶ library Foo {
+    ┆ ┆   
+  7 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │ ╭─▶     struct Bar {
+    ┆ ┆   
+  4 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 2
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  3 │             uint value;
+    │     ──────────┬─────────  
+    │               ╰─────────── definiens: 3
+    │ 
+  5 │         function noop(uint x) public returns (uint) {}
+    │     ─────────────────────┬───┬─────────────────────────  
+    │                          ╰─────────────────────────────── definiens: 5
+    │                              │                           
+    │                              ╰─────────────────────────── definiens: 4
+  6 │         function bar(uint x) public returns (Bar memory) {}
+    │     ────────────────────┬───────┬───────────────────────────  
+    │                         ╰───────────────────────────────────── definiens: 7
+    │                                 │                             
+    │                                 ╰───────────────────────────── definiens: 6
+    │ 
+  8 │ ╭─▶ 
+    ┆ ┆   
+ 17 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 8
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 11 │ ╭─▶     function test(uint a, Foo.Bar memory b) public {
+    ┆ ┆   
+ 16 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 9
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 11 │     function test(uint a, Foo.Bar memory b) public {
+    │                   ───┬── ────────┬────────  
+    │                      ╰────────────────────── definiens: 10
+    │                                  │          
+    │                                  ╰────────── definiens: 11
+ 12 │         uint[] memory xs;
+    │ ─────────────┬────────────  
+    │              ╰────────────── definiens: 12
 ────╯

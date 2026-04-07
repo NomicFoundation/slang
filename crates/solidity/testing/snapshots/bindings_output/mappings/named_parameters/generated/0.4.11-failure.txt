@@ -2,28 +2,28 @@
 
 Parse errors:
 Error: Expected EqualGreaterThan.
-   ╭─[input.sol:2:19]
+   ╭─[ input.sol:2:19 ]
    │
  2 │   mapping(address name => uint256) public justNameInKey;
    │                   ───────┬───────  
    │                          ╰───────── Error occurred here.
 ───╯
 Error: Expected CloseParen or OpenBracket.
-   ╭─[input.sol:4:30]
+   ╭─[ input.sol:4:30 ]
    │
  4 │   mapping(address => uint256 amount) public justNameInValue;
    │                              ───┬──  
    │                                 ╰──── Error occurred here.
 ───╯
 Error: Expected EqualGreaterThan.
-   ╭─[input.sol:6:19]
+   ╭─[ input.sol:6:19 ]
    │
  6 │   mapping(address name => uint256 amount) public nameInBoth;
    │                   ───────────┬──────────  
    │                              ╰──────────── Error occurred here.
 ───╯
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract NamedMapping {
    │          ──────┬─────  
@@ -40,22 +40,26 @@ References and definitions:
    │                                                  ─────┬────  
    │                                                       ╰────── name: 4
 ───╯
-Definiens: 
-   ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+   ╭─[ input.sol:1:1 ]
    │
- 1 │ ╭─────▶ contract NamedMapping {
- 2 │ │ │       mapping(address name => uint256) public justNameInKey;
-   │ │ │     ────────────────────────────┬────────────────────────────  
-   │ │ │                                 ╰────────────────────────────── definiens: 2
- 3 │ │ ╭───▶ 
- 4 │ │ ├─│ ▶   mapping(address => uint256 amount) public justNameInValue;
-   │ │ │ │                                                                  
-   │ │ ╰──────────────────────────────────────────────────────────────────── definiens: 3
- 5 │ │   ╭─▶ 
- 6 │ │   ├─▶   mapping(address name => uint256 amount) public nameInBoth;
-   │ │   │                                                                  
-   │ │   ╰────────────────────────────────────────────────────────────────── definiens: 4
- 7 │ ├─────▶ }
-   │ │           
-   │ ╰─────────── definiens: 1
+ 1 │ ╭─▶ contract NamedMapping {
+   ┆ ┆   
+ 7 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 1
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 2 │ │       mapping(address name => uint256) public justNameInKey;
+   │ │     ────────────────────────────┬────────────────────────────  
+   │ │                                 ╰────────────────────────────── definiens: 2
+ 3 │ ╭───▶ 
+ 4 │ ├─│ ▶   mapping(address => uint256 amount) public justNameInValue;
+   │ │ │                                                                  
+   │ ╰──────────────────────────────────────────────────────────────────── definiens: 3
+ 5 │   ╭─▶ 
+ 6 │   ├─▶   mapping(address name => uint256 amount) public nameInBoth;
+   │   │                                                                  
+   │   ╰────────────────────────────────────────────────────────────────── definiens: 4
 ───╯

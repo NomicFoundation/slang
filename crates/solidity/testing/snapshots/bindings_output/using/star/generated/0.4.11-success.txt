@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ library Lib {
    │         ─┬─  
@@ -15,44 +15,59 @@ References and definitions:
  5 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 4
- 6 │     using Lib for *;
-   │           ─┬─  
-   │            ╰─── ref: 1
    │ 
  8 │     function test(uint x) public {
    │              ──┬─      ┬  
    │                ╰────────── name: 5
    │                        │  
    │                        ╰── name: 6
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 6 │     using Lib for *;
+   │           ─┬─  
+   │            ╰─── ref: 1
+   │ 
  9 │         x.increment();
    │         ┬ ────┬────  
    │         ╰──────────── ref: 6
    │               │      
    │               ╰────── ref: 2
 ───╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │     ╭─▶ library Lib {
-  2 │     │       function increment(uint x) public {}
-    │     │   ────────────────────┬─────┬──────────────  
-    │     │                       ╰────────────────────── definiens: 2
-    │     │                             │                
-    │     │                             ╰──────────────── definiens: 3
-  3 │ │   ├─▶ }
-    │ │   │       
-    │ │   ╰─────── definiens: 1
-  4 │ ╭─────▶ 
-    ┆ ┆       
-  7 │ │ ╭───▶ 
-  8 │ │ │         function test(uint x) public {
-    │ │ │                       ───┬──  
-    │ │ │                          ╰──── definiens: 6
-    ┆ ┆ ┆     
- 10 │ │ ├───▶     }
-    │ │ │             
-    │ │ ╰───────────── definiens: 5
- 11 │ ├─────▶ }
+  1 │ ╭─▶ library Lib {
+    ┆ ┆   
+  3 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │         function increment(uint x) public {}
+    │     ────────────────────┬─────┬──────────────  
+    │                         ╰────────────────────── definiens: 2
+    │                               │                
+    │                               ╰──────────────── definiens: 3
+    │ 
+  4 │ ╭─▶ 
+    ┆ ┆   
+ 11 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 4
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  7 │ ╭─▶ 
+    ┆ ┆   
+ 10 │ ├─▶     }
     │ │           
-    │ ╰─────────── definiens: 4
+    │ ╰─────────── definiens: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  8 │     function test(uint x) public {
+    │                   ───┬──  
+    │                      ╰──── definiens: 6
 ────╯

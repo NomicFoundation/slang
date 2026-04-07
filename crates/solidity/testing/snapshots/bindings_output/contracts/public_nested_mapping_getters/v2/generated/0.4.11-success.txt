@@ -29,19 +29,36 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 1
   2 │     function test(TokenState tokenState) public {
-    │              ──┬─ ─────┬──── ─────┬────  
+    │              ──┬─            ─────┬────  
     │                ╰───────────────────────── name: 2
-    │                        │          │      
-    │                        ╰───────────────── ref: 4
     │                                   │      
     │                                   ╰────── name: 3
+    │ 
+  8 │ contract TokenState {
+    │          ─────┬────  
+    │               ╰────── name: 4
+  9 │     mapping(uint => mapping(uint => address)) public nested_maps;
+    │                                                      ─────┬─────  
+    │                                                           ╰─────── name: 5
+ 10 │     mapping(uint => address[]) public array_in_map;
+    │                                       ──────┬─────  
+    │                                             ╰─────── name: 6
+ 11 │     mapping(uint => address)[] public map_in_array;
+    │                                       ──────┬─────  
+    │                                             ╰─────── name: 7
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │     function test(TokenState tokenState) public {
+    │                   ─────┬────  
+    │                        ╰────── ref: 4
   3 │         tokenState.nested_maps(1, 1).balance;
     │         ─────┬──── ─────┬─────       ───┬───  
     │              ╰──────────────────────────────── ref: 3
@@ -63,17 +80,4 @@ Bindings:
     │                          ╰───────────────────── ref: 7
     │                                          │     
     │                                          ╰───── built-in
-    │ 
-  8 │ contract TokenState {
-    │          ─────┬────  
-    │               ╰────── name: 4
-  9 │     mapping(uint => mapping(uint => address)) public nested_maps;
-    │                                                      ─────┬─────  
-    │                                                           ╰─────── name: 5
- 10 │     mapping(uint => address[]) public array_in_map;
-    │                                       ──────┬─────  
-    │                                             ╰─────── name: 6
- 11 │     mapping(uint => address)[] public map_in_array;
-    │                                       ──────┬─────  
-    │                                             ╰─────── name: 7
 ────╯

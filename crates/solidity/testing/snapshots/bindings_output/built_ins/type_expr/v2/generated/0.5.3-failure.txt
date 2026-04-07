@@ -58,8 +58,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Sample {}
     │          ───┬──  
@@ -92,90 +92,109 @@ Bindings:
     │              ──┬─  
     │                ╰─── name: 10
  11 │         string memory v1 = type(Sample).name;
-    │                       ─┬        ───┬──  ──┬─  
-    │                        ╰────────────────────── name: 11
-    │                                    │      │   
+    │                       ─┬  
+    │                        ╰── name: 11
+ 12 │         bytes memory v2 = type(Sample).creationCode;
+    │                      ─┬  
+    │                       ╰── name: 12
+ 13 │         bytes memory v3 = type(Sample).runtimeCode;
+    │                      ─┬  
+    │                       ╰── name: 13
+    │ 
+ 15 │         string memory v4 = type(ISample).name;
+    │                       ─┬  
+    │                        ╰── name: 14
+ 16 │         bytes4 v5 = type(ISample).interfaceId;
+    │                ─┬  
+    │                 ╰── name: 15
+    │ 
+ 18 │         Direction v6 = type(Direction).min;
+    │                   ─┬  
+    │                    ╰── name: 16
+ 19 │         Direction v7 = type(Direction).max;
+    │                   ─┬  
+    │                    ╰── name: 17
+    │ 
+ 21 │         uint v8 = type(uint).min;
+    │              ─┬  
+    │               ╰── name: 18
+ 22 │         uint v9 = type(uint).max;
+    │              ─┬  
+    │               ╰── name: 19
+    │ 
+ 24 │         string memory v10 = type(Utils).name;
+    │                       ─┬─  
+    │                        ╰─── name: 20
+ 25 │         bytes memory v11 = type(Utils).creationCode;
+    │                      ─┬─  
+    │                       ╰─── name: 21
+ 26 │         bytes memory v12 = type(Utils).runtimeCode;
+    │                      ─┬─  
+    │                       ╰─── name: 22
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 11 │         string memory v1 = type(Sample).name;
+    │                                 ───┬──  ──┬─  
     │                                    ╰────────── ref: 1
     │                                           │   
     │                                           ╰─── built-in
  12 │         bytes memory v2 = type(Sample).creationCode;
-    │                      ─┬        ───┬──  ──────┬─────  
-    │                       ╰────────────────────────────── name: 12
-    │                                   │          │       
+    │                                ───┬──  ──────┬─────  
     │                                   ╰────────────────── ref: 1
     │                                              │       
     │                                              ╰─────── built-in
  13 │         bytes memory v3 = type(Sample).runtimeCode;
-    │                      ─┬        ───┬──  ─────┬─────  
-    │                       ╰───────────────────────────── name: 13
-    │                                   │         │       
+    │                                ───┬──  ─────┬─────  
     │                                   ╰───────────────── ref: 1
     │                                             │       
     │                                             ╰─────── built-in
     │ 
  15 │         string memory v4 = type(ISample).name;
-    │                       ─┬        ───┬───  ──┬─  
-    │                        ╰─────────────────────── name: 14
-    │                                    │       │   
+    │                                 ───┬───  ──┬─  
     │                                    ╰─────────── ref: 2
     │                                            │   
     │                                            ╰─── built-in
  16 │         bytes4 v5 = type(ISample).interfaceId;
-    │                ─┬        ───┬───  ─────┬─────  
-    │                 ╰────────────────────────────── name: 15
-    │                             │          │       
+    │                          ───┬───  ─────┬─────  
     │                             ╰────────────────── ref: 2
     │                                        │       
     │                                        ╰─────── unresolved
     │ 
  18 │         Direction v6 = type(Direction).min;
-    │         ────┬──── ─┬        ────┬────  ─┬─  
+    │         ────┬────           ────┬────  ─┬─  
     │             ╰─────────────────────────────── ref: 5
-    │                    │            │       │   
-    │                    ╰──────────────────────── name: 16
     │                                 │       │   
     │                                 ╰─────────── ref: 5
     │                                         │   
     │                                         ╰─── unresolved
  19 │         Direction v7 = type(Direction).max;
-    │         ────┬──── ─┬        ────┬────  ─┬─  
+    │         ────┬────           ────┬────  ─┬─  
     │             ╰─────────────────────────────── ref: 5
-    │                    │            │       │   
-    │                    ╰──────────────────────── name: 17
     │                                 │       │   
     │                                 ╰─────────── ref: 5
     │                                         │   
     │                                         ╰─── unresolved
     │ 
  21 │         uint v8 = type(uint).min;
-    │              ─┬              ─┬─  
-    │               ╰─────────────────── name: 18
-    │                               │   
+    │                              ─┬─  
     │                               ╰─── unresolved
  22 │         uint v9 = type(uint).max;
-    │              ─┬              ─┬─  
-    │               ╰─────────────────── name: 19
-    │                               │   
+    │                              ─┬─  
     │                               ╰─── unresolved
     │ 
  24 │         string memory v10 = type(Utils).name;
-    │                       ─┬─        ──┬──  ──┬─  
-    │                        ╰────────────────────── name: 20
-    │                                    │      │   
+    │                                  ──┬──  ──┬─  
     │                                    ╰────────── ref: 3
     │                                           │   
     │                                           ╰─── built-in
  25 │         bytes memory v11 = type(Utils).creationCode;
-    │                      ─┬─        ──┬──  ──────┬─────  
-    │                       ╰────────────────────────────── name: 21
-    │                                   │          │       
+    │                                 ──┬──  ──────┬─────  
     │                                   ╰────────────────── ref: 3
     │                                              │       
     │                                              ╰─────── built-in
  26 │         bytes memory v12 = type(Utils).runtimeCode;
-    │                      ─┬─        ──┬──  ─────┬─────  
-    │                       ╰───────────────────────────── name: 22
-    │                                   │         │       
+    │                                 ──┬──  ─────┬─────  
     │                                   ╰───────────────── ref: 3
     │                                             │       
     │                                             ╰─────── built-in

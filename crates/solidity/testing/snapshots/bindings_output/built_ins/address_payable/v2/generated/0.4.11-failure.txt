@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected CloseParen or Comma.
-   ╭─[input.sol:2:34]
+   ╭─[ input.sol:2:34 ]
    │
  2 │     function testPayable(address payable rcpt) public {
    │                                  ──────┬─────  
@@ -33,8 +33,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract Test {
    │          ──┬─  
@@ -42,17 +42,20 @@ Bindings:
  2 │     function testPayable(address payable rcpt) public {
    │              ─────┬─────  
    │                   ╰─────── name: 2
- 3 │         rcpt.transfer(1);
-   │         ──┬─ ────┬───  
-   │           ╰──────────── unresolved
-   │                  │     
-   │                  ╰───── unresolved
    │ 
  5 │     function testNonPayable(address rcpt) public {
    │              ───────┬──────         ──┬─  
    │                     ╰───────────────────── name: 3
    │                                       │   
    │                                       ╰─── name: 4
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 3 │         rcpt.transfer(1);
+   │         ──┬─ ────┬───  
+   │           ╰──────────── unresolved
+   │                  │     
+   │                  ╰───── unresolved
    │ 
  7 │         rcpt.transfer(1);
    │         ──┬─ ────┬───  

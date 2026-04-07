@@ -1,13 +1,11 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-   ╭─[main.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ main.sol:1:1 ]
    │
  1 │ import {FOO} from "./constants.sol";
    │         ─┬─  
    │          ╰─── name: 1
-   │          │   
-   │          ╰─── unresolved
    │ 
  3 │ contract Test {
    │          ──┬─  
@@ -17,41 +15,54 @@ References and definitions:
    │                ╰─── name: 3
    │ 
  6 │             let x := add(FOO, 1)
-   │                 ┬    ─┬─ ─┬─  
-   │                 ╰───────────── name: 4
-   │                       │   │   
+   │                 ┬  
+   │                 ╰── name: 4
+   │
+   ├─[ main.sol:1:1 ]
+   │
+ 1 │ import {FOO} from "./constants.sol";
+   │         ─┬─  
+   │          ╰─── unresolved
+   │ 
+ 6 │             let x := add(FOO, 1)
+   │                      ─┬─ ─┬─  
    │                       ╰─────── ref: built-in
    │                           │   
    │                           ╰─── ref: 1
 ───╯
-Definiens: 
-   ╭─[main.sol:1:1]
+[39mDefiniens:[0m 
+   ╭─[ main.sol:1:1 ]
    │
- 1 │ │     import {FOO} from "./constants.sol";
-   │ │             ─┬─  
-   │ │              ╰─── definiens: 1
- 2 │ ╭───▶ 
-   ┆ ┆ ┆   
- 4 │ │ ╭─▶     function test() public {
-   ┆ ┆ ┆   
- 6 │ │ │               let x := add(FOO, 1)
-   │ │ │                   ┬  
-   │ │ │                   ╰── definiens: 4
-   ┆ ┆ ┆   
- 8 │ │ ├─▶     }
-   │ │ │           
-   │ │ ╰─────────── definiens: 3
- 9 │ ├───▶ }
-   │ │         
-   │ ╰───────── definiens: 2
+ 1 │ │   import {FOO} from "./constants.sol";
+   │ │           ─┬─  
+   │ │            ╰─── definiens: 1
+ 2 │ ╭─▶ 
+   ┆ ┆   
+ 9 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 2
+   │
+   ├─[ main.sol:1:1 ]
+   │
+ 4 │ ╭─▶     function test() public {
+   ┆ ┆   
+ 8 │ ├─▶     }
+   │ │           
+   │ ╰─────────── definiens: 3
+   │
+   ├─[ main.sol:1:1 ]
+   │
+ 6 │             let x := add(FOO, 1)
+   │                 ┬  
+   │                 ╰── definiens: 4
 ───╯
 Parse errors:
 Error: Expected ContractKeyword or EnumKeyword or FunctionKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
-   ╭─[constants.sol:1:1]
+   ╭─[ constants.sol:1:1 ]
    │
  1 │ uint256 constant FOO = 1;
    │ ─────────────┬────────────  
    │              ╰────────────── Error occurred here.
 ───╯
-References and definitions: 
-Definiens: 
+[39mReferences and definitions:[0m 
+[39mDefiniens:[0m 

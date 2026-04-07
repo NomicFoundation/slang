@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected AddressKeyword or BoolKeyword or BytesKeyword or ContractKeyword or EnumKeyword or FixedKeyword or FunctionKeyword or Identifier or ImportKeyword or IntKeyword or InterfaceKeyword or LibraryKeyword or MappingKeyword or PragmaKeyword or StringKeyword or StructKeyword or UfixedKeyword or UintKeyword.
-   ╭─[input.sol:5:1]
+   ╭─[ input.sol:5:1 ]
    │
  5 │ ╭─▶ using ArrayHelper for string[1];
    ┆ ┆   
@@ -28,8 +28,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ library ArrayHelper {
    │         ─────┬─────  

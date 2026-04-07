@@ -31,13 +31,36 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   4 │ type MemoryPointer is uint256;
     │      ──────┬──────  
     │            ╰──────── name: 1
     │ 
+  8 │ MemoryPointer constant FreeMemoryPPtr = MemoryPointer.wrap(0x40);
+    │                        ───────┬──────  
+    │                               ╰──────── name: 2
+    │ 
+ 10 │ function getFreeMemoryPointer() pure returns (MemoryPointer mPtr) {
+    │          ──────────┬─────────                               ──┬─  
+    │                    ╰────────────────────────────────────────────── name: 3
+    │                                                               │   
+    │                                                               ╰─── name: 4
+    │ 
+ 15 │ library MemoryReaders {
+    │         ──────┬──────  
+    │               ╰──────── name: 5
+ 16 │     function readMemoryPointer(MemoryPointer mPtr) internal pure returns (MemoryPointer value) {
+    │              ────────┬────────               ──┬─                                       ──┬──  
+    │                      ╰───────────────────────────────────────────────────────────────────────── name: 6
+    │                                                │                                          │    
+    │                                                ╰─────────────────────────────────────────────── name: 7
+    │                                                                                           │    
+    │                                                                                           ╰──── name: 8
+    │
+    ├─[ input.sol:1:1 ]
+    │
   6 │ using MemoryReaders for MemoryPointer;
     │       ──────┬──────     ──────┬──────  
     │             ╰────────────────────────── ref: 5
@@ -45,22 +68,16 @@ Bindings:
     │                               ╰──────── ref: 1
     │ 
   8 │ MemoryPointer constant FreeMemoryPPtr = MemoryPointer.wrap(0x40);
-    │ ──────┬──────          ───────┬──────   ──────┬────── ──┬─  
+    │ ──────┬──────                           ──────┬────── ──┬─  
     │       ╰───────────────────────────────────────────────────── ref: 1
-    │                               │               │         │   
-    │                               ╰───────────────────────────── name: 2
     │                                               │         │   
     │                                               ╰───────────── ref: 1
     │                                                         │   
     │                                                         ╰─── built-in
     │ 
  10 │ function getFreeMemoryPointer() pure returns (MemoryPointer mPtr) {
-    │          ──────────┬─────────                 ──────┬────── ──┬─  
-    │                    ╰────────────────────────────────────────────── name: 3
-    │                                                     │         │   
-    │                                                     ╰───────────── ref: 1
-    │                                                               │   
-    │                                                               ╰─── name: 4
+    │                                               ──────┬──────  
+    │                                                     ╰──────── ref: 1
     │ 
  12 │     mPtr = FreeMemoryPPtr.readMemoryPointer();
     │     ──┬─   ───────┬────── ────────┬────────  
@@ -70,18 +87,9 @@ Bindings:
     │                                   │          
     │                                   ╰────────── ref: 6
     │ 
- 15 │ library MemoryReaders {
-    │         ──────┬──────  
-    │               ╰──────── name: 5
  16 │     function readMemoryPointer(MemoryPointer mPtr) internal pure returns (MemoryPointer value) {
-    │              ────────┬──────── ──────┬────── ──┬─                         ──────┬────── ──┬──  
-    │                      ╰───────────────────────────────────────────────────────────────────────── name: 6
-    │                                      │         │                                │         │    
-    │                                      ╰───────────────────────────────────────────────────────── ref: 1
-    │                                                │                                │         │    
-    │                                                ╰─────────────────────────────────────────────── name: 7
-    │                                                                                 │         │    
-    │                                                                                 ╰────────────── ref: 1
-    │                                                                                           │    
-    │                                                                                           ╰──── name: 8
+    │                                ──────┬──────                              ──────┬──────  
+    │                                      ╰─────────────────────────────────────────────────── ref: 1
+    │                                                                                 │        
+    │                                                                                 ╰──────── ref: 1
 ────╯

@@ -23,14 +23,12 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ import { slot } from "./slots.sol";  // even if undefined, the local def should have 2 references
     │          ──┬─  
     │            ╰─── name: 1
-    │            │   
-    │            ╰─── unresolved
     │ 
   3 │ contract Foo {
     │          ─┬─  
@@ -42,6 +40,19 @@ Bindings:
     │              ──┬──  
     │                ╰──── name: 4
     │ 
+ 11 │     function useSlotInSolidity() public {
+    │              ────────┬────────  
+    │                      ╰────────── name: 5
+ 12 │         uint value = slot;
+    │              ──┬──  
+    │                ╰──── name: 6
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  1 │ import { slot } from "./slots.sol";  // even if undefined, the local def should have 2 references
+    │          ──┬─  
+    │            ╰─── unresolved
+    │ 
   7 │             value := sload(slot)
     │             ──┬──    ──┬── ──┬─  
     │               ╰────────────────── ref: 4
@@ -50,12 +61,7 @@ Bindings:
     │                              │   
     │                              ╰─── ref: 1
     │ 
- 11 │     function useSlotInSolidity() public {
-    │              ────────┬────────  
-    │                      ╰────────── name: 5
  12 │         uint value = slot;
-    │              ──┬──   ──┬─  
-    │                ╰─────────── name: 6
-    │                        │   
+    │                      ──┬─  
     │                        ╰─── ref: 1
 ────╯

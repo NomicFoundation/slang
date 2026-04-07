@@ -19,8 +19,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   4 │ contract A {
     │          ┬  
@@ -30,15 +30,21 @@ Bindings:
     │               ╰─── name: 2
     │ 
  10 │ contract B is A {
-    │          ┬    ┬  
-    │          ╰─────── name: 3
-    │               │  
+    │          ┬  
+    │          ╰── name: 3
+    │ 
+ 12 │     function foo() public pure virtual override(A) returns (string memory) {
+    │              ─┬─  
+    │               ╰─── name: 4
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 10 │ contract B is A {
+    │               ┬  
     │               ╰── ref: 1
     │ 
  12 │     function foo() public pure virtual override(A) returns (string memory) {
-    │              ─┬─                                ┬  
-    │               ╰──────────────────────────────────── name: 4
-    │                                                 │  
+    │                                                 ┬  
     │                                                 ╰── ref: 1
  13 │         return super.foo();
     │                      ─┬─  

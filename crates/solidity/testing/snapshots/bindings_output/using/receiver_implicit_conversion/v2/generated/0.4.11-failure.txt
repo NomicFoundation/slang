@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected CloseParen or Comma.
-   ╭─[input.sol:9:34]
+   ╭─[ input.sol:9:34 ]
    │
  9 │     function test(bytes calldata c) public {
    │                                  ┬  
@@ -45,8 +45,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library Lib {
     │         ─┬─  
@@ -63,9 +63,7 @@ Bindings:
   6 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 5
-  7 │     using Lib for bytes;
-    │           ─┬─  
-    │            ╰─── ref: 1
+    │ 
   8 │     bytes s;
     │           ┬  
     │           ╰── name: 6
@@ -77,6 +75,13 @@ Bindings:
  10 │         bytes memory m;
     │                      ┬  
     │                      ╰── name: 9
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  7 │     using Lib for bytes;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
  11 │         m.nopCalldata();
     │         ┬ ─────┬─────  
     │         ╰────────────── ref: 9

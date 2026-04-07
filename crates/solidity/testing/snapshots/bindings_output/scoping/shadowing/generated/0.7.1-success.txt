@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ function foo() {}
     │          ─┬─  
@@ -18,10 +18,8 @@ References and definitions:
     │               ╰─── name: 4
     │ 
   8 │ contract Test is Base {
-    │          ──┬─    ──┬─  
-    │            ╰─────────── name: 5
-    │                    │   
-    │                    ╰─── ref: 3
+    │          ──┬─  
+    │            ╰─── name: 5
   9 │     int x;
     │         ┬  
     │         ╰── name: 6
@@ -31,6 +29,17 @@ References and definitions:
     │                ╰───────── name: 7
     │                       │  
     │                       ╰── name: 8
+    │ 
+ 17 │     function foo() internal {}
+    │              ─┬─  
+    │               ╰─── name: 9
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  8 │ contract Test is Base {
+    │                  ──┬─  
+    │                    ╰─── ref: 3
+    │ 
  12 │         foo();
     │         ─┬─  
     │          ╰─── ref: 9
@@ -40,46 +49,53 @@ References and definitions:
  14 │         x;
     │         ┬  
     │         ╰── ref: 8
-    │ 
- 17 │     function foo() internal {}
-    │              ─┬─  
-    │               ╰─── name: 9
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │           function foo() {}
-    │           ─────────┬────────  
-    │                    ╰────────── definiens: 1
-  2 │     │     function bar() {}
-    │     │     ─────────┬────────  
-    │     │              ╰────────── definiens: 2
-  3 │     ╭───▶ 
-    ┆     ┆     
-  5 │     │         function bar() public {}
-    │     │     ──────────────┬──────────────  
-    │     │                   ╰──────────────── definiens: 4
-  6 │ │   ├───▶ }
-    │ │   │         
-    │ │   ╰───────── definiens: 3
-  7 │ ╭───────▶ 
-    ┆ ┆         
-  9 │ │ │           int x;
-    │ │ │       ─────┬─────  
-    │ │ │            ╰─────── definiens: 6
- 10 │ │ ╭─────▶ 
- 11 │ │ │           function test(int x) public {
-    │ │ │                         ──┬──  
-    │ │ │                           ╰──── definiens: 8
-    ┆ ┆ ┆       
- 15 │ │ ├───│ ▶     }
-    │ │ │   │           
-    │ │ ╰─────────────── definiens: 7
- 16 │ │     ╭─▶ 
- 17 │ │     ├─▶     function foo() internal {}
-    │ │     │                                    
-    │ │     ╰──────────────────────────────────── definiens: 9
- 18 │ ├───────▶ }
-    │ │             
-    │ ╰───────────── definiens: 5
+  1 │     function foo() {}
+    │     ─────────┬────────  
+    │              ╰────────── definiens: 1
+  2 │ │   function bar() {}
+    │ │   ─────────┬────────  
+    │ │            ╰────────── definiens: 2
+  3 │ ╭─▶ 
+    ┆ ┆   
+  6 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 3
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  5 │         function bar() public {}
+    │     ──────────────┬──────────────  
+    │                   ╰──────────────── definiens: 4
+    │ 
+  7 │ ╭─▶ 
+    ┆ ┆   
+ 18 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  9 │ │       int x;
+    │ │   ─────┬─────  
+    │ │        ╰─────── definiens: 6
+ 10 │ ╭─▶ 
+    ┆ ┆   
+ 15 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 7
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 11 │         function test(int x) public {
+    │                       ──┬──  
+    │                         ╰──── definiens: 8
+    │ 
+ 16 │ ╭─▶ 
+ 17 │ ├─▶     function foo() internal {}
+    │ │                                    
+    │ ╰──────────────────────────────────── definiens: 9
 ────╯

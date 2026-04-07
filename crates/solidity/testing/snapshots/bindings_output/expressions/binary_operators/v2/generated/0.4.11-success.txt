@@ -50,8 +50,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library Lib {
     │         ─┬─  
@@ -70,12 +70,7 @@ Bindings:
   6 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 6
-  7 │     using Lib for uint;
-    │           ─┬─  
-    │            ╰─── ref: 1
-  8 │     using Lib for bool;
-    │           ─┬─  
-    │            ╰─── ref: 1
+    │ 
   9 │     function test(uint a, uint b) public {
     │              ──┬─      ┬       ┬  
     │                ╰────────────────── name: 7
@@ -83,6 +78,16 @@ Bindings:
     │                        ╰────────── name: 8
     │                                │  
     │                                ╰── name: 9
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  7 │     using Lib for uint;
+    │           ─┬─  
+    │            ╰─── ref: 1
+  8 │     using Lib for bool;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
  10 │         (a += b).nop_uint();
     │          ┬    ┬  ────┬───  
     │          ╰───────────────── ref: 8

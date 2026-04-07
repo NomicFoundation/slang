@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract A {
     │          ┬  
@@ -11,67 +11,88 @@ References and definitions:
     │               ╰─── name: 2
     │ 
   6 │ contract B is A {
-    │          ┬    ┬  
-    │          ╰─────── name: 3
-    │               │  
-    │               ╰── ref: 1
+    │          ┬  
+    │          ╰── name: 3
   7 │     function foo() public virtual override {
     │              ─┬─  
     │               ╰─── name: 4
     │ 
  11 │ contract C is A {
-    │          ┬    ┬  
-    │          ╰─────── name: 5
-    │               │  
-    │               ╰── ref: 1
+    │          ┬  
+    │          ╰── name: 5
     │ 
  14 │ contract D is B, C {
-    │          ┬    ┬  ┬  
-    │          ╰────────── name: 6
-    │               │  │  
-    │               ╰───── ref: 3
-    │                  │  
-    │                  ╰── ref: 5
+    │          ┬  
+    │          ╰── name: 6
  15 │     function foo() public virtual override {
     │              ─┬─  
     │               ╰─── name: 7
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │ contract B is A {
+    │               ┬  
+    │               ╰── ref: 1
+    │ 
+ 11 │ contract C is A {
+    │               ┬  
+    │               ╰── ref: 1
+    │ 
+ 14 │ contract D is B, C {
+    │               ┬  ┬  
+    │               ╰───── ref: 3
+    │                  │  
+    │                  ╰── ref: 5
+    │ 
  16 │         super.foo();
     │               ─┬─  
     │                ╰─── refs: 4, 2
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │       ╭───│ ──▶ contract A {
-  2 │       │   ╭───▶     function foo() public virtual {
-  3 │       │   ├───▶     }
-    │       │   │             
-    │       │   ╰───────────── definiens: 2
-  4 │   │   ├───────▶ }
-    │   │   │             
-    │   │   ╰───────────── definiens: 1
-  5 │   ╭───────────▶ 
-    ┆   ┆     ┆       
-  7 │   │     ╭─────▶     function foo() public virtual override {
-  8 │   │     ├─────▶     }
-    │   │     │               
-    │   │     ╰─────────────── definiens: 4
-  9 │   ├─────────│ ▶ }
-    │   │         │       
-    │   ╰───────────────── definiens: 3
- 10 │             ╭─▶ 
-    ┆             ┆   
- 12 │ │           ├─▶ }
-    │ │           │       
-    │ │           ╰─────── definiens: 5
- 13 │ ╭─────────────▶ 
-    ┆ ┆   ┆           
- 15 │ │   ╭─────────▶     function foo() public virtual override {
-    ┆ ┆   ┆           
- 17 │ │   ├─────────▶     }
-    │ │   │                   
-    │ │   ╰─────────────────── definiens: 7
- 18 │ ├─────────────▶ }
-    │ │                   
-    │ ╰─────────────────── definiens: 6
+  1 │ ╭─▶ contract A {
+    ┆ ┆   
+  4 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │   ╭─▶     function foo() public virtual {
+  3 │   ├─▶     }
+    │   │           
+    │   ╰─────────── definiens: 2
+    │ 
+  5 │ ╭───▶ 
+    ┆ ┆     
+  9 │ ├───▶ }
+    │ │         
+    │ ╰───────── definiens: 3
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  7 │   ╭───▶     function foo() public virtual override {
+  8 │   ├───▶     }
+    │   │             
+    │   ╰───────────── definiens: 4
+    │ 
+ 10 │     ╭─▶ 
+    ┆     ┆   
+ 12 │ │   ├─▶ }
+    │ │   │       
+    │ │   ╰─────── definiens: 5
+ 13 │ ╭─────▶ 
+    ┆ ┆       
+ 18 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 6
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 15 │ ╭─▶     function foo() public virtual override {
+    ┆ ┆   
+ 17 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 7
 ────╯

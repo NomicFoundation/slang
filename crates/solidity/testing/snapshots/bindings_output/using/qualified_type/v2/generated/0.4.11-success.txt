@@ -28,8 +28,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library Lib {
     │         ─┬─  
@@ -42,21 +42,31 @@ Bindings:
     │             ╰── name: 3
     │ 
   5 │     function getValue() external returns (Value memory) {}
-    │              ────┬───                     ──┬──  
-    │                  ╰─────────────────────────────── name: 4
-    │                                             │    
-    │                                             ╰──── ref: 2
+    │              ────┬───  
+    │                  ╰───── name: 4
   6 │     function use(Value memory x) external {}
-    │              ─┬─ ──┬──        ┬  
+    │              ─┬─              ┬  
     │               ╰────────────────── name: 5
-    │                    │          │  
-    │                    ╰───────────── ref: 2
     │                               │  
     │                               ╰── name: 6
     │ 
   8 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 7
+    │ 
+ 10 │     function test() internal {
+    │              ──┬─  
+    │                ╰─── name: 8
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  5 │     function getValue() external returns (Value memory) {}
+    │                                           ──┬──  
+    │                                             ╰──── ref: 2
+  6 │     function use(Value memory x) external {}
+    │                  ──┬──  
+    │                    ╰──── ref: 2
+    │ 
   9 │     using Lib for Lib.Value;
     │           ─┬─     ─┬─ ──┬──  
     │            ╰───────────────── ref: 1
@@ -64,9 +74,7 @@ Bindings:
     │                    ╰───────── ref: 1
     │                         │    
     │                         ╰──── ref: 2
- 10 │     function test() internal {
-    │              ──┬─  
-    │                ╰─── name: 8
+    │ 
  11 │         Lib.getValue().use();
     │         ─┬─ ────┬───   ─┬─  
     │          ╰────────────────── ref: 1

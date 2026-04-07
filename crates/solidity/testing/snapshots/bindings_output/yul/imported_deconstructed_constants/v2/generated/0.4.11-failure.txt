@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
-   ╭─[constants.sol:1:1]
+   ╭─[ constants.sol:1:1 ]
    │
  1 │ uint256 constant FOO = 1;
    │ ─────────────┬────────────  
@@ -30,18 +30,16 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
+[39mBindings:[0m 
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[main.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ main.sol:1:1 ]
    │
  1 │ import {FOO} from "./constants.sol";
    │         ─┬─  
    │          ╰─── name: 1
-   │          │   
-   │          ╰─── unresolved
    │ 
  3 │ contract Test {
    │          ──┬─  
@@ -51,9 +49,17 @@ Bindings:
    │                ╰─── name: 3
    │ 
  6 │             let x := add(FOO, 1)
-   │                 ┬    ─┬─ ─┬─  
-   │                 ╰───────────── name: 4
-   │                       │   │   
+   │                 ┬  
+   │                 ╰── name: 4
+   │
+   ├─[ main.sol:1:1 ]
+   │
+ 1 │ import {FOO} from "./constants.sol";
+   │         ─┬─  
+   │          ╰─── unresolved
+   │ 
+ 6 │             let x := add(FOO, 1)
+   │                      ─┬─ ─┬─  
    │                       ╰─────── built-in
    │                           │   
    │                           ╰─── ref: 1

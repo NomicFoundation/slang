@@ -20,8 +20,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract Base {
    │          ──┬─  
@@ -31,18 +31,24 @@ Bindings:
    │                 ╰───── name: 2
    │ 
  4 │ contract Middle is Base {}
-   │          ───┬──    ──┬─  
-   │             ╰──────────── name: 3
-   │                      │   
-   │                      ╰─── ref: 1
+   │          ───┬──  
+   │             ╰──── name: 3
  5 │ contract Test is Middle {
-   │          ──┬─    ───┬──  
-   │            ╰───────────── name: 4
-   │                     │    
-   │                     ╰──── ref: 3
+   │          ──┬─  
+   │            ╰─── name: 4
  6 │     function in_base() {
    │              ───┬───  
    │                 ╰───── name: 5
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 4 │ contract Middle is Base {}
+   │                    ──┬─  
+   │                      ╰─── ref: 1
+ 5 │ contract Test is Middle {
+   │                  ───┬──  
+   │                     ╰──── ref: 3
+   │ 
  7 │         super.in_base();
    │               ───┬───  
    │                  ╰───── ref: 2

@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected OpenBrace or ReturnsKeyword or Semicolon.
-   ╭─[input.sol:5:27]
+   ╭─[ input.sol:5:27 ]
    │
  5 │ ╭─▶     function foo() public pure virtual returns (string memory) {
    ┆ ┆   
@@ -11,7 +11,7 @@ Error: Expected OpenBrace or ReturnsKeyword or Semicolon.
    │ ╰─────────── Error occurred here.
 ───╯
 Error: Expected OpenBrace or ReturnsKeyword or Semicolon.
-    ╭─[input.sol:11:27]
+    ╭─[ input.sol:11:27 ]
     │
  11 │ ╭─▶     function foo() public pure virtual override(A) returns (string memory) {
     ┆ ┆   
@@ -20,7 +20,7 @@ Error: Expected OpenBrace or ReturnsKeyword or Semicolon.
     │ ╰─────────── Error occurred here.
 ────╯
 Error: Expected OpenBrace or ReturnsKeyword or Semicolon.
-    ╭─[input.sol:17:27]
+    ╭─[ input.sol:17:27 ]
     │
  17 │ ╭─▶     function foo() public pure virtual override returns (string memory) {
     ┆ ┆   
@@ -29,7 +29,7 @@ Error: Expected OpenBrace or ReturnsKeyword or Semicolon.
     │ ╰─────────── Error occurred here.
 ────╯
 Error: Expected OpenBrace or ReturnsKeyword or Semicolon.
-    ╭─[input.sol:24:27]
+    ╭─[ input.sol:24:27 ]
     │
  24 │ ╭─▶     function foo() public pure override(B, C) returns (string memory) {
     ┆ ┆   
@@ -64,41 +64,54 @@ Unbound identifiers (4):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   4 │ contract A {
     │          ┬  
     │          ╰── name: 1
+    │ 
+ 10 │ contract B is A {
+    │          ┬  
+    │          ╰── name: 2
+    │ 
+ 16 │ contract C is A {
+    │          ┬  
+    │          ╰── name: 3
+    │ 
+ 22 │ contract D is B, C {
+    │          ┬  
+    │          ╰── name: 4
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 10 │ contract B is A {
+    │               ┬  
+    │               ╰── ref: 1
+    │ 
+ 16 │ contract C is A {
+    │               ┬  
+    │               ╰── ref: 1
+    │ 
+ 22 │ contract D is B, C {
+    │               ┬  ┬  
+    │               ╰───── ref: 2
+    │                  │  
+    │                  ╰── ref: 3
+    │
+    ├─[ input.sol:1:1 ]
+    │
   5 │     function foo() public pure virtual returns (string memory) {
     │              ─┬─  
     │               ╰─── ???
     │ 
- 10 │ contract B is A {
-    │          ┬    ┬  
-    │          ╰─────── name: 2
-    │               │  
-    │               ╰── ref: 1
  11 │     function foo() public pure virtual override(A) returns (string memory) {
     │              ─┬─  
     │               ╰─── ???
     │ 
- 16 │ contract C is A {
-    │          ┬    ┬  
-    │          ╰─────── name: 3
-    │               │  
-    │               ╰── ref: 1
  17 │     function foo() public pure virtual override returns (string memory) {
     │              ─┬─  
     │               ╰─── ???
-    │ 
- 22 │ contract D is B, C {
-    │          ┬    ┬  ┬  
-    │          ╰────────── name: 4
-    │               │  │  
-    │               ╰───── ref: 2
-    │                  │  
-    │                  ╰── ref: 3
     │ 
  24 │     function foo() public pure override(B, C) returns (string memory) {
     │              ─┬─  

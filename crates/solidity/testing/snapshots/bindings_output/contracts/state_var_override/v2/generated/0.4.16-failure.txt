@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected Equal or Semicolon.
-    ╭─[input.sol:10:25]
+    ╭─[ input.sol:10:25 ]
     │
  10 │     Bar public override foo;
     │                         ─┬─  
@@ -37,8 +37,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ interface IFoo {
     │           ──┬─  
@@ -48,10 +48,8 @@ Bindings:
     │               ╰─── name: 2
     │ 
   5 │ contract Test is IFoo {
-    │          ──┬─    ──┬─  
-    │            ╰─────────── name: 3
-    │                    │   
-    │                    ╰─── ref: 1
+    │          ──┬─  
+    │            ╰─── name: 3
   6 │     struct Bar {
     │            ─┬─  
     │             ╰─── name: 4
@@ -63,14 +61,23 @@ Bindings:
     │              ╰── name: 6
     │ 
  10 │     Bar public override foo;
-    │     ─┬─        ────┬───  
-    │      ╰─────────────────── ref: 4
-    │                    │     
+    │                ────┬───  
     │                    ╰───── name: 7
     │ 
  12 │     function test() internal view {
     │              ──┬─  
     │                ╰─── name: 8
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  5 │ contract Test is IFoo {
+    │                  ──┬─  
+    │                    ╰─── ref: 1
+    │ 
+ 10 │     Bar public override foo;
+    │     ─┬─  
+    │      ╰─── ref: 4
+    │ 
  13 │         foo.x;
     │         ─┬─ ┬  
     │          ╰───── unresolved

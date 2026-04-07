@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library Lib {
     │         ─┬─  
@@ -16,9 +16,7 @@ References and definitions:
   6 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 4
-  7 │     using Lib for bytes;
-    │           ─┬─  
-    │            ╰─── ref: 1
+    │ 
   8 │     bytes s;
     │           ┬  
     │           ╰── name: 5
@@ -30,6 +28,13 @@ References and definitions:
  10 │         bytes memory m;
     │                      ┬  
     │                      ╰── name: 8
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  7 │     using Lib for bytes;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
  11 │         m.nopCalldata();
     │         ┬ ─────┬─────  
     │         ╰────────────── ref: 8
@@ -61,35 +66,47 @@ References and definitions:
     │               │      
     │               ╰────── ref: 3
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │     ╭─▶ library Lib {
-  2 │     │       function nopCalldata(bytes calldata) external {}
-    │     │   ──────────────────────────┬──────────────────────────  
-    │     │                             ╰──────────────────────────── definiens: 2
-  3 │     │       function nopMemory(bytes memory) external {}
-    │     │   ────────────────────────┬────────────────────────  
-    │     │                           ╰────────────────────────── definiens: 3
-  4 │ │   ├─▶ }
-    │ │   │       
-    │ │   ╰─────── definiens: 1
-  5 │ ╭─────▶ 
-    ┆ ┆       
-  8 │ │ │         bytes s;
-    │ │ │     ──────┬──────  
-    │ │ │           ╰──────── definiens: 5
-  9 │ │ ╭───▶     function test(bytes calldata c) public {
-    │ │ │                       ────────┬───────  
-    │ │ │                               ╰───────── definiens: 7
- 10 │ │ │             bytes memory m;
-    │ │ │     ────────────┬───────────  
-    │ │ │                 ╰───────────── definiens: 8
-    ┆ ┆ ┆     
- 17 │ │ ├───▶     }
-    │ │ │             
-    │ │ ╰───────────── definiens: 6
- 18 │ ├─────▶ }
+  1 │ ╭─▶ library Lib {
+    ┆ ┆   
+  4 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │         function nopCalldata(bytes calldata) external {}
+    │     ──────────────────────────┬──────────────────────────  
+    │                               ╰──────────────────────────── definiens: 2
+  3 │         function nopMemory(bytes memory) external {}
+    │     ────────────────────────┬────────────────────────  
+    │                             ╰────────────────────────── definiens: 3
+    │ 
+  5 │ ╭─▶ 
+    ┆ ┆   
+ 18 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 4
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  8 │ │       bytes s;
+    │ │   ──────┬──────  
+    │ │         ╰──────── definiens: 5
+  9 │ ╭─▶     function test(bytes calldata c) public {
+    ┆ ┆   
+ 17 │ ├─▶     }
     │ │           
-    │ ╰─────────── definiens: 4
+    │ ╰─────────── definiens: 6
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  9 │     function test(bytes calldata c) public {
+    │                   ────────┬───────  
+    │                           ╰───────── definiens: 7
+ 10 │         bytes memory m;
+    │ ────────────┬───────────  
+    │             ╰───────────── definiens: 8
 ────╯

@@ -28,50 +28,63 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Base {
     │          ──┬─  
     │            ╰─── name: 1
   2 │     modifier foo virtual { _; }
-    │              ─┬─           ┬  
-    │               ╰─────────────── name: 2
-    │                            │  
+    │              ─┬─  
+    │               ╰─── name: 2
+    │ 
+  5 │ contract A is Base {
+    │          ┬  
+    │          ╰── name: 3
+  6 │     modifier foo virtual override { _; }
+    │              ─┬─  
+    │               ╰─── name: 4
+    │ 
+  9 │ contract B is Base {
+    │          ┬  
+    │          ╰── name: 5
+ 10 │     modifier foo virtual override { _; }
+    │              ─┬─  
+    │               ╰─── name: 6
+    │ 
+ 13 │ contract Test is B, A {
+    │          ──┬─  
+    │            ╰─── name: 7
+ 14 │     function test() public foo {}
+    │              ──┬─  
+    │                ╰─── name: 8
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │     modifier foo virtual { _; }
+    │                            ┬  
     │                            ╰── built-in
     │ 
   5 │ contract A is Base {
-    │          ┬    ──┬─  
-    │          ╰────────── name: 3
-    │                 │   
+    │               ──┬─  
     │                 ╰─── ref: 1
   6 │     modifier foo virtual override { _; }
-    │              ─┬─                    ┬  
-    │               ╰──────────────────────── name: 4
-    │                                     │  
+    │                                     ┬  
     │                                     ╰── built-in
     │ 
   9 │ contract B is Base {
-    │          ┬    ──┬─  
-    │          ╰────────── name: 5
-    │                 │   
+    │               ──┬─  
     │                 ╰─── ref: 1
  10 │     modifier foo virtual override { _; }
-    │              ─┬─                    ┬  
-    │               ╰──────────────────────── name: 6
-    │                                     │  
+    │                                     ┬  
     │                                     ╰── built-in
     │ 
  13 │ contract Test is B, A {
-    │          ──┬─    ┬  ┬  
-    │            ╰─────────── name: 7
-    │                  │  │  
+    │                  ┬  ┬  
     │                  ╰───── ref: 5
     │                     │  
     │                     ╰── ref: 3
  14 │     function test() public foo {}
-    │              ──┬─          ─┬─  
-    │                ╰──────────────── name: 8
-    │                             │   
+    │                            ─┬─  
     │                             ╰─── ref: 4
 ────╯

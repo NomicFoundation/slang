@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ error TopLevelError(int x, int y);
    │       ──────┬──────     ┬      ┬  
@@ -22,8 +22,8 @@ References and definitions:
    │                                    │  
    │                                    ╰── name: 7
 ───╯
-Definiens: 
-   ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ │   error TopLevelError(int x, int y);
    │ │   ─────────────────┬────┬──────┬─────  
@@ -34,14 +34,17 @@ Definiens:
    │ │                                ╰─────── definiens: 3
  2 │ ╭─▶ 
    ┆ ┆   
- 4 │ │       error ContractError(int x, int y);
-   │ │   ───────────────────┬──────┬──────┬─────  
-   │ │                      ╰───────────────────── definiens: 5
-   │ │                             │      │       
-   │ │                             ╰────────────── definiens: 6
-   │ │                                    │       
-   │ │                                    ╰─────── definiens: 7
  5 │ ├─▶ }
    │ │       
    │ ╰─────── definiens: 4
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 4 │     error ContractError(int x, int y);
+   │ ───────────────────┬──────┬──────┬─────  
+   │                    ╰───────────────────── definiens: 5
+   │                           │      │       
+   │                           ╰────────────── definiens: 6
+   │                                  │       
+   │                                  ╰─────── definiens: 7
 ───╯

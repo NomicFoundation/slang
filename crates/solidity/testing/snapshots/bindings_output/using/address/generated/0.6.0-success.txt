@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ library Address {
    │         ───┬───  
@@ -15,42 +15,59 @@ References and definitions:
  4 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 4
- 5 │     using Address for address payable;
-   │           ───┬───  
-   │              ╰───── ref: 1
+   │ 
  6 │     function test(address _rcpt) public {
    │              ──┬─         ──┬──  
    │                ╰───────────────── name: 5
    │                             │    
    │                             ╰──── name: 6
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 5 │     using Address for address payable;
+   │           ───┬───  
+   │              ╰───── ref: 1
+   │ 
  7 │         payable(_rcpt).sendValue();
    │                 ──┬──  ────┬────  
    │                   ╰─────────────── ref: 6
    │                            │      
    │                            ╰────── ref: 2
 ───╯
-Definiens: 
-   ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+   ╭─[ input.sol:1:1 ]
    │
- 1 │     ╭─▶ library Address {
- 2 │     │       function sendValue(address payable recipient) internal {}
-   │     │   ───────────────────────────────┬───┬──────────────────────────  
-   │     │                                  ╰──────────────────────────────── definiens: 2
-   │     │                                      │                            
-   │     │                                      ╰──────────────────────────── definiens: 3
- 3 │ │   ├─▶ }
-   │ │   │       
-   │ │   ╰─────── definiens: 1
- 4 │ ╭─────▶ contract Test {
-   ┆ ┆ ┆     
- 6 │ │ ╭───▶     function test(address _rcpt) public {
-   │ │ │                       ──────┬──────  
-   │ │ │                             ╰──────── definiens: 6
-   ┆ ┆ ┆     
- 8 │ │ ├───▶     }
-   │ │ │             
-   │ │ ╰───────────── definiens: 5
- 9 │ ├─────▶ }
+ 1 │ ╭─▶ library Address {
+   ┆ ┆   
+ 3 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 1
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 2 │         function sendValue(address payable recipient) internal {}
+   │     ───────────────────────────────┬───┬──────────────────────────  
+   │                                    ╰──────────────────────────────── definiens: 2
+   │                                        │                            
+   │                                        ╰──────────────────────────── definiens: 3
+   │ 
+ 4 │ ╭─▶ contract Test {
+   ┆ ┆   
+ 9 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 4
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 6 │ ╭─▶     function test(address _rcpt) public {
+   ┆ ┆   
+ 8 │ ├─▶     }
    │ │           
-   │ ╰─────────── definiens: 4
+   │ ╰─────────── definiens: 5
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 6 │     function test(address _rcpt) public {
+   │                   ──────┬──────  
+   │                         ╰──────── definiens: 6
 ───╯

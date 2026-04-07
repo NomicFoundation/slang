@@ -37,8 +37,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ interface IFoo {
     │           ──┬─  
@@ -51,19 +51,15 @@ Bindings:
     │                   ╰──── name: 3
     │ 
   6 │     function doFoo(AStruct memory aStruct, string calldata witnessString) external;
-    │              ──┬── ───┬───        ───┬───                  ──────┬──────  
+    │              ──┬──                ───┬───                  ──────┬──────  
     │                ╰────────────────────────────────────────────────────────── name: 4
-    │                       │              │                           │        
-    │                       ╰─────────────────────────────────────────────────── ref: 2
     │                                      │                           │        
     │                                      ╰──────────────────────────────────── name: 5
     │                                                                  │        
     │                                                                  ╰──────── name: 6
   7 │     function doFoo(AStruct[] memory someStructs, string calldata witnessString) external;
-    │              ──┬── ───┬───          ─────┬─────                  ──────┬──────  
+    │              ──┬──                  ─────┬─────                  ──────┬──────  
     │                ╰──────────────────────────────────────────────────────────────── name: 7
-    │                       │                  │                             │        
-    │                       ╰───────────────────────────────────────────────────────── ref: 2
     │                                          │                             │        
     │                                          ╰────────────────────────────────────── name: 8
     │                                                                        │        
@@ -73,9 +69,7 @@ Bindings:
     │          ──┬─  
     │            ╰─── name: 10
  11 │     IFoo myFoo;
-    │     ──┬─ ──┬──  
-    │       ╰───────── ref: 1
-    │            │    
+    │          ──┬──  
     │            ╰──── name: 11
  12 │     string myWitness;
     │            ────┬────  
@@ -86,12 +80,27 @@ Bindings:
     │                ╰─── name: 13
     │ 
  16 │         IFoo.AStruct[] memory someStructs;
-    │         ──┬─ ───┬───          ─────┬─────  
-    │           ╰──────────────────────────────── ref: 1
-    │                 │                  │       
-    │                 ╰────────────────────────── ref: 2
-    │                                    │       
+    │                               ─────┬─────  
     │                                    ╰─────── name: 14
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │     function doFoo(AStruct memory aStruct, string calldata witnessString) external;
+    │                    ───┬───  
+    │                       ╰───── ref: 2
+  7 │     function doFoo(AStruct[] memory someStructs, string calldata witnessString) external;
+    │                    ───┬───  
+    │                       ╰───── ref: 2
+    │ 
+ 11 │     IFoo myFoo;
+    │     ──┬─  
+    │       ╰─── ref: 1
+    │ 
+ 16 │         IFoo.AStruct[] memory someStructs;
+    │         ──┬─ ───┬───  
+    │           ╰─────────── ref: 1
+    │                 │     
+    │                 ╰───── ref: 2
     │ 
  18 │         myFoo.doFoo({
     │         ──┬── ──┬──  

@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Test {
     │          ──┬─  
@@ -10,183 +10,219 @@ References and definitions:
     │              ───┬──  
     │                 ╰──── name: 2
   3 │         address origin = tx.origin;
-    │                 ───┬──   ─┬ ───┬──  
-    │                    ╰──────────────── name: 3
-    │                           │    │    
-    │                           ╰───────── ref: built-in
-    │                                │    
-    │                                ╰──── ref: built-in
+    │                 ───┬──  
+    │                    ╰──── name: 3
   4 │         uint price = tx.gasprice;
-    │              ──┬──   ─┬ ────┬───  
-    │                ╰────────────────── name: 4
-    │                       │     │     
-    │                       ╰─────────── ref: built-in
-    │                             │     
-    │                             ╰───── ref: built-in
+    │              ──┬──  
+    │                ╰──── name: 4
     │ 
   7 │     function testBlock() public {
     │              ────┬────  
     │                  ╰────── name: 5
   8 │         uint v1 = block.basefee;
-    │              ─┬   ──┬── ───┬───  
-    │               ╰────────────────── name: 6
-    │                     │      │     
-    │                     ╰──────────── ref: built-in
-    │                            │     
-    │                            ╰───── ref: built-in
+    │              ─┬  
+    │               ╰── name: 6
   9 │         uint v2 = block.blobbasefee;
-    │              ─┬   ──┬── ─────┬─────  
-    │               ╰────────────────────── name: 7
-    │                     │        │       
-    │                     ╰──────────────── ref: built-in
-    │                              │       
-    │                              ╰─────── unresolved
+    │              ─┬  
+    │               ╰── name: 7
  10 │         uint v3 = block.chainid;
-    │              ─┬   ──┬── ───┬───  
-    │               ╰────────────────── name: 8
-    │                     │      │     
-    │                     ╰──────────── ref: built-in
-    │                            │     
-    │                            ╰───── ref: built-in
+    │              ─┬  
+    │               ╰── name: 8
  11 │         address v4 = block.coinbase;
-    │                 ─┬   ──┬── ────┬───  
-    │                  ╰─────────────────── name: 9
-    │                        │       │     
-    │                        ╰───────────── ref: built-in
-    │                                │     
-    │                                ╰───── ref: built-in
+    │                 ─┬  
+    │                  ╰── name: 9
  12 │         uint v5 = block.difficulty;
-    │              ─┬   ──┬── ─────┬────  
-    │               ╰───────────────────── name: 10
-    │                     │        │      
-    │                     ╰─────────────── ref: built-in
-    │                              │      
-    │                              ╰────── ref: built-in
+    │              ─┬  
+    │               ╰── name: 10
  13 │         uint v6 = block.gaslimit;
-    │              ─┬   ──┬── ────┬───  
-    │               ╰─────────────────── name: 11
-    │                     │       │     
-    │                     ╰───────────── ref: built-in
-    │                             │     
-    │                             ╰───── ref: built-in
+    │              ─┬  
+    │               ╰── name: 11
  14 │         uint v7 = block.number;
-    │              ─┬   ──┬── ───┬──  
-    │               ╰───────────────── name: 12
-    │                     │      │    
-    │                     ╰─────────── ref: built-in
-    │                            │    
-    │                            ╰──── ref: built-in
+    │              ─┬  
+    │               ╰── name: 12
  15 │         uint v8 = block.prevrandao;
-    │              ─┬   ──┬── ─────┬────  
-    │               ╰───────────────────── name: 13
-    │                     │        │      
-    │                     ╰─────────────── ref: built-in
-    │                              │      
-    │                              ╰────── unresolved
+    │              ─┬  
+    │               ╰── name: 13
  16 │         uint v9 = block.timestamp;
-    │              ─┬   ──┬── ────┬────  
-    │               ╰──────────────────── name: 14
-    │                     │       │      
-    │                     ╰────────────── ref: built-in
-    │                             │      
-    │                             ╰────── ref: built-in
+    │              ─┬  
+    │               ╰── name: 14
     │ 
  19 │     function testMsg() public {
     │              ───┬───  
     │                 ╰───── name: 15
  20 │         bytes v1 = msg.data;
-    │               ─┬   ─┬─ ──┬─  
-    │                ╰───────────── name: 16
-    │                     │    │   
+    │               ─┬  
+    │                ╰── name: 16
+ 21 │         address v2 = msg.sender;
+    │                 ─┬  
+    │                  ╰── name: 17
+ 22 │         bytes4 v3 = msg.sig;
+    │                ─┬  
+    │                 ╰── name: 18
+ 23 │         uint v4 = msg.value;
+    │              ─┬  
+    │               ╰── name: 19
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  3 │         address origin = tx.origin;
+    │                          ─┬ ───┬──  
+    │                           ╰───────── ref: built-in
+    │                                │    
+    │                                ╰──── ref: built-in
+  4 │         uint price = tx.gasprice;
+    │                      ─┬ ────┬───  
+    │                       ╰─────────── ref: built-in
+    │                             │     
+    │                             ╰───── ref: built-in
+    │ 
+  8 │         uint v1 = block.basefee;
+    │                   ──┬── ───┬───  
+    │                     ╰──────────── ref: built-in
+    │                            │     
+    │                            ╰───── ref: built-in
+  9 │         uint v2 = block.blobbasefee;
+    │                   ──┬── ─────┬─────  
+    │                     ╰──────────────── ref: built-in
+    │                              │       
+    │                              ╰─────── unresolved
+ 10 │         uint v3 = block.chainid;
+    │                   ──┬── ───┬───  
+    │                     ╰──────────── ref: built-in
+    │                            │     
+    │                            ╰───── ref: built-in
+ 11 │         address v4 = block.coinbase;
+    │                      ──┬── ────┬───  
+    │                        ╰───────────── ref: built-in
+    │                                │     
+    │                                ╰───── ref: built-in
+ 12 │         uint v5 = block.difficulty;
+    │                   ──┬── ─────┬────  
+    │                     ╰─────────────── ref: built-in
+    │                              │      
+    │                              ╰────── ref: built-in
+ 13 │         uint v6 = block.gaslimit;
+    │                   ──┬── ────┬───  
+    │                     ╰───────────── ref: built-in
+    │                             │     
+    │                             ╰───── ref: built-in
+ 14 │         uint v7 = block.number;
+    │                   ──┬── ───┬──  
+    │                     ╰─────────── ref: built-in
+    │                            │    
+    │                            ╰──── ref: built-in
+ 15 │         uint v8 = block.prevrandao;
+    │                   ──┬── ─────┬────  
+    │                     ╰─────────────── ref: built-in
+    │                              │      
+    │                              ╰────── unresolved
+ 16 │         uint v9 = block.timestamp;
+    │                   ──┬── ────┬────  
+    │                     ╰────────────── ref: built-in
+    │                             │      
+    │                             ╰────── ref: built-in
+    │ 
+ 20 │         bytes v1 = msg.data;
+    │                    ─┬─ ──┬─  
     │                     ╰──────── ref: built-in
     │                          │   
     │                          ╰─── ref: built-in
  21 │         address v2 = msg.sender;
-    │                 ─┬   ─┬─ ───┬──  
-    │                  ╰─────────────── name: 17
-    │                       │     │    
+    │                      ─┬─ ───┬──  
     │                       ╰────────── ref: built-in
     │                             │    
     │                             ╰──── ref: built-in
  22 │         bytes4 v3 = msg.sig;
-    │                ─┬   ─┬─ ─┬─  
-    │                 ╰──────────── name: 18
-    │                      │   │   
+    │                     ─┬─ ─┬─  
     │                      ╰─────── ref: built-in
     │                          │   
     │                          ╰─── ref: built-in
  23 │         uint v4 = msg.value;
-    │              ─┬   ─┬─ ──┬──  
-    │               ╰────────────── name: 19
-    │                    │    │    
+    │                   ─┬─ ──┬──  
     │                    ╰───────── ref: built-in
     │                         │    
     │                         ╰──── ref: built-in
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │ ╭─────│ ▶ contract Test {
-  2 │ │     ╭─▶     function testTx() public {
-  3 │ │     │           address origin = tx.origin;
-    │ │     │   ──────────────────┬─────────────────  
-    │ │     │                     ╰─────────────────── definiens: 3
-  4 │ │     │           uint price = tx.gasprice;
-    │ │     │   ─────────────────┬────────────────  
-    │ │     │                    ╰────────────────── definiens: 4
-  5 │ │ │   ├─▶     }
-    │ │ │   │           
-    │ │ │   ╰─────────── definiens: 2
-  6 │ │ ╭─────▶ 
-    ┆ ┆ ┆       
-  8 │ │ │               uint v1 = block.basefee;
-    │ │ │       ────────────────┬────────────────  
-    │ │ │                       ╰────────────────── definiens: 6
-  9 │ │ │               uint v2 = block.blobbasefee;
-    │ │ │       ──────────────────┬──────────────────  
-    │ │ │                         ╰──────────────────── definiens: 7
- 10 │ │ │               uint v3 = block.chainid;
-    │ │ │       ────────────────┬────────────────  
-    │ │ │                       ╰────────────────── definiens: 8
- 11 │ │ │               address v4 = block.coinbase;
-    │ │ │       ──────────────────┬──────────────────  
-    │ │ │                         ╰──────────────────── definiens: 9
- 12 │ │ │               uint v5 = block.difficulty;
-    │ │ │       ──────────────────┬─────────────────  
-    │ │ │                         ╰─────────────────── definiens: 10
- 13 │ │ │               uint v6 = block.gaslimit;
-    │ │ │       ─────────────────┬────────────────  
-    │ │ │                        ╰────────────────── definiens: 11
- 14 │ │ │               uint v7 = block.number;
-    │ │ │       ────────────────┬───────────────  
-    │ │ │                       ╰───────────────── definiens: 12
- 15 │ │ │               uint v8 = block.prevrandao;
-    │ │ │       ──────────────────┬─────────────────  
-    │ │ │                         ╰─────────────────── definiens: 13
- 16 │ │ │               uint v9 = block.timestamp;
-    │ │ │       ─────────────────┬─────────────────  
-    │ │ │                        ╰─────────────────── definiens: 14
- 17 │ │ ├─│ ──▶     }
-    │ │ │ │             
-    │ │ ╰─────────────── definiens: 5
- 18 │ │   ╭───▶ 
-    ┆ ┆   ┆     
- 20 │ │   │             bytes v1 = msg.data;
-    │ │   │     ──────────────┬──────────────  
-    │ │   │                   ╰──────────────── definiens: 16
- 21 │ │   │             address v2 = msg.sender;
-    │ │   │     ────────────────┬────────────────  
-    │ │   │                     ╰────────────────── definiens: 17
- 22 │ │   │             bytes4 v3 = msg.sig;
-    │ │   │     ──────────────┬──────────────  
-    │ │   │                   ╰──────────────── definiens: 18
- 23 │ │   │             uint v4 = msg.value;
-    │ │   │     ──────────────┬──────────────  
-    │ │   │                   ╰──────────────── definiens: 19
- 24 │ │   ├───▶     }
-    │ │   │             
-    │ │   ╰───────────── definiens: 15
- 25 │ ├───────▶ }
-    │ │             
-    │ ╰───────────── definiens: 1
+  1 │ ╭─▶ contract Test {
+    ┆ ┆   
+ 25 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │ ╭─▶     function testTx() public {
+    ┆ ┆   
+  5 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 2
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  3 │             address origin = tx.origin;
+    │     ──────────────────┬─────────────────  
+    │                       ╰─────────────────── definiens: 3
+  4 │             uint price = tx.gasprice;
+    │     ─────────────────┬────────────────  
+    │                      ╰────────────────── definiens: 4
+    │ 
+  6 │ ╭─▶ 
+    ┆ ┆   
+ 17 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  8 │             uint v1 = block.basefee;
+    │     ────────────────┬────────────────  
+    │                     ╰────────────────── definiens: 6
+  9 │             uint v2 = block.blobbasefee;
+    │     ──────────────────┬──────────────────  
+    │                       ╰──────────────────── definiens: 7
+ 10 │             uint v3 = block.chainid;
+    │     ────────────────┬────────────────  
+    │                     ╰────────────────── definiens: 8
+ 11 │             address v4 = block.coinbase;
+    │     ──────────────────┬──────────────────  
+    │                       ╰──────────────────── definiens: 9
+ 12 │             uint v5 = block.difficulty;
+    │     ──────────────────┬─────────────────  
+    │                       ╰─────────────────── definiens: 10
+ 13 │             uint v6 = block.gaslimit;
+    │     ─────────────────┬────────────────  
+    │                      ╰────────────────── definiens: 11
+ 14 │             uint v7 = block.number;
+    │     ────────────────┬───────────────  
+    │                     ╰───────────────── definiens: 12
+ 15 │             uint v8 = block.prevrandao;
+    │     ──────────────────┬─────────────────  
+    │                       ╰─────────────────── definiens: 13
+ 16 │             uint v9 = block.timestamp;
+    │     ─────────────────┬─────────────────  
+    │                      ╰─────────────────── definiens: 14
+    │ 
+ 18 │ ╭─▶ 
+    ┆ ┆   
+ 24 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 15
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 20 │         bytes v1 = msg.data;
+    │ ──────────────┬──────────────  
+    │               ╰──────────────── definiens: 16
+ 21 │         address v2 = msg.sender;
+    │ ────────────────┬────────────────  
+    │                 ╰────────────────── definiens: 17
+ 22 │         bytes4 v3 = msg.sig;
+    │ ──────────────┬──────────────  
+    │               ╰──────────────── definiens: 18
+ 23 │         uint v4 = msg.value;
+    │ ──────────────┬──────────────  
+    │               ╰──────────────── definiens: 19
 ────╯

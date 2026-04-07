@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract FunctionModifier {
     │          ────────┬───────  
@@ -15,6 +15,15 @@ References and definitions:
     │                    ╰───────────────────── name: 3
     │                                     │    
     │                                     ╰──── name: 4
+    │ 
+  9 │     function changeOwner(address _newOwner)
+    │              ─────┬─────         ────┬────  
+    │                   ╰───────────────────────── name: 5
+    │                                      │      
+    │                                      ╰────── name: 6
+    │
+    ├─[ input.sol:1:1 ]
+    │
   5 │         assert(_addr != address(0));
     │         ───┬── ──┬──  
     │            ╰────────── ref: built-in
@@ -23,12 +32,6 @@ References and definitions:
   6 │         _;
     │         ┬  
     │         ╰── ref: built-in
-    │ 
-  9 │     function changeOwner(address _newOwner)
-    │              ─────┬─────         ────┬────  
-    │                   ╰───────────────────────── name: 5
-    │                                      │      
-    │                                      ╰────── name: 6
     │ 
  11 │         validAddress(_newOwner)
     │         ──────┬───── ────┬────  
@@ -42,30 +45,41 @@ References and definitions:
     │                     │      
     │                     ╰────── ref: 6
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │ ╭─────▶ contract FunctionModifier {
-  2 │ │   │       address public owner;
-    │ │   │   ─────────────┬────────────  
-    │ │   │                ╰────────────── definiens: 2
-  3 │ │   ╭─▶ 
-  4 │ │   │       modifier validAddress(address _addr) {
-    │ │   │                             ──────┬──────  
-    │ │   │                                   ╰──────── definiens: 4
-    ┆ ┆   ┆   
-  7 │ │ │ ├─▶     }
-    │ │ │ │           
-    │ │ │ ╰─────────── definiens: 3
-  8 │ │ ╭───▶ 
-  9 │ │ │         function changeOwner(address _newOwner)
-    │ │ │                              ────────┬────────  
-    │ │ │                                      ╰────────── definiens: 6
-    ┆ ┆ ┆     
- 14 │ │ ├───▶     }
-    │ │ │             
-    │ │ ╰───────────── definiens: 5
- 15 │ ├─────▶ }
+  1 │ ╭─▶ contract FunctionModifier {
+    ┆ ┆   
+ 15 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │ │       address public owner;
+    │ │   ─────────────┬────────────  
+    │ │                ╰────────────── definiens: 2
+  3 │ ╭─▶ 
+    ┆ ┆   
+  7 │ ├─▶     }
     │ │           
-    │ ╰─────────── definiens: 1
+    │ ╰─────────── definiens: 3
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  4 │         modifier validAddress(address _addr) {
+    │                               ──────┬──────  
+    │                                     ╰──────── definiens: 4
+    │ 
+  8 │ ╭─▶ 
+    ┆ ┆   
+ 14 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  9 │     function changeOwner(address _newOwner)
+    │                          ────────┬────────  
+    │                                  ╰────────── definiens: 6
 ────╯

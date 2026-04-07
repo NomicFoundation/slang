@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Test {
     │          ──┬─  
@@ -16,19 +16,8 @@ References and definitions:
     │                      ─┬  
     │                       ╰── name: 4
   5 │         bytes memory b3 = bytes.concat(b1, b2);
-    │                      ─┬         ───┬── ─┬  ─┬  
-    │                       ╰──────────────────────── name: 5
-    │                                    │    │   │  
-    │                                    ╰─────────── ref: built-in
-    │                                         │   │  
-    │                                         ╰────── ref: 3
-    │                                             │  
-    │                                             ╰── ref: 4
-  6 │         b1.length;
-    │         ─┬ ───┬──  
-    │          ╰───────── ref: 3
-    │               │    
-    │               ╰──── ref: built-in
+    │                      ─┬  
+    │                       ╰── name: 5
     │ 
   9 │     function testString() public {
     │              ─────┬────  
@@ -40,48 +29,76 @@ References and definitions:
     │                       ─┬  
     │                        ╰── name: 8
  12 │         string memory s3 = string.concat(s1, s2);
-    │                       ─┬          ───┬── ─┬  ─┬  
-    │                        ╰───────────────────────── name: 9
-    │                                      │    │   │  
+    │                       ─┬  
+    │                        ╰── name: 9
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  5 │         bytes memory b3 = bytes.concat(b1, b2);
+    │                                 ───┬── ─┬  ─┬  
+    │                                    ╰─────────── ref: built-in
+    │                                         │   │  
+    │                                         ╰────── ref: 3
+    │                                             │  
+    │                                             ╰── ref: 4
+  6 │         b1.length;
+    │         ─┬ ───┬──  
+    │          ╰───────── ref: 3
+    │               │    
+    │               ╰──── ref: built-in
+    │ 
+ 12 │         string memory s3 = string.concat(s1, s2);
+    │                                   ───┬── ─┬  ─┬  
     │                                      ╰─────────── ref: built-in
     │                                           │   │  
     │                                           ╰────── ref: 7
     │                                               │  
     │                                               ╰── ref: 8
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │ ╭─│ ──▶ contract Test {
-  2 │ │ ╭───▶     function testBytes() public {
-  3 │ │ │             bytes memory b1;
-    │ │ │     ────────────┬────────────  
-    │ │ │                 ╰────────────── definiens: 3
-  4 │ │ │             bytes memory b2;
-    │ │ │     ────────────┬────────────  
-    │ │ │                 ╰────────────── definiens: 4
-  5 │ │ │             bytes memory b3 = bytes.concat(b1, b2);
-    │ │ │     ────────────────────────┬───────────────────────  
-    │ │ │                             ╰───────────────────────── definiens: 5
-    ┆ ┆ ┆     
-  7 │ │ ├─│ ▶     }
-    │ │ │ │           
-    │ │ ╰───────────── definiens: 2
-  8 │ │   ╭─▶ 
-    ┆ ┆   ┆   
- 10 │ │   │           string memory s1;
-    │ │   │   ─────────────┬────────────  
-    │ │   │                ╰────────────── definiens: 7
- 11 │ │   │           string memory s2;
-    │ │   │   ─────────────┬────────────  
-    │ │   │                ╰────────────── definiens: 8
- 12 │ │   │           string memory s3 = string.concat(s1, s2);
-    │ │   │   ─────────────────────────┬────────────────────────  
-    │ │   │                            ╰────────────────────────── definiens: 9
- 13 │ │   ├─▶     }
-    │ │   │           
-    │ │   ╰─────────── definiens: 6
- 14 │ ├─────▶ }
+  1 │ ╭─▶ contract Test {
+    ┆ ┆   
+ 14 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │ ╭─▶     function testBytes() public {
+    ┆ ┆   
+  7 │ ├─▶     }
     │ │           
-    │ ╰─────────── definiens: 1
+    │ ╰─────────── definiens: 2
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  3 │             bytes memory b1;
+    │     ────────────┬────────────  
+    │                 ╰────────────── definiens: 3
+  4 │             bytes memory b2;
+    │     ────────────┬────────────  
+    │                 ╰────────────── definiens: 4
+  5 │             bytes memory b3 = bytes.concat(b1, b2);
+    │     ────────────────────────┬───────────────────────  
+    │                             ╰───────────────────────── definiens: 5
+    │ 
+  8 │ ╭─▶ 
+    ┆ ┆   
+ 13 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 6
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 10 │         string memory s1;
+    │ ─────────────┬────────────  
+    │              ╰────────────── definiens: 7
+ 11 │         string memory s2;
+    │ ─────────────┬────────────  
+    │              ╰────────────── definiens: 8
+ 12 │         string memory s3 = string.concat(s1, s2);
+    │ ─────────────────────────┬────────────────────────  
+    │                          ╰────────────────────────── definiens: 9
 ────╯

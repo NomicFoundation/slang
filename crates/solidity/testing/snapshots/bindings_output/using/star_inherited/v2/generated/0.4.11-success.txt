@@ -23,8 +23,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library Lib {
     │         ─┬─  
@@ -38,20 +38,25 @@ Bindings:
   5 │ contract Base {
     │          ──┬─  
     │            ╰─── name: 4
-  6 │     using Lib for *;
-    │           ─┬─  
-    │            ╰─── ref: 1
     │ 
   9 │ contract Test is Base {
-    │          ──┬─    ──┬─  
-    │            ╰─────────── name: 5
-    │                    │   
-    │                    ╰─── ref: 4
+    │          ──┬─  
+    │            ╰─── name: 5
  10 │     function test(uint x) public {
     │              ──┬─      ┬  
     │                ╰────────── name: 6
     │                        │  
     │                        ╰── name: 7
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │     using Lib for *;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
+  9 │ contract Test is Base {
+    │                  ──┬─  
+    │                    ╰─── ref: 4
     │ 
  12 │         x.increment();
     │         ┬ ────┬────  

@@ -1,25 +1,30 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-   ╭─[main.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ main.sol:1:1 ]
    │
  3 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 1
+   │ 
+ 6 │     function test() public pure {
+   │              ──┬─  
+   │                ╰─── name: 2
+ 7 │         Amount x;
+   │                ┬  
+   │                ╰── name: 3
+   │
+   ├─[ main.sol:1:1 ]
+   │
  4 │     using AmountLib for Amount;
    │           ────┬────     ───┬──  
    │               ╰───────────────── unresolved
    │                            │    
    │                            ╰──── unresolved
    │ 
- 6 │     function test() public pure {
-   │              ──┬─  
-   │                ╰─── name: 2
  7 │         Amount x;
-   │         ───┬── ┬  
-   │            ╰────── unresolved
-   │                │  
-   │                ╰── name: 3
+   │         ───┬──  
+   │            ╰──── unresolved
  8 │         x.nop().min();
    │         ┬ ─┬─   ─┬─  
    │         ╰──────────── ref: 3
@@ -33,27 +38,32 @@ References and definitions:
    │            │   
    │            ╰─── unresolved
 ───╯
-Definiens: 
-    ╭─[main.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ main.sol:1:1 ]
     │
-  2 │ ╭───▶ 
-    ┆ ┆     
-  5 │ │ ╭─▶ 
-    ┆ ┆ ┆   
-  7 │ │ │           Amount x;
-    │ │ │   ─────────┬────────  
-    │ │ │            ╰────────── definiens: 3
-    ┆ ┆ ┆   
- 10 │ │ ├─▶     }
-    │ │ │           
-    │ │ ╰─────────── definiens: 2
- 11 │ ├───▶ }
-    │ │         
-    │ ╰───────── definiens: 1
+  2 │ ╭─▶ 
+    ┆ ┆   
+ 11 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ main.sol:1:1 ]
+    │
+  5 │ ╭─▶ 
+    ┆ ┆   
+ 10 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 2
+    │
+    ├─[ main.sol:1:1 ]
+    │
+  7 │         Amount x;
+    │ ─────────┬────────  
+    │          ╰────────── definiens: 3
 ────╯
 Parse errors:
 Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or ContractKeyword or EnumKeyword or FixedKeyword or FunctionKeyword or Identifier or ImportKeyword or IntKeyword or InterfaceKeyword or LibraryKeyword or MappingKeyword or PragmaKeyword or StringKeyword or StructKeyword or UfixedKeyword or UintKeyword.
-    ╭─[lib.sol:1:1]
+    ╭─[ lib.sol:1:1 ]
     │
   1 │ ╭─▶ type Amount is uint64;
     ┆ ┆   
@@ -61,5 +71,5 @@ Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or 
     │ │       
     │ ╰─────── Error occurred here.
 ────╯
-References and definitions: 
-Definiens: 
+[39mReferences and definitions:[0m 
+[39mDefiniens:[0m 

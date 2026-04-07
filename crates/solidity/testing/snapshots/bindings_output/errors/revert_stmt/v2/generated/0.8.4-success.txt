@@ -24,8 +24,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Test {
     │          ──┬─  
@@ -37,9 +37,6 @@ Bindings:
   4 │     function testRevert() public {
     │              ─────┬────  
     │                   ╰────── name: 3
-  5 │         revert InvalidState();
-    │                ──────┬─────  
-    │                      ╰─────── ref: 2
     │ 
   8 │     function testOtherRevert() public {
     │              ───────┬───────  
@@ -47,13 +44,6 @@ Bindings:
   9 │         int code = 10;
     │             ──┬─  
     │               ╰─── name: 5
- 10 │         revert Utils.GenericError(code);
-    │                ──┬── ──────┬───── ──┬─  
-    │                  ╰────────────────────── ref: 6
-    │                            │        │   
-    │                            ╰──────────── ref: 7
-    │                                     │   
-    │                                     ╰─── ref: 5
     │ 
  14 │ library Utils {
     │         ──┬──  
@@ -63,4 +53,18 @@ Bindings:
     │                 ╰──────────────── name: 7
     │                              │   
     │                              ╰─── name: 8
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  5 │         revert InvalidState();
+    │                ──────┬─────  
+    │                      ╰─────── ref: 2
+    │ 
+ 10 │         revert Utils.GenericError(code);
+    │                ──┬── ──────┬───── ──┬─  
+    │                  ╰────────────────────── ref: 6
+    │                            │        │   
+    │                            ╰──────────── ref: 7
+    │                                     │   
+    │                                     ╰─── ref: 5
 ────╯

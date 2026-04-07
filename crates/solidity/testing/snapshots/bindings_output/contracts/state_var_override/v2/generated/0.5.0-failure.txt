@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected ConstantKeyword or Identifier or InternalKeyword or PrivateKeyword or PublicKeyword.
-    ╭─[input.sol:10:16]
+    ╭─[ input.sol:10:16 ]
     │
  10 │     Bar public override foo;
     │                ──────┬─────  
@@ -36,8 +36,8 @@ Unbound identifiers (1):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ interface IFoo {
     │           ──┬─  
@@ -47,10 +47,8 @@ Bindings:
     │               ╰─── name: 2
     │ 
   5 │ contract Test is IFoo {
-    │          ──┬─    ──┬─  
-    │            ╰─────────── name: 3
-    │                    │   
-    │                    ╰─── ref: 1
+    │          ──┬─  
+    │            ╰─── name: 3
   6 │     struct Bar {
     │            ─┬─  
     │             ╰─── name: 4
@@ -61,13 +59,16 @@ Bindings:
     │              ┬  
     │              ╰── name: 6
     │ 
- 10 │     Bar public override foo;
-    │     ─┬─  
-    │      ╰─── ???
-    │ 
  12 │     function test() internal view {
     │              ──┬─  
     │                ╰─── name: 7
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  5 │ contract Test is IFoo {
+    │                  ──┬─  
+    │                    ╰─── ref: 1
+    │ 
  13 │         foo.x;
     │         ─┬─ ┬  
     │          ╰───── unresolved
@@ -79,4 +80,10 @@ Bindings:
  15 │         this.foo();
     │              ─┬─  
     │               ╰─── ref: 2
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 10 │     Bar public override foo;
+    │     ─┬─  
+    │      ╰─── ???
 ────╯

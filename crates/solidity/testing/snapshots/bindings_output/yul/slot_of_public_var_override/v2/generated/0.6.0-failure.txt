@@ -20,8 +20,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Base {
     │          ──┬─  
@@ -31,10 +31,8 @@ Bindings:
     │              ╰── name: 2
     │ 
   5 │ contract Test is Base {
-    │          ──┬─    ──┬─  
-    │            ╰─────────── name: 3
-    │                    │   
-    │                    ╰─── ref: 1
+    │          ──┬─  
+    │            ╰─── name: 3
   6 │     uint public override x;
     │                          ┬  
     │                          ╰── name: 4
@@ -44,8 +42,16 @@ Bindings:
     │                ╰─── name: 5
     │ 
  10 │             let a := x.slot
-    │                 ┬    ───┬──  
-    │                 ╰──────────── name: 6
-    │                         │    
+    │                 ┬  
+    │                 ╰── name: 6
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  5 │ contract Test is Base {
+    │                  ──┬─  
+    │                    ╰─── ref: 1
+    │ 
+ 10 │             let a := x.slot
+    │                      ───┬──  
     │                         ╰──── unresolved
 ────╯

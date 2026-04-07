@@ -39,8 +39,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ interface DataFeed { function getData(address token) external returns (uint value); }
     │           ────┬───            ───┬───         ──┬──                         ──┬──  
@@ -56,9 +56,7 @@ Bindings:
     │          ──────┬─────  
     │                ╰─────── name: 5
   4 │     DataFeed feed;
-    │     ────┬─── ──┬─  
-    │         ╰────────── ref: 1
-    │                │   
+    │              ──┬─  
     │                ╰─── name: 6
   5 │     uint errorCount;
     │          ─────┬────  
@@ -79,14 +77,26 @@ Bindings:
     │                       ─────┬─────  
     │                            ╰─────── name: 13
   9 │         try feed.getData(token) returns (uint v) {
-    │             ──┬─ ───┬─── ──┬──                ┬  
-    │               ╰────────────────────────────────── ref: 6
-    │                     │      │                  │  
-    │                     ╰──────────────────────────── ref: 2
-    │                            │                  │  
-    │                            ╰───────────────────── ref: 10
-    │                                               │  
+    │                                               ┬  
     │                                               ╰── name: 14
+    │ 
+ 12 │         } catch Error(string memory reason) {
+    │                                     ───┬──  
+    │                                        ╰──── name: 15
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  4 │     DataFeed feed;
+    │     ────┬───  
+    │         ╰───── ref: 1
+    │ 
+  9 │         try feed.getData(token) returns (uint v) {
+    │             ──┬─ ───┬─── ──┬──  
+    │               ╰───────────────── ref: 6
+    │                     │      │    
+    │                     ╰─────────── ref: 2
+    │                            │    
+    │                            ╰──── ref: 10
  10 │             lastValue = v;
     │             ────┬────   ┬  
     │                 ╰────────── ref: 8
@@ -96,10 +106,8 @@ Bindings:
     │                     ┬  
     │                     ╰── ref: 14
  12 │         } catch Error(string memory reason) {
-    │                 ──┬──               ───┬──  
-    │                   ╰───────────────────────── built-in
-    │                                        │    
-    │                                        ╰──── name: 15
+    │                 ──┬──  
+    │                   ╰──── built-in
  13 │             last_reason = reason;
     │             ─────┬─────   ───┬──  
     │                  ╰──────────────── ref: 13

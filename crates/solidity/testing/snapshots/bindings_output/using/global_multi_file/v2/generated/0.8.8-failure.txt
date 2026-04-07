@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected AddressKeyword or BoolKeyword or BytesKeyword or ContractKeyword or EnumKeyword or ErrorKeyword or FixedKeyword or FunctionKeyword or Identifier or ImportKeyword or IntKeyword or InterfaceKeyword or LibraryKeyword or MappingKeyword or PragmaKeyword or StringKeyword or StructKeyword or TypeKeyword or UfixedKeyword or UintKeyword.
-    ╭─[main.sol:7:1]
+    ╭─[ main.sol:7:1 ]
     │
   7 │ ╭─▶ using Lib for uint;
     ┆ ┆   
@@ -33,14 +33,12 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[main.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ main.sol:1:1 ]
    │
  1 │ import {foo} from "other.sol";
    │         ─┬─  
    │          ╰─── name: 1
-   │          │   
-   │          ╰─── ref: 5
    │ 
  3 │ library Lib {
    │         ─┬─  
@@ -50,12 +48,18 @@ Bindings:
    │               ╰────────── name: 3
    │                       │  
    │                       ╰── name: 4
+   │
+   ├─[ main.sol:1:1 ]
+   │
+ 1 │ import {foo} from "other.sol";
+   │         ─┬─  
+   │          ╰─── ref: 5
 ───╯
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[other.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ other.sol:1:1 ]
    │
  1 │ function foo(uint a) pure returns (uint) {
    │          ─┬─      ┬  

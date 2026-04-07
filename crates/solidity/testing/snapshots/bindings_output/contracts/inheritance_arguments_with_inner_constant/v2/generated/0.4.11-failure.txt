@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected ConstantKeyword or Identifier or InternalKeyword or PrivateKeyword or PublicKeyword.
-   ╭─[input.sol:2:16]
+   ╭─[ input.sol:2:16 ]
    │
  2 │     constructor(uint) {}
    │                ─────┬────  
@@ -29,24 +29,31 @@ Unbound identifiers (1):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract Base {
    │          ──┬─  
    │            ╰─── name: 1
- 2 │     constructor(uint) {}
-   │     ─────┬─────  
-   │          ╰─────── ???
    │ 
  5 │ contract Derived is Base(OTHER) { // the initializer expression should NOT bind
-   │          ───┬───    ──┬─ ──┬──  
-   │             ╰─────────────────── name: 2
-   │                       │    │    
-   │                       ╰───────── ref: 1
-   │                            │    
-   │                            ╰──── unresolved
+   │          ───┬───  
+   │             ╰───── name: 2
  6 │     uint constant OTHER = 33;
    │                   ──┬──  
    │                     ╰──── name: 3
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 5 │ contract Derived is Base(OTHER) { // the initializer expression should NOT bind
+   │                     ──┬─ ──┬──  
+   │                       ╰───────── ref: 1
+   │                            │    
+   │                            ╰──── unresolved
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 2 │     constructor(uint) {}
+   │     ─────┬─────  
+   │          ╰─────── ???
 ───╯

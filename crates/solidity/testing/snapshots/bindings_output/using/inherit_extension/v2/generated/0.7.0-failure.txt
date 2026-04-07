@@ -25,8 +25,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   2 │ library Lib {
     │         ─┬─  
@@ -45,22 +45,29 @@ Bindings:
     │                  ╰─────── name: 5
     │ 
   8 │ contract Middle is Base {
-    │          ───┬──    ──┬─  
-    │             ╰──────────── name: 6
-    │                      │   
+    │          ───┬──  
+    │             ╰──── name: 6
+    │ 
+ 11 │ contract Test is Middle {
+    │          ──┬─  
+    │            ╰─── name: 7
+ 12 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 8
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  8 │ contract Middle is Base {
+    │                    ──┬─  
     │                      ╰─── ref: 4
   9 │     using Lib for uint256;
     │           ─┬─  
     │            ╰─── ref: 1
     │ 
  11 │ contract Test is Middle {
-    │          ──┬─    ───┬──  
-    │            ╰───────────── name: 7
-    │                     │    
+    │                  ───┬──  
     │                     ╰──── ref: 6
- 12 │     function test() public {
-    │              ──┬─  
-    │                ╰─── name: 8
+    │ 
  13 │         totalSupply.nop();
     │         ─────┬───── ─┬─  
     │              ╰─────────── ref: 5

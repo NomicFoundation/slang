@@ -27,8 +27,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract Test {
    │          ──┬─  
@@ -46,9 +46,7 @@ Bindings:
    │           ───┬───  
    │              ╰───── name: 6
  4 │         Cause cause,
-   │         ──┬── ──┬──  
-   │           ╰────────── ref: 2
-   │                 │    
+   │               ──┬──  
    │                 ╰──── name: 7
  5 │         string details
    │                ───┬───  
@@ -57,6 +55,13 @@ Bindings:
  7 │     function test() public {
    │              ──┬─  
    │                ╰─── name: 9
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 4 │         Cause cause,
+   │         ──┬──  
+   │           ╰──── ref: 2
+   │ 
  8 │         revert Failure({cause: Cause.NotAuthorized, details: "not owner"});
    │                ───┬───  ──┬──  ──┬── ──────┬──────  ───┬───  
    │                   ╰────────────────────────────────────────── ref: 6

@@ -2,56 +2,69 @@
 
 Parse errors:
 Error: Expected Equal or Semicolon.
-   ╭─[input.sol:2:25]
+   ╭─[ input.sol:2:25 ]
    │
  2 │   error IndexOutOfBounds();
    │                         ─┬  
    │                          ╰── Error occurred here.
 ───╯
 Error: Expected Equal or Semicolon.
-   ╭─[input.sol:5:28]
+   ╭─[ input.sol:5:28 ]
    │
  5 │     revert IndexOutOfBounds();
    │                            ─┬  
    │                             ╰── Error occurred here.
 ───╯
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ library Lib {
    │         ─┬─  
    │          ╰─── name: 1
  2 │   error IndexOutOfBounds();
-   │   ──┬── ────────┬───────  
-   │     ╰───────────────────── unresolved
-   │                 │         
+   │         ────────┬───────  
    │                 ╰───────── name: 2
    │ 
  4 │   modifier test() {
    │            ──┬─  
    │              ╰─── name: 3
  5 │     revert IndexOutOfBounds();
-   │     ───┬── ────────┬───────  
-   │        ╰───────────────────── ref: built-in
-   │                    │         
+   │            ────────┬───────  
    │                    ╰───────── name: 4
-───╯
-Definiens: 
-   ╭─[input.sol:1:1]
    │
- 1 │ ╭───▶ library Lib {
- 2 │ │ │     error IndexOutOfBounds();
-   │ │ │   ──────────────┬─────────────  
-   │ │ │                 ╰─────────────── definiens: 2
- 3 │ │ ╭─▶ 
-   ┆ ┆ ┆   
- 5 │ │ │       revert IndexOutOfBounds();
-   │ │ │   ───────────────┬───────────────  
-   │ │ │                  ╰───────────────── definiens: 4
- 6 │ │ ├─▶   }
-   │ │ │         
-   │ │ ╰───────── definiens: 3
- 7 │ ├───▶ }
+   ├─[ input.sol:1:1 ]
+   │
+ 2 │   error IndexOutOfBounds();
+   │   ──┬──  
+   │     ╰──── unresolved
+   │ 
+ 5 │     revert IndexOutOfBounds();
+   │     ───┬──  
+   │        ╰──── ref: built-in
+───╯
+[39mDefiniens:[0m 
+   ╭─[ input.sol:1:1 ]
+   │
+ 1 │ ╭─▶ library Lib {
+   ┆ ┆   
+ 7 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 1
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 2 │ │     error IndexOutOfBounds();
+   │ │   ──────────────┬─────────────  
+   │ │                 ╰─────────────── definiens: 2
+ 3 │ ╭─▶ 
+   ┆ ┆   
+ 6 │ ├─▶   }
    │ │         
-   │ ╰───────── definiens: 1
+   │ ╰───────── definiens: 3
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 5 │     revert IndexOutOfBounds();
+   │ ───────────────┬───────────────  
+   │                ╰───────────────── definiens: 4
 ───╯

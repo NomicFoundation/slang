@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ struct Base {
     │        ──┬─  
@@ -29,9 +29,7 @@ References and definitions:
     │          ────┬────  
     │              ╰────── name: 9
   9 │     Base base;
-    │     ──┬─ ──┬─  
-    │       ╰──────── ref: 1
-    │            │   
+    │          ──┬─  
     │            ╰─── name: 10
  10 │     int y;
     │         ┬  
@@ -44,11 +42,7 @@ References and definitions:
     │          ─────┬─────  
     │               ╰─────── name: 13
  16 │     MyLib.LibStruct lib_struct;
-    │     ──┬── ────┬──── ─────┬────  
-    │       ╰───────────────────────── ref: 3
-    │               │          │      
-    │               ╰───────────────── ref: 9
-    │                          │      
+    │                     ─────┬────  
     │                          ╰────── name: 14
  17 │     int z;
     │         ┬  
@@ -61,18 +55,10 @@ References and definitions:
     │          ──────┬─────  
     │                ╰─────── name: 17
  23 │     OneInterface.IfaceStruct iface_struct;
-    │     ──────┬───── ─────┬───── ──────┬─────  
-    │           ╰──────────────────────────────── ref: 12
-    │                       │            │       
-    │                       ╰──────────────────── ref: 13
-    │                                    │       
+    │                              ──────┬─────  
     │                                    ╰─────── name: 18
  24 │     MyLib.Direction direction;
-    │     ──┬── ────┬──── ────┬────  
-    │       ╰──────────────────────── ref: 3
-    │               │         │      
-    │               ╰──────────────── ref: 4
-    │                         │      
+    │                     ────┬────  
     │                         ╰────── name: 19
  25 │     int w;
     │         ┬  
@@ -82,10 +68,39 @@ References and definitions:
     │            ──┬──  
     │              ╰──── name: 21
  29 │     SampleStruct memory s;
-    │     ──────┬─────        ┬  
-    │           ╰──────────────── ref: 17
-    │                         │  
+    │                         ┬  
     │                         ╰── name: 22
+    │ 
+ 36 │     MyLib.LibStruct memory ls;
+    │                            ─┬  
+    │                             ╰── name: 23
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  9 │     Base base;
+    │     ──┬─  
+    │       ╰─── ref: 1
+    │ 
+ 16 │     MyLib.LibStruct lib_struct;
+    │     ──┬── ────┬────  
+    │       ╰────────────── ref: 3
+    │               │      
+    │               ╰────── ref: 9
+    │ 
+ 23 │     OneInterface.IfaceStruct iface_struct;
+    │     ──────┬───── ─────┬─────  
+    │           ╰─────────────────── ref: 12
+    │                       │       
+    │                       ╰─────── ref: 13
+ 24 │     MyLib.Direction direction;
+    │     ──┬── ────┬────  
+    │       ╰────────────── ref: 3
+    │               │      
+    │               ╰────── ref: 4
+    │ 
+ 29 │     SampleStruct memory s;
+    │     ──────┬─────  
+    │           ╰─────── ref: 17
  30 │     s.iface_struct.lib_struct.base.x = 1;
     │     ┬ ──────┬───── ─────┬──── ──┬─ ┬  
     │     ╰───────────────────────────────── ref: 22
@@ -131,12 +146,10 @@ References and definitions:
     │                                     ╰──── ref: 5
     │ 
  36 │     MyLib.LibStruct memory ls;
-    │     ──┬── ────┬────        ─┬  
-    │       ╰──────────────────────── ref: 3
-    │               │             │  
-    │               ╰──────────────── ref: 9
-    │                             │  
-    │                             ╰── name: 23
+    │     ──┬── ────┬────  
+    │       ╰────────────── ref: 3
+    │               │      
+    │               ╰────── ref: 9
  37 │     ls.base.x = s.iface_struct.lib_struct.base.x;
     │     ─┬ ──┬─ ┬   ┬ ──────┬───── ─────┬──── ──┬─ ┬  
     │      ╰──────────────────────────────────────────── ref: 23
@@ -155,88 +168,118 @@ References and definitions:
     │                                                │  
     │                                                ╰── ref: 2
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │                 ╭─▶ struct Base {
-  2 │                 │     int x;
-    │                 │   ────┬────  
-    │                 │       ╰────── definiens: 2
-  3 │     │           ├─▶ }
-    │     │           │       
-    │     │           ╰─────── definiens: 1
-  4 │     ╭─────────────▶ 
-    ┆     ┆               
-  6 │     │       │         enum Direction { North, South, West, East }
-    │     │       │       ─────────────────────┬─┬────┬──────┬─────┬────  
-    │     │       │                            ╰────────────────────────── definiens: 5
-    │     │       │                              │    │      │     │      
-    │     │       │                              ╰──────────────────────── definiens: 4
-    │     │       │                                   │      │     │      
-    │     │       │                                   ╰─────────────────── definiens: 6
-    │     │       │                                          │     │      
-    │     │       │                                          ╰──────────── definiens: 7
-    │     │       │                                                │      
-    │     │       │                                                ╰────── definiens: 8
-  7 │     │       ╭─────▶ 
-    ┆     ┆       ┆       
-  9 │     │       │           Base base;
-    │     │       │       ───────┬───────  
-    │     │       │              ╰───────── definiens: 10
- 10 │     │       │           int y;
-    │     │       │       ─────┬─────  
-    │     │       │            ╰─────── definiens: 11
- 11 │     │       ├─────▶   }
-    │     │       │             
-    │     │       ╰───────────── definiens: 9
- 12 │     ├───│ ────────▶ }
-    │     │   │               
-    │     ╰─────────────────── definiens: 3
- 13 │         ╭─────────▶ 
-    ┆         ┆ ┆         
- 15 │         │ ╭───────▶   struct IfaceStruct {
- 16 │         │ │             MyLib.LibStruct lib_struct;
-    │         │ │         ────────────────┬───────────────  
-    │         │ │                         ╰───────────────── definiens: 14
- 17 │         │ │             int z;
-    │         │ │         ─────┬─────  
-    │         │ │              ╰─────── definiens: 15
- 18 │         │ ├───────▶   }
-    │         │ │               
-    │         │ ╰─────────────── definiens: 13
- 19 │ │       ├─────────▶ }
-    │ │       │               
-    │ │       ╰─────────────── definiens: 12
- 20 │ ╭─────────────────▶ 
-    ┆ ┆     ┆             
- 22 │ │     ╭───────────▶   struct SampleStruct {
- 23 │ │     │                 OneInterface.IfaceStruct iface_struct;
-    │ │     │             ─────────────────────┬─────────────────────  
-    │ │     │                                  ╰─────────────────────── definiens: 18
- 24 │ │     │                 MyLib.Direction direction;
-    │ │     │             ───────────────┬───────────────  
-    │ │     │                            ╰───────────────── definiens: 19
- 25 │ │     │                 int w;
-    │ │     │             ─────┬─────  
-    │ │     │                  ╰─────── definiens: 20
- 26 │ │ │   ├───────────▶   }
-    │ │ │   │                   
-    │ │ │   ╰─────────────────── definiens: 17
- 27 │ │ ╭───────────────▶ 
-    ┆ ┆ ┆                 
- 29 │ │ │                     SampleStruct memory s;
-    │ │ │                 ─────────────┬─────────────  
-    │ │ │                              ╰─────────────── definiens: 22
-    ┆ ┆ ┆                 
- 35 │ │ │           ╭───▶ 
- 36 │ │ │           ├───▶     MyLib.LibStruct memory ls;
-    │ │ │           │                                      
-    │ │ │           ╰────────────────────────────────────── definiens: 23
-    ┆ ┆ ┆                 
- 38 │ │ ├───────────────▶   }
-    │ │ │                       
-    │ │ ╰─────────────────────── definiens: 21
- 39 │ ├─────────────────▶ }
-    │ │                       
-    │ ╰─────────────────────── definiens: 16
+  1 │ ╭─▶ struct Base {
+    ┆ ┆   
+  3 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │       int x;
+    │     ────┬────  
+    │         ╰────── definiens: 2
+    │ 
+  4 │ ╭─▶ 
+    ┆ ┆   
+ 12 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 3
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │ │     enum Direction { North, South, West, East }
+    │ │   ─────────────────────┬─┬────┬──────┬─────┬────  
+    │ │                        ╰────────────────────────── definiens: 5
+    │ │                          │    │      │     │      
+    │ │                          ╰──────────────────────── definiens: 4
+    │ │                               │      │     │      
+    │ │                               ╰─────────────────── definiens: 6
+    │ │                                      │     │      
+    │ │                                      ╰──────────── definiens: 7
+    │ │                                            │      
+    │ │                                            ╰────── definiens: 8
+  7 │ ╭─▶ 
+    ┆ ┆   
+ 11 │ ├─▶   }
+    │ │         
+    │ ╰───────── definiens: 9
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  9 │         Base base;
+    │     ───────┬───────  
+    │            ╰───────── definiens: 10
+ 10 │         int y;
+    │     ─────┬─────  
+    │          ╰─────── definiens: 11
+    │ 
+ 13 │ ╭─▶ 
+    ┆ ┆   
+ 19 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 12
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 15 │ ╭─▶   struct IfaceStruct {
+    ┆ ┆   
+ 18 │ ├─▶   }
+    │ │         
+    │ ╰───────── definiens: 13
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 16 │         MyLib.LibStruct lib_struct;
+    │     ────────────────┬───────────────  
+    │                     ╰───────────────── definiens: 14
+ 17 │         int z;
+    │     ─────┬─────  
+    │          ╰─────── definiens: 15
+    │ 
+ 20 │ ╭─▶ 
+    ┆ ┆   
+ 39 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 16
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 22 │ ╭─▶   struct SampleStruct {
+    ┆ ┆   
+ 26 │ ├─▶   }
+    │ │         
+    │ ╰───────── definiens: 17
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 23 │         OneInterface.IfaceStruct iface_struct;
+    │     ─────────────────────┬─────────────────────  
+    │                          ╰─────────────────────── definiens: 18
+ 24 │         MyLib.Direction direction;
+    │     ───────────────┬───────────────  
+    │                    ╰───────────────── definiens: 19
+ 25 │         int w;
+    │     ─────┬─────  
+    │          ╰─────── definiens: 20
+    │ 
+ 27 │ ╭─▶ 
+    ┆ ┆   
+ 38 │ ├─▶   }
+    │ │         
+    │ ╰───────── definiens: 21
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 29 │         SampleStruct memory s;
+    │     ─────────────┬─────────────  
+    │                  ╰─────────────── definiens: 22
+    │ 
+ 35 │ ╭─▶ 
+ 36 │ ├─▶     MyLib.LibStruct memory ls;
+    │ │                                    
+    │ ╰──────────────────────────────────── definiens: 23
 ────╯

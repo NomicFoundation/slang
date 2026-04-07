@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected ConstantKeyword or Identifier or InternalKeyword or PrivateKeyword or PublicKeyword.
-   ╭─[input.sol:6:17]
+   ╭─[ input.sol:6:17 ]
    │
  6 │     uint public override x;
    │                 ─────┬────  
@@ -30,8 +30,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ interface Face {
    │           ──┬─  
@@ -41,14 +41,19 @@ Bindings:
    │              ╰── name: 2
    │ 
  5 │ contract Test is Face {
-   │          ──┬─    ──┬─  
-   │            ╰─────────── name: 3
-   │                    │   
-   │                    ╰─── ref: 1
+   │          ──┬─  
+   │            ╰─── name: 3
    │ 
  8 │     function test() internal {
    │              ──┬─  
    │                ╰─── name: 4
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 5 │ contract Test is Face {
+   │                  ──┬─  
+   │                    ╰─── ref: 1
+   │ 
  9 │         this.x.selector;
    │              ┬ ────┬───  
    │              ╰─────────── ref: 2

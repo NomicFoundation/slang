@@ -22,25 +22,18 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ library Lib {
    │         ─┬─  
    │          ╰─── name: 1
- 2 │     using Math for *;
-   │           ──┬─  
-   │             ╰─── ref: 4
+   │ 
  3 │     function test(uint x) internal {
    │              ──┬─      ┬  
    │                ╰────────── name: 2
    │                        │  
    │                        ╰── name: 3
- 4 │         x.add(1);
-   │         ┬ ─┬─  
-   │         ╰────── ref: 3
-   │            │   
-   │            ╰─── ref: 5
    │ 
  7 │ library Math {
    │         ──┬─  
@@ -52,4 +45,16 @@ Bindings:
    │                       ╰────────── name: 6
    │                               │  
    │                               ╰── name: 7
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 2 │     using Math for *;
+   │           ──┬─  
+   │             ╰─── ref: 4
+   │ 
+ 4 │         x.add(1);
+   │         ┬ ─┬─  
+   │         ╰────── ref: 3
+   │            │   
+   │            ╰─── ref: 5
 ───╯

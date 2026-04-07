@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract Test {
    │          ──┬─  
@@ -11,6 +11,13 @@ References and definitions:
    │                    ╰───────────────────── name: 2
    │                                     │    
    │                                     ╰──── name: 3
+   │ 
+ 7 │     constructor (address _addr) validAddress(_addr) {}
+   │                          ──┬──  
+   │                            ╰──── name: 4
+   │
+   ├─[ input.sol:1:1 ]
+   │
  3 │         assert(_addr != address(0));
    │         ───┬── ──┬──  
    │            ╰────────── ref: built-in
@@ -21,29 +28,35 @@ References and definitions:
    │         ╰── ref: built-in
    │ 
  7 │     constructor (address _addr) validAddress(_addr) {}
-   │                          ──┬──  ──────┬───── ──┬──  
-   │                            ╰──────────────────────── name: 4
-   │                                       │        │    
+   │                                 ──────┬───── ──┬──  
    │                                       ╰───────────── ref: 2
    │                                                │    
    │                                                ╰──── ref: 4
 ───╯
-Definiens: 
-   ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+   ╭─[ input.sol:1:1 ]
    │
- 1 │ ╭─│ ▶ contract Test {
- 2 │ │ ╭─▶     modifier validAddress(address _addr) {
-   │ │ │                             ──────┬──────  
-   │ │ │                                   ╰──────── definiens: 3
-   ┆ ┆ ┆   
- 5 │ │ ├─▶     }
-   │ │ │           
-   │ │ ╰─────────── definiens: 2
-   ┆ ┆     
- 7 │ │         constructor (address _addr) validAddress(_addr) {}
-   │ │                      ──────┬──────  
-   │ │                            ╰──────── definiens: 4
- 8 │ ├───▶ }
-   │ │         
-   │ ╰───────── definiens: 1
+ 1 │ ╭─▶ contract Test {
+   ┆ ┆   
+ 8 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 1
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 2 │ ╭─▶     modifier validAddress(address _addr) {
+   ┆ ┆   
+ 5 │ ├─▶     }
+   │ │           
+   │ ╰─────────── definiens: 2
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 2 │     modifier validAddress(address _addr) {
+   │                           ──────┬──────  
+   │                                 ╰──────── definiens: 3
+   │ 
+ 7 │     constructor (address _addr) validAddress(_addr) {}
+   │                  ──────┬──────  
+   │                        ╰──────── definiens: 4
 ───╯

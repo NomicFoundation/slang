@@ -31,8 +31,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library Id {
     │         ─┬  
@@ -45,21 +45,30 @@ Bindings:
     │      ╰─── name: 3
     │ 
   6 │   function id(Answer ans) returns (Answer) {
-    │            ─┬ ───┬── ─┬─           ───┬──  
-    │             ╰────────────────────────────── name: 4
-    │                  │    │               │    
+    │            ─┬        ─┬─  
+    │             ╰───────────── name: 4
+    │                       │   
+    │                       ╰─── name: 5
+    │ 
+ 11 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 6
+    │ 
+ 14 │   function testFunc() returns (Id.Answer) {
+    │            ────┬───  
+    │                ╰───── name: 7
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  6 │   function id(Answer ans) returns (Answer) {
+    │               ───┬──               ───┬──  
     │                  ╰───────────────────────── ref: 2
-    │                       │               │    
-    │                       ╰──────────────────── name: 5
     │                                       │    
     │                                       ╰──── ref: 2
   7 │     return ans;
     │            ─┬─  
     │             ╰─── ref: 5
     │ 
- 11 │ contract Test {
-    │          ──┬─  
-    │            ╰─── name: 6
  12 │   using Id for Id.Answer;
     │         ─┬     ─┬ ───┬──  
     │          ╰──────────────── ref: 1
@@ -69,9 +78,7 @@ Bindings:
     │                      ╰──── ref: 2
     │ 
  14 │   function testFunc() returns (Id.Answer) {
-    │            ────┬───            ─┬ ───┬──  
-    │                ╰────────────────────────── name: 7
-    │                                 │    │    
+    │                                ─┬ ───┬──  
     │                                 ╰───────── ref: 1
     │                                      │    
     │                                      ╰──── ref: 2

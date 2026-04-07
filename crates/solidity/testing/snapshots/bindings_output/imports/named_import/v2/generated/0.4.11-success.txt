@@ -17,8 +17,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[lib.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ lib.sol:1:1 ]
    │
  1 │ contract Base {}
    │          ──┬─  
@@ -27,8 +27,8 @@ Bindings:
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[main.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ main.sol:1:1 ]
    │
  1 │ import * as Lib from "lib.sol";
    │             ─┬─  

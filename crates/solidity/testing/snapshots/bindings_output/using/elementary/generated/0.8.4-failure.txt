@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected AddressKeyword or BoolKeyword or BytesKeyword or ContractKeyword or EnumKeyword or ErrorKeyword or FixedKeyword or FunctionKeyword or Identifier or ImportKeyword or IntKeyword or InterfaceKeyword or LibraryKeyword or MappingKeyword or PragmaKeyword or StringKeyword or StructKeyword or UfixedKeyword or UintKeyword.
-   ╭─[input.sol:3:1]
+   ╭─[ input.sol:3:1 ]
    │
  3 │ ╭─▶ using {square} for int;
    ┆ ┆   
@@ -10,8 +10,8 @@ Error: Expected AddressKeyword or BoolKeyword or BytesKeyword or ContractKeyword
    │ │       
    │ ╰─────── Error occurred here.
 ───╯
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ function square(int value) returns (int) {}
    │          ───┬──     ──┬──  
@@ -19,8 +19,8 @@ References and definitions:
    │                       │    
    │                       ╰──── name: 2
 ───╯
-Definiens: 
-   ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ function square(int value) returns (int) {}
    │ ────────────────────┬─┬─────────────────────  

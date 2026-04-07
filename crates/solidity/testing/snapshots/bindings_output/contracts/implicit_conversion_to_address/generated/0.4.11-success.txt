@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-    ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library FooUtils {
     │         ────┬───  
@@ -17,6 +17,15 @@ References and definitions:
   7 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 4
+    │ 
+ 10 │     function test(Foo f) internal {
+    │              ──┬─     ┬  
+    │                ╰───────── name: 5
+    │                       │  
+    │                       ╰── name: 6
+    │
+    ├─[ input.sol:1:1 ]
+    │
   8 │     using FooUtils for Foo;
     │           ────┬───     ─┬─  
     │               ╰───────────── ref: 1
@@ -24,43 +33,50 @@ References and definitions:
     │                         ╰─── ref: 3
     │ 
  10 │     function test(Foo f) internal {
-    │              ──┬─ ─┬─ ┬  
-    │                ╰───────── name: 5
-    │                    │  │  
-    │                    ╰───── ref: 3
-    │                       │  
-    │                       ╰── name: 6
+    │                   ─┬─  
+    │                    ╰─── ref: 3
  11 │         f.nop(); // in Solidity <0.5.0 contract references are convertible to address
     │         ┬ ─┬─  
     │         ╰────── ref: 6
     │            │   
     │            ╰─── ref: 2
 ────╯
-Definiens: 
-    ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+    ╭─[ input.sol:1:1 ]
     │
-  1 │     ╭───▶ library FooUtils {
-  2 │     │         function nop(address) internal {}
-    │     │     ───────────────────┬──────────────────  
-    │     │                        ╰──────────────────── definiens: 2
-  3 │     ├─│ ▶ }
-    │     │ │       
-    │     ╰───────── definiens: 1
-  4 │       ╭─▶ 
-  5 │ │     ├─▶ contract Foo {}
-    │ │     │                     
-    │ │     ╰───────────────────── definiens: 3
-  6 │ ╭───────▶ 
-    ┆ ┆         
-  9 │ │ ╭─────▶ 
- 10 │ │ │           function test(Foo f) internal {
-    │ │ │                         ──┬──  
-    │ │ │                           ╰──── definiens: 6
-    ┆ ┆ ┆       
- 12 │ │ ├─────▶     }
-    │ │ │               
-    │ │ ╰─────────────── definiens: 5
- 13 │ ├───────▶ }
-    │ │             
-    │ ╰───────────── definiens: 4
+  1 │ ╭─▶ library FooUtils {
+    ┆ ┆   
+  3 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │           function nop(address) internal {}
+    │       ───────────────────┬──────────────────  
+    │                          ╰──────────────────── definiens: 2
+    │ 
+  4 │   ╭─▶ 
+  5 │ │ ├─▶ contract Foo {}
+    │ │ │                     
+    │ │ ╰───────────────────── definiens: 3
+  6 │ ╭───▶ 
+    ┆ ┆     
+ 13 │ ├───▶ }
+    │ │         
+    │ ╰───────── definiens: 4
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  9 │ ╭─▶ 
+    ┆ ┆   
+ 12 │ ├─▶     }
+    │ │           
+    │ ╰─────────── definiens: 5
+    │
+    ├─[ input.sol:1:1 ]
+    │
+ 10 │     function test(Foo f) internal {
+    │                   ──┬──  
+    │                     ╰──── definiens: 6
 ────╯

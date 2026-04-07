@@ -2,7 +2,7 @@
 
 Parse errors:
 Error: Expected ConstantKeyword or Identifier or InternalKeyword or PrivateKeyword or PublicKeyword.
-   ╭─[input.sol:4:16]
+   ╭─[ input.sol:4:16 ]
    │
  4 │     constructor(int _x) {}
    │                ──────┬─────  
@@ -31,8 +31,8 @@ Unbound identifiers (1):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract A {
    │          ┬  
@@ -42,10 +42,6 @@ Bindings:
    │              ╰───────── name: 2
    │                     │  
    │                     ╰── name: 3
-   │ 
- 4 │     constructor(int _x) {}
-   │     ─────┬─────  
-   │          ╰─────── ???
    │ 
  7 │ contract Test {
    │          ──┬─  
@@ -58,4 +54,10 @@ Bindings:
    │             ╰────── ref: 1
    │                 │  
    │                 ╰── ref: 3
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 4 │     constructor(int _x) {}
+   │     ─────┬─────  
+   │          ╰─────── ???
 ───╯

@@ -25,8 +25,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract token {
     │          ──┬──  
@@ -40,20 +40,26 @@ Bindings:
     │                ╰──── name: 3
     │ 
   7 │ contract Test is token {
-    │          ──┬─    ──┬──  
-    │            ╰──────────── name: 4
-    │                    │    
-    │                    ╰──── ref: 1
+    │          ──┬─  
+    │            ╰─── name: 4
   8 │     function merge(address target) {
     │              ──┬──         ───┬──  
     │                ╰─────────────────── name: 5
     │                               │    
     │                               ╰──── name: 6
   9 │         token old = token(address(0x7F2176cEB16dcb648dc924eff617c3dC2BEfd30d));
-    │         ──┬── ─┬─   ──┬──  
+    │               ─┬─  
+    │                ╰─── name: 7
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  7 │ contract Test is token {
+    │                  ──┬──  
+    │                    ╰──── ref: 1
+    │ 
+  9 │         token old = token(address(0x7F2176cEB16dcb648dc924eff617c3dC2BEfd30d));
+    │         ──┬──       ──┬──  
     │           ╰──────────────── ref: 1
-    │                │      │    
-    │                ╰─────────── name: 7
     │                       │    
     │                       ╰──── ref: 1
  10 │         old.balanceOf(target);

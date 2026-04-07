@@ -2,14 +2,14 @@
 
 Parse errors:
 Error: Expected EqualGreaterThan.
-   ╭─[input.sol:3:25]
+   ╭─[ input.sol:3:25 ]
    │
  3 │         mapping(bytes32 value => uint256) positions;
    │                         ────────┬───────  
    │                                 ╰───────── Error occurred here.
 ───╯
 Error: Expected EqualGreaterThan.
-   ╭─[input.sol:6:21]
+   ╭─[ input.sol:6:21 ]
    │
  6 │     mapping(address asset0 => mapping(address asset1 => address)) map;
    │                     ──────────────────────┬─────────────────────  
@@ -34,8 +34,8 @@ Unbound identifiers (2):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-   ╭─[input.sol:1:1]
+[39mBindings:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract Test {
    │          ──┬─  

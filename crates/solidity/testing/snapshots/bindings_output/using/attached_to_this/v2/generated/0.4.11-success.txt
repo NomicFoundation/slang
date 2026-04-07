@@ -23,17 +23,15 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ library Utils {
     │         ──┬──  
     │           ╰──── name: 1
   2 │     function foo(ITest subject) internal {}
-    │              ─┬─ ──┬── ───┬───  
+    │              ─┬─       ───┬───  
     │               ╰───────────────── name: 2
-    │                    │      │     
-    │                    ╰──────────── ref: 4
     │                           │     
     │                           ╰───── name: 3
     │ 
@@ -42,13 +40,8 @@ Bindings:
     │             ╰──── name: 4
     │ 
   7 │ contract Test is ITest {
-    │          ──┬─    ──┬──  
-    │            ╰──────────── name: 5
-    │                    │    
-    │                    ╰──── ref: 4
-  8 │     using Utils for *;
-    │           ──┬──  
-    │             ╰──── ref: 1
+    │          ──┬─  
+    │            ╰─── name: 5
     │ 
  10 │     function bar() internal {}
     │              ─┬─  
@@ -57,6 +50,20 @@ Bindings:
  12 │     function test() internal {
     │              ──┬─  
     │                ╰─── name: 7
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  2 │     function foo(ITest subject) internal {}
+    │                  ──┬──  
+    │                    ╰──── ref: 4
+    │ 
+  7 │ contract Test is ITest {
+    │                  ──┬──  
+    │                    ╰──── ref: 4
+  8 │     using Utils for *;
+    │           ──┬──  
+    │             ╰──── ref: 1
+    │ 
  13 │         this.foo();
     │              ─┬─  
     │               ╰─── ref: 2

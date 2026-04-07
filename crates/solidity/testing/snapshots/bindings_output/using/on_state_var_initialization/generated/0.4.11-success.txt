@@ -1,57 +1,73 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ library Lib {
    │         ─┬─  
    │          ╰─── name: 1
  2 │     function nop(uint256 x) returns (uint256) { return x; }
-   │              ─┬─         ┬                             ┬  
-   │               ╰─────────────────────────────────────────── name: 2
-   │                          │                             │  
-   │                          ╰──────────────────────────────── name: 3
-   │                                                        │  
-   │                                                        ╰── ref: 3
+   │              ─┬─         ┬  
+   │               ╰───────────── name: 2
+   │                          │  
+   │                          ╰── name: 3
    │ 
  4 │ contract Test {
    │          ──┬─  
    │            ╰─── name: 4
- 5 │     using Lib for uint256;
-   │           ─┬─  
-   │            ╰─── ref: 1
+   │ 
  6 │     uint256 private v1 = 1;
    │                     ─┬  
    │                      ╰── name: 5
  7 │     uint256 private v2 = v1.nop();
-   │                     ─┬   ─┬ ─┬─  
-   │                      ╰─────────── name: 6
-   │                           │  │   
+   │                     ─┬  
+   │                      ╰── name: 6
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 2 │     function nop(uint256 x) returns (uint256) { return x; }
+   │                                                        ┬  
+   │                                                        ╰── ref: 3
+   │ 
+ 5 │     using Lib for uint256;
+   │           ─┬─  
+   │            ╰─── ref: 1
+   │ 
+ 7 │     uint256 private v2 = v1.nop();
+   │                          ─┬ ─┬─  
    │                           ╰────── ref: 5
    │                              │   
    │                              ╰─── ref: 2
 ───╯
-Definiens: 
-   ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+   ╭─[ input.sol:1:1 ]
    │
- 1 │   ╭─▶ library Lib {
- 2 │   │       function nop(uint256 x) returns (uint256) { return x; }
-   │   │   ─────────────────────┬────────┬─────────────────────────────  
-   │   │                        ╰──────────────────────────────────────── definiens: 3
-   │   │                                 │                               
-   │   │                                 ╰─────────────────────────────── definiens: 2
- 3 │ │ ├─▶ }
-   │ │ │       
-   │ │ ╰─────── definiens: 1
- 4 │ ╭───▶ contract Test {
-   ┆ ┆     
- 6 │ │         uint256 private v1 = 1;
-   │ │     ──────────────┬─────────────  
-   │ │                   ╰─────────────── definiens: 5
- 7 │ │         uint256 private v2 = v1.nop();
-   │ │     ─────────────────┬─────────────────  
-   │ │                      ╰─────────────────── definiens: 6
- 8 │ ├───▶ }
-   │ │         
-   │ ╰───────── definiens: 4
+ 1 │ ╭─▶ library Lib {
+   ┆ ┆   
+ 3 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 1
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 2 │         function nop(uint256 x) returns (uint256) { return x; }
+   │     ─────────────────────┬────────┬─────────────────────────────  
+   │                          ╰──────────────────────────────────────── definiens: 3
+   │                                   │                               
+   │                                   ╰─────────────────────────────── definiens: 2
+   │ 
+ 4 │ ╭─▶ contract Test {
+   ┆ ┆   
+ 8 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 4
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 6 │     uint256 private v1 = 1;
+   │ ──────────────┬─────────────  
+   │               ╰─────────────── definiens: 5
+ 7 │     uint256 private v2 = v1.nop();
+   │ ─────────────────┬─────────────────  
+   │                  ╰─────────────────── definiens: 6
 ───╯

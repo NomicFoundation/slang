@@ -23,8 +23,8 @@ Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
-Bindings: 
-    ╭─[input.sol:1:1]
+[39mBindings:[0m 
+    ╭─[ input.sol:1:1 ]
     │
   1 │ contract Test {
     │          ──┬─  
@@ -32,13 +32,6 @@ Bindings:
   2 │     function test_new() public returns (uint) {
     │              ────┬───  
     │                  ╰───── name: 2
-  3 │         return new Container().cell().value;
-    │                    ────┬────   ──┬─   ──┬──  
-    │                        ╰───────────────────── ref: 3
-    │                                  │      │    
-    │                                  ╰─────────── ref: 6
-    │                                         │    
-    │                                         ╰──── ref: 5
     │ 
   7 │ contract Container {
     │          ────┬────  
@@ -51,9 +44,21 @@ Bindings:
     │                ╰──── name: 5
     │ 
  12 │     function cell() public returns (Resource memory) {
-    │              ──┬─                   ────┬───  
-    │                ╰────────────────────────────── name: 6
-    │                                         │     
+    │              ──┬─  
+    │                ╰─── name: 6
+    │
+    ├─[ input.sol:1:1 ]
+    │
+  3 │         return new Container().cell().value;
+    │                    ────┬────   ──┬─   ──┬──  
+    │                        ╰───────────────────── ref: 3
+    │                                  │      │    
+    │                                  ╰─────────── ref: 6
+    │                                         │    
+    │                                         ╰──── ref: 5
+    │ 
+ 12 │     function cell() public returns (Resource memory) {
+    │                                     ────┬───  
     │                                         ╰───── ref: 4
  13 │         return Resource(1);
     │                ────┬───  

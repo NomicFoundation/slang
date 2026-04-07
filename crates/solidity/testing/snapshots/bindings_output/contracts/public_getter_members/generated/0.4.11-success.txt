@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
-   ╭─[input.sol:1:1]
+[39mReferences and definitions:[0m 
+   ╭─[ input.sol:1:1 ]
    │
  1 │ contract Base {
    │          ──┬─  
@@ -28,25 +28,38 @@ References and definitions:
    │                         │     
    │                         ╰───── ref: built-in
 ───╯
-Definiens: 
-   ╭─[input.sol:1:1]
+[39mDefiniens:[0m 
+   ╭─[ input.sol:1:1 ]
    │
- 1 │     ╭─▶ contract Base {
- 2 │     │       address public owner;
-   │     │   ─────────────┬────────────  
-   │     │                ╰────────────── definiens: 2
- 3 │ │   ├─▶ }
-   │ │   │       
-   │ │   ╰─────── definiens: 1
- 4 │ ╭─│ ──▶ contract Test {
- 5 │ │ ╭───▶     function test(Base base) public {
-   │ │ │                       ────┬────  
-   │ │ │                           ╰────── definiens: 5
-   ┆ ┆ ┆     
- 7 │ │ ├───▶     }
-   │ │ │             
-   │ │ ╰───────────── definiens: 4
- 8 │ ├─────▶ }
+ 1 │ ╭─▶ contract Base {
+   ┆ ┆   
+ 3 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 1
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 2 │         address public owner;
+   │     ─────────────┬────────────  
+   │                  ╰────────────── definiens: 2
+   │ 
+ 4 │ ╭─▶ contract Test {
+   ┆ ┆   
+ 8 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 3
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 5 │ ╭─▶     function test(Base base) public {
+   ┆ ┆   
+ 7 │ ├─▶     }
    │ │           
-   │ ╰─────────── definiens: 3
+   │ ╰─────────── definiens: 4
+   │
+   ├─[ input.sol:1:1 ]
+   │
+ 5 │     function test(Base base) public {
+   │                   ────┬────  
+   │                       ╰────── definiens: 5
 ───╯
