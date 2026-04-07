@@ -7,13 +7,13 @@ use crate::binder::{
     Binder, ContractDefinition, Definition, ImportDefinition, InterfaceDefinition, Reference,
     Resolution, ScopeId,
 };
-use crate::compilation::file::File;
+use crate::context::InputFile;
 
 mod c3;
 
 /// In this pass we collect all bases of contracts and interfaces and then
 /// compute the linearisation for each of them.
-pub fn run(files: &[File], binder: &mut Binder) {
+pub fn run(files: &[impl InputFile], binder: &mut Binder) {
     let mut pass = Pass::new(binder);
     for file in files {
         pass.visit_file_collect_bases(file.ir_root());

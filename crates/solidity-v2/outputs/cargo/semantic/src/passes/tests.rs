@@ -1,21 +1,43 @@
 use anyhow::{anyhow, Result};
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_ir::ir;
+use slang_solidity_v2_ir::ir::{self, NodeId};
 use slang_solidity_v2_parser::Parser;
 
 use crate::binder::{Binder, Resolution};
-use crate::compilation::file::File;
+use crate::context::InputFile;
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_resolve_references,
 };
 use crate::types::TypeRegistry;
 
-fn build_file(name: &str, contents: &str) -> Result<File> {
+struct TestFile {
+    id: String,
+    ir_root: ir::SourceUnit,
+}
+
+impl InputFile for TestFile {
+    fn id(&self) -> &str {
+        &self.id
+    }
+
+    fn ir_root(&self) -> &ir::SourceUnit {
+        &self.ir_root
+    }
+
+    fn resolved_import_by_node_id(&self, _node_id: NodeId) -> Option<&String> {
+        None
+    }
+}
+
+fn build_file(name: &str, contents: &str) -> Result<TestFile> {
     let version = LanguageVersion::V0_8_30;
     let source_unit_cst =
         Parser::parse(contents, version).map_err(|message| anyhow!(format!("{message:?}")))?;
     let source_unit = ir::build(&source_unit_cst, &contents);
-    Ok(File::new(name.to_string(), source_unit))
+    Ok(TestFile {
+        id: name.to_string(),
+        ir_root: source_unit,
+    })
 }
 
 #[test]

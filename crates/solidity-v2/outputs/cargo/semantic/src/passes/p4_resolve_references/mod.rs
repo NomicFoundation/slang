@@ -3,7 +3,7 @@ use slang_solidity_v2_ir::ir::{self, NodeId};
 
 use crate::binder::{Binder, Scope, ScopeId};
 use crate::built_ins::BuiltInsResolver;
-use crate::compilation::file::File;
+use crate::context::InputFile;
 use crate::types::TypeRegistry;
 
 mod disambiguation;
@@ -17,7 +17,7 @@ mod visitor;
 /// and happen concurrently for each node, and their results are store in the
 /// `Binder` instance.
 pub fn run(
-    files: &[File],
+    files: &[impl InputFile],
     binder: &mut Binder,
     types: &mut TypeRegistry,
     language_version: LanguageVersion,

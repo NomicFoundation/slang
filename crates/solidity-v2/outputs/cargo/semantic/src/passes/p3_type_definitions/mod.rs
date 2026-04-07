@@ -1,7 +1,7 @@
 use slang_solidity_v2_ir::ir::{self, NodeId};
 
 use crate::binder::{Binder, Definition, Scope, ScopeId};
-use crate::compilation::file::File;
+use crate::context::InputFile;
 use crate::types::{Type, TypeId, TypeRegistry};
 
 mod evaluator;
@@ -18,7 +18,7 @@ mod visitor;
 /// Finally, public state variables will be assigned an equivalent getter
 /// function type. This happens after the main typing pass to ensure all types
 /// are already registered.
-pub fn run(files: &[File], binder: &mut Binder, types: &mut TypeRegistry) {
+pub fn run(files: &[impl InputFile], binder: &mut Binder, types: &mut TypeRegistry) {
     let mut pass = Pass::new(binder, types);
     for file in files {
         pass.visit_file(file.ir_root());

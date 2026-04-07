@@ -4,9 +4,9 @@ use std::rc::Rc;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeId};
 use slang_solidity_v2_parser::{Parser, ParserError};
-use slang_solidity_v2_semantic::compilation::file::File;
 use slang_solidity_v2_semantic::context::SemanticContext;
 
+use super::file::File;
 use super::unit::CompilationUnit;
 
 #[doc(hidden)]

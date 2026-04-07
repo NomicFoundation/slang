@@ -7,7 +7,7 @@ use slang_solidity_v2_ir::ir::{Identifier, NodeId};
 use slang_solidity_v2_main::compilation::unit::CompilationUnit;
 use slang_solidity_v2_parser::ParserError;
 use slang_solidity_v2_semantic::binder::{Definition, Resolution, Typing};
-use slang_solidity_v2_semantic::context::SemanticContext;
+use slang_solidity_v2_semantic::context::{InputFile, SemanticContext};
 use slang_solidity_v2_semantic::types::{DataLocation, FunctionType, LiteralKind, Type, TypeId};
 
 // Types

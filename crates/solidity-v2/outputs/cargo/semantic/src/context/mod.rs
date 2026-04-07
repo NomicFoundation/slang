@@ -1,11 +1,23 @@
 use slang_solidity_v2_common::versions::LanguageVersion;
+use slang_solidity_v2_ir::ir::{self, NodeId};
 
 use crate::binder::Binder;
-use crate::compilation::file::File;
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_resolve_references,
 };
 use crate::types::TypeRegistry;
+
+/// Trait for files that can be used as input to the semantic analysis passes.
+pub trait InputFile {
+    /// Returns the file identifier.
+    fn id(&self) -> &str;
+
+    /// Returns the root IR node of the file.
+    fn ir_root(&self) -> &ir::SourceUnit;
+
+    /// Returns the resolved import target file ID for the given import node, if resolved.
+    fn resolved_import_by_node_id(&self, node_id: NodeId) -> Option<&String>;
+}
 
 pub struct SemanticContext {
     binder: Binder,
@@ -13,7 +25,7 @@ pub struct SemanticContext {
 }
 
 impl SemanticContext {
-    pub fn build_from(language_version: LanguageVersion, files: &[File]) -> Self {
+    pub fn build_from(language_version: LanguageVersion, files: &[impl InputFile]) -> Self {
         let mut binder = Binder::default();
         let mut types = TypeRegistry::default();
 

@@ -7,7 +7,7 @@ use ariadne::{Color, Config, Label, Report, ReportBuilder, ReportKind, Source};
 use slang_solidity_v2_ir::ir::NodeId;
 use slang_solidity_v2_parser::ParserError;
 use slang_solidity_v2_semantic::binder::Resolution;
-use slang_solidity_v2_semantic::context::SemanticContext;
+use slang_solidity_v2_semantic::context::{InputFile, SemanticContext};
 use solidity_v2_testing_utils::reporting::diagnostic;
 
 use super::report_data::{
