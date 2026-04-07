@@ -1,5 +1,5 @@
 use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit as InputSourceUnit;
-use slang_solidity_v2_semantic::ir::{self, SourceUnit, SourceUnitMember};
+use slang_solidity_v2_ir::ir::{self, SourceUnit, SourceUnitMember};
 
 use crate::dataset::SolidityProject;
 

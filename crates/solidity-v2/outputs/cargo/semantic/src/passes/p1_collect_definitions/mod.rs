@@ -1,7 +1,8 @@
+use slang_solidity_v2_ir::ir::visitor::Visitor;
+use slang_solidity_v2_ir::ir::{self, NodeId};
+
 use crate::binder::{Binder, Definition, FileScope, ParametersScope, Scope, ScopeId};
 use crate::compilation::file::File;
-use crate::ir::visitor::Visitor;
-use crate::ir::{self, NodeId};
 
 /// In this pass all definitions are collected with their naming identifiers.
 /// Also lexical (and other kinds of) scopes are identified and linked together,

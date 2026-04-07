@@ -1,9 +1,10 @@
 use std::rc::Rc;
 
+use slang_solidity_v2_ir::ir;
+
 use super::evaluator::{evaluate_compile_time_uint_constant, ConstantIdentifierResolver};
 use super::Pass;
 use crate::binder::{Definition, ImportDefinition, Reference, Resolution, ScopeId};
-use crate::ir;
 use crate::types::{DataLocation, FunctionType, Type, TypeId};
 
 impl Pass<'_> {

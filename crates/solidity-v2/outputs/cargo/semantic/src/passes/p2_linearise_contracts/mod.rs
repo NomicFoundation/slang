@@ -1,12 +1,13 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
+use slang_solidity_v2_ir::ir::{self, NodeId};
+
 use crate::binder::{
     Binder, ContractDefinition, Definition, ImportDefinition, InterfaceDefinition, Reference,
     Resolution, ScopeId,
 };
 use crate::compilation::file::File;
-use crate::ir::{self, NodeId};
 
 mod c3;
 

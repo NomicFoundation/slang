@@ -1,11 +1,12 @@
 use std::collections::HashSet;
 use std::rc::Rc;
 
+use slang_solidity_v2_ir::ir::{self, NodeId};
+
 use super::{Pass, ScopeFrame};
 use crate::binder::{
     Definition, Reference, Resolution, ResolveOptions, ScopeId, Typing, UsingDirective,
 };
-use crate::ir::{self, NodeId};
 use crate::types::{FunctionType, Type, TypeId};
 
 /// Lexical style resolution of symbols

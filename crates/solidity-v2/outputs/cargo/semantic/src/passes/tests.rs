@@ -1,10 +1,10 @@
 use anyhow::{anyhow, Result};
 use slang_solidity_v2_common::versions::LanguageVersion;
+use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_parser::Parser;
 
 use crate::binder::{Binder, Resolution};
 use crate::compilation::file::File;
-use crate::ir;
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_resolve_references,
 };

@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::ir::{self, NodeId};
+use slang_solidity_v2_ir::ir::{self, NodeId};
 
 pub struct File {
     id: String,

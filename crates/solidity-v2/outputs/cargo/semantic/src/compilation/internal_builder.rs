@@ -1,12 +1,12 @@
 use std::collections::BTreeMap;
 
 use slang_solidity_v2_common::versions::LanguageVersion;
+use slang_solidity_v2_ir::ir::{self, NodeId};
 use slang_solidity_v2_parser::{Parser, ParserError};
 
 use super::file::File;
 use super::unit::CompilationUnit;
 use crate::binder::Binder;
-use crate::ir::{self, NodeId};
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_resolve_references,
 };

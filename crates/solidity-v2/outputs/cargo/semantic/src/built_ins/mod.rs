@@ -1,8 +1,8 @@
 use slang_solidity_v2_common::versions::LanguageVersion;
+use slang_solidity_v2_ir::ir::NodeId;
 
 use super::binder::{Binder, Definition, Typing};
 use super::types::{DataLocation, FunctionType, LiteralKind, Type, TypeId, TypeRegistry};
-use crate::ir::NodeId;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum BuiltIn {

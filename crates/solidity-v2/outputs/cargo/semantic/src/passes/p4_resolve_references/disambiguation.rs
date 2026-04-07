@@ -1,6 +1,7 @@
+use slang_solidity_v2_ir::ir::NodeId;
+
 use super::Pass;
 use crate::binder::{Definition, ParameterDefinition, Scope, Typing};
-use crate::ir::NodeId;
 use crate::types::{FunctionType, Type, TypeId};
 
 /// Disambiguation functions that require typing (aka overload resolution)

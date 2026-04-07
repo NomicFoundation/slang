@@ -1,4 +1,4 @@
-use crate::ir::{self, NodeId};
+use slang_solidity_v2_ir::ir::{self, NodeId};
 
 mod parsing;
 mod registry;

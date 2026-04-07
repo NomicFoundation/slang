@@ -1,6 +1,7 @@
+use slang_solidity_v2_ir::ir::{self, NodeId};
+
 use crate::binder::{Binder, Definition, Scope, ScopeId};
 use crate::compilation::file::File;
-use crate::ir::{self, NodeId};
 use crate::types::{Type, TypeId, TypeRegistry};
 
 mod evaluator;

@@ -1,9 +1,9 @@
 use slang_solidity_v2_common::versions::LanguageVersion;
+use slang_solidity_v2_ir::ir::{self, NodeId};
 
 use crate::binder::{Binder, Scope, ScopeId};
 use crate::built_ins::BuiltInsResolver;
 use crate::compilation::file::File;
-use crate::ir::{self, NodeId};
 use crate::types::TypeRegistry;
 
 mod disambiguation;

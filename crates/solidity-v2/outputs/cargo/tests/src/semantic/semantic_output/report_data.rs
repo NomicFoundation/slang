@@ -2,11 +2,11 @@ use std::collections::HashMap;
 use std::fmt::Display;
 use std::ops::Range;
 
+use slang_solidity_v2_ir::ir::visitor::{accept_source_unit, Visitor};
+use slang_solidity_v2_ir::ir::{Identifier, NodeId};
 use slang_solidity_v2_parser::ParserError;
 use slang_solidity_v2_semantic::binder::{Definition, Resolution, Typing};
 use slang_solidity_v2_semantic::compilation::unit::CompilationUnit;
-use slang_solidity_v2_semantic::ir::visitor::{accept_source_unit, Visitor};
-use slang_solidity_v2_semantic::ir::{Identifier, NodeId};
 use slang_solidity_v2_semantic::types::{DataLocation, FunctionType, LiteralKind, Type, TypeId};
 
 // Types

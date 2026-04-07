@@ -19,8 +19,8 @@ mod __dependencies_used_in_lib__ {
     use slang_solidity as _;
     use slang_solidity_v2_common as _;
     use slang_solidity_v2_cst as _;
+    use slang_solidity_v2_ir as _;
     use slang_solidity_v2_parser as _;
-    use slang_solidity_v2_semantic as _;
     use solar as _;
     use solidity_testing_utils as _;
     use streaming_iterator as _;

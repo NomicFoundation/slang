@@ -1,8 +1,9 @@
 use std::collections::{HashMap, HashSet, VecDeque};
 
+use slang_solidity_v2_ir::ir::NodeId;
+
 use super::built_ins::BuiltIn;
 use super::types::{Type, TypeId};
-use crate::ir::NodeId;
 
 mod definitions;
 mod references;
