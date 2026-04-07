@@ -340,15 +340,7 @@ impl Binder {
         self.node_typing
             .get(&node_id)
             .cloned()
-            .expect("expected node to have typing information")
-    }
-
-    /// Returns the typing information for the given node, or `None` if the
-    /// node has no typing entry. Prefer this over [`Self::node_typing`] in contexts
-    /// where incomplete typing should be handled gracefully (e.g. ABI
-    /// computation on contracts with unresolvable types).
-    pub fn try_node_typing(&self, node_id: NodeId) -> Option<Typing> {
-        self.node_typing.get(&node_id).cloned()
+            .unwrap_or(Typing::Unresolved)
     }
 
     pub(crate) fn mark_user_meta_type_node(&mut self, node_id: NodeId) {
