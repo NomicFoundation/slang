@@ -6,7 +6,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected ConstantKeyword or Identifier or InternalKeyword or PrivateKeyword or PublicKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/state_variable_view_function/input.sol:1:12]
+       ╭─[ crates/solidity/testing/snapshots/cst_output/ContractMembers/state_variable_view_function/input.sol:1:12 ]
        │
      1 │ function() view foo;
        │            ────┬───  

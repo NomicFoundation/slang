@@ -9,7 +9,7 @@ Source: >
 Errors: # 2 total
   - >
     Error: Expected CallDataKeyword or Identifier or MemoryKeyword or StorageKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/TryStatement/method_call_with_options_and_body/input.sol:1:14]
+       ╭─[ crates/solidity/testing/snapshots/cst_output/TryStatement/method_call_with_options_and_body/input.sol:1:14 ]
        │
      1 │ try foo() { x: 1 } {
        │              ──┬─  
@@ -17,7 +17,7 @@ Errors: # 2 total
     ───╯
   - >
     Error: Expected CatchKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/TryStatement/method_call_with_options_and_body/input.sol:1:19]
+       ╭─[ crates/solidity/testing/snapshots/cst_output/TryStatement/method_call_with_options_and_body/input.sol:1:19 ]
        │
      1 │ ╭─▶ try foo() { x: 1 } {
        ┆ ┆   

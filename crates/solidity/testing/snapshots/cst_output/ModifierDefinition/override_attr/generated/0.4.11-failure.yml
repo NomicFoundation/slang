@@ -6,7 +6,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected OpenBrace or Semicolon.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ModifierDefinition/override_attr/input.sol:1:21]
+       ╭─[ crates/solidity/testing/snapshots/cst_output/ModifierDefinition/override_attr/input.sol:1:21 ]
        │
      1 │ modifier mod(uint a) override { _; }
        │                     ────────┬────────  

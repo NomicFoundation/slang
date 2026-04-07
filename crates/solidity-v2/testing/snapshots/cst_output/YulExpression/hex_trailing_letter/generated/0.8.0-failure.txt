@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Error: Unexpected UNRECOGNIZED. One of YulBreakKeyword_Reserved, YulCloseBrace, YulContinueKeyword_Reserved, YulDecimalLiteral, YulFalseKeyword_Reserved, YulForKeyword_Reserved, YulFunctionKeyword_Reserved, YulHexLiteral, YulHexStringLiteral, YulIdentifier, YulIfKeyword_Reserved, YulLeaveKeyword_Reserved, YulLetKeyword_Reserved, YulOpenBrace, YulStringLiteral, YulSwitchKeyword_Reserved, YulTrueKeyword_Reserved was expected
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulExpression/hex_trailing_letter/input.sol:5:1]
+   ╭─[ crates/solidity-v2/testing/snapshots/cst_output/YulExpression/hex_trailing_letter/input.sol:5:1 ]
    │
  5 │ 0x1g
    │ ──┬─  

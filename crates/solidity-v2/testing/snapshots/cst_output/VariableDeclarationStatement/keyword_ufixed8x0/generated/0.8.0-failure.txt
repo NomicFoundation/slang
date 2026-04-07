@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Error: Unexpected UfixedKeyword_Reserved. One of Ampersand, AmpersandAmpersand, AmpersandEqual, Asterisk, AsteriskAsterisk, AsteriskEqual, AtKeyword_Unreserved, BangEqual, Bar, BarBar, BarEqual, CallDataKeyword_Reserved, Caret, CaretEqual, Equal, EqualEqual, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, GreaterThan, GreaterThanEqual, GreaterThanGreaterThan, GreaterThanGreaterThanEqual, GreaterThanGreaterThanGreaterThan, GreaterThanGreaterThanGreaterThanEqual, Identifier, LayoutKeyword_Unreserved, LessThan, LessThanEqual, LessThanLessThan, LessThanLessThanEqual, MemoryKeyword_Reserved, Minus, MinusEqual, MinusMinus, OpenBrace, OpenBracket, OpenParen, Percent, PercentEqual, Period, Plus, PlusEqual, PlusPlus, QuestionMark, RevertKeyword_Unreserved, Semicolon, Slash, SlashEqual, StorageKeyword_Reserved, TransientKeyword_Unreserved was expected
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/VariableDeclarationStatement/keyword_ufixed8x0/input.sol:5:6]
+   ╭─[ crates/solidity-v2/testing/snapshots/cst_output/VariableDeclarationStatement/keyword_ufixed8x0/input.sol:5:6 ]
    │
  5 │ uint ufixed8x0;
    │      ────┬────  

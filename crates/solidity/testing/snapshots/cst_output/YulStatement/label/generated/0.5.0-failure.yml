@@ -6,7 +6,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected OpenParen.
-       ╭─[crates/solidity/testing/snapshots/cst_output/YulStatement/label/input.sol:1:10]
+       ╭─[ crates/solidity/testing/snapshots/cst_output/YulStatement/label/input.sol:1:10 ]
        │
      1 │ foo_label:
        │          ─┬  

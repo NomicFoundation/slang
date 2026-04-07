@@ -6,7 +6,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected DoubleQuotedStringLiteral or SingleQuotedStringLiteral.
-       ╭─[crates/solidity/testing/snapshots/cst_output/StringLiterals/single_trailing_ident/input.sol:1:6]
+       ╭─[ crates/solidity/testing/snapshots/cst_output/StringLiterals/single_trailing_ident/input.sol:1:6 ]
        │
      1 │ "foo"bar
        │      ──┬─  

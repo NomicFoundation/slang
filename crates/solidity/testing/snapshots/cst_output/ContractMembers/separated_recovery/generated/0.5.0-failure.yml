@@ -17,7 +17,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected OpenBrace or ReturnsKeyword or Semicolon.
-        ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:1:15]
+        ╭─[ crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:1:15 ]
         │
       1 │ ╭─▶ function all() override(some.ident unexpected tokens, ISomeInterface, Other) public {
         ┆ ┆   

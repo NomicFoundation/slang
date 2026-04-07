@@ -9,7 +9,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected Identifier or OpenBracket.
-       ╭─[crates/solidity/testing/snapshots/cst_output/StructDefinition/member_function_pointer/input.sol:3:28]
+       ╭─[ crates/solidity/testing/snapshots/cst_output/StructDefinition/member_function_pointer/input.sol:3:28 ]
        │
      3 │   function (byte) internal pure returns (uint) func;
        │                            ────────────┬───────────  

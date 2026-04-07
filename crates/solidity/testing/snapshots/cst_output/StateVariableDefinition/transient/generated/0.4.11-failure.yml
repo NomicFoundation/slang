@@ -6,7 +6,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected Equal or Semicolon.
-       ╭─[crates/solidity/testing/snapshots/cst_output/StateVariableDefinition/transient/input.sol:1:16]
+       ╭─[ crates/solidity/testing/snapshots/cst_output/StateVariableDefinition/transient/input.sol:1:16 ]
        │
      1 │ uint transient foo;
        │                ─┬─  

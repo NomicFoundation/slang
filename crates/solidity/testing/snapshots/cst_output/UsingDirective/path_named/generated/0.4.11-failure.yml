@@ -6,7 +6,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected OpenBracket or Semicolon.
-       ╭─[crates/solidity/testing/snapshots/cst_output/UsingDirective/path_named/input.sol:1:19]
+       ╭─[ crates/solidity/testing/snapshots/cst_output/UsingDirective/path_named/input.sol:1:19 ]
        │
      1 │ using foo for bar global;
        │                   ───┬──  

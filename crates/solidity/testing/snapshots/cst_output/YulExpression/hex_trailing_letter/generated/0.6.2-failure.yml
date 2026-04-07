@@ -6,7 +6,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or YulDecimalLiteral or YulFalseKeyword or YulHexLiteral or YulIdentifier or YulTrueKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/YulExpression/hex_trailing_letter/input.sol:1:1]
+       ╭─[ crates/solidity/testing/snapshots/cst_output/YulExpression/hex_trailing_letter/input.sol:1:1 ]
        │
      1 │ 0x1g
        │ ──┬─  

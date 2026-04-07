@@ -18,7 +18,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected Equal or Semicolon.
-       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/revert_statement/input.sol:6:19]
+       ╭─[ crates/solidity/testing/snapshots/cst_output/SourceUnit/revert_statement/input.sol:6:19 ]
        │
      6 │     revert MyError(1, 2);
        │                   ───┬──  

@@ -12,7 +12,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected OpenBrace or ReturnsKeyword or Semicolon.
-       ╭─[crates/solidity/testing/snapshots/cst_output/InterfaceDefinition/sample_counter/input.sol:3:31]
+       ╭─[ crates/solidity/testing/snapshots/cst_output/InterfaceDefinition/sample_counter/input.sol:3:31 ]
        │
      3 │ ╭─▶     function count() external view returns (uint);
        ┆ ┆   

@@ -6,7 +6,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected OpenBrace or ReturnsKeyword or Semicolon.
-       ╭─[crates/solidity/testing/snapshots/cst_output/FunctionDefinition/pure_state_mutability/input.sol:1:13]
+       ╭─[ crates/solidity/testing/snapshots/cst_output/FunctionDefinition/pure_state_mutability/input.sol:1:13 ]
        │
      1 │ function a() pure {}
        │             ────┬────  

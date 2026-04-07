@@ -12,7 +12,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected ConstantKeyword or Identifier or InternalKeyword or PrivateKeyword or PublicKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/state_variable_function/input.sol:4:32]
+       ╭─[ crates/solidity/testing/snapshots/cst_output/SourceUnit/state_variable_function/input.sol:4:32 ]
        │
      4 │     function (uint a) internal immutable internal foo;
        │                                ───────────┬──────────  

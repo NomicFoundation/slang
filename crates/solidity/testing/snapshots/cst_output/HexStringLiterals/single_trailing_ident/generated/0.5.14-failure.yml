@@ -6,7 +6,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected DoubleQuotedHexStringLiteral or SingleQuotedHexStringLiteral.
-       ╭─[crates/solidity/testing/snapshots/cst_output/HexStringLiterals/single_trailing_ident/input.sol:1:8]
+       ╭─[ crates/solidity/testing/snapshots/cst_output/HexStringLiterals/single_trailing_ident/input.sol:1:8 ]
        │
      1 │ hex"12"b
        │        ─┬  

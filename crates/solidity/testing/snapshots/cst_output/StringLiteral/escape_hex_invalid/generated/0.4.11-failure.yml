@@ -6,7 +6,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected DoubleQuotedStringLiteral or SingleQuotedStringLiteral.
-       ╭─[crates/solidity/testing/snapshots/cst_output/StringLiteral/escape_hex_invalid/input.sol:1:1]
+       ╭─[ crates/solidity/testing/snapshots/cst_output/StringLiteral/escape_hex_invalid/input.sol:1:1 ]
        │
      1 │ "\x1"
        │ ───┬──  

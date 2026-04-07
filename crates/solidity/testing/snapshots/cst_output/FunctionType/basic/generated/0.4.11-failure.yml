@@ -6,7 +6,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected ReturnsKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/FunctionType/basic/input.sol:1:26]
+       ╭─[ crates/solidity/testing/snapshots/cst_output/FunctionType/basic/input.sol:1:26 ]
        │
      1 │ function (byte) internal pure returns (uint)
        │                          ──────────┬─────────  

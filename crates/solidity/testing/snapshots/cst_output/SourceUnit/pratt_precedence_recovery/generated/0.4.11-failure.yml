@@ -10,7 +10,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected CloseParen or Comma.
-       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/pratt_precedence_recovery/input.sol:4:2]
+       ╭─[ crates/solidity/testing/snapshots/cst_output/SourceUnit/pratt_precedence_recovery/input.sol:4:2 ]
        │
      4 │     }
        │     │ 

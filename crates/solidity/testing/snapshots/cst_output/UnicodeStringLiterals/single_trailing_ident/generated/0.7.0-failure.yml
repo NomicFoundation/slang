@@ -6,7 +6,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected DoubleQuotedUnicodeStringLiteral or SingleQuotedUnicodeStringLiteral.
-       ╭─[crates/solidity/testing/snapshots/cst_output/UnicodeStringLiterals/single_trailing_ident/input.sol:1:17]
+       ╭─[ crates/solidity/testing/snapshots/cst_output/UnicodeStringLiterals/single_trailing_ident/input.sol:1:17 ]
        │
      1 │ unicode"emoji 😃"happy
        │                  ───┬──  

@@ -16,7 +16,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected IsKeyword or OpenBrace.
-        ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/layout_at/input.sol:1:18]
+        ╭─[ crates/solidity/testing/snapshots/cst_output/SourceUnit/layout_at/input.sol:1:18 ]
         │
       1 │ ╭─▶ contract SafeMath layout at 123  {
         ┆ ┆   

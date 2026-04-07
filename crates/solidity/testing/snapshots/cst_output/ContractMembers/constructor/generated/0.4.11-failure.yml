@@ -6,7 +6,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected ConstantKeyword or Identifier or InternalKeyword or PrivateKeyword or PublicKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractMembers/constructor/input.sol:1:12]
+       ╭─[ crates/solidity/testing/snapshots/cst_output/ContractMembers/constructor/input.sol:1:12 ]
        │
      1 │ constructor() public {}
        │            ──────┬──────  

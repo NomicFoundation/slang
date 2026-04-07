@@ -14,7 +14,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected CallDataKeyword or Identifier or MemoryKeyword or StorageKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/emit_contextual/input.sol:6:17]
+       ╭─[ crates/solidity/testing/snapshots/cst_output/ContractDefinition/emit_contextual/input.sol:6:17 ]
        │
      6 │         uint256 emit;
        │                 ──┬─  

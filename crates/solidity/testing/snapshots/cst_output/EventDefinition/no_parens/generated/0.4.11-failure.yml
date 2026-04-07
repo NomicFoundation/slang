@@ -6,7 +6,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected OpenParen.
-       ╭─[crates/solidity/testing/snapshots/cst_output/EventDefinition/no_parens/input.sol:1:14]
+       ╭─[ crates/solidity/testing/snapshots/cst_output/EventDefinition/no_parens/input.sol:1:14 ]
        │
      1 │ event MyEvent;
        │              │ 

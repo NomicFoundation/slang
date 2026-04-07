@@ -6,7 +6,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected DoubleQuotedVersionLiteral or SingleQuotedVersionLiteral or VersionSpecifier.
-       ╭─[crates/solidity/testing/snapshots/cst_output/PragmaDirective/version_string/input.sol:1:17]
+       ╭─[ crates/solidity/testing/snapshots/cst_output/PragmaDirective/version_string/input.sol:1:17 ]
        │
      1 │ pragma solidity "Y";
        │                 ─┬─  

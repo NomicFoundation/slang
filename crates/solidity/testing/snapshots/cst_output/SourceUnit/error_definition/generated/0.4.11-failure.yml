@@ -11,7 +11,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/error_definition/input.sol:1:1]
+       ╭─[ crates/solidity/testing/snapshots/cst_output/SourceUnit/error_definition/input.sol:1:1 ]
        │
      1 │ ╭─▶ error MyError(uint256 a, uint256 b);
        ┆ ┆   

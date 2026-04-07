@@ -6,7 +6,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected OpenBracket.
-       ╭─[crates/solidity/testing/snapshots/cst_output/TypeName/address_payable/input.sol:1:9]
+       ╭─[ crates/solidity/testing/snapshots/cst_output/TypeName/address_payable/input.sol:1:9 ]
        │
      1 │ address payable
        │         ────┬───  

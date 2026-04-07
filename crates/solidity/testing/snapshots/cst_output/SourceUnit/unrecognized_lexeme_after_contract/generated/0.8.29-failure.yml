@@ -6,7 +6,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected IsKeyword or LayoutKeyword or OpenBrace.
-       ╭─[crates/solidity/testing/snapshots/cst_output/SourceUnit/unrecognized_lexeme_after_contract/input.sol:1:11]
+       ╭─[ crates/solidity/testing/snapshots/cst_output/SourceUnit/unrecognized_lexeme_after_contract/input.sol:1:11 ]
        │
      1 │ contract X # { }
        │           ───┬───  

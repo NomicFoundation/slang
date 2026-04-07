@@ -9,7 +9,7 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected AddressKeyword or BoolKeyword or BytesKeyword or CloseParen or FixedKeyword or FunctionKeyword or Identifier or IntKeyword or MappingKeyword or StringKeyword or UfixedKeyword or UintKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/StructDefinition/member_function_pointer/input.sol:3:13]
+       ╭─[ crates/solidity/testing/snapshots/cst_output/StructDefinition/member_function_pointer/input.sol:3:13 ]
        │
      3 │   function (byte) internal pure returns (uint) func;
        │             ──┬─  
