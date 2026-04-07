@@ -13,24 +13,20 @@ use infra_utils::github::GitHub;
 const BENCHER_TEST_TOKEN: &str = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhcGlfa2V5IiwiZXhwIjo1OTkzNjQyMTU2LCJpYXQiOjE2OTg2NzQ4NjEsImlzcyI6Imh0dHBzOi8vZGV2ZWwtLWJlbmNoZXIubmV0bGlmeS5hcHAvIiwic3ViIjoibXVyaWVsLmJhZ2dlQG5vd2hlcmUuY29tIiwib3JnIjpudWxsfQ.9z7jmM53TcVzc1inDxTeX9_OR0PQPpZAsKsCE7lWHfo";
 
 /// Represents a performance threshold for a Bencher benchmark comparison, used in PR benchmarking mode.
-///
-/// `measure` and `upper_boundary` are required for PR benchmarking to define the performance metric and threshold for comparison,
-/// but we keep them as `Option<...>` to allow for flexible construction.
-#[derive(Clone, Default)]
+#[derive(Clone)]
 pub(crate) struct BencherThreshold {
-    pub measure: Option<String>,
-    pub upper_boundary: Option<String>,
+    pub measure: String,
+    pub upper_boundary: String,
     pub max_sample_size: Option<String>,
 }
 
 impl BencherThreshold {
-    pub fn with_measure(mut self, measure: &str) -> Self {
-        self.measure = Some(measure.to_string());
-        self
-    }
-    pub fn with_upper_boundary(mut self, upper_boundary: &str) -> Self {
-        self.upper_boundary = Some(upper_boundary.to_string());
-        self
+    pub fn new(measure: &str, upper_boundary: &str) -> Self {
+        Self {
+            measure: measure.to_string(),
+            upper_boundary: upper_boundary.to_string(),
+            max_sample_size: None,
+        }
     }
     pub fn with_max_sample_size(mut self, max_sample_size: &str) -> Self {
         self.max_sample_size = Some(max_sample_size.to_string());
@@ -103,24 +99,15 @@ pub(crate) fn run_bench(
         } in thresholds
         {
             command = command
-                .property(
-                    "--threshold-measure",
-                    measure
-                        .as_ref()
-                        .expect("Threshold measure must be set for --pr-benchmark"),
-                )
+                .property("--threshold-measure", measure)
                 .property("--threshold-test", "percentage")
-                .property(
-                    "--threshold-upper-boundary",
-                    upper_boundary
-                        .as_ref()
-                        .expect("Threshold upper boundary must be set for --pr-benchmark"),
-                )
-                // Since we have to show it for all or for none of the thresholds, we just always
-                // show it and default to "_"
+                .property("--threshold-upper-boundary", upper_boundary)
+                // Since we have to show it for all or for none of the thresholds, we always
+                // show it and default to "_" if not set.
+                // Bencher will ignore options specified with "_".
                 .property(
                     "--threshold-max-sample-size",
-                    max_sample_size.as_ref().unwrap_or(&"_".to_string()),
+                    max_sample_size.as_ref().map_or("_", String::as_str),
                 );
         }
 

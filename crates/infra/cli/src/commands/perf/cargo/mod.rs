@@ -151,27 +151,29 @@ impl CargoController {
 
         // 1% threshold: iai-callgrind uses deterministic hardware counters (not wall clock),
         // so any change reflects a real code change, not noise.
-        let base_threshold = BencherThreshold::default().with_upper_boundary("0.01");
+        // We also keep the window small (only 2 measurements), for the same reason.
+        let threshold =
+            |measure| BencherThreshold::new(measure, "0.01").with_max_sample_size("2");
         run_bench(
             self.dry_run.get(),
             self.pr_benchmark,
             bencher_project,
             "rust_iai_callgrind",
             &[
-                base_threshold.clone().with_measure("estimated-cycles"),
-                base_threshold.clone().with_measure("instructions"),
-                base_threshold.clone().with_measure("l1-hits"),
-                base_threshold.clone().with_measure("l2-hits"),
-                base_threshold.clone().with_measure("ram-hits"),
-                base_threshold.clone().with_measure("total-read-write"),
-                base_threshold.clone().with_measure("total-bytes"),
-                base_threshold.clone().with_measure("total-blocks"),
-                base_threshold.clone().with_measure("at-t-gmax-bytes"),
-                base_threshold.clone().with_measure("at-t-gmax-blocks"),
-                base_threshold.clone().with_measure("at-t-end-bytes"),
-                base_threshold.clone().with_measure("at-t-end-blocks"),
-                base_threshold.clone().with_measure("reads-bytes"),
-                base_threshold.clone().with_measure("writes-bytes"),
+                threshold("estimated-cycles"),
+                threshold("instructions"),
+                threshold("l1-hits"),
+                threshold("l2-hits"),
+                threshold("ram-hits"),
+                threshold("total-read-write"),
+                threshold("total-bytes"),
+                threshold("total-blocks"),
+                threshold("at-t-gmax-bytes"),
+                threshold("at-t-gmax-blocks"),
+                threshold("at-t-end-bytes"),
+                threshold("at-t-end-blocks"),
+                threshold("reads-bytes"),
+                threshold("writes-bytes"),
             ],
             &test_runner,
         );

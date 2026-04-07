@@ -55,9 +55,7 @@ impl NpmController {
             self.pr_benchmark,
             DEFAULT_BENCHER_PROJECT,
             "json",
-            &[BencherThreshold::default()
-                .with_measure("duration")
-                .with_upper_boundary("0.10")],
+            &[BencherThreshold::new("duration", "0.10")],
             &test_runner,
         );
     }
