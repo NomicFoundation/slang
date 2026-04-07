@@ -10,8 +10,8 @@ use crate::model::SpannedItemDiscriminants::{
 use crate::model::{
     Identifier, SpannedEnumItem, SpannedEnumVariant, SpannedField, SpannedFragmentItem,
     SpannedItem, SpannedKeywordItem, SpannedPrecedenceExpression, SpannedPrecedenceItem,
-    SpannedPrecedenceOperator, SpannedPrimaryExpression, SpannedRepeatedItem, SpannedScanner,
-    SpannedSeparatedItem, SpannedStructItem, SpannedTokenItem, SpannedTriviaItem,
+    SpannedPrecedenceOperator, SpannedPrimaryExpression, SpannedRepeatedItem, SpannedSeparatedItem,
+    SpannedStructItem, SpannedTokenItem, SpannedTokenScanner, SpannedTriviaItem,
     SpannedVersionSpecifier,
 };
 
@@ -358,7 +358,7 @@ fn check_trivia(
 ) {
     let SpannedTriviaItem { name, scanner } = item;
 
-    check_scanner(analysis, Some(name), scanner, enablement, lexical_context);
+    check_token_scanner(analysis, Some(name), scanner, enablement, lexical_context);
 }
 
 fn check_keyword(analysis: &mut Analysis, item: &SpannedKeywordItem, enablement: &VersionSet) {
@@ -366,7 +366,7 @@ fn check_keyword(analysis: &mut Analysis, item: &SpannedKeywordItem, enablement:
         name: _,
         enabled,
         reserved: _,
-        value: _,
+        scanner: _,
     } = item;
 
     let _ = update_enablement(analysis, enablement, enabled.as_ref());
@@ -388,10 +388,10 @@ fn check_token(
     let enablement = update_enablement(analysis, enablement, enabled.as_ref());
 
     if let Some(scanner) = not_followed_by {
-        check_scanner(analysis, Some(name), scanner, &enablement, lexical_context);
+        check_token_scanner(analysis, Some(name), scanner, &enablement, lexical_context);
     }
 
-    check_scanner(analysis, Some(name), scanner, &enablement, lexical_context);
+    check_token_scanner(analysis, Some(name), scanner, &enablement, lexical_context);
 }
 
 fn check_fragment(
@@ -408,36 +408,36 @@ fn check_fragment(
 
     let enablement = update_enablement(analysis, enablement, enabled.as_ref());
 
-    check_scanner(analysis, Some(name), scanner, &enablement, lexical_context);
+    check_token_scanner(analysis, Some(name), scanner, &enablement, lexical_context);
 }
 
-fn check_scanner(
+fn check_token_scanner(
     analysis: &mut Analysis,
     source: Option<&Identifier>,
-    scanner: &SpannedScanner,
+    scanner: &SpannedTokenScanner,
     enablement: &VersionSet,
     lexical_context: &Identifier,
 ) {
     match scanner {
-        SpannedScanner::Sequence { scanners } | SpannedScanner::Choice { scanners } => {
+        SpannedTokenScanner::Sequence { scanners } | SpannedTokenScanner::Choice { scanners } => {
             for scanner in scanners {
-                check_scanner(analysis, source, scanner, enablement, lexical_context);
+                check_token_scanner(analysis, source, scanner, enablement, lexical_context);
             }
         }
-        SpannedScanner::Optional { scanner }
-        | SpannedScanner::ZeroOrMore { scanner }
-        | SpannedScanner::OneOrMore { scanner } => {
-            check_scanner(analysis, source, scanner, enablement, lexical_context);
+        SpannedTokenScanner::Optional { scanner }
+        | SpannedTokenScanner::ZeroOrMore { scanner }
+        | SpannedTokenScanner::OneOrMore { scanner } => {
+            check_token_scanner(analysis, source, scanner, enablement, lexical_context);
         }
-        SpannedScanner::Not { chars: _ }
-        | SpannedScanner::Range {
+        SpannedTokenScanner::Not { chars: _ }
+        | SpannedTokenScanner::Range {
             inclusive_start: _,
             inclusive_end: _,
         }
-        | SpannedScanner::Atom { atom: _ } => {
+        | SpannedTokenScanner::Atom { atom: _ } => {
             // Nothing to check for now.
         }
-        SpannedScanner::Fragment { reference } => {
+        SpannedTokenScanner::Fragment { reference } => {
             check_reference(
                 analysis,
                 source,
