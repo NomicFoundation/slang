@@ -17,6 +17,8 @@ on:
       - "main"
 
 # In the event that there is a new push to the ref, cancel any running jobs because they are now obsolete, wasting resources.
+permissions: {}
+
 concurrency:
   group: "${{ github.workflow }}-${{ github.ref_name }}"
   cancel-in-progress: true
@@ -25,9 +27,12 @@ jobs:
   ci:
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
 
+    permissions:
+      contents: "read"
+
     steps:
       - name: "Checkout Repository"
-        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683" # v4.2.2
         with:
           persist-credentials: false
           # Full history is needed by git-restore-mtime below to find each file's last commit time.
@@ -97,9 +102,12 @@ jobs:
   validate-devcontainer:
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
 
+    permissions:
+      contents: "read"
+
     steps:
       - name: "Checkout Repository"
-        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683" # v4.2.2
         with:
           persist-credentials: false
 
