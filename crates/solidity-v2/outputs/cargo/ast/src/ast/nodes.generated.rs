@@ -20,7 +20,7 @@ pub struct AbicoderPragmaStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_abicoder_pragma(
+pub fn create_abicoder_pragma(
     ir_node: &ir::AbicoderPragma,
     semantic: &Rc<SemanticContext>,
 ) -> AbicoderPragma {
@@ -51,7 +51,7 @@ pub struct AdditiveExpressionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_additive_expression(
+pub fn create_additive_expression(
     ir_node: &ir::AdditiveExpression,
     semantic: &Rc<SemanticContext>,
 ) -> AdditiveExpression {
@@ -95,7 +95,7 @@ pub struct AddressTypeStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_address_type(
+pub fn create_address_type(
     ir_node: &ir::AddressType,
     semantic: &Rc<SemanticContext>,
 ) -> AddressType {
@@ -126,7 +126,7 @@ pub struct AndExpressionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_and_expression(
+pub fn create_and_expression(
     ir_node: &ir::AndExpression,
     semantic: &Rc<SemanticContext>,
 ) -> AndExpression {
@@ -161,7 +161,7 @@ pub struct ArrayExpressionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_array_expression(
+pub fn create_array_expression(
     ir_node: &ir::ArrayExpression,
     semantic: &Rc<SemanticContext>,
 ) -> ArrayExpression {
@@ -192,7 +192,7 @@ pub struct ArrayTypeNameStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_array_type_name(
+pub fn create_array_type_name(
     ir_node: &ir::ArrayTypeName,
     semantic: &Rc<SemanticContext>,
 ) -> ArrayTypeName {
@@ -230,7 +230,7 @@ pub struct AssemblyStatementStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_assembly_statement(
+pub fn create_assembly_statement(
     ir_node: &ir::AssemblyStatement,
     semantic: &Rc<SemanticContext>,
 ) -> AssemblyStatement {
@@ -269,7 +269,7 @@ pub struct AssignmentExpressionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_assignment_expression(
+pub fn create_assignment_expression(
     ir_node: &ir::AssignmentExpression,
     semantic: &Rc<SemanticContext>,
 ) -> AssignmentExpression {
@@ -313,7 +313,7 @@ pub struct BitwiseAndExpressionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_bitwise_and_expression(
+pub fn create_bitwise_and_expression(
     ir_node: &ir::BitwiseAndExpression,
     semantic: &Rc<SemanticContext>,
 ) -> BitwiseAndExpression {
@@ -348,7 +348,7 @@ pub struct BitwiseOrExpressionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_bitwise_or_expression(
+pub fn create_bitwise_or_expression(
     ir_node: &ir::BitwiseOrExpression,
     semantic: &Rc<SemanticContext>,
 ) -> BitwiseOrExpression {
@@ -383,7 +383,7 @@ pub struct BitwiseXorExpressionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_bitwise_xor_expression(
+pub fn create_bitwise_xor_expression(
     ir_node: &ir::BitwiseXorExpression,
     semantic: &Rc<SemanticContext>,
 ) -> BitwiseXorExpression {
@@ -418,7 +418,7 @@ pub struct BlockStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_block(ir_node: &ir::Block, semantic: &Rc<SemanticContext>) -> Block {
+pub fn create_block(ir_node: &ir::Block, semantic: &Rc<SemanticContext>) -> Block {
     Rc::new(BlockStruct {
         ir_node: Rc::clone(ir_node),
         semantic: Rc::clone(semantic),
@@ -446,7 +446,7 @@ pub struct BreakStatementStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_break_statement(
+pub fn create_break_statement(
     ir_node: &ir::BreakStatement,
     semantic: &Rc<SemanticContext>,
 ) -> BreakStatement {
@@ -473,7 +473,7 @@ pub struct CallOptionsExpressionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_call_options_expression(
+pub fn create_call_options_expression(
     ir_node: &ir::CallOptionsExpression,
     semantic: &Rc<SemanticContext>,
 ) -> CallOptionsExpression {
@@ -508,7 +508,7 @@ pub struct CatchClauseStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_catch_clause(
+pub fn create_catch_clause(
     ir_node: &ir::CatchClause,
     semantic: &Rc<SemanticContext>,
 ) -> CatchClause {
@@ -546,7 +546,7 @@ pub struct CatchClauseErrorStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_catch_clause_error(
+pub fn create_catch_clause_error(
     ir_node: &ir::CatchClauseError,
     semantic: &Rc<SemanticContext>,
 ) -> CatchClauseError {
@@ -584,7 +584,7 @@ pub struct ConditionalExpressionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_conditional_expression(
+pub fn create_conditional_expression(
     ir_node: &ir::ConditionalExpression,
     semantic: &Rc<SemanticContext>,
 ) -> ConditionalExpression {
@@ -623,7 +623,7 @@ pub struct ConstantDefinitionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_constant_definition(
+pub fn create_constant_definition(
     ir_node: &ir::ConstantDefinition,
     semantic: &Rc<SemanticContext>,
 ) -> ConstantDefinition {
@@ -672,7 +672,7 @@ pub struct ContinueStatementStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_continue_statement(
+pub fn create_continue_statement(
     ir_node: &ir::ContinueStatement,
     semantic: &Rc<SemanticContext>,
 ) -> ContinueStatement {
@@ -699,7 +699,7 @@ pub struct ContractDefinitionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_contract_definition(
+pub fn create_contract_definition(
     ir_node: &ir::ContractDefinition,
     semantic: &Rc<SemanticContext>,
 ) -> ContractDefinition {
@@ -749,7 +749,7 @@ pub struct DecimalNumberExpressionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_decimal_number_expression(
+pub fn create_decimal_number_expression(
     ir_node: &ir::DecimalNumberExpression,
     semantic: &Rc<SemanticContext>,
 ) -> DecimalNumberExpression {
@@ -787,7 +787,7 @@ pub struct DoWhileStatementStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_do_while_statement(
+pub fn create_do_while_statement(
     ir_node: &ir::DoWhileStatement,
     semantic: &Rc<SemanticContext>,
 ) -> DoWhileStatement {
@@ -822,7 +822,7 @@ pub struct EmitStatementStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_emit_statement(
+pub fn create_emit_statement(
     ir_node: &ir::EmitStatement,
     semantic: &Rc<SemanticContext>,
 ) -> EmitStatement {
@@ -857,7 +857,7 @@ pub struct EnumDefinitionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_enum_definition(
+pub fn create_enum_definition(
     ir_node: &ir::EnumDefinition,
     semantic: &Rc<SemanticContext>,
 ) -> EnumDefinition {
@@ -892,7 +892,7 @@ pub struct EqualityExpressionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_equality_expression(
+pub fn create_equality_expression(
     ir_node: &ir::EqualityExpression,
     semantic: &Rc<SemanticContext>,
 ) -> EqualityExpression {
@@ -936,7 +936,7 @@ pub struct ErrorDefinitionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_error_definition(
+pub fn create_error_definition(
     ir_node: &ir::ErrorDefinition,
     semantic: &Rc<SemanticContext>,
 ) -> ErrorDefinition {
@@ -971,7 +971,7 @@ pub struct EventDefinitionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_event_definition(
+pub fn create_event_definition(
     ir_node: &ir::EventDefinition,
     semantic: &Rc<SemanticContext>,
 ) -> EventDefinition {
@@ -1010,7 +1010,7 @@ pub struct ExperimentalPragmaStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_experimental_pragma(
+pub fn create_experimental_pragma(
     ir_node: &ir::ExperimentalPragma,
     semantic: &Rc<SemanticContext>,
 ) -> ExperimentalPragma {
@@ -1041,7 +1041,7 @@ pub struct ExponentiationExpressionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_exponentiation_expression(
+pub fn create_exponentiation_expression(
     ir_node: &ir::ExponentiationExpression,
     semantic: &Rc<SemanticContext>,
 ) -> ExponentiationExpression {
@@ -1076,7 +1076,7 @@ pub struct ExpressionStatementStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_expression_statement(
+pub fn create_expression_statement(
     ir_node: &ir::ExpressionStatement,
     semantic: &Rc<SemanticContext>,
 ) -> ExpressionStatement {
@@ -1107,7 +1107,7 @@ pub struct ForStatementStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_for_statement(
+pub fn create_for_statement(
     ir_node: &ir::ForStatement,
     semantic: &Rc<SemanticContext>,
 ) -> ForStatement {
@@ -1153,7 +1153,7 @@ pub struct FunctionCallExpressionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_function_call_expression(
+pub fn create_function_call_expression(
     ir_node: &ir::FunctionCallExpression,
     semantic: &Rc<SemanticContext>,
 ) -> FunctionCallExpression {
@@ -1188,7 +1188,7 @@ pub struct FunctionDefinitionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_function_definition(
+pub fn create_function_definition(
     ir_node: &ir::FunctionDefinition,
     semantic: &Rc<SemanticContext>,
 ) -> FunctionDefinition {
@@ -1267,7 +1267,7 @@ pub struct FunctionTypeStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_function_type(
+pub fn create_function_type(
     ir_node: &ir::FunctionType,
     semantic: &Rc<SemanticContext>,
 ) -> FunctionType {
@@ -1313,7 +1313,7 @@ pub struct HexNumberExpressionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_hex_number_expression(
+pub fn create_hex_number_expression(
     ir_node: &ir::HexNumberExpression,
     semantic: &Rc<SemanticContext>,
 ) -> HexNumberExpression {
@@ -1344,7 +1344,7 @@ pub struct IfStatementStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_if_statement(
+pub fn create_if_statement(
     ir_node: &ir::IfStatement,
     semantic: &Rc<SemanticContext>,
 ) -> IfStatement {
@@ -1386,7 +1386,7 @@ pub struct ImportDeconstructionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_import_deconstruction(
+pub fn create_import_deconstruction(
     ir_node: &ir::ImportDeconstruction,
     semantic: &Rc<SemanticContext>,
 ) -> ImportDeconstruction {
@@ -1421,7 +1421,7 @@ pub struct ImportDeconstructionSymbolStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_import_deconstruction_symbol(
+pub fn create_import_deconstruction_symbol(
     ir_node: &ir::ImportDeconstructionSymbol,
     semantic: &Rc<SemanticContext>,
 ) -> ImportDeconstructionSymbol {
@@ -1459,7 +1459,7 @@ pub struct IndexAccessExpressionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_index_access_expression(
+pub fn create_index_access_expression(
     ir_node: &ir::IndexAccessExpression,
     semantic: &Rc<SemanticContext>,
 ) -> IndexAccessExpression {
@@ -1504,7 +1504,7 @@ pub struct InequalityExpressionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_inequality_expression(
+pub fn create_inequality_expression(
     ir_node: &ir::InequalityExpression,
     semantic: &Rc<SemanticContext>,
 ) -> InequalityExpression {
@@ -1548,7 +1548,7 @@ pub struct InheritanceTypeStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_inheritance_type(
+pub fn create_inheritance_type(
     ir_node: &ir::InheritanceType,
     semantic: &Rc<SemanticContext>,
 ) -> InheritanceType {
@@ -1586,7 +1586,7 @@ pub struct InterfaceDefinitionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_interface_definition(
+pub fn create_interface_definition(
     ir_node: &ir::InterfaceDefinition,
     semantic: &Rc<SemanticContext>,
 ) -> InterfaceDefinition {
@@ -1628,7 +1628,7 @@ pub struct LibraryDefinitionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_library_definition(
+pub fn create_library_definition(
     ir_node: &ir::LibraryDefinition,
     semantic: &Rc<SemanticContext>,
 ) -> LibraryDefinition {
@@ -1663,7 +1663,7 @@ pub struct MappingTypeStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_mapping_type(
+pub fn create_mapping_type(
     ir_node: &ir::MappingType,
     semantic: &Rc<SemanticContext>,
 ) -> MappingType {
@@ -1698,7 +1698,7 @@ pub struct MemberAccessExpressionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_member_access_expression(
+pub fn create_member_access_expression(
     ir_node: &ir::MemberAccessExpression,
     semantic: &Rc<SemanticContext>,
 ) -> MemberAccessExpression {
@@ -1733,7 +1733,7 @@ pub struct ModifierInvocationStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_modifier_invocation(
+pub fn create_modifier_invocation(
     ir_node: &ir::ModifierInvocation,
     semantic: &Rc<SemanticContext>,
 ) -> ModifierInvocation {
@@ -1771,7 +1771,7 @@ pub struct MultiTypedDeclarationStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_multi_typed_declaration(
+pub fn create_multi_typed_declaration(
     ir_node: &ir::MultiTypedDeclaration,
     semantic: &Rc<SemanticContext>,
 ) -> MultiTypedDeclaration {
@@ -1806,7 +1806,7 @@ pub struct MultiTypedDeclarationElementStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_multi_typed_declaration_element(
+pub fn create_multi_typed_declaration_element(
     ir_node: &ir::MultiTypedDeclarationElement,
     semantic: &Rc<SemanticContext>,
 ) -> MultiTypedDeclarationElement {
@@ -1840,7 +1840,7 @@ pub struct MultiplicativeExpressionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_multiplicative_expression(
+pub fn create_multiplicative_expression(
     ir_node: &ir::MultiplicativeExpression,
     semantic: &Rc<SemanticContext>,
 ) -> MultiplicativeExpression {
@@ -1884,7 +1884,7 @@ pub struct NamedArgumentStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_named_argument(
+pub fn create_named_argument(
     ir_node: &ir::NamedArgument,
     semantic: &Rc<SemanticContext>,
 ) -> NamedArgument {
@@ -1919,7 +1919,7 @@ pub struct NewExpressionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_new_expression(
+pub fn create_new_expression(
     ir_node: &ir::NewExpression,
     semantic: &Rc<SemanticContext>,
 ) -> NewExpression {
@@ -1950,7 +1950,7 @@ pub struct OrExpressionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_or_expression(
+pub fn create_or_expression(
     ir_node: &ir::OrExpression,
     semantic: &Rc<SemanticContext>,
 ) -> OrExpression {
@@ -1985,10 +1985,7 @@ pub struct ParameterStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_parameter(
-    ir_node: &ir::Parameter,
-    semantic: &Rc<SemanticContext>,
-) -> Parameter {
+pub fn create_parameter(ir_node: &ir::Parameter, semantic: &Rc<SemanticContext>) -> Parameter {
     Rc::new(ParameterStruct {
         ir_node: Rc::clone(ir_node),
         semantic: Rc::clone(semantic),
@@ -2034,10 +2031,7 @@ pub struct PathImportStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_path_import(
-    ir_node: &ir::PathImport,
-    semantic: &Rc<SemanticContext>,
-) -> PathImport {
+pub fn create_path_import(ir_node: &ir::PathImport, semantic: &Rc<SemanticContext>) -> PathImport {
     Rc::new(PathImportStruct {
         ir_node: Rc::clone(ir_node),
         semantic: Rc::clone(semantic),
@@ -2072,7 +2066,7 @@ pub struct PostfixExpressionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_postfix_expression(
+pub fn create_postfix_expression(
     ir_node: &ir::PostfixExpression,
     semantic: &Rc<SemanticContext>,
 ) -> PostfixExpression {
@@ -2110,7 +2104,7 @@ pub struct PragmaDirectiveStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_pragma_directive(
+pub fn create_pragma_directive(
     ir_node: &ir::PragmaDirective,
     semantic: &Rc<SemanticContext>,
 ) -> PragmaDirective {
@@ -2141,7 +2135,7 @@ pub struct PrefixExpressionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_prefix_expression(
+pub fn create_prefix_expression(
     ir_node: &ir::PrefixExpression,
     semantic: &Rc<SemanticContext>,
 ) -> PrefixExpression {
@@ -2179,7 +2173,7 @@ pub struct ReturnStatementStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_return_statement(
+pub fn create_return_statement(
     ir_node: &ir::ReturnStatement,
     semantic: &Rc<SemanticContext>,
 ) -> ReturnStatement {
@@ -2213,7 +2207,7 @@ pub struct RevertStatementStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_revert_statement(
+pub fn create_revert_statement(
     ir_node: &ir::RevertStatement,
     semantic: &Rc<SemanticContext>,
 ) -> RevertStatement {
@@ -2248,7 +2242,7 @@ pub struct ShiftExpressionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_shift_expression(
+pub fn create_shift_expression(
     ir_node: &ir::ShiftExpression,
     semantic: &Rc<SemanticContext>,
 ) -> ShiftExpression {
@@ -2290,7 +2284,7 @@ pub struct SingleTypedDeclarationStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_single_typed_declaration(
+pub fn create_single_typed_declaration(
     ir_node: &ir::SingleTypedDeclaration,
     semantic: &Rc<SemanticContext>,
 ) -> SingleTypedDeclaration {
@@ -2328,10 +2322,7 @@ pub struct SourceUnitStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_source_unit(
-    ir_node: &ir::SourceUnit,
-    semantic: &Rc<SemanticContext>,
-) -> SourceUnit {
+pub fn create_source_unit(ir_node: &ir::SourceUnit, semantic: &Rc<SemanticContext>) -> SourceUnit {
     Rc::new(SourceUnitStruct {
         ir_node: Rc::clone(ir_node),
         semantic: Rc::clone(semantic),
@@ -2359,7 +2350,7 @@ pub struct StateVariableDefinitionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_state_variable_definition(
+pub fn create_state_variable_definition(
     ir_node: &ir::StateVariableDefinition,
     semantic: &Rc<SemanticContext>,
 ) -> StateVariableDefinition {
@@ -2416,7 +2407,7 @@ pub struct StructDefinitionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_struct_definition(
+pub fn create_struct_definition(
     ir_node: &ir::StructDefinition,
     semantic: &Rc<SemanticContext>,
 ) -> StructDefinition {
@@ -2451,7 +2442,7 @@ pub struct StructMemberStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_struct_member(
+pub fn create_struct_member(
     ir_node: &ir::StructMember,
     semantic: &Rc<SemanticContext>,
 ) -> StructMember {
@@ -2486,7 +2477,7 @@ pub struct TryStatementStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_try_statement(
+pub fn create_try_statement(
     ir_node: &ir::TryStatement,
     semantic: &Rc<SemanticContext>,
 ) -> TryStatement {
@@ -2532,7 +2523,7 @@ pub struct TupleExpressionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_tuple_expression(
+pub fn create_tuple_expression(
     ir_node: &ir::TupleExpression,
     semantic: &Rc<SemanticContext>,
 ) -> TupleExpression {
@@ -2563,10 +2554,7 @@ pub struct TupleValueStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_tuple_value(
-    ir_node: &ir::TupleValue,
-    semantic: &Rc<SemanticContext>,
-) -> TupleValue {
+pub fn create_tuple_value(ir_node: &ir::TupleValue, semantic: &Rc<SemanticContext>) -> TupleValue {
     Rc::new(TupleValueStruct {
         ir_node: Rc::clone(ir_node),
         semantic: Rc::clone(semantic),
@@ -2597,7 +2585,7 @@ pub struct TypeExpressionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_type_expression(
+pub fn create_type_expression(
     ir_node: &ir::TypeExpression,
     semantic: &Rc<SemanticContext>,
 ) -> TypeExpression {
@@ -2628,7 +2616,7 @@ pub struct UncheckedBlockStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_unchecked_block(
+pub fn create_unchecked_block(
     ir_node: &ir::UncheckedBlock,
     semantic: &Rc<SemanticContext>,
 ) -> UncheckedBlock {
@@ -2659,7 +2647,7 @@ pub struct UserDefinedValueTypeDefinitionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_user_defined_value_type_definition(
+pub fn create_user_defined_value_type_definition(
     ir_node: &ir::UserDefinedValueTypeDefinition,
     semantic: &Rc<SemanticContext>,
 ) -> UserDefinedValueTypeDefinition {
@@ -2694,7 +2682,7 @@ pub struct UsingDeconstructionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_using_deconstruction(
+pub fn create_using_deconstruction(
     ir_node: &ir::UsingDeconstruction,
     semantic: &Rc<SemanticContext>,
 ) -> UsingDeconstruction {
@@ -2725,7 +2713,7 @@ pub struct UsingDeconstructionSymbolStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_using_deconstruction_symbol(
+pub fn create_using_deconstruction_symbol(
     ir_node: &ir::UsingDeconstructionSymbol,
     semantic: &Rc<SemanticContext>,
 ) -> UsingDeconstructionSymbol {
@@ -2763,7 +2751,7 @@ pub struct UsingDirectiveStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_using_directive(
+pub fn create_using_directive(
     ir_node: &ir::UsingDirective,
     semantic: &Rc<SemanticContext>,
 ) -> UsingDirective {
@@ -2802,7 +2790,7 @@ pub struct VariableDeclarationStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_variable_declaration(
+pub fn create_variable_declaration(
     ir_node: &ir::VariableDeclaration,
     semantic: &Rc<SemanticContext>,
 ) -> VariableDeclaration {
@@ -2844,7 +2832,7 @@ pub struct VariableDeclarationStatementStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_variable_declaration_statement(
+pub fn create_variable_declaration_statement(
     ir_node: &ir::VariableDeclarationStatement,
     semantic: &Rc<SemanticContext>,
 ) -> VariableDeclarationStatement {
@@ -2875,7 +2863,7 @@ pub struct VersionPragmaStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_version_pragma(
+pub fn create_version_pragma(
     ir_node: &ir::VersionPragma,
     semantic: &Rc<SemanticContext>,
 ) -> VersionPragma {
@@ -2906,7 +2894,7 @@ pub struct VersionRangeStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_version_range(
+pub fn create_version_range(
     ir_node: &ir::VersionRange,
     semantic: &Rc<SemanticContext>,
 ) -> VersionRange {
@@ -2941,7 +2929,7 @@ pub struct VersionTermStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_version_term(
+pub fn create_version_term(
     ir_node: &ir::VersionTerm,
     semantic: &Rc<SemanticContext>,
 ) -> VersionTerm {
@@ -2979,7 +2967,7 @@ pub struct WhileStatementStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_while_statement(
+pub fn create_while_statement(
     ir_node: &ir::WhileStatement,
     semantic: &Rc<SemanticContext>,
 ) -> WhileStatement {
@@ -3014,7 +3002,7 @@ pub struct YulBlockStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_yul_block(ir_node: &ir::YulBlock, semantic: &Rc<SemanticContext>) -> YulBlock {
+pub fn create_yul_block(ir_node: &ir::YulBlock, semantic: &Rc<SemanticContext>) -> YulBlock {
     Rc::new(YulBlockStruct {
         ir_node: Rc::clone(ir_node),
         semantic: Rc::clone(semantic),
@@ -3042,7 +3030,7 @@ pub struct YulBreakStatementStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_yul_break_statement(
+pub fn create_yul_break_statement(
     ir_node: &ir::YulBreakStatement,
     semantic: &Rc<SemanticContext>,
 ) -> YulBreakStatement {
@@ -3069,7 +3057,7 @@ pub struct YulContinueStatementStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_yul_continue_statement(
+pub fn create_yul_continue_statement(
     ir_node: &ir::YulContinueStatement,
     semantic: &Rc<SemanticContext>,
 ) -> YulContinueStatement {
@@ -3096,7 +3084,7 @@ pub struct YulDefaultCaseStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_yul_default_case(
+pub fn create_yul_default_case(
     ir_node: &ir::YulDefaultCase,
     semantic: &Rc<SemanticContext>,
 ) -> YulDefaultCase {
@@ -3127,7 +3115,7 @@ pub struct YulForStatementStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_yul_for_statement(
+pub fn create_yul_for_statement(
     ir_node: &ir::YulForStatement,
     semantic: &Rc<SemanticContext>,
 ) -> YulForStatement {
@@ -3170,7 +3158,7 @@ pub struct YulFunctionCallExpressionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_yul_function_call_expression(
+pub fn create_yul_function_call_expression(
     ir_node: &ir::YulFunctionCallExpression,
     semantic: &Rc<SemanticContext>,
 ) -> YulFunctionCallExpression {
@@ -3205,7 +3193,7 @@ pub struct YulFunctionDefinitionStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_yul_function_definition(
+pub fn create_yul_function_definition(
     ir_node: &ir::YulFunctionDefinition,
     semantic: &Rc<SemanticContext>,
 ) -> YulFunctionDefinition {
@@ -3251,7 +3239,7 @@ pub struct YulIfStatementStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_yul_if_statement(
+pub fn create_yul_if_statement(
     ir_node: &ir::YulIfStatement,
     semantic: &Rc<SemanticContext>,
 ) -> YulIfStatement {
@@ -3286,7 +3274,7 @@ pub struct YulLeaveStatementStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_yul_leave_statement(
+pub fn create_yul_leave_statement(
     ir_node: &ir::YulLeaveStatement,
     semantic: &Rc<SemanticContext>,
 ) -> YulLeaveStatement {
@@ -3313,7 +3301,7 @@ pub struct YulSwitchStatementStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_yul_switch_statement(
+pub fn create_yul_switch_statement(
     ir_node: &ir::YulSwitchStatement,
     semantic: &Rc<SemanticContext>,
 ) -> YulSwitchStatement {
@@ -3348,7 +3336,7 @@ pub struct YulValueCaseStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_yul_value_case(
+pub fn create_yul_value_case(
     ir_node: &ir::YulValueCase,
     semantic: &Rc<SemanticContext>,
 ) -> YulValueCase {
@@ -3383,7 +3371,7 @@ pub struct YulVariableAssignmentStatementStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_yul_variable_assignment_statement(
+pub fn create_yul_variable_assignment_statement(
     ir_node: &ir::YulVariableAssignmentStatement,
     semantic: &Rc<SemanticContext>,
 ) -> YulVariableAssignmentStatement {
@@ -3418,7 +3406,7 @@ pub struct YulVariableDeclarationStatementStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_yul_variable_declaration_statement(
+pub fn create_yul_variable_declaration_statement(
     ir_node: &ir::YulVariableDeclarationStatement,
     semantic: &Rc<SemanticContext>,
 ) -> YulVariableDeclarationStatement {
@@ -3456,7 +3444,7 @@ pub struct YulVariableDeclarationValueStruct {
     pub(crate) semantic: Rc<SemanticContext>,
 }
 
-pub(crate) fn create_yul_variable_declaration_value(
+pub fn create_yul_variable_declaration_value(
     ir_node: &ir::YulVariableDeclarationValue,
     semantic: &Rc<SemanticContext>,
 ) -> YulVariableDeclarationValue {

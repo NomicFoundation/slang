@@ -1,4 +1,6 @@
 use slang_solidity_v2_ir::ir::NodeId;
+use slang_solidity_v2_semantic::binder;
+use slang_solidity_v2_semantic::built_ins::BuiltIn;
 
 use super::super::nodes::{IdentifierPathStruct, IdentifierStruct};
 use crate::ast::references::references_binding_to_definition;
@@ -41,6 +43,19 @@ impl IdentifierStruct {
             .semantic
             .resolve_reference_identifier_to_immediate_definition_id(self.ir_node.id())?;
         Definition::try_create(definition_id, &self.semantic)
+    }
+
+    /// If this identifier resolves to a built-in (e.g. `msg`, `block`,
+    /// `tx`), returns the corresponding [`BuiltIn`] variant.
+    pub fn resolve_to_built_in(&self) -> Option<BuiltIn> {
+        let reference = self
+            .semantic
+            .binder()
+            .find_reference_by_identifier_node_id(self.ir_node.id())?;
+        match &reference.resolution {
+            binder::Resolution::BuiltIn(built_in) => Some(*built_in),
+            _ => None,
+        }
     }
 
     /// Returns `true` if the identifier itself is a definition (eg. an enum member)

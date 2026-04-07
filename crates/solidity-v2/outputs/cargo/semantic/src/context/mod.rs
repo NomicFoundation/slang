@@ -1,7 +1,9 @@
+use std::rc::Rc;
+
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeId};
 
-use crate::binder::{Binder, Definition, Scope};
+use crate::binder::{Binder, Definition, Reference, Scope};
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_resolve_references,
 };
@@ -68,6 +70,27 @@ impl SemanticContext {
     // TODO: this should not be public
     pub fn types(&self) -> &TypeRegistry {
         &self.types
+    }
+
+    pub fn all_definitions(&self) -> impl Iterator<Item = &Definition> + use<'_> {
+        self.binder.definitions().values()
+    }
+
+    pub fn all_references(&self) -> impl Iterator<Item = &Reference> + use<'_> {
+        self.binder.references().values()
+    }
+
+    pub fn find_contract_by_name(&self, name: &str) -> Option<ir::ContractDefinition> {
+        self.binder().definitions().values().find_map(|definition| {
+            let Definition::Contract(contract) = definition else {
+                return None;
+            };
+            if definition.identifier().unparse() == name {
+                Some(Rc::clone(&contract.ir_node))
+            } else {
+                None
+            }
+        })
     }
 }
 

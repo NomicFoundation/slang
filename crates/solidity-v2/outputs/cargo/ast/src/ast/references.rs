@@ -1,6 +1,7 @@
 use std::rc::Rc;
 
 use slang_solidity_v2_ir::ir::{self, NodeId};
+use slang_solidity_v2_semantic::built_ins::BuiltIn;
 use slang_solidity_v2_semantic::context::SemanticContext;
 
 use super::{create_identifier, Definition, Identifier};
@@ -10,10 +11,7 @@ pub struct Reference {
 }
 
 impl Reference {
-    pub(crate) fn try_create(
-        ir_node: &ir::Identifier,
-        semantic: &Rc<SemanticContext>,
-    ) -> Option<Self> {
+    pub fn try_create(ir_node: &ir::Identifier, semantic: &Rc<SemanticContext>) -> Option<Self> {
         // ensure the terminal node is actually functioning as a reference
         semantic
             .binder()
@@ -34,6 +32,10 @@ impl Reference {
 
     pub fn resolve_to_immediate_definition(&self) -> Option<Definition> {
         self.identifier.resolve_to_immediate_definition()
+    }
+
+    pub fn resolve_to_built_in(&self) -> Option<BuiltIn> {
+        self.identifier.resolve_to_built_in()
     }
 }
 

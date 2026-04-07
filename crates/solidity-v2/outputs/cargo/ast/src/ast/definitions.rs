@@ -53,10 +53,7 @@ pub enum Definition {
 }
 
 impl Definition {
-    pub(crate) fn try_create(
-        definition_id: NodeId,
-        semantic: &Rc<SemanticContext>,
-    ) -> Option<Self> {
+    pub fn try_create(definition_id: NodeId, semantic: &Rc<SemanticContext>) -> Option<Self> {
         let definition = semantic.binder().find_definition_by_id(definition_id)?;
 
         let definition = match definition {

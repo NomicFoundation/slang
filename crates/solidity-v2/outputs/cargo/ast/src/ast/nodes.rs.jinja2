@@ -19,7 +19,7 @@ use super::types::Type;
     pub(crate) semantic: Rc<SemanticContext>,
   }
 
-  pub(crate) fn create_{{ parent_type | snake_case }}(
+  pub fn create_{{ parent_type | snake_case }}(
     ir_node: &ir::{{ parent_type }},
     semantic: &Rc<SemanticContext>,
   ) -> {{ parent_type }} {
