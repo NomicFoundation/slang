@@ -112,9 +112,19 @@ jobs:
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-      - name: "infra publish check"
+      - name: "Check if publish needed"
         id: "checkVersion"
-        run: "./scripts/bin/infra publish check"
+        run: |
+          local_version=$(grep '^version' Cargo.toml | head -1 | sed 's/.*"\(.*\)"/\1/')
+          published_tag=$(gh api repos/{owner}/{repo}/releases/latest --jq '.tag_name')
+          published_version="${published_tag#v}"
+          if [ "$local_version" != "$published_version" ]; then
+            echo "Version changed ($published_version → $local_version) — publish needed."
+            echo "publishNeeded=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Versions match ($local_version) — nothing to publish."
+            echo "publishNeeded=false" >> "$GITHUB_OUTPUT"
+          fi
         env:
           GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
