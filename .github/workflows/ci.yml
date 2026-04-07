@@ -53,15 +53,19 @@ jobs:
         if: "${{ github.ref_name != 'main' }}"
         uses: "./.github/actions/cache/restore"
 
-      # Restore compiled Rust artifacts from a previous build on main.
+      # Restore compiled Rust artifacts from a previous build on main for non-main runs,
+      # but intentionally skip this restore for merge-queue validation so merge_group
+      # runs compile without the target cache.
       - name: "Restore Cargo Target Cache"
-        if: "${{ github.ref_name != 'main' }}"
+        if: "${{ github.ref_name != 'main' && github.event_name != 'merge_group' }}"
         uses: "actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7" # v5.0.4
         with:
           path: |
             target/
             crates/infra/cli/target/
           key: "cargo-target-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}"
+          # Intentionally broad: allows partial cache hits across Cargo.lock changes.
+          # If stale artifacts cause issues, tighten or remove this fallback.
           restore-keys: |
             cargo-target-${{ runner.os }}-
 
