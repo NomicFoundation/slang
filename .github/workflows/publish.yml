@@ -116,9 +116,12 @@ jobs:
         id: "checkVersion"
         run: |
           local_version=$(grep '^version' Cargo.toml | head -1 | sed 's/.*"\(.*\)"/\1/')
-          published_tag=$(gh api repos/{owner}/{repo}/releases/latest --jq '.tag_name')
+          published_tag=$(gh api repos/{owner}/{repo}/releases/latest --jq '.tag_name' 2>/dev/null || echo "")
           published_version="${published_tag#v}"
-          if [ "$local_version" != "$published_version" ]; then
+          if [ -z "$published_version" ]; then
+            echo "No existing release found — publish needed for $local_version."
+            echo "publishNeeded=true" >> "$GITHUB_OUTPUT"
+          elif [ "$local_version" != "$published_version" ]; then
             echo "Version changed ($published_version → $local_version) — publish needed."
             echo "publishNeeded=true" >> "$GITHUB_OUTPUT"
           else
