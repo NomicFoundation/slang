@@ -46,7 +46,7 @@ updates:
       default-days: 7
       semver-major-days: 30
     ignore:
-      # Frozen pending migration evaluation (see issue #1623):
+      # Frozen pending migration evaluation: https://github.com/NomicFoundation/slang/issues/1623
       - dependency-name: "mkdocs"
       - dependency-name: "mkdocs-material"
       - dependency-name: "mkdocs-literate-nav"
