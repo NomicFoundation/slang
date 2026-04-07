@@ -114,7 +114,6 @@ jobs:
 
       - name: "infra publish check"
         id: "checkVersion"
-        if: "${{ steps.runChangesets.outputs.hasChangesets == 'false' }}"
         run: |
           RESULT=$(./scripts/bin/infra publish check | tail -1)
           echo "${RESULT}" >> "${GITHUB_OUTPUT}"
