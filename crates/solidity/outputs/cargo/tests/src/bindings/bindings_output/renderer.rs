@@ -3,7 +3,7 @@ use std::ops::Range;
 use std::rc::Rc;
 
 use anyhow::Result;
-use ariadne::{Color, Config, FnCache, Label, Report, ReportBuilder, ReportKind, Source};
+use ariadne::{Color, Config, FnCache, IndexType, Label, Report, ReportBuilder, ReportKind, Source};
 use slang_solidity::bindings::{BindingGraph, Definition, Reference};
 use slang_solidity::cst::{NodeKind, TerminalKindExtensions};
 use slang_solidity::diagnostic;
@@ -58,7 +58,7 @@ fn write_part_report<'a>(
     buffer: &'a mut Vec<u8>,
 ) -> Result<()> {
     let file_cache = FnCache::new(
-        (move |id| Err(Box::new(format!("Failed to fetch source '{id}'")) as _)) as fn(&_) -> _,
+        (move |id| Err(format!("Failed to fetch source '{id}'"))) as fn(&_) -> _,
     )
     .with_sources(
         once(part)
@@ -98,11 +98,14 @@ fn check_bindings_coverage<'a>(
 ) -> (Report<'a, ReportSpan<'a>>, bool) {
     let mut all_identifiers_bound = true;
     let mut builder: ReportBuilder<'_, ReportSpan<'_>> = Report::build(
-        ReportKind::Custom("Missing definitions/references:", Color::Unset),
-        part.path,
-        0,
+        ReportKind::Custom("Missing definitions/references:", Color::Primary),
+        (part.path, 0..0),
     )
-    .with_config(Config::default().with_color(false));
+    .with_config(
+        Config::default()
+            .with_color(false)
+            .with_index_type(IndexType::Byte),
+    );
 
     let mut cursor = part.parse_output.create_tree_cursor();
 
@@ -116,9 +119,7 @@ fn check_bindings_coverage<'a>(
         {
             let range = {
                 let range = cursor.text_range();
-                let start = part.contents[..range.start.utf8].chars().count();
-                let end = part.contents[..range.end.utf8].chars().count();
-                start..end
+                range.start.utf8..range.end.utf8
             };
 
             builder = builder.with_label(
@@ -137,11 +138,14 @@ fn build_report_for_part<'a>(
     part_references: impl Iterator<Item = Reference> + 'a,
 ) -> (Report<'a, ReportSpan<'a>>, bool) {
     let mut builder: ReportBuilder<'_, ReportSpan<'_>> = Report::build(
-        ReportKind::Custom("References and definitions", Color::Unset),
-        part.path,
-        0,
+        ReportKind::Custom("References and definitions", Color::Primary),
+        (part.path, 0..0),
     )
-    .with_config(Config::default().with_color(false));
+    .with_config(
+        Config::default()
+            .with_color(false)
+            .with_index_type(IndexType::Byte),
+    );
 
     for (index, definition) in all_definitions.iter().enumerate() {
         if !definition.get_file().is_user_path(part.path) {
@@ -150,9 +154,7 @@ fn build_report_for_part<'a>(
 
         let range = {
             let range = definition.get_cursor().text_range();
-            let start = part.contents[..range.start.utf8].chars().count();
-            let end = part.contents[..range.end.utf8].chars().count();
-            start..end
+            range.start.utf8..range.end.utf8
         };
 
         let message = format!("name: {}", index + 1);
@@ -164,9 +166,7 @@ fn build_report_for_part<'a>(
     for reference in part_references {
         let range = {
             let range = reference.get_cursor().text_range();
-            let start = part.contents[..range.start.utf8].chars().count();
-            let end = part.contents[..range.end.utf8].chars().count();
-            start..end
+            range.start.utf8..range.end.utf8
         };
 
         let definitions = reference.definitions();
@@ -216,8 +216,12 @@ fn build_definiens_report<'a>(
     all_definitions: &'a [Definition],
 ) -> Report<'a, ReportSpan<'a>> {
     let mut builder: ReportBuilder<'_, ReportSpan<'_>> =
-        Report::build(ReportKind::Custom("Definiens", Color::Unset), part.path, 0)
-            .with_config(Config::default().with_color(false));
+        Report::build(ReportKind::Custom("Definiens", Color::Primary), (part.path, 0..0))
+            .with_config(
+                Config::default()
+                    .with_color(false)
+                    .with_index_type(IndexType::Byte),
+            );
 
     for (index, definition) in all_definitions.iter().enumerate() {
         if !definition.get_file().is_user_path(part.path) {
@@ -226,9 +230,7 @@ fn build_definiens_report<'a>(
 
         let range = {
             let range = definition.get_definiens_cursor().text_range();
-            let start = part.contents[..range.start.utf8].chars().count();
-            let end = part.contents[..range.end.utf8].chars().count();
-            start..end
+            range.start.utf8..range.end.utf8
         };
 
         let message = format!("definiens: {}", index + 1);

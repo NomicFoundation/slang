@@ -102,13 +102,16 @@ impl TeraWrapper {
         };
         let variable_location = variable_location.name("variable").unwrap().start();
 
-        let start = source[..variable_location].chars().count();
-        let end = start + variable.chars().count();
+        let start = variable_location;
+        let end = start + variable.len();
 
         let source_id = template_path.unwrap_str();
         let label = ariadne::Label::new((source_id, start..end)).with_message(message);
 
-        ariadne::Report::build(ariadne::ReportKind::Error, source_id, start)
+        ariadne::Report::build(ariadne::ReportKind::Error, (source_id, start..end))
+            .with_config(
+                ariadne::Config::default().with_index_type(ariadne::IndexType::Byte),
+            )
             .with_message(message)
             .with_label(label)
             .finish()

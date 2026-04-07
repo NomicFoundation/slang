@@ -30,7 +30,7 @@ pub trait Diagnostic {
 }
 
 pub fn render<D: Diagnostic>(error: &D, source_id: &str, source: &str, with_color: bool) -> String {
-    use ariadne::{Color, Config, Label, Report, ReportKind, Source};
+    use ariadne::{Color, Config, IndexType, Label, Report, ReportKind, Source};
 
     let (kind, color) = match error.severity() {
         Severity::Error => (ReportKind::Error, Color::Red),
@@ -45,20 +45,16 @@ pub fn render<D: Diagnostic>(error: &D, source_id: &str, source: &str, with_colo
         return format!("{kind}: {message}\n   ─[{source_id}:0:0]");
     }
 
-    // TODO(v2): Once https://github.com/zesterer/ariadne/pull/159 is released we should be able to
-    // skip this step
-    let color = if with_color { color } else { Color::Unset };
+    let color = if with_color { color } else { Color::Primary };
 
-    // TODO(v2): Once https://github.com/zesterer/ariadne/pull/159 is released we should be able to
-    // move to a newer version of ariadne and use IndexType::Byte, to avoid this conversion.
-    let range = {
-        let start = source[..error.text_range().start].chars().count();
-        let end = source[..error.text_range().end].chars().count();
-        start..end
-    };
+    let range = error.text_range();
 
-    let report = Report::build(kind, source_id, range.start)
-        .with_config(Config::default().with_color(with_color))
+    let report = Report::build(kind, (source_id, range.clone()))
+        .with_config(
+            Config::default()
+                .with_color(with_color)
+                .with_index_type(IndexType::Byte),
+        )
         .with_message(message)
         .with_label(
             Label::new((source_id, range))

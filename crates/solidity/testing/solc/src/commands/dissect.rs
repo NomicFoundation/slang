@@ -184,7 +184,10 @@ impl Dissector {
 
         let source = ariadne::Source::from(&self.source);
 
-        ariadne::Report::build(kind, source_id, start)
+        ariadne::Report::build(kind, (source_id, start..end))
+            .with_config(
+                ariadne::Config::default().with_index_type(ariadne::IndexType::Byte),
+            )
             .with_message(message)
             .with_label(label)
             .finish()

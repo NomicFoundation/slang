@@ -3,7 +3,7 @@ use std::fmt::Write;
 use std::ops::Range;
 
 use anyhow::Result;
-use ariadne::{Color, Config, Label, Report, ReportBuilder, ReportKind, Source};
+use ariadne::{Color, Config, IndexType, Label, Report, ReportBuilder, ReportKind, Source};
 use slang_solidity::backend::binder::Resolution;
 use slang_solidity::backend::{SemanticAnalysis, SemanticFile};
 use slang_solidity::cst::{Cursor, NodeId};
@@ -145,16 +145,16 @@ fn render_bindings_for_file(
 ) -> Result<()> {
     let contents = file.tree().unparse();
     let mut builder: BuilderType<'_> =
-        Report::build(ReportKind::Custom("Bindings", Color::Unset), file.id(), 0)
-            .with_config(Config::default().with_color(false));
+        Report::build(ReportKind::Custom("Bindings", Color::Primary), (file.id(), 0..0))
+            .with_config(
+                Config::default()
+                    .with_color(false)
+                    .with_index_type(IndexType::Byte),
+            );
 
     let new_label = |cursor: &Cursor, message: &str| -> Label<Span<'_>> {
-        let range = {
-            let range = cursor.text_range();
-            let start = contents[..range.start.utf8].chars().count();
-            let end = contents[..range.end.utf8].chars().count();
-            start..end
-        };
+        let range = cursor.text_range();
+        let range = range.start.utf8..range.end.utf8;
         Label::new((file.id(), range)).with_message(message)
     };
 
