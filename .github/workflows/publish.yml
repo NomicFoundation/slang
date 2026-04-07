@@ -115,6 +115,8 @@ jobs:
       - name: "infra publish check"
         id: "checkVersion"
         run: "./scripts/bin/infra publish check"
+        env:
+          GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: "infra publish mkdocs --target main-branch"
         run: "./scripts/bin/infra publish mkdocs --target main-branch"

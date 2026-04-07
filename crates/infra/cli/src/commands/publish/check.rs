@@ -14,20 +14,17 @@ impl CheckController {
         let local_version = CargoWorkspace::local_version()?;
         println!("Local version: {local_version}");
 
-        let Ok(published_version) = GitHub::latest_release_version() else {
-            println!("No existing release found — publish needed.");
-            set_github_output("publishNeeded", "true")?;
-            return Ok(());
-        };
+        let published_version = GitHub::latest_release_version()?;
         println!("Latest published version: {published_version}");
 
-        if local_version == published_version {
-            println!("Versions match — nothing to publish.");
-            set_github_output("publishNeeded", "false")?;
-        } else {
+        let publish_needed = local_version != published_version;
+        if publish_needed {
             println!("Version changed — publish needed.");
-            set_github_output("publishNeeded", "true")?;
+        } else {
+            println!("Versions match — nothing to publish.");
         }
+
+        set_github_output("publishNeeded", &publish_needed.to_string())?;
 
         Ok(())
     }
