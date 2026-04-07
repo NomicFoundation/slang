@@ -115,9 +115,9 @@ impl<'a> Pass<'a> {
     }
 
     fn is_in_modifier_scope(&self) -> bool {
-        self.scope_stack.iter().rev().any(|frame| {
+        self.scope_stack.iter().any(|frame| {
             matches!(
-                self.binder.get_scope_by_id(frame.lexical_scope_id),
+                self.binder.get_scope_by_id(frame.structural_scope_id),
                 Scope::Modifier(_)
             )
         })
@@ -125,12 +125,13 @@ impl<'a> Pass<'a> {
 
     fn current_contract_scope_id(&self) -> Option<ScopeId> {
         for ScopeFrame {
-            lexical_scope_id, ..
+            structural_scope_id,
+            ..
         } in self.scope_stack.iter().rev()
         {
-            let scope = self.binder.get_scope_by_id(*lexical_scope_id);
+            let scope = self.binder.get_scope_by_id(*structural_scope_id);
             if matches!(scope, Scope::Contract(_)) {
-                return Some(*lexical_scope_id);
+                return Some(*structural_scope_id);
             }
         }
         None
