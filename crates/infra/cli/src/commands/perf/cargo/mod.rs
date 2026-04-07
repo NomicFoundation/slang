@@ -151,9 +151,6 @@ impl CargoController {
 
         // 1% threshold: iai-callgrind uses deterministic hardware counters (not wall clock),
         // so any change reflects a real code change, not noise.
-        // PR comments disabled for cargo (exceeds GitHub's 65K char limit with bencher v0.5.8).
-        // Results are still uploaded to the bencher dashboard. TODO(#1586): re-enable once
-        // bencher v0.5.10 (auto-truncation) is available.
         run_bench(
             self.dry_run.get(),
             self.pr_benchmark,
@@ -175,7 +172,6 @@ impl CargoController {
                 ("reads-bytes", "0.01"),
                 ("writes-bytes", "0.01"),
             ],
-            false,
             &test_runner,
         );
 

@@ -56,7 +56,6 @@ impl NpmController {
             DEFAULT_BENCHER_PROJECT,
             "json",
             &[("duration", "0.10")],
-            true,
             &test_runner,
         );
     }

@@ -18,7 +18,6 @@ pub(crate) fn run_bench(
     project: &str,
     adapter: &str,
     thresholds: &[(&str, &str)],
-    github_pr_comment: bool,
     test_runner: &str,
 ) {
     assert!(
@@ -78,11 +77,9 @@ pub(crate) fn run_bench(
                 .property("--threshold-upper-boundary", upper_boundary);
         }
 
-        if github_pr_comment {
-            let github_token = std::env::var("GITHUB_TOKEN")
-                .expect("GITHUB_TOKEN must be set for --pr-benchmark with github_pr_comment");
-            command = command.property("--github-actions", &github_token);
-        }
+        let github_token =
+            std::env::var("GITHUB_TOKEN").expect("GITHUB_TOKEN must be set for --pr-benchmark");
+        command = command.property("--github-actions", &github_token);
     }
 
     // Has to be the last argument:

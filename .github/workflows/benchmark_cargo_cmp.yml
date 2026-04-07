@@ -41,6 +41,7 @@ jobs:
 
     permissions:
       contents: "read"
+      pull-requests: "write"
 
     # Skip fork PRs (can't access BENCHER_API_TOKEN). For non-PR events, only run on the main repo.
     if: >-
@@ -85,6 +86,7 @@ jobs:
           BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
           BENCHER_PR_START_POINT_HASH: "${{ github.event.pull_request.base.sha }}"
           BENCHER_PR_HEAD_HASH: "${{ github.event.pull_request.head.sha }}"
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: "Benchmark > Upload Benchmarking Data"
         if: "${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
