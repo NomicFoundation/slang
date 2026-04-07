@@ -150,10 +150,6 @@ fn collect_all_identifiers(
     collector.identifiers
 }
 
-// Disable this clippy linting rule which fails to properly identify the data
-// flow for setting `bound`.
-// See https://github.com/rust-lang/rust-clippy/issues/2918#issuecomment-793146825
-#[allow(clippy::useless_let_if_seq)]
 fn classify_identifiers(
     compilation: &CompilationUnit,
     all_identifiers: Vec<CollectedIdentifier>,
