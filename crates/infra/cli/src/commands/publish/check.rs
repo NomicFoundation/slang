@@ -1,3 +1,5 @@
+use std::io::Write;
+
 use anyhow::Result;
 use clap::Parser;
 use infra_utils::cargo::CargoWorkspace;
@@ -14,19 +16,27 @@ impl CheckController {
 
         let Ok(published_version) = GitHub::latest_release_version() else {
             println!("No existing release found — publish needed.");
-            println!("publishNeeded=true");
+            set_github_output("publishNeeded", "true")?;
             return Ok(());
         };
         println!("Latest published version: {published_version}");
 
         if local_version == published_version {
             println!("Versions match — nothing to publish.");
-            println!("publishNeeded=false");
+            set_github_output("publishNeeded", "false")?;
         } else {
             println!("Version changed — publish needed.");
-            println!("publishNeeded=true");
+            set_github_output("publishNeeded", "true")?;
         }
 
         Ok(())
     }
+}
+
+fn set_github_output(key: &str, value: &str) -> Result<()> {
+    if let Ok(path) = std::env::var("GITHUB_OUTPUT") {
+        let mut file = std::fs::OpenOptions::new().append(true).open(path)?;
+        writeln!(file, "{key}={value}")?;
+    }
+    Ok(())
 }

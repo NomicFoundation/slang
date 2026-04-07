@@ -114,9 +114,7 @@ jobs:
 
       - name: "infra publish check"
         id: "checkVersion"
-        run: |
-          RESULT=$(./scripts/bin/infra publish check | tail -1)
-          echo "${RESULT}" >> "${GITHUB_OUTPUT}"
+        run: "./scripts/bin/infra publish check"
 
       - name: "infra publish mkdocs --target main-branch"
         run: "./scripts/bin/infra publish mkdocs --target main-branch"
