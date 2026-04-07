@@ -55,7 +55,7 @@ jobs:
       - name: "Build Test Binary"
         run: "./scripts/bin/with-hermit cargo build --bin solidity_testing_sourcify --release"
       - name: "Save Test Binary"
-        uses: "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+        uses: "actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f" # v7.0.0
         with:
           name: "solidity_testing_sourcify_${{ inputs.chain_id }}"
           path: "./target/release/solidity_testing_sourcify"
