@@ -22,9 +22,8 @@ pub fn run(
     types: &mut TypeRegistry,
     language_version: LanguageVersion,
 ) {
-    let mut pass = Pass::new(language_version, binder, types);
     for file in files {
-        pass.visit_file(file.ir_root());
+        Pass::visit_file(file, binder, types, language_version);
     }
     // update definition->references reverse mapping
     binder.update_definitions_to_references_index();
@@ -46,27 +45,24 @@ struct Pass<'a> {
 }
 
 impl<'a> Pass<'a> {
-    fn new(
-        language_version: LanguageVersion,
+    fn visit_file(
+        file: &impl InputFile,
         binder: &'a mut Binder,
         types: &'a mut TypeRegistry,
-    ) -> Self {
-        Self {
+        language_version: LanguageVersion,
+    ) {
+        let mut pass = Self {
             language_version,
             scope_stack: Vec::new(),
             binder,
             types,
-        }
+        };
+        ir::visitor::accept_source_unit(file.ir_root(), &mut pass);
+        assert!(pass.scope_stack.is_empty());
     }
 
     fn built_ins_resolver(&self) -> BuiltInsResolver<'_> {
         BuiltInsResolver::new(self.language_version, self.binder, self.types)
-    }
-
-    fn visit_file(&mut self, source_unit: &ir::SourceUnit) {
-        assert!(self.scope_stack.is_empty());
-        ir::visitor::accept_source_unit(source_unit, self);
-        assert!(self.scope_stack.is_empty());
     }
 
     fn enter_scope_for_node_id(&mut self, node_id: NodeId) {

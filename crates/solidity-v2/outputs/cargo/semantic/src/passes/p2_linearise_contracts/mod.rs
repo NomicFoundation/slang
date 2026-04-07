@@ -14,25 +14,30 @@ mod c3;
 /// In this pass we collect all bases of contracts and interfaces and then
 /// compute the linearisation for each of them.
 pub fn run(files: &[impl InputFile], binder: &mut Binder) {
-    let mut pass = Pass::new(binder);
     for file in files {
-        pass.visit_file_collect_bases(file.ir_root());
+        Pass::visit_file_collect_bases(file, binder);
     }
     for file in files {
-        pass.visit_file_linearise_contracts(file.ir_root());
+        Pass::visit_file_linearise_contracts(file, binder);
     }
 }
 
-pub struct Pass<'a> {
-    pub binder: &'a mut Binder,
+struct Pass<'a> {
+    binder: &'a mut Binder,
 }
 
 impl<'a> Pass<'a> {
-    pub fn new(binder: &'a mut Binder) -> Self {
-        Self { binder }
+    fn visit_file_collect_bases(file: &impl InputFile, binder: &'a mut Binder) {
+        let mut pass = Self { binder };
+        pass.collect_bases_from(file.ir_root());
     }
 
-    fn visit_file_collect_bases(&mut self, source_unit: &ir::SourceUnit) {
+    fn visit_file_linearise_contracts(file: &impl InputFile, binder: &'a mut Binder) {
+        let mut pass = Self { binder };
+        pass.linearise_contracts_from(file.ir_root());
+    }
+
+    fn collect_bases_from(&mut self, source_unit: &ir::SourceUnit) {
         let scope_id = self
             .binder
             .scope_id_for_node_id(source_unit.id())
@@ -154,7 +159,7 @@ impl<'a> Pass<'a> {
         last_resolution
     }
 
-    fn visit_file_linearise_contracts(&mut self, source_unit: &ir::SourceUnit) {
+    fn linearise_contracts_from(&mut self, source_unit: &ir::SourceUnit) {
         for member in &source_unit.members {
             let node_id = match member {
                 ir::SourceUnitMember::ContractDefinition(contract_definition) => {

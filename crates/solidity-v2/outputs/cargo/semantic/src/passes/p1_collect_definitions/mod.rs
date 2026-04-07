@@ -11,9 +11,8 @@ use crate::context::InputFile;
 /// as references and typing information for the nodes, to be resolved in later
 /// passes.
 pub fn run(files: &[impl InputFile], binder: &mut Binder) {
-    let mut pass = Pass::new(binder);
     for file in files {
-        pass.visit_file(file);
+        Pass::visit_file(file, binder);
     }
 }
 
@@ -26,29 +25,20 @@ struct ScopeFrame {
 }
 
 struct Pass<'a, F: InputFile> {
-    current_file: Option<&'a F>,
+    current_file: &'a F,
     scope_stack: Vec<ScopeFrame>,
     binder: &'a mut Binder,
 }
 
 impl<'a, F: InputFile> Pass<'a, F> {
-    fn new(binder: &'a mut Binder) -> Self {
-        Self {
-            current_file: None,
+    fn visit_file(file: &'a F, binder: &'a mut Binder) {
+        let mut pass = Self {
+            current_file: file,
             scope_stack: Vec::new(),
             binder,
-        }
-    }
-
-    fn visit_file(&mut self, file: &'a F) {
-        assert!(self.scope_stack.is_empty());
-        assert!(self.current_file.is_none());
-
-        self.current_file = Some(file);
-        ir::visitor::accept_source_unit(file.ir_root(), self);
-        self.current_file = None;
-
-        assert!(self.scope_stack.is_empty());
+        };
+        ir::visitor::accept_source_unit(file.ir_root(), &mut pass);
+        assert!(pass.scope_stack.is_empty());
     }
 
     fn enter_scope(&mut self, scope: Scope) -> ScopeId {
@@ -127,10 +117,7 @@ impl<'a, F: InputFile> Pass<'a, F> {
     }
 
     fn resolve_import_path(&self, import_node_id: NodeId) -> Option<String> {
-        let current_file = self
-            .current_file
-            .expect("import directive must be visited in the context of a current file");
-        current_file
+        self.current_file
             .resolved_import_by_node_id(import_node_id)
             .cloned()
 
@@ -183,10 +170,7 @@ impl<'a, F: InputFile> Pass<'a, F> {
 
 impl<F: InputFile> Visitor for Pass<'_, F> {
     fn enter_source_unit(&mut self, node: &ir::SourceUnit) -> bool {
-        let current_file = self
-            .current_file
-            .expect("visiting SourceUnit without a current file being set");
-        let scope = Scope::new_file(node.id(), current_file.id());
+        let scope = Scope::new_file(node.id(), self.current_file.id());
         self.enter_scope(scope);
 
         true
