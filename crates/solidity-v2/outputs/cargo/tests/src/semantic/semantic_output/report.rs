@@ -150,13 +150,15 @@ fn render_bindings_for_file(
     unbound_identifiers: &[CollectedIdentifier],
     definitions_by_id: &HashMap<NodeId, usize>,
 ) -> Result<()> {
-    // ariadne works with character offsets, not byte offsets, so we need to
-    // convert ranges
     let mut builder: BuilderType<'_> =
         Report::build(ReportKind::Custom("Bindings", Color::Unset), file_id, 0)
             .with_config(Config::default().with_color(false));
 
     let new_label = |range: &Range<usize>, message: &str| -> Label<Span<'_>> {
+        // ariadne works with character offsets, not byte offsets, so we need to
+        // convert ranges
+        // TODO: the next ariadne release should allow byte offsets (see
+        // https://github.com/NomicFoundation/slang/issues/1536)
         let char_range = {
             let start = contents[..range.start].chars().count();
             let end = contents[..range.end].chars().count();
