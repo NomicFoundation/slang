@@ -153,7 +153,7 @@ log = { version = "0.4.27" }
 logos = { version = "0.16.0" }
 lsp-positions = { version = "0.3.0" } 
 markdown = { version = "0.3.0" }
-nom = { version = "7.1.3" }
+nom = { version = "8.0.0" }
 num-bigint = { version = "0.4.6" }
 num-format = { version = "0.4.4" }
 num-traits = { version = "0.2.18" }
