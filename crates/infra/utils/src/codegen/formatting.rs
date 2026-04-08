@@ -40,7 +40,7 @@ pub fn generate_header(file_path: &Path) -> Option<String> {
 fn run_formatter(file_path: &Path, contents: &str) -> Result<String> {
     match (file_path.unwrap_name(), file_path.unwrap_ext()) {
         // We have formatters available for these:
-        (_, "js" | "json" | "mts" | "ts") => run_prettier(file_path, contents),
+        (_, "js" | "json" | "mts" | "ts" | "yml") => run_prettier(file_path, contents),
         (_, "rs") => run_rustfmt(contents),
 
         // No formatters available for these yet:
