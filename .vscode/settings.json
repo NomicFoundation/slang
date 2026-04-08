@@ -42,6 +42,6 @@
   "triggerTaskOnSave.tasks": {
     "Regenerate Jinja Templates": ["**/*.jinja2"]
   },
-  "typescript.tsdk": "node_modules/typescript/lib",
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
   "yaml.validate": false // Disable LSP validation for YAML files, as it is handled by our own cargo tasks
 }
