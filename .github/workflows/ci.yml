@@ -19,9 +19,10 @@ on:
 # In the event that there is a new push to the ref, cancel any running jobs because they are now obsolete, wasting resources.
 permissions: {}
 
+# Queue ci workflows for the same branch (main pushes queue to finish updating the cache; PR runs cancel stale ones):
 concurrency:
   group: "${{ github.workflow }}-${{ github.ref_name }}"
-  cancel-in-progress: true
+  cancel-in-progress: "${{ github.event_name == 'pull_request' }}"
 
 jobs:
   ci:
