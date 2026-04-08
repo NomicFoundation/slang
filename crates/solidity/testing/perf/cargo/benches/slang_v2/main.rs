@@ -53,7 +53,7 @@ macro_rules! slang_v2_define_tests {
 
 
             library_benchmark_group!(
-                name = [< $prj _full >];
+                name = [< $prj _full_v2 >];
 
                 // __SLANG_V2_INFRA_BENCHMARKS_LIST__ (keep in sync)
                 benchmarks =
@@ -64,12 +64,15 @@ macro_rules! slang_v2_define_tests {
     };
 }
 
-// We test a few projects in full for slang v2 benchmarks.
 // Only 0.8.x-compatible projects can be used here.
 // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
-// TODO(v2) Using ui_pool_data_provider_v3 as a placeholder for now, we should look for relevant
-// contracts that are compatible with slang v2.
+slang_v2_define_tests!(uniswap);
+slang_v2_define_tests!(multicall3);
+slang_v2_define_tests!(create_x);
 slang_v2_define_tests!(ui_pool_data_provider_v3);
+slang_v2_define_tests!(cooldogs);
+slang_v2_define_tests!(one_step_leverage_f);
+slang_v2_define_tests!(pointer_libraries);
 slang_v2_define_tests!(merkle_proof);
 
 main!(
@@ -107,5 +110,13 @@ main!(
 
     // NOTE: the trailing comma is required: without it, it won't test the last one
     // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
-    library_benchmark_groups = ui_pool_data_provider_v3_full,merkle_proof_full,
+    library_benchmark_groups =
+        uniswap_full_v2,
+        multicall3_full_v2,
+        create_x_full_v2,
+        ui_pool_data_provider_v3_full_v2,
+        cooldogs_full_v2,
+        one_step_leverage_f_full_v2,
+        pointer_libraries_full_v2,
+        merkle_proof_full_v2,
 );
