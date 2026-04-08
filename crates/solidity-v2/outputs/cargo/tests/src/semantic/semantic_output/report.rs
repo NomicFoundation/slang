@@ -25,7 +25,7 @@ pub(crate) fn binder_report(report_data: &'_ ReportData<'_>) -> Result<String> {
 
     let ReportData {
         compilation,
-        file_contents,
+        files,
         parse_errors,
         all_definitions,
         all_references,
@@ -34,7 +34,7 @@ pub(crate) fn binder_report(report_data: &'_ ReportData<'_>) -> Result<String> {
     } = report_data;
 
     if !parse_errors.is_empty() {
-        report_parse_errors(&mut report, parse_errors, file_contents)?;
+        report_parse_errors(&mut report, parse_errors, files)?;
         writeln!(report, "{SEPARATOR}")?;
     }
 
@@ -52,7 +52,7 @@ pub(crate) fn binder_report(report_data: &'_ ReportData<'_>) -> Result<String> {
         writeln!(report, "{SEPARATOR}")?;
 
         let file_id = file.id();
-        if let Some(contents) = file_contents.get(file_id) {
+        if let Some(contents) = files.get(file_id) {
             render_bindings_for_file(
                 &mut report,
                 file_id,

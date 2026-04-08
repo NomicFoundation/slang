@@ -14,7 +14,7 @@ use slang_solidity_v2_semantic::types::{DataLocation, FunctionType, LiteralKind,
 
 pub(crate) struct ReportData<'a> {
     pub(crate) compilation: &'a CompilationUnit,
-    pub(crate) file_contents: &'a HashMap<String, String>,
+    pub(crate) files: &'a HashMap<String, String>,
     pub(crate) parse_errors: Vec<(String, ParserError)>,
     pub(crate) all_definitions: Vec<CollectedDefinition>,
     pub(crate) all_references: Vec<CollectedReference>,
@@ -48,12 +48,12 @@ pub(crate) struct CollectedReference {
 impl<'a> ReportData<'a> {
     pub(crate) fn prepare(
         compilation: &'a CompilationUnit,
-        file_contents: &'a HashMap<String, String>,
+        files: &'a HashMap<String, String>,
         parse_errors: Vec<(String, ParserError)>,
     ) -> Self {
-        let all_identifiers = collect_all_identifiers(compilation, file_contents);
+        let all_identifiers = collect_all_identifiers(compilation, files);
         let (all_definitions, all_references, unbound_identifiers) =
-            classify_identifiers(compilation, all_identifiers);
+            classify_identifiers(compilation.semantic(), all_identifiers);
         let definitions_by_id = all_definitions
             .iter()
             .map(|definition| (definition.definition_node_id, definition.report_id))
@@ -61,7 +61,7 @@ impl<'a> ReportData<'a> {
 
         Self {
             compilation,
-            file_contents,
+            files,
             parse_errors,
             all_definitions,
             all_references,
@@ -136,7 +136,7 @@ impl IdentifierCollector<'_> {
 
 fn collect_all_identifiers(
     compilation: &CompilationUnit,
-    file_contents: &HashMap<String, String>,
+    files: &HashMap<String, String>,
 ) -> Vec<CollectedIdentifier> {
     let mut collector = IdentifierCollector {
         identifiers: Vec::new(),
@@ -144,7 +144,7 @@ fn collect_all_identifiers(
     };
 
     for file in &compilation.files() {
-        collector.current_file = file_contents.get_key_value(file.id());
+        collector.current_file = files.get_key_value(file.id());
         accept_source_unit(file.ir_root(), &mut collector);
     }
 
@@ -152,7 +152,7 @@ fn collect_all_identifiers(
 }
 
 fn classify_identifiers(
-    compilation: &CompilationUnit,
+    semantic: &SemanticContext,
     all_identifiers: Vec<CollectedIdentifier>,
 ) -> (
     Vec<CollectedDefinition>,
@@ -163,7 +163,7 @@ fn classify_identifiers(
     let mut all_references = Vec::new();
     let mut unbound_identifiers = Vec::new();
 
-    let binder = compilation.semantic().binder();
+    let binder = semantic.binder();
 
     // Walk all identifiers in file/source order and classify each one
     for identifier in all_identifiers {
