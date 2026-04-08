@@ -39,7 +39,6 @@
 - [#1440](https://github.com/NomicFoundation/slang/pull/1440) [`4438fc8`](https://github.com/NomicFoundation/slang/commit/4438fc8e6e01c5d86ac166d24d16c8a6206bd851) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - add `TextIndexExtensions.zero()` utility to create an index at offset zero, which is useful for creating cursors from child nodes where parent offset is not needed.
 
 - [#1390](https://github.com/NomicFoundation/slang/pull/1390) [`6a0f598`](https://github.com/NomicFoundation/slang/commit/6a0f598fc93a85e125f48869f8d882d52392fdb7) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - Add new TypeScript APIs for creating nodes and edges:
-
     - `NonterminalNode.create(kind: NonterminalKind, children: Edge[]): NonterminalNode`
     - `TerminalNode.create(kind: TerminalKind, text: string): TerminalNode`
     - `createEdge(label: EdgeLabel, node: Node): Edge`
@@ -51,7 +50,6 @@
 - [#1424](https://github.com/NomicFoundation/slang/pull/1424) [`d54a35c`](https://github.com/NomicFoundation/slang/commit/d54a35c9507709e921b0e5cf46c25fc7d62bc9c6) Thanks [@ggiraldez](https://github.com/ggiraldez)! - Resolve identifiers in assembly blocks to locally imported symbols
 
 - [#1388](https://github.com/NomicFoundation/slang/pull/1388) [`4607e6a`](https://github.com/NomicFoundation/slang/commit/4607e6a548b5454718202374cddfc8d0ccfdb661) Thanks [@beta-ziliani](https://github.com/beta-ziliani)! - Fixed the pragma grammar and CST nodes:
-
     - `pragma abicoder <version>`:
         - Only enabled starting Solidity `0.7.5`.
         - `<version>` is restricted to new keywords (`v1` and `v2`).
@@ -72,7 +70,6 @@
 - [#1338](https://github.com/NomicFoundation/slang/pull/1338) [`18be0bc`](https://github.com/NomicFoundation/slang/commit/18be0bc1915107dcb9f86402bd7e0b69ec5c7f53) Thanks [@ggiraldez](https://github.com/ggiraldez)! - Make try/catch parameters and vars in for loop initialization available in Yul
 
 - [#1339](https://github.com/NomicFoundation/slang/pull/1339) [`f16e4b5`](https://github.com/NomicFoundation/slang/commit/f16e4b5ab458fccf64fa897b096d668e7ca00c69) Thanks [@ggiraldez](https://github.com/ggiraldez)! - Fixes to the binding rules in Solidity:
-
     - Make the `.length` member available in all static-size byte arrays
     - Allow assembly blocks (and nested Yul functions) to access inherited state variables
     - Allow assembly blocks access to constructor/modifier/fallback parameters
@@ -82,7 +79,6 @@
     - Imported symbols using deconstruction syntax can be bound in assembly blocks
 
 - [#1353](https://github.com/NomicFoundation/slang/pull/1353) [`8e718dd`](https://github.com/NomicFoundation/slang/commit/8e718dd31e98604330dc2345d73d19bdcaed43ec) Thanks [@ggiraldez](https://github.com/ggiraldez)! - Fixes to the binding rules in Solidity:
-
     - Values of the deprecated `byte` type have a `length` member until 0.8.0
     - Bind a qualified identifier in the same contract, ie. `Foo.x` in a method body of `Foo`
     - Correctly bind external constants and built-ins in nested functions in assembly blocks
@@ -91,12 +87,10 @@
     - Event types have a `selector` member
 
 - [#1326](https://github.com/NomicFoundation/slang/pull/1326) [`045179b`](https://github.com/NomicFoundation/slang/commit/045179b80f18efa4a8b75e528f475da37d948077) Thanks [@ggiraldez](https://github.com/ggiraldez)! - Fixes to binding rules:
-
     - Update `TupleDeconstructionStatement` so that their definiens is the `TypedTupleMember`/`UntypedTupleMember` for each variable declared.
     - Update `YulVariableDeclarationStatement` so that their definiens is the `YulIdentifier` for each variable declared.
 
 - [#1350](https://github.com/NomicFoundation/slang/pull/1350) [`0594fe8`](https://github.com/NomicFoundation/slang/commit/0594fe89afda88a801db669af05bd33a27cd6fe4) Thanks [@ggiraldez](https://github.com/ggiraldez)! - Fixes to bindings rules in Solidity:
-
     - Allow binding of `using` directives inside interfaces in Solidity < 0.7.1
     - Bind literal fixed arrays types
     - Fix generating binding graph for built-ins: remove the `memory` location specifier from types so they bind properly
@@ -124,7 +118,6 @@
 ### Patch Changes
 
 - [#1314](https://github.com/NomicFoundation/slang/pull/1314) [`743d6b0`](https://github.com/NomicFoundation/slang/commit/743d6b0c3271a9a2e86103dab18656650cd3f6a7) Thanks [@mjoerussell](https://github.com/mjoerussell)! - Adding missing YUL built in functions:
-
     - `codesize()`
     - `codecopy(f, t, s)`
 
@@ -133,7 +126,6 @@
 ### Minor Changes
 
 - [#1288](https://github.com/NomicFoundation/slang/pull/1288) [`2090ab8`](https://github.com/NomicFoundation/slang/commit/2090ab8bc5e6c4027ee7b065c217a59b1764be37) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - support Solidity `0.8.29` and [Custom Storage Layouts](https://docs.soliditylang.org/en/v0.8.29/contracts.html#custom-storage-layout):
-
     - `ContractDefinition` nodes will no longer have an optional `InheritanceSpecifier` child directly, but will hold a list of `ContractSpecifier` children
     - `ContractSpecifier` nodes have either `InheritanceSpecifier` or `StorageLayoutSpecifier` children
 
