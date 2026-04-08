@@ -1,0 +1,73 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (8):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns void)
+- Def: #3 ["process" @ input.sol:7:14] (function, type: function (uint256, address) returns void)
+- Def: #4 ["qty" @ input.sol:7:30] (parameter, type: uint256)
+- Def: #5 ["rcpt" @ input.sol:7:43] (parameter, type: address)
+- Def: #6 ["process" @ input.sol:8:14] (function, type: function (string memory, uint256) returns void)
+- Def: #7 ["symbol" @ input.sol:8:36] (parameter, type: string memory)
+- Def: #8 ["qty" @ input.sol:8:52] (parameter, type: uint256)
+
+------------------------------------------------------------------------
+
+References (8):
+- Ref: ["process" @ input.sol:3:9] -> #3
+- Ref: ["rcpt" @ input.sol:3:19] -> #5
+- Ref: ["tx" @ input.sol:3:25] -> built-in
+- Ref: ["origin" @ input.sol:3:28] -> built-in
+- Ref: ["qty" @ input.sol:3:36] -> #4
+- Ref: ["process" @ input.sol:4:9] -> #6
+- Ref: ["symbol" @ input.sol:4:19] -> #7
+- Ref: ["qty" @ input.sol:4:34] -> #8
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test() internal {
+   │              ──┬─  
+   │                ╰─── name: 2
+ 3 │         process({ rcpt: tx.origin, qty: 1 });
+   │         ───┬───   ──┬─  ─┬ ───┬──  ─┬─  
+   │            ╰──────────────────────────── ref: 3
+   │                     │    │    │     │   
+   │                     ╰─────────────────── ref: 5
+   │                          │    │     │   
+   │                          ╰────────────── built-in
+   │                               │     │   
+   │                               ╰───────── built-in
+   │                                     │   
+   │                                     ╰─── ref: 4
+ 4 │         process({ symbol: "foo", qty: 2 });
+   │         ───┬───   ───┬──         ─┬─  
+   │            ╰────────────────────────── ref: 6
+   │                      │            │   
+   │                      ╰──────────────── ref: 7
+   │                                   │   
+   │                                   ╰─── ref: 8
+   │ 
+ 7 │     function process(uint256 qty, address rcpt) internal {}
+   │              ───┬───         ─┬─          ──┬─  
+   │                 ╰─────────────────────────────── name: 3
+   │                               │             │   
+   │                               ╰───────────────── name: 4
+   │                                             │   
+   │                                             ╰─── name: 5
+ 8 │     function process(string memory symbol, uint256 qty) internal {}
+   │              ───┬───               ───┬──          ─┬─  
+   │                 ╰─────────────────────────────────────── name: 6
+   │                                       │             │   
+   │                                       ╰───────────────── name: 7
+   │                                                     │   
+   │                                                     ╰─── name: 8
+───╯

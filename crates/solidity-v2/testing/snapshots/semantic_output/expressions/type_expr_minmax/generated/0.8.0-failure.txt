@@ -1,0 +1,86 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["Answer" @ input.sol:1:6] (enum)
+- Def: #2 ["Yes" @ input.sol:2:5] (enum member of Answer)
+- Def: #3 ["Id" @ input.sol:5:9] (library)
+- Def: #4 ["id" @ input.sol:6:14] (function, type: function (Answer) returns Answer)
+- Def: #5 ["ans" @ input.sol:6:24] (parameter, type: Answer)
+- Def: #6 ["Test" @ input.sol:11:10] (contract)
+- Def: #7 ["testFunc" @ input.sol:14:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (11):
+- Ref: ["Answer" @ input.sol:6:17] -> #1
+- Ref: ["Answer" @ input.sol:6:38] -> #1
+- Ref: ["ans" @ input.sol:7:16] -> #5
+- Ref: ["Id" @ input.sol:12:11] -> #3
+- Ref: ["Answer" @ input.sol:12:18] -> #1
+- Ref: ["Answer" @ input.sol:16:14] -> #1
+- Ref: ["min" @ input.sol:16:22] -> unresolved
+- Ref: ["id" @ input.sol:16:26] -> unresolved
+- Ref: ["Answer" @ input.sol:17:14] -> #1
+- Ref: ["max" @ input.sol:17:22] -> unresolved
+- Ref: ["id" @ input.sol:17:26] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ enum Answer {
+    │      ───┬──  
+    │         ╰──── name: 1
+  2 │     Yes
+    │     ─┬─  
+    │      ╰─── name: 2
+    │ 
+  5 │ library Id {
+    │         ─┬  
+    │          ╰── name: 3
+  6 │     function id(Answer ans) returns (Answer) {
+    │              ─┬ ───┬── ─┬─           ───┬──  
+    │               ╰────────────────────────────── name: 4
+    │                    │    │               │    
+    │                    ╰───────────────────────── ref: 1
+    │                         │               │    
+    │                         ╰──────────────────── name: 5
+    │                                         │    
+    │                                         ╰──── ref: 1
+  7 │         return ans;
+    │                ─┬─  
+    │                 ╰─── ref: 5
+    │ 
+ 11 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 6
+ 12 │     using Id for Answer;
+    │           ─┬     ───┬──  
+    │            ╰───────────── ref: 3
+    │                     │    
+    │                     ╰──── ref: 1
+    │ 
+ 14 │     function testFunc() {
+    │              ────┬───  
+    │                  ╰───── name: 7
+    │ 
+ 16 │         type(Answer).min.id();
+    │              ───┬──  ─┬─ ─┬  
+    │                 ╰──────────── ref: 1
+    │                       │   │  
+    │                       ╰────── unresolved
+    │                           │  
+    │                           ╰── unresolved
+ 17 │         type(Answer).max.id();
+    │              ───┬──  ─┬─ ─┬  
+    │                 ╰──────────── ref: 1
+    │                       │   │  
+    │                       ╰────── unresolved
+    │                           │  
+    │                           ╰── unresolved
+────╯

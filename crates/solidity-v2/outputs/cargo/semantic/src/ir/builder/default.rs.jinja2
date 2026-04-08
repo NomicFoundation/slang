@@ -19,28 +19,24 @@ pub trait Builder {
     {% if not sequence.has_added_fields %}
       {
         {% for field in sequence.fields %}
-          {%- if not field.is_removed -%}
-            let {{ field.label | snake_case }} =
-            {%- if field.is_optional -%}
-              {%- if field.type.kind == "UniqueTerminal" -%}
-                source.{{ field.label }}.is_some();
-              {%- else -%}
-                source.{{ field.label }}.as_ref().map(
-                  |value| self.build_{{ field.type.name | snake_case }}(value)
-                );
-              {%- endif -%}
+          let {{ field.label | snake_case }} =
+          {%- if field.is_optional -%}
+            {%- if field.type.kind == "UniqueTerminal" -%}
+              source.{{ field.label }}.is_some();
             {%- else -%}
-              {# Non-optional unique terminals should be elided at this point #}
-              self.build_{{ field.type.name | snake_case }}(&source.{{ field.label | snake_case }});
+              source.{{ field.label }}.as_ref().map(
+                |value| self.build_{{ field.type.name | snake_case }}(value)
+              );
             {%- endif -%}
+          {%- else -%}
+            {# Non-optional unique terminals should be elided at this point #}
+            self.build_{{ field.type.name | snake_case }}(&source.{{ field.label | snake_case }});
           {%- endif -%}
         {%- endfor %}
 
         Rc::new(output::{{ parent_type }}Struct {
           {%- for field in sequence.fields -%}
-            {%- if not field.is_removed -%}
-              {{ field.label | snake_case }},
-            {%- endif -%}
+            {{ field.label | snake_case }},
           {%- endfor %}
         })
       }

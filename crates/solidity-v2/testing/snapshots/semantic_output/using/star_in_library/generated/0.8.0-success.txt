@@ -1,0 +1,55 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["Lib" @ input.sol:1:9] (library)
+- Def: #2 ["test" @ input.sol:3:14] (function, type: function (uint256) returns void)
+- Def: #3 ["x" @ input.sol:3:24] (parameter, type: uint256)
+- Def: #4 ["Math" @ input.sol:7:9] (library)
+- Def: #5 ["add" @ input.sol:8:14] (function, type: function (uint256, uint256) returns void)
+- Def: #6 ["x" @ input.sol:8:23] (parameter, type: uint256)
+- Def: #7 ["y" @ input.sol:8:31] (parameter, type: uint256)
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["Math" @ input.sol:2:11] -> #4
+- Ref: ["x" @ input.sol:4:9] -> #3
+- Ref: ["add" @ input.sol:4:11] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ library Lib {
+   │         ─┬─  
+   │          ╰─── name: 1
+ 2 │     using Math for *;
+   │           ──┬─  
+   │             ╰─── ref: 4
+ 3 │     function test(uint x) internal {
+   │              ──┬─      ┬  
+   │                ╰────────── name: 2
+   │                        │  
+   │                        ╰── name: 3
+ 4 │         x.add(1);
+   │         ┬ ─┬─  
+   │         ╰────── ref: 3
+   │            │   
+   │            ╰─── ref: 5
+   │ 
+ 7 │ library Math {
+   │         ──┬─  
+   │           ╰─── name: 4
+ 8 │     function add(uint x, uint y) internal {}
+   │              ─┬─      ┬       ┬  
+   │               ╰────────────────── name: 5
+   │                       │       │  
+   │                       ╰────────── name: 6
+   │                               │  
+   │                               ╰── name: 7
+───╯

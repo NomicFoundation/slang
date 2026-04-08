@@ -1,0 +1,42 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:2:14] (modifier)
+- Def: #3 ["x" @ input.sol:2:24] (parameter, type: uint256)
+- Def: #4 ["y" @ input.sol:4:17] (yul variable)
+
+------------------------------------------------------------------------
+
+References (2):
+- Ref: ["x" @ input.sol:4:22] -> #3
+- Ref: ["_" @ input.sol:6:9] -> built-in
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     modifier test(uint x) {
+   │              ──┬─      ┬  
+   │                ╰────────── name: 2
+   │                        │  
+   │                        ╰── name: 3
+   │ 
+ 4 │             let y := x
+   │                 ┬    ┬  
+   │                 ╰─────── name: 4
+   │                      │  
+   │                      ╰── ref: 3
+   │ 
+ 6 │         _;
+   │         ┬  
+   │         ╰── built-in
+───╯

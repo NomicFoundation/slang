@@ -127,6 +127,11 @@ fn generate_solidity_v2_tests() -> Result<()> {
         &tests_crate.join("src/cst/cst_output/generated"),
     )?;
 
+    lang_def.generate_semantic_output_tests(
+        &v2_snapshots.join("semantic_output"),
+        &tests_crate.join("src/semantic/semantic_output/generated"),
+    )?;
+
     Ok(())
 }
 

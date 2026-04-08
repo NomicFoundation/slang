@@ -1,0 +1,77 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (8):
+- Def: #1 ["Lib" @ input.sol:1:9] (library)
+- Def: #2 ["Value" @ input.sol:2:12] (struct)
+- Def: #3 ["x" @ input.sol:3:13] (struct member, type: int256)
+- Def: #4 ["getValue" @ input.sol:5:14] (function, type: function () returns Value memory)
+- Def: #5 ["use" @ input.sol:6:14] (function, type: function (Value memory) returns void)
+- Def: #6 ["x" @ input.sol:6:31] (parameter, type: Value memory)
+- Def: #7 ["Test" @ input.sol:8:10] (contract)
+- Def: #8 ["test" @ input.sol:10:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (8):
+- Ref: ["Value" @ input.sol:5:43] -> #2
+- Ref: ["Value" @ input.sol:6:18] -> #2
+- Ref: ["Lib" @ input.sol:9:11] -> #1
+- Ref: ["Lib" @ input.sol:9:19] -> #1
+- Ref: ["Value" @ input.sol:9:23] -> #2
+- Ref: ["Lib" @ input.sol:11:9] -> #1
+- Ref: ["getValue" @ input.sol:11:13] -> #4
+- Ref: ["use" @ input.sol:11:24] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 1
+  2 │     struct Value {
+    │            ──┬──  
+    │              ╰──── name: 2
+  3 │         int x;
+    │             ┬  
+    │             ╰── name: 3
+    │ 
+  5 │     function getValue() external returns (Value memory) {}
+    │              ────┬───                     ──┬──  
+    │                  ╰─────────────────────────────── name: 4
+    │                                             │    
+    │                                             ╰──── ref: 2
+  6 │     function use(Value memory x) external {}
+    │              ─┬─ ──┬──        ┬  
+    │               ╰────────────────── name: 5
+    │                    │          │  
+    │                    ╰───────────── ref: 2
+    │                               │  
+    │                               ╰── name: 6
+    │ 
+  8 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 7
+  9 │     using Lib for Lib.Value;
+    │           ─┬─     ─┬─ ──┬──  
+    │            ╰───────────────── ref: 1
+    │                    │    │    
+    │                    ╰───────── ref: 1
+    │                         │    
+    │                         ╰──── ref: 2
+ 10 │     function test() internal {
+    │              ──┬─  
+    │                ╰─── name: 8
+ 11 │         Lib.getValue().use();
+    │         ─┬─ ────┬───   ─┬─  
+    │          ╰────────────────── ref: 1
+    │                 │       │   
+    │                 ╰─────────── ref: 4
+    │                         │   
+    │                         ╰─── ref: 5
+────╯

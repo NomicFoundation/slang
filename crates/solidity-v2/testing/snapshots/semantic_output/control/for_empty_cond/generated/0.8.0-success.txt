@@ -1,0 +1,48 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns void)
+- Def: #3 ["x" @ input.sol:3:13] (variable, type: int256)
+- Def: #4 ["i" @ input.sol:4:18] (variable, type: int256)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["i" @ input.sol:4:26] -> #4
+- Ref: ["x" @ input.sol:5:13] -> #3
+- Ref: ["x" @ input.sol:5:17] -> #3
+- Ref: ["i" @ input.sol:6:17] -> #4
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 2
+ 3 │         int x = 1;
+   │             ┬  
+   │             ╰── name: 3
+ 4 │         for (int i = 0;; i++) {
+   │                  ┬       ┬  
+   │                  ╰────────── name: 4
+   │                          │  
+   │                          ╰── ref: 4
+ 5 │             x = x * 2;
+   │             ┬   ┬  
+   │             ╰────── ref: 3
+   │                 │  
+   │                 ╰── ref: 3
+ 6 │             if (i > 10) break;
+   │                 ┬  
+   │                 ╰── ref: 4
+───╯

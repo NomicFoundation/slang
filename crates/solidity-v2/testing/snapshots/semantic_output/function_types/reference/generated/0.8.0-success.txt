@@ -1,0 +1,62 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns void)
+- Def: #3 ["v1" @ input.sol:3:20] (variable, type: function () returns void)
+- Def: #4 ["v2" @ input.sol:4:20] (variable, type: function () returns void)
+- Def: #5 ["v3" @ input.sol:5:20] (variable, type: function () returns void)
+- Def: #6 ["Foo" @ input.sol:9:9] (library)
+- Def: #7 ["bar" @ input.sol:10:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (5):
+- Ref: ["Test" @ input.sol:3:25] -> #1
+- Ref: ["test" @ input.sol:3:30] -> #2
+- Ref: ["test" @ input.sol:4:25] -> #2
+- Ref: ["Foo" @ input.sol:5:25] -> #6
+- Ref: ["bar" @ input.sol:5:29] -> #7
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 2
+  3 │         function() v1 = Test.test;
+    │                    ─┬   ──┬─ ──┬─  
+    │                     ╰────────────── name: 3
+    │                           │    │   
+    │                           ╰──────── ref: 1
+    │                                │   
+    │                                ╰─── ref: 2
+  4 │         function() v2 = test;
+    │                    ─┬   ──┬─  
+    │                     ╰───────── name: 4
+    │                           │   
+    │                           ╰─── ref: 2
+  5 │         function() v3 = Foo.bar;
+    │                    ─┬   ─┬─ ─┬─  
+    │                     ╰──────────── name: 5
+    │                          │   │   
+    │                          ╰─────── ref: 6
+    │                              │   
+    │                              ╰─── ref: 7
+    │ 
+  9 │ library Foo {
+    │         ─┬─  
+    │          ╰─── name: 6
+ 10 │     function bar() internal {}
+    │              ─┬─  
+    │               ╰─── name: 7
+────╯

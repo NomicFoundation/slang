@@ -1,0 +1,66 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (8):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["InvalidState" @ input.sol:2:11] (error)
+- Def: #3 ["testRevert" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #4 ["testOtherRevert" @ input.sol:8:14] (function, type: function () returns void)
+- Def: #5 ["code" @ input.sol:9:13] (variable, type: int256)
+- Def: #6 ["Utils" @ input.sol:14:9] (library)
+- Def: #7 ["GenericError" @ input.sol:15:11] (error)
+- Def: #8 ["code" @ input.sol:15:28] (parameter, type: int256)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["InvalidState" @ input.sol:5:16] -> #2
+- Ref: ["Utils" @ input.sol:10:16] -> #6
+- Ref: ["GenericError" @ input.sol:10:22] -> #7
+- Ref: ["code" @ input.sol:10:35] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     error InvalidState();
+    │           ──────┬─────  
+    │                 ╰─────── name: 2
+    │ 
+  4 │     function testRevert() public {
+    │              ─────┬────  
+    │                   ╰────── name: 3
+  5 │         revert InvalidState();
+    │                ──────┬─────  
+    │                      ╰─────── ref: 2
+    │ 
+  8 │     function testOtherRevert() public {
+    │              ───────┬───────  
+    │                     ╰───────── name: 4
+  9 │         int code = 10;
+    │             ──┬─  
+    │               ╰─── name: 5
+ 10 │         revert Utils.GenericError(code);
+    │                ──┬── ──────┬───── ──┬─  
+    │                  ╰────────────────────── ref: 6
+    │                            │        │   
+    │                            ╰──────────── ref: 7
+    │                                     │   
+    │                                     ╰─── ref: 5
+    │ 
+ 14 │ library Utils {
+    │         ──┬──  
+    │           ╰──── name: 6
+ 15 │     error GenericError(int code);
+    │           ──────┬─────     ──┬─  
+    │                 ╰──────────────── name: 7
+    │                              │   
+    │                              ╰─── name: 8
+────╯

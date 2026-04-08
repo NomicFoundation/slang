@@ -51,13 +51,20 @@ fn flatten_contract_specifiers(mutator: &mut IrModelMutator) {
     mutator.remove_type("ContractSpecifier");
     mutator.collapse_sequence("InheritanceSpecifier");
     mutator.collapse_sequence("StorageLayoutSpecifier");
-    mutator.add_sequence_field(
+    mutator.insert_sequence_field_before(
         "ContractDefinition",
         "inheritance_types",
         "InheritanceTypes",
         false,
+        "members",
     );
-    mutator.add_sequence_field("ContractDefinition", "storage_layout", "Expression", true);
+    mutator.insert_sequence_field_before(
+        "ContractDefinition",
+        "storage_layout",
+        "Expression",
+        true,
+        "members",
+    );
 }
 
 fn simplify_identifier_path_element(mutator: &mut IrModelMutator) {
@@ -73,7 +80,13 @@ fn unify_function_types(mutator: &mut IrModelMutator) {
     );
 
     // Add the kind to the FunctionDefinition type, which will now hold all kinds
-    mutator.add_sequence_field("FunctionDefinition", "kind", "FunctionKind", false);
+    mutator.insert_sequence_field_before(
+        "FunctionDefinition",
+        "kind",
+        "FunctionKind",
+        false,
+        "parameters",
+    );
 
     // Then remove other specific function types and related attributes
     mutator.remove_type("ConstructorDefinition");
@@ -94,7 +107,13 @@ fn unify_function_types(mutator: &mut IrModelMutator) {
 
     // This also requires modifying the name and body fields
     mutator.remove_sequence_field("FunctionDefinition", "name");
-    mutator.add_sequence_field("FunctionDefinition", "name", "Identifier", true);
+    mutator.insert_sequence_field_before(
+        "FunctionDefinition",
+        "name",
+        "Identifier",
+        true,
+        "parameters",
+    );
     mutator.remove_sequence_field("FunctionDefinition", "body");
     mutator.add_sequence_field("FunctionDefinition", "body", "Block", true);
 
@@ -116,39 +135,44 @@ fn flatten_function_attributes(mutator: &mut IrModelMutator) {
         &["Pure", "View", "NonPayable", "Payable"],
     );
 
-    mutator.add_sequence_field(
+    mutator.insert_sequence_field_before(
         "FunctionDefinition",
         "visibility",
         "FunctionVisibility",
         false,
+        "returns",
     );
-    mutator.add_sequence_field(
+    mutator.insert_sequence_field_before(
         "FunctionDefinition",
         "mutability",
         "FunctionMutability",
         false,
+        "returns",
     );
     // We use an optional unique terminal to effectively have a boolean
-    mutator.add_sequence_field(
+    mutator.insert_sequence_field_before(
         "FunctionDefinition",
         "virtual_keyword",
         "VirtualKeyword",
         true,
+        "returns",
     );
 
     // Flatten list of override specifiers and modifier invocations
-    mutator.add_sequence_field(
+    mutator.insert_sequence_field_before(
         "FunctionDefinition",
         "override_specifier",
         "OverridePaths",
         true,
+        "returns",
     );
     mutator.add_collection_type("ModifierInvocations", "ModifierInvocation");
-    mutator.add_sequence_field(
+    mutator.insert_sequence_field_before(
         "FunctionDefinition",
         "modifier_invocations",
         "ModifierInvocations",
         false,
+        "returns",
     );
 
     // And remove the list of attributes
@@ -156,8 +180,20 @@ fn flatten_function_attributes(mutator: &mut IrModelMutator) {
     mutator.remove_type("FunctionAttribute");
 
     // For `FunctionType` we need visibility and mutability
-    mutator.add_sequence_field("FunctionType", "visibility", "FunctionVisibility", false);
-    mutator.add_sequence_field("FunctionType", "mutability", "FunctionMutability", false);
+    mutator.insert_sequence_field_before(
+        "FunctionType",
+        "visibility",
+        "FunctionVisibility",
+        false,
+        "returns",
+    );
+    mutator.insert_sequence_field_before(
+        "FunctionType",
+        "mutability",
+        "FunctionMutability",
+        false,
+        "returns",
+    );
     mutator.remove_type("FunctionTypeAttributes");
     mutator.remove_type("FunctionTypeAttribute");
 }

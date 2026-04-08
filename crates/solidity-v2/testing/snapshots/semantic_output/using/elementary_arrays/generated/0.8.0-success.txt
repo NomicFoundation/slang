@@ -1,0 +1,49 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["first" @ input.sol:1:10] (function, type: function (uint256[] memory) returns uint256)
+- Def: #2 ["values" @ input.sol:1:30] (parameter, type: uint256[] memory)
+- Def: #3 ["test" @ input.sol:7:10] (function, type: function (uint256[] memory) returns uint256)
+- Def: #4 ["values" @ input.sol:7:29] (parameter, type: uint256[] memory)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["values" @ input.sol:2:12] -> #2
+- Ref: ["first" @ input.sol:5:8] -> #1
+- Ref: ["values" @ input.sol:8:12] -> #4
+- Ref: ["first" @ input.sol:8:19] -> #1
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ function first(uint[] memory values) returns (uint) {
+   │          ──┬──               ───┬──  
+   │            ╰───────────────────────── name: 1
+   │                                 │    
+   │                                 ╰──── name: 2
+ 2 │     return values[0];
+   │            ───┬──  
+   │               ╰──── ref: 2
+   │ 
+ 5 │ using {first} for uint[];
+   │        ──┬──  
+   │          ╰──── ref: 1
+   │ 
+ 7 │ function test(uint[] memory values) returns (uint) {
+   │          ──┬─               ───┬──  
+   │            ╰──────────────────────── name: 3
+   │                                │    
+   │                                ╰──── name: 4
+ 8 │     return values.first();
+   │            ───┬── ──┬──  
+   │               ╰────────── ref: 4
+   │                     │    
+   │                     ╰──── ref: 1
+───╯

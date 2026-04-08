@@ -4154,9 +4154,13 @@ name = "solidity_v2_cargo_tests"
 version = "1.3.4"
 dependencies = [
  "anyhow",
+ "ariadne",
+ "indoc",
  "infra_utils",
+ "regex",
  "slang_solidity_v2_common",
  "slang_solidity_v2_parser",
+ "slang_solidity_v2_semantic",
  "solidity_v2_language",
  "solidity_v2_testing_utils",
 ]

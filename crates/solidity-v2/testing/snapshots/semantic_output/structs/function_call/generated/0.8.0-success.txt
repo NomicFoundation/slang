@@ -1,0 +1,52 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["Value" @ input.sol:2:12] (struct)
+- Def: #3 ["x" @ input.sol:3:13] (struct member, type: int256)
+- Def: #4 ["test" @ input.sol:5:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (5):
+- Ref: ["Value" @ input.sol:6:9] -> #2
+- Ref: ["x" @ input.sol:6:19] -> #3
+- Ref: ["Value" @ input.sol:7:9] -> #2
+- Ref: ["x" @ input.sol:7:16] -> #3
+- Ref: ["x" @ input.sol:7:24] -> #3
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     struct Value {
+   │            ──┬──  
+   │              ╰──── name: 2
+ 3 │         int x;
+   │             ┬  
+   │             ╰── name: 3
+   │ 
+ 5 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 4
+ 6 │         Value(10).x;
+   │         ──┬──     ┬  
+   │           ╰────────── ref: 2
+   │                   │  
+   │                   ╰── ref: 3
+ 7 │         Value({x: 10}).x;
+   │         ──┬──  ┬       ┬  
+   │           ╰─────────────── ref: 2
+   │                │       │  
+   │                ╰────────── ref: 3
+   │                        │  
+   │                        ╰── ref: 3
+───╯

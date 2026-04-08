@@ -1,0 +1,96 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (8):
+- Def: #1 ["Lib" @ input.sol:1:9] (library)
+- Def: #2 ["nopCalldata" @ input.sol:2:14] (function, type: function (bytes calldata) returns void)
+- Def: #3 ["nopMemory" @ input.sol:3:14] (function, type: function (bytes memory) returns void)
+- Def: #4 ["Test" @ input.sol:6:10] (contract)
+- Def: #5 ["s" @ input.sol:8:11] (state var, type: bytes storage)
+- Def: #6 ["test" @ input.sol:9:14] (function, type: function (bytes calldata) returns void)
+- Def: #7 ["c" @ input.sol:9:34] (parameter, type: bytes calldata)
+- Def: #8 ["m" @ input.sol:10:22] (variable, type: bytes memory)
+
+------------------------------------------------------------------------
+
+References (13):
+- Ref: ["Lib" @ input.sol:7:11] -> #1
+- Ref: ["m" @ input.sol:11:9] -> #8
+- Ref: ["nopCalldata" @ input.sol:11:11] -> #2
+- Ref: ["m" @ input.sol:12:9] -> #8
+- Ref: ["nopMemory" @ input.sol:12:11] -> #3
+- Ref: ["c" @ input.sol:13:9] -> #7
+- Ref: ["nopCalldata" @ input.sol:13:11] -> #2
+- Ref: ["c" @ input.sol:14:9] -> #7
+- Ref: ["nopMemory" @ input.sol:14:11] -> #3
+- Ref: ["s" @ input.sol:15:9] -> #5
+- Ref: ["nopCalldata" @ input.sol:15:11] -> #2
+- Ref: ["s" @ input.sol:16:9] -> #5
+- Ref: ["nopMemory" @ input.sol:16:11] -> #3
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 1
+  2 │     function nopCalldata(bytes calldata) external {}
+    │              ─────┬─────  
+    │                   ╰─────── name: 2
+  3 │     function nopMemory(bytes memory) external {}
+    │              ────┬────  
+    │                  ╰────── name: 3
+    │ 
+  6 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 4
+  7 │     using Lib for bytes;
+    │           ─┬─  
+    │            ╰─── ref: 1
+  8 │     bytes s;
+    │           ┬  
+    │           ╰── name: 5
+  9 │     function test(bytes calldata c) public {
+    │              ──┬─                ┬  
+    │                ╰──────────────────── name: 6
+    │                                  │  
+    │                                  ╰── name: 7
+ 10 │         bytes memory m;
+    │                      ┬  
+    │                      ╰── name: 8
+ 11 │         m.nopCalldata();
+    │         ┬ ─────┬─────  
+    │         ╰────────────── ref: 8
+    │                │       
+    │                ╰─────── ref: 2
+ 12 │         m.nopMemory();
+    │         ┬ ────┬────  
+    │         ╰──────────── ref: 8
+    │               │      
+    │               ╰────── ref: 3
+ 13 │         c.nopCalldata();
+    │         ┬ ─────┬─────  
+    │         ╰────────────── ref: 7
+    │                │       
+    │                ╰─────── ref: 2
+ 14 │         c.nopMemory();
+    │         ┬ ────┬────  
+    │         ╰──────────── ref: 7
+    │               │      
+    │               ╰────── ref: 3
+ 15 │         s.nopCalldata();
+    │         ┬ ─────┬─────  
+    │         ╰────────────── ref: 5
+    │                │       
+    │                ╰─────── ref: 2
+ 16 │         s.nopMemory();
+    │         ┬ ────┬────  
+    │         ╰──────────── ref: 5
+    │               │      
+    │               ╰────── ref: 3
+────╯
