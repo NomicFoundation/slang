@@ -1,6 +1,6 @@
 use slang_solidity::cst::{NodeKind, TerminalKindExtensions};
 
-use super::bindings_build::BuiltBindingGraph;
+use crate::tests::slang::bindings_build::BuiltBindingGraph;
 
 pub fn setup(project: &str) -> BuiltBindingGraph {
     let unit = super::parser::run(crate::tests::setup::setup(project));
