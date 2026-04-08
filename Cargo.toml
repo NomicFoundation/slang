@@ -167,7 +167,7 @@ reqwest = { version = "0.12.21", features = ["blocking"] }
 rustdoc-json = { version = "0.9.5" }
 semver = { version = "1.0.26", features = ["serde"] }
 serde = { version = "1.0.219", features = ["derive", "rc"] }
-serde_json = { version = "1.0.140", features = ["preserve_order"] }
+serde_json = { version = "1.0.143", features = ["preserve_order"] }
 sha3 = { version = "0.10.8" }
 similar-asserts = { version = "1.7.0" }
 smallvec = { version = "1.15.0", features = ["union"] }
