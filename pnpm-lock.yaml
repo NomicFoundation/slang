@@ -7,8 +7,8 @@ settings:
 catalogs:
   default:
     '@bytecodealliance/preview2-shim':
-      specifier: ^0.17.2
-      version: 0.17.4
+      specifier: ^0.17.8
+      version: 0.17.8
     '@changesets/changelog-github':
       specifier: ^0.5.1
       version: 0.5.1
@@ -147,7 +147,7 @@ importers:
     dependencies:
       '@bytecodealliance/preview2-shim':
         specifier: 'catalog:'
-        version: 0.17.4
+        version: 0.17.8
 
   crates/solidity/outputs/npm/tests:
     devDependencies:
@@ -369,6 +369,9 @@ packages:
 
   '@bytecodealliance/preview2-shim@0.17.4':
     resolution: {integrity: sha512-vRfxQ6ob5wCgXlpVNoeIUHrqJ2+JTcnQASNMpoi3OVPRYA2oUfhMJdWFP0u5JVL9FlC4YKe+QKqerr345B3T4A==}
+
+  '@bytecodealliance/preview2-shim@0.17.8':
+    resolution: {integrity: sha512-wS5kg8u0KCML1UeHQPJ1IuOI24x/XLentCzsqPER1+gDNC5Cz2hG4G2blLOZap+3CEGhIhnJ9mmZYj6a2W0Lww==}
 
   '@bytecodealliance/weval@0.3.4':
     resolution: {integrity: sha512-+GCKtZXhPj7qyDl5pR0F3PTEk8tWINV8dv1tUbKMjMXvqjHIkvzalkWo5ZL2kCKwh8Bwn8rWpSmyvRC/Nlu9nQ==}
@@ -3714,6 +3717,8 @@ snapshots:
       terser: 5.44.0
 
   '@bytecodealliance/preview2-shim@0.17.4': {}
+
+  '@bytecodealliance/preview2-shim@0.17.8': {}
 
   '@bytecodealliance/weval@0.3.4':
     dependencies:

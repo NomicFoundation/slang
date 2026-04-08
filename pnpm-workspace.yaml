@@ -9,7 +9,7 @@ packages:
   - "documentation/public/user-guide"
 
 catalog:
-  "@bytecodealliance/preview2-shim": "^0.17.2"
+  "@bytecodealliance/preview2-shim": "^0.17.8"
   "@changesets/changelog-github": "^0.5.1"
   "@changesets/cli": "^2.29.8"
   "@ignored/slang-jco": "^1.9.1-slang.1"
