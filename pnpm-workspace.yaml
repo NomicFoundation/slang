@@ -13,7 +13,7 @@ catalog:
   "@changesets/changelog-github": "^0.5.1"
   "@changesets/cli": "^2.29.8"
   "@ignored/slang-jco": "^1.9.1-slang.1"
-  "@openzeppelin/contracts": "^5.2.0"
+  "@openzeppelin/contracts": "^5.6.1"
   "@solidity-parser/parser": "^0.20.1"
   "@types/command-line-args": "^5.2.3"
   "@types/command-line-usage": "^5.0.4"
