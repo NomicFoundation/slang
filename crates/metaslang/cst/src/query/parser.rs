@@ -484,7 +484,9 @@ fn text_token(i: &str) -> IResult<&str, String, QueryParserError<&str>> {
     .parse(i)
 }
 
-fn token<'input>(c: char) -> impl Parser<&'input str, char, QueryParserError<&'input str>> {
+fn token<'input>(
+    c: char,
+) -> impl Parser<&'input str, Output = char, Error = QueryParserError<&'input str>> {
     terminated(char(c), multispace0)
 }
 
@@ -501,7 +503,7 @@ fn recognize_as_failure<I: Clone, O1, O2, F>(
     mut parser: F,
 ) -> impl FnMut(I) -> IResult<I, O2, QueryParserError<I>>
 where
-    F: nom::Parser<I, O1, QueryParserError<I>>,
+    F: Parser<I, Output = O1, Error = QueryParserError<I>>,
 {
     use nom::Err::Failure;
     move |input: I| {
