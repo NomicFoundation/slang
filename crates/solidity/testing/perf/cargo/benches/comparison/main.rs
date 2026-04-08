@@ -8,7 +8,7 @@ use iai_callgrind::{
 };
 use paste::paste;
 use solidity_testing_perf_cargo::dataset::SolidityProject;
-use solidity_testing_perf_cargo::{tests, tests_v2};
+use solidity_testing_perf_cargo::tests;
 
 mod __dependencies_used_in_lib__ {
     use anyhow as _;
@@ -34,7 +34,7 @@ macro_rules! slang_test {
             #[library_benchmark(setup = tests::setup::setup)]
             #[bench::test(stringify!($prj))]
             pub fn [<slang_ $prj>](project: &SolidityProject) {
-                black_box(tests::parser::run(project));
+                black_box(tests::slang::parser::run(project));
             }
         }
     };
@@ -46,7 +46,7 @@ macro_rules! solar_test {
             #[library_benchmark(setup = tests::setup::setup)]
             #[bench::test(stringify!($prj))]
             pub fn [<solar_ $prj>](project: &SolidityProject) {
-                black_box(tests::solar_parser::run(project));
+                black_box(tests::solar::parser::run(project));
             }
         }
     };
@@ -58,7 +58,7 @@ macro_rules! tree_sitter_test {
             #[library_benchmark(setup = tests::setup::setup)]
             #[bench::test(stringify!($prj))]
             pub fn [<tree_sitter_ $prj>](project: &SolidityProject) {
-                black_box(tests::tree_sitter_parser::run(project));
+                black_box(tests::tree_sitter::parser::run(project));
             }
         }
     };
@@ -70,7 +70,7 @@ macro_rules! slang_v2_test {
             #[library_benchmark(setup = tests::setup::setup)]
             #[bench::test(stringify!($prj))]
             pub fn [<slang_v2_ $prj>](project: &SolidityProject) {
-                black_box(tests_v2::parser::run(project));
+                black_box(tests::slang_v2::parser::run(project));
             }
         }
     };

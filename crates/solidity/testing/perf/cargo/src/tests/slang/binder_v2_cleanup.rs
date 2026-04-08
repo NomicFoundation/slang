@@ -5,7 +5,7 @@ use slang_solidity::compilation::CompilationUnit;
 use super::binder_v2_run::BuiltSemanticAnalysis;
 
 pub fn setup(project: &str) -> BuiltSemanticAnalysis {
-    let unit: Rc<CompilationUnit> = super::setup::setup(project)
+    let unit: Rc<CompilationUnit> = crate::tests::setup::setup(project)
         .build_compilation_unit()
         .unwrap()
         .into();

@@ -10,7 +10,7 @@ pub struct BuiltBindingGraph {
 }
 
 pub fn setup(project: &str) -> Rc<CompilationUnit> {
-    super::parser::run(super::setup::setup(project))
+    super::parser::run(crate::tests::setup::setup(project))
 }
 
 pub fn run(unit: Rc<CompilationUnit>) -> BuiltBindingGraph {

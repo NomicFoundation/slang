@@ -4,7 +4,7 @@ use slang_solidity::compilation::CompilationUnit;
 use slang_solidity::cst::NonterminalKind;
 
 pub fn setup(project: &str) -> Rc<CompilationUnit> {
-    super::parser::run(super::setup::setup(project))
+    super::parser::run(crate::tests::setup::setup(project))
 }
 
 pub fn run(unit: Rc<CompilationUnit>) -> Rc<CompilationUnit> {

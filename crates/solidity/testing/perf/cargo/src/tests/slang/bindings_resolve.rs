@@ -1,9 +1,9 @@
 use slang_solidity::cst::{NodeKind, TerminalKindExtensions};
 
-use crate::tests::bindings_build::BuiltBindingGraph;
+use super::bindings_build::BuiltBindingGraph;
 
 pub fn setup(project: &str) -> BuiltBindingGraph {
-    let unit = super::parser::run(super::setup::setup(project));
+    let unit = super::parser::run(crate::tests::setup::setup(project));
     super::bindings_build::run(unit)
 }
 

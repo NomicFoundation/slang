@@ -2,7 +2,6 @@
 
 pub mod dataset;
 pub mod tests;
-pub mod tests_v2;
 
 mod __dependencies_used_in_benches__ {
     use iai_callgrind as _;
@@ -25,8 +24,8 @@ mod unit_tests {
             ($test_phase:ident) => {
                 #[test]
                 fn $test_phase() {
-                    let payload = crate::tests::$test_phase::setup(super::PROJECT_TO_TEST);
-                    crate::tests::$test_phase::test(payload);
+                    let payload = crate::tests::slang::$test_phase::setup(super::PROJECT_TO_TEST);
+                    crate::tests::slang::$test_phase::test(payload);
                 }
             };
         }
@@ -35,8 +34,8 @@ mod unit_tests {
             ($test_phase:ident, $value:expr) => {
                 #[test]
                 fn $test_phase() {
-                    let payload = crate::tests::$test_phase::setup(super::PROJECT_TO_TEST);
-                    let value = crate::tests::$test_phase::test(payload);
+                    let payload = crate::tests::slang::$test_phase::setup(super::PROJECT_TO_TEST);
+                    let value = crate::tests::slang::$test_phase::test(payload);
                     assert_eq!(value, $value);
                 }
             };
@@ -58,12 +57,13 @@ mod unit_tests {
             // __SLANG_V2_INFRA_BENCHMARKS_LIST__ (keep in sync)
 
             let payload = crate::tests::setup::setup(super::PROJECT_TO_TEST);
-            let source_units = crate::tests_v2::parser::test(payload);
-            let contract_count = crate::tests_v2::parser::count_contracts(&source_units);
+            let source_units = crate::tests::slang_v2::parser::test(payload);
+            let contract_count = crate::tests::slang_v2::parser::count_contracts(&source_units);
             assert_eq!(contract_count, super::CONTRACT_COUNT);
 
-            let ir_source_units = crate::tests_v2::ir_builder::test(payload, source_units);
-            let ir_contract_count = crate::tests_v2::ir_builder::count_contracts(&ir_source_units);
+            let ir_source_units = crate::tests::slang_v2::ir_builder::test(payload, source_units);
+            let ir_contract_count =
+                crate::tests::slang_v2::ir_builder::count_contracts(&ir_source_units);
             assert_eq!(ir_contract_count, super::CONTRACT_COUNT);
         }
     }
@@ -72,7 +72,7 @@ mod unit_tests {
         #[test]
         fn parser() {
             let payload = crate::tests::setup::setup(super::PROJECT_TO_TEST);
-            let contract_count = crate::tests::solar_parser::test(payload);
+            let contract_count = crate::tests::solar::parser::test(payload);
             assert_eq!(contract_count, super::CONTRACT_COUNT);
         }
     }
@@ -81,7 +81,7 @@ mod unit_tests {
         #[test]
         fn parser() {
             let payload = crate::tests::setup::setup(super::PROJECT_TO_TEST);
-            let contract_count = crate::tests::tree_sitter_parser::test(payload);
+            let contract_count = crate::tests::tree_sitter::parser::test(payload);
             assert_eq!(contract_count, super::CONTRACT_COUNT);
         }
     }
