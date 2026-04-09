@@ -34,12 +34,12 @@ Tree:
                                   - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "x()()" (137..142)
                                       - (operand꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "x()" (137..140)
                                           - (operand꞉ Expression) ► (identifier꞉ Identifier): "x" # (137..138)
-                                          - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "()" (138..140)
-                                              - (open_paren꞉ OpenParen): "(" # (138..139)
+                                          - ? (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration) # "()" (138..140)
+                                            : - (open_paren꞉ OpenParen): "(" # (138..139)
                                               - (arguments꞉ PositionalArguments): []
                                               - (close_paren꞉ CloseParen): ")" # (139..140)
-                                      - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "()" (140..142)
-                                          - (open_paren꞉ OpenParen): "(" # (140..141)
+                                      - ? (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration) # "()" (140..142)
+                                        : - (open_paren꞉ OpenParen): "(" # (140..141)
                                           - (arguments꞉ PositionalArguments): []
                                           - (close_paren꞉ CloseParen): ")" # (141..142)
                                   - (semicolon꞉ Semicolon): ";" # (150..151)

@@ -35,8 +35,8 @@ Tree:
                               - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "someFunc({})\n\n// <<<\n;" (183..205)
                                   - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "someFunc({})" (183..195)
                                       - (operand꞉ Expression) ► (identifier꞉ Identifier): "someFunc" # (183..191)
-                                      - (arguments꞉ ArgumentsDeclaration) ► (named_arguments_declaration꞉ NamedArgumentsDeclaration): # "({})" (191..195)
-                                          - (open_paren꞉ OpenParen): "(" # (191..192)
+                                      - ? (arguments꞉ ArgumentsDeclaration) ► (named_arguments_declaration꞉ NamedArgumentsDeclaration) # "({})" (191..195)
+                                        : - (open_paren꞉ OpenParen): "(" # (191..192)
                                           - (arguments꞉ NamedArgumentGroup): # "{}" (192..194)
                                               - (open_brace꞉ OpenBrace): "{" # (192..193)
                                               - (arguments꞉ NamedArguments): []

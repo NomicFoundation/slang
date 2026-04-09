@@ -39,8 +39,8 @@ Tree:
                                               - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "a" # (142..143)
                                               - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "b" # (144..145)
                                               - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "c" # (146..147)
-                                      - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "()" (147..149)
-                                          - (open_paren꞉ OpenParen): "(" # (147..148)
+                                      - ? (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration) # "()" (147..149)
+                                        : - (open_paren꞉ OpenParen): "(" # (147..148)
                                           - (arguments꞉ PositionalArguments): []
                                           - (close_paren꞉ CloseParen): ")" # (148..149)
                                   - (semicolon꞉ Semicolon): ";" # (158..159)
