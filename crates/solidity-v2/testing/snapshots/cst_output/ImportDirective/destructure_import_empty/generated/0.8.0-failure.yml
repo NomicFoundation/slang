@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ImportDirective/destructure_import_empty/input.sol │ 0..114
+  2  │ // Empty imports are not valid                                                                                     │ 115..145
+  3  │ import {} from "foo";                                                                                              │ 146..167
+  4  │                                                                                                                    │ 168..168
+  5  │ // <<<                                                                                                             │ 169..175
+
+Errors: # 1 total
+  - >
+    Error: Unexpected CloseBrace. One of AtKeyword_Unreserved, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, LayoutKeyword_Unreserved, RevertKeyword_Unreserved, TransientKeyword_Unreserved was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ImportDirective/destructure_import_empty/input.sol:3:9]
+       │
+     3 │ import {} from "foo";
+       │         ┬  
+       │         ╰── Error occurred here.
+    ───╯

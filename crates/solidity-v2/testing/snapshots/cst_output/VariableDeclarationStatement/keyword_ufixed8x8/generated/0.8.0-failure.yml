@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                             │ 0..12
+  2  │     function f() {                                                                                                       │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/VariableDeclarationStatement/keyword_ufixed8x8/input.sol │ 32..152
+  4  │ // This form is always reserved:                                                                                         │ 153..185
+  5  │ uint ufixed8x8;                                                                                                          │ 186..201
+  6  │                                                                                                                          │ 202..202
+  7  │ // <<<                                                                                                                   │ 203..209
+  8  │     }                                                                                                                    │ 210..215
+  9  │ }                                                                                                                        │ 216..217
+
+Errors: # 1 total
+  - >
+    Error: Unexpected UfixedKeyword_Reserved. One of Ampersand, AmpersandAmpersand, AmpersandEqual, Asterisk, AsteriskAsterisk, AsteriskEqual, AtKeyword_Unreserved, BangEqual, Bar, BarBar, BarEqual, CallDataKeyword_Reserved, Caret, CaretEqual, Equal, EqualEqual, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, GreaterThan, GreaterThanEqual, GreaterThanGreaterThan, GreaterThanGreaterThanEqual, GreaterThanGreaterThanGreaterThan, GreaterThanGreaterThanGreaterThanEqual, Identifier, LayoutKeyword_Unreserved, LessThan, LessThanEqual, LessThanLessThan, LessThanLessThanEqual, MemoryKeyword_Reserved, Minus, MinusEqual, MinusMinus, OpenBrace, OpenBracket, OpenParen, Percent, PercentEqual, Period, Plus, PlusEqual, PlusPlus, QuestionMark, RevertKeyword_Unreserved, Semicolon, Slash, SlashEqual, StorageKeyword_Reserved, TransientKeyword_Unreserved was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/VariableDeclarationStatement/keyword_ufixed8x8/input.sol:5:6]
+       │
+     5 │ uint ufixed8x8;
+       │      ────┬────  
+       │          ╰────── Error occurred here.
+    ───╯

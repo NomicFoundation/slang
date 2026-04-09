@@ -1,5 +1,3 @@
-use std::fmt::Write;
-
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
@@ -8,7 +6,6 @@ use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::validation::validate_syntax_version;
 use slang_solidity_v2_parser::Parser as V2Parser;
 use solidity_v2_language::SolidityDefinition;
-use solidity_v2_testing_utils::reporting::diagnostic;
 
 pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
     let test_dir = CargoWorkspace::locate_source_crate("solidity_v2_testing_snapshots")?
@@ -48,33 +45,15 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             // Note: comparing objects cheaply before expensive serialization.
             Some(ref last) if last == &v2_output => continue,
             _ => {
-                let (status, content) = match &v2_output {
-                    (Ok(parsed_cst), validation_errors) if validation_errors.is_empty() => {
-                        // Print the structured CST:
-                        ("success", format!("{parsed_cst:#?}\n"))
-                    }
-                    (Ok(parsed_cst), validation_errors) => {
-                        // Print validation errors, followed by the structured CST:
-                        let mut s = String::new();
-                        for err in validation_errors {
-                            let rendered = diagnostic::render(err, &source_id, &source, false);
-                            writeln!(s, "{rendered}\n").unwrap();
-                        }
+                let (status, content) = solidity_v2_testing_utils::cst_renderer::render(
+                    &source, &source_id, &v2_output,
+                );
 
-                        writeln!(s, "\n{parsed_cst:#?}").unwrap();
-
-                        ("failure", s)
-                    }
-                    (Err(err), _) => {
-                        // No structured CST to print. Just print the error:
-                        let e = diagnostic::render(err, &source_id, &source, false);
-                        ("failure", format!("{e}\n"))
-                    }
-                };
+                let status = if status { "success" } else { "failure" };
 
                 let snapshot_path = test_dir
                     .join("generated")
-                    .join(format!("{lang_version}-{status}.txt"));
+                    .join(format!("{lang_version}-{status}.yml"));
 
                 fs.write_file_raw(&snapshot_path, content)?;
                 last_output = Some(v2_output);

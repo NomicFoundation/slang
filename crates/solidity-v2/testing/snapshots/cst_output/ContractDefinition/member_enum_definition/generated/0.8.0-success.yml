@@ -1,0 +1,32 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_enum_definition/input.sol │ 0..115
+  2  │ contract Sample {                                                                                                   │ 116..133
+  3  │   enum State {                                                                                                      │ 134..148
+  4  │     A,                                                                                                              │ 149..155
+  5  │     B,                                                                                                              │ 156..162
+  6  │     C                                                                                                               │ 163..168
+  7  │   }                                                                                                                 │ 169..172
+  8  │ }                                                                                                                   │ 173..174
+  9  │ // <<<                                                                                                              │ 175..181
+
+Tree:
+  - (root꞉ SourceUnit): # "contract Sample {\n  enum State {\n    A,\n    B,\n   ..." (116..174)
+      - (members꞉ SourceUnitMembers): # "contract Sample {\n  enum State {\n    A,\n    B,\n   ..." (116..174)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  enum State {\n    A,\n    B,\n   ..." (116..174)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (116..124)
+              - (name꞉ Identifier): "Sample" # (125..131)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (132..133)
+              - (members꞉ ContractMembers): # "enum State {\n    A,\n    B,\n    C\n  }" (136..172)
+                  - (item꞉ ContractMember) ► (enum_definition꞉ EnumDefinition): # "enum State {\n    A,\n    B,\n    C\n  }" (136..172)
+                      - (enum_keyword꞉ EnumKeyword): "enum" # (136..140)
+                      - (name꞉ Identifier): "State" # (141..146)
+                      - (open_brace꞉ OpenBrace): "{" # (147..148)
+                      - (members꞉ EnumMembers): # "A,\n    B,\n    C" (153..168)
+                          - (item꞉ Identifier): "A" # (153..154)
+                          - (item꞉ Identifier): "B" # (160..161)
+                          - (item꞉ Identifier): "C" # (167..168)
+                      - (close_brace꞉ CloseBrace): "}" # (171..172)
+              - (close_brace꞉ CloseBrace): "}" # (173..174)

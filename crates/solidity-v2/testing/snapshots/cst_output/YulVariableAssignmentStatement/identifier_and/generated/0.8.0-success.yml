@@ -1,0 +1,49 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                            │ 0..12
+  2  │     function f() {                                                                                                      │ 13..31
+  3  │         assembly {                                                                                                      │ 32..50
+  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulVariableAssignmentStatement/identifier_and/input.sol │ 51..170
+  5  │ // this identifier is unreserved, and bound as a variable name. See #1203:                                              │ 171..245
+  6  │ and := 0                                                                                                                │ 246..254
+  7  │                                                                                                                         │ 255..255
+  8  │ // <<<                                                                                                                  │ 256..262
+  9  │         }                                                                                                               │ 263..272
+  10 │     }                                                                                                                   │ 273..278
+  11 │ }                                                                                                                       │ 279..280
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n        assembly {..." (0..280)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n        assembly {..." (0..280)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n        assembly {..." (0..280)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n        assembly {\n// >>> Copied fr..." (17..278)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n        assembly {\n// >>> Copied fr..." (17..278)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n        assembly {\n// >>> Copied from crates/sol..." (30..278)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "assembly {\n// >>> Copied from crates/solidity/test..." (40..272)
+                              - (item꞉ Statement) ► (assembly_statement꞉ AssemblyStatement): # "assembly {\n// >>> Copied from crates/solidity/test..." (40..272)
+                                  - (assembly_keyword꞉ AssemblyKeyword): "assembly" # (40..48)
+                                  - (body꞉ YulBlock): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (49..272)
+                                      - (open_brace꞉ YulOpenBrace): "{" # (49..50)
+                                      - (statements꞉ YulStatements): # "and := 0" (246..254)
+                                          - (item꞉ YulStatement) ► (yul_variable_assignment_statement꞉ YulVariableAssignmentStatement): # "and := 0" (246..254)
+                                              - (variables꞉ YulPaths): # "and" (246..249)
+                                                  - (item꞉ YulPath): # "and" (246..249)
+                                                      - (item꞉ YulIdentifier): "and" # (246..249)
+                                              - (assignment꞉ YulColonEqual): ":=" # (250..252)
+                                              - (expression꞉ YulExpression) ► (yul_literal꞉ YulLiteral) ► (yul_decimal_literal꞉ YulDecimalLiteral): "0" # (253..254)
+                                      - (close_brace꞉ YulCloseBrace): "}" # (271..272)
+                          - (close_brace꞉ CloseBrace): "}" # (277..278)
+              - (close_brace꞉ CloseBrace): "}" # (279..280)

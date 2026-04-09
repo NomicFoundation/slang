@@ -1,0 +1,78 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                              │ 0..12
+  2  │     function f() {                                                                                        │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ConditionalExpression/recursive/input.sol │ 32..137
+  4  │ foo ? a == b ? a + b * c : a + b * c + d : !bar ? e + f : g + h                                           │ 138..201
+  5  │ // <<<                                                                                                    │ 202..208
+  6  │ ;                                                                                                         │ 209..210
+  7  │     }                                                                                                     │ 211..216
+  8  │ }                                                                                                         │ 217..218
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..218)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..218)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..218)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..216)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..216)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..216)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "foo ? a == b ? a + b * c : a + b * c + d : !bar ? ..." (138..210)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "foo ? a == b ? a + b * c : a + b * c + d : !bar ? ..." (138..210)
+                                  - (expression꞉ Expression) ► (conditional_expression꞉ ConditionalExpression): # "foo ? a == b ? a + b * c : a + b * c + d : !bar ? ..." (138..201)
+                                      - (operand꞉ Expression) ► (identifier꞉ Identifier): "foo" # (138..141)
+                                      - (question_mark꞉ QuestionMark): "?" # (142..143)
+                                      - (true_expression꞉ Expression) ► (conditional_expression꞉ ConditionalExpression): # "a == b ? a + b * c : a + b * c + d" (144..178)
+                                          - (operand꞉ Expression) ► (equality_expression꞉ EqualityExpression): # "a == b" (144..150)
+                                              - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (144..145)
+                                              - (expression_equality_expression_operator꞉ Expression_EqualityExpression_Operator) ► (equal_equal꞉ EqualEqual): "==" # (146..148)
+                                              - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (149..150)
+                                          - (question_mark꞉ QuestionMark): "?" # (151..152)
+                                          - (true_expression꞉ Expression) ► (additive_expression꞉ AdditiveExpression): # "a + b * c" (153..162)
+                                              - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (153..154)
+                                              - (expression_additive_expression_operator꞉ Expression_AdditiveExpression_Operator) ► (plus꞉ Plus): "+" # (155..156)
+                                              - (right_operand꞉ Expression) ► (multiplicative_expression꞉ MultiplicativeExpression): # "b * c" (157..162)
+                                                  - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (157..158)
+                                                  - (expression_multiplicative_expression_operator꞉ Expression_MultiplicativeExpression_Operator) ► (asterisk꞉ Asterisk): "*" # (159..160)
+                                                  - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "c" # (161..162)
+                                          - (colon꞉ Colon): ":" # (163..164)
+                                          - (false_expression꞉ Expression) ► (additive_expression꞉ AdditiveExpression): # "a + b * c + d" (165..178)
+                                              - (left_operand꞉ Expression) ► (additive_expression꞉ AdditiveExpression): # "a + b * c" (165..174)
+                                                  - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (165..166)
+                                                  - (expression_additive_expression_operator꞉ Expression_AdditiveExpression_Operator) ► (plus꞉ Plus): "+" # (167..168)
+                                                  - (right_operand꞉ Expression) ► (multiplicative_expression꞉ MultiplicativeExpression): # "b * c" (169..174)
+                                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (169..170)
+                                                      - (expression_multiplicative_expression_operator꞉ Expression_MultiplicativeExpression_Operator) ► (asterisk꞉ Asterisk): "*" # (171..172)
+                                                      - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "c" # (173..174)
+                                              - (expression_additive_expression_operator꞉ Expression_AdditiveExpression_Operator) ► (plus꞉ Plus): "+" # (175..176)
+                                              - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "d" # (177..178)
+                                      - (colon꞉ Colon): ":" # (179..180)
+                                      - (false_expression꞉ Expression) ► (conditional_expression꞉ ConditionalExpression): # "!bar ? e + f : g + h" (181..201)
+                                          - (operand꞉ Expression) ► (prefix_expression꞉ PrefixExpression): # "!bar" (181..185)
+                                              - (expression_prefix_expression_operator꞉ Expression_PrefixExpression_Operator) ► (bang꞉ Bang): "!" # (181..182)
+                                              - (operand꞉ Expression) ► (identifier꞉ Identifier): "bar" # (182..185)
+                                          - (question_mark꞉ QuestionMark): "?" # (186..187)
+                                          - (true_expression꞉ Expression) ► (additive_expression꞉ AdditiveExpression): # "e + f" (188..193)
+                                              - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "e" # (188..189)
+                                              - (expression_additive_expression_operator꞉ Expression_AdditiveExpression_Operator) ► (plus꞉ Plus): "+" # (190..191)
+                                              - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "f" # (192..193)
+                                          - (colon꞉ Colon): ":" # (194..195)
+                                          - (false_expression꞉ Expression) ► (additive_expression꞉ AdditiveExpression): # "g + h" (196..201)
+                                              - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "g" # (196..197)
+                                              - (expression_additive_expression_operator꞉ Expression_AdditiveExpression_Operator) ► (plus꞉ Plus): "+" # (198..199)
+                                              - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "h" # (200..201)
+                                  - (semicolon꞉ Semicolon): ";" # (209..210)
+                          - (close_brace꞉ CloseBrace): "}" # (215..216)
+              - (close_brace꞉ CloseBrace): "}" # (217..218)

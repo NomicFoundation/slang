@@ -1,0 +1,73 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                             │ 0..12
+  2  │     function f() {                                                                                                       │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/TryStatement/method_call_with_options_and_body/input.sol │ 32..152
+  4  │ try foo() { x: 1 } {                                                                                                     │ 153..173
+  5  │   bar();                                                                                                                 │ 174..182
+  6  │ } catch {                                                                                                                │ 183..192
+  7  │ }                                                                                                                        │ 193..194
+  8  │                                                                                                                          │ 195..195
+  9  │ // <<<                                                                                                                   │ 196..202
+  10 │     }                                                                                                                    │ 203..208
+  11 │ }                                                                                                                        │ 209..210
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..210)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..210)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..210)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..208)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..208)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..208)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "try foo() { x: 1 } {\n  bar();\n} catch {\n}" (153..194)
+                              - (item꞉ Statement) ► (try_statement꞉ TryStatement): # "try foo() { x: 1 } {\n  bar();\n} catch {\n}" (153..194)
+                                  - (try_keyword꞉ TryKeyword): "try" # (153..156)
+                                  - (expression꞉ Expression) ► (call_options_expression꞉ CallOptionsExpression): # "foo() { x: 1 }" (157..171)
+                                      - (operand꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "foo()" (157..162)
+                                          - (operand꞉ Expression) ► (identifier꞉ Identifier): "foo" # (157..160)
+                                          - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "()" (160..162)
+                                              - (open_paren꞉ OpenParen): "(" # (160..161)
+                                              - (arguments꞉ PositionalArguments): []
+                                              - (close_paren꞉ CloseParen): ")" # (161..162)
+                                      - (open_brace꞉ OpenBrace): "{" # (163..164)
+                                      - (options꞉ CallOptions): # "x: 1" (165..169)
+                                          - (item꞉ NamedArgument): # "x: 1" (165..169)
+                                              - (name꞉ Identifier): "x" # (165..166)
+                                              - (colon꞉ Colon): ":" # (166..167)
+                                              - (value꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "1" (168..169)
+                                                  - (literal꞉ DecimalLiteral): "1" # (168..169)
+                                      - (close_brace꞉ CloseBrace): "}" # (170..171)
+                                  - (body꞉ Block): # "{\n  bar();\n}" (172..184)
+                                      - (open_brace꞉ OpenBrace): "{" # (172..173)
+                                      - (statements꞉ Statements): # "bar();" (176..182)
+                                          - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "bar();" (176..182)
+                                              - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "bar()" (176..181)
+                                                  - (operand꞉ Expression) ► (identifier꞉ Identifier): "bar" # (176..179)
+                                                  - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "()" (179..181)
+                                                      - (open_paren꞉ OpenParen): "(" # (179..180)
+                                                      - (arguments꞉ PositionalArguments): []
+                                                      - (close_paren꞉ CloseParen): ")" # (180..181)
+                                              - (semicolon꞉ Semicolon): ";" # (181..182)
+                                      - (close_brace꞉ CloseBrace): "}" # (183..184)
+                                  - (catch_clauses꞉ CatchClauses): # "catch {\n}" (185..194)
+                                      - (item꞉ CatchClause): # "catch {\n}" (185..194)
+                                          - (catch_keyword꞉ CatchKeyword): "catch" # (185..190)
+                                          - (body꞉ Block): # "{\n}" (191..194)
+                                              - (open_brace꞉ OpenBrace): "{" # (191..192)
+                                              - (statements꞉ Statements): []
+                                              - (close_brace꞉ CloseBrace): "}" # (193..194)
+                          - (close_brace꞉ CloseBrace): "}" # (207..208)
+              - (close_brace꞉ CloseBrace): "}" # (209..210)

@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/trailing_trivia_multi_line_spanning_multiple_lines/input.sol │ 0..135
+  2  │ contract A {} /* some                                                                                                                   │ 136..157
+  3  │ comment*/                                                                                                                               │ 158..167
+  4  │ contract B {}                                                                                                                           │ 168..181
+  5  │                                                                                                                                         │ 182..182
+  6  │ // <<<                                                                                                                                  │ 183..189
+
+Tree:
+  - (root꞉ SourceUnit): # "contract A {} /* some\ncomment*/\ncontract B {}" (136..181)
+      - (members꞉ SourceUnitMembers): # "contract A {} /* some\ncomment*/\ncontract B {}" (136..181)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract A {}" (136..149)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (136..144)
+              - (name꞉ Identifier): "A" # (145..146)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (147..148)
+              - (members꞉ ContractMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (148..149)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract B {}" (168..181)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (168..176)
+              - (name꞉ Identifier): "B" # (177..178)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (179..180)
+              - (members꞉ ContractMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (180..181)

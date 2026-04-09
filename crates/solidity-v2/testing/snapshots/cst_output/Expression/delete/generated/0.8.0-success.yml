@@ -1,0 +1,44 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                │ 0..12
+  2  │     function f() {                                                                          │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/delete/input.sol │ 32..123
+  4  │ delete obj[slot]                                                                            │ 124..140
+  5  │                                                                                             │ 141..141
+  6  │ // <<<                                                                                      │ 142..148
+  7  │ ;                                                                                           │ 149..150
+  8  │     }                                                                                       │ 151..156
+  9  │ }                                                                                           │ 157..158
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..158)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..158)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..158)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..156)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..156)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..156)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "delete obj[slot]\n\n// <<<\n;" (124..150)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "delete obj[slot]\n\n// <<<\n;" (124..150)
+                                  - (expression꞉ Expression) ► (prefix_expression꞉ PrefixExpression): # "delete obj[slot]" (124..140)
+                                      - (expression_prefix_expression_operator꞉ Expression_PrefixExpression_Operator) ► (delete_keyword꞉ DeleteKeyword): "delete" # (124..130)
+                                      - (operand꞉ Expression) ► (index_access_expression꞉ IndexAccessExpression): # "obj[slot]" (131..140)
+                                          - (operand꞉ Expression) ► (identifier꞉ Identifier): "obj" # (131..134)
+                                          - (open_bracket꞉ OpenBracket): "[" # (134..135)
+                                          - (start꞉ Expression) ► (identifier꞉ Identifier): "slot" # (135..139)
+                                          - (close_bracket꞉ CloseBracket): "]" # (139..140)
+                                  - (semicolon꞉ Semicolon): ";" # (149..150)
+                          - (close_brace꞉ CloseBrace): "}" # (155..156)
+              - (close_brace꞉ CloseBrace): "}" # (157..158)

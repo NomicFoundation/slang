@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/PragmaDirective/experimental_abiencoderv2/input.sol │ 0..115
+  2  │ pragma experimental SMTChecker;                                                                                     │ 116..147
+  3  │                                                                                                                     │ 148..148
+  4  │ // <<<                                                                                                              │ 149..155
+
+Tree:
+  - (root꞉ SourceUnit): # "pragma experimental SMTChecker;" (116..147)
+      - (members꞉ SourceUnitMembers): # "pragma experimental SMTChecker;" (116..147)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma experimental SMTChecker;" (116..147)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (116..122)
+              - (pragma꞉ Pragma) ► (experimental_pragma꞉ ExperimentalPragma): # "experimental SMTChecker" (123..146)
+                  - (experimental_keyword꞉ ExperimentalKeyword): "experimental" # (123..135)
+                  - (feature꞉ ExperimentalFeature) ► (smt_checker_keyword꞉ SMTCheckerKeyword): "SMTChecker" # (136..146)
+              - (semicolon꞉ PragmaSemicolon): ";" # (146..147)

@@ -1,0 +1,45 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                              │ 0..12
+  2  │     function f()                                                                          │ 13..29
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Block/unchecked/input.sol │ 30..119
+  4  │ { unchecked { x = 1; } }                                                                  │ 120..144
+  5  │ // <<<                                                                                    │ 145..151
+  6  │ }                                                                                         │ 152..153
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f()\n// >>> Copied from c..." (0..153)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f()\n// >>> Copied from c..." (0..153)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f()\n// >>> Copied from c..." (0..153)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f()\n// >>> Copied from crates/solidity/te..." (17..144)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f()\n// >>> Copied from crates/solidity/te..." (17..144)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{ unchecked { x = 1; } }" (120..144)
+                          - (open_brace꞉ OpenBrace): "{" # (120..121)
+                          - (statements꞉ Statements): # "unchecked { x = 1; }" (122..142)
+                              - (item꞉ Statement) ► (unchecked_block꞉ UncheckedBlock): # "unchecked { x = 1; }" (122..142)
+                                  - (unchecked_keyword꞉ UncheckedKeyword): "unchecked" # (122..131)
+                                  - (block꞉ Block): # "{ x = 1; }" (132..142)
+                                      - (open_brace꞉ OpenBrace): "{" # (132..133)
+                                      - (statements꞉ Statements): # "x = 1;" (134..140)
+                                          - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "x = 1;" (134..140)
+                                              - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "x = 1" (134..139)
+                                                  - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "x" # (134..135)
+                                                  - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (equal꞉ Equal): "=" # (136..137)
+                                                  - (right_operand꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "1" (138..139)
+                                                      - (literal꞉ DecimalLiteral): "1" # (138..139)
+                                              - (semicolon꞉ Semicolon): ";" # (139..140)
+                                      - (close_brace꞉ CloseBrace): "}" # (141..142)
+                          - (close_brace꞉ CloseBrace): "}" # (143..144)
+              - (close_brace꞉ CloseBrace): "}" # (152..153)

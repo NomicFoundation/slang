@@ -1,0 +1,36 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ using {                                                                                                             │ 0..7
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/UsingDeconstructionSymbol/identifier_path/input.sol │ 8..123
+  3  │ foo.bar                                                                                                             │ 124..131
+  4  │ // <<<                                                                                                              │ 132..138
+  5  │ } for uint;                                                                                                         │ 139..150
+
+Errors: # 1 total
+  - >
+    Error: This syntax was introduced in version '0.8.13'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDeconstructionSymbol/identifier_path/input.sol:1:1]
+       │
+     1 │ ╭─▶ using {
+       ┆ ┆   
+     5 │ ├─▶ } for uint;
+       │ │                 
+       │ ╰───────────────── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit): # "using {\n// >>> Copied from crates/solidity/testing..." (0..150)
+      - (members꞉ SourceUnitMembers): # "using {\n// >>> Copied from crates/solidity/testing..." (0..150)
+          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective): # "using {\n// >>> Copied from crates/solidity/testing..." (0..150)
+              - (using_keyword꞉ UsingKeyword): "using" # (0..5)
+              - (clause꞉ UsingClause) ► (using_deconstruction꞉ UsingDeconstruction): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (6..140)
+                  - (open_brace꞉ OpenBrace): "{" # (6..7)
+                  - (symbols꞉ UsingDeconstructionSymbols): # "foo.bar" (124..131)
+                      - (item꞉ UsingDeconstructionSymbol): # "foo.bar" (124..131)
+                          - (name꞉ IdentifierPath): # "foo.bar" (124..131)
+                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "foo" # (124..127)
+                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "bar" # (128..131)
+                  - (close_brace꞉ CloseBrace): "}" # (139..140)
+              - (for_keyword꞉ ForKeyword): "for" # (141..144)
+              - (target꞉ UsingTarget) ► (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (145..149)
+              - (semicolon꞉ Semicolon): ";" # (149..150)

@@ -1,0 +1,37 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/inheritance_specifier/input.sol │ 0..114
+  2  │ contract Sample is Foo, Bar(1, 2), Baz {}                                                                          │ 115..156
+  3  │ // <<<                                                                                                             │ 157..163
+
+Tree:
+  - (root꞉ SourceUnit): # "contract Sample is Foo, Bar(1, 2), Baz {}" (115..156)
+      - (members꞉ SourceUnitMembers): # "contract Sample is Foo, Bar(1, 2), Baz {}" (115..156)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample is Foo, Bar(1, 2), Baz {}" (115..156)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (115..123)
+              - (name꞉ Identifier): "Sample" # (124..130)
+              - (specifiers꞉ ContractSpecifiers): # "is Foo, Bar(1, 2), Baz" (131..153)
+                  - (item꞉ ContractSpecifier) ► (inheritance_specifier꞉ InheritanceSpecifier): # "is Foo, Bar(1, 2), Baz" (131..153)
+                      - (is_keyword꞉ IsKeyword): "is" # (131..133)
+                      - (types꞉ InheritanceTypes): # "Foo, Bar(1, 2), Baz" (134..153)
+                          - (item꞉ InheritanceType): # "Foo" (134..137)
+                              - (type_name꞉ IdentifierPath): # "Foo" (134..137)
+                                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "Foo" # (134..137)
+                          - (item꞉ InheritanceType): # "Bar(1, 2)" (139..148)
+                              - (type_name꞉ IdentifierPath): # "Bar" (139..142)
+                                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "Bar" # (139..142)
+                              - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "(1, 2)" (142..148)
+                                  - (open_paren꞉ OpenParen): "(" # (142..143)
+                                  - (arguments꞉ PositionalArguments): # "1, 2" (143..147)
+                                      - (item꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "1" (143..144)
+                                          - (literal꞉ DecimalLiteral): "1" # (143..144)
+                                      - (item꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "2" (146..147)
+                                          - (literal꞉ DecimalLiteral): "2" # (146..147)
+                                  - (close_paren꞉ CloseParen): ")" # (147..148)
+                          - (item꞉ InheritanceType): # "Baz" (150..153)
+                              - (type_name꞉ IdentifierPath): # "Baz" (150..153)
+                                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "Baz" # (150..153)
+              - (open_brace꞉ OpenBrace): "{" # (154..155)
+              - (members꞉ ContractMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (155..156)

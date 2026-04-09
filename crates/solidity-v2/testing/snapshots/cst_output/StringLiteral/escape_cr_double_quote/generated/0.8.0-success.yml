@@ -1,0 +1,39 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                   │ 0..12
+  2  │     function f() {                                                                                             │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/StringLiteral/escape_cr_double_quote/input.sol │ 32..142
+  4  │ "foo\                                                                                                          │ 143..148
+  5  │ bar"                                                                                                           │ 149..153
+  6  │ // <<<                                                                                                         │ 154..160
+  7  │ ;                                                                                                              │ 161..162
+  8  │     }                                                                                                          │ 163..168
+  9  │ }                                                                                                              │ 169..170
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..171)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..171)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..171)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..169)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..169)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..169)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # '"foo\\rbar"\r\n// <<<\n;' (143..163)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # '"foo\\rbar"\r\n// <<<\n;' (143..163)
+                                  - (expression꞉ Expression) ► (string_expression꞉ StringExpression) ► (string_literals꞉ StringLiterals): # '"foo\\rbar"' (143..153)
+                                      - (item꞉ StringLiteral): '"foo\\rbar"' # (143..153)
+                                  - (semicolon꞉ Semicolon): ";" # (162..163)
+                          - (close_brace꞉ CloseBrace): "}" # (168..169)
+              - (close_brace꞉ CloseBrace): "}" # (170..171)

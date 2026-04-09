@@ -1,0 +1,34 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                      │ 0..12
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/MappingType/named_value/input.sol │ 13..110
+  3  │ mapping(string => bytes32 Bar)                                                                    │ 111..141
+  4  │ // <<<                                                                                            │ 142..148
+  5  │ x;                                                                                                │ 149..151
+  6  │ }                                                                                                 │ 152..153
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..153)
+      - (members꞉ SourceUnitMembers): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..153)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..153)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "mapping(string => bytes32 Bar)\n// <<<\nx;" (111..151)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "mapping(string => bytes32 Bar)\n// <<<\nx;" (111..151)
+                      - (type_name꞉ TypeName) ► (mapping_type꞉ MappingType): # "mapping(string => bytes32 Bar)" (111..141)
+                          - (mapping_keyword꞉ MappingKeyword): "mapping" # (111..118)
+                          - (open_paren꞉ OpenParen): "(" # (118..119)
+                          - (key_type꞉ MappingKey): # "string" (119..125)
+                              - (key_type꞉ MappingKeyType) ► (elementary_type꞉ ElementaryType) ► (string_keyword꞉ StringKeyword): "string" # (119..125)
+                          - (equal_greater_than꞉ EqualGreaterThan): "=>" # (126..128)
+                          - (value_type꞉ MappingValue): # "bytes32 Bar" (129..140)
+                              - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (bytes_keyword꞉ BytesKeyword): "bytes32" # (129..136)
+                              - (name꞉ Identifier): "Bar" # (137..140)
+                          - (close_paren꞉ CloseParen): ")" # (140..141)
+                      - (attributes꞉ StateVariableAttributes): []
+                      - (name꞉ Identifier): "x" # (149..150)
+                      - (semicolon꞉ Semicolon): ";" # (150..151)
+              - (close_brace꞉ CloseBrace): "}" # (152..153)

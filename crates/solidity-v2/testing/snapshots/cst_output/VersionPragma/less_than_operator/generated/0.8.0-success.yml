@@ -1,0 +1,25 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ pragma                                                                                                     │ 0..6
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/VersionPragma/less_than_operator/input.sol │ 7..113
+  3  │ solidity <1.0.0                                                                                            │ 114..129
+  4  │ // <<<                                                                                                     │ 130..136
+  5  │ ;                                                                                                          │ 137..138
+
+Tree:
+  - (root꞉ SourceUnit): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..138)
+      - (members꞉ SourceUnitMembers): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..138)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..138)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # "solidity <1.0.0" (114..129)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (114..122)
+                  - (sets꞉ VersionExpressionSets): # "<1.0.0" (123..129)
+                      - (item꞉ VersionExpressionSet): # "<1.0.0" (123..129)
+                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm): # "<1.0.0" (123..129)
+                              - (operator꞉ VersionOperator) ► (pragma_less_than꞉ PragmaLessThan): "<" # (123..124)
+                              - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral): # "1.0.0" (124..129)
+                                  - (item꞉ VersionSpecifier): "1" # (124..125)
+                                  - (item꞉ VersionSpecifier): "0" # (126..127)
+                                  - (item꞉ VersionSpecifier): "0" # (128..129)
+              - (semicolon꞉ PragmaSemicolon): ";" # (137..138)

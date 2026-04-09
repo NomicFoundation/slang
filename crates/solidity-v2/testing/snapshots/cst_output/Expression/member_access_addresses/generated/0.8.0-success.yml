@@ -1,0 +1,63 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                 │ 0..12
+  2  │     function f() {                                                                                           │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/member_access_addresses/input.sol │ 32..140
+  4  │ [                                                                                                            │ 141..142
+  5  │     // This is parsed as an IAP and later resolved to a member access                                        │ 143..212
+  6  │     x[1].address,                                                                                            │ 213..230
+  7  │     x().address                                                                                              │ 231..246
+  8  │ ]                                                                                                            │ 247..248
+  9  │                                                                                                              │ 249..249
+  10 │ // <<<                                                                                                       │ 250..256
+  11 │ ;                                                                                                            │ 257..258
+  12 │     }                                                                                                        │ 259..264
+  13 │ }                                                                                                            │ 265..266
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..266)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..266)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..266)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..264)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..264)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..264)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "[\n    // This is parsed as an IAP and later resolv..." (141..258)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "[\n    // This is parsed as an IAP and later resolv..." (141..258)
+                                  - (expression꞉ Expression) ► (array_expression꞉ ArrayExpression): # "[\n    // This is parsed as an IAP and later resolv..." (141..248)
+                                      - (open_bracket꞉ OpenBracket): "[" # (141..142)
+                                      - (items꞉ ArrayValues): # "x[1].address,\n    x().address" (217..246)
+                                          - (item꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "x[1].address" (217..229)
+                                              - (operand꞉ Expression) ► (index_access_expression꞉ IndexAccessExpression): # "x[1]" (217..221)
+                                                  - (operand꞉ Expression) ► (identifier꞉ Identifier): "x" # (217..218)
+                                                  - (open_bracket꞉ OpenBracket): "[" # (218..219)
+                                                  - (start꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "1" (219..220)
+                                                      - (literal꞉ DecimalLiteral): "1" # (219..220)
+                                                  - (close_bracket꞉ CloseBracket): "]" # (220..221)
+                                              - (period꞉ Period): "." # (221..222)
+                                              - (member꞉ IdentifierPathElement) ► (address_keyword꞉ AddressKeyword): "address" # (222..229)
+                                          - (item꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "x().address" (235..246)
+                                              - (operand꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "x()" (235..238)
+                                                  - (operand꞉ Expression) ► (identifier꞉ Identifier): "x" # (235..236)
+                                                  - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "()" (236..238)
+                                                      - (open_paren꞉ OpenParen): "(" # (236..237)
+                                                      - (arguments꞉ PositionalArguments): []
+                                                      - (close_paren꞉ CloseParen): ")" # (237..238)
+                                              - (period꞉ Period): "." # (238..239)
+                                              - (member꞉ IdentifierPathElement) ► (address_keyword꞉ AddressKeyword): "address" # (239..246)
+                                      - (close_bracket꞉ CloseBracket): "]" # (247..248)
+                                  - (semicolon꞉ Semicolon): ";" # (257..258)
+                          - (close_brace꞉ CloseBrace): "}" # (263..264)
+              - (close_brace꞉ CloseBrace): "}" # (265..266)

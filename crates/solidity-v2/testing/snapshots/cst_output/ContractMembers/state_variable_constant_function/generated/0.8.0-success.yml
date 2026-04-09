@@ -1,0 +1,32 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                               │ 0..12
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractMembers/state_variable_constant_function/input.sol │ 13..135
+  3  │ function() constant foo;                                                                                                   │ 136..160
+  4  │                                                                                                                            │ 161..161
+  5  │ // <<<                                                                                                                     │ 162..168
+  6  │ }                                                                                                                          │ 169..170
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..170)
+      - (members꞉ SourceUnitMembers): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..170)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n// >>> Copied from crates/solidity/te..." (0..170)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function() constant foo;" (136..160)
+                  - (item꞉ ContractMember) ► (state_variable_definition꞉ StateVariableDefinition): # "function() constant foo;" (136..160)
+                      - (type_name꞉ TypeName) ► (function_type꞉ FunctionType): # "function()" (136..146)
+                          - (function_keyword꞉ FunctionKeyword): "function" # (136..144)
+                          - (parameters꞉ ParametersDeclaration): # "()" (144..146)
+                              - (open_paren꞉ OpenParen): "(" # (144..145)
+                              - (parameters꞉ Parameters): []
+                              - (close_paren꞉ CloseParen): ")" # (145..146)
+                          - (attributes꞉ FunctionTypeAttributes): []
+                      - (attributes꞉ StateVariableAttributes): # "constant" (147..155)
+                          - (item꞉ StateVariableAttribute) ► (constant_keyword꞉ ConstantKeyword): "constant" # (147..155)
+                      - (name꞉ Identifier): "foo" # (156..159)
+                      - (semicolon꞉ Semicolon): ";" # (159..160)
+              - (close_brace꞉ CloseBrace): "}" # (169..170)

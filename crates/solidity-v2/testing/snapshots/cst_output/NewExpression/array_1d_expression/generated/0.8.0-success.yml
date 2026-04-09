@@ -1,0 +1,45 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                │ 0..12
+  2  │     function f() {                                                                                          │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/NewExpression/array_1d_expression/input.sol │ 32..139
+  4  │ new Foo[10]                                                                                                 │ 140..151
+  5  │ // <<<                                                                                                      │ 152..158
+  6  │ ;                                                                                                           │ 159..160
+  7  │     }                                                                                                       │ 161..166
+  8  │ }                                                                                                           │ 167..168
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..168)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..168)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..168)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..166)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..166)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..166)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "new Foo[10]\n// <<<\n;" (140..160)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "new Foo[10]\n// <<<\n;" (140..160)
+                                  - (expression꞉ Expression) ► (new_expression꞉ NewExpression): # "new Foo[10]" (140..151)
+                                      - (new_keyword꞉ NewKeyword): "new" # (140..143)
+                                      - (type_name꞉ TypeName) ► (array_type_name꞉ ArrayTypeName): # "Foo[10]" (144..151)
+                                          - (operand꞉ TypeName) ► (identifier_path꞉ IdentifierPath): # "Foo" (144..147)
+                                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "Foo" # (144..147)
+                                          - (open_bracket꞉ OpenBracket): "[" # (147..148)
+                                          - (index꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "10" (148..150)
+                                              - (literal꞉ DecimalLiteral): "10" # (148..150)
+                                          - (close_bracket꞉ CloseBracket): "]" # (150..151)
+                                  - (semicolon꞉ Semicolon): ";" # (159..160)
+                          - (close_brace꞉ CloseBrace): "}" # (165..166)
+              - (close_brace꞉ CloseBrace): "}" # (167..168)

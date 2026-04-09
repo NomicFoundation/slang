@@ -1,0 +1,20 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/StructDefinition/member_function_pointer/input.sol │ 0..114
+  2  │ struct State {                                                                                                     │ 115..129
+  3  │   bool accepts;                                                                                                    │ 130..145
+  4  │   function (byte) internal pure returns (uint) func;                                                               │ 146..198
+  5  │ }                                                                                                                  │ 199..200
+  6  │                                                                                                                    │ 201..201
+  7  │ // <<<                                                                                                             │ 202..208
+
+Errors: # 1 total
+  - >
+    Error: Unexpected ByteKeyword_Reserved. One of AddressKeyword_Reserved, AtKeyword_Unreserved, BoolKeyword_Reserved, BytesKeyword_Reserved, CloseParen, ErrorKeyword_Unreserved, FixedKeyword_Reserved, FromKeyword_Unreserved, FunctionKeyword_Reserved, GlobalKeyword_Unreserved, Identifier, IntKeyword_Reserved, LayoutKeyword_Unreserved, MappingKeyword_Reserved, RevertKeyword_Unreserved, StringKeyword_Reserved, TransientKeyword_Unreserved, UfixedKeyword_Reserved, UintKeyword_Reserved was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/StructDefinition/member_function_pointer/input.sol:4:13]
+       │
+     4 │   function (byte) internal pure returns (uint) func;
+       │             ──┬─  
+       │               ╰─── Error occurred here.
+    ───╯

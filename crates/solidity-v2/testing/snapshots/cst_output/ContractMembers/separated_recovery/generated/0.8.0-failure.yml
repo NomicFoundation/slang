@@ -1,0 +1,30 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                 │ 0..12
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol │ 13..121
+  3  │ function all() override(some.ident unexpected tokens, ISomeInterface, Other) public {                        │ 122..207
+  4  │   msg.sender.call{do: 1, arg: 1 }();                                                                         │ 208..244
+  5  │   msg.sender.call{, empty: 1, parse: 2 }();                                                                  │ 245..288
+  6  │   msg.sender.call{arg: 1, missing_expr: , no_semicolon, , }();                                               │ 289..351
+  7  │   msg.sender.call{arg: 1 unexpected tokens, not: 2, recovered, yet: 3, }();                                  │ 352..427
+  8  │                                                                                                              │ 428..428
+  9  │ }                                                                                                            │ 429..430
+  10 │                                                                                                              │ 431..431
+  11 │ function empty() override(some.ident, /* empty */, other.arg.here, and.here);                                │ 432..509
+  12 │                                                                                                              │ 510..510
+  13 │ function nested_lists() override(some.ident, next.do.that, other.while, next.one, final, ultimate);          │ 511..610
+  14 │ function nested_lists() override(some., next.arg, next.one, ultimate);                                       │ 611..681
+  15 │                                                                                                              │ 682..682
+  16 │ // <<<                                                                                                       │ 683..689
+  17 │ }                                                                                                            │ 690..691
+
+Errors: # 1 total
+  - >
+    Error: Unexpected Identifier. One of CloseParen, Comma was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractMembers/separated_recovery/input.sol:3:36]
+       │
+     3 │ function all() override(some.ident unexpected tokens, ISomeInterface, Other) public {
+       │                                    ─────┬────  
+       │                                         ╰────── Error occurred here.
+    ───╯

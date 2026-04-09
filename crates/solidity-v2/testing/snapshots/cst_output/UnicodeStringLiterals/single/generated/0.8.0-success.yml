@@ -1,0 +1,38 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                           │ 0..12
+  2  │     function f() {                                                                                     │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/UnicodeStringLiterals/single/input.sol │ 32..134
+  4  │ unicode"emoji 😃"                                                                                       │ 135..154
+  5  │ // <<<                                                                                                 │ 155..161
+  6  │ ;                                                                                                      │ 162..163
+  7  │     }                                                                                                  │ 164..169
+  8  │ }                                                                                                      │ 170..171
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..171)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..171)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..171)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..169)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..169)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..169)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # 'unicode"emoji 😃"\n// <<<\n;' (135..163)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # 'unicode"emoji 😃"\n// <<<\n;' (135..163)
+                                  - (expression꞉ Expression) ► (string_expression꞉ StringExpression) ► (unicode_string_literals꞉ UnicodeStringLiterals): # 'unicode"emoji 😃"' (135..154)
+                                      - (item꞉ UnicodeStringLiteral): 'unicode"emoji 😃"' # (135..154)
+                                  - (semicolon꞉ Semicolon): ";" # (162..163)
+                          - (close_brace꞉ CloseBrace): "}" # (168..169)
+              - (close_brace꞉ CloseBrace): "}" # (170..171)

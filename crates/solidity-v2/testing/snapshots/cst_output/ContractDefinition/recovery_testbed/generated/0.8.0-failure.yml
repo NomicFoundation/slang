@@ -1,0 +1,28 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/recovery_testbed/input.sol │ 0..109
+  2  │ contract Contract {                                                                                           │ 110..129
+  3  │ 	function _transfer(address while) private {                                                                  │ 130..174
+  4  │ 		if(while == pair && !_isExcludedFromFee[to]){                                                               │ 175..222
+  5  │ 			uint256 a = 1;                                                                                             │ 223..240
+  6  │ 		}                                                                                                           │ 241..244
+  7  │ 	}                                                                                                            │ 245..247
+  8  │                                                                                                               │ 248..248
+  9  │ 	function abc() {                                                                                             │ 249..266
+  10 │ 		uint256 x = 0;                                                                                              │ 267..283
+  11 │ 		unchecked { invalid sequence }                                                                              │ 284..316
+  12 │ 	}                                                                                                            │ 317..319
+  13 │ }                                                                                                             │ 320..321
+  14 │                                                                                                               │ 322..322
+  15 │ // <<<                                                                                                        │ 323..329
+
+Errors: # 1 total
+  - >
+    Error: Unexpected WhileKeyword_Reserved. One of AtKeyword_Unreserved, CallDataKeyword_Reserved, CloseParen, Comma, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, LayoutKeyword_Unreserved, MemoryKeyword_Reserved, OpenBracket, PayableKeyword_Reserved, RevertKeyword_Unreserved, StorageKeyword_Reserved, TransientKeyword_Unreserved was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/recovery_testbed/input.sol:3:29]
+       │
+     3 │     function _transfer(address while) private {
+       │                                ──┬──  
+       │                                  ╰──── Error occurred here.
+    ───╯

@@ -1,0 +1,56 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/UsingDirective/destructure_multiple/input.sol │ 0..109
+  2  │ using {add as +, sub, mul, div as /} for Int global;                                                          │ 110..162
+  3  │ // <<<                                                                                                        │ 163..169
+
+Errors: # 2 total
+  - >
+    Error: This syntax was introduced in version '0.8.19'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/destructure_multiple/input.sol:2:12]
+       │
+     2 │ using {add as +, sub, mul, div as /} for Int global;
+       │            ──┬─  
+       │              ╰─── Error occurred here.
+    ───╯
+  - >
+    Error: This syntax was introduced in version '0.8.19'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/destructure_multiple/input.sol:2:32]
+       │
+     2 │ using {add as +, sub, mul, div as /} for Int global;
+       │                                ──┬─  
+       │                                  ╰─── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit): # "using {add as +, sub, mul, div as /} for Int globa..." (110..162)
+      - (members꞉ SourceUnitMembers): # "using {add as +, sub, mul, div as /} for Int globa..." (110..162)
+          - (item꞉ SourceUnitMember) ► (using_directive꞉ UsingDirective): # "using {add as +, sub, mul, div as /} for Int globa..." (110..162)
+              - (using_keyword꞉ UsingKeyword): "using" # (110..115)
+              - (clause꞉ UsingClause) ► (using_deconstruction꞉ UsingDeconstruction): # "{add as +, sub, mul, div as /}" (116..146)
+                  - (open_brace꞉ OpenBrace): "{" # (116..117)
+                  - (symbols꞉ UsingDeconstructionSymbols): # "add as +, sub, mul, div as /" (117..145)
+                      - (item꞉ UsingDeconstructionSymbol): # "add as +" (117..125)
+                          - (name꞉ IdentifierPath): # "add" (117..120)
+                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "add" # (117..120)
+                          - (alias꞉ UsingAlias): # "as +" (121..125)
+                              - (as_keyword꞉ AsKeyword): "as" # (121..123)
+                              - (operator꞉ UsingOperator) ► (plus꞉ Plus): "+" # (124..125)
+                      - (item꞉ UsingDeconstructionSymbol): # "sub" (127..130)
+                          - (name꞉ IdentifierPath): # "sub" (127..130)
+                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "sub" # (127..130)
+                      - (item꞉ UsingDeconstructionSymbol): # "mul" (132..135)
+                          - (name꞉ IdentifierPath): # "mul" (132..135)
+                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "mul" # (132..135)
+                      - (item꞉ UsingDeconstructionSymbol): # "div as /" (137..145)
+                          - (name꞉ IdentifierPath): # "div" (137..140)
+                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "div" # (137..140)
+                          - (alias꞉ UsingAlias): # "as /" (141..145)
+                              - (as_keyword꞉ AsKeyword): "as" # (141..143)
+                              - (operator꞉ UsingOperator) ► (slash꞉ Slash): "/" # (144..145)
+                  - (close_brace꞉ CloseBrace): "}" # (145..146)
+              - (for_keyword꞉ ForKeyword): "for" # (147..150)
+              - (target꞉ UsingTarget) ► (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath): # "Int" (151..154)
+                  - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "Int" # (151..154)
+              - (global_keyword꞉ GlobalKeyword): "global" # (155..161)
+              - (semicolon꞉ Semicolon): ";" # (161..162)

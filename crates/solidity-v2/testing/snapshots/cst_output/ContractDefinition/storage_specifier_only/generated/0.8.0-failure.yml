@@ -1,0 +1,46 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/storage_specifier_only/input.sol │ 0..115
+  2  │ contract Foo layout at 0 {                                                                                          │ 116..142
+  3  │     function foo(){}                                                                                                │ 143..163
+  4  │ }                                                                                                                   │ 164..165
+  5  │                                                                                                                     │ 166..166
+  6  │ // <<<                                                                                                              │ 167..173
+
+Errors: # 1 total
+  - >
+    Error: This syntax was introduced in version '0.8.29'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/storage_specifier_only/input.sol:2:14]
+       │
+     2 │ contract Foo layout at 0 {
+       │              ─────┬─────  
+       │                   ╰─────── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit): # "contract Foo layout at 0 {\n    function foo(){}\n}" (116..165)
+      - (members꞉ SourceUnitMembers): # "contract Foo layout at 0 {\n    function foo(){}\n}" (116..165)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Foo layout at 0 {\n    function foo(){}\n}" (116..165)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (116..124)
+              - (name꞉ Identifier): "Foo" # (125..128)
+              - (specifiers꞉ ContractSpecifiers): # "layout at 0" (129..140)
+                  - (item꞉ ContractSpecifier) ► (storage_layout_specifier꞉ StorageLayoutSpecifier): # "layout at 0" (129..140)
+                      - (layout_keyword꞉ LayoutKeyword): "layout" # (129..135)
+                      - (at_keyword꞉ AtKeyword): "at" # (136..138)
+                      - (expression꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "0" (139..140)
+                          - (literal꞉ DecimalLiteral): "0" # (139..140)
+              - (open_brace꞉ OpenBrace): "{" # (141..142)
+              - (members꞉ ContractMembers): # "function foo(){}" (147..163)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function foo(){}" (147..163)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (147..155)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "foo" # (156..159)
+                      - (parameters꞉ ParametersDeclaration): # "()" (159..161)
+                          - (open_paren꞉ OpenParen): "(" # (159..160)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (160..161)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{}" (161..163)
+                          - (open_brace꞉ OpenBrace): "{" # (161..162)
+                          - (statements꞉ Statements): []
+                          - (close_brace꞉ CloseBrace): "}" # (162..163)
+              - (close_brace꞉ CloseBrace): "}" # (164..165)

@@ -1,0 +1,42 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/FunctionDefinition/overridden/input.sol │ 0..103
+  2  │ function some() public virtual override returns (uint256) {                                             │ 104..163
+  3  │ 	return 1;                                                                                              │ 164..174
+  4  │ }                                                                                                       │ 175..176
+  5  │                                                                                                         │ 177..177
+  6  │ // <<<                                                                                                  │ 178..184
+
+Tree:
+  - (root꞉ SourceUnit): # "function some() public virtual override returns (u..." (104..176)
+      - (members꞉ SourceUnitMembers): # "function some() public virtual override returns (u..." (104..176)
+          - (item꞉ SourceUnitMember) ► (function_definition꞉ FunctionDefinition): # "function some() public virtual override returns (u..." (104..176)
+              - (function_keyword꞉ FunctionKeyword): "function" # (104..112)
+              - (name꞉ FunctionName) ► (identifier꞉ Identifier): "some" # (113..117)
+              - (parameters꞉ ParametersDeclaration): # "()" (117..119)
+                  - (open_paren꞉ OpenParen): "(" # (117..118)
+                  - (parameters꞉ Parameters): []
+                  - (close_paren꞉ CloseParen): ")" # (118..119)
+              - (attributes꞉ FunctionAttributes): # "public virtual override" (120..143)
+                  - (item꞉ FunctionAttribute) ► (public_keyword꞉ PublicKeyword): "public" # (120..126)
+                  - (item꞉ FunctionAttribute) ► (virtual_keyword꞉ VirtualKeyword): "virtual" # (127..134)
+                  - (item꞉ FunctionAttribute) ► (override_specifier꞉ OverrideSpecifier): # "override" (135..143)
+                      - (override_keyword꞉ OverrideKeyword): "override" # (135..143)
+              - (returns꞉ ReturnsDeclaration): # "returns (uint256)" (144..161)
+                  - (returns_keyword꞉ ReturnsKeyword): "returns" # (144..151)
+                  - (variables꞉ ParametersDeclaration): # "(uint256)" (152..161)
+                      - (open_paren꞉ OpenParen): "(" # (152..153)
+                      - (parameters꞉ Parameters): # "uint256" (153..160)
+                          - (item꞉ Parameter): # "uint256" (153..160)
+                              - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (153..160)
+                      - (close_paren꞉ CloseParen): ")" # (160..161)
+              - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n\treturn 1;\n}" (162..176)
+                  - (open_brace꞉ OpenBrace): "{" # (162..163)
+                  - (statements꞉ Statements): # "return 1;" (165..174)
+                      - (item꞉ Statement) ► (return_statement꞉ ReturnStatement): # "return 1;" (165..174)
+                          - (return_keyword꞉ ReturnKeyword): "return" # (165..171)
+                          - (expression꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "1" (172..173)
+                              - (literal꞉ DecimalLiteral): "1" # (172..173)
+                          - (semicolon꞉ Semicolon): ";" # (173..174)
+                  - (close_brace꞉ CloseBrace): "}" # (175..176)

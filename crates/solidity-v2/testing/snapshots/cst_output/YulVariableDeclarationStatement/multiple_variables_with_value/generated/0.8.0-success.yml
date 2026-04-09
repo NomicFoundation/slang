@@ -1,0 +1,56 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                                            │ 0..12
+  2  │     function f() {                                                                                                                      │ 13..31
+  3  │         assembly {                                                                                                                      │ 32..50
+  4  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/YulVariableDeclarationStatement/multiple_variables_with_value/input.sol │ 51..186
+  5  │ let x, y, z := foo()                                                                                                                    │ 187..207
+  6  │                                                                                                                                         │ 208..208
+  7  │ // <<<                                                                                                                                  │ 209..215
+  8  │         }                                                                                                                               │ 216..225
+  9  │     }                                                                                                                                   │ 226..231
+  10 │ }                                                                                                                                       │ 232..233
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n        assembly {..." (0..233)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n        assembly {..." (0..233)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n        assembly {..." (0..233)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n        assembly {\n// >>> Copied fr..." (17..231)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n        assembly {\n// >>> Copied fr..." (17..231)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n        assembly {\n// >>> Copied from crates/sol..." (30..231)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "assembly {\n// >>> Copied from crates/solidity/test..." (40..225)
+                              - (item꞉ Statement) ► (assembly_statement꞉ AssemblyStatement): # "assembly {\n// >>> Copied from crates/solidity/test..." (40..225)
+                                  - (assembly_keyword꞉ AssemblyKeyword): "assembly" # (40..48)
+                                  - (body꞉ YulBlock): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (49..225)
+                                      - (open_brace꞉ YulOpenBrace): "{" # (49..50)
+                                      - (statements꞉ YulStatements): # "let x, y, z := foo()" (187..207)
+                                          - (item꞉ YulStatement) ► (yul_variable_declaration_statement꞉ YulVariableDeclarationStatement): # "let x, y, z := foo()" (187..207)
+                                              - (let_keyword꞉ YulLetKeyword): "let" # (187..190)
+                                              - (variables꞉ YulVariableNames): # "x, y, z" (191..198)
+                                                  - (item꞉ YulIdentifier): "x" # (191..192)
+                                                  - (item꞉ YulIdentifier): "y" # (194..195)
+                                                  - (item꞉ YulIdentifier): "z" # (197..198)
+                                              - (value꞉ YulVariableDeclarationValue): # ":= foo()" (199..207)
+                                                  - (assignment꞉ YulColonEqual): ":=" # (199..201)
+                                                  - (expression꞉ YulExpression) ► (yul_function_call_expression꞉ YulFunctionCallExpression): # "foo()" (202..207)
+                                                      - (operand꞉ YulExpression) ► (yul_path꞉ YulPath): # "foo" (202..205)
+                                                          - (item꞉ YulIdentifier): "foo" # (202..205)
+                                                      - (open_paren꞉ YulOpenParen): "(" # (205..206)
+                                                      - (arguments꞉ YulArguments): []
+                                                      - (close_paren꞉ YulCloseParen): ")" # (206..207)
+                                      - (close_brace꞉ YulCloseBrace): "}" # (224..225)
+                          - (close_brace꞉ CloseBrace): "}" # (230..231)
+              - (close_brace꞉ CloseBrace): "}" # (232..233)

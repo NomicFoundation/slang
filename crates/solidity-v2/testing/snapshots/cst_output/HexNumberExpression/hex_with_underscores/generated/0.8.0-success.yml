@@ -1,0 +1,38 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                       │ 0..12
+  2  │     function f() {                                                                                                 │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/HexNumberExpression/hex_with_underscores/input.sol │ 32..146
+  4  │ 0x12_3_45_6                                                                                                        │ 147..158
+  5  │ // <<<                                                                                                             │ 159..165
+  6  │ ;                                                                                                                  │ 166..167
+  7  │     }                                                                                                              │ 168..173
+  8  │ }                                                                                                                  │ 174..175
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..175)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..175)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..175)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..173)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..173)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..173)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "0x12_3_45_6\n// <<<\n;" (147..167)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "0x12_3_45_6\n// <<<\n;" (147..167)
+                                  - (expression꞉ Expression) ► (hex_number_expression꞉ HexNumberExpression): # "0x12_3_45_6" (147..158)
+                                      - (literal꞉ HexLiteral): "0x12_3_45_6" # (147..158)
+                                  - (semicolon꞉ Semicolon): ";" # (166..167)
+                          - (close_brace꞉ CloseBrace): "}" # (172..173)
+              - (close_brace꞉ CloseBrace): "}" # (174..175)

@@ -1,0 +1,103 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/SourceUnit/revert_statement/input.sol │ 0..101
+  2  │ library SafeMath {                                                                                    │ 102..120
+  3  │   function tryAdd() internal pure  {                                                                  │ 121..157
+  4  │                                                                                                       │ 158..158
+  5  │     revert (1, 2);                                                                                    │ 159..177
+  6  │                                                                                                       │ 178..178
+  7  │     revert MyError(1, 2);                                                                             │ 179..204
+  8  │                                                                                                       │ 205..205
+  9  │   // This is a variable declaration with type revert                                                  │ 206..258
+  10 │     revert foo;                                                                                       │ 259..274
+  11 │     revert foo = 34;                                                                                  │ 275..295
+  12 │     revert.hello foo;                                                                                 │ 296..317
+  13 │   }                                                                                                   │ 318..321
+  14 │ }                                                                                                     │ 322..323
+  15 │                                                                                                       │ 324..324
+  16 │ // <<<                                                                                                │ 325..331
+
+Errors: # 1 total
+  - >
+    Error: This syntax was introduced in version '0.8.4'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/revert_statement/input.sol:7:5]
+       │
+     7 │     revert MyError(1, 2);
+       │     ──────────┬──────────  
+       │               ╰──────────── Error occurred here.
+    ───╯
+Tree:
+  - (root꞉ SourceUnit): # "library SafeMath {\n  function tryAdd() internal pu..." (102..323)
+      - (members꞉ SourceUnitMembers): # "library SafeMath {\n  function tryAdd() internal pu..." (102..323)
+          - (item꞉ SourceUnitMember) ► (library_definition꞉ LibraryDefinition): # "library SafeMath {\n  function tryAdd() internal pu..." (102..323)
+              - (library_keyword꞉ LibraryKeyword): "library" # (102..109)
+              - (name꞉ Identifier): "SafeMath" # (110..118)
+              - (open_brace꞉ OpenBrace): "{" # (119..120)
+              - (members꞉ LibraryMembers): # "function tryAdd() internal pure  {\n\n    revert (1,..." (123..321)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function tryAdd() internal pure  {\n\n    revert (1,..." (123..321)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (123..131)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "tryAdd" # (132..138)
+                      - (parameters꞉ ParametersDeclaration): # "()" (138..140)
+                          - (open_paren꞉ OpenParen): "(" # (138..139)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (139..140)
+                      - (attributes꞉ FunctionAttributes): # "internal pure" (141..154)
+                          - (item꞉ FunctionAttribute) ► (internal_keyword꞉ InternalKeyword): "internal" # (141..149)
+                          - (item꞉ FunctionAttribute) ► (pure_keyword꞉ PureKeyword): "pure" # (150..154)
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n\n    revert (1, 2);\n\n    revert MyError(1, 2);\n\n..." (156..321)
+                          - (open_brace꞉ OpenBrace): "{" # (156..157)
+                          - (statements꞉ Statements): # "revert (1, 2);\n\n    revert MyError(1, 2);\n\n  // Th..." (163..317)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "revert (1, 2);" (163..177)
+                                  - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "revert (1, 2)" (163..176)
+                                      - (operand꞉ Expression) ► (identifier꞉ Identifier): "revert" # (163..169)
+                                      - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "(1, 2)" (170..176)
+                                          - (open_paren꞉ OpenParen): "(" # (170..171)
+                                          - (arguments꞉ PositionalArguments): # "1, 2" (171..175)
+                                              - (item꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "1" (171..172)
+                                                  - (literal꞉ DecimalLiteral): "1" # (171..172)
+                                              - (item꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "2" (174..175)
+                                                  - (literal꞉ DecimalLiteral): "2" # (174..175)
+                                          - (close_paren꞉ CloseParen): ")" # (175..176)
+                                  - (semicolon꞉ Semicolon): ";" # (176..177)
+                              - (item꞉ Statement) ► (revert_statement꞉ RevertStatement): # "revert MyError(1, 2);" (183..204)
+                                  - (revert_keyword꞉ RevertKeyword): "revert" # (183..189)
+                                  - (error꞉ IdentifierPath): # "MyError" (190..197)
+                                      - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "MyError" # (190..197)
+                                  - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "(1, 2)" (197..203)
+                                      - (open_paren꞉ OpenParen): "(" # (197..198)
+                                      - (arguments꞉ PositionalArguments): # "1, 2" (198..202)
+                                          - (item꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "1" (198..199)
+                                              - (literal꞉ DecimalLiteral): "1" # (198..199)
+                                          - (item꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "2" (201..202)
+                                              - (literal꞉ DecimalLiteral): "2" # (201..202)
+                                      - (close_paren꞉ CloseParen): ")" # (202..203)
+                                  - (semicolon꞉ Semicolon): ";" # (203..204)
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement): # "revert foo;" (263..274)
+                                  - (target꞉ VariableDeclarationTarget) ► (single_typed_declaration꞉ SingleTypedDeclaration): # "revert foo" (263..273)
+                                      - (declaration꞉ VariableDeclaration): # "revert foo" (263..273)
+                                          - (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath): # "revert" (263..269)
+                                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "revert" # (263..269)
+                                          - (name꞉ Identifier): "foo" # (270..273)
+                                  - (semicolon꞉ Semicolon): ";" # (273..274)
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement): # "revert foo = 34;" (279..295)
+                                  - (target꞉ VariableDeclarationTarget) ► (single_typed_declaration꞉ SingleTypedDeclaration): # "revert foo = 34" (279..294)
+                                      - (declaration꞉ VariableDeclaration): # "revert foo" (279..289)
+                                          - (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath): # "revert" (279..285)
+                                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "revert" # (279..285)
+                                          - (name꞉ Identifier): "foo" # (286..289)
+                                      - (value꞉ VariableDeclarationValue): # "= 34" (290..294)
+                                          - (equal꞉ Equal): "=" # (290..291)
+                                          - (expression꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "34" (292..294)
+                                              - (literal꞉ DecimalLiteral): "34" # (292..294)
+                                  - (semicolon꞉ Semicolon): ";" # (294..295)
+                              - (item꞉ Statement) ► (variable_declaration_statement꞉ VariableDeclarationStatement): # "revert.hello foo;" (300..317)
+                                  - (target꞉ VariableDeclarationTarget) ► (single_typed_declaration꞉ SingleTypedDeclaration): # "revert.hello foo" (300..316)
+                                      - (declaration꞉ VariableDeclaration): # "revert.hello foo" (300..316)
+                                          - (type_name꞉ TypeName) ► (identifier_path꞉ IdentifierPath): # "revert.hello" (300..312)
+                                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "revert" # (300..306)
+                                              - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "hello" # (307..312)
+                                          - (name꞉ Identifier): "foo" # (313..316)
+                                  - (semicolon꞉ Semicolon): ";" # (316..317)
+                          - (close_brace꞉ CloseBrace): "}" # (320..321)
+              - (close_brace꞉ CloseBrace): "}" # (322..323)

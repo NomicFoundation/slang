@@ -1,0 +1,23 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/EnumDefinition/multiple_members/input.sol │ 0..105
+  2  │ enum Foo {                                                                                                │ 106..116
+  3  │     Bar1,                                                                                                 │ 117..126
+  4  │     Bar2,                                                                                                 │ 127..136
+  5  │     Bar3                                                                                                  │ 137..145
+  6  │ }                                                                                                         │ 146..147
+  7  │ // <<<                                                                                                    │ 148..154
+
+Tree:
+  - (root꞉ SourceUnit): # "enum Foo {\n    Bar1,\n    Bar2,\n    Bar3\n}" (106..147)
+      - (members꞉ SourceUnitMembers): # "enum Foo {\n    Bar1,\n    Bar2,\n    Bar3\n}" (106..147)
+          - (item꞉ SourceUnitMember) ► (enum_definition꞉ EnumDefinition): # "enum Foo {\n    Bar1,\n    Bar2,\n    Bar3\n}" (106..147)
+              - (enum_keyword꞉ EnumKeyword): "enum" # (106..110)
+              - (name꞉ Identifier): "Foo" # (111..114)
+              - (open_brace꞉ OpenBrace): "{" # (115..116)
+              - (members꞉ EnumMembers): # "Bar1,\n    Bar2,\n    Bar3" (121..145)
+                  - (item꞉ Identifier): "Bar1" # (121..125)
+                  - (item꞉ Identifier): "Bar2" # (131..135)
+                  - (item꞉ Identifier): "Bar3" # (141..145)
+              - (close_brace꞉ CloseBrace): "}" # (146..147)

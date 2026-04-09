@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ pragma                                                                                                       │ 0..6
+  2  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/VersionPragma/double_quotes_string/input.sol │ 7..115
+  3  │ solidity "1.2.3"                                                                                             │ 116..132
+  4  │                                                                                                              │ 133..133
+  5  │ // <<<                                                                                                       │ 134..140
+  6  │ ;                                                                                                            │ 141..142
+
+Tree:
+  - (root꞉ SourceUnit): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..142)
+      - (members꞉ SourceUnitMembers): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..142)
+          - (item꞉ SourceUnitMember) ► (pragma_directive꞉ PragmaDirective): # "pragma\n// >>> Copied from crates/solidity/testing/..." (0..142)
+              - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+              - (pragma꞉ Pragma) ► (version_pragma꞉ VersionPragma): # 'solidity "1.2.3"' (116..132)
+                  - (solidity_keyword꞉ SolidityKeyword): "solidity" # (116..124)
+                  - (sets꞉ VersionExpressionSets): # '"1.2.3"' (125..132)
+                      - (item꞉ VersionExpressionSet): # '"1.2.3"' (125..132)
+                          - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm): # '"1.2.3"' (125..132)
+                              - (literal꞉ VersionLiteral) ► (pragma_string_literal꞉ PragmaStringLiteral): '"1.2.3"' # (125..132)
+              - (semicolon꞉ PragmaSemicolon): ";" # (141..142)

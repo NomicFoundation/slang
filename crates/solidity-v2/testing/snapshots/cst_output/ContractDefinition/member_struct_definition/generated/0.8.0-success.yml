@@ -1,0 +1,36 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_struct_definition/input.sol │ 0..117
+  2  │ contract Sample {                                                                                                     │ 118..135
+  3  │   struct S {                                                                                                          │ 136..148
+  4  │     uint a;                                                                                                           │ 149..160
+  5  │     uint b;                                                                                                           │ 161..172
+  6  │   }                                                                                                                   │ 173..176
+  7  │ }                                                                                                                     │ 177..178
+  8  │ // <<<                                                                                                                │ 179..185
+
+Tree:
+  - (root꞉ SourceUnit): # "contract Sample {\n  struct S {\n    uint a;\n    uin..." (118..178)
+      - (members꞉ SourceUnitMembers): # "contract Sample {\n  struct S {\n    uint a;\n    uin..." (118..178)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  struct S {\n    uint a;\n    uin..." (118..178)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (118..126)
+              - (name꞉ Identifier): "Sample" # (127..133)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (134..135)
+              - (members꞉ ContractMembers): # "struct S {\n    uint a;\n    uint b;\n  }" (138..176)
+                  - (item꞉ ContractMember) ► (struct_definition꞉ StructDefinition): # "struct S {\n    uint a;\n    uint b;\n  }" (138..176)
+                      - (struct_keyword꞉ StructKeyword): "struct" # (138..144)
+                      - (name꞉ Identifier): "S" # (145..146)
+                      - (open_brace꞉ OpenBrace): "{" # (147..148)
+                      - (members꞉ StructMembers): # "uint a;\n    uint b;" (153..172)
+                          - (item꞉ StructMember): # "uint a;" (153..160)
+                              - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (153..157)
+                              - (name꞉ Identifier): "a" # (158..159)
+                              - (semicolon꞉ Semicolon): ";" # (159..160)
+                          - (item꞉ StructMember): # "uint b;" (165..172)
+                              - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint" # (165..169)
+                              - (name꞉ Identifier): "b" # (170..171)
+                              - (semicolon꞉ Semicolon): ";" # (171..172)
+                      - (close_brace꞉ CloseBrace): "}" # (175..176)
+              - (close_brace꞉ CloseBrace): "}" # (177..178)

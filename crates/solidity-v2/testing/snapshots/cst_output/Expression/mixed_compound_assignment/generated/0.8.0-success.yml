@@ -1,0 +1,44 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                                   │ 0..12
+  2  │     function f() {                                                                                             │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/mixed_compound_assignment/input.sol │ 32..142
+  4  │ a += b -= c                                                                                                    │ 143..154
+  5  │                                                                                                                │ 155..155
+  6  │ // <<<                                                                                                         │ 156..162
+  7  │ ;                                                                                                              │ 163..164
+  8  │     }                                                                                                          │ 165..170
+  9  │ }                                                                                                              │ 171..172
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..172)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..172)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..172)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..170)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..170)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..170)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "a += b -= c\n\n// <<<\n;" (143..164)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "a += b -= c\n\n// <<<\n;" (143..164)
+                                  - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "a += b -= c" (143..154)
+                                      - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "a" # (143..144)
+                                      - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (plus_equal꞉ PlusEqual): "+=" # (145..147)
+                                      - (right_operand꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "b -= c" (148..154)
+                                          - (left_operand꞉ Expression) ► (identifier꞉ Identifier): "b" # (148..149)
+                                          - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (minus_equal꞉ MinusEqual): "-=" # (150..152)
+                                          - (right_operand꞉ Expression) ► (identifier꞉ Identifier): "c" # (153..154)
+                                  - (semicolon꞉ Semicolon): ";" # (163..164)
+                          - (close_brace꞉ CloseBrace): "}" # (169..170)
+              - (close_brace꞉ CloseBrace): "}" # (171..172)

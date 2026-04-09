@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/StructDefinition/no_members/input.sol │ 0..101
+  2  │ struct S { }                                                                                          │ 102..114
+  3  │                                                                                                       │ 115..115
+  4  │ // <<<                                                                                                │ 116..122
+
+Tree:
+  - (root꞉ SourceUnit): # "struct S { }" (102..114)
+      - (members꞉ SourceUnitMembers): # "struct S { }" (102..114)
+          - (item꞉ SourceUnitMember) ► (struct_definition꞉ StructDefinition): # "struct S { }" (102..114)
+              - (struct_keyword꞉ StructKeyword): "struct" # (102..108)
+              - (name꞉ Identifier): "S" # (109..110)
+              - (open_brace꞉ OpenBrace): "{" # (111..112)
+              - (members꞉ StructMembers): []
+              - (close_brace꞉ CloseBrace): "}" # (113..114)

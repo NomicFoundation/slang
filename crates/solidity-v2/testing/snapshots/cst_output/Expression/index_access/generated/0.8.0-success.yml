@@ -1,0 +1,41 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract C {                                                                                      │ 0..12
+  2  │     function f() {                                                                                │ 13..31
+  3  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/Expression/index_access/input.sol │ 32..129
+  4  │ arr[index]                                                                                        │ 130..140
+  5  │ // <<<                                                                                            │ 141..147
+  6  │ ;                                                                                                 │ 148..149
+  7  │     }                                                                                             │ 150..155
+  8  │ }                                                                                                 │ 156..157
+
+Tree:
+  - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..157)
+      - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..157)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract C {\n    function f() {\n// >>> Copied from..." (0..157)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+              - (name꞉ Identifier): "C" # (9..10)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (11..12)
+              - (members꞉ ContractMembers): # "function f() {\n// >>> Copied from crates/solidity/..." (17..155)
+                  - (item꞉ ContractMember) ► (function_definition꞉ FunctionDefinition): # "function f() {\n// >>> Copied from crates/solidity/..." (17..155)
+                      - (function_keyword꞉ FunctionKeyword): "function" # (17..25)
+                      - (name꞉ FunctionName) ► (identifier꞉ Identifier): "f" # (26..27)
+                      - (parameters꞉ ParametersDeclaration): # "()" (27..29)
+                          - (open_paren꞉ OpenParen): "(" # (27..28)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (28..29)
+                      - (attributes꞉ FunctionAttributes): []
+                      - (body꞉ FunctionBody) ► (block꞉ Block): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (30..155)
+                          - (open_brace꞉ OpenBrace): "{" # (30..31)
+                          - (statements꞉ Statements): # "arr[index]\n// <<<\n;" (130..149)
+                              - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "arr[index]\n// <<<\n;" (130..149)
+                                  - (expression꞉ Expression) ► (index_access_expression꞉ IndexAccessExpression): # "arr[index]" (130..140)
+                                      - (operand꞉ Expression) ► (identifier꞉ Identifier): "arr" # (130..133)
+                                      - (open_bracket꞉ OpenBracket): "[" # (133..134)
+                                      - (start꞉ Expression) ► (identifier꞉ Identifier): "index" # (134..139)
+                                      - (close_bracket꞉ CloseBracket): "]" # (139..140)
+                                  - (semicolon꞉ Semicolon): ";" # (148..149)
+                          - (close_brace꞉ CloseBrace): "}" # (154..155)
+              - (close_brace꞉ CloseBrace): "}" # (156..157)

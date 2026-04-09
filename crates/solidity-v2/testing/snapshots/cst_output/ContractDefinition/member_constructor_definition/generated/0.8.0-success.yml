@@ -1,0 +1,32 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // >>> Copied from crates/solidity/testing/snapshots/cst_output/ContractDefinition/member_constructor_definition/input.sol │ 0..122
+  2  │ contract Sample {                                                                                                          │ 123..140
+  3  │   constructor() public {                                                                                                   │ 141..165
+  4  │   }                                                                                                                        │ 166..169
+  5  │ }                                                                                                                          │ 170..171
+  6  │ // <<<                                                                                                                     │ 172..178
+
+Tree:
+  - (root꞉ SourceUnit): # "contract Sample {\n  constructor() public {\n  }\n}" (123..171)
+      - (members꞉ SourceUnitMembers): # "contract Sample {\n  constructor() public {\n  }\n}" (123..171)
+          - (item꞉ SourceUnitMember) ► (contract_definition꞉ ContractDefinition): # "contract Sample {\n  constructor() public {\n  }\n}" (123..171)
+              - (contract_keyword꞉ ContractKeyword): "contract" # (123..131)
+              - (name꞉ Identifier): "Sample" # (132..138)
+              - (specifiers꞉ ContractSpecifiers): []
+              - (open_brace꞉ OpenBrace): "{" # (139..140)
+              - (members꞉ ContractMembers): # "constructor() public {\n  }" (143..169)
+                  - (item꞉ ContractMember) ► (constructor_definition꞉ ConstructorDefinition): # "constructor() public {\n  }" (143..169)
+                      - (constructor_keyword꞉ ConstructorKeyword): "constructor" # (143..154)
+                      - (parameters꞉ ParametersDeclaration): # "()" (154..156)
+                          - (open_paren꞉ OpenParen): "(" # (154..155)
+                          - (parameters꞉ Parameters): []
+                          - (close_paren꞉ CloseParen): ")" # (155..156)
+                      - (attributes꞉ ConstructorAttributes): # "public" (157..163)
+                          - (item꞉ ConstructorAttribute) ► (public_keyword꞉ PublicKeyword): "public" # (157..163)
+                      - (body꞉ Block): # "{\n  }" (164..169)
+                          - (open_brace꞉ OpenBrace): "{" # (164..165)
+                          - (statements꞉ Statements): []
+                          - (close_brace꞉ CloseBrace): "}" # (168..169)
+              - (close_brace꞉ CloseBrace): "}" # (170..171)
