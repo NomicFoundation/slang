@@ -180,7 +180,7 @@ string-interner = { version = "0.17.0", features = [
 ] }
 strum = { version = "0.26.3" }
 strum_macros = { version = "0.26.4" }
-syn = { version = "2.0.104", features = [
+syn = { version = "2.0.117", features = [
     "fold",
     "full",
     "extra-traits",
