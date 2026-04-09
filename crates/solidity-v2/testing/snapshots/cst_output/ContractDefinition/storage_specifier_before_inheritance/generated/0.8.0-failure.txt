@@ -1,0 +1,82 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Error: This syntax was introduced in version '0.8.29'.
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/storage_specifier_before_inheritance/input.sol:2:14]
+   │
+ 2 │ contract Foo layout at 0 is Bar {
+   │              ─────┬─────  
+   │                   ╰─────── Error occurred here.
+───╯
+
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 130..138,
+                    },
+                    name: Identifier {
+                        range: 139..142,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [
+                            StorageLayoutSpecifier(
+                                StorageLayoutSpecifierStruct {
+                                    layout_keyword: LayoutKeyword {
+                                        range: 143..149,
+                                    },
+                                    at_keyword: AtKeyword {
+                                        range: 150..152,
+                                    },
+                                    expression: DecimalNumberExpression(
+                                        DecimalNumberExpressionStruct {
+                                            literal: DecimalLiteral {
+                                                range: 153..154,
+                                            },
+                                            unit: None,
+                                        },
+                                    ),
+                                },
+                            ),
+                            InheritanceSpecifier(
+                                InheritanceSpecifierStruct {
+                                    is_keyword: IsKeyword {
+                                        range: 155..157,
+                                    },
+                                    types: InheritanceTypes {
+                                        elements: [
+                                            InheritanceTypeStruct {
+                                                type_name: IdentifierPath {
+                                                    elements: [
+                                                        Identifier(
+                                                            Identifier {
+                                                                range: 158..161,
+                                                            },
+                                                        ),
+                                                    ],
+                                                },
+                                                arguments: None,
+                                            },
+                                        ],
+                                    },
+                                },
+                            ),
+                        ],
+                    },
+                    open_brace: OpenBrace {
+                        range: 162..163,
+                    },
+                    members: ContractMembers {
+                        elements: [],
+                    },
+                    close_brace: CloseBrace {
+                        range: 164..165,
+                    },
+                },
+            ),
+        ],
+    },
+}

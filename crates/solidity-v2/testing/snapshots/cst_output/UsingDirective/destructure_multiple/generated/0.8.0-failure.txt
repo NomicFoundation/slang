@@ -1,0 +1,132 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Error: This syntax was introduced in version '0.8.13'.
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/destructure_multiple/input.sol:2:1]
+   │
+ 2 │ using {add as +, sub, mul, div as /} for Int global;
+   │ ──────────────────────────┬─────────────────────────  
+   │                           ╰─────────────────────────── Error occurred here.
+───╯
+
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            UsingDirective(
+                UsingDirectiveStruct {
+                    using_keyword: UsingKeyword {
+                        range: 110..115,
+                    },
+                    clause: UsingDeconstruction(
+                        UsingDeconstructionStruct {
+                            open_brace: OpenBrace {
+                                range: 116..117,
+                            },
+                            symbols: UsingDeconstructionSymbols {
+                                elements: [
+                                    UsingDeconstructionSymbolStruct {
+                                        name: IdentifierPath {
+                                            elements: [
+                                                Identifier(
+                                                    Identifier {
+                                                        range: 117..120,
+                                                    },
+                                                ),
+                                            ],
+                                        },
+                                        alias: Some(
+                                            UsingAliasStruct {
+                                                as_keyword: AsKeyword {
+                                                    range: 121..123,
+                                                },
+                                                operator: Plus(
+                                                    Plus {
+                                                        range: 124..125,
+                                                    },
+                                                ),
+                                            },
+                                        ),
+                                    },
+                                    UsingDeconstructionSymbolStruct {
+                                        name: IdentifierPath {
+                                            elements: [
+                                                Identifier(
+                                                    Identifier {
+                                                        range: 127..130,
+                                                    },
+                                                ),
+                                            ],
+                                        },
+                                        alias: None,
+                                    },
+                                    UsingDeconstructionSymbolStruct {
+                                        name: IdentifierPath {
+                                            elements: [
+                                                Identifier(
+                                                    Identifier {
+                                                        range: 132..135,
+                                                    },
+                                                ),
+                                            ],
+                                        },
+                                        alias: None,
+                                    },
+                                    UsingDeconstructionSymbolStruct {
+                                        name: IdentifierPath {
+                                            elements: [
+                                                Identifier(
+                                                    Identifier {
+                                                        range: 137..140,
+                                                    },
+                                                ),
+                                            ],
+                                        },
+                                        alias: Some(
+                                            UsingAliasStruct {
+                                                as_keyword: AsKeyword {
+                                                    range: 141..143,
+                                                },
+                                                operator: Slash(
+                                                    Slash {
+                                                        range: 144..145,
+                                                    },
+                                                ),
+                                            },
+                                        ),
+                                    },
+                                ],
+                            },
+                            close_brace: CloseBrace {
+                                range: 145..146,
+                            },
+                        },
+                    ),
+                    for_keyword: ForKeyword {
+                        range: 147..150,
+                    },
+                    target: TypeName(
+                        IdentifierPath(
+                            IdentifierPath {
+                                elements: [
+                                    Identifier(
+                                        Identifier {
+                                            range: 151..154,
+                                        },
+                                    ),
+                                ],
+                            },
+                        ),
+                    ),
+                    global_keyword: Some(
+                        GlobalKeyword {
+                            range: 155..161,
+                        },
+                    ),
+                    semicolon: Semicolon {
+                        range: 161..162,
+                    },
+                },
+            ),
+        ],
+    },
+}

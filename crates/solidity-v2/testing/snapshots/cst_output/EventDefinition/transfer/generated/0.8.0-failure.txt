@@ -1,0 +1,102 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Error: This syntax was introduced in version '0.8.22'.
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/EventDefinition/transfer/input.sol:2:1]
+   │
+ 2 │ event Transfer(address indexed from, address indexed to, uint256 value);
+   │ ────────────────────────────────────┬───────────────────────────────────  
+   │                                     ╰───────────────────────────────────── Error occurred here.
+───╯
+
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            EventDefinition(
+                EventDefinitionStruct {
+                    event_keyword: EventKeyword {
+                        range: 99..104,
+                    },
+                    name: Identifier {
+                        range: 105..113,
+                    },
+                    parameters: EventParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            range: 113..114,
+                        },
+                        parameters: EventParameters {
+                            elements: [
+                                EventParameterStruct {
+                                    type_name: ElementaryType(
+                                        AddressType(
+                                            AddressTypeStruct {
+                                                address_keyword: AddressKeyword {
+                                                    range: 114..121,
+                                                },
+                                                payable_keyword: None,
+                                            },
+                                        ),
+                                    ),
+                                    indexed_keyword: Some(
+                                        IndexedKeyword {
+                                            range: 122..129,
+                                        },
+                                    ),
+                                    name: Some(
+                                        Identifier {
+                                            range: 130..134,
+                                        },
+                                    ),
+                                },
+                                EventParameterStruct {
+                                    type_name: ElementaryType(
+                                        AddressType(
+                                            AddressTypeStruct {
+                                                address_keyword: AddressKeyword {
+                                                    range: 136..143,
+                                                },
+                                                payable_keyword: None,
+                                            },
+                                        ),
+                                    ),
+                                    indexed_keyword: Some(
+                                        IndexedKeyword {
+                                            range: 144..151,
+                                        },
+                                    ),
+                                    name: Some(
+                                        Identifier {
+                                            range: 152..154,
+                                        },
+                                    ),
+                                },
+                                EventParameterStruct {
+                                    type_name: ElementaryType(
+                                        UintKeyword(
+                                            UintKeyword {
+                                                range: 156..163,
+                                            },
+                                        ),
+                                    ),
+                                    indexed_keyword: None,
+                                    name: Some(
+                                        Identifier {
+                                            range: 164..169,
+                                        },
+                                    ),
+                                },
+                            ],
+                        },
+                        close_paren: CloseParen {
+                            range: 169..170,
+                        },
+                    },
+                    anonymous_keyword: None,
+                    semicolon: Semicolon {
+                        range: 170..171,
+                    },
+                },
+            ),
+        ],
+    },
+}

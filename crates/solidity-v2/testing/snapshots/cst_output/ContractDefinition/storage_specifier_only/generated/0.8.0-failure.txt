@@ -1,0 +1,100 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Error: This syntax was introduced in version '0.8.29'.
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/storage_specifier_only/input.sol:2:14]
+   │
+ 2 │ contract Foo layout at 0 {
+   │              ─────┬─────  
+   │                   ╰─────── Error occurred here.
+───╯
+
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 116..124,
+                    },
+                    name: Identifier {
+                        range: 125..128,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [
+                            StorageLayoutSpecifier(
+                                StorageLayoutSpecifierStruct {
+                                    layout_keyword: LayoutKeyword {
+                                        range: 129..135,
+                                    },
+                                    at_keyword: AtKeyword {
+                                        range: 136..138,
+                                    },
+                                    expression: DecimalNumberExpression(
+                                        DecimalNumberExpressionStruct {
+                                            literal: DecimalLiteral {
+                                                range: 139..140,
+                                            },
+                                            unit: None,
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    open_brace: OpenBrace {
+                        range: 141..142,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            FunctionDefinition(
+                                FunctionDefinitionStruct {
+                                    function_keyword: FunctionKeyword {
+                                        range: 147..155,
+                                    },
+                                    name: Identifier(
+                                        Identifier {
+                                            range: 156..159,
+                                        },
+                                    ),
+                                    parameters: ParametersDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            range: 159..160,
+                                        },
+                                        parameters: Parameters {
+                                            elements: [],
+                                        },
+                                        close_paren: CloseParen {
+                                            range: 160..161,
+                                        },
+                                    },
+                                    attributes: FunctionAttributes {
+                                        elements: [],
+                                    },
+                                    returns: None,
+                                    body: Block(
+                                        BlockStruct {
+                                            open_brace: OpenBrace {
+                                                range: 161..162,
+                                            },
+                                            statements: Statements {
+                                                elements: [],
+                                            },
+                                            close_brace: CloseBrace {
+                                                range: 162..163,
+                                            },
+                                        },
+                                    ),
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 164..165,
+                    },
+                },
+            ),
+        ],
+    },
+}

@@ -1,0 +1,59 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Error: This syntax was introduced in version '0.8.13'.
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/path_named/input.sol:2:1]
+   │
+ 2 │ using foo for bar global;
+   │ ────────────┬────────────  
+   │             ╰────────────── Error occurred here.
+───╯
+
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            UsingDirective(
+                UsingDirectiveStruct {
+                    using_keyword: UsingKeyword {
+                        range: 100..105,
+                    },
+                    clause: IdentifierPath(
+                        IdentifierPath {
+                            elements: [
+                                Identifier(
+                                    Identifier {
+                                        range: 106..109,
+                                    },
+                                ),
+                            ],
+                        },
+                    ),
+                    for_keyword: ForKeyword {
+                        range: 110..113,
+                    },
+                    target: TypeName(
+                        IdentifierPath(
+                            IdentifierPath {
+                                elements: [
+                                    Identifier(
+                                        Identifier {
+                                            range: 114..117,
+                                        },
+                                    ),
+                                ],
+                            },
+                        ),
+                    ),
+                    global_keyword: Some(
+                        GlobalKeyword {
+                            range: 118..124,
+                        },
+                    ),
+                    semicolon: Semicolon {
+                        range: 124..125,
+                    },
+                },
+            ),
+        ],
+    },
+}

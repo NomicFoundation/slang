@@ -1,0 +1,95 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Error: This syntax was introduced in version '0.8.18'.
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/MappingType/named_key/input.sol:3:16]
+   │
+ 3 │ mapping(string Foo => bytes32)
+   │                ─┬─  
+   │                 ╰─── Error occurred here.
+───╯
+
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 0..8,
+                    },
+                    name: Identifier {
+                        range: 9..10,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 11..12,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            StateVariableDefinition(
+                                StateVariableDefinitionStruct {
+                                    type_name: MappingType(
+                                        MappingTypeStruct {
+                                            mapping_keyword: MappingKeyword {
+                                                range: 109..116,
+                                            },
+                                            open_paren: OpenParen {
+                                                range: 116..117,
+                                            },
+                                            key_type: MappingKeyStruct {
+                                                key_type: ElementaryType(
+                                                    StringKeyword(
+                                                        StringKeyword {
+                                                            range: 117..123,
+                                                        },
+                                                    ),
+                                                ),
+                                                name: Some(
+                                                    Identifier {
+                                                        range: 124..127,
+                                                    },
+                                                ),
+                                            },
+                                            equal_greater_than: EqualGreaterThan {
+                                                range: 128..130,
+                                            },
+                                            value_type: MappingValueStruct {
+                                                type_name: ElementaryType(
+                                                    BytesKeyword(
+                                                        BytesKeyword {
+                                                            range: 131..138,
+                                                        },
+                                                    ),
+                                                ),
+                                                name: None,
+                                            },
+                                            close_paren: CloseParen {
+                                                range: 138..139,
+                                            },
+                                        },
+                                    ),
+                                    attributes: StateVariableAttributes {
+                                        elements: [],
+                                    },
+                                    name: Identifier {
+                                        range: 147..148,
+                                    },
+                                    value: None,
+                                    semicolon: Semicolon {
+                                        range: 148..149,
+                                    },
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 150..151,
+                    },
+                },
+            ),
+        ],
+    },
+}
