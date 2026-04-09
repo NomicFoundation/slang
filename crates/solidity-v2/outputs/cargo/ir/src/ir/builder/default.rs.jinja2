@@ -123,7 +123,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
   {% for parent_type, collection in builder.collections %}
     {% if not collection.is_new -%}
       pub(super) fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }} {
-        source.elements.iter().map(|item|
+        source.elements().map(|item|
           self.build_{{ collection.item_type.name | snake_case }}(item)
         ).collect()
       }

@@ -2370,8 +2370,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::ArrayValues,
     ) -> output::ArrayValues {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_expression(item))
             .collect()
     }
@@ -2381,8 +2380,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::CallOptions,
     ) -> output::CallOptions {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_named_argument(item))
             .collect()
     }
@@ -2392,8 +2390,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::CatchClauses,
     ) -> output::CatchClauses {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_catch_clause(item))
             .collect()
     }
@@ -2403,8 +2400,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::ContractMembers,
     ) -> output::ContractMembers {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_contract_member(item))
             .collect()
     }
@@ -2414,8 +2410,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::EnumMembers,
     ) -> output::EnumMembers {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_identifier(item))
             .collect()
     }
@@ -2425,8 +2420,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::HexStringLiterals,
     ) -> output::HexStringLiterals {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_hex_string_literal(item))
             .collect()
     }
@@ -2436,8 +2430,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::IdentifierPath,
     ) -> output::IdentifierPath {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_identifier_path_element(item))
             .collect()
     }
@@ -2447,8 +2440,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::ImportDeconstructionSymbols,
     ) -> output::ImportDeconstructionSymbols {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_import_deconstruction_symbol(item))
             .collect()
     }
@@ -2458,8 +2450,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::InheritanceTypes,
     ) -> output::InheritanceTypes {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_inheritance_type(item))
             .collect()
     }
@@ -2469,8 +2460,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::InterfaceMembers,
     ) -> output::InterfaceMembers {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_contract_member(item))
             .collect()
     }
@@ -2480,8 +2470,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::LibraryMembers,
     ) -> output::LibraryMembers {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_contract_member(item))
             .collect()
     }
@@ -2491,8 +2480,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::MultiTypedDeclarationElements,
     ) -> output::MultiTypedDeclarationElements {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_multi_typed_declaration_element(item))
             .collect()
     }
@@ -2502,8 +2490,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::NamedArguments,
     ) -> output::NamedArguments {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_named_argument(item))
             .collect()
     }
@@ -2513,16 +2500,14 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::OverridePaths,
     ) -> output::OverridePaths {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_identifier_path(item))
             .collect()
     }
 
     pub(super) fn build_parameters(&mut self, source: &input::Parameters) -> output::Parameters {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_parameter(item))
             .collect()
     }
@@ -2532,8 +2517,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::PositionalArguments,
     ) -> output::PositionalArguments {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_expression(item))
             .collect()
     }
@@ -2543,8 +2527,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::SimpleVersionLiteral,
     ) -> output::SimpleVersionLiteral {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_version_specifier(item))
             .collect()
     }
@@ -2554,16 +2537,14 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::SourceUnitMembers,
     ) -> output::SourceUnitMembers {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_source_unit_member(item))
             .collect()
     }
 
     pub(super) fn build_statements(&mut self, source: &input::Statements) -> output::Statements {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_statement(item))
             .collect()
     }
@@ -2573,8 +2554,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::StringLiterals,
     ) -> output::StringLiterals {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_string_literal(item))
             .collect()
     }
@@ -2584,8 +2564,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::StructMembers,
     ) -> output::StructMembers {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_struct_member(item))
             .collect()
     }
@@ -2595,8 +2574,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::TupleValues,
     ) -> output::TupleValues {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_tuple_value(item))
             .collect()
     }
@@ -2606,8 +2584,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::UnicodeStringLiterals,
     ) -> output::UnicodeStringLiterals {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_unicode_string_literal(item))
             .collect()
     }
@@ -2617,8 +2594,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::UsingDeconstructionSymbols,
     ) -> output::UsingDeconstructionSymbols {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_using_deconstruction_symbol(item))
             .collect()
     }
@@ -2628,8 +2604,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::VersionExpressionSet,
     ) -> output::VersionExpressionSet {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_version_expression(item))
             .collect()
     }
@@ -2639,8 +2614,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::VersionExpressionSets,
     ) -> output::VersionExpressionSets {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_version_expression_set(item))
             .collect()
     }
@@ -2650,16 +2624,14 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::YulArguments,
     ) -> output::YulArguments {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_yul_expression(item))
             .collect()
     }
 
     pub(super) fn build_yul_flags(&mut self, source: &input::YulFlags) -> output::YulFlags {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_yul_string_literal(item))
             .collect()
     }
@@ -2669,24 +2641,21 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::YulParameters,
     ) -> output::YulParameters {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_yul_identifier(item))
             .collect()
     }
 
     pub(super) fn build_yul_path(&mut self, source: &input::YulPath) -> output::YulPath {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_yul_identifier(item))
             .collect()
     }
 
     pub(super) fn build_yul_paths(&mut self, source: &input::YulPaths) -> output::YulPaths {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_yul_path(item))
             .collect()
     }
@@ -2696,8 +2665,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::YulStatements,
     ) -> output::YulStatements {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_yul_statement(item))
             .collect()
     }
@@ -2707,8 +2675,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::YulSwitchCases,
     ) -> output::YulSwitchCases {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_yul_switch_case(item))
             .collect()
     }
@@ -2718,8 +2685,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::YulVariableNames,
     ) -> output::YulVariableNames {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_yul_identifier(item))
             .collect()
     }

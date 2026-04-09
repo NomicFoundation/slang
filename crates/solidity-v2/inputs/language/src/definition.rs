@@ -1863,7 +1863,7 @@ StateVariableDefinition: StateVariableDefinition = {
     // Special case for `error` type
     <l:@L> L_ErrorKeyword_Unreserved <r:@R>  <attributes: StateVariableAttributes>  <name: Identifier>  <value: (StateVariableDefinitionValue)?>  <semicolon: Semicolon> => {
         let identifier = new_identifier(l..r, source);
-        let iap = parser_helpers::new_index_access_path_from_identifier_path(new_identifier_path(vec![new_identifier_path_element_identifier(identifier)]));
+        let iap = parser_helpers::new_index_access_path_from_identifier_path(new_identifier_path(SeparatedList::single(new_identifier_path_element_identifier(identifier))));
         let type_name = parser_helpers::new_type_name_index_access_path(iap);
 
         new_state_variable_definition(type_name, attributes, name, value, semicolon)
@@ -1885,12 +1885,13 @@ StateVariableDefinition: StateVariableDefinition = {
 // Match an identifier path that, if it's a single element, is not `error`
 IdentifierPathNoError: IdentifierPath = {
     // We either have any identifier with a tail (ie a period)
-    <head: Identifier>  <mut tail: IdentifierPathTail>  => {
-        tail.insert(0, new_identifier_path_element_identifier(head));
-        new_identifier_path(tail)
+    <head: Identifier>  <tail: IdentifierPathTail>  => {
+        let (first_period, mut rest) = tail;
+        rest.push_front(new_identifier_path_element_identifier(head), first_period);
+        new_identifier_path(rest)
     },
     // or a single identifier that is not `error`
-    <head: SomeIdentifier<"ErrorKeyword_Unreserved">>  => new_identifier_path(vec![new_identifier_path_element_identifier(<>)]),
+    <head: SomeIdentifier<"ErrorKeyword_Unreserved">>  => new_identifier_path(SeparatedList::single(new_identifier_path_element_identifier(<>))),
 };
 
 // These are the attributes that can appear in a state variable but not a function,
@@ -2522,7 +2523,7 @@ VariableDeclarationSpecialRevert: VariableDeclaration = {
     // The special `revert` type
     <l:@L> L_RevertKeyword_Unreserved <r:@R>  <storage_location: (StorageLocation)?>  <name: Identifier>  => {
         let identifier = new_identifier(l..r, source);
-        let iap = parser_helpers::new_index_access_path_from_identifier_path(new_identifier_path(vec![new_identifier_path_element_identifier(identifier)]));
+        let iap = parser_helpers::new_index_access_path_from_identifier_path(new_identifier_path(SeparatedList::single(new_identifier_path_element_identifier(identifier))));
         let type_name = parser_helpers::new_type_name_index_access_path(iap);
         new_variable_declaration(type_name, storage_location, name)
     }
@@ -2532,12 +2533,13 @@ VariableDeclarationSpecialRevert: VariableDeclaration = {
 #[inline]
 IdentifierPathNoRevert: IdentifierPath = {
     // We either have any identifier with a tail (ie a period)
-    <head: Identifier> <mut tail: IdentifierPathTail>  => {
-        tail.insert(0, new_identifier_path_element_identifier(head));
-        new_identifier_path(tail)
+    <head: Identifier> <tail: IdentifierPathTail>  => {
+        let (first_period, mut rest) = tail;
+        rest.push_front(new_identifier_path_element_identifier(head), first_period);
+        new_identifier_path(rest)
     },
     // or a single identifier that is not `revert`
-    <head: SomeIdentifier<"RevertKeyword_Unreserved">>  => new_identifier_path(vec![new_identifier_path_element_identifier(<>)]),
+    <head: SomeIdentifier<"RevertKeyword_Unreserved">>  => new_identifier_path(SeparatedList::single(new_identifier_path_element_identifier(<>))),
 };
                                         )
                                     )
@@ -2631,22 +2633,29 @@ IdentifierPathNoRevert: IdentifierPath = {
 //
 // Since they also share a prefix (`(,,,`) we need to have a common prefix rule to avoid reduce/reduce conflicts.
 MultiTypedDeclarationElements: MultiTypedDeclarationElements = {
-    <prefix: TuplePrefix> <differentiator: VariableDeclaration> <typed_tuple_deconstruction_element: (Comma <Separated<Comma, <MultiTypedDeclarationElement>>>)?>  => {
-        let mut elements = vec![new_multi_typed_declaration_element(None); prefix];
-        elements.push(new_multi_typed_declaration_element(Some(differentiator)));
-        elements.extend(typed_tuple_deconstruction_element.unwrap_or(vec![]));
-        new_multi_typed_declaration_elements(elements)
+    <prefix: TuplePrefix> <differentiator: VariableDeclaration> <tail: (<Comma> <Separated<Comma, <MultiTypedDeclarationElement>>>)?> => {
+        let mut list = if prefix.is_empty() {
+            SeparatedList::single(new_multi_typed_declaration_element(Some(differentiator)))
+        } else {
+            let mut prefix = prefix.into_iter();
+            let last_comma = prefix.next_back().unwrap();
+            let mut list = SeparatedList::single(new_multi_typed_declaration_element(None));
+            for comma in prefix {
+                list.push(comma, new_multi_typed_declaration_element(None));
+            }
+            list.push(last_comma, new_multi_typed_declaration_element(Some(differentiator)));
+            list
+        };
+        if let Some((comma, tail_list)) = tail {
+            list.extend(comma, tail_list);
+        }
+        new_multi_typed_declaration_elements(list)
     },
-
 };
 
-// TuplePrefix counts how many leading commas we have in a tuple deconstruction or
-// in a tuple expression, this helps avoid reduce/reduce conflicts
-TuplePrefix: usize = {
-    // Count how many commas we have at the start, each comma represents an unnamed element
-    Comma  <rest: TuplePrefix>  => 1 + rest,
-    => 0,
-};
+// TuplePrefix collects leading commas in a tuple deconstruction or
+// tuple expression, this helps avoid reduce/reduce conflicts
+TuplePrefix = RepeatedAllowEmpty<Comma>;
                                         )
                                     )
                                 ),
@@ -3621,18 +3630,31 @@ NoFunctionType: FunctionType = {};
 #[inline]
 TupleValues: TupleValues = {
     <prefix: TuplePrefix> => {
-        // We need to add an extra empty element here, since the trailing comma indicates
-        // an additional empty tuple value.
-        let elements = vec![new_tuple_value(None); prefix + 1];
-        new_tuple_values(elements)
+        // N commas means N+1 empty tuple values
+        let mut list = SeparatedList::single(new_tuple_value(None));
+        for comma in prefix {
+            list.push(comma, new_tuple_value(None));
+        }
+        new_tuple_values(list)
     },
-    <prefix: TuplePrefix> <differentiator: Expression> <tuple_value: (Comma <Separated<Comma, <TupleValue>>>)?>  => {
-        let mut elements = vec![new_tuple_value(None); prefix];
-        elements.push(new_tuple_value(Some(differentiator)));
-        elements.extend(tuple_value.unwrap_or(vec![]));
-        new_tuple_values(elements)
+    <prefix: TuplePrefix> <differentiator: Expression> <tail: (<Comma> <Separated<Comma, <TupleValue>>>)?> => {
+        let mut list = if prefix.is_empty() {
+            SeparatedList::single(new_tuple_value(Some(differentiator)))
+        } else {
+            let mut prefix = prefix.into_iter();
+            let last_comma = prefix.next_back().unwrap();
+            let mut list = SeparatedList::single(new_tuple_value(None));
+            for comma in prefix {
+                list.push(comma, new_tuple_value(None));
+            }
+            list.push(last_comma, new_tuple_value(Some(differentiator)));
+            list
+        };
+        if let Some((comma, tail_list)) = tail {
+            list.extend(comma, tail_list);
+        }
+        new_tuple_values(list)
     },
-
 };
                                         )
                                     )
@@ -3921,22 +3943,18 @@ TupleValues: TupleValues = {
 // an `AddressKeyword`
 IdentifierPath: IdentifierPath = {
     <head: Identifier>  <tail: (IdentifierPathTail)?>  => {
-        match tail {
-            Some(mut tail) => {
-                tail.insert(0, new_identifier_path_element_identifier(head));
-                new_identifier_path(tail)
-            },
-            None => new_identifier_path(vec![new_identifier_path_element_identifier(head)]),
-        }
+        let separated_list = if let Some((first_period, mut rest)) = tail {
+            rest.push_front(new_identifier_path_element_identifier(head), first_period);
+            rest
+        } else {
+            SeparatedList::single(new_identifier_path_element_identifier(head))
+        };
+        new_identifier_path(separated_list)
     },
 
 };
-IdentifierPathTail: Vec<IdentifierPathElement> = {
-    Period  <elements: IdentifierPathTailElements>  => <>,
-
-};
-IdentifierPathTailElements: Vec<IdentifierPathElement> = {
-    <member_access_identifier: Separated<Period, <IdentifierPathElement>>>  => <>,
+IdentifierPathTail: (Period, SeparatedList<IdentifierPathElement, Period>) = {
+    <first_period: Period> <rest: Separated<Period, <IdentifierPathElement>>> => (first_period, rest),
 
 };
                                         )

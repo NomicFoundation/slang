@@ -48,7 +48,7 @@ impl<T: TextStart> TextStart for Option<T> {
 {% for parent_type, collection in target.collections %}
     impl TextStart for {{ parent_type }} {
         fn text_start(&self) -> Option<usize> {
-            self.elements.iter().find_map(TextStart::text_start)
+            self.elements().find_map(TextStart::text_start)
         }
     }
 {% endfor %}

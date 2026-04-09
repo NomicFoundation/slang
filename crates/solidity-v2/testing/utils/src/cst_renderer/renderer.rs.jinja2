@@ -65,6 +65,37 @@ pub fn render_{{ parent_type | snake_case }}(source: &str, node: &{{ parent_type
 
 {% for parent_type, collection in target.collections %}
 pub fn render_{{ parent_type | snake_case }}(source: &str, node: &{{ parent_type }}, depth: usize) -> RenderedOutput {
+  {% if collection.separator_type %}
+  match &**node {
+    slang_solidity_v2_cst::separated::SeparatedList::Empty => {
+      (None, vec![": []\n".to_string()])
+    }
+    slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+      let mut acc = ChildrenAccumulator::new(source, depth + 1);
+      {
+      {% if collection.item_type.is_terminal %}
+        let rendered = render_terminal(source, &first.range);
+      {% else %}
+        let rendered = render_{{ collection.item_type.name | snake_case }}(source, first, depth + 1);
+      {% endif %}
+        acc.add("item", "{{ collection.item_type.name }}", rendered);
+      }
+      for (separator, element) in rest {
+        {
+          let rendered = render_terminal(source, &separator.range);
+          acc.add("separator", "{{ collection.separator_type.name }}", rendered);
+        }
+      {% if collection.item_type.is_terminal %}
+        let rendered = render_terminal(source, &element.range);
+      {% else %}
+        let rendered = render_{{ collection.item_type.name | snake_case }}(source, element, depth + 1);
+      {% endif %}
+        acc.add("item", "{{ collection.item_type.name }}", rendered);
+      }
+      acc.finish()
+    }
+  }
+  {% else %}
   if node.elements.is_empty() {
     return (None, vec![": []\n".to_string()]);
   }
@@ -78,6 +109,7 @@ pub fn render_{{ parent_type | snake_case }}(source: &str, node: &{{ parent_type
       acc.add("item", "{{ collection.item_type.name }}", rendered);
   }
   acc.finish()
+  {% endif %}
 }
 
 {% endfor %}
