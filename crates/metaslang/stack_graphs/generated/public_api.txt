@@ -927,13 +927,16 @@ impl core::marker::Copy for metaslang_stack_graphs::partial::Cyclicity
 impl core::ops::bit::Not for metaslang_stack_graphs::partial::Cyclicity
 pub type metaslang_stack_graphs::partial::Cyclicity::Output = enumset::set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>
 pub fn metaslang_stack_graphs::partial::Cyclicity::not(self) -> Self::Output
+impl enumset::traits::EnumSetConstHelper for metaslang_stack_graphs::partial::Cyclicity
+pub type metaslang_stack_graphs::partial::Cyclicity::ConstInitHelper = __EnumSetInitHelper
+pub type metaslang_stack_graphs::partial::Cyclicity::ConstOpHelper = __EnumSetOpHelper
+pub const metaslang_stack_graphs::partial::Cyclicity::CONST_INIT_HELPER: __EnumSetInitHelper
+pub const metaslang_stack_graphs::partial::Cyclicity::CONST_OP_HELPER: __EnumSetOpHelper
 impl enumset::traits::EnumSetType for metaslang_stack_graphs::partial::Cyclicity
 impl enumset::traits::EnumSetTypePrivate for metaslang_stack_graphs::partial::Cyclicity
-pub type metaslang_stack_graphs::partial::Cyclicity::ConstHelper = __EnumSetConstHelper
 pub type metaslang_stack_graphs::partial::Cyclicity::Repr = u8
 pub const metaslang_stack_graphs::partial::Cyclicity::ALL_BITS: Self::Repr
 pub const metaslang_stack_graphs::partial::Cyclicity::BIT_WIDTH: u32
-pub const metaslang_stack_graphs::partial::Cyclicity::CONST_HELPER_INSTANCE: __EnumSetConstHelper
 pub const metaslang_stack_graphs::partial::Cyclicity::VARIANT_COUNT: u32
 pub unsafe fn metaslang_stack_graphs::partial::Cyclicity::enum_from_u32(val: u32) -> Self
 pub fn metaslang_stack_graphs::partial::Cyclicity::enum_into_u32(self) -> u32
