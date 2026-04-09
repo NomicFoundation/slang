@@ -5,13 +5,15 @@ Source: >
   2  │ type Foo is bool;                                                                                             │ 110..127
   3  │ // <<<                                                                                                        │ 128..134
 
-Error: This syntax was introduced in version '0.8.8'.
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/UserDefinedValueTypeDefinition/bool/input.sol:2:1]
-   │
- 2 │ type Foo is bool;
-   │ ────────┬────────  
-   │         ╰────────── Error occurred here.
-───╯
+Errors: # 1 total
+  - >
+    Error: This syntax was introduced in version '0.8.8'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UserDefinedValueTypeDefinition/bool/input.sol:2:1]
+       │
+     2 │ type Foo is bool;
+       │ ────────┬────────  
+       │         ╰────────── Error occurred here.
+    ───╯
 Tree:
   - (root꞉ SourceUnit): # "type Foo is bool;" (110..127)
       - (members꞉ SourceUnitMembers): # "type Foo is bool;" (110..127)

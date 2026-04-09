@@ -18,13 +18,15 @@ Source: >
   15 │                                                                                                       │ 324..324
   16 │ // <<<                                                                                                │ 325..331
 
-Error: This syntax was introduced in version '0.8.4'.
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/revert_statement/input.sol:7:5]
-   │
- 7 │     revert MyError(1, 2);
-   │     ──────────┬──────────  
-   │               ╰──────────── Error occurred here.
-───╯
+Errors: # 1 total
+  - >
+    Error: This syntax was introduced in version '0.8.4'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/revert_statement/input.sol:7:5]
+       │
+     7 │     revert MyError(1, 2);
+       │     ──────────┬──────────  
+       │               ╰──────────── Error occurred here.
+    ───╯
 Tree:
   - (root꞉ SourceUnit): # "library SafeMath {\n  function tryAdd() internal pu..." (102..323)
       - (members꞉ SourceUnitMembers): # "library SafeMath {\n  function tryAdd() internal pu..." (102..323)

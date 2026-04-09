@@ -5,13 +5,15 @@ Source: >
   2  │ using {add as +, sub, mul, div as /} for Int global;                                                          │ 110..162
   3  │ // <<<                                                                                                        │ 163..169
 
-Error: This syntax was introduced in version '0.8.13'.
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/destructure_multiple/input.sol:2:1]
-   │
- 2 │ using {add as +, sub, mul, div as /} for Int global;
-   │ ──────────────────────────┬─────────────────────────  
-   │                           ╰─────────────────────────── Error occurred here.
-───╯
+Errors: # 1 total
+  - >
+    Error: This syntax was introduced in version '0.8.13'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/destructure_multiple/input.sol:2:1]
+       │
+     2 │ using {add as +, sub, mul, div as /} for Int global;
+       │ ──────────────────────────┬─────────────────────────  
+       │                           ╰─────────────────────────── Error occurred here.
+    ───╯
 Tree:
   - (root꞉ SourceUnit): # "using {add as +, sub, mul, div as /} for Int globa..." (110..162)
       - (members꞉ SourceUnitMembers): # "using {add as +, sub, mul, div as /} for Int globa..." (110..162)

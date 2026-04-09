@@ -11,20 +11,23 @@ Source: >
   8  │                                                                                                       │ 204..204
   9  │ // <<<                                                                                                │ 205..211
 
-Error: This syntax was introduced in version '0.8.4'.
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/error_definition/input.sol:2:1]
-   │
- 2 │ error MyError(uint256 a, uint256 b);
-   │ ──────────────────┬─────────────────  
-   │                   ╰─────────────────── Error occurred here.
-───╯
-Error: This syntax was introduced in version '0.8.4'.
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/error_definition/input.sol:5:3]
-   │
- 5 │   error MyOtherError(address addr);
-   │   ────────────────┬────────────────  
-   │                   ╰────────────────── Error occurred here.
-───╯
+Errors: # 2 total
+  - >
+    Error: This syntax was introduced in version '0.8.4'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/error_definition/input.sol:2:1]
+       │
+     2 │ error MyError(uint256 a, uint256 b);
+       │ ──────────────────┬─────────────────  
+       │                   ╰─────────────────── Error occurred here.
+    ───╯
+  - >
+    Error: This syntax was introduced in version '0.8.4'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/error_definition/input.sol:5:3]
+       │
+     5 │   error MyOtherError(address addr);
+       │   ────────────────┬────────────────  
+       │                   ╰────────────────── Error occurred here.
+    ───╯
 Tree:
   - (root꞉ SourceUnit): # "error MyError(uint256 a, uint256 b);\n\ncontract A {..." (102..203)
       - (members꞉ SourceUnitMembers): # "error MyError(uint256 a, uint256 b);\n\ncontract A {..." (102..203)

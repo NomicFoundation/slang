@@ -3,11 +3,12 @@
 Source: >
   1  │ '                                                                                │ 0..1
 
-Error: >
-  Error: Unexpected UNRECOGNIZED. One of AbstractKeyword_Reserved, AddressKeyword_Reserved, AtKeyword_Unreserved, BoolKeyword_Reserved, BytesKeyword_Reserved, ContractKeyword_Reserved, EnumKeyword_Reserved, ErrorKeyword_Unreserved, EventKeyword_Reserved, FixedKeyword_Reserved, FromKeyword_Unreserved, FunctionKeyword_Reserved, GlobalKeyword_Unreserved, Identifier, ImportKeyword_Reserved, IntKeyword_Reserved, InterfaceKeyword_Reserved, LayoutKeyword_Unreserved, LibraryKeyword_Reserved, MappingKeyword_Reserved, PragmaKeyword_Reserved, RevertKeyword_Unreserved, StringKeyword_Reserved, StructKeyword_Reserved, TransientKeyword_Unreserved, TypeKeyword_Reserved, UfixedKeyword_Reserved, UintKeyword_Reserved, UsingKeyword_Reserved was expected
-     ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/unterminated_single_quote_string/input.sol:1:1]
-     │
-   1 │ '
-     │ ┬  
-     │ ╰── Error occurred here.
-  ───╯
+Errors: # 1 total
+  - >
+    Error: Unexpected UNRECOGNIZED. One of AbstractKeyword_Reserved, AddressKeyword_Reserved, AtKeyword_Unreserved, BoolKeyword_Reserved, BytesKeyword_Reserved, ContractKeyword_Reserved, EnumKeyword_Reserved, ErrorKeyword_Unreserved, EventKeyword_Reserved, FixedKeyword_Reserved, FromKeyword_Unreserved, FunctionKeyword_Reserved, GlobalKeyword_Unreserved, Identifier, ImportKeyword_Reserved, IntKeyword_Reserved, InterfaceKeyword_Reserved, LayoutKeyword_Unreserved, LibraryKeyword_Reserved, MappingKeyword_Reserved, PragmaKeyword_Reserved, RevertKeyword_Unreserved, StringKeyword_Reserved, StructKeyword_Reserved, TransientKeyword_Unreserved, TypeKeyword_Reserved, UfixedKeyword_Reserved, UintKeyword_Reserved, UsingKeyword_Reserved was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/unterminated_single_quote_string/input.sol:1:1]
+       │
+     1 │ '
+       │ ┬  
+       │ ╰── Error occurred here.
+    ───╯

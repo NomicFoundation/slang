@@ -5,13 +5,15 @@ Source: >
   2  │ using foo for bar global;                                                                           │ 100..125
   3  │ // <<<                                                                                              │ 126..132
 
-Error: This syntax was introduced in version '0.8.13'.
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/path_named/input.sol:2:1]
-   │
- 2 │ using foo for bar global;
-   │ ────────────┬────────────  
-   │             ╰────────────── Error occurred here.
-───╯
+Errors: # 1 total
+  - >
+    Error: This syntax was introduced in version '0.8.13'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/path_named/input.sol:2:1]
+       │
+     2 │ using foo for bar global;
+       │ ────────────┬────────────  
+       │             ╰────────────── Error occurred here.
+    ───╯
 Tree:
   - (root꞉ SourceUnit): # "using foo for bar global;" (100..125)
       - (members꞉ SourceUnitMembers): # "using foo for bar global;" (100..125)

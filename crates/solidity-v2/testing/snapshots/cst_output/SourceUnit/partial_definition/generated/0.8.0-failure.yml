@@ -6,11 +6,12 @@ Source: >
   3  │   function                                                                                              │ 122..132
   4  │ // <<<                                                                                                  │ 133..139
 
-Error: >
-  Error: Unexpected end of file. One of AtKeyword_Unreserved, ErrorKeyword_Unreserved, FallbackKeyword_Reserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, LayoutKeyword_Unreserved, OpenParen, ReceiveKeyword_Reserved, RevertKeyword_Unreserved, TransientKeyword_Unreserved was expected
-     ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/partial_definition/input.sol:3:11]
-     │
-   3 │   function
-     │           │ 
-     │           ╰─ Error occurred here.
-  ───╯
+Errors: # 1 total
+  - >
+    Error: Unexpected end of file. One of AtKeyword_Unreserved, ErrorKeyword_Unreserved, FallbackKeyword_Reserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, LayoutKeyword_Unreserved, OpenParen, ReceiveKeyword_Reserved, RevertKeyword_Unreserved, TransientKeyword_Unreserved was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/partial_definition/input.sol:3:11]
+       │
+     3 │   function
+       │           │ 
+       │           ╰─ Error occurred here.
+    ───╯

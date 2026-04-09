@@ -3,8 +3,8 @@
 //! ## Output format
 //!
 //! - **`Source:`** — annotated source lines with byte ranges.
-//! - **`Tree:`** (success) — nested CST structure with inline previews and byte ranges.
 //! - **`Error:`** (failure) — rendered diagnostic output.
+//! - **`Tree:`** (successful parser) — nested CST structure with inline previews and byte ranges.
 //!
 //! ## Symbol legend
 //!
@@ -44,51 +44,46 @@ pub(crate) fn format_label_kind(label: &str, kind: &str) -> String {
 }
 
 /// Render a parse result (success or failure) to YAML format.
+///
+/// Returns a tuple of (`is_success`, `rendered_output`), where `is_success` is true if
+/// `result` had no errors.
 pub fn render(
     source: &str,
     source_id: &str,
     result: &(Result<SourceUnit, ParserError>, Vec<SyntaxVersionError>),
-) -> String {
+) -> (bool, String) {
     let mut w = String::new();
 
+    // Write the source code
     write_source(&mut w, source);
     writeln!(&mut w).unwrap();
 
-    match result {
-        (Ok(cst), validation_errors) if validation_errors.is_empty() => {
-            writeln!(&mut w, "Tree:").unwrap();
-            let (_, root_frags) = renderer::render_source_unit(source, cst, 0);
-            write!(w, "  - {}", format_label_kind("root", "SourceUnit")).unwrap();
-            for frag in root_frags {
-                w.push_str(&frag);
-            }
-        }
-        (Ok(cst), validation_errors) => {
-            // Print validation errors, followed by the structured CST:
-            for err in validation_errors {
-                let rendered = diagnostic::render(err, &source_id, &source, false);
-                writeln!(&mut w, "{rendered}").unwrap();
-            }
-
-            writeln!(&mut w, "Tree:").unwrap();
-
-            let (_, root_frags) = renderer::render_source_unit(source, cst, 0);
-            // Note: \u{a789} (MODIFIER LETTER COLON) is used instead of : to avoid
-            // conflicting with YAML's key-value syntax, which breaks YAML linters.
-            w.push_str("  - (root\u{a789} SourceUnit)");
-            for frag in root_frags {
-                w.push_str(&frag);
-            }
-        }
+    // Write the errors
+    let is_success = match result {
         (Err(err), _) => {
             let rendered = diagnostic::render(err, source_id, source, false);
-            writeln!(&mut w, "Error: >").unwrap();
-            for line in rendered.lines() {
-                writeln!(&mut w, "  {line}").unwrap();
-            }
+            !write_errors(&mut w, &vec![rendered]).unwrap()
+        }
+        (Ok(_), validation_errors) => {
+            let rendered_errors: Vec<String> = validation_errors
+                .iter()
+                .map(|err| diagnostic::render(err, source_id, source, false))
+                .collect();
+            !write_errors(&mut w, &rendered_errors).unwrap()
+        }
+    };
+
+    // Write the Tree
+    if let (Ok(cst), _) = result {
+        writeln!(&mut w, "Tree:").unwrap();
+        let (_, root_frags) = renderer::render_source_unit(source, cst, 0);
+        write!(w, "  - {}", format_label_kind("root", "SourceUnit")).unwrap();
+        for frag in root_frags {
+            w.push_str(&frag);
         }
     }
-    w
+
+    (is_success, w)
 }
 
 /// Helper to accumulate rendered children, merge their ranges,
@@ -227,4 +222,21 @@ fn render_preview(source: &str, range: &Range<usize>) -> String {
     } else {
         format!("\"{contents}\"")
     }
+}
+
+fn write_errors(w: &mut String, errors: &Vec<String>) -> Result<bool, std::fmt::Error> {
+    if errors.is_empty() {
+        return Ok(false);
+    }
+
+    writeln!(w, "Errors: # {count} total", count = errors.len())?;
+
+    for error in errors {
+        writeln!(w, "  - >")?;
+        for line in error.lines() {
+            writeln!(w, "    {line}")?;
+        }
+    }
+
+    Ok(true)
 }

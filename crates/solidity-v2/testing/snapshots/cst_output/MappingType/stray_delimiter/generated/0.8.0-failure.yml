@@ -9,11 +9,12 @@ Source: >
   6  │ x;                                                                                                    │ 155..157
   7  │ }                                                                                                     │ 158..159
 
-Error: >
-  Error: Unexpected CloseBracket. One of AtKeyword_Unreserved, CloseParen, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, LayoutKeyword_Unreserved, OpenBracket, RevertKeyword_Unreserved, TransientKeyword_Unreserved was expected
-     ╭─[crates/solidity-v2/testing/snapshots/cst_output/MappingType/stray_delimiter/input.sol:3:26]
-     │
-   3 │ mapping(string => bytes32] arg)
-     │                          ┬  
-     │                          ╰── Error occurred here.
-  ───╯
+Errors: # 1 total
+  - >
+    Error: Unexpected CloseBracket. One of AtKeyword_Unreserved, CloseParen, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, LayoutKeyword_Unreserved, OpenBracket, RevertKeyword_Unreserved, TransientKeyword_Unreserved was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/MappingType/stray_delimiter/input.sol:3:26]
+       │
+     3 │ mapping(string => bytes32] arg)
+       │                          ┬  
+       │                          ╰── Error occurred here.
+    ───╯

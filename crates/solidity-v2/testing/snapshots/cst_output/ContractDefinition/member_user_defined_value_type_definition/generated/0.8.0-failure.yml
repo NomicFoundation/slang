@@ -7,13 +7,15 @@ Source: >
   4  │ }                                                                                                                                      │ 173..174
   5  │ // <<<                                                                                                                                 │ 175..181
 
-Error: This syntax was introduced in version '0.8.8'.
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/member_user_defined_value_type_definition/input.sol:3:3]
-   │
- 3 │   type Foo is bool;
-   │   ────────┬────────  
-   │           ╰────────── Error occurred here.
-───╯
+Errors: # 1 total
+  - >
+    Error: This syntax was introduced in version '0.8.8'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/member_user_defined_value_type_definition/input.sol:3:3]
+       │
+     3 │   type Foo is bool;
+       │   ────────┬────────  
+       │           ╰────────── Error occurred here.
+    ───╯
 Tree:
   - (root꞉ SourceUnit): # "contract Sample {\n  type Foo is bool;\n}" (135..174)
       - (members꞉ SourceUnitMembers): # "contract Sample {\n  type Foo is bool;\n}" (135..174)

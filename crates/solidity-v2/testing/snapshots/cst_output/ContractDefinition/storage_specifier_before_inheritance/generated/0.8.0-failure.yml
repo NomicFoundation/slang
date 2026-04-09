@@ -7,13 +7,15 @@ Source: >
   4  │                                                                                                                                   │ 166..166
   5  │ // <<<                                                                                                                            │ 167..173
 
-Error: This syntax was introduced in version '0.8.29'.
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/storage_specifier_before_inheritance/input.sol:2:14]
-   │
- 2 │ contract Foo layout at 0 is Bar {
-   │              ─────┬─────  
-   │                   ╰─────── Error occurred here.
-───╯
+Errors: # 1 total
+  - >
+    Error: This syntax was introduced in version '0.8.29'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/storage_specifier_before_inheritance/input.sol:2:14]
+       │
+     2 │ contract Foo layout at 0 is Bar {
+       │              ─────┬─────  
+       │                   ╰─────── Error occurred here.
+    ───╯
 Tree:
   - (root꞉ SourceUnit): # "contract Foo layout at 0 is Bar {\n}" (130..165)
       - (members꞉ SourceUnitMembers): # "contract Foo layout at 0 is Bar {\n}" (130..165)

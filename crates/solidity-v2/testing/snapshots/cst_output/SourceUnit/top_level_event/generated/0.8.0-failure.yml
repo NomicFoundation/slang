@@ -6,13 +6,15 @@ Source: >
   3  │                                                                                                      │ 126..126
   4  │ // <<<                                                                                               │ 127..133
 
-Error: This syntax was introduced in version '0.8.22'.
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/top_level_event/input.sol:2:1]
-   │
- 2 │ event E1(uint256 value);
-   │ ────────────┬───────────  
-   │             ╰───────────── Error occurred here.
-───╯
+Errors: # 1 total
+  - >
+    Error: This syntax was introduced in version '0.8.22'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/top_level_event/input.sol:2:1]
+       │
+     2 │ event E1(uint256 value);
+       │ ────────────┬───────────  
+       │             ╰───────────── Error occurred here.
+    ───╯
 Tree:
   - (root꞉ SourceUnit): # "event E1(uint256 value);" (101..125)
       - (members꞉ SourceUnitMembers): # "event E1(uint256 value);" (101..125)

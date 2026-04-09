@@ -28,20 +28,23 @@ Source: >
   25 │                                                                                                      │ 894..894
   26 │ // <<<                                                                                               │ 895..901
 
-Error: This syntax was introduced in version '0.8.13'.
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/using_directive/input.sol:5:1]
-   │
- 5 │ using EnvelopeUtils for Envelope global;
-   │ ────────────────────┬───────────────────  
-   │                     ╰───────────────────── Error occurred here.
-───╯
-Error: This syntax was introduced in version '0.8.13'.
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/using_directive/input.sol:6:1]
-   │
- 6 │ using TransactionUtils for Transaction global;
-   │ ───────────────────────┬──────────────────────  
-   │                        ╰──────────────────────── Error occurred here.
-───╯
+Errors: # 2 total
+  - >
+    Error: This syntax was introduced in version '0.8.13'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/using_directive/input.sol:5:1]
+       │
+     5 │ using EnvelopeUtils for Envelope global;
+       │ ────────────────────┬───────────────────  
+       │                     ╰───────────────────── Error occurred here.
+    ───╯
+  - >
+    Error: This syntax was introduced in version '0.8.13'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/using_directive/input.sol:6:1]
+       │
+     6 │ using TransactionUtils for Transaction global;
+       │ ───────────────────────┬──────────────────────  
+       │                        ╰──────────────────────── Error occurred here.
+    ───╯
 Tree:
   - (root꞉ SourceUnit): # "pragma solidity ^0.8.0;\n\nusing EnvelopeUtils for E..." (133..893)
       - (members꞉ SourceUnitMembers): # "pragma solidity ^0.8.0;\n\nusing EnvelopeUtils for E..." (133..893)

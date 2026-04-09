@@ -6,13 +6,15 @@ Source: >
   3  │                                                                                                    │ 172..172
   4  │ // <<<                                                                                             │ 173..179
 
-Error: This syntax was introduced in version '0.8.22'.
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/EventDefinition/transfer/input.sol:2:1]
-   │
- 2 │ event Transfer(address indexed from, address indexed to, uint256 value);
-   │ ────────────────────────────────────┬───────────────────────────────────  
-   │                                     ╰───────────────────────────────────── Error occurred here.
-───╯
+Errors: # 1 total
+  - >
+    Error: This syntax was introduced in version '0.8.22'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/EventDefinition/transfer/input.sol:2:1]
+       │
+     2 │ event Transfer(address indexed from, address indexed to, uint256 value);
+       │ ────────────────────────────────────┬───────────────────────────────────  
+       │                                     ╰───────────────────────────────────── Error occurred here.
+    ───╯
 Tree:
   - (root꞉ SourceUnit): # "event Transfer(address indexed from, address index..." (99..171)
       - (members꞉ SourceUnitMembers): # "event Transfer(address indexed from, address index..." (99..171)

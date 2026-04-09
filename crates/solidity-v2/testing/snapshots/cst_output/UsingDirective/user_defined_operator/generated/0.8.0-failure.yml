@@ -5,13 +5,15 @@ Source: >
   2  │ using {div as /} for Int global;                                                                               │ 111..143
   3  │ // <<<                                                                                                         │ 144..150
 
-Error: This syntax was introduced in version '0.8.13'.
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/user_defined_operator/input.sol:2:1]
-   │
- 2 │ using {div as /} for Int global;
-   │ ────────────────┬───────────────  
-   │                 ╰───────────────── Error occurred here.
-───╯
+Errors: # 1 total
+  - >
+    Error: This syntax was introduced in version '0.8.13'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/user_defined_operator/input.sol:2:1]
+       │
+     2 │ using {div as /} for Int global;
+       │ ────────────────┬───────────────  
+       │                 ╰───────────────── Error occurred here.
+    ───╯
 Tree:
   - (root꞉ SourceUnit): # "using {div as /} for Int global;" (111..143)
       - (members꞉ SourceUnitMembers): # "using {div as /} for Int global;" (111..143)

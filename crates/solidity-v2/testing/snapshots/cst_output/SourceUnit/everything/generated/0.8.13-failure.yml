@@ -30,13 +30,15 @@ Source: >
   27 │                                                                                                 │ 339..339
   28 │ // <<<                                                                                          │ 340..346
 
-Error: This syntax was introduced in version '0.8.22'.
-    ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/everything/input.sol:26:1]
-    │
- 26 │ event E1(uint256 value);
-    │ ────────────┬───────────  
-    │             ╰───────────── Error occurred here.
-────╯
+Errors: # 1 total
+  - >
+    Error: This syntax was introduced in version '0.8.22'.
+        ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/everything/input.sol:26:1]
+        │
+     26 │ event E1(uint256 value);
+        │ ────────────┬───────────  
+        │             ╰───────────── Error occurred here.
+    ────╯
 Tree:
   - (root꞉ SourceUnit): # 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...' (96..338)
       - (members꞉ SourceUnitMembers): # 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...' (96..338)

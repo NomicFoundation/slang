@@ -11,11 +11,12 @@ Source: >
   8  │     }                                                                                                        │ 160..165
   9  │ }                                                                                                            │ 166..167
 
-Error: >
-  Error: Unexpected YearsKeyword_Reserved. One of Ampersand, AmpersandAmpersand, AmpersandEqual, Asterisk, AsteriskAsterisk, AsteriskEqual, BangEqual, Bar, BarBar, BarEqual, Caret, CaretEqual, DaysKeyword_Reserved, Equal, EqualEqual, EtherKeyword_Reserved, GreaterThan, GreaterThanEqual, GreaterThanGreaterThan, GreaterThanGreaterThanEqual, GreaterThanGreaterThanGreaterThan, GreaterThanGreaterThanGreaterThanEqual, GweiKeyword_Reserved, HoursKeyword_Reserved, LessThan, LessThanEqual, LessThanLessThan, LessThanLessThanEqual, Minus, MinusEqual, MinusMinus, MinutesKeyword_Reserved, OpenBrace, OpenBracket, OpenParen, Percent, PercentEqual, Period, Plus, PlusEqual, PlusPlus, QuestionMark, SecondsKeyword_Reserved, Semicolon, Slash, SlashEqual, WeeksKeyword_Reserved, WeiKeyword_Reserved was expected
-     ╭─[crates/solidity-v2/testing/snapshots/cst_output/DecimalNumberExpression/years_unit/input.sol:4:4]
-     │
-   4 │ 10 years
-     │    ──┬──  
-     │      ╰──── Error occurred here.
-  ───╯
+Errors: # 1 total
+  - >
+    Error: Unexpected YearsKeyword_Reserved. One of Ampersand, AmpersandAmpersand, AmpersandEqual, Asterisk, AsteriskAsterisk, AsteriskEqual, BangEqual, Bar, BarBar, BarEqual, Caret, CaretEqual, DaysKeyword_Reserved, Equal, EqualEqual, EtherKeyword_Reserved, GreaterThan, GreaterThanEqual, GreaterThanGreaterThan, GreaterThanGreaterThanEqual, GreaterThanGreaterThanGreaterThan, GreaterThanGreaterThanGreaterThanEqual, GweiKeyword_Reserved, HoursKeyword_Reserved, LessThan, LessThanEqual, LessThanLessThan, LessThanLessThanEqual, Minus, MinusEqual, MinusMinus, MinutesKeyword_Reserved, OpenBrace, OpenBracket, OpenParen, Percent, PercentEqual, Period, Plus, PlusEqual, PlusPlus, QuestionMark, SecondsKeyword_Reserved, Semicolon, Slash, SlashEqual, WeeksKeyword_Reserved, WeiKeyword_Reserved was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/DecimalNumberExpression/years_unit/input.sol:4:4]
+       │
+     4 │ 10 years
+       │    ──┬──  
+       │      ╰──── Error occurred here.
+    ───╯

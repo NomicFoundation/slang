@@ -5,13 +5,15 @@ Source: >
   2  │ using {add} for Int global;                                                                                 │ 108..135
   3  │ // <<<                                                                                                      │ 136..142
 
-Error: This syntax was introduced in version '0.8.13'.
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/destructure_single/input.sol:2:1]
-   │
- 2 │ using {add} for Int global;
-   │ ─────────────┬─────────────  
-   │              ╰─────────────── Error occurred here.
-───╯
+Errors: # 1 total
+  - >
+    Error: This syntax was introduced in version '0.8.13'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/destructure_single/input.sol:2:1]
+       │
+     2 │ using {add} for Int global;
+       │ ─────────────┬─────────────  
+       │              ╰─────────────── Error occurred here.
+    ───╯
 Tree:
   - (root꞉ SourceUnit): # "using {add} for Int global;" (108..135)
       - (members꞉ SourceUnitMembers): # "using {add} for Int global;" (108..135)

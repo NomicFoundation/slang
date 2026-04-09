@@ -10,11 +10,12 @@ Source: >
   7  │     }                                                                                             │ 144..149
   8  │ }                                                                                                 │ 150..151
 
-Error: >
-  Error: Unexpected Semicolon. One of AtKeyword_Unreserved, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, LayoutKeyword_Unreserved, RevertKeyword_Unreserved, TransientKeyword_Unreserved was expected
-     ╭─[crates/solidity-v2/testing/snapshots/cst_output/Expression/keyword_emit/input.sol:6:1]
-     │
-   6 │ ;
-     │ ┬  
-     │ ╰── Error occurred here.
-  ───╯
+Errors: # 1 total
+  - >
+    Error: Unexpected Semicolon. One of AtKeyword_Unreserved, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, LayoutKeyword_Unreserved, RevertKeyword_Unreserved, TransientKeyword_Unreserved was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/Expression/keyword_emit/input.sol:6:1]
+       │
+     6 │ ;
+       │ ┬  
+       │ ╰── Error occurred here.
+    ───╯

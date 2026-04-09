@@ -7,13 +7,15 @@ Source: >
   4  │ }                                                                                                                    │ 153..154
   5  │ // <<<                                                                                                               │ 155..161
 
-Error: This syntax was introduced in version '0.8.4'.
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/member_error_definition/input.sol:3:3]
-   │
- 3 │   error Error1();
-   │   ───────┬───────  
-   │          ╰───────── Error occurred here.
-───╯
+Errors: # 1 total
+  - >
+    Error: This syntax was introduced in version '0.8.4'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/member_error_definition/input.sol:3:3]
+       │
+     3 │   error Error1();
+       │   ───────┬───────  
+       │          ╰───────── Error occurred here.
+    ───╯
 Tree:
   - (root꞉ SourceUnit): # "contract Sample {\n  error Error1();\n}" (117..154)
       - (members꞉ SourceUnitMembers): # "contract Sample {\n  error Error1();\n}" (117..154)

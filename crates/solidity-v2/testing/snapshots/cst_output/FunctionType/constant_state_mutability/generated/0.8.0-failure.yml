@@ -9,11 +9,12 @@ Source: >
   6  │ x;                                                                                                               │ 179..181
   7  │ }                                                                                                                │ 182..183
 
-Error: >
-  Error: Unexpected ReturnsKeyword_Reserved. One of AtKeyword_Unreserved, ConstantKeyword_Reserved, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, ImmutableKeyword_Reserved, InternalKeyword_Reserved, LayoutKeyword_Unreserved, OverrideKeyword_Reserved, PrivateKeyword_Reserved, PublicKeyword_Reserved, RevertKeyword_Unreserved, TransientKeyword_Unreserved was expected
-     ╭─[crates/solidity-v2/testing/snapshots/cst_output/FunctionType/constant_state_mutability/input.sol:3:31]
-     │
-   3 │ function () constant internal returns (uint)
-     │                               ───┬───  
-     │                                  ╰───── Error occurred here.
-  ───╯
+Errors: # 1 total
+  - >
+    Error: Unexpected ReturnsKeyword_Reserved. One of AtKeyword_Unreserved, ConstantKeyword_Reserved, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, ImmutableKeyword_Reserved, InternalKeyword_Reserved, LayoutKeyword_Unreserved, OverrideKeyword_Reserved, PrivateKeyword_Reserved, PublicKeyword_Reserved, RevertKeyword_Unreserved, TransientKeyword_Unreserved was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/FunctionType/constant_state_mutability/input.sol:3:31]
+       │
+     3 │ function () constant internal returns (uint)
+       │                               ───┬───  
+       │                                  ╰───── Error occurred here.
+    ───╯

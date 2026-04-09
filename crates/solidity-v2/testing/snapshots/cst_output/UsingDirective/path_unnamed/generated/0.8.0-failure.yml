@@ -5,13 +5,15 @@ Source: >
   2  │ using foo for *;                                                                                      │ 102..118
   3  │ // <<<                                                                                                │ 119..125
 
-Error: This syntax was introduced in version '0.8.13'.
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/path_unnamed/input.sol:2:1]
-   │
- 2 │ using foo for *;
-   │ ────────┬───────  
-   │         ╰───────── Error occurred here.
-───╯
+Errors: # 1 total
+  - >
+    Error: This syntax was introduced in version '0.8.13'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDirective/path_unnamed/input.sol:2:1]
+       │
+     2 │ using foo for *;
+       │ ────────┬───────  
+       │         ╰───────── Error occurred here.
+    ───╯
 Tree:
   - (root꞉ SourceUnit): # "using foo for *;" (102..118)
       - (members꞉ SourceUnitMembers): # "using foo for *;" (102..118)

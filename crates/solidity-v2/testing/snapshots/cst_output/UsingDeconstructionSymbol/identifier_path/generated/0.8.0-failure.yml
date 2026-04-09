@@ -7,15 +7,17 @@ Source: >
   4  │ // <<<                                                                                                              │ 132..138
   5  │ } for uint;                                                                                                         │ 139..150
 
-Error: This syntax was introduced in version '0.8.13'.
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDeconstructionSymbol/identifier_path/input.sol:1:1]
-   │
- 1 │ ╭─▶ using {
-   ┆ ┆   
- 5 │ ├─▶ } for uint;
-   │ │                 
-   │ ╰───────────────── Error occurred here.
-───╯
+Errors: # 1 total
+  - >
+    Error: This syntax was introduced in version '0.8.13'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/UsingDeconstructionSymbol/identifier_path/input.sol:1:1]
+       │
+     1 │ ╭─▶ using {
+       ┆ ┆   
+     5 │ ├─▶ } for uint;
+       │ │                 
+       │ ╰───────────────── Error occurred here.
+    ───╯
 Tree:
   - (root꞉ SourceUnit): # "using {\n// >>> Copied from crates/solidity/testing..." (0..150)
       - (members꞉ SourceUnitMembers): # "using {\n// >>> Copied from crates/solidity/testing..." (0..150)

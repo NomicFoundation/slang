@@ -6,11 +6,12 @@ Source: >
   3  │                                                                                                     │ 115..115
   4  │ // <<<                                                                                              │ 116..122
 
-Error: >
-  Error: Unexpected Semicolon. One of OpenParen was expected
-     ╭─[crates/solidity-v2/testing/snapshots/cst_output/EventDefinition/no_parens/input.sol:2:14]
-     │
-   2 │ event MyEvent;
-     │              ┬  
-     │              ╰── Error occurred here.
-  ───╯
+Errors: # 1 total
+  - >
+    Error: Unexpected Semicolon. One of OpenParen was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/EventDefinition/no_parens/input.sol:2:14]
+       │
+     2 │ event MyEvent;
+       │              ┬  
+       │              ╰── Error occurred here.
+    ───╯

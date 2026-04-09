@@ -45,15 +45,11 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             // Note: comparing objects cheaply before expensive serialization.
             Some(ref last) if last == &v2_output => continue,
             _ => {
-                let content = solidity_v2_testing_utils::cst_renderer::render(
+                let (status, content) = solidity_v2_testing_utils::cst_renderer::render(
                     &source, &source_id, &v2_output,
                 );
 
-                let status = if v2_output.0.is_ok() && v2_output.1.is_empty() {
-                    "success"
-                } else {
-                    "failure"
-                };
+                let status = if status { "success" } else { "failure" };
 
                 let snapshot_path = test_dir
                     .join("generated")

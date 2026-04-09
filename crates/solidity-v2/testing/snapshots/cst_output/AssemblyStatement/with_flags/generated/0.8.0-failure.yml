@@ -12,13 +12,15 @@ Source: >
   9  │     }                                                                                                  │ 182..187
   10 │ }                                                                                                      │ 188..189
 
-Error: This syntax was introduced in version '0.8.13'.
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/AssemblyStatement/with_flags/input.sol:4:19]
-   │
- 4 │ assembly "evmasm" ("memory-safe") {
-   │                   ───────┬───────  
-   │                          ╰───────── Error occurred here.
-───╯
+Errors: # 1 total
+  - >
+    Error: This syntax was introduced in version '0.8.13'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/AssemblyStatement/with_flags/input.sol:4:19]
+       │
+     4 │ assembly "evmasm" ("memory-safe") {
+       │                   ───────┬───────  
+       │                          ╰───────── Error occurred here.
+    ───╯
 Tree:
   - (root꞉ SourceUnit): # "contract C {\n    function f() {\n// >>> Copied from..." (0..189)
       - (members꞉ SourceUnitMembers): # "contract C {\n    function f() {\n// >>> Copied from..." (0..189)

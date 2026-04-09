@@ -10,11 +10,12 @@ Source: >
   7  │     }                                                                                                                       │ 173..178
   8  │ }                                                                                                                           │ 179..180
 
-Error: >
-  Error: Unexpected CloseParen. One of Semicolon was expected
-     ╭─[crates/solidity-v2/testing/snapshots/cst_output/Statements/recovery_ignore_multiple_empty_matches/input.sol:4:8]
-     │
-   4 │ for(int)
-     │        ┬  
-     │        ╰── Error occurred here.
-  ───╯
+Errors: # 1 total
+  - >
+    Error: Unexpected CloseParen. One of Semicolon was expected
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/Statements/recovery_ignore_multiple_empty_matches/input.sol:4:8]
+       │
+     4 │ for(int)
+       │        ┬  
+       │        ╰── Error occurred here.
+    ───╯

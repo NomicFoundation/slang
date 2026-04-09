@@ -8,13 +8,15 @@ Source: >
   5  │                                                                                                                     │ 166..166
   6  │ // <<<                                                                                                              │ 167..173
 
-Error: This syntax was introduced in version '0.8.29'.
-   ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/storage_specifier_only/input.sol:2:14]
-   │
- 2 │ contract Foo layout at 0 {
-   │              ─────┬─────  
-   │                   ╰─────── Error occurred here.
-───╯
+Errors: # 1 total
+  - >
+    Error: This syntax was introduced in version '0.8.29'.
+       ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/storage_specifier_only/input.sol:2:14]
+       │
+     2 │ contract Foo layout at 0 {
+       │              ─────┬─────  
+       │                   ╰─────── Error occurred here.
+    ───╯
 Tree:
   - (root꞉ SourceUnit): # "contract Foo layout at 0 {\n    function foo(){}\n}" (116..165)
       - (members꞉ SourceUnitMembers): # "contract Foo layout at 0 {\n    function foo(){}\n}" (116..165)
