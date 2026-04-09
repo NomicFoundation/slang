@@ -61,8 +61,8 @@ catalogs:
       specifier: ^0.18.0
       version: 0.18.0
     solc:
-      specifier: ^0.8.30
-      version: 0.8.30
+      specifier: ^0.8.34
+      version: 0.8.34
     ts-jest:
       specifier: ^29.3.4
       version: 29.3.4
@@ -126,7 +126,7 @@ importers:
         version: 0.18.0(prettier@3.5.3)
       solc:
         specifier: 'catalog:'
-        version: 0.8.30
+        version: 0.8.34
       ts-jest:
         specifier: 'catalog:'
         version: 29.3.4(@babel/core@7.28.4)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.4))(jest@30.3.0(@types/node@24.0.8)(ts-node@10.9.2(@types/node@24.0.8)(typescript@5.8.3)))(typescript@5.8.3)
@@ -3387,8 +3387,8 @@ packages:
     resolution: {integrity: sha512-HLpt+uLy/pxB+bum/9DzAgiKS8CX1EvbWxI4zlmgGCExImLdiad2iCwXT5Z4c9c3Eq8rP2318mPW2c+QbtjK8A==}
     engines: {node: '>= 10.0.0', npm: '>= 3.0.0'}
 
-  solc@0.8.30:
-    resolution: {integrity: sha512-9Srk/gndtBmoUbg4CE6ypAzPQlElv8ntbnl6SigUBAzgXKn35v87sj04uZeoZWjtDkdzT0qKFcIo/wl63UMxdw==}
+  solc@0.8.34:
+    resolution: {integrity: sha512-qf8HajA1sHhXRV0hMSDXLjVbc4v3Q+SQbL9zok+1WmgVj7Z4oMjMHxaysCzfGtFVqjZdfDDJWyZI+tcx5bO7Dw==}
     engines: {node: '>=12.0.0'}
     hasBin: true
 
@@ -3960,7 +3960,7 @@ snapshots:
       '@bytecodealliance/componentize-js': 0.19.2
       '@bytecodealliance/preview2-shim': 0.17.4
       binaryen: 123.0.0
-      commander: 14.0.2
+      commander: 14.0.3
       mkdirp: 3.0.1
       ora: 8.2.0
       terser: 5.44.0
@@ -7378,7 +7378,7 @@ snapshots:
       ip-address: 10.0.1
       smart-buffer: 4.2.0
 
-  solc@0.8.30:
+  solc@0.8.34:
     dependencies:
       command-exists: 1.2.9
       commander: 8.3.0
