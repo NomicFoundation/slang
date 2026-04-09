@@ -38,6 +38,7 @@ Tree:
                                                   - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (bool_keyword꞉ BoolKeyword): "bool" # (159..163)
                                                   - (storage_location꞉ StorageLocation) ► (memory_keyword꞉ MemoryKeyword): "memory" # (164..170)
                                                   - (name꞉ Identifier): "x" # (171..172)
+                                          - (separator꞉ Comma): "," # (172..173)
                                           - (item꞉ MultiTypedDeclarationElement): # "bool storage y" (174..188)
                                               - (member꞉ VariableDeclaration): # "bool storage y" (174..188)
                                                   - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (bool_keyword꞉ BoolKeyword): "bool" # (174..178)

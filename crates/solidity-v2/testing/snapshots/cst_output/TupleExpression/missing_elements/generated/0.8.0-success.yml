@@ -33,11 +33,14 @@ Tree:
                               - (item꞉ Statement) ► (expression_statement꞉ ExpressionStatement): # "(, second, , fourth)\n// <<<\n;" (139..168)
                                   - (expression꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "(, second, , fourth)" (139..159)
                                       - (open_paren꞉ OpenParen): "(" # (139..140)
-                                      - (items꞉ TupleValues): # "second, , fourth" (142..158)
+                                      - (items꞉ TupleValues): # ", second, , fourth" (140..158)
                                           - (item꞉ TupleValue): []
+                                          - (separator꞉ Comma): "," # (140..141)
                                           - (item꞉ TupleValue): # "second" (142..148)
                                               - (expression꞉ Expression) ► (identifier꞉ Identifier): "second" # (142..148)
+                                          - (separator꞉ Comma): "," # (148..149)
                                           - (item꞉ TupleValue): []
+                                          - (separator꞉ Comma): "," # (150..151)
                                           - (item꞉ TupleValue): # "fourth" (152..158)
                                               - (expression꞉ Expression) ► (identifier꞉ Identifier): "fourth" # (152..158)
                                       - (close_paren꞉ CloseParen): ")" # (158..159)
