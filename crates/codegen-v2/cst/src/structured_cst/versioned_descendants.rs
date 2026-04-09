@@ -55,11 +55,7 @@ fn initial_dfs(
     }
 
     let result = check_local(builder, nonterminal, |child| {
-        if builder.terminals.contains(child) {
-            false
-        } else {
-            initial_dfs(builder, child, cache, visiting)
-        }
+        initial_dfs(builder, child, cache, visiting)
     });
 
     visiting.remove(nonterminal);
