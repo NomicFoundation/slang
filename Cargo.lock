@@ -3925,6 +3925,7 @@ version = "1.3.4"
 dependencies = [
  "paste",
  "sha3 0.11.0",
+ "slang_solidity_v2_common",
  "slang_solidity_v2_ir",
  "slang_solidity_v2_semantic",
 ]
