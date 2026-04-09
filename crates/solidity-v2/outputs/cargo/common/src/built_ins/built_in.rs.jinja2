@@ -1,0 +1,11 @@
+/// A Solidity built-in definition identifier.
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+pub enum BuiltIn {
+    {% for context in model.language.built_ins -%}
+    {% for scope in context.scopes -%}
+    {% for definition in scope.definitions %}
+    {{ definition.name }},
+    {%- endfor %}
+    {% endfor -%}
+    {% endfor %}
+}

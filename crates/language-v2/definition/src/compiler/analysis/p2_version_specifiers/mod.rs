@@ -7,8 +7,9 @@ use semver::Version;
 use crate::compiler::analysis::Analysis;
 use crate::internals::Spanned;
 use crate::model::{
-    Identifier, SpannedEnumItem, SpannedEnumVariant, SpannedField, SpannedFragmentItem,
-    SpannedItem, SpannedKeywordItem, SpannedPrecedenceExpression, SpannedPrecedenceItem,
+    Identifier, SpannedBuiltInContext, SpannedBuiltInDefinition, SpannedBuiltInScope,
+    SpannedEnumItem, SpannedEnumVariant, SpannedField, SpannedFragmentItem, SpannedItem,
+    SpannedKeywordItem, SpannedPrecedenceExpression, SpannedPrecedenceItem,
     SpannedPrecedenceOperator, SpannedPrimaryExpression, SpannedRepeatedItem, SpannedSeparatedItem,
     SpannedStructItem, SpannedTokenItem, SpannedVersionSpecifier,
 };
@@ -18,6 +19,10 @@ pub(crate) fn run(analysis: &mut Analysis) {
 
     for item in language.items() {
         check_item(analysis, item);
+    }
+
+    for built_in_context in &language.built_ins {
+        check_built_in_context(analysis, built_in_context);
     }
 }
 
@@ -190,6 +195,31 @@ fn check_fragment(analysis: &mut Analysis, item: &SpannedFragmentItem) {
         enabled,
         scanner: _,
     } = item;
+
+    check_version_specifier(analysis, enabled.as_ref());
+}
+
+fn check_built_in_context(analysis: &mut Analysis, context: &SpannedBuiltInContext) {
+    let SpannedBuiltInContext { name: _, scopes } = context;
+
+    for scope in scopes {
+        check_built_in_scope(analysis, scope);
+    }
+}
+
+fn check_built_in_scope(analysis: &mut Analysis, scope: &SpannedBuiltInScope) {
+    let SpannedBuiltInScope {
+        name: _,
+        definitions,
+    } = scope;
+
+    for definition in definitions {
+        check_built_in_definition(analysis, definition);
+    }
+}
+
+fn check_built_in_definition(analysis: &mut Analysis, definition: &SpannedBuiltInDefinition) {
+    let SpannedBuiltInDefinition { name: _, enabled } = definition;
 
     check_version_specifier(analysis, enabled.as_ref());
 }

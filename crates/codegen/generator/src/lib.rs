@@ -87,6 +87,7 @@ impl RuntimeModel {
 struct LanguageModelV2 {
     name: String,
     versions: IndexSet<Version>,
+    built_ins: Vec<codegen_v2_semantic::built_ins::BuiltInContextModel>,
 }
 
 impl LanguageModelV2 {
@@ -94,6 +95,7 @@ impl LanguageModelV2 {
         Self {
             name: language.name.to_string(),
             versions: language.versions.clone(),
+            built_ins: codegen_v2_semantic::built_ins::build_built_ins_model(language),
         }
     }
 }

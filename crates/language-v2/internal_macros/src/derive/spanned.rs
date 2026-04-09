@@ -112,10 +112,8 @@ fn get_spanned_type(input: Type) -> Type {
         // Let's use that instead:
         "BuiltIn"
         | "BuiltInContext"
-        | "BuiltInField"
-        | "BuiltInFunction"
-        | "BuiltInParameter"
-        | "BuiltInType"
+        | "BuiltInDefinition"
+        | "BuiltInScope"
         | "EnumItem"
         | "EnumVariant"
         | "Field"
