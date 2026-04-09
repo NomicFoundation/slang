@@ -7,23 +7,31 @@ mod default;
 use default::Builder;
 
 use super::Source;
+use crate::interner::{Interner, StringId};
 use crate::ir::nodes as output;
 
 pub fn build_source_unit(
     source_unit: &input::SourceUnit,
     source: &impl Source,
+    interner: &mut Interner,
 ) -> output::SourceUnit {
-    let mut builder = CstToIrBuilder { source };
+    let mut builder = CstToIrBuilder { source, interner };
     builder.build_source_unit(source_unit)
 }
 
 struct CstToIrBuilder<'a, S: Source> {
     pub source: &'a S,
+    pub interner: &'a mut Interner,
 }
 
 impl<S: Source> Builder for CstToIrBuilder<'_, S> {
     fn unparse_range(&self, range: std::ops::Range<usize>) -> String {
         self.source.text(range).to_owned()
+    }
+
+    fn intern_identifier(&mut self, range: std::ops::Range<usize>) -> StringId {
+        let text = self.source.text(range);
+        self.interner.intern(text)
     }
 
     //

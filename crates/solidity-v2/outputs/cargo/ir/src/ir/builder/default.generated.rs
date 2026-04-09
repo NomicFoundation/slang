@@ -8,10 +8,12 @@ use std::rc::Rc;
 
 use slang_solidity_v2_cst::structured_cst::nodes as input;
 
+use crate::interner::StringId;
 use crate::ir::nodes as output;
 
 pub trait Builder {
     fn unparse_range(&self, range: std::ops::Range<usize>) -> String;
+    fn intern_identifier(&mut self, range: std::ops::Range<usize>) -> StringId;
 
     //
     // Sequences
@@ -2226,15 +2228,19 @@ pub trait Builder {
         match source {
             input::IdentifierPathElement::Identifier(terminal) => {
                 let text = self.unparse_range(terminal.range.clone());
+                let string_id = self.intern_identifier(terminal.range.clone());
                 Rc::new(output::IdentifierStruct {
                     range: terminal.range.clone(),
+                    string_id,
                     text,
                 })
             }
             input::IdentifierPathElement::AddressKeyword(terminal) => {
                 let text = self.unparse_range(terminal.range.clone());
+                let string_id = self.intern_identifier(terminal.range.clone());
                 Rc::new(output::IdentifierStruct {
                     range: terminal.range.clone(),
+                    string_id,
                     text,
                 })
             }
@@ -2608,8 +2614,10 @@ pub trait Builder {
 
     fn build_identifier(&mut self, source: &input::Identifier) -> output::Identifier {
         let text = self.unparse_range(source.range.clone());
+        let string_id = self.intern_identifier(source.range.clone());
         Rc::new(output::IdentifierStruct {
             range: source.range.clone(),
+            string_id,
             text,
         })
     }
@@ -2715,8 +2723,10 @@ pub trait Builder {
 
     fn build_yul_identifier(&mut self, source: &input::YulIdentifier) -> output::Identifier {
         let text = self.unparse_range(source.range.clone());
+        let string_id = self.intern_identifier(source.range.clone());
         Rc::new(output::IdentifierStruct {
             range: source.range.clone(),
+            string_id,
             text,
         })
     }

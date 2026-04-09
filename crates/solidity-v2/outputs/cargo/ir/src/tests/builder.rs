@@ -1,6 +1,7 @@
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_parser::{ParseOutput, Parser};
 
+use crate::interner::Interner;
 use crate::ir;
 
 #[test]
@@ -27,7 +28,8 @@ contract MyContract {
 
     assert!(errors.is_empty(), "Parser errors: {errors:?}");
 
-    let source_unit = ir::build(&source_unit, &CONTENTS);
+    let mut interner = Interner::new();
+    let source_unit = ir::build(&source_unit, &CONTENTS, &mut interner);
     assert_eq!(2, source_unit.members.len());
     assert!(matches!(
         source_unit.members[0],
@@ -91,7 +93,8 @@ contract Test is Base layout at 0 {}
 
     assert!(errors.is_empty(), "Parser errors: {errors:?}");
 
-    let source_unit = ir::build(&source_unit, &CONTENTS);
+    let mut interner = Interner::new();
+    let source_unit = ir::build(&source_unit, &CONTENTS, &mut interner);
     assert_eq!(2, source_unit.members.len());
 
     let ir::SourceUnitMember::ContractDefinition(base_contract) = &source_unit.members[0] else {

@@ -2,6 +2,7 @@ use std::collections::BTreeMap;
 use std::rc::Rc;
 
 use slang_solidity_v2_common::versions::LanguageVersion;
+use slang_solidity_v2_ir::interner::Interner;
 use slang_solidity_v2_ir::ir::{self, NodeId};
 use slang_solidity_v2_parser::{ParseOutput, Parser, ParserError};
 use slang_solidity_v2_semantic::context::{extract_import_paths_from_source_unit, SemanticContext};
@@ -12,6 +13,7 @@ use super::unit::CompilationUnit;
 #[doc(hidden)]
 pub struct InternalCompilationBuilder {
     language_version: LanguageVersion,
+    interner: Interner,
     files: BTreeMap<String, File>,
 }
 
@@ -19,6 +21,7 @@ impl InternalCompilationBuilder {
     pub fn create(language_version: LanguageVersion) -> Self {
         Self {
             language_version,
+            interner: Interner::new(),
             files: BTreeMap::new(),
         }
     }
@@ -40,7 +43,7 @@ impl InternalCompilationBuilder {
             errors,
         } = Parser::parse(contents, self.language_version);
 
-        let source_unit = ir::build(&source_unit, &contents);
+        let source_unit = ir::build(&source_unit, &contents, &mut self.interner);
         let import_paths = extract_import_paths_from_source_unit(&source_unit);
 
         let file = File::new(id.clone(), source_unit);
@@ -71,7 +74,12 @@ impl InternalCompilationBuilder {
         let files: Vec<File> = self.files.into_values().collect();
         let semantic = SemanticContext::build_from(self.language_version, &files);
 
-        CompilationUnit::create(self.language_version, files, Rc::new(semantic))
+        CompilationUnit::create(
+            self.language_version,
+            files,
+            Rc::new(semantic),
+            Rc::new(self.interner),
+        )
     }
 }
 

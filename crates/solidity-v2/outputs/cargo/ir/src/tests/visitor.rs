@@ -1,6 +1,7 @@
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_parser::{ParseOutput, Parser};
 
+use crate::interner::Interner;
 use crate::ir;
 
 #[derive(Default)]
@@ -83,7 +84,8 @@ contract Counter is Ownable {
 
     assert!(errors.is_empty(), "Parser errors: {errors:?}");
 
-    let source_unit = ir::build(&source_unit, &CONTENTS);
+    let mut interner = Interner::new();
+    let source_unit = ir::build(&source_unit, &CONTENTS, &mut interner);
 
     let mut visitor = CounterVisitor::new(true);
     ir::visitor::accept_source_unit(&source_unit, &mut visitor);

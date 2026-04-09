@@ -6,6 +6,8 @@ use std::ops::Range;
 use std::rc::Rc;
 use std::vec::Vec;
 
+use crate::interner::StringId;
+
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(transparent)]
 pub struct NodeId(usize);
@@ -1895,6 +1897,7 @@ pub type Identifier = Rc<IdentifierStruct>;
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct IdentifierStruct {
     pub range: Range<usize>,
+    pub string_id: StringId,
     pub text: String,
 }
 
