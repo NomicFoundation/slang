@@ -48,29 +48,21 @@ pub enum BuiltIn {
     ErrorOrPanic,
     Gasleft,
     Keccak256,
-    LegacyCallOptionGas(LegacyCall),
-    LegacyCallOptionValue(LegacyCall),
-    LegacyCallOptionValueNew(TypeId),
     Length,
-    Log(u8),
     ModifierUnderscore,
     Msg,
     MsgData,
-    MsgGas,
     MsgSender,
     MsgSig,
     MsgValue,
     Mulmod,
-    Now,
     Require,
     Revert,
     Ripemd160,
     Selector,
     Selfdestruct,
     Sha256,
-    Sha3,
     StringConcat,
-    Suicide,
     Tx,
     TxGasPrice,
     TxOrigin,
@@ -124,8 +116,6 @@ pub enum BuiltIn {
     YulGt,
     YulInvalid,
     YulIszero,
-    YulJump,
-    YulJumpi,
     YulKeccak256,
     YulLengthField,
     YulLog(u8),
@@ -155,7 +145,6 @@ pub enum BuiltIn {
     YulSelfbalance,
     YulSelfdestruct,
     YulSgt,
-    YulSha3,
     YulShl,
     YulShr,
     YulSignextend,
@@ -167,7 +156,6 @@ pub enum BuiltIn {
     YulStaticcall,
     YulStop,
     YulSub,
-    YulSuicide,
     YulSwap(u8),
     YulTimestamp,
     YulTload,
@@ -220,29 +208,21 @@ impl BuiltIn {
             BuiltIn::ErrorOrPanic => PublicBuiltIn::ErrorOrPanic,
             BuiltIn::Gasleft => PublicBuiltIn::Gasleft,
             BuiltIn::Keccak256 => PublicBuiltIn::Keccak256,
-            BuiltIn::LegacyCallOptionGas(_) => PublicBuiltIn::LegacyCallOptionGas,
-            BuiltIn::LegacyCallOptionValue(_) => PublicBuiltIn::LegacyCallOptionValue,
-            BuiltIn::LegacyCallOptionValueNew(_) => PublicBuiltIn::LegacyCallOptionValueNew,
             BuiltIn::Length => PublicBuiltIn::Length,
-            BuiltIn::Log(_) => PublicBuiltIn::Log,
             BuiltIn::ModifierUnderscore => PublicBuiltIn::ModifierUnderscore,
             BuiltIn::Msg => PublicBuiltIn::Msg,
             BuiltIn::MsgData => PublicBuiltIn::MsgData,
-            BuiltIn::MsgGas => PublicBuiltIn::MsgGas,
             BuiltIn::MsgSender => PublicBuiltIn::MsgSender,
             BuiltIn::MsgSig => PublicBuiltIn::MsgSig,
             BuiltIn::MsgValue => PublicBuiltIn::MsgValue,
             BuiltIn::Mulmod => PublicBuiltIn::Mulmod,
-            BuiltIn::Now => PublicBuiltIn::Now,
             BuiltIn::Require => PublicBuiltIn::Require,
             BuiltIn::Revert => PublicBuiltIn::Revert,
             BuiltIn::Ripemd160 => PublicBuiltIn::Ripemd160,
             BuiltIn::Selector => PublicBuiltIn::Selector,
             BuiltIn::Selfdestruct => PublicBuiltIn::Selfdestruct,
             BuiltIn::Sha256 => PublicBuiltIn::Sha256,
-            BuiltIn::Sha3 => PublicBuiltIn::Sha3,
             BuiltIn::StringConcat => PublicBuiltIn::StringConcat,
-            BuiltIn::Suicide => PublicBuiltIn::Suicide,
             BuiltIn::Tx => PublicBuiltIn::Tx,
             BuiltIn::TxGasPrice => PublicBuiltIn::TxGasPrice,
             BuiltIn::TxOrigin => PublicBuiltIn::TxOrigin,
@@ -296,8 +276,6 @@ impl BuiltIn {
             BuiltIn::YulGt => PublicBuiltIn::YulGt,
             BuiltIn::YulInvalid => PublicBuiltIn::YulInvalid,
             BuiltIn::YulIszero => PublicBuiltIn::YulIszero,
-            BuiltIn::YulJump => PublicBuiltIn::YulJump,
-            BuiltIn::YulJumpi => PublicBuiltIn::YulJumpi,
             BuiltIn::YulKeccak256 => PublicBuiltIn::YulKeccak256,
             BuiltIn::YulLengthField => PublicBuiltIn::YulLengthField,
             BuiltIn::YulLog(_) => PublicBuiltIn::YulLog,
@@ -327,7 +305,6 @@ impl BuiltIn {
             BuiltIn::YulSelfbalance => PublicBuiltIn::YulSelfbalance,
             BuiltIn::YulSelfdestruct => PublicBuiltIn::YulSelfdestruct,
             BuiltIn::YulSgt => PublicBuiltIn::YulSgt,
-            BuiltIn::YulSha3 => PublicBuiltIn::YulSha3,
             BuiltIn::YulShl => PublicBuiltIn::YulShl,
             BuiltIn::YulShr => PublicBuiltIn::YulShr,
             BuiltIn::YulSignextend => PublicBuiltIn::YulSignextend,
@@ -339,7 +316,6 @@ impl BuiltIn {
             BuiltIn::YulStaticcall => PublicBuiltIn::YulStaticcall,
             BuiltIn::YulStop => PublicBuiltIn::YulStop,
             BuiltIn::YulSub => PublicBuiltIn::YulSub,
-            BuiltIn::YulSuicide => PublicBuiltIn::YulSuicide,
             BuiltIn::YulSwap(_) => PublicBuiltIn::YulSwap,
             BuiltIn::YulTimestamp => PublicBuiltIn::YulTimestamp,
             BuiltIn::YulTload => PublicBuiltIn::YulTload,
@@ -347,14 +323,6 @@ impl BuiltIn {
             BuiltIn::YulXor => PublicBuiltIn::YulXor,
         }
     }
-}
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum LegacyCall {
-    Call,
-    Delegatecall,
-    Staticcall,
-    User(TypeId),
 }
 
 pub(crate) struct BuiltInsResolver<'a> {
@@ -763,12 +731,10 @@ impl<'a> BuiltInsResolver<'a> {
             BuiltIn::BlockPrevrandao => Typing::Resolved(self.types.uint256()),
             BuiltIn::BlockTimestamp => Typing::Resolved(self.types.uint256()),
             BuiltIn::Length => Typing::Resolved(self.types.uint256()),
-            BuiltIn::MsgGas => Typing::Resolved(self.types.uint256()),
             BuiltIn::MsgData => Typing::Resolved(self.types.bytes_calldata()),
             BuiltIn::MsgSender => Typing::Resolved(self.types.address()),
             BuiltIn::MsgSig => Typing::Resolved(self.types.bytes4()),
             BuiltIn::MsgValue => Typing::Resolved(self.types.uint256()),
-            BuiltIn::Now => Typing::Resolved(self.types.uint256()),
             BuiltIn::Selector => Typing::Resolved(self.types.bytes4()),
             BuiltIn::TxGasPrice => Typing::Resolved(self.types.uint256()),
             BuiltIn::TxOrigin => Typing::Resolved(self.types.address()),
@@ -801,13 +767,9 @@ impl<'a> BuiltInsResolver<'a> {
             | BuiltIn::Block
             | BuiltIn::Blockhash
             | BuiltIn::BytesConcat
-            | BuiltIn::LegacyCallOptionGas(_)
-            | BuiltIn::LegacyCallOptionValue(_)
-            | BuiltIn::LegacyCallOptionValueNew(_)
             | BuiltIn::Ecrecover
             | BuiltIn::Gasleft
             | BuiltIn::Keccak256
-            | BuiltIn::Log(_)
             | BuiltIn::ModifierUnderscore
             | BuiltIn::Mulmod
             | BuiltIn::Msg
@@ -816,9 +778,7 @@ impl<'a> BuiltInsResolver<'a> {
             | BuiltIn::Ripemd160
             | BuiltIn::Selfdestruct
             | BuiltIn::Sha256
-            | BuiltIn::Sha3
             | BuiltIn::StringConcat
-            | BuiltIn::Suicide
             | BuiltIn::Tx
             | BuiltIn::Wrap(_)
             | BuiltIn::Unwrap(_) => Typing::BuiltIn(*built_in),
@@ -849,13 +809,7 @@ impl<'a> BuiltInsResolver<'a> {
             BuiltIn::AddressCall => Typing::Resolved(self.types.boolean_bytes_tuple()),
             BuiltIn::AddressCallcode => Typing::Resolved(self.types.boolean_bytes_tuple()),
             BuiltIn::AddressDelegatecall => Typing::Resolved(self.types.boolean_bytes_tuple()),
-            BuiltIn::AddressSend if self.language_version < LanguageVersion::V0_8_0 => {
-                Typing::Resolved(self.types.boolean())
-            }
             BuiltIn::AddressStaticcall => Typing::Resolved(self.types.boolean_bytes_tuple()),
-            BuiltIn::AddressTransfer if self.language_version < LanguageVersion::V0_8_0 => {
-                Typing::Resolved(self.types.void())
-            }
             BuiltIn::ArrayPush(type_id) => {
                 if argument_typings.is_empty() {
                     Typing::Resolved(*type_id)
@@ -871,25 +825,13 @@ impl<'a> BuiltInsResolver<'a> {
             BuiltIn::Ecrecover => Typing::Resolved(self.types.address()),
             BuiltIn::Gasleft => Typing::Resolved(self.types.uint256()),
             BuiltIn::Keccak256 => Typing::Resolved(self.types.bytes32()),
-            BuiltIn::LegacyCallOptionGas(call_type) | BuiltIn::LegacyCallOptionValue(call_type) => {
-                match call_type {
-                    LegacyCall::Call => Typing::BuiltIn(BuiltIn::AddressCall),
-                    LegacyCall::Delegatecall => Typing::BuiltIn(BuiltIn::AddressDelegatecall),
-                    LegacyCall::Staticcall => Typing::BuiltIn(BuiltIn::AddressStaticcall),
-                    LegacyCall::User(type_id) => Typing::Resolved(*type_id),
-                }
-            }
-            BuiltIn::LegacyCallOptionValueNew(type_id) => Typing::NewExpression(*type_id),
-            BuiltIn::Log(_) => Typing::Resolved(self.types.void()),
             BuiltIn::Mulmod => Typing::Resolved(self.types.uint256()),
             BuiltIn::Require => Typing::Resolved(self.types.void()),
             BuiltIn::Revert => Typing::Resolved(self.types.void()),
             BuiltIn::Ripemd160 => Typing::Resolved(self.types.bytes20()),
             BuiltIn::Selfdestruct => Typing::Resolved(self.types.void()),
             BuiltIn::Sha256 => Typing::Resolved(self.types.bytes32()),
-            BuiltIn::Sha3 => Typing::Resolved(self.types.bytes32()),
             BuiltIn::StringConcat => Typing::Resolved(self.types.string()),
-            BuiltIn::Suicide => Typing::Resolved(self.types.void()),
             BuiltIn::Unwrap(definition_id) => {
                 let Some(Definition::UserDefinedValueType(udvt)) =
                     self.binder.find_definition_by_id(*definition_id)
