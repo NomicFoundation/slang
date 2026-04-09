@@ -27,7 +27,7 @@ catalog:
   "markdownlint-cli": "^0.48.0"
   "prettier-plugin-sh": "^0.18.0"
   "prettier": "^3.5.3"
-  "solc": "^0.8.30"
+  "solc": "^0.8.34"
   "ts-jest-resolver": "^2.0.1"
   "ts-jest": "^29.3.4"
   "tsx": "^4.19.4"
