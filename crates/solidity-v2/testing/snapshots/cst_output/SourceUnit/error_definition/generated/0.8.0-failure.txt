@@ -1,0 +1,169 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Error: This syntax was introduced in version '0.8.4'.
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/error_definition/input.sol:2:1]
+   │
+ 2 │ error MyError(uint256 a, uint256 b);
+   │ ──────────────────┬─────────────────  
+   │                   ╰─────────────────── Error occurred here.
+───╯
+
+Error: This syntax was introduced in version '0.8.4'.
+   ╭─[crates/solidity-v2/testing/snapshots/cst_output/SourceUnit/error_definition/input.sol:5:3]
+   │
+ 5 │   error MyOtherError(address addr);
+   │   ────────────────┬────────────────  
+   │                   ╰────────────────── Error occurred here.
+───╯
+
+
+SourceUnitStruct {
+    members: SourceUnitMembers {
+        elements: [
+            ErrorDefinition(
+                ErrorDefinitionStruct {
+                    error_keyword: ErrorKeyword {
+                        range: 102..107,
+                    },
+                    name: Identifier {
+                        range: 108..115,
+                    },
+                    members: ErrorParametersDeclarationStruct {
+                        open_paren: OpenParen {
+                            range: 115..116,
+                        },
+                        parameters: ErrorParameters {
+                            elements: [
+                                ErrorParameterStruct {
+                                    type_name: ElementaryType(
+                                        UintKeyword(
+                                            UintKeyword {
+                                                range: 116..123,
+                                            },
+                                        ),
+                                    ),
+                                    name: Some(
+                                        Identifier {
+                                            range: 124..125,
+                                        },
+                                    ),
+                                },
+                                ErrorParameterStruct {
+                                    type_name: ElementaryType(
+                                        UintKeyword(
+                                            UintKeyword {
+                                                range: 127..134,
+                                            },
+                                        ),
+                                    ),
+                                    name: Some(
+                                        Identifier {
+                                            range: 135..136,
+                                        },
+                                    ),
+                                },
+                            ],
+                        },
+                        close_paren: CloseParen {
+                            range: 136..137,
+                        },
+                    },
+                    semicolon: Semicolon {
+                        range: 137..138,
+                    },
+                },
+            ),
+            ContractDefinition(
+                ContractDefinitionStruct {
+                    abstract_keyword: None,
+                    contract_keyword: ContractKeyword {
+                        range: 140..148,
+                    },
+                    name: Identifier {
+                        range: 149..150,
+                    },
+                    specifiers: ContractSpecifiers {
+                        elements: [],
+                    },
+                    open_brace: OpenBrace {
+                        range: 151..152,
+                    },
+                    members: ContractMembers {
+                        elements: [
+                            ErrorDefinition(
+                                ErrorDefinitionStruct {
+                                    error_keyword: ErrorKeyword {
+                                        range: 155..160,
+                                    },
+                                    name: Identifier {
+                                        range: 161..173,
+                                    },
+                                    members: ErrorParametersDeclarationStruct {
+                                        open_paren: OpenParen {
+                                            range: 173..174,
+                                        },
+                                        parameters: ErrorParameters {
+                                            elements: [
+                                                ErrorParameterStruct {
+                                                    type_name: ElementaryType(
+                                                        AddressType(
+                                                            AddressTypeStruct {
+                                                                address_keyword: AddressKeyword {
+                                                                    range: 174..181,
+                                                                },
+                                                                payable_keyword: None,
+                                                            },
+                                                        ),
+                                                    ),
+                                                    name: Some(
+                                                        Identifier {
+                                                            range: 182..186,
+                                                        },
+                                                    ),
+                                                },
+                                            ],
+                                        },
+                                        close_paren: CloseParen {
+                                            range: 186..187,
+                                        },
+                                    },
+                                    semicolon: Semicolon {
+                                        range: 187..188,
+                                    },
+                                },
+                            ),
+                            StateVariableDefinition(
+                                StateVariableDefinitionStruct {
+                                    type_name: IdentifierPath(
+                                        IdentifierPath {
+                                            elements: [
+                                                Identifier(
+                                                    Identifier {
+                                                        range: 191..196,
+                                                    },
+                                                ),
+                                            ],
+                                        },
+                                    ),
+                                    attributes: StateVariableAttributes {
+                                        elements: [],
+                                    },
+                                    name: Identifier {
+                                        range: 197..200,
+                                    },
+                                    value: None,
+                                    semicolon: Semicolon {
+                                        range: 200..201,
+                                    },
+                                },
+                            ),
+                        ],
+                    },
+                    close_brace: CloseBrace {
+                        range: 202..203,
+                    },
+                },
+            ),
+        ],
+    },
+}

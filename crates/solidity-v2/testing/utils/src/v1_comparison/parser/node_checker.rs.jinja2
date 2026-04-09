@@ -959,7 +959,7 @@ impl NodeChecker for {{ parent_type }} {
     fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
         match self {
             {% for variant in choice.variants %}
-            Self::{{ variant.name }}(element) => element.check_node_with_offset(node, text_offset),
+            Self::{{ variant.variant_type.name }}(element) => element.check_node_with_offset(node, text_offset),
             {% endfor %}
         }
     }
@@ -1095,7 +1095,7 @@ impl NodeChecker for {{ parent_type }} {
 
         match self {
             {% for variant in choice.variants %}
-            Self::{{ variant.name }}(element) => {
+            Self::{{ variant.variant_type.name }}(element) => {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             }
             {% endfor %}

@@ -34,15 +34,15 @@ use std::rc::Rc;
     {%- for field in sequence.fields %}
       pub {{ field.label | snake_case }}:
         {%- if field.is_optional -%}
-          Option<{{ field.type.name }}>,
+          Option<{{ field.field_type.name }}>,
         {%- else -%}
-          {{ field.type.name }},
+          {{ field.field_type.name }},
         {%- endif -%}
     {% endfor -%}
   }
 
   pub fn new_{{ parent_type | snake_case }}({% for field in sequence.fields -%}
-      {{ field.label | snake_case }}: {% if field.is_optional %}Option<{% endif %}{{ field.type.name }}{% if field.is_optional %}>{% endif %},
+      {{ field.label | snake_case }}: {% if field.is_optional %}Option<{% endif %}{{ field.field_type.name }}{% if field.is_optional %}>{% endif %},
     {%- endfor %}) -> {{ parent_type }} {
       Rc::new({{ parent_type }}Struct {
         {%- for field in sequence.fields %}
@@ -61,13 +61,13 @@ use std::rc::Rc;
   #[derive(Clone, Debug, PartialEq)]
   pub enum {{ parent_type }} {
     {% for variant in choice.variants -%}
-      {{ variant.name }}({{ variant.name }}),
+      {{ variant.variant_type.name }}({{ variant.variant_type.name }}),
     {%- endfor -%}
   }
 
   {% for variant in choice.variants %}
-    pub fn new_{{ parent_type | snake_case }}_{{ variant.name | snake_case }}(element: {{ variant.name }}) -> {{ parent_type }} {
-      {{ parent_type }}::{{ variant.name }}(element)
+    pub fn new_{{ parent_type | snake_case }}_{{ variant.variant_type.name | snake_case }}(element: {{ variant.variant_type.name }}) -> {{ parent_type }} {
+      {{ parent_type }}::{{ variant.variant_type.name }}(element)
     }
   {% endfor %}
 {% endfor %}
