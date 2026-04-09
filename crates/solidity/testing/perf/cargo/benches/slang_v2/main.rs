@@ -8,6 +8,7 @@ use iai_callgrind::{
 };
 use paste::paste;
 use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit;
+use slang_solidity_v2_ir::interner::Interner;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::context::SemanticContext;
 use solidity_testing_perf_cargo::dataset::SolidityProject;
@@ -52,16 +53,16 @@ macro_rules! slang_v2_define_tests {
             #[bench::test(stringify!($prj))]
             // Note: the input CST source units are consumed (dropped) during IR building.
             // This is the intended use case: the CST is replaced by the IR representation.
-            pub fn [< $prj _ir_builder >]((project, source_units): (&'static SolidityProject, Vec<(String, SourceUnit)>)) -> Vec<ir::SourceUnit> {
+            pub fn [< $prj _ir_builder >]((project, source_units): (&'static SolidityProject, Vec<(String, SourceUnit)>)) -> (Interner, Vec<ir::SourceUnit>) {
                 black_box(tests::slang_v2::ir_builder::run(black_box(project), black_box(source_units)))
             }
 
             #[library_benchmark(setup = tests::slang_v2::semantic::setup)]
             #[bench::test(stringify!($prj))]
             pub fn [< $prj _semantic >](
-                (project, input_files): (&'static SolidityProject, Vec<tests::slang_v2::semantic::File>),
+                (project, interner, input_files): (&'static SolidityProject, Interner, Vec<tests::slang_v2::semantic::File>),
             ) -> SemanticContext {
-                black_box(tests::slang_v2::semantic::run(black_box(project), black_box(input_files)))
+                black_box(tests::slang_v2::semantic::run(black_box(project), black_box(interner), black_box(input_files)))
             }
 
             library_benchmark_group!(

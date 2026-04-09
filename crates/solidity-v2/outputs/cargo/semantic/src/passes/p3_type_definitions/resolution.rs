@@ -1,3 +1,4 @@
+use slang_solidity_v2_ir::interner::StringId;
 use slang_solidity_v2_ir::ir;
 
 use super::evaluator::{evaluate_compile_time_uint_constant, ConstantIdentifierResolver};
@@ -140,7 +141,7 @@ impl Pass<'_> {
 impl ConstantIdentifierResolver<ScopeId> for Pass<'_> {
     fn resolve_identifier_in_scope(
         &self,
-        identifier: &str,
+        identifier: StringId,
         scope_id: &ScopeId,
     ) -> Option<(ir::Expression, ScopeId)> {
         let resolution = self.binder.resolve_in_scope(*scope_id, identifier);

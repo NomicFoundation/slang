@@ -1,6 +1,7 @@
 use std::rc::Rc;
 
 use slang_solidity_v2_common::versions::LanguageVersion;
+use slang_solidity_v2_ir::interner::Interner;
 use slang_solidity_v2_ir::ir::{self, NodeId};
 
 use crate::binder::{Binder, Definition, Reference, Scope};
@@ -50,14 +51,18 @@ pub struct SemanticContext {
 }
 
 impl SemanticContext {
-    pub fn build_from(language_version: LanguageVersion, files: &[impl SemanticFile]) -> Self {
+    pub fn build_from(
+        language_version: LanguageVersion,
+        files: &[impl SemanticFile],
+        interner: &Interner,
+    ) -> Self {
         let mut binder = Binder::default();
         let mut types = TypeRegistry::default();
 
         p1_collect_definitions::run(files, &mut binder);
         p2_linearise_contracts::run(files, &mut binder);
         p3_type_definitions::run(files, &mut binder, &mut types);
-        p4_resolve_references::run(files, &mut binder, &mut types, language_version);
+        p4_resolve_references::run(files, &mut binder, &mut types, language_version, interner);
 
         Self { binder, types }
     }

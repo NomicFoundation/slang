@@ -1,3 +1,4 @@
+use slang_solidity_v2_ir::interner::StringId;
 use slang_solidity_v2_ir::ir::NodeId;
 
 use super::Pass;
@@ -144,7 +145,7 @@ impl Pass<'_> {
     pub(super) fn lookup_function_matching_named_arguments<'a>(
         &'a self,
         type_ids: &[TypeId],
-        argument_typings: &[(String, Typing)],
+        argument_typings: &[(StringId, Typing)],
         receiver_type_id: Option<TypeId>,
     ) -> Option<&'a FunctionType> {
         // get types and filter non-function types
@@ -202,18 +203,16 @@ impl Pass<'_> {
     fn parameters_match_named_arguments(
         &self,
         parameters: &[ParameterDefinition],
-        argument_typings: &[(String, Typing)],
+        argument_typings: &[(StringId, Typing)],
         external_call: bool,
     ) -> bool {
         argument_typings
             .iter()
             .all(|(argument_name, argument_typing)| {
-                let Some(parameter) = parameters.iter().find(|parameter| {
-                    parameter
-                        .name
-                        .as_ref()
-                        .is_some_and(|name| name == argument_name)
-                }) else {
+                let Some(parameter) = parameters
+                    .iter()
+                    .find(|parameter| parameter.name.is_some_and(|name| name == *argument_name))
+                else {
                     return false;
                 };
                 parameter.type_id.is_some_and(|type_id| {
@@ -267,7 +266,7 @@ impl Pass<'_> {
     pub(super) fn lookup_event_matching_named_arguments(
         &self,
         definition_ids: &[NodeId],
-        argument_typings: &[(String, Typing)],
+        argument_typings: &[(StringId, Typing)],
     ) -> Option<NodeId> {
         for definition_id in definition_ids {
             let Some(parameters) = self.get_event_definition_parameters(*definition_id) else {

@@ -1,5 +1,6 @@
 use std::collections::{HashMap, HashSet, VecDeque};
 
+use slang_solidity_v2_ir::interner::StringId;
 use slang_solidity_v2_ir::ir::NodeId;
 
 use super::built_ins::BuiltIn;
@@ -184,7 +185,7 @@ impl Binder {
 
     pub(crate) fn insert_definition_in_scope(&mut self, definition: Definition, scope_id: ScopeId) {
         let scope = self.get_scope_mut(scope_id);
-        let symbol = definition.identifier().unparse().to_string();
+        let symbol = definition.identifier().string_id;
         scope.insert_definition(symbol, definition.node_id());
         self.insert_definition_no_scope(definition);
     }
@@ -344,7 +345,7 @@ impl Binder {
     // Resolving a symbol in a file scope is special because of default imports.
     // We want to find *all* definitions with the given symbol reachable from
     // the file.
-    fn resolve_in_file_scope(&self, file_id: &str, symbol: &str) -> Resolution {
+    fn resolve_in_file_scope(&self, file_id: &str, symbol: StringId) -> Resolution {
         let mut found_definitions = Vec::new();
         let mut visited_files = HashSet::new();
         let mut files_to_search = VecDeque::new();
@@ -366,7 +367,7 @@ impl Binder {
     fn resolve_in_contract_scope_internal(
         &self,
         contract_scope: &ContractScope,
-        symbol: &str,
+        symbol: StringId,
         options: ResolveOptions,
     ) -> Resolution {
         // Search for the symbol in the linearised bases *in-order*.
@@ -399,7 +400,7 @@ impl Binder {
                 else {
                     unreachable!("expected the scope of a base contract to be a ContractScope");
                 };
-                let Some(definitions) = base_contract_scope.definitions.get(symbol) else {
+                let Some(definitions) = base_contract_scope.definitions.get(&symbol) else {
                     continue;
                 };
                 for definition_id in definitions {
@@ -428,7 +429,7 @@ impl Binder {
                 }
             }
             Resolution::from(results)
-        } else if let Some(definitions) = contract_scope.definitions.get(symbol) {
+        } else if let Some(definitions) = contract_scope.definitions.get(&symbol) {
             // This case shouldn't happen for valid Solidity, as all
             // contracts should have a proper linearisation
             Resolution::from(definitions.clone())
@@ -440,10 +441,10 @@ impl Binder {
     // This function attempts to lexically resolve `symbol` starting from the
     // given scope. Certain scopes can delegate to their "parent" scopes if
     // the symbol is not found there.
-    pub(crate) fn resolve_in_scope(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
+    pub(crate) fn resolve_in_scope(&self, scope_id: ScopeId, symbol: StringId) -> Resolution {
         let scope = self.get_scope_by_id(scope_id);
         match scope {
-            Scope::Block(block_scope) => block_scope.definitions.get(symbol).copied().map_or_else(
+            Scope::Block(block_scope) => block_scope.definitions.get(&symbol).copied().map_or_else(
                 || self.resolve_in_scope(block_scope.parent_scope_id, symbol),
                 Resolution::Definition,
             ),
@@ -458,35 +459,37 @@ impl Binder {
                     self.resolve_in_scope(contract_scope.file_scope_id, symbol)
                 })
             }
-            Scope::Enum(enum_scope) => enum_scope.definitions.get(symbol).into(),
+            Scope::Enum(enum_scope) => enum_scope.definitions.get(&symbol).into(),
             Scope::File(file_scope) => self.resolve_in_file_scope(&file_scope.file_id, symbol),
             Scope::Function(function_scope) => function_scope
                 .definitions
-                .get(symbol)
+                .get(&symbol)
                 .copied()
                 .map_or_else(
                     || self.resolve_in_scope(function_scope.parameters_scope_id, symbol),
                     Resolution::Definition,
                 )
                 .or_else(|| self.resolve_in_scope(function_scope.parent_scope_id, symbol)),
-            Scope::Modifier(modifier_scope) => {
-                modifier_scope.definitions.get(symbol).copied().map_or_else(
+            Scope::Modifier(modifier_scope) => modifier_scope
+                .definitions
+                .get(&symbol)
+                .copied()
+                .map_or_else(
                     || self.resolve_in_scope(modifier_scope.parent_scope_id, symbol),
                     Resolution::Definition,
-                )
-            }
+                ),
             Scope::Parameters(parameters_scope) => {
                 parameters_scope.lookup_definition(symbol).into()
             }
-            Scope::Struct(struct_scope) => struct_scope.definitions.get(symbol).into(),
+            Scope::Struct(struct_scope) => struct_scope.definitions.get(&symbol).into(),
             Scope::Using(using_scope) => using_scope
                 .symbols
-                .get(symbol)
+                .get(&symbol)
                 .cloned()
                 .map_or(Resolution::Unresolved, Resolution::from),
             Scope::YulBlock(yul_block_scope) => yul_block_scope
                 .definitions
-                .get(symbol)
+                .get(&symbol)
                 .copied()
                 .map_or_else(
                     || self.resolve_in_scope(yul_block_scope.parent_scope_id, symbol),
@@ -497,7 +500,7 @@ impl Binder {
                 // cannot resolve to a Yul variable defined in a parent block
                 yul_function_scope
                     .definitions
-                    .get(symbol)
+                    .get(&symbol)
                     .copied()
                     .map_or_else(
                         || self.resolve_in_scope(yul_function_scope.parent_scope_id, symbol),
@@ -545,7 +548,7 @@ impl Binder {
                     continue;
                 };
                 working_set.extend(
-                    self.resolve_in_scope(scope_id, &imported_symbol.symbol)
+                    self.resolve_in_scope(scope_id, imported_symbol.symbol)
                         .get_definition_ids(),
                 );
             } else {
@@ -565,7 +568,7 @@ impl Binder {
     pub(crate) fn resolve_in_scope_as_namespace(
         &self,
         scope_id: ScopeId,
-        symbol: &str,
+        symbol: StringId,
     ) -> Resolution {
         let scope = self.get_scope_by_id(scope_id);
         match scope {
@@ -574,11 +577,11 @@ impl Binder {
                 symbol,
                 ResolveOptions::Qualified,
             ),
-            Scope::Enum(enum_scope) => enum_scope.definitions.get(symbol).into(),
-            Scope::Struct(struct_scope) => struct_scope.definitions.get(symbol).into(),
+            Scope::Enum(enum_scope) => enum_scope.definitions.get(&symbol).into(),
+            Scope::Struct(struct_scope) => struct_scope.definitions.get(&symbol).into(),
             Scope::Using(using_scope) => using_scope
                 .symbols
-                .get(symbol)
+                .get(&symbol)
                 .cloned()
                 .map_or(Resolution::Unresolved, Resolution::from),
             Scope::Parameters(parameters_scope) => {
@@ -597,7 +600,7 @@ impl Binder {
     pub(crate) fn resolve_in_contract_scope(
         &self,
         scope_id: ScopeId,
-        symbol: &str,
+        symbol: StringId,
         options: ResolveOptions,
     ) -> Resolution {
         let scope = self.get_scope_by_id(scope_id);

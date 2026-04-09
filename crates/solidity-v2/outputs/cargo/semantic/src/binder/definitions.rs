@@ -1,5 +1,6 @@
 use std::rc::Rc;
 
+use slang_solidity_v2_ir::interner::StringId;
 use slang_solidity_v2_ir::ir::{self, NodeId};
 
 use super::ScopeId;
@@ -87,7 +88,7 @@ pub struct ImportDefinition {
 #[derive(Debug)]
 pub struct ImportedSymbolDefinition {
     pub ir_node: ir::ImportDeconstructionSymbol,
-    pub symbol: String,
+    pub symbol: StringId,
     pub resolved_file_id: Option<String>,
 }
 
@@ -356,7 +357,7 @@ impl Definition {
 
     pub(crate) fn new_imported_symbol(
         ir_node: &ir::ImportDeconstructionSymbol,
-        symbol: String,
+        symbol: StringId,
         resolved_file_id: Option<String>,
     ) -> Self {
         Self::ImportedSymbol(ImportedSymbolDefinition {

@@ -119,7 +119,7 @@ impl Visitor for Pass<'_> {
 
             let resolution = scope_id.map_or(Resolution::Unresolved, |scope_id| {
                 self.binder
-                    .resolve_in_scope(scope_id, symbol.name.unparse())
+                    .resolve_in_scope(scope_id, symbol.name.string_id)
             });
             let reference = Reference::new(Rc::clone(&symbol.name), resolution);
             self.binder.insert_reference(reference);
@@ -354,10 +354,10 @@ impl Visitor for Pass<'_> {
                                 });
                             // TODO(validation): *all* definitions should point to functions
 
-                            symbols.insert(symbol_name.unparse().to_string(), definition_ids);
+                            symbols.insert(symbol_name.string_id, definition_ids);
 
                             if let Some(operator) = &symbol.alias {
-                                operators.insert(*operator, symbol_name.unparse().to_string());
+                                operators.insert(*operator, symbol_name.string_id);
                             }
                         }
 

@@ -257,7 +257,7 @@ contract Test is Base {
     p1_collect_definitions::run(&files, &mut binder);
     p2_linearise_contracts::run(&files, &mut binder);
     p3_type_definitions::run(&files, &mut binder, &mut types);
-    p4_resolve_references::run(&files, &mut binder, &mut types, language_version);
+    p4_resolve_references::run(&files, &mut binder, &mut types, language_version, &interner);
 
     // Verify that references were created and most are resolved
     let references = binder.references();

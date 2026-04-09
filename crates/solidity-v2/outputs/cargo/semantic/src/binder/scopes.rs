@@ -1,5 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
+use slang_solidity_v2_ir::interner::StringId;
 use slang_solidity_v2_ir::ir::{self, NodeId};
 
 use super::ScopeId;
@@ -25,25 +26,25 @@ pub(crate) enum Scope {
 pub(crate) struct BlockScope {
     pub(crate) node_id: NodeId,
     pub(crate) parent_scope_id: ScopeId,
-    pub(crate) definitions: HashMap<String, NodeId>,
+    pub(crate) definitions: HashMap<StringId, NodeId>,
 }
 
 pub(crate) struct ContractScope {
     pub(crate) node_id: NodeId,
     pub(crate) file_scope_id: ScopeId,
-    pub(crate) definitions: HashMap<String, Vec<NodeId>>,
+    pub(crate) definitions: HashMap<StringId, Vec<NodeId>>,
     pub(crate) using_directives: Vec<UsingDirective>,
 }
 
 pub(crate) struct EnumScope {
     pub(crate) node_id: NodeId,
-    pub(crate) definitions: HashMap<String, NodeId>,
+    pub(crate) definitions: HashMap<StringId, NodeId>,
 }
 
 pub(crate) struct FileScope {
     pub(crate) node_id: NodeId,
     pub(crate) file_id: String,
-    pub(crate) definitions: HashMap<String, Vec<NodeId>>,
+    pub(crate) definitions: HashMap<StringId, Vec<NodeId>>,
     pub(crate) imported_files: HashSet<String>,
     pub(crate) using_directives: Vec<UsingDirective>,
 }
@@ -52,7 +53,7 @@ pub(crate) struct FunctionScope {
     pub(crate) node_id: NodeId,
     pub(crate) parent_scope_id: ScopeId,
     pub(crate) parameters_scope_id: ScopeId,
-    pub(crate) definitions: HashMap<String, NodeId>,
+    pub(crate) definitions: HashMap<StringId, NodeId>,
 }
 
 // TODO: this is similar to a function scope, but it doesn't have a separate
@@ -64,14 +65,14 @@ pub(crate) struct FunctionScope {
 pub(crate) struct ModifierScope {
     pub(crate) node_id: NodeId,
     pub(crate) parent_scope_id: ScopeId,
-    pub(crate) definitions: HashMap<String, NodeId>,
+    pub(crate) definitions: HashMap<StringId, NodeId>,
 }
 
 /// This is stored in a vector in the `ParametersScope` below preserving order
 /// for positional arguments and used by the binder, both to resolve named
 /// arguments, and disambiguate overloads of functions and events.
 pub(crate) struct ParameterDefinition {
-    pub(crate) name: Option<String>,
+    pub(crate) name: Option<StringId>,
     pub(crate) node_id: NodeId,
     /// The type of the parameter, or `None` if it's not yet computed or cannot
     /// be computed. For some parameter containers (eg. errors) it's never
@@ -85,24 +86,24 @@ pub(crate) struct ParametersScope {
 
 pub(crate) struct StructScope {
     pub(crate) node_id: NodeId,
-    pub(crate) definitions: HashMap<String, NodeId>,
+    pub(crate) definitions: HashMap<StringId, NodeId>,
 }
 
 pub(crate) struct UsingScope {
     pub(crate) node_id: NodeId,
-    pub(crate) symbols: HashMap<String, Vec<NodeId>>,
+    pub(crate) symbols: HashMap<StringId, Vec<NodeId>>,
 }
 
 pub(crate) struct YulBlockScope {
     pub(crate) node_id: NodeId,
     pub(crate) parent_scope_id: ScopeId,
-    pub(crate) definitions: HashMap<String, NodeId>,
+    pub(crate) definitions: HashMap<StringId, NodeId>,
 }
 
 pub(crate) struct YulFunctionScope {
     pub(crate) node_id: NodeId,
     pub(crate) parent_scope_id: ScopeId,
-    pub(crate) definitions: HashMap<String, NodeId>,
+    pub(crate) definitions: HashMap<StringId, NodeId>,
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -125,7 +126,7 @@ impl Scope {
         }
     }
 
-    pub(crate) fn insert_definition(&mut self, symbol: String, node_id: NodeId) {
+    pub(crate) fn insert_definition(&mut self, symbol: StringId, node_id: NodeId) {
         match self {
             Self::Block(block_scope) => block_scope.insert_definition(symbol, node_id),
             Self::Contract(contract_scope) => contract_scope.insert_definition(symbol, node_id),
@@ -189,7 +190,7 @@ impl Scope {
         Self::Struct(StructScope::new(node_id))
     }
 
-    pub(crate) fn new_using(node_id: NodeId, symbols: HashMap<String, Vec<NodeId>>) -> Self {
+    pub(crate) fn new_using(node_id: NodeId, symbols: HashMap<StringId, Vec<NodeId>>) -> Self {
         Self::Using(UsingScope::new(node_id, symbols))
     }
 
@@ -211,7 +212,7 @@ impl BlockScope {
         }
     }
 
-    pub(crate) fn insert_definition(&mut self, symbol: String, node_id: NodeId) {
+    pub(crate) fn insert_definition(&mut self, symbol: StringId, node_id: NodeId) {
         self.definitions.insert(symbol, node_id);
     }
 }
@@ -226,7 +227,7 @@ impl ContractScope {
         }
     }
 
-    pub(crate) fn insert_definition(&mut self, symbol: String, node_id: NodeId) {
+    pub(crate) fn insert_definition(&mut self, symbol: StringId, node_id: NodeId) {
         if let Some(definitions) = self.definitions.get_mut(&symbol) {
             definitions.push(node_id);
         } else {
@@ -243,7 +244,7 @@ impl EnumScope {
         }
     }
 
-    pub(crate) fn insert_definition(&mut self, symbol: String, node_id: NodeId) {
+    pub(crate) fn insert_definition(&mut self, symbol: StringId, node_id: NodeId) {
         self.definitions.insert(symbol, node_id);
     }
 }
@@ -259,7 +260,7 @@ impl FileScope {
         }
     }
 
-    pub(crate) fn insert_definition(&mut self, symbol: String, node_id: NodeId) {
+    pub(crate) fn insert_definition(&mut self, symbol: StringId, node_id: NodeId) {
         if let Some(definitions) = self.definitions.get_mut(&symbol) {
             definitions.push(node_id);
         } else {
@@ -271,8 +272,8 @@ impl FileScope {
         self.imported_files.insert(file_id);
     }
 
-    pub(super) fn lookup_symbol<'a>(&'a self, symbol: &str) -> impl Iterator<Item = NodeId> + 'a {
-        match self.definitions.get(symbol) {
+    pub(super) fn lookup_symbol(&self, symbol: StringId) -> impl Iterator<Item = NodeId> + '_ {
+        match self.definitions.get(&symbol) {
             Some(defs) => OptionIter::Some(defs.iter().copied()),
             None => OptionIter::Empty,
         }
@@ -289,7 +290,7 @@ impl FunctionScope {
         }
     }
 
-    pub(crate) fn insert_definition(&mut self, symbol: String, node_id: NodeId) {
+    pub(crate) fn insert_definition(&mut self, symbol: StringId, node_id: NodeId) {
         self.definitions.insert(symbol, node_id);
     }
 }
@@ -303,7 +304,7 @@ impl ModifierScope {
         }
     }
 
-    pub(crate) fn insert_definition(&mut self, symbol: String, node_id: NodeId) {
+    pub(crate) fn insert_definition(&mut self, symbol: StringId, node_id: NodeId) {
         self.definitions.insert(symbol, node_id);
     }
 }
@@ -315,9 +316,9 @@ impl ParametersScope {
         }
     }
 
-    pub(crate) fn add_parameter(&mut self, identifier: Option<&String>, node_id: NodeId) {
+    pub(crate) fn add_parameter(&mut self, name: Option<StringId>, node_id: NodeId) {
         self.parameters.push(ParameterDefinition {
-            name: identifier.cloned(),
+            name,
             node_id,
             type_id: None,
         });
@@ -332,10 +333,10 @@ impl ParametersScope {
         }
     }
 
-    pub(crate) fn lookup_definition(&self, symbol: &str) -> Option<NodeId> {
+    pub(crate) fn lookup_definition(&self, symbol: StringId) -> Option<NodeId> {
         self.parameters
             .iter()
-            .find(|parameter| parameter.name.as_ref().is_some_and(|name| name == symbol))
+            .find(|parameter| parameter.name.is_some_and(|name| name == symbol))
             .map(|parameter| parameter.node_id)
     }
 }
@@ -348,13 +349,13 @@ impl StructScope {
         }
     }
 
-    pub(crate) fn insert_definition(&mut self, symbol: String, node_id: NodeId) {
+    pub(crate) fn insert_definition(&mut self, symbol: StringId, node_id: NodeId) {
         self.definitions.insert(symbol, node_id);
     }
 }
 
 impl UsingScope {
-    fn new(node_id: NodeId, symbols: HashMap<String, Vec<NodeId>>) -> Self {
+    fn new(node_id: NodeId, symbols: HashMap<StringId, Vec<NodeId>>) -> Self {
         Self { node_id, symbols }
     }
 }
@@ -368,7 +369,7 @@ impl YulBlockScope {
         }
     }
 
-    pub(crate) fn insert_definition(&mut self, symbol: String, node_id: NodeId) {
+    pub(crate) fn insert_definition(&mut self, symbol: StringId, node_id: NodeId) {
         self.definitions.insert(symbol, node_id);
     }
 }
@@ -382,7 +383,7 @@ impl YulFunctionScope {
         }
     }
 
-    pub(crate) fn insert_definition(&mut self, symbol: String, node_id: NodeId) {
+    pub(crate) fn insert_definition(&mut self, symbol: StringId, node_id: NodeId) {
         self.definitions.insert(symbol, node_id);
     }
 }
@@ -401,7 +402,7 @@ pub(crate) enum UsingDirective {
     },
     SingleTypeOperator {
         scope_id: ScopeId,
-        operator_mapping: HashMap<ir::UsingOperator, String>,
+        operator_mapping: HashMap<ir::UsingOperator, StringId>,
         type_id: TypeId,
     },
 }
@@ -418,7 +419,7 @@ impl UsingDirective {
     pub(crate) fn new_single_type_with_operators(
         scope_id: ScopeId,
         type_id: TypeId,
-        operator_mapping: HashMap<ir::UsingOperator, String>,
+        operator_mapping: HashMap<ir::UsingOperator, StringId>,
     ) -> Self {
         Self::SingleTypeOperator {
             scope_id,

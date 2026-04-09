@@ -72,14 +72,10 @@ impl InternalCompilationBuilder {
 
     pub fn build(self) -> CompilationUnit {
         let files: Vec<File> = self.files.into_values().collect();
-        let semantic = SemanticContext::build_from(self.language_version, &files);
+        let interner = Rc::new(self.interner);
+        let semantic = SemanticContext::build_from(self.language_version, &files, &interner);
 
-        CompilationUnit::create(
-            self.language_version,
-            files,
-            Rc::new(semantic),
-            Rc::new(self.interner),
-        )
+        CompilationUnit::create(self.language_version, files, Rc::new(semantic), interner)
     }
 }
 

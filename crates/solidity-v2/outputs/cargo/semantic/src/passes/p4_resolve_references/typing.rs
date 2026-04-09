@@ -1,3 +1,4 @@
+use slang_solidity_v2_ir::interner::StringId;
 use slang_solidity_v2_ir::ir::{self, NodeId};
 
 use super::Pass;
@@ -412,12 +413,12 @@ impl Pass<'_> {
     pub(super) fn collect_named_argument_typings(
         &self,
         arguments: &[ir::NamedArgument],
-    ) -> Vec<(String, Typing)> {
+    ) -> Vec<(StringId, Typing)> {
         arguments
             .iter()
             .map(|argument| {
                 (
-                    argument.name.unparse().to_string(),
+                    argument.name.string_id,
                     self.typing_of_expression(&argument.value),
                 )
             })

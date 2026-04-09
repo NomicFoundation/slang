@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use slang_solidity_v2_ir::interner::Interner;
 use slang_solidity_v2_ir::ir::{self, NodeId};
 use slang_solidity_v2_semantic::binder;
 use slang_solidity_v2_semantic::context::{
@@ -34,11 +35,11 @@ impl SemanticFile for File {
     }
 }
 
-pub fn setup(project: &str) -> (&'static SolidityProject, Vec<File>) {
+pub fn setup(project: &str) -> (&'static SolidityProject, Interner, Vec<File>) {
     let (project, sources) = super::ir_builder::setup(project);
-    let ir_source_units = super::ir_builder::test(project, sources);
+    let (interner, ir_source_units) = super::ir_builder::test(project, sources);
     let files = build_files(project, ir_source_units);
-    (project, files)
+    (project, interner, files)
 }
 
 pub fn build_files(
@@ -68,13 +69,21 @@ pub fn build_files(
         .collect()
 }
 
-pub fn run(project: &'static SolidityProject, files: Vec<File>) -> SemanticContext {
-    test(project, files)
+pub fn run(
+    project: &'static SolidityProject,
+    interner: Interner,
+    files: Vec<File>,
+) -> SemanticContext {
+    test(project, interner, files)
 }
 
-pub fn test(project: &'static SolidityProject, files: Vec<impl SemanticFile>) -> SemanticContext {
+pub fn test(
+    project: &'static SolidityProject,
+    interner: Interner,
+    files: Vec<impl SemanticFile>,
+) -> SemanticContext {
     let language_version = super::parser::parse_version(project);
-    SemanticContext::build_from(language_version, &files)
+    SemanticContext::build_from(language_version, &files, &interner)
 }
 
 pub fn count_contracts(semantic: &SemanticContext) -> usize {

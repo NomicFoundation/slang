@@ -13,14 +13,14 @@ pub fn setup(project: &str) -> (&'static SolidityProject, Vec<(String, InputSour
 pub fn run(
     project: &'static SolidityProject,
     sources: Vec<(String, InputSourceUnit)>,
-) -> Vec<SourceUnit> {
+) -> (Interner, Vec<SourceUnit>) {
     test(project, sources)
 }
 
 pub fn test(
     project: &'static SolidityProject,
     sources: Vec<(String, InputSourceUnit)>,
-) -> Vec<SourceUnit> {
+) -> (Interner, Vec<SourceUnit>) {
     let mut interner = Interner::new();
     let mut ir_source_units = Vec::new();
     for (name, source) in sources {
@@ -33,7 +33,7 @@ pub fn test(
             &mut interner,
         ));
     }
-    ir_source_units
+    (interner, ir_source_units)
 }
 
 pub fn count_contracts(source_units: &Vec<SourceUnit>) -> usize {

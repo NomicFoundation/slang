@@ -3,6 +3,7 @@ use std::str::FromStr;
 use num_bigint::BigInt;
 use num_traits::cast::ToPrimitive;
 use num_traits::Num;
+use slang_solidity_v2_ir::interner::StringId;
 use slang_solidity_v2_ir::ir;
 
 pub(crate) fn evaluate_compile_time_uint_constant<Scope>(
@@ -45,7 +46,7 @@ pub(crate) trait ConstantIdentifierResolver<Scope> {
     /// be resolved to a constant.
     fn resolve_identifier_in_scope(
         &self,
-        identifier: &str,
+        identifier: StringId,
         scope: &Scope,
     ) -> Option<(ir::Expression, Scope)>;
 }
@@ -276,7 +277,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
         let current_scope = self.scope_stack.last().expect("scope stack is empty");
         let (target_expression, target_scope) = self
             .identifier_resolver
-            .resolve_identifier_in_scope(identifier.unparse(), current_scope)?;
+            .resolve_identifier_in_scope(identifier.string_id, current_scope)?;
         self.evaluate_expression_in_scope(&target_expression, target_scope)
     }
 
@@ -304,24 +305,41 @@ mod tests {
 
     use super::*;
 
-    #[derive(Default)]
-    struct MapResolver {
+    struct MapResolver<'a> {
         // qualified identifier => (target expression, target scope)
         // qualified identifier is the concatenation of the scope and identifier
         context: HashMap<String, (ir::Expression, String)>,
+        interner: &'a Interner,
     }
 
-    impl ConstantIdentifierResolver<String> for MapResolver {
+    impl<'a> MapResolver<'a> {
+        fn new(interner: &'a Interner) -> Self {
+            Self {
+                context: HashMap::new(),
+                interner,
+            }
+        }
+
+        fn new_with_context(
+            interner: &'a Interner,
+            context: HashMap<String, (ir::Expression, String)>,
+        ) -> Self {
+            Self { context, interner }
+        }
+    }
+
+    impl ConstantIdentifierResolver<String> for MapResolver<'_> {
         fn resolve_identifier_in_scope(
             &self,
-            identifier: &str,
+            identifier: StringId,
             scope: &String,
         ) -> Option<(ir::Expression, String)> {
+            let identifier = self.interner.resolve(identifier);
             self.context.get(&format!("{scope}{identifier}")).cloned()
         }
     }
 
-    fn parse_expression(input: &str) -> ir::Expression {
+    fn parse_expression(input: &str, interner: &mut Interner) -> ir::Expression {
         let source = format!("uint constant x = {input};");
         let version = LanguageVersion::V0_8_30;
 
@@ -332,8 +350,7 @@ mod tests {
 
         assert!(errors.is_empty(), "Parser errors: {errors:?}");
 
-        let mut interner = Interner::default();
-        let source_unit = ir::build(&source_unit, &source, &mut interner);
+        let source_unit = ir::build(&source_unit, &source, interner);
         let member = source_unit.members.first().expect("no source unit members");
         match member {
             ir::SourceUnitMember::ConstantDefinition(definition) => definition
@@ -345,8 +362,9 @@ mod tests {
     }
 
     fn eval_string(input: &str) -> Option<ConstantValue> {
-        let expression = parse_expression(input);
-        evaluate_compile_time_constant(&expression, String::new(), &MapResolver::default())
+        let mut interner = Interner::default();
+        let expression = parse_expression(input, &mut interner);
+        evaluate_compile_time_constant(&expression, String::new(), &MapResolver::new(&interner))
     }
 
     // `context` is given as a list of constants defined as:
@@ -358,18 +376,26 @@ mod tests {
         input: &str,
         context: &[(&str, &str, &str)],
     ) -> Option<ConstantValue> {
+        let mut interner = Interner::default();
         let context: HashMap<String, (ir::Expression, String)> = context
             .iter()
             .map(|(name, input, target_scope)| {
                 (
                     (*name).to_string(),
-                    (parse_expression(input), (*target_scope).to_string()),
+                    (
+                        parse_expression(input, &mut interner),
+                        (*target_scope).to_string(),
+                    ),
                 )
             })
             .collect();
-        let expression = parse_expression(input);
+        let expression = parse_expression(input, &mut interner);
 
-        evaluate_compile_time_constant(&expression, String::new(), &MapResolver { context })
+        evaluate_compile_time_constant(
+            &expression,
+            String::new(),
+            &MapResolver::new_with_context(&interner, context),
+        )
     }
 
     #[test]

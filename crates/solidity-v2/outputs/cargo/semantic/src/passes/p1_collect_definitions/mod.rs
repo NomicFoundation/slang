@@ -130,7 +130,10 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
     fn collect_parameters(&mut self, parameters: &ir::Parameters) -> ScopeId {
         let mut scope = ParametersScope::new();
         for parameter in parameters {
-            scope.add_parameter(parameter.name.as_ref().map(|id| &id.text), parameter.id());
+            scope.add_parameter(
+                parameter.name.as_ref().map(|id| id.string_id),
+                parameter.id(),
+            );
             if parameter.name.is_some() {
                 let definition = Definition::new_parameter(parameter);
                 self.binder.insert_definition_no_scope(definition);
@@ -242,7 +245,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         for symbol in &node.symbols {
             let definition = Definition::new_imported_symbol(
                 symbol,
-                symbol.name.unparse().to_owned(),
+                symbol.name.string_id,
                 imported_file_id.clone(),
             );
             self.insert_definition_in_current_scope(definition);
