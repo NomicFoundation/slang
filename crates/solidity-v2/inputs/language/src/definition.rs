@@ -4429,6 +4429,7 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
             )]
         )
     ],
+    // __SLANG_SOLIDITY_V2_BUILT_INS__ (keep in sync)
     built_ins = [
         BuiltInContext(
             name = Solidity,

@@ -5,6 +5,13 @@ use slang_solidity_v2_ir::ir::NodeId;
 use super::binder::{Binder, Definition, Typing};
 use super::types::{DataLocation, LiteralKind, Type, TypeId, TypeRegistry};
 
+/// This is the internal representation of a built-in resolution and typing and
+/// it's richer than the public enum defined in the `common` crate which is
+/// generated from the language definition because it contains additional
+/// information about the specific built-in use. Eg. `.push()` or `AraryPush`
+/// needs to carry the type of the original array to correctly resolve the type
+/// in the function call context.
+// __SLANG_SOLIDITY_V2_BUILT_INS__ (keep in sync)
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum BuiltIn {
     Abi,
