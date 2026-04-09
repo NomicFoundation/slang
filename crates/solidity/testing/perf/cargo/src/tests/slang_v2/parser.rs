@@ -5,23 +5,29 @@ use slang_solidity_v2_parser::Parser;
 
 use crate::dataset::SolidityProject;
 
+pub fn setup(project: &str) -> &'static SolidityProject {
+    crate::tests::setup::setup(project)
+}
+
 pub fn run(project: &SolidityProject) {
     test(project);
 }
 
-pub fn test(project: &SolidityProject) -> Vec<SourceUnit> {
+pub fn test(project: &SolidityProject) -> Vec<(String, SourceUnit)> {
     let lang_version = parse_version(project);
     let mut source_units = Vec::new();
-    for source in project.sources.values() {
+    for (key, source) in &project.sources {
         let source_unit = Parser::parse(source, lang_version).unwrap();
-        source_units.push(source_unit);
+        source_units.push((key.clone(), source_unit));
     }
+    assert!(!source_units.is_empty());
+
     source_units
 }
 
-pub fn count_contracts(source_units: &Vec<SourceUnit>) -> usize {
+pub fn count_contracts(source_units: &Vec<(String, SourceUnit)>) -> usize {
     let mut contract_count = 0;
-    for source_unit in source_units {
+    for (_, source_unit) in source_units {
         for member in &source_unit.members.elements {
             match member {
                 SourceUnitMember::ContractDefinition(_)

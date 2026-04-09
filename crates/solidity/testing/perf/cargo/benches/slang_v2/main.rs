@@ -1,18 +1,15 @@
 #![allow(clippy::exit)]
 
 use std::hint::black_box;
-use std::rc::Rc;
 
 use iai_callgrind::{
     library_benchmark, library_benchmark_group, main, Direction, FlamegraphConfig,
     LibraryBenchmarkConfig, Tool, ValgrindTool,
 };
 use paste::paste;
-use slang_solidity::compilation::CompilationUnit;
+use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit;
 use solidity_testing_perf_cargo::dataset::SolidityProject;
 use solidity_testing_perf_cargo::tests;
-use solidity_testing_perf_cargo::tests::slang::binder_v2_run::BuiltSemanticAnalysis;
-use solidity_testing_perf_cargo::tests::slang::bindings_build::BuiltBindingGraph;
 
 mod __dependencies_used_in_lib__ {
     use anyhow as _;
@@ -22,7 +19,6 @@ mod __dependencies_used_in_lib__ {
     use serde_json as _;
     use slang_solidity as _;
     use slang_solidity_v2_common as _;
-    use slang_solidity_v2_cst as _;
     use slang_solidity_v2_parser as _;
     use slang_solidity_v2_semantic as _;
     use solar as _;
@@ -32,88 +28,52 @@ mod __dependencies_used_in_lib__ {
     use tree_sitter_solidity as _;
 }
 
-macro_rules! slang_define_full_tests {
+macro_rules! slang_v2_define_tests {
     ($prj:ident) => {
         /*
          * WARNING:
          * The reported `iai` benchmark ID is constructed from: `{file_name}::{group_name}::{function_name}`
          * Changing any of the above would change the resulting benchmark ID, and disconnect it from previous results.
          *
-         * __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
+         * __SLANG_V2_INFRA_BENCHMARKS_LIST__ (keep in sync)
          */
 
         paste! {
-            #[library_benchmark(setup = tests::slang::parser::setup)]
+            #[library_benchmark(setup = tests::slang_v2::parser::setup)]
             #[bench::test(stringify!($prj))]
-            pub fn [< $prj _parser >](project: &SolidityProject) -> Rc<CompilationUnit> {
-                black_box(tests::slang::parser::run(project))
+            pub fn [< $prj _parser >](project: &SolidityProject) {
+                black_box(tests::slang_v2::parser::run(project))
             }
 
-            #[library_benchmark(setup = tests::slang::cursor::setup)]
+            #[library_benchmark(setup = tests::slang_v2::ir_builder::setup)]
             #[bench::test(stringify!($prj))]
-            pub fn [< $prj _cursor >](unit: Rc<CompilationUnit>) -> Rc<CompilationUnit> {
-                black_box(tests::slang::cursor::run(unit))
+            pub fn [< $prj _ir_builder >]((project, source_units): (&'static SolidityProject, Vec<(String, SourceUnit)>)) {
+                black_box(tests::slang_v2::ir_builder::run(project, source_units))
             }
 
-            #[library_benchmark(setup = tests::slang::query::setup)]
-            #[bench::test(stringify!($prj))]
-            pub fn [< $prj _query >](unit: Rc<CompilationUnit>) -> Rc<CompilationUnit> {
-                black_box(tests::slang::query::run(unit))
-            }
-
-            #[library_benchmark(setup = tests::slang::bindings_build::setup)]
-            #[bench::test(stringify!($prj))]
-            pub fn [< $prj _bindings_build >](unit: Rc<CompilationUnit>) -> BuiltBindingGraph {
-                black_box(tests::slang::bindings_build::run(unit))
-            }
-
-            #[library_benchmark(setup = tests::slang::bindings_resolve::setup)]
-            #[bench::test(stringify!($prj))]
-            pub fn [< $prj _bindings_resolve >](unit: BuiltBindingGraph) -> BuiltBindingGraph {
-                black_box(tests::slang::bindings_resolve::run(unit))
-            }
-
-            // We add a cleanup phase to measure the destruction of the AST and the binding structures
-            #[library_benchmark(setup = tests::slang::bindings_resolve::setup)]
-            #[bench::test(stringify!($prj))]
-            pub fn [< $prj _cleanup >](unit: BuiltBindingGraph) {
-                black_box(unit);
-            }
-
-            #[library_benchmark(setup = tests::slang::binder_v2_run::setup)]
-            #[bench::test(stringify!($prj))]
-            fn [< $prj _binder_v2_run >](unit: Rc<CompilationUnit>) -> BuiltSemanticAnalysis {
-                black_box(tests::slang::binder_v2_run::run(unit))
-            }
-
-            #[library_benchmark(setup = tests::slang::binder_v2_cleanup::setup)]
-            #[bench::test(stringify!($prj))]
-            fn [< $prj _binder_v2_cleanup >](unit: BuiltSemanticAnalysis) {
-                black_box(unit);
-            }
 
             library_benchmark_group!(
-                name = [< $prj _full >];
+                name = [< $prj _full_v2 >];
 
-                // __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
+                // __SLANG_V2_INFRA_BENCHMARKS_LIST__ (keep in sync)
                 benchmarks =
-                    [< $prj _parser >],
-                    [< $prj _cursor >],
-                    [< $prj _query >],
-                    [< $prj _bindings_build >],
-                    [< $prj _bindings_resolve >],
-                    [< $prj _cleanup >],
-                    [< $prj _binder_v2_run >],
-                    [< $prj _binder_v2_cleanup >],
+                [< $prj _parser >],
+                [< $prj _ir_builder >],
             );
         }
     };
 }
 
-// We test a few projects in full for slang-only benchmarks
+// Only 0.8.x-compatible projects can be used here.
 // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
-slang_define_full_tests!(weighted_pool);
-slang_define_full_tests!(merkle_proof);
+slang_v2_define_tests!(uniswap);
+slang_v2_define_tests!(multicall3);
+slang_v2_define_tests!(create_x);
+slang_v2_define_tests!(ui_pool_data_provider_v3);
+slang_v2_define_tests!(cooldogs);
+slang_v2_define_tests!(one_step_leverage_f);
+slang_v2_define_tests!(pointer_libraries);
+slang_v2_define_tests!(merkle_proof);
 
 main!(
     config = LibraryBenchmarkConfig::default()
@@ -150,5 +110,13 @@ main!(
 
     // NOTE: the trailing comma is required: without it, it won't test the last one
     // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
-    library_benchmark_groups = weighted_pool_full,merkle_proof_full,
+    library_benchmark_groups =
+        uniswap_full_v2,
+        multicall3_full_v2,
+        create_x_full_v2,
+        ui_pool_data_provider_v3_full_v2,
+        cooldogs_full_v2,
+        one_step_leverage_f_full_v2,
+        pointer_libraries_full_v2,
+        merkle_proof_full_v2,
 );

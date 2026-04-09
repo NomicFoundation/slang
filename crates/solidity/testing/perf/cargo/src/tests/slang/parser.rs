@@ -5,7 +5,7 @@ use slang_solidity::compilation::CompilationUnit;
 use crate::dataset::SolidityProject;
 
 pub fn setup(project: &str) -> &'static SolidityProject {
-    super::setup::setup(project)
+    crate::tests::setup::setup(project)
 }
 
 pub fn run(project: &SolidityProject) -> Rc<CompilationUnit> {

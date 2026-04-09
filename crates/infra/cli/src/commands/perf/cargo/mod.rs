@@ -13,6 +13,7 @@ use crate::utils::DryRun;
 
 const DEFAULT_BENCHER_PROJECT_CMP: &str = "slang-dashboard-cargo-cmp";
 const DEFAULT_BENCHER_PROJECT_SLANG: &str = "slang-dashboard-cargo-slang";
+const DEFAULT_BENCHER_PROJECT_SLANG_V2: &str = "slang-dashboard-cargo-slang-v2";
 
 #[derive(Clone, Debug, Parser)]
 pub struct CargoController {
@@ -36,6 +37,8 @@ enum Benches {
     Slang,
     /// Performs a comparison with different crates for solidity parsing
     Comparison,
+    /// Performs the slang v2 benchmarks
+    SlangV2,
 }
 
 impl CargoController {
@@ -52,6 +55,7 @@ impl CargoController {
             let (package, bench_name) = match self.bench {
                 Benches::Slang => ("solidity_testing_perf_cargo", "slang"),
                 Benches::Comparison => ("solidity_testing_perf_cargo", "comparison"),
+                Benches::SlangV2 => ("solidity_testing_perf_cargo", "slang_v2"),
             };
             Command::new("cargo")
                 .args(["build", "--package", package, "--bench", bench_name])
@@ -73,6 +77,11 @@ impl CargoController {
                 "solidity_testing_perf_cargo",
                 "comparison",
                 DEFAULT_BENCHER_PROJECT_CMP,
+            ),
+            Benches::SlangV2 => self.run_iai_bench(
+                "solidity_testing_perf_cargo",
+                "slang_v2",
+                DEFAULT_BENCHER_PROJECT_SLANG_V2,
             ),
         }
         Ok(())

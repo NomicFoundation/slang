@@ -1,11 +1,5 @@
-pub mod binder_v2_cleanup;
-pub mod binder_v2_run;
-pub mod bindings_build;
-pub mod bindings_resolve;
-pub mod cursor;
-pub mod parser;
-pub mod query;
 pub mod setup;
-pub mod slang_v2_parser;
-pub mod solar_parser;
-pub mod tree_sitter_parser;
+pub mod slang;
+pub mod slang_v2;
+pub mod solar;
+pub mod tree_sitter;

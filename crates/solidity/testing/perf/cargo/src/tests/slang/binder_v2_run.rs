@@ -12,7 +12,7 @@ pub struct BuiltSemanticAnalysis {
 }
 
 pub fn setup(project: &str) -> Rc<CompilationUnit> {
-    let project = super::setup::setup(project);
+    let project = crate::tests::setup::setup(project);
     project.build_compilation_unit().unwrap().into()
 }
 
