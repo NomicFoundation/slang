@@ -96,9 +96,7 @@ pub struct NodeId(usize);
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct {{ terminal_type }}Struct {
       pub range: Range<usize>,
-      {% if terminal.is_identifier -%}
       pub string_id: StringId,
-      {% endif -%}
       pub text: String,
     }
 

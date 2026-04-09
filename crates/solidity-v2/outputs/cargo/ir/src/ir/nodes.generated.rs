@@ -1807,6 +1807,7 @@ pub type BytesKeyword = Rc<BytesKeywordStruct>;
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct BytesKeywordStruct {
     pub range: Range<usize>,
+    pub string_id: StringId,
     pub text: String,
 }
 
@@ -1825,6 +1826,7 @@ pub type DecimalLiteral = Rc<DecimalLiteralStruct>;
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct DecimalLiteralStruct {
     pub range: Range<usize>,
+    pub string_id: StringId,
     pub text: String,
 }
 
@@ -1843,6 +1845,7 @@ pub type FixedKeyword = Rc<FixedKeywordStruct>;
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct FixedKeywordStruct {
     pub range: Range<usize>,
+    pub string_id: StringId,
     pub text: String,
 }
 
@@ -1861,6 +1864,7 @@ pub type HexLiteral = Rc<HexLiteralStruct>;
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct HexLiteralStruct {
     pub range: Range<usize>,
+    pub string_id: StringId,
     pub text: String,
 }
 
@@ -1879,6 +1883,7 @@ pub type HexStringLiteral = Rc<HexStringLiteralStruct>;
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct HexStringLiteralStruct {
     pub range: Range<usize>,
+    pub string_id: StringId,
     pub text: String,
 }
 
@@ -1916,6 +1921,7 @@ pub type IntKeyword = Rc<IntKeywordStruct>;
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct IntKeywordStruct {
     pub range: Range<usize>,
+    pub string_id: StringId,
     pub text: String,
 }
 
@@ -1934,6 +1940,7 @@ pub type StringLiteral = Rc<StringLiteralStruct>;
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct StringLiteralStruct {
     pub range: Range<usize>,
+    pub string_id: StringId,
     pub text: String,
 }
 
@@ -1952,6 +1959,7 @@ pub type UfixedKeyword = Rc<UfixedKeywordStruct>;
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct UfixedKeywordStruct {
     pub range: Range<usize>,
+    pub string_id: StringId,
     pub text: String,
 }
 
@@ -1970,6 +1978,7 @@ pub type UintKeyword = Rc<UintKeywordStruct>;
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct UintKeywordStruct {
     pub range: Range<usize>,
+    pub string_id: StringId,
     pub text: String,
 }
 
@@ -1988,6 +1997,7 @@ pub type UnicodeStringLiteral = Rc<UnicodeStringLiteralStruct>;
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct UnicodeStringLiteralStruct {
     pub range: Range<usize>,
+    pub string_id: StringId,
     pub text: String,
 }
 
@@ -2006,6 +2016,7 @@ pub type VersionSpecifier = Rc<VersionSpecifierStruct>;
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct VersionSpecifierStruct {
     pub range: Range<usize>,
+    pub string_id: StringId,
     pub text: String,
 }
 

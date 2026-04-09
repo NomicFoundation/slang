@@ -11,7 +11,7 @@ use slang_solidity_v2_cst::structured_cst::nodes as input;
 
 pub trait Builder {
   fn unparse_range(&self, range: std::ops::Range<usize>) -> String;
-  fn intern_identifier(&mut self, range: std::ops::Range<usize>) -> StringId;
+  fn intern_string(&mut self, range: std::ops::Range<usize>) -> StringId;
 
   //
   // Sequences
@@ -107,14 +107,10 @@ pub trait Builder {
         {% for variant in collapsed.variants -%}
           input::{{ parent_type }}::{{ variant.source.name }}(terminal) => {
             let text = self.unparse_range(terminal.range.clone());
-            {% if collapsed.target_is_identifier -%}
-            let string_id = self.intern_identifier(terminal.range.clone());
-            {% endif -%}
+            let string_id = self.intern_string(terminal.range.clone());
             Rc::new(output::{{ collapsed.target.name }}Struct {
               range: terminal.range.clone(),
-              {% if collapsed.target_is_identifier -%}
               string_id,
-              {% endif -%}
               text,
             })
           }
@@ -147,14 +143,10 @@ pub trait Builder {
     {% if not terminal.is_new and not terminal.is_unique %}
       fn build_{{ terminal_type | snake_case }}(&mut self, source: &input::{{ terminal_type }}) -> output::{{ terminal_type }} {
         let text = self.unparse_range(source.range.clone());
-        {% if terminal.is_identifier -%}
-        let string_id = self.intern_identifier(source.range.clone());
-        {% endif -%}
+        let string_id = self.intern_string(source.range.clone());
         Rc::new(output::{{ terminal_type }}Struct {
           range: source.range.clone(),
-          {% if terminal.is_identifier -%}
           string_id,
-          {% endif -%}
           text,
         })
       }
@@ -168,14 +160,10 @@ pub trait Builder {
     {% if not normalized.is_unique %}
       fn build_{{ source_type | snake_case }}(&mut self, source: &input::{{ source_type }}) -> output::{{ normalized.target }} {
         let text = self.unparse_range(source.range.clone());
-        {% if normalized.target_is_identifier -%}
-        let string_id = self.intern_identifier(source.range.clone());
-        {% endif -%}
+        let string_id = self.intern_string(source.range.clone());
         Rc::new(output::{{ normalized.target }}Struct {
           range: source.range.clone(),
-          {% if normalized.target_is_identifier -%}
           string_id,
-          {% endif -%}
           text,
         })
       }

@@ -29,7 +29,7 @@ impl<S: Source> Builder for CstToIrBuilder<'_, S> {
         self.source.text(range).to_owned()
     }
 
-    fn intern_identifier(&mut self, range: std::ops::Range<usize>) -> StringId {
+    fn intern_string(&mut self, range: std::ops::Range<usize>) -> StringId {
         let text = self.source.text(range);
         self.interner.intern(text)
     }
