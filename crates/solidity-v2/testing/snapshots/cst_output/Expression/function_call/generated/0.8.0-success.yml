@@ -38,6 +38,7 @@ Tree:
                                           - (arguments꞉ PositionalArguments): # "1, 2" (133..137)
                                               - (item꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "1" (133..134)
                                                   - (literal꞉ DecimalLiteral): "1" # (133..134)
+                                              - (separator꞉ Comma): "," # (134..135)
                                               - (item꞉ Expression) ► (decimal_number_expression꞉ DecimalNumberExpression): # "2" (136..137)
                                                   - (literal꞉ DecimalLiteral): "2" # (136..137)
                                           - (close_paren꞉ CloseParen): ")" # (137..138)

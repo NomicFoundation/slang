@@ -76,6 +76,8 @@ pub struct ChoiceVariant {
 pub struct Collection {
     pub item_type: NodeType,
     pub enabled: model::VersionSpecifier,
+    /// Only `Separated` items have a `separator_type`
+    pub separator_type: Option<NodeType>,
 }
 
 impl NodeType {

@@ -47,10 +47,12 @@ Tree:
                                   - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "(, z, ) = foo" (254..267)
                                       - (left_operand꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "(, z, )" (254..261)
                                           - (open_paren꞉ OpenParen): "(" # (254..255)
-                                          - (items꞉ TupleValues): # "z" (257..258)
+                                          - (items꞉ TupleValues): # ", z," (255..259)
                                               - (item꞉ TupleValue): []
+                                              - (separator꞉ Comma): "," # (255..256)
                                               - (item꞉ TupleValue): # "z" (257..258)
                                                   - (expression꞉ Expression) ► (identifier꞉ Identifier): "z" # (257..258)
+                                              - (separator꞉ Comma): "," # (258..259)
                                               - (item꞉ TupleValue): []
                                           - (close_paren꞉ CloseParen): ")" # (260..261)
                                       - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (equal꞉ Equal): "=" # (262..263)
@@ -64,6 +66,7 @@ Tree:
                                           - (items꞉ TupleValues): # "a, b" (281..285)
                                               - (item꞉ TupleValue): # "a" (281..282)
                                                   - (expression꞉ Expression) ► (identifier꞉ Identifier): "a" # (281..282)
+                                              - (separator꞉ Comma): "," # (282..283)
                                               - (item꞉ TupleValue): # "b" (284..285)
                                                   - (expression꞉ Expression) ► (identifier꞉ Identifier): "b" # (284..285)
                                           - (close_paren꞉ CloseParen): ")" # (285..286)
@@ -78,7 +81,9 @@ Tree:
                                           - (items꞉ TupleValues): # "x, , y" (306..312)
                                               - (item꞉ TupleValue): # "x" (306..307)
                                                   - (expression꞉ Expression) ► (identifier꞉ Identifier): "x" # (306..307)
+                                              - (separator꞉ Comma): "," # (307..308)
                                               - (item꞉ TupleValue): []
+                                              - (separator꞉ Comma): "," # (309..310)
                                               - (item꞉ TupleValue): # "y" (311..312)
                                                   - (expression꞉ Expression) ► (identifier꞉ Identifier): "y" # (311..312)
                                           - (close_paren꞉ CloseParen): ")" # (312..313)
@@ -90,11 +95,15 @@ Tree:
                                   - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "(, , , , a) = foo" (332..349)
                                       - (left_operand꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "(, , , , a)" (332..343)
                                           - (open_paren꞉ OpenParen): "(" # (332..333)
-                                          - (items꞉ TupleValues): # "a" (341..342)
+                                          - (items꞉ TupleValues): # ", , , , a" (333..342)
                                               - (item꞉ TupleValue): []
+                                              - (separator꞉ Comma): "," # (333..334)
                                               - (item꞉ TupleValue): []
+                                              - (separator꞉ Comma): "," # (335..336)
                                               - (item꞉ TupleValue): []
+                                              - (separator꞉ Comma): "," # (337..338)
                                               - (item꞉ TupleValue): []
+                                              - (separator꞉ Comma): "," # (339..340)
                                               - (item꞉ TupleValue): # "a" (341..342)
                                                   - (expression꞉ Expression) ► (identifier꞉ Identifier): "a" # (341..342)
                                           - (close_paren꞉ CloseParen): ")" # (342..343)
@@ -106,9 +115,10 @@ Tree:
                                   - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "(a, ) = foo" (362..373)
                                       - (left_operand꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "(a, )" (362..367)
                                           - (open_paren꞉ OpenParen): "(" # (362..363)
-                                          - (items꞉ TupleValues): # "a" (363..364)
+                                          - (items꞉ TupleValues): # "a," (363..365)
                                               - (item꞉ TupleValue): # "a" (363..364)
                                                   - (expression꞉ Expression) ► (identifier꞉ Identifier): "a" # (363..364)
+                                              - (separator꞉ Comma): "," # (364..365)
                                               - (item꞉ TupleValue): []
                                           - (close_paren꞉ CloseParen): ")" # (366..367)
                                       - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (equal꞉ Equal): "=" # (368..369)
@@ -118,10 +128,12 @@ Tree:
                                   - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "(, z, ) = foo" (380..393)
                                       - (left_operand꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "(, z, )" (380..387)
                                           - (open_paren꞉ OpenParen): "(" # (380..381)
-                                          - (items꞉ TupleValues): # "z" (383..384)
+                                          - (items꞉ TupleValues): # ", z," (381..385)
                                               - (item꞉ TupleValue): []
+                                              - (separator꞉ Comma): "," # (381..382)
                                               - (item꞉ TupleValue): # "z" (383..384)
                                                   - (expression꞉ Expression) ► (identifier꞉ Identifier): "z" # (383..384)
+                                              - (separator꞉ Comma): "," # (384..385)
                                               - (item꞉ TupleValue): []
                                           - (close_paren꞉ CloseParen): ")" # (386..387)
                                       - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (equal꞉ Equal): "=" # (388..389)
@@ -134,6 +146,7 @@ Tree:
                                           - (items꞉ TupleValues): # "a, b" (400..404)
                                               - (item꞉ TupleValue): # "a" (400..401)
                                                   - (expression꞉ Expression) ► (identifier꞉ Identifier): "a" # (400..401)
+                                              - (separator꞉ Comma): "," # (401..402)
                                               - (item꞉ TupleValue): # "b" (403..404)
                                                   - (expression꞉ Expression) ► (identifier꞉ Identifier): "b" # (403..404)
                                           - (close_paren꞉ CloseParen): ")" # (404..405)
@@ -147,7 +160,9 @@ Tree:
                                           - (items꞉ TupleValues): # "x, , y" (418..424)
                                               - (item꞉ TupleValue): # "x" (418..419)
                                                   - (expression꞉ Expression) ► (identifier꞉ Identifier): "x" # (418..419)
+                                              - (separator꞉ Comma): "," # (419..420)
                                               - (item꞉ TupleValue): []
+                                              - (separator꞉ Comma): "," # (421..422)
                                               - (item꞉ TupleValue): # "y" (423..424)
                                                   - (expression꞉ Expression) ► (identifier꞉ Identifier): "y" # (423..424)
                                           - (close_paren꞉ CloseParen): ")" # (424..425)
@@ -158,11 +173,15 @@ Tree:
                                   - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "(, , , , a) = foo" (437..454)
                                       - (left_operand꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "(, , , , a)" (437..448)
                                           - (open_paren꞉ OpenParen): "(" # (437..438)
-                                          - (items꞉ TupleValues): # "a" (446..447)
+                                          - (items꞉ TupleValues): # ", , , , a" (438..447)
                                               - (item꞉ TupleValue): []
+                                              - (separator꞉ Comma): "," # (438..439)
                                               - (item꞉ TupleValue): []
+                                              - (separator꞉ Comma): "," # (440..441)
                                               - (item꞉ TupleValue): []
+                                              - (separator꞉ Comma): "," # (442..443)
                                               - (item꞉ TupleValue): []
+                                              - (separator꞉ Comma): "," # (444..445)
                                               - (item꞉ TupleValue): # "a" (446..447)
                                                   - (expression꞉ Expression) ► (identifier꞉ Identifier): "a" # (446..447)
                                           - (close_paren꞉ CloseParen): ")" # (447..448)
@@ -173,9 +192,10 @@ Tree:
                                   - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "(a, ) = foo" (460..471)
                                       - (left_operand꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "(a, )" (460..465)
                                           - (open_paren꞉ OpenParen): "(" # (460..461)
-                                          - (items꞉ TupleValues): # "a" (461..462)
+                                          - (items꞉ TupleValues): # "a," (461..463)
                                               - (item꞉ TupleValue): # "a" (461..462)
                                                   - (expression꞉ Expression) ► (identifier꞉ Identifier): "a" # (461..462)
+                                              - (separator꞉ Comma): "," # (462..463)
                                               - (item꞉ TupleValue): []
                                           - (close_paren꞉ CloseParen): ")" # (464..465)
                                       - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (equal꞉ Equal): "=" # (466..467)

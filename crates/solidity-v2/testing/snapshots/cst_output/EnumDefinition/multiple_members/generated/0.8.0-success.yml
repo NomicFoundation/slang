@@ -18,6 +18,8 @@ Tree:
               - (open_brace꞉ OpenBrace): "{" # (115..116)
               - (members꞉ EnumMembers): # "Bar1,\n    Bar2,\n    Bar3" (121..145)
                   - (item꞉ Identifier): "Bar1" # (121..125)
+                  - (separator꞉ Comma): "," # (125..126)
                   - (item꞉ Identifier): "Bar2" # (131..135)
+                  - (separator꞉ Comma): "," # (135..136)
                   - (item꞉ Identifier): "Bar3" # (141..145)
               - (close_brace꞉ CloseBrace): "}" # (146..147)

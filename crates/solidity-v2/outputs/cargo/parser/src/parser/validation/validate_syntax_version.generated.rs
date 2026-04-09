@@ -1708,13 +1708,13 @@ fn check_variable_declaration_target(
 //
 
 fn check_array_values(node: &ArrayValues, version: LanguageVersion, errors: &mut Vec<ParserError>) {
-    for child in &node.elements {
+    for child in node.elements() {
         check_expression(child, version, errors);
     }
 }
 
 fn check_call_options(node: &CallOptions, version: LanguageVersion, errors: &mut Vec<ParserError>) {
-    for child in &node.elements {
+    for child in node.elements() {
         check_named_argument(child, version, errors);
     }
 }
@@ -1724,7 +1724,7 @@ fn check_catch_clauses(
     version: LanguageVersion,
     errors: &mut Vec<ParserError>,
 ) {
-    for child in &node.elements {
+    for child in node.elements() {
         check_catch_clause(child, version, errors);
     }
 }
@@ -1734,7 +1734,7 @@ fn check_constructor_attributes(
     version: LanguageVersion,
     errors: &mut Vec<ParserError>,
 ) {
-    for child in &node.elements {
+    for child in node.elements() {
         check_constructor_attribute(child, version, errors);
     }
 }
@@ -1744,7 +1744,7 @@ fn check_contract_members(
     version: LanguageVersion,
     errors: &mut Vec<ParserError>,
 ) {
-    for child in &node.elements {
+    for child in node.elements() {
         check_contract_member(child, version, errors);
     }
 }
@@ -1754,7 +1754,7 @@ fn check_contract_specifiers(
     version: LanguageVersion,
     errors: &mut Vec<ParserError>,
 ) {
-    for child in &node.elements {
+    for child in node.elements() {
         check_contract_specifier(child, version, errors);
     }
 }
@@ -1773,7 +1773,7 @@ fn check_error_parameters(
         });
         return;
     }
-    for child in &node.elements {
+    for child in node.elements() {
         check_error_parameter(child, version, errors);
     }
 }
@@ -1783,7 +1783,7 @@ fn check_event_parameters(
     version: LanguageVersion,
     errors: &mut Vec<ParserError>,
 ) {
-    for child in &node.elements {
+    for child in node.elements() {
         check_event_parameter(child, version, errors);
     }
 }
@@ -1793,7 +1793,7 @@ fn check_fallback_function_attributes(
     version: LanguageVersion,
     errors: &mut Vec<ParserError>,
 ) {
-    for child in &node.elements {
+    for child in node.elements() {
         check_fallback_function_attribute(child, version, errors);
     }
 }
@@ -1803,7 +1803,7 @@ fn check_function_attributes(
     version: LanguageVersion,
     errors: &mut Vec<ParserError>,
 ) {
-    for child in &node.elements {
+    for child in node.elements() {
         check_function_attribute(child, version, errors);
     }
 }
@@ -1813,7 +1813,7 @@ fn check_inheritance_types(
     version: LanguageVersion,
     errors: &mut Vec<ParserError>,
 ) {
-    for child in &node.elements {
+    for child in node.elements() {
         check_inheritance_type(child, version, errors);
     }
 }
@@ -1823,7 +1823,7 @@ fn check_interface_members(
     version: LanguageVersion,
     errors: &mut Vec<ParserError>,
 ) {
-    for child in &node.elements {
+    for child in node.elements() {
         check_contract_member(child, version, errors);
     }
 }
@@ -1833,7 +1833,7 @@ fn check_library_members(
     version: LanguageVersion,
     errors: &mut Vec<ParserError>,
 ) {
-    for child in &node.elements {
+    for child in node.elements() {
         check_contract_member(child, version, errors);
     }
 }
@@ -1843,7 +1843,7 @@ fn check_multi_typed_declaration_elements(
     version: LanguageVersion,
     errors: &mut Vec<ParserError>,
 ) {
-    for child in &node.elements {
+    for child in node.elements() {
         check_multi_typed_declaration_element(child, version, errors);
     }
 }
@@ -1853,13 +1853,13 @@ fn check_named_arguments(
     version: LanguageVersion,
     errors: &mut Vec<ParserError>,
 ) {
-    for child in &node.elements {
+    for child in node.elements() {
         check_named_argument(child, version, errors);
     }
 }
 
 fn check_parameters(node: &Parameters, version: LanguageVersion, errors: &mut Vec<ParserError>) {
-    for child in &node.elements {
+    for child in node.elements() {
         check_parameter(child, version, errors);
     }
 }
@@ -1869,7 +1869,7 @@ fn check_positional_arguments(
     version: LanguageVersion,
     errors: &mut Vec<ParserError>,
 ) {
-    for child in &node.elements {
+    for child in node.elements() {
         check_expression(child, version, errors);
     }
 }
@@ -1879,7 +1879,7 @@ fn check_receive_function_attributes(
     version: LanguageVersion,
     errors: &mut Vec<ParserError>,
 ) {
-    for child in &node.elements {
+    for child in node.elements() {
         check_receive_function_attribute(child, version, errors);
     }
 }
@@ -1889,7 +1889,7 @@ fn check_source_unit_members(
     version: LanguageVersion,
     errors: &mut Vec<ParserError>,
 ) {
-    for child in &node.elements {
+    for child in node.elements() {
         check_source_unit_member(child, version, errors);
     }
 }
@@ -1899,13 +1899,13 @@ fn check_state_variable_attributes(
     version: LanguageVersion,
     errors: &mut Vec<ParserError>,
 ) {
-    for child in &node.elements {
+    for child in node.elements() {
         check_state_variable_attribute(child, version, errors);
     }
 }
 
 fn check_statements(node: &Statements, version: LanguageVersion, errors: &mut Vec<ParserError>) {
-    for child in &node.elements {
+    for child in node.elements() {
         check_statement(child, version, errors);
     }
 }
@@ -1915,13 +1915,13 @@ fn check_struct_members(
     version: LanguageVersion,
     errors: &mut Vec<ParserError>,
 ) {
-    for child in &node.elements {
+    for child in node.elements() {
         check_struct_member(child, version, errors);
     }
 }
 
 fn check_tuple_values(node: &TupleValues, version: LanguageVersion, errors: &mut Vec<ParserError>) {
-    for child in &node.elements {
+    for child in node.elements() {
         check_tuple_value(child, version, errors);
     }
 }
@@ -1940,7 +1940,7 @@ fn check_using_deconstruction_symbols(
         });
         return;
     }
-    for child in &node.elements {
+    for child in node.elements() {
         check_using_deconstruction_symbol(child, version, errors);
     }
 }

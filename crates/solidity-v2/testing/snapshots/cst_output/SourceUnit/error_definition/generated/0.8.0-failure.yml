@@ -40,6 +40,7 @@ Tree:
                       - (item꞉ ErrorParameter): # "uint256 a" (116..125)
                           - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (116..123)
                           - (name꞉ Identifier): "a" # (124..125)
+                      - (separator꞉ Comma): "," # (125..126)
                       - (item꞉ ErrorParameter): # "uint256 b" (127..136)
                           - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (127..134)
                           - (name꞉ Identifier): "b" # (135..136)

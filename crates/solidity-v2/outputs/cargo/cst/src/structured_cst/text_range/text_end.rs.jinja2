@@ -50,7 +50,7 @@ impl<T: TextEnd> TextEnd for Rc<T> {
 {% for parent_type, collection in target.collections %}
     impl TextEnd for {{ parent_type }} {
         fn calculate_text_end(&self) -> Option<usize> {
-            self.elements.iter().rev().find_map(TextEnd::calculate_text_end)
+            self.elements().rev().find_map(TextEnd::calculate_text_end)
         }
     }
 {% endfor %}

@@ -129,17 +129,30 @@ impl StructuredCstModelBuilder {
         let item_type = self.find_node_type(&item.reference);
         let enabled = item.enabled.clone().unwrap_or_default();
 
-        self.collections
-            .insert(parent_type, Collection { item_type, enabled });
+        self.collections.insert(
+            parent_type,
+            Collection {
+                item_type,
+                enabled,
+                separator_type: None,
+            },
+        );
     }
 
     fn add_separated_item(&mut self, item: &model::SeparatedItem) {
         let parent_type = item.name.clone();
         let item_type = self.find_node_type(&item.reference);
+        let separator_type = Some(self.find_node_type(&item.separator));
         let enabled = item.enabled.clone().unwrap_or_default();
 
-        self.collections
-            .insert(parent_type, Collection { item_type, enabled });
+        self.collections.insert(
+            parent_type,
+            Collection {
+                item_type,
+                enabled,
+                separator_type,
+            },
+        );
     }
 
     fn add_precedence_item(&mut self, item: &model::PrecedenceItem) {

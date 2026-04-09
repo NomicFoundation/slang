@@ -48,6 +48,7 @@ Tree:
                                                   - (close_bracket꞉ CloseBracket): "]" # (220..221)
                                               - (period꞉ Period): "." # (221..222)
                                               - (member꞉ IdentifierPathElement) ► (address_keyword꞉ AddressKeyword): "address" # (222..229)
+                                          - (separator꞉ Comma): "," # (229..230)
                                           - (item꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "x().address" (235..246)
                                               - (operand꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "x()" (235..238)
                                                   - (operand꞉ Expression) ► (identifier꞉ Identifier): "x" # (235..236)

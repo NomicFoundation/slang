@@ -7,6 +7,8 @@
 use std::ops::Range;
 use std::rc::Rc;
 
+use crate::separated::SeparatedList;
+
 
 // TODO(v2):
 // - (perf) don't use terminals that are not needed
@@ -75,16 +77,40 @@ use std::rc::Rc;
 //
 // Repeated & Separated
 //
-// TODO(v2): consider using a transparent representation
 {% for parent_type, collection in target.collections %}
+  {% if collection.separator_type -%}
+  {# ── Separated: newtype around SeparatedList with Deref ── #}
+  #[derive(Clone, Debug, PartialEq)]
+  pub struct {{ parent_type }}(pub SeparatedList<{{ collection.item_type.name }}, {{ collection.separator_type.name }}>);
+
+  impl std::ops::Deref for {{ parent_type }} {
+      type Target = SeparatedList<{{ collection.item_type.name }}, {{ collection.separator_type.name }}>;
+      fn deref(&self) -> &Self::Target { &self.0 }
+  }
+
+  impl std::ops::DerefMut for {{ parent_type }} {
+      fn deref_mut(&mut self) -> &mut Self::Target { &mut self.0 }
+  }
+
+  pub fn new_{{ parent_type | snake_case }}(list: SeparatedList<{{ collection.item_type.name }}, {{ collection.separator_type.name }}>) -> {{ parent_type }} {
+      {{ parent_type }}(list)
+  }
+  {%- else -%}
   #[derive(Clone, Debug, PartialEq)]
   pub struct {{ parent_type }} {
       pub elements: Vec<{{ collection.item_type.name }}>,
   }
 
-  pub fn new_{{ parent_type | snake_case }}(elements: Vec<{{ collection.item_type.name }}>) -> {{ parent_type }} {
-    {{ parent_type }} { elements }
+  impl {{ parent_type }} {
+      pub fn elements(&self) -> impl DoubleEndedIterator<Item = &{{ collection.item_type.name }}> {
+          self.elements.iter()
+      }
   }
+
+  pub fn new_{{ parent_type | snake_case }}(elements: Vec<{{ collection.item_type.name }}>) -> {{ parent_type }} {
+      {{ parent_type }} { elements }
+  }
+  {%- endif %}
 
 {% endfor %}
 
@@ -103,4 +129,3 @@ use std::rc::Rc;
     {{ parent_type }} { range }
   }
 {% endfor %}
-

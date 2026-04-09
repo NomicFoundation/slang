@@ -18,6 +18,7 @@ Tree:
                       - (item꞉ UsingDeconstructionSymbol): # "foo.bar" (124..131)
                           - (name꞉ IdentifierPath): # "foo.bar" (124..131)
                               - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "foo" # (124..127)
+                              - (separator꞉ Period): "." # (127..128)
                               - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "bar" # (128..131)
                   - (close_brace꞉ CloseBrace): "}" # (139..140)
               - (for_keyword꞉ ForKeyword): "for" # (141..144)

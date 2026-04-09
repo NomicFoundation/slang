@@ -8,6 +8,8 @@
 use std::ops::Range;
 use std::rc::Rc;
 
+use crate::separated::SeparatedList;
+
 // TODO(v2):
 // - (perf) don't use terminals that are not needed
 // - (feat) visitor/traversal/serializer
@@ -4228,29 +4230,56 @@ pub fn new_yul_switch_case_yul_value_case(element: YulValueCase) -> YulSwitchCas
 //
 // Repeated & Separated
 //
-// TODO(v2): consider using a transparent representation
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct ArrayValues {
-    pub elements: Vec<Expression>,
+pub struct ArrayValues(pub SeparatedList<Expression, Comma>);
+
+impl std::ops::Deref for ArrayValues {
+    type Target = SeparatedList<Expression, Comma>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }
 
-pub fn new_array_values(elements: Vec<Expression>) -> ArrayValues {
-    ArrayValues { elements }
+impl std::ops::DerefMut for ArrayValues {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+pub fn new_array_values(list: SeparatedList<Expression, Comma>) -> ArrayValues {
+    ArrayValues(list)
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct CallOptions {
-    pub elements: Vec<NamedArgument>,
+pub struct CallOptions(pub SeparatedList<NamedArgument, Comma>);
+
+impl std::ops::Deref for CallOptions {
+    type Target = SeparatedList<NamedArgument, Comma>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }
 
-pub fn new_call_options(elements: Vec<NamedArgument>) -> CallOptions {
-    CallOptions { elements }
+impl std::ops::DerefMut for CallOptions {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+pub fn new_call_options(list: SeparatedList<NamedArgument, Comma>) -> CallOptions {
+    CallOptions(list)
 }
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct CatchClauses {
     pub elements: Vec<CatchClause>,
+}
+
+impl CatchClauses {
+    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &CatchClause> {
+        self.elements.iter()
+    }
 }
 
 pub fn new_catch_clauses(elements: Vec<CatchClause>) -> CatchClauses {
@@ -4262,6 +4291,12 @@ pub struct ConstructorAttributes {
     pub elements: Vec<ConstructorAttribute>,
 }
 
+impl ConstructorAttributes {
+    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &ConstructorAttribute> {
+        self.elements.iter()
+    }
+}
+
 pub fn new_constructor_attributes(elements: Vec<ConstructorAttribute>) -> ConstructorAttributes {
     ConstructorAttributes { elements }
 }
@@ -4269,6 +4304,12 @@ pub fn new_constructor_attributes(elements: Vec<ConstructorAttribute>) -> Constr
 #[derive(Clone, Debug, PartialEq)]
 pub struct ContractMembers {
     pub elements: Vec<ContractMember>,
+}
+
+impl ContractMembers {
+    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &ContractMember> {
+        self.elements.iter()
+    }
 }
 
 pub fn new_contract_members(elements: Vec<ContractMember>) -> ContractMembers {
@@ -4280,40 +4321,85 @@ pub struct ContractSpecifiers {
     pub elements: Vec<ContractSpecifier>,
 }
 
+impl ContractSpecifiers {
+    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &ContractSpecifier> {
+        self.elements.iter()
+    }
+}
+
 pub fn new_contract_specifiers(elements: Vec<ContractSpecifier>) -> ContractSpecifiers {
     ContractSpecifiers { elements }
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct EnumMembers {
-    pub elements: Vec<Identifier>,
+pub struct EnumMembers(pub SeparatedList<Identifier, Comma>);
+
+impl std::ops::Deref for EnumMembers {
+    type Target = SeparatedList<Identifier, Comma>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }
 
-pub fn new_enum_members(elements: Vec<Identifier>) -> EnumMembers {
-    EnumMembers { elements }
+impl std::ops::DerefMut for EnumMembers {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+pub fn new_enum_members(list: SeparatedList<Identifier, Comma>) -> EnumMembers {
+    EnumMembers(list)
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct ErrorParameters {
-    pub elements: Vec<ErrorParameter>,
+pub struct ErrorParameters(pub SeparatedList<ErrorParameter, Comma>);
+
+impl std::ops::Deref for ErrorParameters {
+    type Target = SeparatedList<ErrorParameter, Comma>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }
 
-pub fn new_error_parameters(elements: Vec<ErrorParameter>) -> ErrorParameters {
-    ErrorParameters { elements }
+impl std::ops::DerefMut for ErrorParameters {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+pub fn new_error_parameters(list: SeparatedList<ErrorParameter, Comma>) -> ErrorParameters {
+    ErrorParameters(list)
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct EventParameters {
-    pub elements: Vec<EventParameter>,
+pub struct EventParameters(pub SeparatedList<EventParameter, Comma>);
+
+impl std::ops::Deref for EventParameters {
+    type Target = SeparatedList<EventParameter, Comma>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }
 
-pub fn new_event_parameters(elements: Vec<EventParameter>) -> EventParameters {
-    EventParameters { elements }
+impl std::ops::DerefMut for EventParameters {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+pub fn new_event_parameters(list: SeparatedList<EventParameter, Comma>) -> EventParameters {
+    EventParameters(list)
 }
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct FallbackFunctionAttributes {
     pub elements: Vec<FallbackFunctionAttribute>,
+}
+
+impl FallbackFunctionAttributes {
+    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &FallbackFunctionAttribute> {
+        self.elements.iter()
+    }
 }
 
 pub fn new_fallback_function_attributes(
@@ -4327,6 +4413,12 @@ pub struct FunctionAttributes {
     pub elements: Vec<FunctionAttribute>,
 }
 
+impl FunctionAttributes {
+    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &FunctionAttribute> {
+        self.elements.iter()
+    }
+}
+
 pub fn new_function_attributes(elements: Vec<FunctionAttribute>) -> FunctionAttributes {
     FunctionAttributes { elements }
 }
@@ -4334,6 +4426,12 @@ pub fn new_function_attributes(elements: Vec<FunctionAttribute>) -> FunctionAttr
 #[derive(Clone, Debug, PartialEq)]
 pub struct FunctionTypeAttributes {
     pub elements: Vec<FunctionTypeAttribute>,
+}
+
+impl FunctionTypeAttributes {
+    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &FunctionTypeAttribute> {
+        self.elements.iter()
+    }
 }
 
 pub fn new_function_type_attributes(
@@ -4347,42 +4445,87 @@ pub struct HexStringLiterals {
     pub elements: Vec<HexStringLiteral>,
 }
 
+impl HexStringLiterals {
+    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &HexStringLiteral> {
+        self.elements.iter()
+    }
+}
+
 pub fn new_hex_string_literals(elements: Vec<HexStringLiteral>) -> HexStringLiterals {
     HexStringLiterals { elements }
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct IdentifierPath {
-    pub elements: Vec<IdentifierPathElement>,
+pub struct IdentifierPath(pub SeparatedList<IdentifierPathElement, Period>);
+
+impl std::ops::Deref for IdentifierPath {
+    type Target = SeparatedList<IdentifierPathElement, Period>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }
 
-pub fn new_identifier_path(elements: Vec<IdentifierPathElement>) -> IdentifierPath {
-    IdentifierPath { elements }
+impl std::ops::DerefMut for IdentifierPath {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+pub fn new_identifier_path(list: SeparatedList<IdentifierPathElement, Period>) -> IdentifierPath {
+    IdentifierPath(list)
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct ImportDeconstructionSymbols {
-    pub elements: Vec<ImportDeconstructionSymbol>,
+pub struct ImportDeconstructionSymbols(pub SeparatedList<ImportDeconstructionSymbol, Comma>);
+
+impl std::ops::Deref for ImportDeconstructionSymbols {
+    type Target = SeparatedList<ImportDeconstructionSymbol, Comma>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl std::ops::DerefMut for ImportDeconstructionSymbols {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
 }
 
 pub fn new_import_deconstruction_symbols(
-    elements: Vec<ImportDeconstructionSymbol>,
+    list: SeparatedList<ImportDeconstructionSymbol, Comma>,
 ) -> ImportDeconstructionSymbols {
-    ImportDeconstructionSymbols { elements }
+    ImportDeconstructionSymbols(list)
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct InheritanceTypes {
-    pub elements: Vec<InheritanceType>,
+pub struct InheritanceTypes(pub SeparatedList<InheritanceType, Comma>);
+
+impl std::ops::Deref for InheritanceTypes {
+    type Target = SeparatedList<InheritanceType, Comma>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }
 
-pub fn new_inheritance_types(elements: Vec<InheritanceType>) -> InheritanceTypes {
-    InheritanceTypes { elements }
+impl std::ops::DerefMut for InheritanceTypes {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+pub fn new_inheritance_types(list: SeparatedList<InheritanceType, Comma>) -> InheritanceTypes {
+    InheritanceTypes(list)
 }
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct InterfaceMembers {
     pub elements: Vec<ContractMember>,
+}
+
+impl InterfaceMembers {
+    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &ContractMember> {
+        self.elements.iter()
+    }
 }
 
 pub fn new_interface_members(elements: Vec<ContractMember>) -> InterfaceMembers {
@@ -4394,6 +4537,12 @@ pub struct LibraryMembers {
     pub elements: Vec<ContractMember>,
 }
 
+impl LibraryMembers {
+    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &ContractMember> {
+        self.elements.iter()
+    }
+}
+
 pub fn new_library_members(elements: Vec<ContractMember>) -> LibraryMembers {
     LibraryMembers { elements }
 }
@@ -4403,60 +4552,127 @@ pub struct ModifierAttributes {
     pub elements: Vec<ModifierAttribute>,
 }
 
+impl ModifierAttributes {
+    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &ModifierAttribute> {
+        self.elements.iter()
+    }
+}
+
 pub fn new_modifier_attributes(elements: Vec<ModifierAttribute>) -> ModifierAttributes {
     ModifierAttributes { elements }
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct MultiTypedDeclarationElements {
-    pub elements: Vec<MultiTypedDeclarationElement>,
+pub struct MultiTypedDeclarationElements(pub SeparatedList<MultiTypedDeclarationElement, Comma>);
+
+impl std::ops::Deref for MultiTypedDeclarationElements {
+    type Target = SeparatedList<MultiTypedDeclarationElement, Comma>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl std::ops::DerefMut for MultiTypedDeclarationElements {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
 }
 
 pub fn new_multi_typed_declaration_elements(
-    elements: Vec<MultiTypedDeclarationElement>,
+    list: SeparatedList<MultiTypedDeclarationElement, Comma>,
 ) -> MultiTypedDeclarationElements {
-    MultiTypedDeclarationElements { elements }
+    MultiTypedDeclarationElements(list)
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct NamedArguments {
-    pub elements: Vec<NamedArgument>,
+pub struct NamedArguments(pub SeparatedList<NamedArgument, Comma>);
+
+impl std::ops::Deref for NamedArguments {
+    type Target = SeparatedList<NamedArgument, Comma>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }
 
-pub fn new_named_arguments(elements: Vec<NamedArgument>) -> NamedArguments {
-    NamedArguments { elements }
+impl std::ops::DerefMut for NamedArguments {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
 }
 
-#[derive(Clone, Debug, PartialEq)]
-pub struct OverridePaths {
-    pub elements: Vec<IdentifierPath>,
-}
-
-pub fn new_override_paths(elements: Vec<IdentifierPath>) -> OverridePaths {
-    OverridePaths { elements }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct Parameters {
-    pub elements: Vec<Parameter>,
-}
-
-pub fn new_parameters(elements: Vec<Parameter>) -> Parameters {
-    Parameters { elements }
+pub fn new_named_arguments(list: SeparatedList<NamedArgument, Comma>) -> NamedArguments {
+    NamedArguments(list)
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct PositionalArguments {
-    pub elements: Vec<Expression>,
+pub struct OverridePaths(pub SeparatedList<IdentifierPath, Comma>);
+
+impl std::ops::Deref for OverridePaths {
+    type Target = SeparatedList<IdentifierPath, Comma>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }
 
-pub fn new_positional_arguments(elements: Vec<Expression>) -> PositionalArguments {
-    PositionalArguments { elements }
+impl std::ops::DerefMut for OverridePaths {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+pub fn new_override_paths(list: SeparatedList<IdentifierPath, Comma>) -> OverridePaths {
+    OverridePaths(list)
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct Parameters(pub SeparatedList<Parameter, Comma>);
+
+impl std::ops::Deref for Parameters {
+    type Target = SeparatedList<Parameter, Comma>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl std::ops::DerefMut for Parameters {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+pub fn new_parameters(list: SeparatedList<Parameter, Comma>) -> Parameters {
+    Parameters(list)
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct PositionalArguments(pub SeparatedList<Expression, Comma>);
+
+impl std::ops::Deref for PositionalArguments {
+    type Target = SeparatedList<Expression, Comma>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl std::ops::DerefMut for PositionalArguments {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+pub fn new_positional_arguments(list: SeparatedList<Expression, Comma>) -> PositionalArguments {
+    PositionalArguments(list)
 }
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ReceiveFunctionAttributes {
     pub elements: Vec<ReceiveFunctionAttribute>,
+}
+
+impl ReceiveFunctionAttributes {
+    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &ReceiveFunctionAttribute> {
+        self.elements.iter()
+    }
 }
 
 pub fn new_receive_function_attributes(
@@ -4466,17 +4682,36 @@ pub fn new_receive_function_attributes(
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct SimpleVersionLiteral {
-    pub elements: Vec<VersionSpecifier>,
+pub struct SimpleVersionLiteral(pub SeparatedList<VersionSpecifier, PragmaPeriod>);
+
+impl std::ops::Deref for SimpleVersionLiteral {
+    type Target = SeparatedList<VersionSpecifier, PragmaPeriod>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }
 
-pub fn new_simple_version_literal(elements: Vec<VersionSpecifier>) -> SimpleVersionLiteral {
-    SimpleVersionLiteral { elements }
+impl std::ops::DerefMut for SimpleVersionLiteral {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+pub fn new_simple_version_literal(
+    list: SeparatedList<VersionSpecifier, PragmaPeriod>,
+) -> SimpleVersionLiteral {
+    SimpleVersionLiteral(list)
 }
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct SourceUnitMembers {
     pub elements: Vec<SourceUnitMember>,
+}
+
+impl SourceUnitMembers {
+    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &SourceUnitMember> {
+        self.elements.iter()
+    }
 }
 
 pub fn new_source_unit_members(elements: Vec<SourceUnitMember>) -> SourceUnitMembers {
@@ -4486,6 +4721,12 @@ pub fn new_source_unit_members(elements: Vec<SourceUnitMember>) -> SourceUnitMem
 #[derive(Clone, Debug, PartialEq)]
 pub struct StateVariableAttributes {
     pub elements: Vec<StateVariableAttribute>,
+}
+
+impl StateVariableAttributes {
+    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &StateVariableAttribute> {
+        self.elements.iter()
+    }
 }
 
 pub fn new_state_variable_attributes(
@@ -4499,6 +4740,12 @@ pub struct Statements {
     pub elements: Vec<Statement>,
 }
 
+impl Statements {
+    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &Statement> {
+        self.elements.iter()
+    }
+}
+
 pub fn new_statements(elements: Vec<Statement>) -> Statements {
     Statements { elements }
 }
@@ -4506,6 +4753,12 @@ pub fn new_statements(elements: Vec<Statement>) -> Statements {
 #[derive(Clone, Debug, PartialEq)]
 pub struct StringLiterals {
     pub elements: Vec<StringLiteral>,
+}
+
+impl StringLiterals {
+    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &StringLiteral> {
+        self.elements.iter()
+    }
 }
 
 pub fn new_string_literals(elements: Vec<StringLiteral>) -> StringLiterals {
@@ -4517,17 +4770,34 @@ pub struct StructMembers {
     pub elements: Vec<StructMember>,
 }
 
+impl StructMembers {
+    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &StructMember> {
+        self.elements.iter()
+    }
+}
+
 pub fn new_struct_members(elements: Vec<StructMember>) -> StructMembers {
     StructMembers { elements }
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct TupleValues {
-    pub elements: Vec<TupleValue>,
+pub struct TupleValues(pub SeparatedList<TupleValue, Comma>);
+
+impl std::ops::Deref for TupleValues {
+    type Target = SeparatedList<TupleValue, Comma>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }
 
-pub fn new_tuple_values(elements: Vec<TupleValue>) -> TupleValues {
-    TupleValues { elements }
+impl std::ops::DerefMut for TupleValues {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+pub fn new_tuple_values(list: SeparatedList<TupleValue, Comma>) -> TupleValues {
+    TupleValues(list)
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -4535,19 +4805,36 @@ pub struct UnicodeStringLiterals {
     pub elements: Vec<UnicodeStringLiteral>,
 }
 
+impl UnicodeStringLiterals {
+    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &UnicodeStringLiteral> {
+        self.elements.iter()
+    }
+}
+
 pub fn new_unicode_string_literals(elements: Vec<UnicodeStringLiteral>) -> UnicodeStringLiterals {
     UnicodeStringLiterals { elements }
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct UsingDeconstructionSymbols {
-    pub elements: Vec<UsingDeconstructionSymbol>,
+pub struct UsingDeconstructionSymbols(pub SeparatedList<UsingDeconstructionSymbol, Comma>);
+
+impl std::ops::Deref for UsingDeconstructionSymbols {
+    type Target = SeparatedList<UsingDeconstructionSymbol, Comma>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl std::ops::DerefMut for UsingDeconstructionSymbols {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
 }
 
 pub fn new_using_deconstruction_symbols(
-    elements: Vec<UsingDeconstructionSymbol>,
+    list: SeparatedList<UsingDeconstructionSymbol, Comma>,
 ) -> UsingDeconstructionSymbols {
-    UsingDeconstructionSymbols { elements }
+    UsingDeconstructionSymbols(list)
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -4555,67 +4842,147 @@ pub struct VersionExpressionSet {
     pub elements: Vec<VersionExpression>,
 }
 
+impl VersionExpressionSet {
+    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &VersionExpression> {
+        self.elements.iter()
+    }
+}
+
 pub fn new_version_expression_set(elements: Vec<VersionExpression>) -> VersionExpressionSet {
     VersionExpressionSet { elements }
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct VersionExpressionSets {
-    pub elements: Vec<VersionExpressionSet>,
+pub struct VersionExpressionSets(pub SeparatedList<VersionExpressionSet, PragmaBarBar>);
+
+impl std::ops::Deref for VersionExpressionSets {
+    type Target = SeparatedList<VersionExpressionSet, PragmaBarBar>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }
 
-pub fn new_version_expression_sets(elements: Vec<VersionExpressionSet>) -> VersionExpressionSets {
-    VersionExpressionSets { elements }
+impl std::ops::DerefMut for VersionExpressionSets {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
 }
 
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulArguments {
-    pub elements: Vec<YulExpression>,
-}
-
-pub fn new_yul_arguments(elements: Vec<YulExpression>) -> YulArguments {
-    YulArguments { elements }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct YulFlags {
-    pub elements: Vec<YulStringLiteral>,
-}
-
-pub fn new_yul_flags(elements: Vec<YulStringLiteral>) -> YulFlags {
-    YulFlags { elements }
+pub fn new_version_expression_sets(
+    list: SeparatedList<VersionExpressionSet, PragmaBarBar>,
+) -> VersionExpressionSets {
+    VersionExpressionSets(list)
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct YulParameters {
-    pub elements: Vec<YulIdentifier>,
+pub struct YulArguments(pub SeparatedList<YulExpression, YulComma>);
+
+impl std::ops::Deref for YulArguments {
+    type Target = SeparatedList<YulExpression, YulComma>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }
 
-pub fn new_yul_parameters(elements: Vec<YulIdentifier>) -> YulParameters {
-    YulParameters { elements }
+impl std::ops::DerefMut for YulArguments {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+pub fn new_yul_arguments(list: SeparatedList<YulExpression, YulComma>) -> YulArguments {
+    YulArguments(list)
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct YulPath {
-    pub elements: Vec<YulIdentifier>,
+pub struct YulFlags(pub SeparatedList<YulStringLiteral, YulComma>);
+
+impl std::ops::Deref for YulFlags {
+    type Target = SeparatedList<YulStringLiteral, YulComma>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }
 
-pub fn new_yul_path(elements: Vec<YulIdentifier>) -> YulPath {
-    YulPath { elements }
+impl std::ops::DerefMut for YulFlags {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+pub fn new_yul_flags(list: SeparatedList<YulStringLiteral, YulComma>) -> YulFlags {
+    YulFlags(list)
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct YulPaths {
-    pub elements: Vec<YulPath>,
+pub struct YulParameters(pub SeparatedList<YulIdentifier, YulComma>);
+
+impl std::ops::Deref for YulParameters {
+    type Target = SeparatedList<YulIdentifier, YulComma>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }
 
-pub fn new_yul_paths(elements: Vec<YulPath>) -> YulPaths {
-    YulPaths { elements }
+impl std::ops::DerefMut for YulParameters {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+pub fn new_yul_parameters(list: SeparatedList<YulIdentifier, YulComma>) -> YulParameters {
+    YulParameters(list)
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct YulPath(pub SeparatedList<YulIdentifier, YulPeriod>);
+
+impl std::ops::Deref for YulPath {
+    type Target = SeparatedList<YulIdentifier, YulPeriod>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl std::ops::DerefMut for YulPath {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+pub fn new_yul_path(list: SeparatedList<YulIdentifier, YulPeriod>) -> YulPath {
+    YulPath(list)
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct YulPaths(pub SeparatedList<YulPath, YulComma>);
+
+impl std::ops::Deref for YulPaths {
+    type Target = SeparatedList<YulPath, YulComma>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl std::ops::DerefMut for YulPaths {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+pub fn new_yul_paths(list: SeparatedList<YulPath, YulComma>) -> YulPaths {
+    YulPaths(list)
 }
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct YulStatements {
     pub elements: Vec<YulStatement>,
+}
+
+impl YulStatements {
+    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &YulStatement> {
+        self.elements.iter()
+    }
 }
 
 pub fn new_yul_statements(elements: Vec<YulStatement>) -> YulStatements {
@@ -4627,17 +4994,34 @@ pub struct YulSwitchCases {
     pub elements: Vec<YulSwitchCase>,
 }
 
+impl YulSwitchCases {
+    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &YulSwitchCase> {
+        self.elements.iter()
+    }
+}
+
 pub fn new_yul_switch_cases(elements: Vec<YulSwitchCase>) -> YulSwitchCases {
     YulSwitchCases { elements }
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct YulVariableNames {
-    pub elements: Vec<YulIdentifier>,
+pub struct YulVariableNames(pub SeparatedList<YulIdentifier, YulComma>);
+
+impl std::ops::Deref for YulVariableNames {
+    type Target = SeparatedList<YulIdentifier, YulComma>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }
 
-pub fn new_yul_variable_names(elements: Vec<YulIdentifier>) -> YulVariableNames {
-    YulVariableNames { elements }
+impl std::ops::DerefMut for YulVariableNames {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+pub fn new_yul_variable_names(list: SeparatedList<YulIdentifier, YulComma>) -> YulVariableNames {
+    YulVariableNames(list)
 }
 
 //

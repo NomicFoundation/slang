@@ -17,6 +17,8 @@ Tree:
                           - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm): # "1.0.0" (114..119)
                               - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral): # "1.0.0" (114..119)
                                   - (item꞉ VersionSpecifier): "1" # (114..115)
+                                  - (separator꞉ PragmaPeriod): "." # (115..116)
                                   - (item꞉ VersionSpecifier): "0" # (116..117)
+                                  - (separator꞉ PragmaPeriod): "." # (117..118)
                                   - (item꞉ VersionSpecifier): "0" # (118..119)
               - (semicolon꞉ PragmaSemicolon): ";" # (119..120)

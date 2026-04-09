@@ -27,6 +27,7 @@ Tree:
                       - (item꞉ UsingDeconstructionSymbol): # "foo.bar as /" (136..148)
                           - (name꞉ IdentifierPath): # "foo.bar" (136..143)
                               - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "foo" # (136..139)
+                              - (separator꞉ Period): "." # (139..140)
                               - (item꞉ IdentifierPathElement) ► (identifier꞉ Identifier): "bar" # (140..143)
                           - (alias꞉ UsingAlias): # "as /" (144..148)
                               - (as_keyword꞉ AsKeyword): "as" # (144..146)
