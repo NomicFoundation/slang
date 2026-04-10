@@ -30,7 +30,7 @@ catalog:
   "solc": "^0.8.34"
   "ts-jest-resolver": "^2.0.1"
   "ts-jest": "^29.3.4"
-  "tsx": "^4.19.4"
+  "tsx": "^4.21.0"
   "typedoc": "^0.28.17"
   "typescript": "^5.8.3"
 
