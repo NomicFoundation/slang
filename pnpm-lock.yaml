@@ -37,8 +37,8 @@ catalogs:
       specifier: ^24.0.8
       version: 24.0.8
     command-line-args:
-      specifier: ^6.0.1
-      version: 6.0.1
+      specifier: ^6.0.2
+      version: 6.0.2
     command-line-usage:
       specifier: ^7.0.4
       version: 7.0.4
@@ -174,7 +174,7 @@ importers:
         version: 5.0.4
       command-line-args:
         specifier: 'catalog:'
-        version: 6.0.1
+        version: 6.0.2
       command-line-usage:
         specifier: 'catalog:'
         version: 7.0.4
@@ -1610,6 +1610,10 @@ packages:
     resolution: {integrity: sha512-gUAZ7HPyb4SJczXAMUXMGAvI976JoK3qEx9v1FTmeYuJj0IBiaKttG1ydtGKdkfqWkIkouke7nG8ufGy77+Cvw==}
     engines: {node: '>=12.17'}
 
+  array-back@6.2.3:
+    resolution: {integrity: sha512-SGDvmg6QTYiTxCBkYVmThcoa67uLl35pyzRHdpCGBOcqFy6BtwnphoFPk7LhJshD+Yk1Kt35WGWeZPTgwR4Fhw==}
+    engines: {node: '>=12.17'}
+
   array-timsort@1.0.3:
     resolution: {integrity: sha512-/+3GRL7dDAGEfM6TseQk/U+mi18TU2Ms9I3UlLdUMhz2hbvGNTKdj9xniwXfUqgYhHxRx0+8UnKkvlNwVU+cWQ==}
 
@@ -1864,8 +1868,8 @@ packages:
   command-exists@1.2.9:
     resolution: {integrity: sha512-LTQ/SGc+s0Xc0Fu5WaKnR0YiygZkm9eKFvyS+fRsU7/ZWFF8ykFM6Pc9aCVf1+xasOOZpO3BAVgVrKvsqKHV7w==}
 
-  command-line-args@6.0.1:
-    resolution: {integrity: sha512-Jr3eByUjqyK0qd8W0SGFW1nZwqCaNCtbXjRo2cRJC1OYxWl3MZ5t1US3jq+cO4sPavqgw4l9BMGX0CBe+trepg==}
+  command-line-args@6.0.2:
+    resolution: {integrity: sha512-AIjYVxrV9X752LmPDLbVYv8aMCuHPSLZJXEo2qo/xJfv+NYhaZ4sMSF01rM+gHPaMgvPM0l5D/F+Qx+i2WfSmQ==}
     engines: {node: '>=12.20'}
     peerDependencies:
       '@75lb/nature': latest
@@ -5217,6 +5221,8 @@ snapshots:
 
   array-back@6.2.2: {}
 
+  array-back@6.2.3: {}
+
   array-timsort@1.0.3: {}
 
   array-union@2.1.0: {}
@@ -5507,9 +5513,9 @@ snapshots:
 
   command-exists@1.2.9: {}
 
-  command-line-args@6.0.1:
+  command-line-args@6.0.2:
     dependencies:
-      array-back: 6.2.2
+      array-back: 6.2.3
       find-replace: 5.0.2
       lodash.camelcase: 4.3.0
       typical: 7.3.0
