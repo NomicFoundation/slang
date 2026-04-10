@@ -19,6 +19,29 @@ pub trait SemanticFile {
     fn resolved_import_by_node_id(&self, node_id: NodeId) -> Option<&String>;
 }
 
+pub fn extract_import_paths_from_source_unit(
+    source_unit: &ir::SourceUnit,
+) -> Vec<(NodeId, String)> {
+    let mut import_paths = Vec::new();
+
+    for member in &source_unit.members {
+        let ir::SourceUnitMember::ImportClause(import_clause) = member else {
+            continue;
+        };
+        let (node_id, path) = match import_clause {
+            ir::ImportClause::PathImport(path_import) => {
+                (path_import.id(), path_import.path.unparse().to_owned())
+            }
+            ir::ImportClause::ImportDeconstruction(import_deconstruction) => (
+                import_deconstruction.id(),
+                import_deconstruction.path.unparse().to_owned(),
+            ),
+        };
+        import_paths.push((node_id, path));
+    }
+    import_paths
+}
+
 pub struct SemanticContext {
     binder: Binder,
     types: TypeRegistry,
