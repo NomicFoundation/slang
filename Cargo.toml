@@ -188,7 +188,7 @@ syn = { version = "2.0.117", features = [
     "printing",
 ] }
 tar = { version = "0.4.45" }
-tempfile = { version = "3.19.1" }
+tempfile = { version = "3.27.0" }
 tera = { version = "1.20.1" }
 thiserror = { version = "2.0.12" }
 toml = { version = "0.8.20" }
