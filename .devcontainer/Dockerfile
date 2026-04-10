@@ -28,8 +28,6 @@ RUN sudo apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 # Setup default Bash and Zsh for local development inside the image:
-COPY ./scripts/ /home/vscode/
-
-# Users that mount their own dot files are responsible for sourcing Slang's `.rc` files themselves:
+COPY --chown=vscode:vscode ./scripts/ /home/vscode/
 RUN echo "source /home/vscode/.bashrc_devcontainer" >> /home/vscode/.bashrc
 RUN echo "source /home/vscode/.zshrc_devcontainer" >> /home/vscode/.zshrc
