@@ -6,7 +6,7 @@ use std::ops::Range;
 use std::rc::Rc;
 use std::vec::Vec;
 
-use crate::interner::StringId;
+use crate::interner::{Interner, StringId};
 
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(transparent)]
@@ -1808,7 +1808,6 @@ pub type BytesKeyword = Rc<BytesKeywordStruct>;
 pub struct BytesKeywordStruct {
     pub range: Range<usize>,
     pub string_id: StringId,
-    pub text: String,
 }
 
 impl BytesKeywordStruct {
@@ -1816,8 +1815,8 @@ impl BytesKeywordStruct {
         NodeId(Rc::as_ptr(self) as usize)
     }
 
-    pub fn unparse(&self) -> &str {
-        &self.text
+    pub fn unparse<'a>(&self, interner: &'a Interner) -> &'a str {
+        interner.resolve(self.string_id)
     }
 }
 
@@ -1827,7 +1826,6 @@ pub type DecimalLiteral = Rc<DecimalLiteralStruct>;
 pub struct DecimalLiteralStruct {
     pub range: Range<usize>,
     pub string_id: StringId,
-    pub text: String,
 }
 
 impl DecimalLiteralStruct {
@@ -1835,8 +1833,8 @@ impl DecimalLiteralStruct {
         NodeId(Rc::as_ptr(self) as usize)
     }
 
-    pub fn unparse(&self) -> &str {
-        &self.text
+    pub fn unparse<'a>(&self, interner: &'a Interner) -> &'a str {
+        interner.resolve(self.string_id)
     }
 }
 
@@ -1846,7 +1844,6 @@ pub type FixedKeyword = Rc<FixedKeywordStruct>;
 pub struct FixedKeywordStruct {
     pub range: Range<usize>,
     pub string_id: StringId,
-    pub text: String,
 }
 
 impl FixedKeywordStruct {
@@ -1854,8 +1851,8 @@ impl FixedKeywordStruct {
         NodeId(Rc::as_ptr(self) as usize)
     }
 
-    pub fn unparse(&self) -> &str {
-        &self.text
+    pub fn unparse<'a>(&self, interner: &'a Interner) -> &'a str {
+        interner.resolve(self.string_id)
     }
 }
 
@@ -1865,7 +1862,6 @@ pub type HexLiteral = Rc<HexLiteralStruct>;
 pub struct HexLiteralStruct {
     pub range: Range<usize>,
     pub string_id: StringId,
-    pub text: String,
 }
 
 impl HexLiteralStruct {
@@ -1873,8 +1869,8 @@ impl HexLiteralStruct {
         NodeId(Rc::as_ptr(self) as usize)
     }
 
-    pub fn unparse(&self) -> &str {
-        &self.text
+    pub fn unparse<'a>(&self, interner: &'a Interner) -> &'a str {
+        interner.resolve(self.string_id)
     }
 }
 
@@ -1884,7 +1880,6 @@ pub type HexStringLiteral = Rc<HexStringLiteralStruct>;
 pub struct HexStringLiteralStruct {
     pub range: Range<usize>,
     pub string_id: StringId,
-    pub text: String,
 }
 
 impl HexStringLiteralStruct {
@@ -1892,8 +1887,8 @@ impl HexStringLiteralStruct {
         NodeId(Rc::as_ptr(self) as usize)
     }
 
-    pub fn unparse(&self) -> &str {
-        &self.text
+    pub fn unparse<'a>(&self, interner: &'a Interner) -> &'a str {
+        interner.resolve(self.string_id)
     }
 }
 
@@ -1903,7 +1898,6 @@ pub type Identifier = Rc<IdentifierStruct>;
 pub struct IdentifierStruct {
     pub range: Range<usize>,
     pub string_id: StringId,
-    pub text: String,
 }
 
 impl IdentifierStruct {
@@ -1911,8 +1905,8 @@ impl IdentifierStruct {
         NodeId(Rc::as_ptr(self) as usize)
     }
 
-    pub fn unparse(&self) -> &str {
-        &self.text
+    pub fn unparse<'a>(&self, interner: &'a Interner) -> &'a str {
+        interner.resolve(self.string_id)
     }
 }
 
@@ -1922,7 +1916,6 @@ pub type IntKeyword = Rc<IntKeywordStruct>;
 pub struct IntKeywordStruct {
     pub range: Range<usize>,
     pub string_id: StringId,
-    pub text: String,
 }
 
 impl IntKeywordStruct {
@@ -1930,8 +1923,8 @@ impl IntKeywordStruct {
         NodeId(Rc::as_ptr(self) as usize)
     }
 
-    pub fn unparse(&self) -> &str {
-        &self.text
+    pub fn unparse<'a>(&self, interner: &'a Interner) -> &'a str {
+        interner.resolve(self.string_id)
     }
 }
 
@@ -1941,7 +1934,6 @@ pub type StringLiteral = Rc<StringLiteralStruct>;
 pub struct StringLiteralStruct {
     pub range: Range<usize>,
     pub string_id: StringId,
-    pub text: String,
 }
 
 impl StringLiteralStruct {
@@ -1949,8 +1941,8 @@ impl StringLiteralStruct {
         NodeId(Rc::as_ptr(self) as usize)
     }
 
-    pub fn unparse(&self) -> &str {
-        &self.text
+    pub fn unparse<'a>(&self, interner: &'a Interner) -> &'a str {
+        interner.resolve(self.string_id)
     }
 }
 
@@ -1960,7 +1952,6 @@ pub type UfixedKeyword = Rc<UfixedKeywordStruct>;
 pub struct UfixedKeywordStruct {
     pub range: Range<usize>,
     pub string_id: StringId,
-    pub text: String,
 }
 
 impl UfixedKeywordStruct {
@@ -1968,8 +1959,8 @@ impl UfixedKeywordStruct {
         NodeId(Rc::as_ptr(self) as usize)
     }
 
-    pub fn unparse(&self) -> &str {
-        &self.text
+    pub fn unparse<'a>(&self, interner: &'a Interner) -> &'a str {
+        interner.resolve(self.string_id)
     }
 }
 
@@ -1979,7 +1970,6 @@ pub type UintKeyword = Rc<UintKeywordStruct>;
 pub struct UintKeywordStruct {
     pub range: Range<usize>,
     pub string_id: StringId,
-    pub text: String,
 }
 
 impl UintKeywordStruct {
@@ -1987,8 +1977,8 @@ impl UintKeywordStruct {
         NodeId(Rc::as_ptr(self) as usize)
     }
 
-    pub fn unparse(&self) -> &str {
-        &self.text
+    pub fn unparse<'a>(&self, interner: &'a Interner) -> &'a str {
+        interner.resolve(self.string_id)
     }
 }
 
@@ -1998,7 +1988,6 @@ pub type UnicodeStringLiteral = Rc<UnicodeStringLiteralStruct>;
 pub struct UnicodeStringLiteralStruct {
     pub range: Range<usize>,
     pub string_id: StringId,
-    pub text: String,
 }
 
 impl UnicodeStringLiteralStruct {
@@ -2006,8 +1995,8 @@ impl UnicodeStringLiteralStruct {
         NodeId(Rc::as_ptr(self) as usize)
     }
 
-    pub fn unparse(&self) -> &str {
-        &self.text
+    pub fn unparse<'a>(&self, interner: &'a Interner) -> &'a str {
+        interner.resolve(self.string_id)
     }
 }
 
@@ -2017,7 +2006,6 @@ pub type VersionSpecifier = Rc<VersionSpecifierStruct>;
 pub struct VersionSpecifierStruct {
     pub range: Range<usize>,
     pub string_id: StringId,
-    pub text: String,
 }
 
 impl VersionSpecifierStruct {
@@ -2025,7 +2013,7 @@ impl VersionSpecifierStruct {
         NodeId(Rc::as_ptr(self) as usize)
     }
 
-    pub fn unparse(&self) -> &str {
-        &self.text
+    pub fn unparse<'a>(&self, interner: &'a Interner) -> &'a str {
+        interner.resolve(self.string_id)
     }
 }

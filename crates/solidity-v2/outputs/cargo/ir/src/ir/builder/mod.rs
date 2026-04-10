@@ -25,10 +25,6 @@ struct CstToIrBuilder<'a, S: Source> {
 }
 
 impl<S: Source> Builder for CstToIrBuilder<'_, S> {
-    fn unparse_range(&self, range: std::ops::Range<usize>) -> String {
-        self.source.text(range).to_owned()
-    }
-
     fn intern_string(&mut self, range: std::ops::Range<usize>) -> StringId {
         let text = self.source.text(range);
         self.interner.intern(text)

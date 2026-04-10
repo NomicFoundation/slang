@@ -269,10 +269,10 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
                     let current_scope_node_id = self.current_scope().node_id();
                     let enclosing_definition =
                         self.binder.find_definition_by_id(current_scope_node_id);
-                    let enclosing_contract_name =
+                    let enclosing_contract_string_id =
                         if let Some(enclosing_definition) = enclosing_definition {
                             if matches!(enclosing_definition, Definition::Contract(_)) {
-                                Some(enclosing_definition.identifier().unparse())
+                                Some(enclosing_definition.identifier().string_id)
                             } else {
                                 None
                             }
@@ -280,8 +280,8 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
                             None
                         };
 
-                    if enclosing_contract_name
-                        .is_some_and(|contract_name| contract_name == name.unparse())
+                    if enclosing_contract_string_id
+                        .is_some_and(|contract_id| contract_id == name.string_id)
                     {
                         // TODO(validation): there cannot be a function with the
                         // same name as the enclosing contract (since Solidity

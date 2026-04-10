@@ -9,7 +9,7 @@ impl FunctionDefinitionStruct {
                 // different functions
                 self.ir_node.kind == other.ir_node.kind
             }
-            (Some(name), Some(other_name)) => name.unparse() == other_name.unparse(),
+            (Some(name), Some(other_name)) => name.string_id == other_name.string_id,
             _ => false,
         };
         if !name_matches {

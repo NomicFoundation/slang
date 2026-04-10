@@ -7,7 +7,11 @@ impl EventDefinitionStruct {
 
         Some(AbiEntry::Event(AbiEvent {
             node_id: self.ir_node.id(),
-            name: self.ir_node.name.unparse().to_string(),
+            name: self
+                .ir_node
+                .name
+                .unparse(self.semantic.interner())
+                .to_string(),
             inputs,
             anonymous: self.ir_node.anonymous_keyword,
         }))

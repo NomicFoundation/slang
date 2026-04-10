@@ -30,7 +30,11 @@ impl StateVariableDefinitionStruct {
 
         Some(AbiEntry::Function(AbiFunction {
             node_id: self.ir_node.id(),
-            name: self.ir_node.name.unparse().to_string(),
+            name: self
+                .ir_node
+                .name
+                .unparse(self.semantic.interner())
+                .to_string(),
             inputs,
             outputs,
             state_mutability: AbiMutability::View,
@@ -45,7 +49,7 @@ impl StateVariableDefinitionStruct {
 
         let signature = format!(
             "{name}({parameters})",
-            name = self.ir_node.name.unparse(),
+            name = self.ir_node.name.unparse(self.semantic.interner()),
             parameters = inputs
                 .into_iter()
                 .map(|parameter| parameter.type_name().to_owned())

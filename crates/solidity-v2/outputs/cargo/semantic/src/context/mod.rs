@@ -24,6 +24,7 @@ pub trait SemanticFile {
 
 pub fn extract_import_paths_from_source_unit(
     source_unit: &ir::SourceUnit,
+    interner: &Interner,
 ) -> Vec<(NodeId, String)> {
     let mut import_paths = Vec::new();
 
@@ -33,11 +34,11 @@ pub fn extract_import_paths_from_source_unit(
         };
         let (node_id, path) = match import_clause {
             ir::ImportClause::PathImport(path_import) => {
-                (path_import.id(), path_import.path.unparse().to_owned())
+                (path_import.id(), path_import.path.unparse(interner).to_owned())
             }
             ir::ImportClause::ImportDeconstruction(import_deconstruction) => (
                 import_deconstruction.id(),
-                import_deconstruction.path.unparse().to_owned(),
+                import_deconstruction.path.unparse(interner).to_owned(),
             ),
         };
         import_paths.push((node_id, path));
@@ -46,6 +47,7 @@ pub fn extract_import_paths_from_source_unit(
 }
 
 pub struct SemanticContext {
+    interner: Rc<Interner>,
     binder: Binder,
     types: TypeRegistry,
 }
@@ -54,17 +56,25 @@ impl SemanticContext {
     pub fn build_from(
         language_version: LanguageVersion,
         files: &[impl SemanticFile],
-        interner: &Interner,
+        interner: &Rc<Interner>,
     ) -> Self {
         let mut binder = Binder::default();
         let mut types = TypeRegistry::default();
 
         p1_collect_definitions::run(files, &mut binder);
         p2_linearise_contracts::run(files, &mut binder);
-        p3_type_definitions::run(files, &mut binder, &mut types);
+        p3_type_definitions::run(files, &mut binder, &mut types, interner);
         p4_resolve_references::run(files, &mut binder, &mut types, language_version, interner);
 
-        Self { binder, types }
+        Self {
+            interner: Rc::clone(interner),
+            binder,
+            types,
+        }
+    }
+
+    pub fn interner(&self) -> &Interner {
+        &self.interner
     }
 
     // TODO: this should not be public
@@ -90,7 +100,7 @@ impl SemanticContext {
             let Definition::Contract(contract) = definition else {
                 return None;
             };
-            if definition.identifier().unparse() == name {
+            if definition.identifier().unparse(&self.interner) == name {
                 Some(Rc::clone(&contract.ir_node))
             } else {
                 None
@@ -132,7 +142,7 @@ impl SemanticContext {
             .find_definition_by_id(definition_id)
             .unwrap()
             .identifier()
-            .unparse()
+            .unparse(&self.interner)
             .to_string()
     }
 

@@ -130,13 +130,13 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_hex_number_expression(&mut self, node: &ir::HexNumberExpression) {
-        let kind = Self::hex_number_literal_kind(node);
+        let kind = self.hex_number_literal_kind(node);
         let type_id = self.types.register_type(Type::Literal(kind));
         self.binder.set_node_type(node.id(), Some(type_id));
     }
 
     fn leave_decimal_number_expression(&mut self, node: &ir::DecimalNumberExpression) {
-        let type_ = if node.unit.is_none() && node.literal.unparse() == "0" {
+        let type_ = if node.unit.is_none() && node.literal.unparse(self.interner) == "0" {
             Type::Literal(LiteralKind::Zero)
         } else {
             Type::Literal(LiteralKind::DecimalInteger)
@@ -148,7 +148,7 @@ impl Visitor for Pass<'_> {
     fn leave_string_expression(&mut self, node: &ir::StringExpression) {
         let type_id = self
             .types
-            .register_type(Self::type_of_string_expression(node));
+            .register_type(self.type_of_string_expression(node));
         let node_id = Self::string_expression_node_id(node);
         self.binder.set_node_type(node_id, Some(type_id));
     }

@@ -51,6 +51,7 @@ impl Pass<'_> {
                                     size_expression,
                                     self.current_contract_or_file_scope_id(),
                                     self,
+                                    self.interner,
                                 )
                                 .unwrap_or_default();
                                 self.types.register_type(Type::FixedSizeArray {

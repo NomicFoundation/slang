@@ -3,6 +3,7 @@ use std::fmt::Display;
 use std::ops::Range;
 
 use slang_solidity_v2::compilation::unit::CompilationUnit;
+use slang_solidity_v2_ir::interner::Interner;
 use slang_solidity_v2_ir::ir::visitor::{accept_source_unit, Visitor};
 use slang_solidity_v2_ir::ir::{Identifier, NodeId};
 use slang_solidity_v2_parser::ParserError;
@@ -84,6 +85,7 @@ impl<'a> ReportData<'a> {
 
 struct IdentifierCollector<'a> {
     identifiers: Vec<CollectedIdentifier>,
+    interner: &'a Interner,
     current_file: Option<(&'a String, &'a String)>,
 }
 
@@ -94,7 +96,7 @@ impl Visitor for IdentifierCollector<'_> {
             file_id: self.current_file_id(),
             node_id: node.id(),
             range: node.range.clone(),
-            text: node.text.clone(),
+            text: node.unparse(self.interner).to_owned(),
             line,
             column,
         });
@@ -140,6 +142,7 @@ fn collect_all_identifiers(
 ) -> Vec<CollectedIdentifier> {
     let mut collector = IdentifierCollector {
         identifiers: Vec::new(),
+        interner: compilation.interner(),
         current_file: None,
     };
 
@@ -421,8 +424,8 @@ impl CollectedDefinitionDisplay<'_> {
             .find_definition_by_id(definition_id)
             .unwrap()
             .identifier()
-            .text
-            .clone()
+            .unparse(self.semantic.interner())
+            .to_string()
     }
 }
 

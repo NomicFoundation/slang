@@ -51,6 +51,7 @@ impl Visitor for Pass<'_> {
                 base_slot_expression,
                 self.current_contract_or_file_scope_id(),
                 self,
+                self.interner,
             ) {
                 let Definition::Contract(contract_definition) =
                     self.binder.get_definition_mut(node.id())
@@ -421,7 +422,7 @@ impl Visitor for Pass<'_> {
 
     fn enter_catch_clause_error(&mut self, node: &ir::CatchClauseError) -> bool {
         if let Some(name) = &node.name {
-            let resolution = match name.unparse() {
+            let resolution = match name.unparse(self.interner) {
                 "Error" | "Panic" => Resolution::BuiltIn(BuiltIn::ErrorOrPanic),
                 _ => Resolution::Unresolved,
             };

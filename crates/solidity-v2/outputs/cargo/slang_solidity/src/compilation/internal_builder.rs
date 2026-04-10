@@ -44,7 +44,7 @@ impl InternalCompilationBuilder {
         } = Parser::parse(contents, self.language_version);
 
         let source_unit = ir::build(&source_unit, &contents, &mut self.interner);
-        let import_paths = extract_import_paths_from_source_unit(&source_unit);
+        let import_paths = extract_import_paths_from_source_unit(&source_unit, &self.interner);
 
         let file = File::new(id.clone(), source_unit);
         self.files.insert(id, file);

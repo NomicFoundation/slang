@@ -5708,7 +5708,7 @@ impl IdentifierStruct {
     }
 
     pub fn unparse(&self) -> &str {
-        self.ir_node.unparse()
+        self.ir_node.unparse(self.semantic.interner())
     }
 
     pub fn get_type(&self) -> Option<Type> {

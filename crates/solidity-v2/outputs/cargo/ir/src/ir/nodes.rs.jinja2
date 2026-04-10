@@ -5,7 +5,7 @@ use std::rc::Rc;
 use std::ops::Range;
 use std::vec::Vec;
 
-use crate::interner::StringId;
+use crate::interner::{Interner, StringId};
 
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(transparent)]
@@ -97,7 +97,6 @@ pub struct NodeId(usize);
     pub struct {{ terminal_type }}Struct {
       pub range: Range<usize>,
       pub string_id: StringId,
-      pub text: String,
     }
 
     impl {{ terminal_type }}Struct {
@@ -105,8 +104,8 @@ pub struct NodeId(usize);
         NodeId(Rc::as_ptr(self) as usize)
       }
 
-      pub fn unparse(&self) -> &str {
-        &self.text
+      pub fn unparse<'a>(&self, interner: &'a Interner) -> &'a str {
+        interner.resolve(self.string_id)
       }
     }
   {% endif %}
