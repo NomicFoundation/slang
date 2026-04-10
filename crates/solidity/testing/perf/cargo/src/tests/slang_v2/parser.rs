@@ -40,7 +40,7 @@ pub fn count_contracts(source_units: &Vec<(String, SourceUnit)>) -> usize {
     contract_count
 }
 
-fn parse_version(project: &SolidityProject) -> LanguageVersion {
+pub fn parse_version(project: &SolidityProject) -> LanguageVersion {
     let mut version = semver::Version::parse(&project.compiler_version).unwrap();
     version.pre = Prerelease::EMPTY;
     version.build = BuildMetadata::EMPTY;

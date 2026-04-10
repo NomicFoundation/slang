@@ -21,6 +21,7 @@ mod __dependencies_used_in_lib__ {
     use slang_solidity_v2_common as _;
     use slang_solidity_v2_ir as _;
     use slang_solidity_v2_parser as _;
+    use slang_solidity_v2_semantic as _;
     use solar as _;
     use solidity_testing_utils as _;
     use streaming_iterator as _;
@@ -47,10 +48,19 @@ macro_rules! slang_v2_define_tests {
 
             #[library_benchmark(setup = tests::slang_v2::ir_builder::setup)]
             #[bench::test(stringify!($prj))]
-            pub fn [< $prj _ir_builder >]((project, source_units): (&'static SolidityProject, Vec<(String, SourceUnit)>)) {
+            pub fn [< $prj _ir_builder >](
+                (project, source_units): (&'static SolidityProject, Vec<(String, SourceUnit)>),
+            ) {
                 black_box(tests::slang_v2::ir_builder::run(project, source_units))
             }
 
+            #[library_benchmark(setup = tests::slang_v2::semantic::setup)]
+            #[bench::test(stringify!($prj))]
+            pub fn [< $prj _semantic >](
+                (project, input_files): (&'static SolidityProject, Vec<tests::slang_v2::semantic::File>),
+            ) {
+                black_box(tests::slang_v2::semantic::run(project, input_files))
+            }
 
             library_benchmark_group!(
                 name = [< $prj _full_v2 >];
@@ -59,6 +69,7 @@ macro_rules! slang_v2_define_tests {
                 benchmarks =
                 [< $prj _parser >],
                 [< $prj _ir_builder >],
+                [< $prj _semantic >],
             );
         }
     };
