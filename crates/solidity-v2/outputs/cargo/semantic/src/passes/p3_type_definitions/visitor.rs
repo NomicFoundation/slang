@@ -116,7 +116,7 @@ impl Visitor for Pass<'_> {
             let scope_id = imported_symbol
                 .resolved_file_id
                 .as_ref()
-                .and_then(|file_id| self.binder.scope_id_for_file_id(file_id));
+                .and_then(|file_id| self.binder.scope_id_for_file_id(*file_id));
 
             let resolution = scope_id.map_or(Resolution::Unresolved, |scope_id| {
                 self.binder

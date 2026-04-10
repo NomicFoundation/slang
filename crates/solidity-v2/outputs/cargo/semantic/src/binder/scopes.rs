@@ -4,6 +4,7 @@ use slang_solidity_v2_ir::interner::StringId;
 use slang_solidity_v2_ir::ir::{self, NodeId};
 
 use super::ScopeId;
+use crate::context::FileId;
 use crate::types::TypeId;
 
 //////////////////////////////////////////////////////////////////////////////
@@ -43,9 +44,9 @@ pub(crate) struct EnumScope {
 
 pub(crate) struct FileScope {
     pub(crate) node_id: NodeId,
-    pub(crate) file_id: String,
+    pub(crate) file_id: FileId,
     pub(crate) definitions: HashMap<StringId, Vec<NodeId>>,
-    pub(crate) imported_files: HashSet<String>,
+    pub(crate) imported_files: HashSet<FileId>,
     pub(crate) using_directives: Vec<UsingDirective>,
 }
 
@@ -166,7 +167,7 @@ impl Scope {
         Self::Enum(EnumScope::new(node_id))
     }
 
-    pub(crate) fn new_file(node_id: NodeId, file_id: &str) -> Self {
+    pub(crate) fn new_file(node_id: NodeId, file_id: FileId) -> Self {
         Self::File(FileScope::new(node_id, file_id))
     }
 
@@ -250,10 +251,10 @@ impl EnumScope {
 }
 
 impl FileScope {
-    fn new(node_id: NodeId, file_id: &str) -> Self {
+    fn new(node_id: NodeId, file_id: FileId) -> Self {
         Self {
             node_id,
-            file_id: file_id.to_string(),
+            file_id,
             definitions: HashMap::new(),
             imported_files: HashSet::new(),
             using_directives: Vec::new(),
@@ -268,7 +269,7 @@ impl FileScope {
         }
     }
 
-    pub(crate) fn add_imported_file(&mut self, file_id: String) {
+    pub(crate) fn add_imported_file(&mut self, file_id: FileId) {
         self.imported_files.insert(file_id);
     }
 

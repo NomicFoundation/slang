@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_ir::interner::Interner;
+use slang_solidity_v2_ir::interner::{Interner, StringId};
 use slang_solidity_v2_ir::ir::{self, NodeId};
 
 use crate::binder::{Binder, Definition, Reference, Scope};
@@ -10,16 +10,18 @@ use crate::passes::{
 };
 use crate::types::{Type, TypeId, TypeRegistry};
 
+pub type FileId = StringId;
+
 /// Trait for files that can be used as input to the semantic analysis passes.
 pub trait SemanticFile {
     /// Returns the file identifier.
-    fn id(&self) -> &str;
+    fn file_id(&self) -> FileId;
 
     /// Returns the root IR node of the file.
     fn ir_root(&self) -> &ir::SourceUnit;
 
     /// Returns the resolved import target file ID for the given import node, if resolved.
-    fn resolved_import_by_node_id(&self, node_id: NodeId) -> Option<&String>;
+    fn resolved_import_by_node_id(&self, node_id: NodeId) -> Option<FileId>;
 }
 
 pub fn extract_import_paths_from_source_unit(
@@ -33,9 +35,10 @@ pub fn extract_import_paths_from_source_unit(
             continue;
         };
         let (node_id, path) = match import_clause {
-            ir::ImportClause::PathImport(path_import) => {
-                (path_import.id(), path_import.path.unparse(interner).to_owned())
-            }
+            ir::ImportClause::PathImport(path_import) => (
+                path_import.id(),
+                path_import.path.unparse(interner).to_owned(),
+            ),
             ir::ImportClause::ImportDeconstruction(import_deconstruction) => (
                 import_deconstruction.id(),
                 import_deconstruction.path.unparse(interner).to_owned(),
@@ -115,7 +118,7 @@ impl SemanticContext {
         let Scope::File(file_scope) = self.binder().get_scope_by_id(scope_id) else {
             return None;
         };
-        Some(file_scope.file_id.clone())
+        Some(self.interner.resolve(file_scope.file_id).to_owned())
     }
 
     pub fn resolve_reference_identifier_to_definition_id(&self, node_id: NodeId) -> Option<NodeId> {

@@ -11,7 +11,11 @@ impl ContractDefinitionStruct {
     // be able to obtain it here, but for that we need bi-directional tree
     // navigation
     pub fn compute_abi_with_file_id(&self, file_id: String) -> Option<ContractAbi> {
-        let name = self.ir_node.name.unparse(self.semantic.interner()).to_string();
+        let name = self
+            .ir_node
+            .name
+            .unparse(self.semantic.interner())
+            .to_string();
         let entries = self.compute_abi_entries()?;
         let (storage_layout, transient_storage_layout) = self.compute_storage_layout()?;
         Some(ContractAbi {
@@ -109,7 +113,11 @@ impl ContractDefinitionStruct {
                 ptr += remaining_bytes;
             }
 
-            let label = state_variable.ir_node.name.unparse(self.semantic.interner()).to_string();
+            let label = state_variable
+                .ir_node
+                .name
+                .unparse(self.semantic.interner())
+                .to_string();
             let slot = ptr.div(SemanticContext::SLOT_SIZE);
             let offset = ptr % SemanticContext::SLOT_SIZE;
             let type_name = self.semantic.type_internal_name(variable_type_id);

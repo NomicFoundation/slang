@@ -2,7 +2,7 @@ use slang_solidity_v2_ir::ir::visitor::Visitor;
 use slang_solidity_v2_ir::ir::{self, NodeId};
 
 use crate::binder::{Binder, Definition, FileScope, ParametersScope, Scope, ScopeId};
-use crate::context::SemanticFile;
+use crate::context::{FileId, SemanticFile};
 
 /// In this pass all definitions are collected with their naming identifiers.
 /// Also lexical (and other kinds of) scopes are identified and linked together,
@@ -116,10 +116,8 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
             .insert_definition_in_scope(definition, self.current_scope_id());
     }
 
-    fn resolve_import_path(&self, import_node_id: NodeId) -> Option<String> {
-        self.current_file
-            .resolved_import_by_node_id(import_node_id)
-            .cloned()
+    fn resolve_import_path(&mut self, import_node_id: NodeId) -> Option<FileId> {
+        self.current_file.resolved_import_by_node_id(import_node_id)
 
         // TODO(validation): emit an error/warning if the file cannot be resolved
     }
@@ -173,7 +171,7 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
 
 impl<F: SemanticFile> Visitor for Pass<'_, F> {
     fn enter_source_unit(&mut self, node: &ir::SourceUnit) -> bool {
-        let scope = Scope::new_file(node.id(), self.current_file.id());
+        let scope = Scope::new_file(node.id(), self.current_file.file_id());
         self.enter_scope(scope);
 
         true
@@ -243,11 +241,8 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         let imported_file_id = self.resolve_import_path(node.id());
 
         for symbol in &node.symbols {
-            let definition = Definition::new_imported_symbol(
-                symbol,
-                symbol.name.string_id,
-                imported_file_id.clone(),
-            );
+            let definition =
+                Definition::new_imported_symbol(symbol, symbol.name.string_id, imported_file_id);
             self.insert_definition_in_current_scope(definition);
         }
 

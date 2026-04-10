@@ -75,33 +75,36 @@ impl<E, C: CompilationBuilderConfig<Error = E>> CompilationBuilder<E, C> {
     /// imported or not, to be able to query the definitions there.
     ///
     /// Adding a file that has already been added is a no-op.
-    pub fn add_file(&mut self, file_id: &str) -> Result<(), CompilationBuilderError<E>> {
-        if !self.seen_files.insert(file_id.into()) {
+    pub fn add_file(&mut self, id: &str) -> Result<(), CompilationBuilderError<E>> {
+        if !self.seen_files.insert(id.into()) {
             return Ok(());
         }
 
         let source = self
             .config
-            .read_file(file_id)
+            .read_file(id)
             .map_err(|err| CompilationBuilderError::UserError(err))?;
 
         if let Some(source) = source {
             // TODO(v2): move to a proper diagnostics API (reporter)
-            let AddFileResponse { import_paths } = self
+            let AddFileResponse {
+                file_id,
+                import_paths,
+            } = self
                 .internal
-                .add_file(file_id.into(), &source)
+                .add_file(id, &source)
                 .map_err(|err| CompilationBuilderError::ParserError(err))?;
 
             for (node_id, import_path) in import_paths {
                 let import_id = self
                     .config
-                    .resolve_import(file_id, &import_path)
+                    .resolve_import(id, &import_path)
                     .map_err(|err| CompilationBuilderError::UserError(err))?;
 
                 if let Some(import_id) = &import_id {
                     self.internal
-                        .resolve_import(file_id, node_id, import_id.clone())
-                        .unwrap_or_else(|_| panic!("{file_id} should have been added"));
+                        .resolve_import(file_id, node_id, import_id)
+                        .unwrap_or_else(|_| panic!("{id} should have been added"));
                     self.add_file(import_id)?;
                 }
             }

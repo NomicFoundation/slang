@@ -5,7 +5,9 @@ use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::interner::Interner;
 use slang_solidity_v2_ir::ir::{self, NodeId};
 use slang_solidity_v2_parser::{ParseOutput, Parser, ParserError};
-use slang_solidity_v2_semantic::context::{extract_import_paths_from_source_unit, SemanticContext};
+use slang_solidity_v2_semantic::context::{
+    extract_import_paths_from_source_unit, FileId, SemanticContext,
+};
 
 use super::file::File;
 use super::unit::CompilationUnit;
@@ -14,7 +16,7 @@ use super::unit::CompilationUnit;
 pub struct InternalCompilationBuilder {
     language_version: LanguageVersion,
     interner: Interner,
-    files: BTreeMap<String, File>,
+    files: BTreeMap<FileId, File>,
 }
 
 impl InternalCompilationBuilder {
@@ -28,12 +30,14 @@ impl InternalCompilationBuilder {
 
     pub fn add_file(
         &mut self,
-        id: String,
+        id: &str,
         contents: &str,
     ) -> Result<AddFileResponse, Vec<ParserError>> {
-        if self.files.contains_key(&id) {
+        let file_id = self.interner.intern(id);
+        if self.files.contains_key(&file_id) {
             // Already added. No need to process it again:
             return Ok(AddFileResponse {
+                file_id,
                 import_paths: vec![],
             });
         }
@@ -46,26 +50,33 @@ impl InternalCompilationBuilder {
         let source_unit = ir::build(&source_unit, &contents, &mut self.interner);
         let import_paths = extract_import_paths_from_source_unit(&source_unit, &self.interner);
 
-        let file = File::new(id.clone(), source_unit);
-        self.files.insert(id, file);
+        let file = File::new(id.to_string(), file_id, source_unit);
+        self.files.insert(file_id, file);
 
         if !errors.is_empty() {
             return Err(errors);
         }
 
-        Ok(AddFileResponse { import_paths })
+        Ok(AddFileResponse {
+            file_id,
+            import_paths,
+        })
     }
 
     pub fn resolve_import(
         &mut self,
-        source_file_id: &str,
+        source_file_id: FileId,
         node_id: NodeId,
-        destination_file_id: String,
+        destination_file: &str,
     ) -> Result<(), ResolveImportError> {
         self.files
-            .get_mut(source_file_id)
-            .ok_or_else(|| ResolveImportError::SourceFileNotFound(source_file_id.to_owned()))?
-            .add_resolved_import(node_id, destination_file_id);
+            .get_mut(&source_file_id)
+            .ok_or_else(|| {
+                ResolveImportError::SourceFileNotFound(
+                    self.interner.resolve(source_file_id).to_owned(),
+                )
+            })?
+            .add_resolved_import(node_id, self.interner.intern(destination_file));
 
         Ok(())
     }
@@ -81,6 +92,7 @@ impl InternalCompilationBuilder {
 
 #[doc(hidden)]
 pub struct AddFileResponse {
+    pub file_id: FileId,
     pub import_paths: Vec<(NodeId, String)>,
 }
 

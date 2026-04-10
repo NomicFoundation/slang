@@ -54,7 +54,7 @@ pub(super) fn resolve_identifier_path_in_scope(
                     resolved_file_id, ..
                 }) => resolved_file_id
                     .as_ref()
-                    .and_then(|resolved_file_id| binder.scope_id_for_file_id(resolved_file_id)),
+                    .and_then(|resolved_file_id| binder.scope_id_for_file_id(*resolved_file_id)),
                 Definition::Contract(_) | Definition::Interface(_) | Definition::Library(_) => {
                     use_lexical_resolution = false;
                     binder.scope_id_for_node_id(definition.node_id())

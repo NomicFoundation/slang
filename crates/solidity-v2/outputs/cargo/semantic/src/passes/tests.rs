@@ -6,27 +6,27 @@ use slang_solidity_v2_ir::ir::{self, NodeId};
 use slang_solidity_v2_parser::{ParseOutput, Parser};
 
 use crate::binder::{Binder, Resolution};
-use crate::context::SemanticFile;
+use crate::context::{FileId, SemanticFile};
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_resolve_references,
 };
 use crate::types::TypeRegistry;
 
 struct TestFile {
-    id: String,
+    file_id: FileId,
     ir_root: ir::SourceUnit,
 }
 
 impl SemanticFile for TestFile {
-    fn id(&self) -> &str {
-        &self.id
+    fn file_id(&self) -> FileId {
+        self.file_id
     }
 
     fn ir_root(&self) -> &ir::SourceUnit {
         &self.ir_root
     }
 
-    fn resolved_import_by_node_id(&self, _node_id: NodeId) -> Option<&String> {
+    fn resolved_import_by_node_id(&self, _node_id: NodeId) -> Option<FileId> {
         None
     }
 }
@@ -40,10 +40,8 @@ fn build_file(name: &str, contents: &str, interner: &mut Interner) -> TestFile {
     assert!(errors.is_empty(), "Parser errors: {errors:?}");
 
     let ir_root = ir::build(&source_unit, &contents, interner);
-    TestFile {
-        id: name.to_string(),
-        ir_root,
-    }
+    let file_id = interner.intern(name);
+    TestFile { file_id, ir_root }
 }
 
 #[test]

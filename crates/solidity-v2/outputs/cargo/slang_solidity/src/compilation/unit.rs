@@ -24,7 +24,7 @@ impl CompilationUnit {
     ) -> Self {
         let files: BTreeMap<String, Rc<File>> = files
             .into_iter()
-            .map(|file| (file.id().to_string(), Rc::new(file)))
+            .map(|file| (interner.resolve(file.file_id()).to_string(), Rc::new(file)))
             .collect();
         Self {
             language_version,

@@ -209,7 +209,7 @@ impl Pass<'_> {
                         if let Some(scope_id) = import_definition
                             .resolved_file_id
                             .as_ref()
-                            .and_then(|file_id| self.binder.scope_id_for_file_id(file_id))
+                            .and_then(|file_id| self.binder.scope_id_for_file_id(*file_id))
                         {
                             self.binder.resolve_in_scope(scope_id, symbol)
                         } else {
