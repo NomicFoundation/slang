@@ -115,32 +115,11 @@ jobs:
       - name: "Check if publish needed"
         id: "checkVersion"
         if: "${{ steps.runChangesets.outputs.hasChangesets == 'false' }}"
-        uses: "actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea" # v7.0.1
-        with:
-          script: |
-            const fs = require('fs');
-            const cargo = fs.readFileSync('Cargo.toml', 'utf8');
-            const match = cargo.match(/^version\s*=\s*"(.+)"/m);
-            if (!match) throw new Error('Could not parse version from Cargo.toml');
-            const localVersion = match[1];
-            console.log(`Local version: ${localVersion}`);
-
-            try {
-              const release = await github.rest.repos.getReleaseByTag({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                tag: `v${localVersion}`,
-              });
-              console.log(`Release v${localVersion} already exists — nothing to publish.`);
-              core.setOutput('publishNeeded', 'false');
-            } catch (error) {
-              if (error.status === 404) {
-                console.log(`No release found for v${localVersion} — publish needed.`);
-                core.setOutput('publishNeeded', 'true');
-              } else {
-                throw error;
-              }
-            }
+        run: |
+          RESULT="$(./scripts/bin/infra publish github-release --check-only)"
+          echo "publishNeeded=${RESULT}" >> "$GITHUB_OUTPUT"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: "infra publish mkdocs --target main-branch"
         run: "./scripts/bin/infra publish mkdocs --target main-branch"
