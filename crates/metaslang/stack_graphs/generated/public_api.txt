@@ -313,7 +313,7 @@ pub metaslang_stack_graphs::c::sg_edge::precedence: i32
 pub metaslang_stack_graphs::c::sg_edge::sink: metaslang_stack_graphs::c::sg_node_handle
 pub metaslang_stack_graphs::c::sg_edge::source: metaslang_stack_graphs::c::sg_node_handle
 #[repr(C)] pub struct metaslang_stack_graphs::c::sg_file
-pub metaslang_stack_graphs::c::sg_file::name: *const libc::primitives::c_char
+pub metaslang_stack_graphs::c::sg_file::name: *const core::ffi::primitives::c_char
 pub metaslang_stack_graphs::c::sg_file::name_len: usize
 #[repr(C)] pub struct metaslang_stack_graphs::c::sg_files
 pub metaslang_stack_graphs::c::sg_files::count: usize
@@ -524,13 +524,13 @@ impl core::convert::Into<metaslang_stack_graphs::stitching::StitcherConfig> for 
 pub fn metaslang_stack_graphs::c::sg_stitcher_config::into(self) -> metaslang_stack_graphs::stitching::StitcherConfig
 impl core::marker::Copy for metaslang_stack_graphs::c::sg_stitcher_config
 #[repr(C)] pub struct metaslang_stack_graphs::c::sg_string
-pub metaslang_stack_graphs::c::sg_string::content: *const libc::primitives::c_char
+pub metaslang_stack_graphs::c::sg_string::content: *const core::ffi::primitives::c_char
 pub metaslang_stack_graphs::c::sg_string::length: usize
 #[repr(C)] pub struct metaslang_stack_graphs::c::sg_strings
 pub metaslang_stack_graphs::c::sg_strings::count: usize
 pub metaslang_stack_graphs::c::sg_strings::strings: *const metaslang_stack_graphs::c::sg_string
 #[repr(C)] pub struct metaslang_stack_graphs::c::sg_symbol
-pub metaslang_stack_graphs::c::sg_symbol::symbol: *const libc::primitives::c_char
+pub metaslang_stack_graphs::c::sg_symbol::symbol: *const core::ffi::primitives::c_char
 pub metaslang_stack_graphs::c::sg_symbol::symbol_len: usize
 #[repr(C)] pub struct metaslang_stack_graphs::c::sg_symbols
 pub metaslang_stack_graphs::c::sg_symbols::count: usize
@@ -579,10 +579,10 @@ pub const metaslang_stack_graphs::c::SG_ROOT_NODE_ID: u32
 #[no_mangle] pub c fn metaslang_stack_graphs::c::sg_partial_path_list_new() -> *mut metaslang_stack_graphs::c::sg_partial_path_list
 #[no_mangle] pub c fn metaslang_stack_graphs::c::sg_partial_path_list_paths(partial_path_list: *const metaslang_stack_graphs::c::sg_partial_path_list) -> *const metaslang_stack_graphs::c::sg_partial_path
 #[no_mangle] pub c fn metaslang_stack_graphs::c::sg_stack_graph_add_edges(graph: *mut metaslang_stack_graphs::c::sg_stack_graph, count: usize, edges: *const metaslang_stack_graphs::c::sg_edge)
-#[no_mangle] pub c fn metaslang_stack_graphs::c::sg_stack_graph_add_files(graph: *mut metaslang_stack_graphs::c::sg_stack_graph, count: usize, files: *const libc::primitives::c_char, lengths: *const usize, handles_out: *mut metaslang_stack_graphs::c::sg_file_handle)
+#[no_mangle] pub c fn metaslang_stack_graphs::c::sg_stack_graph_add_files(graph: *mut metaslang_stack_graphs::c::sg_stack_graph, count: usize, files: *const core::ffi::primitives::c_char, lengths: *const usize, handles_out: *mut metaslang_stack_graphs::c::sg_file_handle)
 #[no_mangle] pub c fn metaslang_stack_graphs::c::sg_stack_graph_add_source_infos(graph: *mut metaslang_stack_graphs::c::sg_stack_graph, count: usize, infos: *const metaslang_stack_graphs::c::sg_node_source_info)
-#[no_mangle] pub c fn metaslang_stack_graphs::c::sg_stack_graph_add_strings(graph: *mut metaslang_stack_graphs::c::sg_stack_graph, count: usize, strings: *const libc::primitives::c_char, lengths: *const usize, handles_out: *mut metaslang_stack_graphs::c::sg_string_handle)
-#[no_mangle] pub c fn metaslang_stack_graphs::c::sg_stack_graph_add_symbols(graph: *mut metaslang_stack_graphs::c::sg_stack_graph, count: usize, symbols: *const libc::primitives::c_char, lengths: *const usize, handles_out: *mut metaslang_stack_graphs::c::sg_symbol_handle)
+#[no_mangle] pub c fn metaslang_stack_graphs::c::sg_stack_graph_add_strings(graph: *mut metaslang_stack_graphs::c::sg_stack_graph, count: usize, strings: *const core::ffi::primitives::c_char, lengths: *const usize, handles_out: *mut metaslang_stack_graphs::c::sg_string_handle)
+#[no_mangle] pub c fn metaslang_stack_graphs::c::sg_stack_graph_add_symbols(graph: *mut metaslang_stack_graphs::c::sg_stack_graph, count: usize, symbols: *const core::ffi::primitives::c_char, lengths: *const usize, handles_out: *mut metaslang_stack_graphs::c::sg_symbol_handle)
 #[no_mangle] pub c fn metaslang_stack_graphs::c::sg_stack_graph_files(graph: *const metaslang_stack_graphs::c::sg_stack_graph) -> metaslang_stack_graphs::c::sg_files
 #[no_mangle] pub c fn metaslang_stack_graphs::c::sg_stack_graph_free(graph: *mut metaslang_stack_graphs::c::sg_stack_graph)
 #[no_mangle] pub c fn metaslang_stack_graphs::c::sg_stack_graph_get_or_create_nodes(graph: *mut metaslang_stack_graphs::c::sg_stack_graph, count: usize, nodes: *const metaslang_stack_graphs::c::sg_node, handles_out: *mut metaslang_stack_graphs::c::sg_node_handle)
