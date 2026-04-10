@@ -175,19 +175,6 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           ./scripts/bin/infra publish mkdocs --target main-branch --dry-run
 
-      # TODO: Remove this step after verifying the publishNeeded propagation in CI.
-      - name: "TEST: verify --check-only output"
-        if: "github.event_name == 'pull_request'"
-        run: |
-          RESULT="$(./scripts/bin/infra publish github-release --check-only)"
-          echo "Result: '${RESULT}'"
-          if [ "$RESULT" != "false" ]; then
-            echo "ERROR: Expected 'false' (v1.3.4 is already released), got '${RESULT}'"
-            exit 1
-          fi
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-
       - name: "PR: publish summary"
         if: "github.event_name == 'pull_request'"
         run: |
