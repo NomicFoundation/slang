@@ -1,0 +1,14 @@
+name: "cargo/cooldown-check"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Restore Cargo Cooldown Cache"
+      uses: "./.github/actions/cache/cargo-cooldown/restore"
+
+    - name: "Cargo cooldown check"
+      run: "./scripts/bin/with-hermit cargo cooldown-check"
+      shell: "bash"
+
+    - name: "Save Cargo Cooldown Cache"
+      uses: "./.github/actions/cache/cargo-cooldown/save"

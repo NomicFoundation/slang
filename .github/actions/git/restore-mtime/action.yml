@@ -1,0 +1,13 @@
+name: "git/restore-mtime"
+
+runs:
+  using: "composite"
+  steps:
+    # git checkout sets all file mtimes to "now", which invalidates cached cargo fingerprints
+    # and causes unnecessary recompilation. This restores mtimes to each file's last commit time,
+    # so unchanged files match the cached fingerprints and cargo skips recompilation.
+    - name: "Restore file mtimes from git"
+      uses: "chetan/git-restore-mtime-action@d186aca54f8760da4dec55313195e51ed3ebb0b3" # v2.3
+      with:
+        # Use commit time rather than author time, since we share caches across branches
+        args: "--commit-time"

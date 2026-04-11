@@ -1,0 +1,13 @@
+name: "cache/cargo-target/save"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Save Cargo Target Cache"
+      uses: "actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7" # v5.0.4
+      with:
+        # __SLANG_CI_CACHE_CARGO_TARGET_PATHS__ (keep in sync)
+        key: "cargo-target-${{ runner.os }}-v1-${{ github.ref_name }}-${{ hashFiles('Cargo.lock') }}"
+        path: |
+          target/
+          crates/infra/cli/target/
