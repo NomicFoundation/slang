@@ -7,7 +7,7 @@ runs:
       uses: "actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7" # v5.0.4
       with:
         # __SLANG_CI_CACHE_DEPENDENCIES_PATHS__ (keep in sync)
-        key: "dependencies-${{ runner.os }}-v1-${{ github.ref_name }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('Pipfile.lock') }}"
+        key: "dependencies-${{ runner.os }}-v1-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('Pipfile.lock') }}"
         path: |
           ~/.cache/hermit/
           ~/.local/share/virtualenvs/
