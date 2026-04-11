@@ -54,9 +54,6 @@ jobs:
         if: "${{ github.ref_name != 'main' && github.event_name != 'merge_group' }}"
         uses: "./.github/actions/cache/cargo-target/restore"
 
-      - name: "Cargo cooldown check"
-        uses: "./.github/actions/cargo/cooldown-check"
-
       #
       # Run all CI steps in order: _SLANG_INFRA_CI_STEPS_ORDERED_ (keep in sync)
       #
@@ -80,6 +77,35 @@ jobs:
       - name: "Save Dependencies Cache"
         if: "${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'main' }}"
         uses: "./.github/actions/cache/dependencies/save"
+
+  cargo-cooldown-check:
+    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+
+    permissions:
+      contents: "read"
+
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd" # v6.0.2
+        with:
+          persist-credentials: false
+          fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
+
+      - name: "Restore file mtimes from git"
+        uses: "./.github/actions/git/restore-mtime"
+
+      # Cache is updated in this workflow, and reused in subsequent workflows.
+      # Always start with a fresh cache when running on the main branch.
+      - name: "Restore Cargo Cooldown Cache"
+        if: "${{ github.ref_name != 'main' }}"
+        uses: "./.github/actions/cache/cargo-cooldown/restore"
+
+      - name: "Cargo cooldown check"
+        run: "./scripts/bin/with-hermit cargo cooldown-check"
+
+      - name: "Save Cargo Cooldown Cache"
+        if: "${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'main' }}"
+        uses: "./.github/actions/cache/cargo-cooldown/save"
 
   # We cannot run the full CI in devcontainers, as we will run out of disk space in GitHub Actions.
   # Instead, we just validate the devcontainer is built correctly by running a minimal check below.

@@ -85,9 +85,6 @@ jobs:
           persist-credentials: false
           fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
 
-      - name: "Cargo cooldown check"
-        uses: "./.github/actions/cargo/cooldown-check"
-
       - name: "Restore file mtimes from git"
         uses: "./.github/actions/git/restore-mtime"
 
