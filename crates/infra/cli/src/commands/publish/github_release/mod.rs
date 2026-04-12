@@ -13,6 +13,10 @@ use crate::utils::DryRun;
 
 #[derive(Clone, Debug, Parser)]
 pub struct GithubReleaseController {
+    /// Only check if a publish is needed. Prints 'true' or 'false' to stdout.
+    #[arg(long)]
+    check_only: bool,
+
     #[command(flatten)]
     dry_run: DryRun,
 }
@@ -20,12 +24,20 @@ pub struct GithubReleaseController {
 impl GithubReleaseController {
     pub fn execute(&self) -> Result<()> {
         let current_version = CargoWorkspace::local_version()?;
-        println!("Current version: {current_version}");
-
         let previous_version = GitHub::latest_release_version()?;
+        let publish_needed = current_version != previous_version;
+
+        if self.check_only {
+            eprintln!("Current version: {current_version}");
+            eprintln!("Latest published version: {previous_version}");
+            println!("{publish_needed}");
+            return Ok(());
+        }
+
+        println!("Current version: {current_version}");
         println!("Latest published version: {previous_version}");
 
-        if current_version == previous_version {
+        if !publish_needed {
             println!("Skipping release, since the workspace version is already published.");
             return Ok(());
         }
