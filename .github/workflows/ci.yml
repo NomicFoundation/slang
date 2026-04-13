@@ -36,42 +36,23 @@ jobs:
         uses: "actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd" # v6.0.2
         with:
           persist-credentials: false
-          # Full history is needed by git-restore-mtime below to find each file's last commit time.
-          fetch-depth: 0
+          fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
 
-      # git checkout sets all file mtimes to "now", which invalidates cached cargo fingerprints
-      # and causes unnecessary recompilation. This restores mtimes to each file's last commit time,
-      # so unchanged files match the cached fingerprints and cargo skips recompilation.
       - name: "Restore file mtimes from git"
-        uses: "chetan/git-restore-mtime-action@d186aca54f8760da4dec55313195e51ed3ebb0b3" # v2.3
-        with:
-          # Use commit time rather than author time, since we share caches across branches
-          args: "--commit-time"
+        uses: "./.github/actions/git/restore-mtime"
 
       # Cache is updated in this workflow, and reused in subsequent workflows.
       # Always start with a fresh cache when running on the main branch.
-      - name: "Restore Cache"
+      - name: "Restore Dependencies Cache"
         if: "${{ github.ref_name != 'main' }}"
-        uses: "./.github/actions/cache/restore"
+        uses: "./.github/actions/cache/dependencies/restore"
 
       # Restore compiled Rust artifacts from a previous build on main for non-main runs,
       # but intentionally skip this restore for merge-queue validation so merge_group
       # runs compile without the target cache.
       - name: "Restore Cargo Target Cache"
         if: "${{ github.ref_name != 'main' && github.event_name != 'merge_group' }}"
-        uses: "actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7" # v5.0.4
-        with:
-          path: |
-            target/
-            crates/infra/cli/target/
-          key: "cargo-target-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}"
-          # Intentionally broad: allows partial cache hits across Cargo.lock changes.
-          # If stale artifacts cause issues, tighten or remove this fallback.
-          restore-keys: |
-            cargo-target-${{ runner.os }}-
-
-      - name: "Cargo cooldown check"
-        uses: "./.github/actions/cooldown-check"
+        uses: "./.github/actions/cache/cargo-target/restore"
 
       #
       # Run all CI steps in order: _SLANG_INFRA_CI_STEPS_ORDERED_ (keep in sync)
@@ -90,17 +71,41 @@ jobs:
         run: "./scripts/bin/infra lint"
 
       - name: "Save Cargo Target Cache"
-        if: "${{ github.ref == 'refs/heads/main' }}"
-        uses: "actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7" # v5.0.4
-        with:
-          path: |
-            target/
-            crates/infra/cli/target/
-          key: "cargo-target-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}"
-
-      - name: "Save Cache"
         if: "${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'main' }}"
-        uses: "./.github/actions/cache/save"
+        uses: "./.github/actions/cache/cargo-target/save"
+
+      - name: "Save Dependencies Cache"
+        if: "${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'main' }}"
+        uses: "./.github/actions/cache/dependencies/save"
+
+  cargo-cooldown-check:
+    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+
+    permissions:
+      contents: "read"
+
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd" # v6.0.2
+        with:
+          persist-credentials: false
+          fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
+
+      - name: "Restore file mtimes from git"
+        uses: "./.github/actions/git/restore-mtime"
+
+      # Cache is updated in this workflow, and reused in subsequent workflows.
+      # Always start with a fresh cache when running on the main branch.
+      - name: "Restore Cargo Cooldown Cache"
+        if: "${{ github.ref_name != 'main' }}"
+        uses: "./.github/actions/cache/cargo-cooldown/restore"
+
+      - name: "Cargo cooldown check"
+        run: "./scripts/bin/with-hermit cargo cooldown-check"
+
+      - name: "Save Cargo Cooldown Cache"
+        if: "${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'main' }}"
+        uses: "./.github/actions/cache/cargo-cooldown/save"
 
   # We cannot run the full CI in devcontainers, as we will run out of disk space in GitHub Actions.
   # Instead, we just validate the devcontainer is built correctly by running a minimal check below.

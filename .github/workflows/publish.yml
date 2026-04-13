@@ -85,12 +85,16 @@ jobs:
         uses: "actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd" # v6.0.2
         with:
           persist-credentials: false
+          fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
 
-      - name: "Cargo cooldown check"
-        uses: "./.github/actions/cooldown-check"
+      - name: "Restore file mtimes from git"
+        uses: "./.github/actions/git/restore-mtime"
 
-      - name: "Restore Cache"
-        uses: "./.github/actions/cache/restore"
+      - name: "Restore Dependencies Cache"
+        uses: "./.github/actions/cache/dependencies/restore"
+
+      - name: "Restore Cargo Target Cache"
+        uses: "./.github/actions/cache/cargo-target/restore"
 
       - name: "infra setup"
         run: "./scripts/bin/infra setup"
@@ -156,9 +160,16 @@ jobs:
         uses: "actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd" # v6.0.2
         with:
           persist-credentials: false
+          fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
 
-      - name: "Restore Cache"
-        uses: "./.github/actions/cache/restore"
+      - name: "Restore file mtimes from git"
+        uses: "./.github/actions/git/restore-mtime"
+
+      - name: "Restore Dependencies Cache"
+        uses: "./.github/actions/cache/dependencies/restore"
+
+      - name: "Restore Cargo Target Cache"
+        uses: "./.github/actions/cache/cargo-target/restore"
 
       - name: "infra setup"
         run: "./scripts/bin/infra setup"
@@ -306,9 +317,16 @@ jobs:
         uses: "actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd" # v6.0.2
         with:
           persist-credentials: false
+          fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
 
-      - name: "Restore Cache"
-        uses: "./.github/actions/cache/restore"
+      - name: "Restore file mtimes from git"
+        uses: "./.github/actions/git/restore-mtime"
+
+      - name: "Restore Dependencies Cache"
+        uses: "./.github/actions/cache/dependencies/restore"
+
+      - name: "Restore Cargo Target Cache"
+        uses: "./.github/actions/cache/cargo-target/restore"
 
       - name: "infra setup"
         run: "./scripts/bin/infra setup"

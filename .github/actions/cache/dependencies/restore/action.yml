@@ -1,13 +1,13 @@
-name: "cache/restore"
+name: "cache/dependencies/restore"
 
 runs:
   using: "composite"
   steps:
-    - name: "Restore Cache"
+    - name: "Restore Dependencies Cache"
       uses: "actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7" # v5.0.4
       with:
-        # __SLANG_CI_CACHE_PATHS__ (keep in sync)
-        key: "cache-${{ github.ref_name }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('Pipfile.lock') }}"
+        # __SLANG_CI_CACHE_DEPENDENCIES_PATHS__ (keep in sync)
+        key: "dependencies-${{ runner.os }}-v1-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('Pipfile.lock') }}"
         path: |
           ~/.cache/hermit/
           ~/.local/share/virtualenvs/
@@ -16,6 +16,4 @@ runs:
           ~/.cargo/git/
           ~/.local/share/pnpm/store/
         restore-keys: |
-          cache-${{ github.ref_name }}-
-          cache-main-
-          cache-
+          dependencies-${{ runner.os }}-v1-
