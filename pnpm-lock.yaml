@@ -58,8 +58,8 @@ catalogs:
       specifier: ^3.5.3
       version: 3.5.3
     prettier-plugin-sh:
-      specifier: ^0.18.0
-      version: 0.18.0
+      specifier: ^0.18.1
+      version: 0.18.1
     solc:
       specifier: ^0.8.34
       version: 0.8.34
@@ -123,7 +123,7 @@ importers:
         version: 3.5.3
       prettier-plugin-sh:
         specifier: 'catalog:'
-        version: 0.18.0(prettier@3.5.3)
+        version: 0.18.1(prettier@3.5.3)
       solc:
         specifier: 'catalog:'
         version: 0.8.34
@@ -1328,8 +1328,8 @@ packages:
     resolution: {integrity: sha512-QNqXyfVS2wm9hweSYD2O7F0G06uurj9kZ96TRQE5Y9hU7+tgdZwIkbAKc5Ocy1HxEY2kuDQa6cQ1WRs/O5LFKA==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
 
-  '@reteps/dockerfmt@0.3.6':
-    resolution: {integrity: sha512-Tb5wIMvBf/nLejTQ61krK644/CEMB/cpiaIFXqGApfGqO3GwcR3qnI0DbmkFVCl2OyEp8LnLX3EkucoL0+tbFg==}
+  '@reteps/dockerfmt@0.5.2':
+    resolution: {integrity: sha512-Hbr7yen4fP5TxGM54ucXa4o5NwWXatJ6Bd9I8gp0PValYbI4Rug2Gu+rVv7K7o/efQc3F5ctqWJz47rYaa8zBw==}
     engines: {node: ^v12.20.0 || ^14.13.0 || >=16.0.0}
 
   '@shikijs/engine-oniguruma@3.23.0':
@@ -3210,8 +3210,8 @@ packages:
     resolution: {integrity: sha512-/+5VFTchJDoVj3bhoqi6UeymcD00DAwb1nJwamzPvHEszJ4FpF6SNNbUbOS8yI56qHzdV8eK0qEfOSiodkTdxg==}
     engines: {node: '>= 0.4'}
 
-  prettier-plugin-sh@0.18.0:
-    resolution: {integrity: sha512-cW1XL27FOJQ/qGHOW6IHwdCiNWQsAgK+feA8V6+xUTaH0cD3Mh+tFAtBvEEWvuY6hTDzRV943Fzeii+qMOh7nQ==}
+  prettier-plugin-sh@0.18.1:
+    resolution: {integrity: sha512-uZmU22wBMevjh3rmCatNQqiEer2+5KLa0xYCBX6zQQUQkcNzVL+s6FbPKK6ZSUNUbQk6jMAcQHrYPvuL2W6ihQ==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
       prettier: ^3.6.0
@@ -4987,7 +4987,7 @@ snapshots:
 
   '@pkgr/core@0.2.9': {}
 
-  '@reteps/dockerfmt@0.3.6': {}
+  '@reteps/dockerfmt@0.5.2': {}
 
   '@shikijs/engine-oniguruma@3.23.0':
     dependencies:
@@ -7215,9 +7215,9 @@ snapshots:
 
   possible-typed-array-names@1.1.0: {}
 
-  prettier-plugin-sh@0.18.0(prettier@3.5.3):
+  prettier-plugin-sh@0.18.1(prettier@3.5.3):
     dependencies:
-      '@reteps/dockerfmt': 0.3.6
+      '@reteps/dockerfmt': 0.5.2
       prettier: 3.5.3
       sh-syntax: 0.5.8
 
