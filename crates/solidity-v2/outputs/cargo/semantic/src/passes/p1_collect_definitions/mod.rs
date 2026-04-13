@@ -260,11 +260,8 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
                 let parameters_scope_id = self.collect_parameters(&node.parameters);
 
                 if let Some(name) = &node.name {
-                    let definition = Definition::new_function(
-                        node,
-                        parameters_scope_id,
-                        node.visibility.clone(),
-                    );
+                    let definition =
+                        Definition::new_function(node, parameters_scope_id, node.visibility);
 
                     let current_scope_node_id = self.current_scope().node_id();
                     let enclosing_definition =
@@ -370,7 +367,7 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
     }
 
     fn enter_state_variable_definition(&mut self, node: &ir::StateVariableDefinition) -> bool {
-        let definition = Definition::new_state_variable(node, node.visibility.clone());
+        let definition = Definition::new_state_variable(node, node.visibility);
         self.insert_definition_in_current_scope(definition);
 
         // there may be more definitions in the type of the state variable (eg.
