@@ -143,7 +143,7 @@ iai-callgrind-runner = { version = "0.12.3" }
 ignore = { version = "0.4.25" }
 indexmap = { version = "2.10.0", features = ["serde"] }
 indicatif = { version = "0.17.12", features = ["in_memory"] }
-indoc = { version = "2.0.6" }
+indoc = { version = "2.0.7" }
 Inflector = { version = "0.11.4" }
 itertools = { version = "0.13.0" }
 lalrpop = { version = "0.23.0", default-features = false }
