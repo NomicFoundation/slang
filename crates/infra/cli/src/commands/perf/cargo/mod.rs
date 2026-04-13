@@ -152,8 +152,7 @@ impl CargoController {
         // 1% threshold: iai-callgrind uses deterministic hardware counters (not wall clock),
         // so any change reflects a real code change, not noise.
         // We also keep the window small (only 2 measurements), for the same reason.
-        let threshold =
-            |measure| BencherThreshold::new(measure, "0.01").with_max_sample_size("2");
+        let threshold = |measure| BencherThreshold::new(measure, "0.01").with_max_sample_size("2");
         run_bench(
             self.dry_run.get(),
             self.pr_benchmark,
