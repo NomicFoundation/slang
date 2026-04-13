@@ -707,8 +707,8 @@ dependencies = [
  "quote",
  "semver 1.0.26",
  "serde",
- "strum 0.26.3",
- "strum_macros 0.26.4",
+ "strum",
+ "strum_macros",
 ]
 
 [[package]]
@@ -2037,8 +2037,8 @@ dependencies = [
  "semver 1.0.26",
  "serde",
  "serde_json",
- "strum 0.26.3",
- "strum_macros 0.26.4",
+ "strum",
+ "strum_macros",
  "tempfile",
  "toml",
 ]
@@ -2228,8 +2228,8 @@ dependencies = [
  "quote",
  "semver 1.0.26",
  "serde",
- "strum 0.26.3",
- "strum_macros 0.26.4",
+ "strum",
+ "strum_macros",
  "syn 2.0.117",
  "thiserror 2.0.12",
 ]
@@ -2276,8 +2276,8 @@ dependencies = [
  "quote",
  "semver 1.0.26",
  "serde",
- "strum 0.26.3",
- "strum_macros 0.26.4",
+ "strum",
+ "strum_macros",
  "syn 2.0.117",
  "thiserror 2.0.12",
 ]
@@ -2503,8 +2503,8 @@ dependencies = [
  "serde_json",
  "smallvec",
  "string-interner",
- "strum 0.26.3",
- "strum_macros 0.26.4",
+ "strum",
+ "strum_macros",
  "thiserror 2.0.12",
 ]
 
@@ -3784,8 +3784,8 @@ dependencies = [
  "semver 1.0.26",
  "serde",
  "sha3",
- "strum 0.26.3",
- "strum_macros 0.26.4",
+ "strum",
+ "strum_macros",
  "thiserror 2.0.12",
 ]
 
@@ -3824,8 +3824,8 @@ dependencies = [
  "regex",
  "slang_solidity_v2_common",
  "slang_solidity_v2_cst",
- "strum 0.26.3",
- "strum_macros 0.26.4",
+ "strum",
+ "strum_macros",
 ]
 
 [[package]]
@@ -3893,7 +3893,7 @@ dependencies = [
  "solar-data-structures",
  "solar-interface",
  "solar-macros",
- "strum 0.27.1",
+ "strum",
  "typed-arena",
 ]
 
@@ -3939,7 +3939,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "908d455bb7c04acd783bd157b63791bf010cf6a495a845e48f7aee334aad319f"
 dependencies = [
  "clap",
- "strum 0.27.1",
+ "strum",
  "vergen",
 ]
 
@@ -4042,7 +4042,7 @@ dependencies = [
  "solar-interface",
  "solar-macros",
  "solar-parse",
- "strum 0.27.1",
+ "strum",
  "thread_local",
  "tracing",
  "typed-arena",
@@ -4064,7 +4064,7 @@ dependencies = [
  "semver 1.0.26",
  "slang_solidity",
  "solidity_language",
- "strum_macros 0.26.4",
+ "strum_macros",
 ]
 
 [[package]]
@@ -4128,8 +4128,8 @@ dependencies = [
  "regex",
  "serde_json",
  "solidity_testing_utils",
- "strum 0.26.3",
- "strum_macros 0.26.4",
+ "strum",
+ "strum_macros",
 ]
 
 [[package]]
@@ -4155,7 +4155,7 @@ dependencies = [
  "serde",
  "serde_json",
  "solidity_language",
- "strum_macros 0.26.4",
+ "strum_macros",
  "url",
 ]
 
@@ -4294,42 +4294,22 @@ checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
 
 [[package]]
 name = "strum"
-version = "0.26.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8fec0f0aef304996cf250b31b5a10dee7980c85da9d759361292b8bca5a18f06"
-
-[[package]]
-name = "strum"
 version = "0.27.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f64def088c51c9510a8579e3c5d67c65349dcf755e5479ad3d010aa6454e2c32"
 dependencies = [
- "strum_macros 0.27.1",
+ "strum_macros",
 ]
 
 [[package]]
 name = "strum_macros"
-version = "0.26.4"
+version = "0.27.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4c6bee85a5a24955dc440386795aa378cd9cf82acd5f764469152d2270e581be"
+checksum = "7695ce3845ea4b33927c055a39dc438a45b059f7c1b3d91d38d10355fb8cbca7"
 dependencies = [
  "heck",
  "proc-macro2",
  "quote",
- "rustversion",
- "syn 2.0.117",
-]
-
-[[package]]
-name = "strum_macros"
-version = "0.27.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c77a8c5abcaf0f9ce05d62342b7d298c346515365c36b673df4ebe3ced01fde8"
-dependencies = [
- "heck",
- "proc-macro2",
- "quote",
- "rustversion",
  "syn 2.0.117",
 ]
 
