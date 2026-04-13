@@ -22,6 +22,11 @@ fn externals() -> Result<()> {
 }
 
 #[test]
+fn implicit_conversion() -> Result<()> {
+    run(T, "implicit_conversion")
+}
+
+#[test]
 fn reference() -> Result<()> {
     run(T, "reference")
 }

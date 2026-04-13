@@ -320,19 +320,21 @@ impl Visitor for Pass<'_> {
             self.resolve_symbol_in_typing(&operand_typing, node.member.unparse()),
         );
 
-        // Special case: if the operand is either `this` or a contract/interface
-        // reference type, then try to type the member as a getter
+        // If the operand is either `this` or a contract/interface reference
+        // type, then resolve the member typing as a contract member. This
+        // handles public getters and visibility changes for public methods.
         let mut typing = if self.typing_is_contract_reference(&operand_typing) {
-            self.typing_of_resolution_as_getter(&resolution)
+            self.typing_of_resolution_as_contract_member(&resolution)
         } else {
             self.typing_of_resolution(&resolution)
         };
 
-        // Special case: If the type is a reference type with location
-        // "inherited", we use the operand's location for the resulting typing
+        // Special cases
         if let Some(type_id) = typing.as_type_id() {
             let type_ = self.types.get_type_by_id(type_id);
             if type_.is_inherited_location() {
+                // If the type is a reference type with location "inherited", we
+                // use the operand's location for the resulting typing
                 if let Some(operand_location) = operand_typing
                     .as_type_id()
                     .and_then(|type_id| self.types.get_type_by_id(type_id).data_location())

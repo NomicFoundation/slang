@@ -101,6 +101,18 @@ impl FunctionType {
             FunctionVisibility::External | FunctionVisibility::Public
         )
     }
+
+    #[must_use]
+    pub fn with_external_visibility(&self) -> Self {
+        Self {
+            definition_id: self.definition_id,
+            implicit_receiver_type: self.implicit_receiver_type,
+            parameter_types: self.parameter_types.clone(),
+            return_type: self.return_type,
+            visibility: FunctionVisibility::External,
+            mutability: self.mutability,
+        }
+    }
 }
 
 pub trait ImplicitlyConvertible<T> {

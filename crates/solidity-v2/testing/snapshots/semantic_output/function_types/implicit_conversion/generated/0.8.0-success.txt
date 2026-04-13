@@ -1,0 +1,87 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (8):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["intern" @ input.sol:2:14] (function, type: function () returns void)
+- Def: #3 ["extern" @ input.sol:3:14] (function, type: function () returns void)
+- Def: #4 ["privat" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #5 ["publi" @ input.sol:5:14] (function, type: function () returns void)
+- Def: #6 ["callback" @ input.sol:7:14] (function, type: function (function () returns void) returns void)
+- Def: #7 ["callback" @ input.sol:8:14] (function, type: function (function () returns void) returns void)
+- Def: #8 ["test" @ input.sol:10:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (10):
+- Ref: ["callback" @ input.sol:11:9] -> #6
+- Ref: ["intern" @ input.sol:11:18] -> #2
+- Ref: ["callback" @ input.sol:12:9] -> #7
+- Ref: ["extern" @ input.sol:12:23] -> #3
+- Ref: ["callback" @ input.sol:13:9] -> #6
+- Ref: ["privat" @ input.sol:13:18] -> #4
+- Ref: ["callback" @ input.sol:14:9] -> #6
+- Ref: ["publi" @ input.sol:14:18] -> #5
+- Ref: ["callback" @ input.sol:15:9] -> #7
+- Ref: ["publi" @ input.sol:15:23] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     function intern() internal {}
+    │              ───┬──  
+    │                 ╰──── name: 2
+  3 │     function extern() external {}
+    │              ───┬──  
+    │                 ╰──── name: 3
+  4 │     function privat() private {}
+    │              ───┬──  
+    │                 ╰──── name: 4
+  5 │     function publi() public {}
+    │              ──┬──  
+    │                ╰──── name: 5
+    │ 
+  7 │     function callback(function() internal) private pure {}
+    │              ────┬───  
+    │                  ╰───── name: 6
+  8 │     function callback(function() external) private pure {}
+    │              ────┬───  
+    │                  ╰───── name: 7
+    │ 
+ 10 │     function test() internal view {
+    │              ──┬─  
+    │                ╰─── name: 8
+ 11 │         callback(intern);       // internal
+    │         ────┬─── ───┬──  
+    │             ╰──────────── ref: 6
+    │                     │    
+    │                     ╰──── ref: 2
+ 12 │         callback(this.extern);  // external
+    │         ────┬───      ───┬──  
+    │             ╰───────────────── ref: 7
+    │                          │    
+    │                          ╰──── ref: 3
+ 13 │         callback(privat);       // internal
+    │         ────┬─── ───┬──  
+    │             ╰──────────── ref: 6
+    │                     │    
+    │                     ╰──── ref: 4
+ 14 │         callback(publi);        // internal
+    │         ────┬─── ──┬──  
+    │             ╰─────────── ref: 6
+    │                    │    
+    │                    ╰──── ref: 5
+ 15 │         callback(this.publi);   // external
+    │         ────┬───      ──┬──  
+    │             ╰──────────────── ref: 7
+    │                         │    
+    │                         ╰──── ref: 5
+────╯
