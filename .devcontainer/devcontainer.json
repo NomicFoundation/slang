@@ -4,6 +4,7 @@
   "build": {
     "dockerfile": "Dockerfile"
   },
+  "remoteUser": "vscode",
   "postCreateCommand": {
     // Fix target volume permissions, if it is owned by root:
     "fixTargetVolumePermissions_hermit": "sudo chown -R $(whoami): /workspaces/${localWorkspaceFolderBasename}/.hermit",
