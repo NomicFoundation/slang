@@ -1,7 +1,7 @@
 use slang_solidity_v2_ir::ir::{self, NodeId};
 
 use crate::binder::{Binder, Definition, Scope, ScopeId};
-use crate::context::InputFile;
+use crate::context::SemanticFile;
 use crate::types::{Type, TypeId, TypeRegistry};
 
 mod evaluator;
@@ -18,7 +18,7 @@ mod visitor;
 /// Finally, public state variables will be assigned an equivalent getter
 /// function type. This happens after the main typing pass to ensure all types
 /// are already registered.
-pub fn run(files: &[impl InputFile], binder: &mut Binder, types: &mut TypeRegistry) {
+pub fn run(files: &[impl SemanticFile], binder: &mut Binder, types: &mut TypeRegistry) {
     for file in files {
         Pass::visit_file(file, binder, types);
     }
@@ -35,7 +35,7 @@ struct Pass<'a> {
 }
 
 impl<'a> Pass<'a> {
-    fn visit_file(file: &impl InputFile, binder: &'a mut Binder, types: &'a mut TypeRegistry) {
+    fn visit_file(file: &impl SemanticFile, binder: &'a mut Binder, types: &'a mut TypeRegistry) {
         let mut pass = Self {
             scope_stack: Vec::new(),
             binder,
@@ -53,7 +53,7 @@ impl<'a> Pass<'a> {
     // cannot happen concurrently with the typing of the definitions in the main
     // pass.
     fn visit_file_type_getters(
-        file: &impl InputFile,
+        file: &impl SemanticFile,
         binder: &'a mut Binder,
         types: &'a mut TypeRegistry,
     ) {

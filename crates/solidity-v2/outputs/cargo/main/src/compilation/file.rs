@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use slang_solidity_v2_ir::ir::{self, NodeId};
-use slang_solidity_v2_semantic::context::InputFile;
+use slang_solidity_v2_semantic::context::SemanticFile;
 
 pub struct File {
     id: String,
@@ -10,7 +10,7 @@ pub struct File {
 }
 
 impl File {
-    pub fn new(id: String, ir_root: ir::SourceUnit) -> Self {
+    pub(crate) fn new(id: String, ir_root: ir::SourceUnit) -> Self {
         Self {
             id,
             ir_root,
@@ -18,12 +18,12 @@ impl File {
         }
     }
 
-    pub fn add_resolved_import(&mut self, node_id: NodeId, target_file_id: String) {
+    pub(crate) fn add_resolved_import(&mut self, node_id: NodeId, target_file_id: String) {
         self.resolved_imports.insert(node_id, target_file_id);
     }
 }
 
-impl InputFile for File {
+impl SemanticFile for File {
     fn id(&self) -> &str {
         &self.id
     }

@@ -4,13 +4,13 @@ use slang_solidity_v2_ir::ir::{self, NodeId};
 
 use super::common::resolve_identifier_path_in_scope;
 use crate::binder::{Binder, ContractDefinition, Definition, InterfaceDefinition, ScopeId};
-use crate::context::InputFile;
+use crate::context::SemanticFile;
 
 mod c3;
 
 /// In this pass we collect all bases of contracts and interfaces and then
 /// compute the linearisation for each of them.
-pub fn run(files: &[impl InputFile], binder: &mut Binder) {
+pub fn run(files: &[impl SemanticFile], binder: &mut Binder) {
     for file in files {
         Pass::visit_file_collect_bases(file, binder);
     }
@@ -24,12 +24,12 @@ struct Pass<'a> {
 }
 
 impl<'a> Pass<'a> {
-    fn visit_file_collect_bases(file: &impl InputFile, binder: &'a mut Binder) {
+    fn visit_file_collect_bases(file: &impl SemanticFile, binder: &'a mut Binder) {
         let mut pass = Self { binder };
         pass.collect_bases_from(file.ir_root());
     }
 
-    fn visit_file_linearise_contracts(file: &impl InputFile, binder: &'a mut Binder) {
+    fn visit_file_linearise_contracts(file: &impl SemanticFile, binder: &'a mut Binder) {
         let mut pass = Self { binder };
         pass.linearise_contracts_from(file.ir_root());
     }

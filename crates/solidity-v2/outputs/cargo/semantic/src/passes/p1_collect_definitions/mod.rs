@@ -2,7 +2,7 @@ use slang_solidity_v2_ir::ir::visitor::Visitor;
 use slang_solidity_v2_ir::ir::{self, NodeId};
 
 use crate::binder::{Binder, Definition, FileScope, ParametersScope, Scope, ScopeId};
-use crate::context::InputFile;
+use crate::context::SemanticFile;
 
 /// In this pass all definitions are collected with their naming identifiers.
 /// Also lexical (and other kinds of) scopes are identified and linked together,
@@ -10,7 +10,7 @@ use crate::context::InputFile;
 /// instantiates a `Binder` object which will store all this information as well
 /// as references and typing information for the nodes, to be resolved in later
 /// passes.
-pub fn run(files: &[impl InputFile], binder: &mut Binder) {
+pub fn run(files: &[impl SemanticFile], binder: &mut Binder) {
     for file in files {
         Pass::visit_file(file, binder);
     }
@@ -24,13 +24,13 @@ struct ScopeFrame {
     lexical_scope_id: ScopeId,
 }
 
-struct Pass<'a, F: InputFile> {
+struct Pass<'a, F: SemanticFile> {
     current_file: &'a F,
     scope_stack: Vec<ScopeFrame>,
     binder: &'a mut Binder,
 }
 
-impl<'a, F: InputFile> Pass<'a, F> {
+impl<'a, F: SemanticFile> Pass<'a, F> {
     fn visit_file(file: &'a F, binder: &'a mut Binder) {
         let mut pass = Self {
             current_file: file,
@@ -168,7 +168,7 @@ impl<'a, F: InputFile> Pass<'a, F> {
     }
 }
 
-impl<F: InputFile> Visitor for Pass<'_, F> {
+impl<F: SemanticFile> Visitor for Pass<'_, F> {
     fn enter_source_unit(&mut self, node: &ir::SourceUnit) -> bool {
         let scope = Scope::new_file(node.id(), self.current_file.id());
         self.enter_scope(scope);

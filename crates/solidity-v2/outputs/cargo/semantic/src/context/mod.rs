@@ -8,7 +8,7 @@ use crate::passes::{
 use crate::types::TypeRegistry;
 
 /// Trait for files that can be used as input to the semantic analysis passes.
-pub trait InputFile {
+pub trait SemanticFile {
     /// Returns the file identifier.
     fn id(&self) -> &str;
 
@@ -25,7 +25,7 @@ pub struct SemanticContext {
 }
 
 impl SemanticContext {
-    pub fn build_from(language_version: LanguageVersion, files: &[impl InputFile]) -> Self {
+    pub fn build_from(language_version: LanguageVersion, files: &[impl SemanticFile]) -> Self {
         let mut binder = Binder::default();
         let mut types = TypeRegistry::default();
 

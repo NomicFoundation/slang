@@ -4,7 +4,7 @@ use slang_solidity_v2_ir::ir::{self, NodeId};
 use slang_solidity_v2_parser::Parser;
 
 use crate::binder::{Binder, Resolution};
-use crate::context::InputFile;
+use crate::context::SemanticFile;
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_resolve_references,
 };
@@ -15,7 +15,7 @@ struct TestFile {
     ir_root: ir::SourceUnit,
 }
 
-impl InputFile for TestFile {
+impl SemanticFile for TestFile {
     fn id(&self) -> &str {
         &self.id
     }
