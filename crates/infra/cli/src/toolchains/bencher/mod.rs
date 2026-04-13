@@ -12,13 +12,34 @@ use infra_utils::github::GitHub;
 // Source: https://github.com/bencherdev/bencher/blob/aa31a002842cfb0da9d6c60569396fc5261f5111/tasks/test_api/src/task/test/smoke_test.rs#L20
 const BENCHER_TEST_TOKEN: &str = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhcGlfa2V5IiwiZXhwIjo1OTkzNjQyMTU2LCJpYXQiOjE2OTg2NzQ4NjEsImlzcyI6Imh0dHBzOi8vZGV2ZWwtLWJlbmNoZXIubmV0bGlmeS5hcHAvIiwic3ViIjoibXVyaWVsLmJhZ2dlQG5vd2hlcmUuY29tIiwib3JnIjpudWxsfQ.9z7jmM53TcVzc1inDxTeX9_OR0PQPpZAsKsCE7lWHfo";
 
+/// Represents a performance threshold for a Bencher benchmark comparison, used in PR benchmarking mode.
+#[derive(Clone)]
+pub(crate) struct BencherThreshold {
+    pub measure: String,
+    pub upper_boundary: String,
+    pub max_sample_size: Option<String>,
+}
+
+impl BencherThreshold {
+    pub fn new(measure: &str, upper_boundary: &str) -> Self {
+        Self {
+            measure: measure.to_string(),
+            upper_boundary: upper_boundary.to_string(),
+            max_sample_size: None,
+        }
+    }
+    pub fn with_max_sample_size(mut self, max_sample_size: &str) -> Self {
+        self.max_sample_size = Some(max_sample_size.to_string());
+        self
+    }
+}
+
 pub(crate) fn run_bench(
     dry_run: bool,
     pr_benchmark: bool,
     project: &str,
     adapter: &str,
-    thresholds: &[(&str, &str)],
-    github_pr_comment: bool,
+    thresholds: &[BencherThreshold],
     test_runner: &str,
 ) {
     assert!(
@@ -71,18 +92,28 @@ pub(crate) fn run_bench(
             .flag("--start-point-reset")
             .property("--hash", &head_hash);
 
-        for &(measure, upper_boundary) in thresholds {
+        for BencherThreshold {
+            measure,
+            upper_boundary,
+            max_sample_size,
+        } in thresholds
+        {
             command = command
                 .property("--threshold-measure", measure)
                 .property("--threshold-test", "percentage")
-                .property("--threshold-upper-boundary", upper_boundary);
+                .property("--threshold-upper-boundary", upper_boundary)
+                // Since we have to show it for all or for none of the thresholds, we always
+                // show it and default to "_" if not set.
+                // Bencher will ignore options specified with "_".
+                .property(
+                    "--threshold-max-sample-size",
+                    max_sample_size.as_ref().map_or("_", String::as_str),
+                );
         }
 
-        if github_pr_comment {
-            let github_token = std::env::var("GITHUB_TOKEN")
-                .expect("GITHUB_TOKEN must be set for --pr-benchmark with github_pr_comment");
-            command = command.property("--github-actions", &github_token);
-        }
+        let github_token =
+            std::env::var("GITHUB_TOKEN").expect("GITHUB_TOKEN must be set for --pr-benchmark");
+        command = command.property("--github-actions", &github_token);
     }
 
     // Has to be the last argument:

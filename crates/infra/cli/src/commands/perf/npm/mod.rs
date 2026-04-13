@@ -3,7 +3,7 @@ use clap::Parser;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 
-use crate::toolchains::bencher::run_bench;
+use crate::toolchains::bencher::{run_bench, BencherThreshold};
 use crate::utils::DryRun;
 
 const DEFAULT_BENCHER_PROJECT: &str = "slang-dashboard-npm";
@@ -55,8 +55,7 @@ impl NpmController {
             self.pr_benchmark,
             DEFAULT_BENCHER_PROJECT,
             "json",
-            &[("duration", "0.10")],
-            true,
+            &[BencherThreshold::new("duration", "0.10")],
             &test_runner,
         );
     }
