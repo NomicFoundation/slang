@@ -1,37 +1,40 @@
 use std::collections::HashMap;
-use std::rc::Rc;
 
-use crate::binder::{
-    Binder, ContractDefinition, Definition, ImportDefinition, InterfaceDefinition, Reference,
-    Resolution, ScopeId,
-};
-use crate::compilation::file::File;
-use crate::ir::{self, NodeId};
+use slang_solidity_v2_ir::ir::{self, NodeId};
+
+use super::common::resolve_identifier_path_in_scope;
+use crate::binder::{Binder, ContractDefinition, Definition, InterfaceDefinition, ScopeId};
+use crate::context::SemanticFile;
 
 mod c3;
 
 /// In this pass we collect all bases of contracts and interfaces and then
 /// compute the linearisation for each of them.
-pub fn run(files: &[File], binder: &mut Binder) {
-    let mut pass = Pass::new(binder);
+pub fn run(files: &[impl SemanticFile], binder: &mut Binder) {
     for file in files {
-        pass.visit_file_collect_bases(file.ir_root());
+        Pass::visit_file_collect_bases(file, binder);
     }
     for file in files {
-        pass.visit_file_linearise_contracts(file.ir_root());
+        Pass::visit_file_linearise_contracts(file, binder);
     }
 }
 
-pub struct Pass<'a> {
-    pub binder: &'a mut Binder,
+struct Pass<'a> {
+    binder: &'a mut Binder,
 }
 
 impl<'a> Pass<'a> {
-    pub fn new(binder: &'a mut Binder) -> Self {
-        Self { binder }
+    fn visit_file_collect_bases(file: &impl SemanticFile, binder: &'a mut Binder) {
+        let mut pass = Self { binder };
+        pass.collect_bases_from(file.ir_root());
     }
 
-    fn visit_file_collect_bases(&mut self, source_unit: &ir::SourceUnit) {
+    fn visit_file_linearise_contracts(file: &impl SemanticFile, binder: &'a mut Binder) {
+        let mut pass = Self { binder };
+        pass.linearise_contracts_from(file.ir_root());
+    }
+
+    fn collect_bases_from(&mut self, source_unit: &ir::SourceUnit) {
         let scope_id = self
             .binder
             .scope_id_for_node_id(source_unit.id())
@@ -81,7 +84,7 @@ impl<'a> Pass<'a> {
         types
             .iter()
             .filter_map(|inheritance_type| {
-                self.resolve_identifier_path_in_scope(&inheritance_type.type_name, scope_id)
+                resolve_identifier_path_in_scope(self.binder, &inheritance_type.type_name, scope_id)
                     .as_definition_id()
                     .filter(|definition_id| {
                         // bases are either contracts or interfaces, discard anything else
@@ -94,66 +97,7 @@ impl<'a> Pass<'a> {
             .collect()
     }
 
-    fn resolve_identifier_path_in_scope(
-        &mut self,
-        identifier_path: &ir::IdentifierPath,
-        starting_scope_id: ScopeId,
-    ) -> Resolution {
-        let mut scope_id = Some(starting_scope_id);
-        let mut use_lexical_resolution = true;
-        let mut last_resolution: Resolution = Resolution::Unresolved;
-
-        for identifier in identifier_path {
-            let symbol = identifier.unparse();
-            let resolution = if let Some(scope_id) = scope_id {
-                if use_lexical_resolution {
-                    self.binder.resolve_in_scope(scope_id, symbol)
-                } else {
-                    self.binder.resolve_in_scope_as_namespace(scope_id, symbol)
-                }
-            } else {
-                Resolution::Unresolved
-            };
-
-            let reference = Reference::new(Rc::clone(identifier), resolution.clone());
-            self.binder.insert_reference(reference);
-
-            // Unless we used namespace resolution and in order to continue
-            // resolving the identifier path, we should ensure we've followed
-            // through any symbol alias (ie. import deconstruction symbol). This
-            // is not needed for namespaced resolution because there cannot be
-            // import directives inside contracts, interfaces or libraries which
-            // changes the lookup mode (see below).
-            let resolution = if use_lexical_resolution {
-                self.binder.follow_symbol_aliases(&resolution)
-            } else {
-                resolution
-            };
-
-            // recurse into file scopes pointed by the resolved definition
-            // to resolve the next identifier in the path
-            scope_id = resolution
-                .as_definition_id()
-                .and_then(|node_id| self.binder.find_definition_by_id(node_id))
-                .and_then(|definition| match definition {
-                    Definition::Import(ImportDefinition {
-                        resolved_file_id, ..
-                    }) => resolved_file_id.as_ref().and_then(|resolved_file_id| {
-                        self.binder.scope_id_for_file_id(resolved_file_id)
-                    }),
-                    Definition::Contract(_) | Definition::Interface(_) | Definition::Library(_) => {
-                        use_lexical_resolution = false;
-                        self.binder.scope_id_for_node_id(definition.node_id())
-                    }
-                    _ => None,
-                });
-
-            last_resolution = resolution;
-        }
-        last_resolution
-    }
-
-    fn visit_file_linearise_contracts(&mut self, source_unit: &ir::SourceUnit) {
+    fn linearise_contracts_from(&mut self, source_unit: &ir::SourceUnit) {
         for member in &source_unit.members {
             let node_id = match member {
                 ir::SourceUnitMember::ContractDefinition(contract_definition) => {

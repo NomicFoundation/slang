@@ -1,6 +1,7 @@
+use slang_solidity_v2_ir::ir::{self, NodeId};
+
 use crate::binder::{Binder, Definition, Scope, ScopeId};
-use crate::compilation::file::File;
-use crate::ir::{self, NodeId};
+use crate::context::SemanticFile;
 use crate::types::{Type, TypeId, TypeRegistry};
 
 mod evaluator;
@@ -17,13 +18,12 @@ mod visitor;
 /// Finally, public state variables will be assigned an equivalent getter
 /// function type. This happens after the main typing pass to ensure all types
 /// are already registered.
-pub fn run(files: &[File], binder: &mut Binder, types: &mut TypeRegistry) {
-    let mut pass = Pass::new(binder, types);
+pub fn run(files: &[impl SemanticFile], binder: &mut Binder, types: &mut TypeRegistry) {
     for file in files {
-        pass.visit_file(file.ir_root());
+        Pass::visit_file(file, binder, types);
     }
     for file in files {
-        pass.visit_file_type_getters(file.ir_root());
+        Pass::visit_file_type_getters(file, binder, types);
     }
 }
 
@@ -35,21 +35,16 @@ struct Pass<'a> {
 }
 
 impl<'a> Pass<'a> {
-    fn new(binder: &'a mut Binder, types: &'a mut TypeRegistry) -> Self {
-        Self {
+    fn visit_file(file: &impl SemanticFile, binder: &'a mut Binder, types: &'a mut TypeRegistry) {
+        let mut pass = Self {
             scope_stack: Vec::new(),
             binder,
             types,
             current_receiver_type: None,
-        }
-    }
-
-    fn visit_file(&mut self, source_unit: &ir::SourceUnit) {
-        assert!(self.current_receiver_type.is_none());
-        assert!(self.scope_stack.is_empty());
-        ir::visitor::accept_source_unit(source_unit, self);
-        assert!(self.scope_stack.is_empty());
-        assert!(self.current_receiver_type.is_none());
+        };
+        ir::visitor::accept_source_unit(file.ir_root(), &mut pass);
+        assert!(pass.scope_stack.is_empty());
+        assert!(pass.current_receiver_type.is_none());
     }
 
     // This is a short second pass to compute and register the types of the
@@ -57,7 +52,21 @@ impl<'a> Pass<'a> {
     // getter requires all struct fields to be typed already thus why this
     // cannot happen concurrently with the typing of the definitions in the main
     // pass.
-    fn visit_file_type_getters(&mut self, source_unit: &ir::SourceUnit) {
+    fn visit_file_type_getters(
+        file: &impl SemanticFile,
+        binder: &'a mut Binder,
+        types: &'a mut TypeRegistry,
+    ) {
+        let mut pass = Self {
+            scope_stack: Vec::new(),
+            binder,
+            types,
+            current_receiver_type: None,
+        };
+        pass.type_getters_from(file.ir_root());
+    }
+
+    fn type_getters_from(&mut self, source_unit: &ir::SourceUnit) {
         for source_unit_member in &source_unit.members {
             let ir::SourceUnitMember::ContractDefinition(contract_definition) = source_unit_member
             else {

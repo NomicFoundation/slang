@@ -1,11 +1,12 @@
 use std::rc::Rc;
 
+use slang_solidity_v2_ir::ir;
+use slang_solidity_v2_ir::ir::visitor::Visitor;
+use slang_solidity_v2_ir::ir::Expression_PrefixExpression_Operator;
+
 use super::Pass;
 use crate::binder::{Reference, Resolution, Typing};
 use crate::built_ins::BuiltIn;
-use crate::ir;
-use crate::ir::visitor::Visitor;
-use crate::ir::Expression_PrefixExpression_Operator;
 use crate::types::{DataLocation, LiteralKind, Type};
 
 impl Visitor for Pass<'_> {

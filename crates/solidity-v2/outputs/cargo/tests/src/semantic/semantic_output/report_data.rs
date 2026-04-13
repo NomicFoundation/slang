@@ -2,18 +2,19 @@ use std::collections::HashMap;
 use std::fmt::Display;
 use std::ops::Range;
 
+use slang_solidity_v2::compilation::unit::CompilationUnit;
+use slang_solidity_v2_ir::ir::visitor::{accept_source_unit, Visitor};
+use slang_solidity_v2_ir::ir::{Identifier, NodeId};
 use slang_solidity_v2_parser::ParserError;
 use slang_solidity_v2_semantic::binder::{Definition, Resolution, Typing};
-use slang_solidity_v2_semantic::compilation::unit::CompilationUnit;
-use slang_solidity_v2_semantic::ir::visitor::{accept_source_unit, Visitor};
-use slang_solidity_v2_semantic::ir::{Identifier, NodeId};
+use slang_solidity_v2_semantic::context::{SemanticContext, SemanticFile};
 use slang_solidity_v2_semantic::types::{DataLocation, FunctionType, LiteralKind, Type, TypeId};
 
 // Types
 
 pub(crate) struct ReportData<'a> {
     pub(crate) compilation: &'a CompilationUnit,
-    pub(crate) file_contents: &'a HashMap<String, String>,
+    pub(crate) files: &'a HashMap<String, String>,
     pub(crate) parse_errors: Vec<(String, ParserError)>,
     pub(crate) all_definitions: Vec<CollectedDefinition>,
     pub(crate) all_references: Vec<CollectedReference>,
@@ -47,12 +48,12 @@ pub(crate) struct CollectedReference {
 impl<'a> ReportData<'a> {
     pub(crate) fn prepare(
         compilation: &'a CompilationUnit,
-        file_contents: &'a HashMap<String, String>,
+        files: &'a HashMap<String, String>,
         parse_errors: Vec<(String, ParserError)>,
     ) -> Self {
-        let all_identifiers = collect_all_identifiers(compilation, file_contents);
+        let all_identifiers = collect_all_identifiers(compilation, files);
         let (all_definitions, all_references, unbound_identifiers) =
-            classify_identifiers(compilation, all_identifiers);
+            classify_identifiers(compilation.semantic(), all_identifiers);
         let definitions_by_id = all_definitions
             .iter()
             .map(|definition| (definition.definition_node_id, definition.report_id))
@@ -60,7 +61,7 @@ impl<'a> ReportData<'a> {
 
         Self {
             compilation,
-            file_contents,
+            files,
             parse_errors,
             all_definitions,
             all_references,
@@ -135,7 +136,7 @@ impl IdentifierCollector<'_> {
 
 fn collect_all_identifiers(
     compilation: &CompilationUnit,
-    file_contents: &HashMap<String, String>,
+    files: &HashMap<String, String>,
 ) -> Vec<CollectedIdentifier> {
     let mut collector = IdentifierCollector {
         identifiers: Vec::new(),
@@ -143,7 +144,7 @@ fn collect_all_identifiers(
     };
 
     for file in &compilation.files() {
-        collector.current_file = file_contents.get_key_value(file.id());
+        collector.current_file = files.get_key_value(file.id());
         accept_source_unit(file.ir_root(), &mut collector);
     }
 
@@ -151,7 +152,7 @@ fn collect_all_identifiers(
 }
 
 fn classify_identifiers(
-    compilation: &CompilationUnit,
+    semantic: &SemanticContext,
     all_identifiers: Vec<CollectedIdentifier>,
 ) -> (
     Vec<CollectedDefinition>,
@@ -162,7 +163,7 @@ fn classify_identifiers(
     let mut all_references = Vec::new();
     let mut unbound_identifiers = Vec::new();
 
-    let binder = compilation.binder();
+    let binder = semantic.binder();
 
     // Walk all identifiers in file/source order and classify each one
     for identifier in all_identifiers {
@@ -198,18 +199,18 @@ fn classify_identifiers(
 impl CollectedDefinition {
     pub(crate) fn display<'a>(
         &'a self,
-        compilation: &'a CompilationUnit,
+        semantic: &'a SemanticContext,
     ) -> CollectedDefinitionDisplay<'a> {
         CollectedDefinitionDisplay {
             definition: self,
-            compilation,
+            semantic,
         }
     }
 }
 
 pub(crate) struct CollectedDefinitionDisplay<'a> {
     definition: &'a CollectedDefinition,
-    compilation: &'a CompilationUnit,
+    semantic: &'a SemanticContext,
 }
 
 impl Display for CollectedDefinitionDisplay<'_> {
@@ -231,7 +232,7 @@ impl Display for CollectedDefinitionDisplay<'_> {
 impl CollectedDefinitionDisplay<'_> {
     fn definition_type(&self) -> String {
         if let Some(definition) = self
-            .compilation
+            .semantic
             .binder()
             .find_definition_by_id(self.definition.definition_node_id)
         {
@@ -282,7 +283,7 @@ impl CollectedDefinitionDisplay<'_> {
 
     fn definition_type_display(&self) -> String {
         let node_id = self.definition.definition_node_id;
-        let typing = self.compilation.binder().node_typing(node_id);
+        let typing = self.semantic.binder().node_typing(node_id);
         match typing {
             Typing::Unresolved => "unresolved".to_string(),
             Typing::Resolved(type_id) => self.type_display(type_id),
@@ -300,7 +301,7 @@ impl CollectedDefinitionDisplay<'_> {
 
     #[allow(clippy::too_many_lines)]
     fn type_display(&self, type_id: TypeId) -> String {
-        match self.compilation.types().get_type_by_id(type_id) {
+        match self.semantic.types().get_type_by_id(type_id) {
             Type::Address { payable } => {
                 if *payable {
                     "address payable".to_string()
@@ -415,7 +416,7 @@ impl CollectedDefinitionDisplay<'_> {
     }
 
     fn definition_name(&self, definition_id: NodeId) -> String {
-        self.compilation
+        self.semantic
             .binder()
             .find_definition_by_id(definition_id)
             .unwrap()

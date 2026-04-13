@@ -1,7 +1,8 @@
+use slang_solidity_v2_ir::ir::visitor::Visitor;
+use slang_solidity_v2_ir::ir::{self, NodeId};
+
 use crate::binder::{Binder, Definition, FileScope, ParametersScope, Scope, ScopeId};
-use crate::compilation::file::File;
-use crate::ir::visitor::Visitor;
-use crate::ir::{self, NodeId};
+use crate::context::SemanticFile;
 
 /// In this pass all definitions are collected with their naming identifiers.
 /// Also lexical (and other kinds of) scopes are identified and linked together,
@@ -9,10 +10,9 @@ use crate::ir::{self, NodeId};
 /// instantiates a `Binder` object which will store all this information as well
 /// as references and typing information for the nodes, to be resolved in later
 /// passes.
-pub fn run(files: &[File], binder: &mut Binder) {
-    let mut pass = Pass::new(binder);
+pub fn run(files: &[impl SemanticFile], binder: &mut Binder) {
     for file in files {
-        pass.visit_file(file);
+        Pass::visit_file(file, binder);
     }
 }
 
@@ -24,30 +24,21 @@ struct ScopeFrame {
     lexical_scope_id: ScopeId,
 }
 
-struct Pass<'a> {
-    current_file: Option<&'a File>,
+struct Pass<'a, F: SemanticFile> {
+    current_file: &'a F,
     scope_stack: Vec<ScopeFrame>,
     binder: &'a mut Binder,
 }
 
-impl<'a> Pass<'a> {
-    fn new(binder: &'a mut Binder) -> Self {
-        Self {
-            current_file: None,
+impl<'a, F: SemanticFile> Pass<'a, F> {
+    fn visit_file(file: &'a F, binder: &'a mut Binder) {
+        let mut pass = Self {
+            current_file: file,
             scope_stack: Vec::new(),
             binder,
-        }
-    }
-
-    fn visit_file(&mut self, file: &'a File) {
-        assert!(self.scope_stack.is_empty());
-        assert!(self.current_file.is_none());
-
-        self.current_file = Some(file);
-        ir::visitor::accept_source_unit(file.ir_root(), self);
-        self.current_file = None;
-
-        assert!(self.scope_stack.is_empty());
+        };
+        ir::visitor::accept_source_unit(file.ir_root(), &mut pass);
+        assert!(pass.scope_stack.is_empty());
     }
 
     fn enter_scope(&mut self, scope: Scope) -> ScopeId {
@@ -126,10 +117,7 @@ impl<'a> Pass<'a> {
     }
 
     fn resolve_import_path(&self, import_node_id: NodeId) -> Option<String> {
-        let current_file = self
-            .current_file
-            .expect("import directive must be visited in the context of a current file");
-        current_file
+        self.current_file
             .resolved_import_by_node_id(import_node_id)
             .cloned()
 
@@ -180,12 +168,9 @@ impl<'a> Pass<'a> {
     }
 }
 
-impl Visitor for Pass<'_> {
+impl<F: SemanticFile> Visitor for Pass<'_, F> {
     fn enter_source_unit(&mut self, node: &ir::SourceUnit) -> bool {
-        let current_file = self
-            .current_file
-            .expect("visiting SourceUnit without a current file being set");
-        let scope = Scope::new_file(node.id(), current_file.id());
+        let scope = Scope::new_file(node.id(), self.current_file.id());
         self.enter_scope(scope);
 
         true

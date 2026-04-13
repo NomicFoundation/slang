@@ -1,7 +1,8 @@
+use slang_solidity_v2_ir::ir;
+use slang_solidity_v2_ir::ir::NodeId;
+
 use super::Pass;
 use crate::binder::{Definition, Scope};
-use crate::ir;
-use crate::ir::NodeId;
 use crate::types::{DataLocation, FunctionType, FunctionTypeKind, Type, TypeId};
 
 impl Pass<'_> {

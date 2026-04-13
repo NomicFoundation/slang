@@ -3,8 +3,7 @@ use std::str::FromStr;
 use num_bigint::BigInt;
 use num_traits::cast::ToPrimitive;
 use num_traits::Num;
-
-use crate::ir;
+use slang_solidity_v2_ir::ir;
 
 pub(crate) fn evaluate_compile_time_uint_constant<Scope>(
     expression: &ir::Expression,

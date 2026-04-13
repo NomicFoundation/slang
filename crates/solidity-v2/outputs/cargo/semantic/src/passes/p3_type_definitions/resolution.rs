@@ -1,16 +1,14 @@
-use std::rc::Rc;
+use slang_solidity_v2_ir::ir;
 
 use super::evaluator::{evaluate_compile_time_uint_constant, ConstantIdentifierResolver};
 use super::Pass;
-use crate::binder::{Definition, ImportDefinition, Reference, Resolution, ScopeId};
-use crate::ir;
+use crate::binder::{Definition, Resolution, ScopeId};
+use crate::passes::common::resolve_identifier_path_in_scope;
 use crate::types::{DataLocation, FunctionType, Type, TypeId};
 
 impl Pass<'_> {
-    // Resolves an IdentifierPath. It starts resolution at the "contract" scope
-    // level, or at the file level if there's no contract scope open. It will
-    // follow through in contracts/intrefaces/libraries as well as imports and
-    // treat them as namespaces.
+    // Resolves an IdentifierPath starting at the "contract" scope level, or at
+    // the file level if there's no contract scope open.
     // Returns the resolution of the last reference.
     pub(super) fn resolve_identifier_path(
         &mut self,
@@ -18,58 +16,8 @@ impl Pass<'_> {
     ) -> Resolution {
         // start resolution from the current contract (or file if there's no
         // contract scope open)
-        let mut scope_id = Some(self.current_contract_or_file_scope_id());
-        let mut use_lexical_resolution = true;
-        let mut last_resolution: Resolution = Resolution::Unresolved;
-
-        for identifier in identifier_path {
-            let symbol = identifier.unparse();
-            let resolution = if let Some(scope_id) = scope_id {
-                if use_lexical_resolution {
-                    self.binder.resolve_in_scope(scope_id, symbol)
-                } else {
-                    self.binder.resolve_in_scope_as_namespace(scope_id, symbol)
-                }
-            } else {
-                Resolution::Unresolved
-            };
-
-            let reference = Reference::new(Rc::clone(identifier), resolution.clone());
-            self.binder.insert_reference(reference);
-
-            // Unless we used namespace resolution and in order to continue
-            // resolving the identifier path, we should ensure we've followed
-            // through any symbol alias (ie. import deconstruction symbol). This
-            // is not needed for namespaced resolution because there cannot be
-            // import directives inside contracts, interfaces or libraries which
-            // changes the lookup mode (see below).
-            let resolution = if use_lexical_resolution {
-                self.binder.follow_symbol_aliases(&resolution)
-            } else {
-                resolution
-            };
-
-            // recurse into file scopes pointed by the resolved definition
-            // to resolve the next identifier in the path
-            scope_id = resolution
-                .as_definition_id()
-                .and_then(|node_id| self.binder.find_definition_by_id(node_id))
-                .and_then(|definition| match definition {
-                    Definition::Import(ImportDefinition {
-                        resolved_file_id, ..
-                    }) => resolved_file_id.as_ref().and_then(|resolved_file_id| {
-                        self.binder.scope_id_for_file_id(resolved_file_id)
-                    }),
-                    Definition::Contract(_) | Definition::Interface(_) | Definition::Library(_) => {
-                        use_lexical_resolution = false;
-                        self.binder.scope_id_for_node_id(definition.node_id())
-                    }
-                    _ => None,
-                });
-
-            last_resolution = resolution;
-        }
-        last_resolution
+        let starting_scope_id = self.current_contract_or_file_scope_id();
+        resolve_identifier_path_in_scope(self.binder, identifier_path, starting_scope_id)
     }
 
     pub(super) fn resolve_parameter_types(

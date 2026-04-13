@@ -1,12 +1,13 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
+use slang_solidity_v2_ir::ir;
+use slang_solidity_v2_ir::ir::visitor::Visitor;
+
 use super::evaluator::evaluate_compile_time_uint_constant;
 use super::Pass;
 use crate::binder::{Definition, Reference, Resolution, Scope, Typing, UsingDirective};
 use crate::built_ins::BuiltIn;
-use crate::ir;
-use crate::ir::visitor::Visitor;
 use crate::types::{DataLocation, Type};
 
 impl Visitor for Pass<'_> {

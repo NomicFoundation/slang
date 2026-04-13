@@ -1,9 +1,9 @@
 use slang_solidity_v2_common::versions::LanguageVersion;
+use slang_solidity_v2_ir::ir::{self, NodeId};
 
 use crate::binder::{Binder, Scope, ScopeId};
 use crate::built_ins::BuiltInsResolver;
-use crate::compilation::file::File;
-use crate::ir::{self, NodeId};
+use crate::context::SemanticFile;
 use crate::types::TypeRegistry;
 
 mod disambiguation;
@@ -17,14 +17,13 @@ mod visitor;
 /// and happen concurrently for each node, and their results are store in the
 /// `Binder` instance.
 pub fn run(
-    files: &[File],
+    files: &[impl SemanticFile],
     binder: &mut Binder,
     types: &mut TypeRegistry,
     language_version: LanguageVersion,
 ) {
-    let mut pass = Pass::new(language_version, binder, types);
     for file in files {
-        pass.visit_file(file.ir_root());
+        Pass::visit_file(file, binder, types, language_version);
     }
     // update definition->references reverse mapping
     binder.update_definitions_to_references_index();
@@ -46,27 +45,24 @@ struct Pass<'a> {
 }
 
 impl<'a> Pass<'a> {
-    fn new(
-        language_version: LanguageVersion,
+    fn visit_file(
+        file: &impl SemanticFile,
         binder: &'a mut Binder,
         types: &'a mut TypeRegistry,
-    ) -> Self {
-        Self {
+        language_version: LanguageVersion,
+    ) {
+        let mut pass = Self {
             language_version,
             scope_stack: Vec::new(),
             binder,
             types,
-        }
+        };
+        ir::visitor::accept_source_unit(file.ir_root(), &mut pass);
+        assert!(pass.scope_stack.is_empty());
     }
 
     fn built_ins_resolver(&self) -> BuiltInsResolver<'_> {
         BuiltInsResolver::new(self.language_version, self.binder, self.types)
-    }
-
-    fn visit_file(&mut self, source_unit: &ir::SourceUnit) {
-        assert!(self.scope_stack.is_empty());
-        ir::visitor::accept_source_unit(source_unit, self);
-        assert!(self.scope_stack.is_empty());
     }
 
     fn enter_scope_for_node_id(&mut self, node_id: NodeId) {
@@ -119,9 +115,9 @@ impl<'a> Pass<'a> {
     }
 
     fn is_in_modifier_scope(&self) -> bool {
-        self.scope_stack.iter().rev().any(|frame| {
+        self.scope_stack.iter().any(|frame| {
             matches!(
-                self.binder.get_scope_by_id(frame.lexical_scope_id),
+                self.binder.get_scope_by_id(frame.structural_scope_id),
                 Scope::Modifier(_)
             )
         })
@@ -129,12 +125,13 @@ impl<'a> Pass<'a> {
 
     fn current_contract_scope_id(&self) -> Option<ScopeId> {
         for ScopeFrame {
-            lexical_scope_id, ..
+            structural_scope_id,
+            ..
         } in self.scope_stack.iter().rev()
         {
-            let scope = self.binder.get_scope_by_id(*lexical_scope_id);
+            let scope = self.binder.get_scope_by_id(*structural_scope_id);
             if matches!(scope, Scope::Contract(_)) {
-                return Some(*lexical_scope_id);
+                return Some(*structural_scope_id);
             }
         }
         None
