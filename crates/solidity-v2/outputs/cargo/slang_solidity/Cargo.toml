@@ -4,7 +4,7 @@ rust-version.workspace = true
 edition.workspace = true
 publish = false
 
-name = "slang_solidity_v2_main"
+name = "slang_solidity_v2"
 description = "Main compilation unit for the [slang_solidity](https://crates.io/crates/slang_solidity) crate."
 homepage = "https://nomicfoundation.github.io/slang/"
 repository = "https://github.com/NomicFoundation/slang/"

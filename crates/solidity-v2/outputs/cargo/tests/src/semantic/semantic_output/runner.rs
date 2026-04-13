@@ -5,10 +5,10 @@ use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
-use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_main::compilation::builder::{
+use slang_solidity_v2::compilation::builder::{
     CompilationBuilder, CompilationBuilderConfig, CompilationBuilderError,
 };
+use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_parser::ParserError;
 use solidity_v2_language::SolidityDefinition;
 

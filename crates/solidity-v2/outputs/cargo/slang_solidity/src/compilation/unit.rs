@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 use std::rc::Rc;
 
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_semantic::context::{SemanticFile, SemanticContext};
+use slang_solidity_v2_semantic::context::{SemanticContext, SemanticFile};
 
 use super::file::File;
 
