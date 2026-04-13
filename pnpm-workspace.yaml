@@ -29,7 +29,7 @@ catalog:
   "prettier": "^3.5.3"
   "solc": "^0.8.34"
   "ts-jest-resolver": "^2.0.1"
-  "ts-jest": "^29.3.4"
+  "ts-jest": "^29.4.9"
   "tsx": "^4.21.0"
   "typedoc": "^0.28.17"
   "typescript": "^5.8.3"
