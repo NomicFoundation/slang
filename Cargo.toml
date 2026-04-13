@@ -192,7 +192,7 @@ tempfile = { version = "3.27.0" }
 tera = { version = "1.20.1" }
 thiserror = { version = "2.0.12" }
 toml = { version = "0.8.20" }
-tree-sitter-solidity = { version = "1.2.11" }
+tree-sitter-solidity = { version = "1.2.13" }
 tree-sitter = { version = "0.24.7" }
 trybuild = { version = "1.0.104" }
 url = { version = "2.5.4", features = ["serde"] }
