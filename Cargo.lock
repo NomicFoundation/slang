@@ -707,7 +707,7 @@ dependencies = [
  "quote",
  "semver 1.0.26",
  "serde",
- "strum 0.26.3",
+ "strum",
  "strum_macros 0.26.4",
 ]
 
@@ -2037,7 +2037,7 @@ dependencies = [
  "semver 1.0.26",
  "serde",
  "serde_json",
- "strum 0.26.3",
+ "strum",
  "strum_macros 0.26.4",
  "tempfile",
  "toml",
@@ -2228,7 +2228,7 @@ dependencies = [
  "quote",
  "semver 1.0.26",
  "serde",
- "strum 0.26.3",
+ "strum",
  "strum_macros 0.26.4",
  "syn 2.0.117",
  "thiserror 2.0.12",
@@ -2276,7 +2276,7 @@ dependencies = [
  "quote",
  "semver 1.0.26",
  "serde",
- "strum 0.26.3",
+ "strum",
  "strum_macros 0.26.4",
  "syn 2.0.117",
  "thiserror 2.0.12",
@@ -2503,7 +2503,7 @@ dependencies = [
  "serde_json",
  "smallvec",
  "string-interner",
- "strum 0.26.3",
+ "strum",
  "strum_macros 0.26.4",
  "thiserror 2.0.12",
 ]
@@ -3784,7 +3784,7 @@ dependencies = [
  "semver 1.0.26",
  "serde",
  "sha3",
- "strum 0.26.3",
+ "strum",
  "strum_macros 0.26.4",
  "thiserror 2.0.12",
 ]
@@ -3824,7 +3824,7 @@ dependencies = [
  "regex",
  "slang_solidity_v2_common",
  "slang_solidity_v2_cst",
- "strum 0.26.3",
+ "strum",
  "strum_macros 0.26.4",
 ]
 
@@ -3893,7 +3893,7 @@ dependencies = [
  "solar-data-structures",
  "solar-interface",
  "solar-macros",
- "strum 0.27.1",
+ "strum",
  "typed-arena",
 ]
 
@@ -3939,7 +3939,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "908d455bb7c04acd783bd157b63791bf010cf6a495a845e48f7aee334aad319f"
 dependencies = [
  "clap",
- "strum 0.27.1",
+ "strum",
  "vergen",
 ]
 
@@ -4042,7 +4042,7 @@ dependencies = [
  "solar-interface",
  "solar-macros",
  "solar-parse",
- "strum 0.27.1",
+ "strum",
  "thread_local",
  "tracing",
  "typed-arena",
@@ -4128,7 +4128,7 @@ dependencies = [
  "regex",
  "serde_json",
  "solidity_testing_utils",
- "strum 0.26.3",
+ "strum",
  "strum_macros 0.26.4",
 ]
 
@@ -4291,12 +4291,6 @@ name = "strsim"
 version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
-
-[[package]]
-name = "strum"
-version = "0.26.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8fec0f0aef304996cf250b31b5a10dee7980c85da9d759361292b8bca5a18f06"
 
 [[package]]
 name = "strum"

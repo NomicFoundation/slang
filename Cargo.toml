@@ -178,7 +178,7 @@ string-interner = { version = "0.17.0", features = [
     "inline-more",
     "backends",
 ] }
-strum = { version = "0.26.3" }
+strum = { version = "0.27.1" }
 strum_macros = { version = "0.26.4" }
 syn = { version = "2.0.117", features = [
     "fold",
