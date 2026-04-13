@@ -1,0 +1,141 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (21):
+- Def: #1 ["Base" @ input.sol:1:10] (contract)
+- Def: #2 ["Data" @ input.sol:2:12] (struct)
+- Def: #3 ["x" @ input.sol:3:14] (struct member, type: uint256)
+- Def: #4 ["foo" @ input.sol:5:14] (function, type: function (Data memory[] memory) returns void)
+- Def: #5 ["d" @ input.sol:5:32] (parameter, type: Data memory[] memory)
+- Def: #6 ["bar" @ input.sol:6:14] (function, type: function (Data calldata[] calldata) returns void)
+- Def: #7 ["d" @ input.sol:6:34] (parameter, type: Data calldata[] calldata)
+- Def: #8 ["foo2" @ input.sol:7:14] (function, type: function (Data memory[] memory) returns void)
+- Def: #9 ["d" @ input.sol:7:33] (parameter, type: Data memory[] memory)
+- Def: #10 ["bar2" @ input.sol:8:14] (function, type: function (Data calldata[] calldata) returns void)
+- Def: #11 ["d" @ input.sol:8:35] (parameter, type: Data calldata[] calldata)
+- Def: #12 ["Foo" @ input.sol:11:10] (contract)
+- Def: #13 ["foo" @ input.sol:14:14] (function, type: function (Data calldata[] calldata) returns void)
+- Def: #14 ["d" @ input.sol:14:34] (parameter, type: Data calldata[] calldata)
+- Def: #15 ["bar" @ input.sol:15:14] (function, type: function (Data memory[] memory) returns void)
+- Def: #16 ["d" @ input.sol:15:32] (parameter, type: Data memory[] memory)
+- Def: #17 ["foo2" @ input.sol:16:14] (function, type: function (Data calldata[] calldata) returns void)
+- Def: #18 ["d" @ input.sol:16:35] (parameter, type: Data calldata[] calldata)
+- Def: #19 ["bar2" @ input.sol:17:14] (function, type: function (Data memory[] memory) returns void)
+- Def: #20 ["d" @ input.sol:17:33] (parameter, type: Data memory[] memory)
+- Def: #21 ["test" @ input.sol:19:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (13):
+- Ref: ["Data" @ input.sol:5:18] -> #2
+- Ref: ["Data" @ input.sol:6:18] -> #2
+- Ref: ["Data" @ input.sol:7:19] -> #2
+- Ref: ["Data" @ input.sol:8:19] -> #2
+- Ref: ["Base" @ input.sol:11:17] -> #1
+- Ref: ["Data" @ input.sol:14:18] -> #2
+- Ref: ["Data" @ input.sol:15:18] -> #2
+- Ref: ["Data" @ input.sol:16:19] -> #2
+- Ref: ["Data" @ input.sol:17:19] -> #2
+- Ref: ["foo" @ input.sol:20:14] -> #13
+- Ref: ["bar" @ input.sol:21:14] -> #15
+- Ref: ["foo2" @ input.sol:22:14] -> #17
+- Ref: ["bar2" @ input.sol:23:14] -> #19
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Base {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     struct Data {
+    │            ──┬─  
+    │              ╰─── name: 2
+  3 │         uint x;
+    │              ┬  
+    │              ╰── name: 3
+    │ 
+  5 │     function foo(Data[] memory d) virtual external {}
+    │              ─┬─ ──┬─          ┬  
+    │               ╰─────────────────── name: 4
+    │                    │           │  
+    │                    ╰────────────── ref: 2
+    │                                │  
+    │                                ╰── name: 5
+  6 │     function bar(Data[] calldata d) virtual external {}
+    │              ─┬─ ──┬─            ┬  
+    │               ╰───────────────────── name: 6
+    │                    │             │  
+    │                    ╰──────────────── ref: 2
+    │                                  │  
+    │                                  ╰── name: 7
+  7 │     function foo2(Data[] memory d) virtual external {}
+    │              ──┬─ ──┬─          ┬  
+    │                ╰─────────────────── name: 8
+    │                     │           │  
+    │                     ╰────────────── ref: 2
+    │                                 │  
+    │                                 ╰── name: 9
+  8 │     function bar2(Data[] calldata d) virtual external {}
+    │              ──┬─ ──┬─            ┬  
+    │                ╰───────────────────── name: 10
+    │                     │             │  
+    │                     ╰──────────────── ref: 2
+    │                                   │  
+    │                                   ╰── name: 11
+    │ 
+ 11 │ contract Foo is Base {
+    │          ─┬─    ──┬─  
+    │           ╰─────────── name: 12
+    │                   │   
+    │                   ╰─── ref: 1
+    │ 
+ 14 │     function foo(Data[] calldata d) override external {}
+    │              ─┬─ ──┬─            ┬  
+    │               ╰───────────────────── name: 13
+    │                    │             │  
+    │                    ╰──────────────── ref: 2
+    │                                  │  
+    │                                  ╰── name: 14
+ 15 │     function bar(Data[] memory d) override external {}
+    │              ─┬─ ──┬─          ┬  
+    │               ╰─────────────────── name: 15
+    │                    │           │  
+    │                    ╰────────────── ref: 2
+    │                                │  
+    │                                ╰── name: 16
+ 16 │     function foo2(Data[] calldata d) override public {}
+    │              ──┬─ ──┬─            ┬  
+    │                ╰───────────────────── name: 17
+    │                     │             │  
+    │                     ╰──────────────── ref: 2
+    │                                   │  
+    │                                   ╰── name: 18
+ 17 │     function bar2(Data[] memory d) override public {}
+    │              ──┬─ ──┬─          ┬  
+    │                ╰─────────────────── name: 19
+    │                     │           │  
+    │                     ╰────────────── ref: 2
+    │                                 │  
+    │                                 ╰── name: 20
+    │ 
+ 19 │     function test() internal view {
+    │              ──┬─  
+    │                ╰─── name: 21
+ 20 │         this.foo;
+    │              ─┬─  
+    │               ╰─── ref: 13
+ 21 │         this.bar;
+    │              ─┬─  
+    │               ╰─── ref: 15
+ 22 │         this.foo2;
+    │              ──┬─  
+    │                ╰─── ref: 17
+ 23 │         this.bar2;
+    │              ──┬─  
+    │                ╰─── ref: 19
+────╯

@@ -115,8 +115,15 @@ impl DataLocation {
         }
     }
 
-    pub fn overrides(&self, target: Self) -> bool {
-        *self == target || (*self == Self::Memory && target == Self::Calldata)
+    // When calling external functions, it is irrelevant if the data location of
+    // the parameters is ``calldata`` or ``memory``, the encoding of the data
+    // does not change. Because of that, changing the data location when
+    // overriding external functions is allowed.
+    // See https://github.com/argotorg/solidity/pull/12850
+    pub fn overrides_in_external_function(&self, target: Self) -> bool {
+        *self == target
+            || (*self == Self::Memory && target == Self::Calldata)
+            || (*self == Self::Calldata && target == Self::Memory)
     }
 }
 

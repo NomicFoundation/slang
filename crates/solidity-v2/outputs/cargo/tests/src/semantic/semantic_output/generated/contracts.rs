@@ -37,6 +37,11 @@ fn diamond() -> Result<()> {
 }
 
 #[test]
+fn external_functions_overrides() -> Result<()> {
+    run(T, "external_functions_overrides")
+}
+
+#[test]
 fn fallback_receive() -> Result<()> {
     run(T, "fallback_receive")
 }
