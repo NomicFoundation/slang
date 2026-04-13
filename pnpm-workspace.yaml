@@ -32,7 +32,7 @@ catalog:
   "ts-jest": "^29.4.9"
   "tsx": "^4.21.0"
   "typedoc": "^0.28.17"
-  "typescript": "^5.8.3"
+  "typescript": "^5.9.3"
 
 overrides:
   # Temporary fixes until our dependencies are updated:
