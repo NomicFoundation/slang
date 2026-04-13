@@ -2,7 +2,7 @@ use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::NodeId;
 
 use super::binder::{Binder, Definition, Typing};
-use super::types::{DataLocation, FunctionType, LiteralKind, Type, TypeId, TypeRegistry};
+use super::types::{DataLocation, LiteralKind, Type, TypeId, TypeRegistry};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum BuiltIn {
@@ -510,9 +510,8 @@ impl<'a> BuiltInsResolver<'a> {
                 "length" => Some(BuiltIn::Length),
                 _ => None,
             },
-            Type::Function(FunctionType { external, .. }) => {
-                // Solidity < 0.5.0 didn't require explicit visibility attributes
-                if *external {
+            Type::Function(ftype) => {
+                if ftype.is_external() {
                     match symbol {
                         "address" if self.language_version >= LanguageVersion::V0_8_2 => {
                             Some(BuiltIn::Address)

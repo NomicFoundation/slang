@@ -81,18 +81,14 @@ impl Pass<'_> {
                 } else {
                     self.types.void()
                 };
-                let kind = (&function_type.mutability).into();
-                let external = matches!(
-                    function_type.visibility,
-                    ir::FunctionVisibility::External | ir::FunctionVisibility::Public
-                );
                 Some(self.types.register_type(Type::Function(FunctionType {
                     definition_id: None,
                     implicit_receiver_type: None,
                     parameter_types,
                     return_type,
-                    external,
-                    kind,
+                    // TODO(validation): function types can only be internal or external
+                    visibility: function_type.visibility,
+                    mutability: function_type.mutability,
                 })))
             }
             ir::TypeName::MappingType(mapping_type) => {

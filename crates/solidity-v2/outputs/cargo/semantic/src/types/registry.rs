@@ -1,8 +1,10 @@
 use std::collections::HashMap;
 
 use indexmap::IndexSet;
+use slang_solidity_v2_ir::ir;
 
 use super::{DataLocation, FunctionType, LiteralKind, Type, TypeId};
+use crate::types::ImplicitlyConvertible;
 
 /// The `TypeRegistry` stores an index of registered types, both elementary
 /// types and user defined types. Each type is given a `TypeId` for efficient
@@ -264,10 +266,10 @@ impl TypeRegistry {
 
             (Type::Function(from_function_type), Type::Function(to_function_type)) => {
                 // This is full equality except for definition_id which can differ
-                from_function_type.external == to_function_type.external
+                from_function_type.visibility.implicitly_convertible_to(to_function_type.visibility)
                     && from_function_type
-                        .kind
-                        .implicitly_convertible_to(to_function_type.kind)
+                        .mutability
+                        .implicitly_convertible_to(to_function_type.mutability)
                     && from_function_type.parameter_types == to_function_type.parameter_types
                     && from_function_type.return_type == to_function_type.return_type
             }
@@ -376,16 +378,16 @@ impl TypeRegistry {
             Type::Function(FunctionType {
                 parameter_types,
                 return_type,
-                external,
-                kind,
+                visibility,
+                mutability,
                 ..
             }) => Type::Function(FunctionType {
                 definition_id: None,
                 implicit_receiver_type: None,
                 parameter_types: parameter_types.clone(),
                 return_type: *return_type,
-                external: *external,
-                kind: *kind,
+                visibility: *visibility,
+                mutability: *mutability,
             }),
 
             Type::Address { .. }
@@ -501,7 +503,12 @@ impl TypeRegistry {
         // If the `other` function is external, allow changing the data location
         // of parameters from `memory` to `calldata` (or viceversa) if our
         // visibility is external or public.
-        if other.external && ftype.external {
+        if matches!(other.visibility, ir::FunctionVisibility::External)
+            && matches!(
+                ftype.visibility,
+                ir::FunctionVisibility::External | ir::FunctionVisibility::Public
+            )
+        {
             ftype
                 .parameter_types
                 .iter()
