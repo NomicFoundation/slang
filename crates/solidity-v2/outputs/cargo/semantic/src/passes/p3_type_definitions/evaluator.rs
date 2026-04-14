@@ -328,10 +328,11 @@ mod tests {
             source_unit,
             errors,
         } = Parser::parse(&source, version);
-
         assert!(errors.is_empty(), "Parser errors: {errors:?}");
 
-        let source_unit = ir::build(&source_unit, &source);
+        let mut id_generator = ir::NodeIdGenerator::default();
+        let source_unit = ir::build(&source_unit, &source, &mut id_generator);
+
         let member = source_unit.members.first().expect("no source unit members");
         match member {
             ir::SourceUnitMember::ConstantDefinition(definition) => definition

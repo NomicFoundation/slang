@@ -11,6 +11,7 @@ use slang_solidity_v2_cst::structured_cst::nodes as input;
 use crate::ir::nodes as output;
 
 pub trait Builder {
+    fn next_id(&mut self) -> output::NodeId;
     fn unparse_range(&self, range: std::ops::Range<usize>) -> String;
 
     //
@@ -18,15 +19,17 @@ pub trait Builder {
     //
 
     fn build_abicoder_pragma(&mut self, source: &input::AbicoderPragma) -> output::AbicoderPragma {
+        let id = self.next_id();
         let version = self.build_abicoder_version(&source.version);
 
-        Rc::new(output::AbicoderPragmaStruct { version })
+        Rc::new(output::AbicoderPragmaStruct { id, version })
     }
 
     fn build_additive_expression(
         &mut self,
         source: &input::AdditiveExpression,
     ) -> output::AdditiveExpression {
+        let id = self.next_id();
         let left_operand = self.build_expression(&source.left_operand);
         let expression_additive_expression_operator = self
             .build_expression_additive_expression_operator(
@@ -35,6 +38,7 @@ pub trait Builder {
         let right_operand = self.build_expression(&source.right_operand);
 
         Rc::new(output::AdditiveExpressionStruct {
+            id,
             left_operand,
             expression_additive_expression_operator,
             right_operand,
@@ -42,16 +46,22 @@ pub trait Builder {
     }
 
     fn build_address_type(&mut self, source: &input::AddressType) -> output::AddressType {
+        let id = self.next_id();
         let payable_keyword = source.payable_keyword.is_some();
 
-        Rc::new(output::AddressTypeStruct { payable_keyword })
+        Rc::new(output::AddressTypeStruct {
+            id,
+            payable_keyword,
+        })
     }
 
     fn build_and_expression(&mut self, source: &input::AndExpression) -> output::AndExpression {
+        let id = self.next_id();
         let left_operand = self.build_expression(&source.left_operand);
         let right_operand = self.build_expression(&source.right_operand);
 
         Rc::new(output::AndExpressionStruct {
+            id,
             left_operand,
             right_operand,
         })
@@ -61,25 +71,28 @@ pub trait Builder {
         &mut self,
         source: &input::ArrayExpression,
     ) -> output::ArrayExpression {
+        let id = self.next_id();
         let items = self.build_array_values(&source.items);
 
-        Rc::new(output::ArrayExpressionStruct { items })
+        Rc::new(output::ArrayExpressionStruct { id, items })
     }
 
     fn build_array_type_name(&mut self, source: &input::ArrayTypeName) -> output::ArrayTypeName {
+        let id = self.next_id();
         let operand = self.build_type_name(&source.operand);
         let index = source
             .index
             .as_ref()
             .map(|value| self.build_expression(value));
 
-        Rc::new(output::ArrayTypeNameStruct { operand, index })
+        Rc::new(output::ArrayTypeNameStruct { id, operand, index })
     }
 
     fn build_assembly_statement(
         &mut self,
         source: &input::AssemblyStatement,
     ) -> output::AssemblyStatement {
+        let id = self.next_id();
         let label = source
             .label
             .as_ref()
@@ -90,13 +103,19 @@ pub trait Builder {
             .map(|value| self.build_yul_flags_declaration(value));
         let body = self.build_yul_block(&source.body);
 
-        Rc::new(output::AssemblyStatementStruct { label, flags, body })
+        Rc::new(output::AssemblyStatementStruct {
+            id,
+            label,
+            flags,
+            body,
+        })
     }
 
     fn build_assignment_expression(
         &mut self,
         source: &input::AssignmentExpression,
     ) -> output::AssignmentExpression {
+        let id = self.next_id();
         let left_operand = self.build_expression(&source.left_operand);
         let expression_assignment_expression_operator = self
             .build_expression_assignment_expression_operator(
@@ -105,6 +124,7 @@ pub trait Builder {
         let right_operand = self.build_expression(&source.right_operand);
 
         Rc::new(output::AssignmentExpressionStruct {
+            id,
             left_operand,
             expression_assignment_expression_operator,
             right_operand,
@@ -115,10 +135,12 @@ pub trait Builder {
         &mut self,
         source: &input::BitwiseAndExpression,
     ) -> output::BitwiseAndExpression {
+        let id = self.next_id();
         let left_operand = self.build_expression(&source.left_operand);
         let right_operand = self.build_expression(&source.right_operand);
 
         Rc::new(output::BitwiseAndExpressionStruct {
+            id,
             left_operand,
             right_operand,
         })
@@ -128,10 +150,12 @@ pub trait Builder {
         &mut self,
         source: &input::BitwiseOrExpression,
     ) -> output::BitwiseOrExpression {
+        let id = self.next_id();
         let left_operand = self.build_expression(&source.left_operand);
         let right_operand = self.build_expression(&source.right_operand);
 
         Rc::new(output::BitwiseOrExpressionStruct {
+            id,
             left_operand,
             right_operand,
         })
@@ -141,67 +165,85 @@ pub trait Builder {
         &mut self,
         source: &input::BitwiseXorExpression,
     ) -> output::BitwiseXorExpression {
+        let id = self.next_id();
         let left_operand = self.build_expression(&source.left_operand);
         let right_operand = self.build_expression(&source.right_operand);
 
         Rc::new(output::BitwiseXorExpressionStruct {
+            id,
             left_operand,
             right_operand,
         })
     }
 
     fn build_block(&mut self, source: &input::Block) -> output::Block {
+        let id = self.next_id();
         let statements = self.build_statements(&source.statements);
 
-        Rc::new(output::BlockStruct { statements })
+        Rc::new(output::BlockStruct { id, statements })
     }
 
     fn build_break_statement(&mut self, source: &input::BreakStatement) -> output::BreakStatement {
-        Rc::new(output::BreakStatementStruct {})
+        let id = self.next_id();
+
+        Rc::new(output::BreakStatementStruct { id })
     }
 
     fn build_call_options_expression(
         &mut self,
         source: &input::CallOptionsExpression,
     ) -> output::CallOptionsExpression {
+        let id = self.next_id();
         let operand = self.build_expression(&source.operand);
         let options = self.build_call_options(&source.options);
 
-        Rc::new(output::CallOptionsExpressionStruct { operand, options })
+        Rc::new(output::CallOptionsExpressionStruct {
+            id,
+            operand,
+            options,
+        })
     }
 
     fn build_catch_clause(&mut self, source: &input::CatchClause) -> output::CatchClause {
+        let id = self.next_id();
         let error = source
             .error
             .as_ref()
             .map(|value| self.build_catch_clause_error(value));
         let body = self.build_block(&source.body);
 
-        Rc::new(output::CatchClauseStruct { error, body })
+        Rc::new(output::CatchClauseStruct { id, error, body })
     }
 
     fn build_catch_clause_error(
         &mut self,
         source: &input::CatchClauseError,
     ) -> output::CatchClauseError {
+        let id = self.next_id();
         let name = source
             .name
             .as_ref()
             .map(|value| self.build_identifier(value));
         let parameters = self.build_parameters_declaration(&source.parameters);
 
-        Rc::new(output::CatchClauseErrorStruct { name, parameters })
+        Rc::new(output::CatchClauseErrorStruct {
+            id,
+            name,
+            parameters,
+        })
     }
 
     fn build_conditional_expression(
         &mut self,
         source: &input::ConditionalExpression,
     ) -> output::ConditionalExpression {
+        let id = self.next_id();
         let operand = self.build_expression(&source.operand);
         let true_expression = self.build_expression(&source.true_expression);
         let false_expression = self.build_expression(&source.false_expression);
 
         Rc::new(output::ConditionalExpressionStruct {
+            id,
             operand,
             true_expression,
             false_expression,
@@ -217,7 +259,9 @@ pub trait Builder {
         &mut self,
         source: &input::ContinueStatement,
     ) -> output::ContinueStatement {
-        Rc::new(output::ContinueStatementStruct {})
+        let id = self.next_id();
+
+        Rc::new(output::ContinueStatementStruct { id })
     }
 
     fn build_contract_definition(
@@ -229,43 +273,56 @@ pub trait Builder {
         &mut self,
         source: &input::DecimalNumberExpression,
     ) -> output::DecimalNumberExpression {
+        let id = self.next_id();
         let literal = self.build_decimal_literal(&source.literal);
         let unit = source
             .unit
             .as_ref()
             .map(|value| self.build_number_unit(value));
 
-        Rc::new(output::DecimalNumberExpressionStruct { literal, unit })
+        Rc::new(output::DecimalNumberExpressionStruct { id, literal, unit })
     }
 
     fn build_do_while_statement(
         &mut self,
         source: &input::DoWhileStatement,
     ) -> output::DoWhileStatement {
+        let id = self.next_id();
         let body = self.build_statement(&source.body);
         let condition = self.build_expression(&source.condition);
 
-        Rc::new(output::DoWhileStatementStruct { body, condition })
+        Rc::new(output::DoWhileStatementStruct {
+            id,
+            body,
+            condition,
+        })
     }
 
     fn build_emit_statement(&mut self, source: &input::EmitStatement) -> output::EmitStatement {
+        let id = self.next_id();
         let event = self.build_identifier_path(&source.event);
         let arguments = self.build_arguments_declaration(&source.arguments);
 
-        Rc::new(output::EmitStatementStruct { event, arguments })
+        Rc::new(output::EmitStatementStruct {
+            id,
+            event,
+            arguments,
+        })
     }
 
     fn build_enum_definition(&mut self, source: &input::EnumDefinition) -> output::EnumDefinition {
+        let id = self.next_id();
         let name = self.build_identifier(&source.name);
         let members = self.build_enum_members(&source.members);
 
-        Rc::new(output::EnumDefinitionStruct { name, members })
+        Rc::new(output::EnumDefinitionStruct { id, name, members })
     }
 
     fn build_equality_expression(
         &mut self,
         source: &input::EqualityExpression,
     ) -> output::EqualityExpression {
+        let id = self.next_id();
         let left_operand = self.build_expression(&source.left_operand);
         let expression_equality_expression_operator = self
             .build_expression_equality_expression_operator(
@@ -274,6 +331,7 @@ pub trait Builder {
         let right_operand = self.build_expression(&source.right_operand);
 
         Rc::new(output::EqualityExpressionStruct {
+            id,
             left_operand,
             expression_equality_expression_operator,
             right_operand,
@@ -294,19 +352,22 @@ pub trait Builder {
         &mut self,
         source: &input::ExperimentalPragma,
     ) -> output::ExperimentalPragma {
+        let id = self.next_id();
         let feature = self.build_experimental_feature(&source.feature);
 
-        Rc::new(output::ExperimentalPragmaStruct { feature })
+        Rc::new(output::ExperimentalPragmaStruct { id, feature })
     }
 
     fn build_exponentiation_expression(
         &mut self,
         source: &input::ExponentiationExpression,
     ) -> output::ExponentiationExpression {
+        let id = self.next_id();
         let left_operand = self.build_expression(&source.left_operand);
         let right_operand = self.build_expression(&source.right_operand);
 
         Rc::new(output::ExponentiationExpressionStruct {
+            id,
             left_operand,
             right_operand,
         })
@@ -316,12 +377,14 @@ pub trait Builder {
         &mut self,
         source: &input::ExpressionStatement,
     ) -> output::ExpressionStatement {
+        let id = self.next_id();
         let expression = self.build_expression(&source.expression);
 
-        Rc::new(output::ExpressionStatementStruct { expression })
+        Rc::new(output::ExpressionStatementStruct { id, expression })
     }
 
     fn build_for_statement(&mut self, source: &input::ForStatement) -> output::ForStatement {
+        let id = self.next_id();
         let initialization = self.build_for_statement_initialization(&source.initialization);
         let condition = self.build_for_statement_condition(&source.condition);
         let iterator = source
@@ -331,6 +394,7 @@ pub trait Builder {
         let body = self.build_statement(&source.body);
 
         Rc::new(output::ForStatementStruct {
+            id,
             initialization,
             condition,
             iterator,
@@ -342,10 +406,15 @@ pub trait Builder {
         &mut self,
         source: &input::FunctionCallExpression,
     ) -> output::FunctionCallExpression {
+        let id = self.next_id();
         let operand = self.build_expression(&source.operand);
         let arguments = self.build_arguments_declaration(&source.arguments);
 
-        Rc::new(output::FunctionCallExpressionStruct { operand, arguments })
+        Rc::new(output::FunctionCallExpressionStruct {
+            id,
+            operand,
+            arguments,
+        })
     }
 
     fn build_function_definition(
@@ -359,12 +428,14 @@ pub trait Builder {
         &mut self,
         source: &input::HexNumberExpression,
     ) -> output::HexNumberExpression {
+        let id = self.next_id();
         let literal = self.build_hex_literal(&source.literal);
 
-        Rc::new(output::HexNumberExpressionStruct { literal })
+        Rc::new(output::HexNumberExpressionStruct { id, literal })
     }
 
     fn build_if_statement(&mut self, source: &input::IfStatement) -> output::IfStatement {
+        let id = self.next_id();
         let condition = self.build_expression(&source.condition);
         let body = self.build_statement(&source.body);
         let else_branch = source
@@ -373,6 +444,7 @@ pub trait Builder {
             .map(|value| self.build_else_branch(value));
 
         Rc::new(output::IfStatementStruct {
+            id,
             condition,
             body,
             else_branch,
@@ -383,23 +455,25 @@ pub trait Builder {
         &mut self,
         source: &input::ImportDeconstruction,
     ) -> output::ImportDeconstruction {
+        let id = self.next_id();
         let symbols = self.build_import_deconstruction_symbols(&source.symbols);
         let path = self.build_string_literal(&source.path);
 
-        Rc::new(output::ImportDeconstructionStruct { symbols, path })
+        Rc::new(output::ImportDeconstructionStruct { id, symbols, path })
     }
 
     fn build_import_deconstruction_symbol(
         &mut self,
         source: &input::ImportDeconstructionSymbol,
     ) -> output::ImportDeconstructionSymbol {
+        let id = self.next_id();
         let name = self.build_identifier(&source.name);
         let alias = source
             .alias
             .as_ref()
             .map(|value| self.build_import_alias(value));
 
-        Rc::new(output::ImportDeconstructionSymbolStruct { name, alias })
+        Rc::new(output::ImportDeconstructionSymbolStruct { id, name, alias })
     }
 
     fn build_index_access_expression(
@@ -411,6 +485,7 @@ pub trait Builder {
         &mut self,
         source: &input::InequalityExpression,
     ) -> output::InequalityExpression {
+        let id = self.next_id();
         let left_operand = self.build_expression(&source.left_operand);
         let expression_inequality_expression_operator = self
             .build_expression_inequality_expression_operator(
@@ -419,6 +494,7 @@ pub trait Builder {
         let right_operand = self.build_expression(&source.right_operand);
 
         Rc::new(output::InequalityExpressionStruct {
+            id,
             left_operand,
             expression_inequality_expression_operator,
             right_operand,
@@ -429,6 +505,7 @@ pub trait Builder {
         &mut self,
         source: &input::InheritanceType,
     ) -> output::InheritanceType {
+        let id = self.next_id();
         let type_name = self.build_identifier_path(&source.type_name);
         let arguments = source
             .arguments
@@ -436,6 +513,7 @@ pub trait Builder {
             .map(|value| self.build_arguments_declaration(value));
 
         Rc::new(output::InheritanceTypeStruct {
+            id,
             type_name,
             arguments,
         })
@@ -445,6 +523,7 @@ pub trait Builder {
         &mut self,
         source: &input::InterfaceDefinition,
     ) -> output::InterfaceDefinition {
+        let id = self.next_id();
         let name = self.build_identifier(&source.name);
         let inheritance = source
             .inheritance
@@ -453,6 +532,7 @@ pub trait Builder {
         let members = self.build_interface_members(&source.members);
 
         Rc::new(output::InterfaceDefinitionStruct {
+            id,
             name,
             inheritance,
             members,
@@ -463,10 +543,11 @@ pub trait Builder {
         &mut self,
         source: &input::LibraryDefinition,
     ) -> output::LibraryDefinition {
+        let id = self.next_id();
         let name = self.build_identifier(&source.name);
         let members = self.build_library_members(&source.members);
 
-        Rc::new(output::LibraryDefinitionStruct { name, members })
+        Rc::new(output::LibraryDefinitionStruct { id, name, members })
     }
 
     fn build_mapping_type(&mut self, source: &input::MappingType) -> output::MappingType;
@@ -475,51 +556,68 @@ pub trait Builder {
         &mut self,
         source: &input::MemberAccessExpression,
     ) -> output::MemberAccessExpression {
+        let id = self.next_id();
         let operand = self.build_expression(&source.operand);
         let member = self.build_identifier_path_element(&source.member);
 
-        Rc::new(output::MemberAccessExpressionStruct { operand, member })
+        Rc::new(output::MemberAccessExpressionStruct {
+            id,
+            operand,
+            member,
+        })
     }
 
     fn build_modifier_invocation(
         &mut self,
         source: &input::ModifierInvocation,
     ) -> output::ModifierInvocation {
+        let id = self.next_id();
         let name = self.build_identifier_path(&source.name);
         let arguments = source
             .arguments
             .as_ref()
             .map(|value| self.build_arguments_declaration(value));
 
-        Rc::new(output::ModifierInvocationStruct { name, arguments })
+        Rc::new(output::ModifierInvocationStruct {
+            id,
+            name,
+            arguments,
+        })
     }
 
     fn build_multi_typed_declaration(
         &mut self,
         source: &input::MultiTypedDeclaration,
     ) -> output::MultiTypedDeclaration {
+        let id = self.next_id();
         let elements = self.build_multi_typed_declaration_elements(&source.elements);
         let value = self.build_variable_declaration_value(&source.value);
 
-        Rc::new(output::MultiTypedDeclarationStruct { elements, value })
+        Rc::new(output::MultiTypedDeclarationStruct {
+            id,
+            elements,
+            value,
+        })
     }
 
     fn build_multi_typed_declaration_element(
         &mut self,
         source: &input::MultiTypedDeclarationElement,
     ) -> output::MultiTypedDeclarationElement {
+        let id = self.next_id();
         let member = source
             .member
             .as_ref()
             .map(|value| self.build_variable_declaration(value));
 
-        Rc::new(output::MultiTypedDeclarationElementStruct { member })
+        Rc::new(output::MultiTypedDeclarationElementStruct { id, member })
     }
 
     fn build_multiplicative_expression(
         &mut self,
         source: &input::MultiplicativeExpression,
     ) -> output::MultiplicativeExpression {
+        let id = self.next_id();
         let left_operand = self.build_expression(&source.left_operand);
         let expression_multiplicative_expression_operator = self
             .build_expression_multiplicative_expression_operator(
@@ -528,6 +626,7 @@ pub trait Builder {
         let right_operand = self.build_expression(&source.right_operand);
 
         Rc::new(output::MultiplicativeExpressionStruct {
+            id,
             left_operand,
             expression_multiplicative_expression_operator,
             right_operand,
@@ -535,23 +634,27 @@ pub trait Builder {
     }
 
     fn build_named_argument(&mut self, source: &input::NamedArgument) -> output::NamedArgument {
+        let id = self.next_id();
         let name = self.build_identifier(&source.name);
         let value = self.build_expression(&source.value);
 
-        Rc::new(output::NamedArgumentStruct { name, value })
+        Rc::new(output::NamedArgumentStruct { id, name, value })
     }
 
     fn build_new_expression(&mut self, source: &input::NewExpression) -> output::NewExpression {
+        let id = self.next_id();
         let type_name = self.build_type_name(&source.type_name);
 
-        Rc::new(output::NewExpressionStruct { type_name })
+        Rc::new(output::NewExpressionStruct { id, type_name })
     }
 
     fn build_or_expression(&mut self, source: &input::OrExpression) -> output::OrExpression {
+        let id = self.next_id();
         let left_operand = self.build_expression(&source.left_operand);
         let right_operand = self.build_expression(&source.right_operand);
 
         Rc::new(output::OrExpressionStruct {
+            id,
             left_operand,
             right_operand,
         })
@@ -560,19 +663,21 @@ pub trait Builder {
     fn build_parameter(&mut self, source: &input::Parameter) -> output::Parameter;
 
     fn build_path_import(&mut self, source: &input::PathImport) -> output::PathImport {
+        let id = self.next_id();
         let path = self.build_string_literal(&source.path);
         let alias = source
             .alias
             .as_ref()
             .map(|value| self.build_import_alias(value));
 
-        Rc::new(output::PathImportStruct { path, alias })
+        Rc::new(output::PathImportStruct { id, path, alias })
     }
 
     fn build_postfix_expression(
         &mut self,
         source: &input::PostfixExpression,
     ) -> output::PostfixExpression {
+        let id = self.next_id();
         let operand = self.build_expression(&source.operand);
         let expression_postfix_expression_operator = self
             .build_expression_postfix_expression_operator(
@@ -580,6 +685,7 @@ pub trait Builder {
             );
 
         Rc::new(output::PostfixExpressionStruct {
+            id,
             operand,
             expression_postfix_expression_operator,
         })
@@ -589,15 +695,17 @@ pub trait Builder {
         &mut self,
         source: &input::PragmaDirective,
     ) -> output::PragmaDirective {
+        let id = self.next_id();
         let pragma = self.build_pragma(&source.pragma);
 
-        Rc::new(output::PragmaDirectiveStruct { pragma })
+        Rc::new(output::PragmaDirectiveStruct { id, pragma })
     }
 
     fn build_prefix_expression(
         &mut self,
         source: &input::PrefixExpression,
     ) -> output::PrefixExpression {
+        let id = self.next_id();
         let expression_prefix_expression_operator = self
             .build_expression_prefix_expression_operator(
                 &source.expression_prefix_expression_operator,
@@ -605,6 +713,7 @@ pub trait Builder {
         let operand = self.build_expression(&source.operand);
 
         Rc::new(output::PrefixExpressionStruct {
+            id,
             expression_prefix_expression_operator,
             operand,
         })
@@ -614,28 +723,35 @@ pub trait Builder {
         &mut self,
         source: &input::ReturnStatement,
     ) -> output::ReturnStatement {
+        let id = self.next_id();
         let expression = source
             .expression
             .as_ref()
             .map(|value| self.build_expression(value));
 
-        Rc::new(output::ReturnStatementStruct { expression })
+        Rc::new(output::ReturnStatementStruct { id, expression })
     }
 
     fn build_revert_statement(
         &mut self,
         source: &input::RevertStatement,
     ) -> output::RevertStatement {
+        let id = self.next_id();
         let error = self.build_identifier_path(&source.error);
         let arguments = self.build_arguments_declaration(&source.arguments);
 
-        Rc::new(output::RevertStatementStruct { error, arguments })
+        Rc::new(output::RevertStatementStruct {
+            id,
+            error,
+            arguments,
+        })
     }
 
     fn build_shift_expression(
         &mut self,
         source: &input::ShiftExpression,
     ) -> output::ShiftExpression {
+        let id = self.next_id();
         let left_operand = self.build_expression(&source.left_operand);
         let expression_shift_expression_operator = self.build_expression_shift_expression_operator(
             &source.expression_shift_expression_operator,
@@ -643,6 +759,7 @@ pub trait Builder {
         let right_operand = self.build_expression(&source.right_operand);
 
         Rc::new(output::ShiftExpressionStruct {
+            id,
             left_operand,
             expression_shift_expression_operator,
             right_operand,
@@ -653,19 +770,25 @@ pub trait Builder {
         &mut self,
         source: &input::SingleTypedDeclaration,
     ) -> output::SingleTypedDeclaration {
+        let id = self.next_id();
         let declaration = self.build_variable_declaration(&source.declaration);
         let value = source
             .value
             .as_ref()
             .map(|value| self.build_variable_declaration_value(value));
 
-        Rc::new(output::SingleTypedDeclarationStruct { declaration, value })
+        Rc::new(output::SingleTypedDeclarationStruct {
+            id,
+            declaration,
+            value,
+        })
     }
 
     fn build_source_unit(&mut self, source: &input::SourceUnit) -> output::SourceUnit {
+        let id = self.next_id();
         let members = self.build_source_unit_members(&source.members);
 
-        Rc::new(output::SourceUnitStruct { members })
+        Rc::new(output::SourceUnitStruct { id, members })
     }
 
     fn build_state_variable_definition(
@@ -677,20 +800,27 @@ pub trait Builder {
         &mut self,
         source: &input::StructDefinition,
     ) -> output::StructDefinition {
+        let id = self.next_id();
         let name = self.build_identifier(&source.name);
         let members = self.build_struct_members(&source.members);
 
-        Rc::new(output::StructDefinitionStruct { name, members })
+        Rc::new(output::StructDefinitionStruct { id, name, members })
     }
 
     fn build_struct_member(&mut self, source: &input::StructMember) -> output::StructMember {
+        let id = self.next_id();
         let type_name = self.build_type_name(&source.type_name);
         let name = self.build_identifier(&source.name);
 
-        Rc::new(output::StructMemberStruct { type_name, name })
+        Rc::new(output::StructMemberStruct {
+            id,
+            type_name,
+            name,
+        })
     }
 
     fn build_try_statement(&mut self, source: &input::TryStatement) -> output::TryStatement {
+        let id = self.next_id();
         let expression = self.build_expression(&source.expression);
         let returns = source
             .returns
@@ -700,6 +830,7 @@ pub trait Builder {
         let catch_clauses = self.build_catch_clauses(&source.catch_clauses);
 
         Rc::new(output::TryStatementStruct {
+            id,
             expression,
             returns,
             body,
@@ -711,70 +842,83 @@ pub trait Builder {
         &mut self,
         source: &input::TupleExpression,
     ) -> output::TupleExpression {
+        let id = self.next_id();
         let items = self.build_tuple_values(&source.items);
 
-        Rc::new(output::TupleExpressionStruct { items })
+        Rc::new(output::TupleExpressionStruct { id, items })
     }
 
     fn build_tuple_value(&mut self, source: &input::TupleValue) -> output::TupleValue {
+        let id = self.next_id();
         let expression = source
             .expression
             .as_ref()
             .map(|value| self.build_expression(value));
 
-        Rc::new(output::TupleValueStruct { expression })
+        Rc::new(output::TupleValueStruct { id, expression })
     }
 
     fn build_type_expression(&mut self, source: &input::TypeExpression) -> output::TypeExpression {
+        let id = self.next_id();
         let type_name = self.build_type_name(&source.type_name);
 
-        Rc::new(output::TypeExpressionStruct { type_name })
+        Rc::new(output::TypeExpressionStruct { id, type_name })
     }
 
     fn build_unchecked_block(&mut self, source: &input::UncheckedBlock) -> output::UncheckedBlock {
+        let id = self.next_id();
         let block = self.build_block(&source.block);
 
-        Rc::new(output::UncheckedBlockStruct { block })
+        Rc::new(output::UncheckedBlockStruct { id, block })
     }
 
     fn build_user_defined_value_type_definition(
         &mut self,
         source: &input::UserDefinedValueTypeDefinition,
     ) -> output::UserDefinedValueTypeDefinition {
+        let id = self.next_id();
         let name = self.build_identifier(&source.name);
         let value_type = self.build_elementary_type(&source.value_type);
 
-        Rc::new(output::UserDefinedValueTypeDefinitionStruct { name, value_type })
+        Rc::new(output::UserDefinedValueTypeDefinitionStruct {
+            id,
+            name,
+            value_type,
+        })
     }
 
     fn build_using_deconstruction(
         &mut self,
         source: &input::UsingDeconstruction,
     ) -> output::UsingDeconstruction {
+        let id = self.next_id();
         let symbols = self.build_using_deconstruction_symbols(&source.symbols);
 
-        Rc::new(output::UsingDeconstructionStruct { symbols })
+        Rc::new(output::UsingDeconstructionStruct { id, symbols })
     }
 
     fn build_using_deconstruction_symbol(
         &mut self,
         source: &input::UsingDeconstructionSymbol,
     ) -> output::UsingDeconstructionSymbol {
+        let id = self.next_id();
         let name = self.build_identifier_path(&source.name);
         let alias = source
             .alias
             .as_ref()
             .map(|value| self.build_using_alias(value));
 
-        Rc::new(output::UsingDeconstructionSymbolStruct { name, alias })
+        Rc::new(output::UsingDeconstructionSymbolStruct { id, name, alias })
     }
 
     fn build_using_directive(&mut self, source: &input::UsingDirective) -> output::UsingDirective {
+        let id = self.next_id();
         let clause = self.build_using_clause(&source.clause);
         let target = self.build_using_target(&source.target);
         let global_keyword = source.global_keyword.is_some();
 
         Rc::new(output::UsingDirectiveStruct {
+            id,
             clause,
             target,
             global_keyword,
@@ -785,6 +929,7 @@ pub trait Builder {
         &mut self,
         source: &input::VariableDeclaration,
     ) -> output::VariableDeclaration {
+        let id = self.next_id();
         let type_name = self.build_type_name(&source.type_name);
         let storage_location = source
             .storage_location
@@ -793,6 +938,7 @@ pub trait Builder {
         let name = self.build_identifier(&source.name);
 
         Rc::new(output::VariableDeclarationStruct {
+            id,
             type_name,
             storage_location,
             name,
@@ -803,77 +949,98 @@ pub trait Builder {
         &mut self,
         source: &input::VariableDeclarationStatement,
     ) -> output::VariableDeclarationStatement {
+        let id = self.next_id();
         let target = self.build_variable_declaration_target(&source.target);
 
-        Rc::new(output::VariableDeclarationStatementStruct { target })
+        Rc::new(output::VariableDeclarationStatementStruct { id, target })
     }
 
     fn build_version_pragma(&mut self, source: &input::VersionPragma) -> output::VersionPragma {
+        let id = self.next_id();
         let sets = self.build_version_expression_sets(&source.sets);
 
-        Rc::new(output::VersionPragmaStruct { sets })
+        Rc::new(output::VersionPragmaStruct { id, sets })
     }
 
     fn build_version_range(&mut self, source: &input::VersionRange) -> output::VersionRange {
+        let id = self.next_id();
         let start = self.build_version_literal(&source.start);
         let end = self.build_version_literal(&source.end);
 
-        Rc::new(output::VersionRangeStruct { start, end })
+        Rc::new(output::VersionRangeStruct { id, start, end })
     }
 
     fn build_version_term(&mut self, source: &input::VersionTerm) -> output::VersionTerm {
+        let id = self.next_id();
         let operator = source
             .operator
             .as_ref()
             .map(|value| self.build_version_operator(value));
         let literal = self.build_version_literal(&source.literal);
 
-        Rc::new(output::VersionTermStruct { operator, literal })
+        Rc::new(output::VersionTermStruct {
+            id,
+            operator,
+            literal,
+        })
     }
 
     fn build_while_statement(&mut self, source: &input::WhileStatement) -> output::WhileStatement {
+        let id = self.next_id();
         let condition = self.build_expression(&source.condition);
         let body = self.build_statement(&source.body);
 
-        Rc::new(output::WhileStatementStruct { condition, body })
+        Rc::new(output::WhileStatementStruct {
+            id,
+            condition,
+            body,
+        })
     }
 
     fn build_yul_block(&mut self, source: &input::YulBlock) -> output::YulBlock {
+        let id = self.next_id();
         let statements = self.build_yul_statements(&source.statements);
 
-        Rc::new(output::YulBlockStruct { statements })
+        Rc::new(output::YulBlockStruct { id, statements })
     }
 
     fn build_yul_break_statement(
         &mut self,
         source: &input::YulBreakStatement,
     ) -> output::YulBreakStatement {
-        Rc::new(output::YulBreakStatementStruct {})
+        let id = self.next_id();
+
+        Rc::new(output::YulBreakStatementStruct { id })
     }
 
     fn build_yul_continue_statement(
         &mut self,
         source: &input::YulContinueStatement,
     ) -> output::YulContinueStatement {
-        Rc::new(output::YulContinueStatementStruct {})
+        let id = self.next_id();
+
+        Rc::new(output::YulContinueStatementStruct { id })
     }
 
     fn build_yul_default_case(&mut self, source: &input::YulDefaultCase) -> output::YulDefaultCase {
+        let id = self.next_id();
         let body = self.build_yul_block(&source.body);
 
-        Rc::new(output::YulDefaultCaseStruct { body })
+        Rc::new(output::YulDefaultCaseStruct { id, body })
     }
 
     fn build_yul_for_statement(
         &mut self,
         source: &input::YulForStatement,
     ) -> output::YulForStatement {
+        let id = self.next_id();
         let initialization = self.build_yul_block(&source.initialization);
         let condition = self.build_yul_expression(&source.condition);
         let iterator = self.build_yul_block(&source.iterator);
         let body = self.build_yul_block(&source.body);
 
         Rc::new(output::YulForStatementStruct {
+            id,
             initialization,
             condition,
             iterator,
@@ -885,16 +1052,22 @@ pub trait Builder {
         &mut self,
         source: &input::YulFunctionCallExpression,
     ) -> output::YulFunctionCallExpression {
+        let id = self.next_id();
         let operand = self.build_yul_expression(&source.operand);
         let arguments = self.build_yul_arguments(&source.arguments);
 
-        Rc::new(output::YulFunctionCallExpressionStruct { operand, arguments })
+        Rc::new(output::YulFunctionCallExpressionStruct {
+            id,
+            operand,
+            arguments,
+        })
     }
 
     fn build_yul_function_definition(
         &mut self,
         source: &input::YulFunctionDefinition,
     ) -> output::YulFunctionDefinition {
+        let id = self.next_id();
         let name = self.build_yul_identifier(&source.name);
         let parameters = self.build_yul_parameters_declaration(&source.parameters);
         let returns = source
@@ -904,6 +1077,7 @@ pub trait Builder {
         let body = self.build_yul_block(&source.body);
 
         Rc::new(output::YulFunctionDefinitionStruct {
+            id,
             name,
             parameters,
             returns,
@@ -912,44 +1086,59 @@ pub trait Builder {
     }
 
     fn build_yul_if_statement(&mut self, source: &input::YulIfStatement) -> output::YulIfStatement {
+        let id = self.next_id();
         let condition = self.build_yul_expression(&source.condition);
         let body = self.build_yul_block(&source.body);
 
-        Rc::new(output::YulIfStatementStruct { condition, body })
+        Rc::new(output::YulIfStatementStruct {
+            id,
+            condition,
+            body,
+        })
     }
 
     fn build_yul_leave_statement(
         &mut self,
         source: &input::YulLeaveStatement,
     ) -> output::YulLeaveStatement {
-        Rc::new(output::YulLeaveStatementStruct {})
+        let id = self.next_id();
+
+        Rc::new(output::YulLeaveStatementStruct { id })
     }
 
     fn build_yul_switch_statement(
         &mut self,
         source: &input::YulSwitchStatement,
     ) -> output::YulSwitchStatement {
+        let id = self.next_id();
         let expression = self.build_yul_expression(&source.expression);
         let cases = self.build_yul_switch_cases(&source.cases);
 
-        Rc::new(output::YulSwitchStatementStruct { expression, cases })
+        Rc::new(output::YulSwitchStatementStruct {
+            id,
+            expression,
+            cases,
+        })
     }
 
     fn build_yul_value_case(&mut self, source: &input::YulValueCase) -> output::YulValueCase {
+        let id = self.next_id();
         let value = self.build_yul_literal(&source.value);
         let body = self.build_yul_block(&source.body);
 
-        Rc::new(output::YulValueCaseStruct { value, body })
+        Rc::new(output::YulValueCaseStruct { id, value, body })
     }
 
     fn build_yul_variable_assignment_statement(
         &mut self,
         source: &input::YulVariableAssignmentStatement,
     ) -> output::YulVariableAssignmentStatement {
+        let id = self.next_id();
         let variables = self.build_yul_paths(&source.variables);
         let expression = self.build_yul_expression(&source.expression);
 
         Rc::new(output::YulVariableAssignmentStatementStruct {
+            id,
             variables,
             expression,
         })
@@ -959,22 +1148,28 @@ pub trait Builder {
         &mut self,
         source: &input::YulVariableDeclarationStatement,
     ) -> output::YulVariableDeclarationStatement {
+        let id = self.next_id();
         let variables = self.build_yul_variable_names(&source.variables);
         let value = source
             .value
             .as_ref()
             .map(|value| self.build_yul_variable_declaration_value(value));
 
-        Rc::new(output::YulVariableDeclarationStatementStruct { variables, value })
+        Rc::new(output::YulVariableDeclarationStatementStruct {
+            id,
+            variables,
+            value,
+        })
     }
 
     fn build_yul_variable_declaration_value(
         &mut self,
         source: &input::YulVariableDeclarationValue,
     ) -> output::YulVariableDeclarationValue {
+        let id = self.next_id();
         let expression = self.build_yul_expression(&source.expression);
 
-        Rc::new(output::YulVariableDeclarationValueStruct { expression })
+        Rc::new(output::YulVariableDeclarationValueStruct { id, expression })
     }
 
     //
@@ -2227,6 +2422,7 @@ pub trait Builder {
             input::IdentifierPathElement::Identifier(terminal) => {
                 let text = self.unparse_range(terminal.range.clone());
                 Rc::new(output::IdentifierStruct {
+                    id: self.next_id(),
                     range: terminal.range.clone(),
                     text,
                 })
@@ -2234,6 +2430,7 @@ pub trait Builder {
             input::IdentifierPathElement::AddressKeyword(terminal) => {
                 let text = self.unparse_range(terminal.range.clone());
                 Rc::new(output::IdentifierStruct {
+                    id: self.next_id(),
                     range: terminal.range.clone(),
                     text,
                 })
@@ -2566,6 +2763,7 @@ pub trait Builder {
     fn build_bytes_keyword(&mut self, source: &input::BytesKeyword) -> output::BytesKeyword {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::BytesKeywordStruct {
+            id: self.next_id(),
             range: source.range.clone(),
             text,
         })
@@ -2574,6 +2772,7 @@ pub trait Builder {
     fn build_decimal_literal(&mut self, source: &input::DecimalLiteral) -> output::DecimalLiteral {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::DecimalLiteralStruct {
+            id: self.next_id(),
             range: source.range.clone(),
             text,
         })
@@ -2582,6 +2781,7 @@ pub trait Builder {
     fn build_fixed_keyword(&mut self, source: &input::FixedKeyword) -> output::FixedKeyword {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::FixedKeywordStruct {
+            id: self.next_id(),
             range: source.range.clone(),
             text,
         })
@@ -2590,6 +2790,7 @@ pub trait Builder {
     fn build_hex_literal(&mut self, source: &input::HexLiteral) -> output::HexLiteral {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::HexLiteralStruct {
+            id: self.next_id(),
             range: source.range.clone(),
             text,
         })
@@ -2601,6 +2802,7 @@ pub trait Builder {
     ) -> output::HexStringLiteral {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::HexStringLiteralStruct {
+            id: self.next_id(),
             range: source.range.clone(),
             text,
         })
@@ -2609,6 +2811,7 @@ pub trait Builder {
     fn build_identifier(&mut self, source: &input::Identifier) -> output::Identifier {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::IdentifierStruct {
+            id: self.next_id(),
             range: source.range.clone(),
             text,
         })
@@ -2617,6 +2820,7 @@ pub trait Builder {
     fn build_int_keyword(&mut self, source: &input::IntKeyword) -> output::IntKeyword {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::IntKeywordStruct {
+            id: self.next_id(),
             range: source.range.clone(),
             text,
         })
@@ -2625,6 +2829,7 @@ pub trait Builder {
     fn build_string_literal(&mut self, source: &input::StringLiteral) -> output::StringLiteral {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::StringLiteralStruct {
+            id: self.next_id(),
             range: source.range.clone(),
             text,
         })
@@ -2633,6 +2838,7 @@ pub trait Builder {
     fn build_ufixed_keyword(&mut self, source: &input::UfixedKeyword) -> output::UfixedKeyword {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::UfixedKeywordStruct {
+            id: self.next_id(),
             range: source.range.clone(),
             text,
         })
@@ -2641,6 +2847,7 @@ pub trait Builder {
     fn build_uint_keyword(&mut self, source: &input::UintKeyword) -> output::UintKeyword {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::UintKeywordStruct {
+            id: self.next_id(),
             range: source.range.clone(),
             text,
         })
@@ -2652,6 +2859,7 @@ pub trait Builder {
     ) -> output::UnicodeStringLiteral {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::UnicodeStringLiteralStruct {
+            id: self.next_id(),
             range: source.range.clone(),
             text,
         })
@@ -2663,6 +2871,7 @@ pub trait Builder {
     ) -> output::VersionSpecifier {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::VersionSpecifierStruct {
+            id: self.next_id(),
             range: source.range.clone(),
             text,
         })
@@ -2678,6 +2887,7 @@ pub trait Builder {
     ) -> output::StringLiteral {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::StringLiteralStruct {
+            id: self.next_id(),
             range: source.range.clone(),
             text,
         })
@@ -2689,6 +2899,7 @@ pub trait Builder {
     ) -> output::DecimalLiteral {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::DecimalLiteralStruct {
+            id: self.next_id(),
             range: source.range.clone(),
             text,
         })
@@ -2697,6 +2908,7 @@ pub trait Builder {
     fn build_yul_hex_literal(&mut self, source: &input::YulHexLiteral) -> output::HexLiteral {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::HexLiteralStruct {
+            id: self.next_id(),
             range: source.range.clone(),
             text,
         })
@@ -2708,6 +2920,7 @@ pub trait Builder {
     ) -> output::HexStringLiteral {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::HexStringLiteralStruct {
+            id: self.next_id(),
             range: source.range.clone(),
             text,
         })
@@ -2716,6 +2929,7 @@ pub trait Builder {
     fn build_yul_identifier(&mut self, source: &input::YulIdentifier) -> output::Identifier {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::IdentifierStruct {
+            id: self.next_id(),
             range: source.range.clone(),
             text,
         })
@@ -2727,6 +2941,7 @@ pub trait Builder {
     ) -> output::StringLiteral {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::StringLiteralStruct {
+            id: self.next_id(),
             range: source.range.clone(),
             text,
         })

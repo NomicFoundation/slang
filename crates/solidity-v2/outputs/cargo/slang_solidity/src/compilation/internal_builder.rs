@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 use std::rc::Rc;
 
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_ir::ir::{self, NodeId};
+use slang_solidity_v2_ir::ir::{self, NodeId, NodeIdGenerator};
 use slang_solidity_v2_parser::{ParseOutput, Parser, ParserError};
 use slang_solidity_v2_semantic::context::{extract_import_paths_from_source_unit, SemanticContext};
 
@@ -13,6 +13,7 @@ use super::unit::CompilationUnit;
 pub struct InternalCompilationBuilder {
     language_version: LanguageVersion,
     files: BTreeMap<String, File>,
+    id_generator: NodeIdGenerator,
 }
 
 impl InternalCompilationBuilder {
@@ -20,6 +21,7 @@ impl InternalCompilationBuilder {
         Self {
             language_version,
             files: BTreeMap::new(),
+            id_generator: NodeIdGenerator::default(),
         }
     }
 
@@ -40,7 +42,7 @@ impl InternalCompilationBuilder {
             errors,
         } = Parser::parse(contents, self.language_version);
 
-        let source_unit = ir::build(&source_unit, &contents);
+        let source_unit = ir::build(&source_unit, &contents, &mut self.id_generator);
         let import_paths = extract_import_paths_from_source_unit(&source_unit);
 
         let file = File::new(id.clone(), source_unit);

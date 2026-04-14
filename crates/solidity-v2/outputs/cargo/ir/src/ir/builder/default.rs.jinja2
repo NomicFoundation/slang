@@ -9,6 +9,7 @@ use crate::ir::nodes as output;
 use slang_solidity_v2_cst::structured_cst::nodes as input;
 
 pub trait Builder {
+  fn next_id(&mut self) -> output::NodeId;
   fn unparse_range(&self, range: std::ops::Range<usize>) -> String;
 
   //
@@ -18,7 +19,8 @@ pub trait Builder {
     fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }}
     {% if not sequence.has_added_fields %}
       {
-        {% for field in sequence.fields %}
+        let id = self.next_id();
+        {%- for field in sequence.fields %}
           let {{ field.label | snake_case }} =
           {%- if field.is_optional -%}
             {%- if field.type.kind == "UniqueTerminal" -%}
@@ -35,6 +37,7 @@ pub trait Builder {
         {%- endfor %}
 
         Rc::new(output::{{ parent_type }}Struct {
+          id,
           {%- for field in sequence.fields -%}
             {{ field.label | snake_case }},
           {%- endfor %}
@@ -106,6 +109,7 @@ pub trait Builder {
           input::{{ parent_type }}::{{ variant.source.name }}(terminal) => {
             let text = self.unparse_range(terminal.range.clone());
             Rc::new(output::{{ collapsed.target.name }}Struct {
+              id: self.next_id(),
               range: terminal.range.clone(),
               text,
             })
@@ -140,6 +144,7 @@ pub trait Builder {
       fn build_{{ terminal_type | snake_case }}(&mut self, source: &input::{{ terminal_type }}) -> output::{{ terminal_type }} {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::{{ terminal_type }}Struct {
+          id: self.next_id(),
           range: source.range.clone(),
           text,
         })
@@ -155,6 +160,7 @@ pub trait Builder {
       fn build_{{ source_type | snake_case }}(&mut self, source: &input::{{ source_type }}) -> output::{{ normalized.target }} {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::{{ normalized.target }}Struct {
+          id: self.next_id(),
           range: source.range.clone(),
           text,
         })

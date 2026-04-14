@@ -80,10 +80,10 @@ contract Counter is Ownable {
         source_unit,
         errors,
     } = Parser::parse(CONTENTS, LanguageVersion::V0_8_30);
-
     assert!(errors.is_empty(), "Parser errors: {errors:?}");
 
-    let source_unit = ir::build(&source_unit, &CONTENTS);
+    let mut id_generator = ir::NodeIdGenerator::default();
+    let source_unit = ir::build(&source_unit, &CONTENTS, &mut id_generator);
 
     let mut visitor = CounterVisitor::new(true);
     ir::visitor::accept_source_unit(&source_unit, &mut visitor);
