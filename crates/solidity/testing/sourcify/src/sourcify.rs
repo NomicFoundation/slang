@@ -147,7 +147,7 @@ impl ArchiveDescriptor {
         } else if name_prefix.ends_with("partial_match") {
             MatchType::Partial
         } else {
-            bail!("Invalid match type in archive path: {}", path_str);
+            bail!("Invalid match type in archive path: {path_str}");
         };
 
         let chain_id_part = parts.next().ok_or(Error::msg("Failed to get chain ID"))?;
