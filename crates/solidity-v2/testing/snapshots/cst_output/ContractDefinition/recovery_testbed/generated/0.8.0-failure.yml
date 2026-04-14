@@ -19,7 +19,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Unexpected WhileKeyword_Reserved. One of AtKeyword_Unreserved, CallDataKeyword_Reserved, CloseParen, Comma, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, LayoutKeyword_Unreserved, MemoryKeyword_Reserved, OpenBracket, PayableKeyword_Reserved, RevertKeyword_Unreserved, StorageKeyword_Reserved, TransientKeyword_Unreserved was expected
+    Error: Unexpected WhileKeyword. One of AtKeyword, CallDataKeyword, CloseParen, Comma, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, MemoryKeyword, OpenBracket, PayableKeyword, RevertKeyword, StorageKeyword, TransientKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/ContractDefinition/recovery_testbed/input.sol:3:29]
        │
      3 │     function _transfer(address while) private {

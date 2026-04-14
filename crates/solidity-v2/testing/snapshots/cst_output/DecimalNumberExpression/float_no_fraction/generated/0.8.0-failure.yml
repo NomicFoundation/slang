@@ -12,7 +12,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Unexpected Semicolon. One of AddressKeyword_Reserved, AtKeyword_Unreserved, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, LayoutKeyword_Unreserved, RevertKeyword_Unreserved, TransientKeyword_Unreserved was expected
+    Error: Unexpected Semicolon. One of AddressKeyword, AtKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, LayoutKeyword, RevertKeyword, TransientKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/DecimalNumberExpression/float_no_fraction/input.sol:6:1]
        │
      6 │ ;

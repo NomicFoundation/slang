@@ -1,0 +1,13 @@
+{%- set model = model.structured_cst_model -%}
+
+use strum::Display;
+
+#[derive(Clone, Copy, Debug, Display, Eq, Hash, PartialEq, PartialOrd, Ord)]
+pub enum TerminalKind {
+    #[allow(clippy::upper_case_acronyms)]
+    UNRECOGNIZED,
+
+    {% for terminal in model.terminals -%}
+        {{ terminal }},
+    {% endfor %}
+}

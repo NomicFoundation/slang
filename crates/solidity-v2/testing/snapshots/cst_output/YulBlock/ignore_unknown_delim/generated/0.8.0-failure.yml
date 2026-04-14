@@ -18,7 +18,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Unexpected UNRECOGNIZED. One of YulDecimalLiteral, YulFalseKeyword_Reserved, YulHexLiteral, YulHexStringLiteral, YulIdentifier, YulStringLiteral, YulTrueKeyword_Reserved was expected
+    Error: Unexpected UNRECOGNIZED. One of YulDecimalLiteral, YulFalseKeyword, YulHexLiteral, YulHexStringLiteral, YulIdentifier, YulStringLiteral, YulTrueKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/YulBlock/ignore_unknown_delim/input.sol:8:13]
        │
      8 │        result := [mul(a, b)

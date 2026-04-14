@@ -53,15 +53,15 @@ impl Diagnostic for ParserError {
                 )
             }
             ParserError::UnexpectedTerminal {
-                terminal, expected, ..
+                found, expected, ..
             } => {
                 format!(
-                    "Unexpected {terminal}. One of {expected_list} was expected",
+                    "Unexpected {found}. One of {expected_list} was expected",
                     expected_list = expected.iter().map(|e| format!("{e}")).join(", ")
                 )
             }
-            ParserError::ExtraTerminal { terminal, .. } => {
-                format!("Unexpected {terminal}. End of file was expected")
+            ParserError::ExtraTerminal { found, .. } => {
+                format!("Unexpected {found}. End of file was expected")
             }
         }
     }
