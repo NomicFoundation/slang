@@ -57,7 +57,6 @@ Changed from a `Separated` list of `Identifier`, to a list of `IdentifierPathEle
 Major restructuring to consolidate `TupleDeconstructionStatement` and `VariableDeclarationStatement` into a single unified type with three variants.
 
 - **Before (V1)**: Two separate statement types:
-
     - `VariableDeclarationStatement`: `variable_type`, `storage_location?`, `name`, `value?`, `semicolon`
     - `TupleDeconstructionStatement`: `var_keyword?`, `open_paren`, `elements`, `close_paren`, `equal`, `expression`, `semicolon`
 

@@ -26,7 +26,7 @@ catalog:
   "markdown-link-check": "^3.14.2"
   "markdownlint-cli": "^0.48.0"
   "prettier-plugin-sh": "^0.18.1"
-  "prettier": "^3.5.3"
+  "prettier": "^3.8.1"
   "solc": "^0.8.34"
   "ts-jest-resolver": "^2.0.1"
   "ts-jest": "^29.4.9"

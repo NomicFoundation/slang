@@ -15,6 +15,13 @@
       }
     },
     {
+      "__comment__": "Disable line-length reformatting for generated YAML snapshots",
+      "files": "**/cst_output/**/generated/*.yml",
+      "options": {
+        "printWidth": 9999
+      }
+    },
+    {
       "__comment__": "Workaround for: https://github.com/un-ts/prettier/issues/441#issuecomment-2820914126",
       "files": "**/Dockerfile",
       "options": {
