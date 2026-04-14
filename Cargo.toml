@@ -125,7 +125,7 @@ solidity_v2_cargo_tests = { path = "crates/solidity-v2/outputs/cargo/tests", ver
 #
 # External
 #
-anyhow = { version = "1.0.97", features = ["backtrace", "std"] }
+anyhow = { version = "1.0.102", features = ["backtrace", "std"] }
 ariadne = { version = "0.2.0" }
 # https://github.com/bencherdev/bencher/releases/tag/v0.6.1
 bencher_cli = { git = "https://github.com/bencherdev/bencher", rev = "595a6d60abd1c71b1dfb7bbdd52be7bc63b0f8c3"}

@@ -174,7 +174,7 @@ impl CompilationBuilderConfig for &SolidityProject {
         self.sources
             .get(file_id)
             .map(|s| Some(s.to_owned()))
-            .ok_or(anyhow!("Can't find {}", file_id))
+            .ok_or(anyhow!("Can't find {file_id}"))
     }
 
     /// Resolves an import of a solidity file.
@@ -197,13 +197,7 @@ impl CompilationBuilderConfig for &SolidityProject {
 
         self.import_resolver
             .resolve_import(source_file_id, import_path)
-            .ok_or_else(|| {
-                anyhow!(
-                    "Can't resolve import '{}' from '{}'",
-                    import_path,
-                    source_file_id
-                )
-            })
+            .ok_or_else(|| anyhow!("Can't resolve import '{import_path}' from '{source_file_id}'"))
             .map(Some)
     }
 }
