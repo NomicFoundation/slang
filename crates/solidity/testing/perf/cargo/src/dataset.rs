@@ -197,9 +197,7 @@ impl CompilationBuilderConfig for &SolidityProject {
 
         self.import_resolver
             .resolve_import(source_file_id, import_path)
-            .ok_or_else(|| {
-                anyhow!("Can't resolve import '{import_path}' from '{source_file_id}'")
-            })
+            .ok_or_else(|| anyhow!("Can't resolve import '{import_path}' from '{source_file_id}'"))
             .map(Some)
     }
 }
