@@ -495,15 +495,16 @@ impl TypeRegistry {
         {
             return false;
         }
-        if ftype.parameter_types == other.parameter_types {
-            return true;
-        }
-        // TODO(validation): check that return parameters match
 
-        // If the `other` function is external, allow changing the data location
-        // of parameters from `memory` to `calldata` (or viceversa) if our
-        // visibility is external or public.
-        if matches!(other.visibility, ir::FunctionVisibility::External)
+        // In general, parameter types must match exactly for functions to
+        // override others.
+        if ftype.parameter_types == other.parameter_types {
+            true
+
+        // The exception is if the `other` function is external which allows
+        // changing the data location of parameters from `memory` to `calldata`
+        // (or viceversa) if the visibility of `ftype` is external or public.
+        } else if matches!(other.visibility, ir::FunctionVisibility::External)
             && matches!(
                 ftype.visibility,
                 ir::FunctionVisibility::External | ir::FunctionVisibility::Public
@@ -517,7 +518,7 @@ impl TypeRegistry {
                     self.parameter_type_overrides_in_external_function(*ptype_left, *ptype_right)
                 })
         } else {
-            // parameter types don't match, so this is not an override
+            // Parameter types don't match: `ftype` *does not* override `other`.
             false
         }
     }
@@ -542,11 +543,11 @@ impl TypeRegistry {
                     location: location_right,
                 },
             ) => {
-                //element_type_left == element_type_right
-                self.parameter_type_overrides_in_external_function(
-                    *element_type_left,
-                    *element_type_right,
-                ) && location_left.overrides_in_external_function(*location_right)
+                location_left.overrides_in_external_function(*location_right)
+                    && self.parameter_type_overrides_in_external_function(
+                        *element_type_left,
+                        *element_type_right,
+                    )
             }
             (
                 Type::FixedSizeArray {
@@ -560,12 +561,12 @@ impl TypeRegistry {
                     location: location_right,
                 },
             ) => {
-                //element_type_left == element_type_right
-                self.parameter_type_overrides_in_external_function(
-                    *element_type_left,
-                    *element_type_right,
-                ) && size_left == size_right
+                size_left == size_right
                     && location_left.overrides_in_external_function(*location_right)
+                    && self.parameter_type_overrides_in_external_function(
+                        *element_type_left,
+                        *element_type_right,
+                    )
             }
             (
                 Type::Bytes {

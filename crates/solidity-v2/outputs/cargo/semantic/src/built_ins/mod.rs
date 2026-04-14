@@ -511,7 +511,7 @@ impl<'a> BuiltInsResolver<'a> {
                 _ => None,
             },
             Type::Function(ftype) => {
-                if ftype.is_external() {
+                if ftype.is_externally_visible() {
                     match symbol {
                         "address" if self.language_version >= LanguageVersion::V0_8_2 => {
                             Some(BuiltIn::Address)

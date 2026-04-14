@@ -95,7 +95,7 @@ pub struct FunctionType {
 }
 
 impl FunctionType {
-    pub fn is_external(&self) -> bool {
+    pub fn is_externally_visible(&self) -> bool {
         matches!(
             self.visibility,
             FunctionVisibility::External | FunctionVisibility::Public
