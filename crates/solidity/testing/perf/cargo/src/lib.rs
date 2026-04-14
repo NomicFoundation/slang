@@ -52,19 +52,34 @@ mod unit_tests {
     }
 
     mod slang_v2 {
+        // __SLANG_V2_INFRA_BENCHMARKS_LIST__ (keep in sync)
+
         #[test]
         fn parser() {
-            // __SLANG_V2_INFRA_BENCHMARKS_LIST__ (keep in sync)
-
-            let payload = crate::tests::setup::setup(super::PROJECT_TO_TEST);
-            let source_units = crate::tests::slang_v2::parser::test(payload);
+            let project = crate::tests::slang_v2::parser::setup(super::PROJECT_TO_TEST);
+            let source_units = crate::tests::slang_v2::parser::test(project);
             let contract_count = crate::tests::slang_v2::parser::count_contracts(&source_units);
             assert_eq!(contract_count, super::CONTRACT_COUNT);
+        }
 
-            let ir_source_units = crate::tests::slang_v2::ir_builder::test(payload, source_units);
+        #[test]
+        fn ir_builder() {
+            let (project, source_units) =
+                crate::tests::slang_v2::ir_builder::setup(super::PROJECT_TO_TEST);
+            let ir_source_units = crate::tests::slang_v2::ir_builder::test(project, source_units);
             let ir_contract_count =
                 crate::tests::slang_v2::ir_builder::count_contracts(&ir_source_units);
             assert_eq!(ir_contract_count, super::CONTRACT_COUNT);
+        }
+
+        #[test]
+        fn semantic() {
+            let (project, input_files) =
+                crate::tests::slang_v2::semantic::setup(super::PROJECT_TO_TEST);
+            let semantic_context = crate::tests::slang_v2::semantic::test(project, input_files);
+            let semantic_contract_count =
+                crate::tests::slang_v2::semantic::count_contracts(&semantic_context);
+            assert_eq!(semantic_contract_count, super::CONTRACT_COUNT);
         }
     }
 

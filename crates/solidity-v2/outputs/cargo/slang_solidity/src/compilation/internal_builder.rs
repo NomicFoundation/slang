@@ -4,7 +4,7 @@ use std::rc::Rc;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeId};
 use slang_solidity_v2_parser::{Parser, ParserError};
-use slang_solidity_v2_semantic::context::SemanticContext;
+use slang_solidity_v2_semantic::context::{extract_import_paths_from_source_unit, SemanticContext};
 
 use super::file::File;
 use super::unit::CompilationUnit;
@@ -33,7 +33,7 @@ impl InternalCompilationBuilder {
 
         let source_unit_cst = Parser::parse(contents, self.language_version)?;
         let source_unit = ir::build(&source_unit_cst, &contents);
-        let import_paths = Self::extract_imports_path(&source_unit);
+        let import_paths = extract_import_paths_from_source_unit(&source_unit);
 
         let file = File::new(id.clone(), source_unit);
         self.files.insert(id, file);
@@ -53,27 +53,6 @@ impl InternalCompilationBuilder {
             .add_resolved_import(node_id, destination_file_id);
 
         Ok(())
-    }
-
-    fn extract_imports_path(source_unit: &ir::SourceUnit) -> Vec<(NodeId, String)> {
-        let mut import_paths = Vec::new();
-
-        for member in &source_unit.members {
-            let ir::SourceUnitMember::ImportClause(import_clause) = member else {
-                continue;
-            };
-            let (node_id, path) = match import_clause {
-                ir::ImportClause::PathImport(path_import) => {
-                    (path_import.id(), path_import.path.unparse().to_owned())
-                }
-                ir::ImportClause::ImportDeconstruction(import_deconstruction) => (
-                    import_deconstruction.id(),
-                    import_deconstruction.path.unparse().to_owned(),
-                ),
-            };
-            import_paths.push((node_id, path));
-        }
-        import_paths
     }
 
     pub fn build(self) -> CompilationUnit {
