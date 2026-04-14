@@ -735,7 +735,7 @@ dependencies = [
  "anyhow",
  "codegen_ebnf",
  "infra_utils",
- "itertools 0.13.0",
+ "itertools 0.14.0",
  "language_definition",
  "serde",
  "serde_json",
@@ -2028,7 +2028,7 @@ dependencies = [
  "clap",
  "clap_complete",
  "infra_utils",
- "itertools 0.13.0",
+ "itertools 0.14.0",
  "markdown",
  "public-api",
  "rayon",
@@ -2052,7 +2052,7 @@ dependencies = [
  "console 0.16.3",
  "httpdate",
  "ignore",
- "itertools 0.13.0",
+ "itertools 0.14.0",
  "num-format",
  "rayon",
  "regex",
@@ -2093,15 +2093,6 @@ name = "itertools"
 version = "0.10.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b0fd2260e829bddf4cb6ea802289de2f86d6a7a690192fbe91b3f46e0f2c8473"
-dependencies = [
- "either",
-]
-
-[[package]]
-name = "itertools"
-version = "0.13.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "413ee7dfc52ee1a4949ceeb7dbc8a33f2d6c088194d9f922fb8318faf1f01186"
 dependencies = [
  "either",
 ]
@@ -2221,7 +2212,7 @@ dependencies = [
  "Inflector",
  "indexmap",
  "infra_utils",
- "itertools 0.13.0",
+ "itertools 0.14.0",
  "language_internal_macros",
  "proc-macro2",
  "quote",
@@ -2237,7 +2228,7 @@ dependencies = [
 name = "language_internal_macros"
 version = "1.3.4"
 dependencies = [
- "itertools 0.13.0",
+ "itertools 0.14.0",
  "proc-macro2",
  "quote",
  "syn 2.0.117",
@@ -2269,7 +2260,7 @@ dependencies = [
  "Inflector",
  "indexmap",
  "infra_utils",
- "itertools 0.13.0",
+ "itertools 0.14.0",
  "language_v2_internal_macros",
  "proc-macro2",
  "quote",
@@ -2285,7 +2276,7 @@ dependencies = [
 name = "language_v2_internal_macros"
 version = "1.3.4"
 dependencies = [
- "itertools 0.13.0",
+ "itertools 0.14.0",
  "proc-macro2",
  "quote",
  "syn 2.0.117",
@@ -2516,7 +2507,7 @@ dependencies = [
  "either",
  "enumset",
  "fxhash",
- "itertools 0.13.0",
+ "itertools 0.14.0",
  "libc",
  "lsp-positions",
  "smallvec",
@@ -4165,7 +4156,7 @@ dependencies = [
  "console 0.16.3",
  "indicatif",
  "infra_utils",
- "itertools 0.13.0",
+ "itertools 0.14.0",
  "language_definition",
  "rayon",
  "regex",
@@ -4248,7 +4239,7 @@ dependencies = [
  "anyhow",
  "ariadne",
  "infra_utils",
- "itertools 0.13.0",
+ "itertools 0.14.0",
  "semver 1.0.26",
  "slang_solidity",
  "slang_solidity_v2_common",
