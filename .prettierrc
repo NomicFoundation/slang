@@ -15,6 +15,7 @@
       }
     },
     {
+      "__comment__": "Disable line-length reformatting for generated YAML snapshots",
       "files": "**/cst_output/**/generated/*.yml",
       "options": {
         "printWidth": 9999
