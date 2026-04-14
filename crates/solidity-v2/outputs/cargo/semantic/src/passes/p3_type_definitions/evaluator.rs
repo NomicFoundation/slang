@@ -292,3 +292,151 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::collections::HashMap;
+
+    use num_bigint::ToBigInt;
+    use slang_solidity_v2_common::versions::LanguageVersion;
+    use slang_solidity_v2_parser::Parser;
+
+    use super::*;
+
+    #[derive(Default)]
+    struct MapResolver {
+        // qualified identifier => (target expression, target scope)
+        // qualified identifier is the concatenation of the scope and identifier
+        context: HashMap<String, (ir::Expression, String)>,
+    }
+
+    impl ConstantIdentifierResolver<String> for MapResolver {
+        fn resolve_identifier_in_scope(
+            &self,
+            identifier: &str,
+            scope: &String,
+        ) -> Option<(ir::Expression, String)> {
+            self.context.get(&format!("{scope}{identifier}")).cloned()
+        }
+    }
+
+    fn parse_expression(input: &str) -> ir::Expression {
+        let source = format!("uint constant x = {input};");
+        let version = LanguageVersion::V0_8_30;
+        let source_unit_cst = Parser::parse(&source, version).expect("failed to parse expression");
+        let source_unit = ir::build(&source_unit_cst, &source);
+        let member = source_unit.members.first().expect("no source unit members");
+        match member {
+            ir::SourceUnitMember::ConstantDefinition(definition) => definition
+                .value
+                .clone()
+                .expect("constant definition has no value expression"),
+            _ => panic!("expected a ConstantDefinition"),
+        }
+    }
+
+    fn eval_string(input: &str) -> Option<ConstantValue> {
+        let expression = parse_expression(input);
+        evaluate_compile_time_constant(&expression, String::new(), &MapResolver::default())
+    }
+
+    // `context` is given as a list of constants defined as:
+    // - the qualified identifier
+    // - the target expression (to be parsed)
+    // - the target scope
+    // Resolution always starts at the empty string scope in these tests.
+    fn eval_string_with_context(
+        input: &str,
+        context: &[(&str, &str, &str)],
+    ) -> Option<ConstantValue> {
+        let context: HashMap<String, (ir::Expression, String)> = context
+            .iter()
+            .map(|(name, input, target_scope)| {
+                (
+                    (*name).to_string(),
+                    (parse_expression(input), (*target_scope).to_string()),
+                )
+            })
+            .collect();
+        let expression = parse_expression(input);
+
+        evaluate_compile_time_constant(&expression, String::new(), &MapResolver { context })
+    }
+
+    #[test]
+    fn test_literals() {
+        assert!(eval_string("1")
+            .is_some_and(|value| value == ConstantValue::Integer(1.to_bigint().unwrap())));
+        assert!(eval_string("42")
+            .is_some_and(|value| value == ConstantValue::Integer(42.to_bigint().unwrap())));
+        assert!(eval_string("0x01")
+            .is_some_and(|value| value == ConstantValue::Integer(1.to_bigint().unwrap())));
+        assert!(eval_string("0xa0")
+            .is_some_and(|value| value == ConstantValue::Integer(160.to_bigint().unwrap())));
+    }
+
+    #[test]
+    fn test_prefix_expression() {
+        assert!(eval_string("-42")
+            .is_some_and(|value| value == ConstantValue::Integer((-42).to_bigint().unwrap())));
+    }
+
+    #[test]
+    fn test_binary_expression() {
+        assert!(eval_string("1 + 2")
+            .is_some_and(|value| value == ConstantValue::Integer(3.to_bigint().unwrap())));
+        assert!(eval_string("2 - 2")
+            .is_some_and(|value| value == ConstantValue::Integer(0.to_bigint().unwrap())));
+        assert!(eval_string("1 - 2")
+            .is_some_and(|value| value == ConstantValue::Integer((-1).to_bigint().unwrap())));
+        assert!(eval_string("1 * 2")
+            .is_some_and(|value| value == ConstantValue::Integer(2.to_bigint().unwrap())));
+        assert!(eval_string("4 / 2")
+            .is_some_and(|value| value == ConstantValue::Integer(2.to_bigint().unwrap())));
+        assert!(eval_string("5 % 2")
+            .is_some_and(|value| value == ConstantValue::Integer(1.to_bigint().unwrap())));
+        assert!(eval_string("2 ** 5")
+            .is_some_and(|value| value == ConstantValue::Integer(32.to_bigint().unwrap())));
+        assert!(eval_string("32 << 2")
+            .is_some_and(|value| value == ConstantValue::Integer(128.to_bigint().unwrap())));
+        assert!(eval_string("32 >> 2")
+            .is_some_and(|value| value == ConstantValue::Integer(8.to_bigint().unwrap())));
+        assert!(eval_string("32 | 16")
+            .is_some_and(|value| value == ConstantValue::Integer(48.to_bigint().unwrap())));
+        assert!(eval_string("15 ^ 31")
+            .is_some_and(|value| value == ConstantValue::Integer(16.to_bigint().unwrap())));
+        assert!(eval_string("15 & 31")
+            .is_some_and(|value| value == ConstantValue::Integer(15.to_bigint().unwrap())));
+    }
+
+    #[test]
+    fn test_nesting_expressions() {
+        assert!(eval_string("1 + (2 + 3)")
+            .is_some_and(|value| value == ConstantValue::Integer(6.to_bigint().unwrap())));
+        assert!(eval_string("3 * (2 + 1)")
+            .is_some_and(|value| value == ConstantValue::Integer(9.to_bigint().unwrap())));
+    }
+
+    #[test]
+    fn test_identifier_lookup() {
+        assert!(eval_string_with_context("FOO", &[("FOO", "1", "")])
+            .is_some_and(|value| value == ConstantValue::Integer(1.to_bigint().unwrap())));
+        assert!(
+            eval_string_with_context("FOO + 2*BAR", &[("FOO", "1", ""), ("BAR", "5", "")])
+                .is_some_and(|value| value == ConstantValue::Integer(11.to_bigint().unwrap()))
+        );
+        // undefined symbols
+        assert!(eval_string_with_context("FOO", &[]).is_none());
+        // cyclic references
+        assert!(
+            eval_string_with_context("FOO", &[("FOO", "BAR", ""), ("BAR", "FOO", "")]).is_none()
+        );
+        // switching contexts: the value of FOO should resolve in the CTX.
+        // context, where BAR is defined
+        assert!(eval_string_with_context(
+            "FOO",
+            &[("FOO", "BAR", "CTX."), ("CTX.BAR", "42", "CTX.")]
+        )
+        .is_some_and(|value| value == ConstantValue::Integer(42.to_bigint().unwrap())));
+    }
+}
