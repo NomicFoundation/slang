@@ -38,8 +38,8 @@ Tree:
                                   - (body꞉ YulBlock): # "{\n// >>> Copied from crates/solidity/testing/snaps..." (49..266)
                                       - (open_brace꞉ YulOpenBrace): "{" # (49..50)
                                       - (statements꞉ YulStatements): # "and()" (243..248)
-                                          - ? (item꞉ YulStatement) ► (yul_expression꞉ YulExpression) ► (yul_function_call_expression꞉ YulFunctionCallExpression) # "and()" (243..248)
-                                            : - (operand꞉ YulExpression) ► (yul_path꞉ YulPath): # "and" (243..246)
+                                          - (item꞉ YulStatement) ► (yul_expression꞉ YulExpression) ► (yul_function_call_expression꞉ YulFunctionCallExpression): # "and()" (243..248)
+                                              - (operand꞉ YulExpression) ► (yul_path꞉ YulPath): # "and" (243..246)
                                                   - (item꞉ YulIdentifier): "and" # (243..246)
                                               - (open_paren꞉ YulOpenParen): "(" # (246..247)
                                               - (arguments꞉ YulArguments): []

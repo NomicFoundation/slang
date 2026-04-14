@@ -34,8 +34,8 @@ Tree:
                                   - (expression꞉ Expression) ► (member_access_expression꞉ MemberAccessExpression): # "x().y" (145..150)
                                       - (operand꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "x()" (145..148)
                                           - (operand꞉ Expression) ► (identifier꞉ Identifier): "x" # (145..146)
-                                          - ? (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration) # "()" (146..148)
-                                            : - (open_paren꞉ OpenParen): "(" # (146..147)
+                                          - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "()" (146..148)
+                                              - (open_paren꞉ OpenParen): "(" # (146..147)
                                               - (arguments꞉ PositionalArguments): []
                                               - (close_paren꞉ CloseParen): ")" # (147..148)
                                       - (period꞉ Period): "." # (148..149)

@@ -55,7 +55,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
                     .join("generated")
                     .join(format!("{lang_version}-{status}.yml"));
 
-                fs.write_file_formatted(&snapshot_path, content)?;
+                fs.write_file_raw(&snapshot_path, content)?;
                 last_output = Some(v2_output);
             }
         }

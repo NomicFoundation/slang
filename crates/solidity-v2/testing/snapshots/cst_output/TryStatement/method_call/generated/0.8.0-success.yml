@@ -36,8 +36,8 @@ Tree:
                                   - (try_keyword꞉ TryKeyword): "try" # (131..134)
                                   - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "foo()" (135..140)
                                       - (operand꞉ Expression) ► (identifier꞉ Identifier): "foo" # (135..138)
-                                      - ? (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration) # "()" (138..140)
-                                        : - (open_paren꞉ OpenParen): "(" # (138..139)
+                                      - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "()" (138..140)
+                                          - (open_paren꞉ OpenParen): "(" # (138..139)
                                           - (arguments꞉ PositionalArguments): []
                                           - (close_paren꞉ CloseParen): ")" # (139..140)
                                   - (body꞉ Block): # "{\n}" (141..144)

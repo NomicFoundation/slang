@@ -60,8 +60,8 @@ Tree:
                       - (at_keyword꞉ AtKeyword): "at" # (205..207)
                       - (expression꞉ Expression) ► (function_call_expression꞉ FunctionCallExpression): # "foo()" (208..213)
                           - (operand꞉ Expression) ► (identifier꞉ Identifier): "foo" # (208..211)
-                          - ? (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration) # "()" (211..213)
-                            : - (open_paren꞉ OpenParen): "(" # (211..212)
+                          - (arguments꞉ ArgumentsDeclaration) ► (positional_arguments_declaration꞉ PositionalArgumentsDeclaration): # "()" (211..213)
+                              - (open_paren꞉ OpenParen): "(" # (211..212)
                               - (arguments꞉ PositionalArguments): []
                               - (close_paren꞉ CloseParen): ")" # (212..213)
               - (open_brace꞉ OpenBrace): "{" # (215..216)
