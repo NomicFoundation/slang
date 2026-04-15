@@ -77,8 +77,10 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         for file in files.keys() {
             match builder.add_file(file) {
                 Ok(()) => {}
-                Err(CompilationBuilderError::ParserError(error)) => {
-                    parse_errors.push((file.clone(), error));
+                Err(CompilationBuilderError::ParserError(errors)) => {
+                    for error in errors {
+                        parse_errors.push((file.clone(), error));
+                    }
                 }
                 Err(CompilationBuilderError::UserError(infallible)) => match infallible {},
             }

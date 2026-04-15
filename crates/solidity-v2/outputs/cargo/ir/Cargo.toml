@@ -22,7 +22,6 @@ categories = ["compilers", "utilities"]
 slang_solidity_v2_cst = { workspace = true }
 
 [dev-dependencies]
-anyhow = { workspace = true }
 slang_solidity_v2_common = { workspace = true }
 slang_solidity_v2_parser = { workspace = true }
 

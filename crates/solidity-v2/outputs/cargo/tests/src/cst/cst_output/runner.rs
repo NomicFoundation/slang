@@ -33,9 +33,10 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
         // TODO(v2): these tests should really go through 'CompilationUnit' once it is ready.
         // This way, we won't have to call individual validation APIs.
         // All errors should be collected during the compilation unit construction.
-        let validation_errors = match &v2_parse {
-            Ok(parsed_cst) => validate_syntax_version(parsed_cst, lang_version),
-            Err(_) => Vec::new(),
+        let validation_errors = if v2_parse.errors.is_empty() {
+            validate_syntax_version(&v2_parse.source_unit, lang_version)
+        } else {
+            Vec::new()
         };
 
         let v2_output = (v2_parse, validation_errors);

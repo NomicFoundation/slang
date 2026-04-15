@@ -4,7 +4,7 @@ use std::str::FromStr;
 use crate::lexer::LexemeKind;
 
 // TODO(v2): Replace `LexemeKind` with `TerminalKind` in the public API, since lexemes are internal types.
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum ParserError {
     UnexpectedEof {
         offset: usize,

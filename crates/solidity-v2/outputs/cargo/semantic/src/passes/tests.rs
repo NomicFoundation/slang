@@ -1,7 +1,6 @@
-use anyhow::{anyhow, Result};
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeId};
-use slang_solidity_v2_parser::Parser;
+use slang_solidity_v2_parser::{ParseOutput, Parser};
 
 use crate::binder::{Binder, Resolution};
 use crate::context::SemanticFile;
@@ -29,25 +28,29 @@ impl SemanticFile for TestFile {
     }
 }
 
-fn build_file(name: &str, contents: &str) -> Result<TestFile> {
-    let version = LanguageVersion::V0_8_30;
-    let source_unit_cst =
-        Parser::parse(contents, version).map_err(|message| anyhow!(format!("{message:?}")))?;
-    let source_unit = ir::build(&source_unit_cst, &contents);
-    Ok(TestFile {
+fn build_file(name: &str, contents: &str) -> TestFile {
+    let ParseOutput {
+        source_unit,
+        errors,
+    } = Parser::parse(contents, LanguageVersion::V0_8_30);
+
+    assert!(errors.is_empty(), "Parser errors: {errors:?}");
+
+    let ir_root = ir::build(&source_unit, &contents);
+    TestFile {
         id: name.to_string(),
-        ir_root: source_unit,
-    })
+        ir_root,
+    }
 }
 
 #[test]
-fn test_collect_definitions_and_linearise_contracts() -> Result<()> {
+fn test_collect_definitions_and_linearise_contracts() {
     const CONTENTS: &str = r###"
 contract Base {}
 contract Test is Base layout at 0 {}
     "###;
 
-    let file = build_file("test.sol", CONTENTS)?;
+    let file = build_file("test.sol", CONTENTS);
 
     let files = [file];
     let mut binder = Binder::default();
@@ -58,12 +61,10 @@ contract Test is Base layout at 0 {}
     assert_eq!(2, binder.definitions().len());
     // Verify linearisations were computed
     assert_eq!(2, binder.linearisations().len());
-
-    Ok(())
 }
 
 #[test]
-fn test_type_definitions() -> Result<()> {
+fn test_type_definitions() {
     const CONTENTS: &str = r###"
 contract Base {
     uint256 public x;
@@ -89,7 +90,7 @@ contract Test is Base {
 }
     "###;
 
-    let file = build_file("test.sol", CONTENTS)?;
+    let file = build_file("test.sol", CONTENTS);
 
     let files = [file];
     let mut binder = Binder::default();
@@ -106,12 +107,10 @@ contract Test is Base {
     // function types, getter types, etc.
     let registered_types = types_after - types_before;
     assert_eq!(registered_types, 7);
-
-    Ok(())
 }
 
 #[test]
-fn test_resolve_references() -> Result<()> {
+fn test_resolve_references() {
     const CONTENTS: &str = r###"
 contract Base {
     uint256 public x;
@@ -143,7 +142,7 @@ contract Test is Base {
 }
     "###;
 
-    let file = build_file("test.sol", CONTENTS)?;
+    let file = build_file("test.sol", CONTENTS);
 
     let files = [file];
     let mut binder = Binder::default();
@@ -170,6 +169,4 @@ contract Test is Base {
         resolved_count > 0,
         "expected at least some resolved references"
     );
-
-    Ok(())
 }

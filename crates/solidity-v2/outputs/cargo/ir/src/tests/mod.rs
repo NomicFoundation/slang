@@ -1,21 +1,23 @@
-use anyhow::{anyhow, Result};
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_parser::Parser;
+use slang_solidity_v2_parser::{ParseOutput, Parser};
 
 use crate::ir;
 
 #[test]
-fn test_build_ir_tree() -> Result<()> {
+fn test_build_ir_tree() {
     const CONTENTS: &str = r###"
 contract Base {}
 contract Test is Base layout at 0 {}
     "###;
 
-    let version = LanguageVersion::V0_8_30;
-    let source_unit_cst =
-        Parser::parse(CONTENTS, version).map_err(|message| anyhow!(format!("{message:?}")))?;
-    let source_unit = ir::build(&source_unit_cst, &CONTENTS);
+    let ParseOutput {
+        source_unit,
+        errors,
+    } = Parser::parse(CONTENTS, LanguageVersion::V0_8_30);
 
+    assert!(errors.is_empty(), "Parser errors: {errors:?}");
+
+    let source_unit = ir::build(&source_unit, &CONTENTS);
     assert_eq!(2, source_unit.members.len());
 
     let ir::SourceUnitMember::ContractDefinition(base_contract) = &source_unit.members[0] else {
@@ -40,6 +42,4 @@ contract Test is Base layout at 0 {}
             .join(".")
     );
     assert!(test_contract.storage_layout.is_some());
-
-    Ok(())
 }

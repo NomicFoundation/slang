@@ -7,7 +7,7 @@ use super::internal_builder::{AddFileResponse, InternalCompilationBuilder};
 use super::unit::CompilationUnit;
 
 pub enum CompilationBuilderError<E> {
-    ParserError(ParserError),
+    ParserError(Vec<ParserError>),
     UserError(E),
 }
 
@@ -86,6 +86,7 @@ impl<E, C: CompilationBuilderConfig<Error = E>> CompilationBuilder<E, C> {
             .map_err(|err| CompilationBuilderError::UserError(err))?;
 
         if let Some(source) = source {
+            // TODO(v2): move to a proper diagnostics API (reporter)
             let AddFileResponse { import_paths } = self
                 .internal
                 .add_file(file_id.into(), &source)

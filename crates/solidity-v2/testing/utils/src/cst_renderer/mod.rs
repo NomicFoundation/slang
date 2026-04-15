@@ -19,9 +19,8 @@ use std::cmp::max;
 use std::fmt::Write;
 use std::ops::Range;
 
-use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit;
 use slang_solidity_v2_cst::structured_cst::validation::SyntaxVersionError;
-use slang_solidity_v2_parser::ParserError;
+use slang_solidity_v2_parser::ParseOutput;
 
 use crate::reporting::diagnostic;
 
@@ -50,7 +49,7 @@ pub(crate) fn format_label_kind(label: &str, kind: &str) -> String {
 pub fn render(
     source: &str,
     source_id: &str,
-    result: &(Result<SourceUnit, ParserError>, Vec<SyntaxVersionError>),
+    result: &(ParseOutput, Vec<SyntaxVersionError>),
 ) -> (bool, String) {
     let mut w = String::new();
 
@@ -59,28 +58,35 @@ pub fn render(
     writeln!(&mut w).unwrap();
 
     // Write the errors
-    let is_success = match result {
-        (Err(err), _) => {
-            let rendered = diagnostic::render(err, source_id, source, false);
-            !write_errors(&mut w, &vec![rendered]).unwrap()
-        }
-        (Ok(_), validation_errors) => {
-            let rendered_errors: Vec<String> = validation_errors
-                .iter()
-                .map(|err| diagnostic::render(err, source_id, source, false))
-                .collect();
-            !write_errors(&mut w, &rendered_errors).unwrap()
-        }
-    };
+    let (
+        ParseOutput {
+            source_unit,
+            errors,
+        },
+        validation_errors,
+    ) = result;
+
+    // TODO(v2): this will move to the `Diagnostic` reporter API:
+    let mut all_errors = Vec::new();
+    all_errors.extend(
+        errors
+            .iter()
+            .map(|e| diagnostic::render(e, source_id, source, false)),
+    );
+    all_errors.extend(
+        validation_errors
+            .iter()
+            .map(|e| diagnostic::render(e, source_id, source, false)),
+    );
+
+    let is_success = !write_errors(&mut w, &all_errors).unwrap();
 
     // Write the Tree
-    if let (Ok(cst), _) = result {
-        writeln!(&mut w, "Tree:").unwrap();
-        let (_, root_frags) = renderer::render_source_unit(source, cst, 0);
-        write!(w, "  - {}", format_label_kind("root", "SourceUnit")).unwrap();
-        for frag in root_frags {
-            w.push_str(&frag);
-        }
+    writeln!(&mut w, "Tree:").unwrap();
+    let (_, root_frags) = renderer::render_source_unit(source, source_unit, 0);
+    write!(w, "  - {}", format_label_kind("root", "SourceUnit")).unwrap();
+    for frag in root_frags {
+        w.push_str(&frag);
     }
 
     (is_success, w)
