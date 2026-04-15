@@ -4,4 +4,4 @@ mod lexer;
 mod parser;
 
 pub use parser::parser_error::ParserError;
-pub use parser::Parser;
+pub use parser::{ParseOutput, Parser};

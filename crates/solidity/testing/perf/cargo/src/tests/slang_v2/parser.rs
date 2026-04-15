@@ -1,7 +1,7 @@
 use semver::{BuildMetadata, Prerelease};
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes::{SourceUnit, SourceUnitMember};
-use slang_solidity_v2_parser::Parser;
+use slang_solidity_v2_parser::{ParseOutput, Parser};
 
 use crate::dataset::SolidityProject;
 
@@ -17,7 +17,12 @@ pub fn test(project: &SolidityProject) -> Vec<(String, SourceUnit)> {
     let lang_version = parse_version(project);
     let mut source_units = Vec::new();
     for (key, source) in &project.sources {
-        let source_unit = Parser::parse(source, lang_version).unwrap();
+        let ParseOutput {
+            source_unit,
+            errors,
+        } = Parser::parse(source, lang_version);
+        assert!(errors.is_empty());
+
         source_units.push((key.clone(), source_unit));
     }
     assert!(!source_units.is_empty());

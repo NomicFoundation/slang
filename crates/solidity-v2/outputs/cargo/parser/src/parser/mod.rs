@@ -1,6 +1,8 @@
 use lalrpop_util::lalrpop_mod;
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit;
+use slang_solidity_v2_cst::structured_cst::nodes::{
+    new_source_unit, new_source_unit_members, SourceUnit,
+};
 
 use crate::lexer::{LexemeKind, Lexer};
 use crate::parser::parser_error::ParserError;
@@ -25,18 +27,34 @@ lalrpop_mod!(
 
 pub mod parser_error;
 
+/// The output of a parse operation, containing both the source unit and any errors.
+#[derive(Debug, PartialEq)]
+pub struct ParseOutput {
+    pub source_unit: SourceUnit,
+    pub errors: Vec<ParserError>,
+}
+
 /// A Parser for Solidity Source Units
 ///
-/// TODO(v2): Error recovery, for now we just fail
+/// TODO(v2): Error recovery, for now we return an empty [`SourceUnit`] on error
 /// TODO(v2): Make the parser skip unique tokens, performance improvement
 #[derive(Default)]
 pub struct Parser;
 
 impl Parser {
-    pub fn parse(input: &str, version: LanguageVersion) -> Result<SourceUnit, ParserError> {
+    pub fn parse(input: &str, version: LanguageVersion) -> ParseOutput {
         let lexer = Lexer::new(input, version);
         let parser = grammar::SourceUnitParser::new();
-        parser.parse(input, lexer).map_err(|e| e.into())
+        match parser.parse(input, lexer) {
+            Ok(source_unit) => ParseOutput {
+                source_unit,
+                errors: vec![],
+            },
+            Err(e) => ParseOutput {
+                source_unit: new_source_unit(new_source_unit_members(vec![])),
+                errors: vec![e.into()],
+            },
+        }
     }
 }
 

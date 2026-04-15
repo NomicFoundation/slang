@@ -7,7 +7,7 @@ pub use node_checker::{NodeChecker, NodeCheckerError};
 use semver::Version;
 use slang_solidity::cst::Cursor;
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_parser::{Parser as V2Parser, ParserError};
+use slang_solidity_v2_parser::{ParseOutput, Parser as V2Parser, ParserError};
 
 use crate::reporting::diagnostic::{Diagnostic, Severity};
 
@@ -45,14 +45,21 @@ pub fn compare_with_v1_cursor(
     version: &Version,
 ) -> Vec<ComparisonError> {
     let lang_version = LanguageVersion::try_from(version.clone()).unwrap();
-    let v2_output = V2Parser::parse(source, lang_version);
+    let ParseOutput {
+        source_unit,
+        errors,
+    } = V2Parser::parse(source, lang_version);
 
-    match v2_output {
-        Ok(v2_tree) => v2_tree
-            .check_node(&root_cursor.node())
+    if !errors.is_empty() {
+        return errors
             .into_iter()
-            .map(ComparisonError::NodeCheckerError)
-            .collect(),
-        Err(error) => vec![ComparisonError::ParsingError(error)],
+            .map(ComparisonError::ParsingError)
+            .collect();
     }
+
+    source_unit
+        .check_node(&root_cursor.node())
+        .into_iter()
+        .map(ComparisonError::NodeCheckerError)
+        .collect()
 }

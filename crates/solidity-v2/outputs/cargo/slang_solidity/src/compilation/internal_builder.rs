@@ -3,7 +3,7 @@ use std::rc::Rc;
 
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeId};
-use slang_solidity_v2_parser::{Parser, ParserError};
+use slang_solidity_v2_parser::{ParseOutput, Parser, ParserError};
 use slang_solidity_v2_semantic::context::{extract_import_paths_from_source_unit, SemanticContext};
 
 use super::file::File;
@@ -23,7 +23,11 @@ impl InternalCompilationBuilder {
         }
     }
 
-    pub fn add_file(&mut self, id: String, contents: &str) -> Result<AddFileResponse, ParserError> {
+    pub fn add_file(
+        &mut self,
+        id: String,
+        contents: &str,
+    ) -> Result<AddFileResponse, Vec<ParserError>> {
         if self.files.contains_key(&id) {
             // Already added. No need to process it again:
             return Ok(AddFileResponse {
@@ -31,12 +35,20 @@ impl InternalCompilationBuilder {
             });
         }
 
-        let source_unit_cst = Parser::parse(contents, self.language_version)?;
-        let source_unit = ir::build(&source_unit_cst, &contents);
+        let ParseOutput {
+            source_unit,
+            errors,
+        } = Parser::parse(contents, self.language_version);
+
+        let source_unit = ir::build(&source_unit, &contents);
         let import_paths = extract_import_paths_from_source_unit(&source_unit);
 
         let file = File::new(id.clone(), source_unit);
         self.files.insert(id, file);
+
+        if !errors.is_empty() {
+            return Err(errors);
+        }
 
         Ok(AddFileResponse { import_paths })
     }
