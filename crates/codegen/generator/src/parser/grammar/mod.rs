@@ -32,7 +32,7 @@ impl Grammar {
 }
 
 #[allow(clippy::enum_variant_names)] // this will be removed soon
-#[derive(Clone, strum_macros::EnumTryAs)]
+#[derive(Clone, strum::EnumTryAs)]
 pub enum GrammarElement {
     ScannerDefinition(ScannerDefinitionRef),
     KeywordScannerDefinition(Rc<model::KeywordItem>),

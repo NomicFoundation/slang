@@ -10,10 +10,10 @@
     PartialEq,
     PartialOrd,
     serde::Serialize,
-    strum_macros::AsRefStr,
-    strum_macros::Display,
-    strum_macros::EnumString,
-    strum_macros::IntoStaticStr,
+    strum::AsRefStr,
+    strum::Display,
+    strum::EnumString,
+    strum::IntoStaticStr,
 )]
 #[strum(serialize_all = "snake_case")]
 #[derive(Clone, Copy)]

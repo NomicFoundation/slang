@@ -2,7 +2,7 @@
 
 /// The lexical context of the scanner.
 #[repr(u8)]
-#[derive(strum_macros::FromRepr, Clone, Copy)]
+#[derive(strum::FromRepr, Clone, Copy)]
 pub(crate) enum LexicalContext {
     Default,
     Pragma,

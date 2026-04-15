@@ -6,7 +6,7 @@ use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
 use slang_solidity::cst::NonterminalKind;
 use slang_solidity::parser::Parser;
-use strum_macros::Display;
+use strum::Display;
 
 use crate::cst::cst_output::renderer::render;
 use crate::cst::generated::VERSION_BREAKS;

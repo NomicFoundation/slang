@@ -705,7 +705,6 @@ dependencies = [
  "semver 1.0.28",
  "serde",
  "strum",
- "strum_macros",
 ]
 
 [[package]]
@@ -2034,7 +2033,6 @@ dependencies = [
  "serde",
  "serde_json",
  "strum",
- "strum_macros",
  "tempfile",
  "toml",
 ]
@@ -2216,7 +2214,6 @@ dependencies = [
  "semver 1.0.28",
  "serde",
  "strum",
- "strum_macros",
  "syn 2.0.117",
  "thiserror 2.0.12",
 ]
@@ -2264,7 +2261,6 @@ dependencies = [
  "semver 1.0.28",
  "serde",
  "strum",
- "strum_macros",
  "syn 2.0.117",
  "thiserror 2.0.12",
 ]
@@ -2491,7 +2487,6 @@ dependencies = [
  "smallvec",
  "string-interner",
  "strum",
- "strum_macros",
  "thiserror 2.0.12",
 ]
 
@@ -3773,7 +3768,6 @@ dependencies = [
  "serde",
  "sha3",
  "strum",
- "strum_macros",
  "thiserror 2.0.12",
 ]
 
@@ -3834,7 +3828,6 @@ dependencies = [
  "slang_solidity_v2_common",
  "slang_solidity_v2_cst",
  "strum",
- "strum_macros",
 ]
 
 [[package]]
@@ -4072,7 +4065,7 @@ dependencies = [
  "semver 1.0.28",
  "slang_solidity",
  "solidity_language",
- "strum_macros",
+ "strum",
 ]
 
 [[package]]
@@ -4138,7 +4131,6 @@ dependencies = [
  "serde_json",
  "solidity_testing_utils",
  "strum",
- "strum_macros",
 ]
 
 [[package]]
@@ -4164,7 +4156,7 @@ dependencies = [
  "serde",
  "serde_json",
  "solidity_language",
- "strum_macros",
+ "strum",
  "url",
 ]
 
@@ -4304,9 +4296,9 @@ checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
 
 [[package]]
 name = "strum"
-version = "0.27.1"
+version = "0.27.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f64def088c51c9510a8579e3c5d67c65349dcf755e5479ad3d010aa6454e2c32"
+checksum = "af23d6f6c1a224baef9d3f61e287d2761385a5b88fdab4eb4c6f11aeb54c4bcf"
 dependencies = [
  "strum_macros",
 ]

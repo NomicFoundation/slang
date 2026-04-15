@@ -21,8 +21,8 @@ use {log as _, regex as _, serde_json as _, smallvec as _, string_interner as _,
     Eq,
     PartialEq,
     serde::Serialize,
-    strum_macros::IntoStaticStr,
-    strum_macros::EnumString,
+    strum::IntoStaticStr,
+    strum::EnumString,
 )]
 pub enum DummyKind {
     #[default]

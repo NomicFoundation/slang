@@ -2,7 +2,7 @@
 
 use std::ops::Range;
 
-use strum_macros::{Display, EnumString, IntoStaticStr};
+use strum::{Display, EnumString, IntoStaticStr};
 
 #[derive(Debug)]
 pub struct Lexeme {
