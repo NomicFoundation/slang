@@ -94,9 +94,6 @@ jobs:
           persist-credentials: false
           fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
 
-      - name: "Free up disk space"
-        uses: "./.github/actions/free-disk-space"
-
       - name: "Restore file mtimes from git"
         uses: "./.github/actions/git/restore-mtime"
 
@@ -113,8 +110,10 @@ jobs:
         if: "${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'main' }}"
         uses: "./.github/actions/cache/cargo-cooldown/save"
 
-  # We cannot run the full CI in devcontainers, as we will run out of disk space in GitHub Actions.
-  # Instead, we just validate the devcontainer is built correctly by running a minimal check below.
+  # The full CI runs on the bare runner so it can reuse the cargo-target cache;
+  # reproducing that cache-mount setup inside a devcontainer would slow CI down
+  # rather than speed it up. This job is kept as a minimal smoke test that the
+  # devcontainer image still builds and can run the tooling it's expected to.
   validate-devcontainer:
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
 
@@ -127,6 +126,9 @@ jobs:
         with:
           persist-credentials: false
 
+      # The devcontainers/ci action pulls and/or builds the devcontainer image
+      # below, which is tight on the stock ubuntu-24.04 runner; freeing unused
+      # pre-installed tooling first keeps the image build from failing on space.
       - name: "Free up disk space"
         uses: "./.github/actions/free-disk-space"
 
