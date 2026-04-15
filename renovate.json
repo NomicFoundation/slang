@@ -29,14 +29,14 @@
       "enabled": false
     },
     {
-      "description": "ariadne: hold below 0.6 — 0.6.0 rewrite deferred (PR #1615 / manual attempt #1631 both closed)",
+      "description": "ariadne: skip the 0.3–0.6 range — the 0.6 rewrite was deferred; post-0.6 releases contain the fixes needed to migrate, so allow those through.",
       "matchPackageNames": ["ariadne"],
-      "allowedVersions": "<0.6.0"
+      "allowedVersions": ">0.6.0"
     },
     {
-      "description": "tree-sitter-solidity: hold below 1.2.13 — would affect bencher benchmark data, upgrade deliberately",
+      "description": "tree-sitter-solidity: manual bumps only — would affect bencher benchmark data, upgrade deliberately",
       "matchPackageNames": ["tree-sitter-solidity"],
-      "allowedVersions": "<1.2.13"
+      "enabled": false
     },
     {
       "description": "toml: hold below 0.9 — 0.9 / 1.0 not yet adopted",
