@@ -705,7 +705,7 @@ dependencies = [
  "semver 1.0.28",
  "serde",
  "strum",
- "strum_macros",
+ "strum_macros 0.28.0",
 ]
 
 [[package]]
@@ -2034,7 +2034,7 @@ dependencies = [
  "serde",
  "serde_json",
  "strum",
- "strum_macros",
+ "strum_macros 0.28.0",
  "tempfile",
  "toml",
 ]
@@ -2216,7 +2216,7 @@ dependencies = [
  "semver 1.0.28",
  "serde",
  "strum",
- "strum_macros",
+ "strum_macros 0.28.0",
  "syn 2.0.117",
  "thiserror 2.0.12",
 ]
@@ -2264,7 +2264,7 @@ dependencies = [
  "semver 1.0.28",
  "serde",
  "strum",
- "strum_macros",
+ "strum_macros 0.28.0",
  "syn 2.0.117",
  "thiserror 2.0.12",
 ]
@@ -2491,7 +2491,7 @@ dependencies = [
  "smallvec",
  "string-interner",
  "strum",
- "strum_macros",
+ "strum_macros 0.28.0",
  "thiserror 2.0.12",
 ]
 
@@ -3773,7 +3773,7 @@ dependencies = [
  "serde",
  "sha3",
  "strum",
- "strum_macros",
+ "strum_macros 0.28.0",
  "thiserror 2.0.12",
 ]
 
@@ -3834,7 +3834,7 @@ dependencies = [
  "slang_solidity_v2_common",
  "slang_solidity_v2_cst",
  "strum",
- "strum_macros",
+ "strum_macros 0.28.0",
 ]
 
 [[package]]
@@ -4072,7 +4072,7 @@ dependencies = [
  "semver 1.0.28",
  "slang_solidity",
  "solidity_language",
- "strum_macros",
+ "strum_macros 0.28.0",
 ]
 
 [[package]]
@@ -4138,7 +4138,7 @@ dependencies = [
  "serde_json",
  "solidity_testing_utils",
  "strum",
- "strum_macros",
+ "strum_macros 0.28.0",
 ]
 
 [[package]]
@@ -4164,7 +4164,7 @@ dependencies = [
  "serde",
  "serde_json",
  "solidity_language",
- "strum_macros",
+ "strum_macros 0.28.0",
  "url",
 ]
 
@@ -4308,7 +4308,7 @@ version = "0.27.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f64def088c51c9510a8579e3c5d67c65349dcf755e5479ad3d010aa6454e2c32"
 dependencies = [
- "strum_macros",
+ "strum_macros 0.27.2",
 ]
 
 [[package]]
@@ -4316,6 +4316,18 @@ name = "strum_macros"
 version = "0.27.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7695ce3845ea4b33927c055a39dc438a45b059f7c1b3d91d38d10355fb8cbca7"
+dependencies = [
+ "heck",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.117",
+]
+
+[[package]]
+name = "strum_macros"
+version = "0.28.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ab85eea0270ee17587ed4156089e10b9e6880ee688791d45a905f5b1ca36f664"
 dependencies = [
  "heck",
  "proc-macro2",

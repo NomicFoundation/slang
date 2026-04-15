@@ -183,7 +183,7 @@ string-interner = { version = "0.19.0", features = [
     "backends",
 ] }
 strum = { version = "0.27.1" }
-strum_macros = { version = "0.27.2" }
+strum_macros = { version = "0.28.0" }
 syn = { version = "2.0.117", features = [
     "fold",
     "full",
