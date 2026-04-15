@@ -1,0 +1,45 @@
+name: "free-disk-space"
+
+description: |
+  Reclaims ~25-30 GB of disk space on GitHub-hosted Ubuntu runners by
+  removing pre-installed tooling that slang does not use.
+
+  Reference: https://github.com/actions/runner-images (the ubuntu-24.04
+  README lists everything pre-installed).
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Report initial disk usage"
+      shell: "bash"
+      run: "df -h /"
+
+    # .NET SDK (~1.6 GB).
+    - name: "Remove .NET SDK"
+      shell: "bash"
+      run: "sudo rm -rf /usr/share/dotnet"
+
+    # Android SDK + NDK (~11-14 GB, the single largest item on ubuntu-24.04).
+    - name: "Remove Android SDK and NDK"
+      shell: "bash"
+      run: "sudo rm -rf /usr/local/lib/android"
+
+    # Haskell toolchain (~5-6 GB): both the system GHC under `/opt/ghc`
+    # and the user-installed `ghcup` toolchain under `/usr/local/.ghcup`.
+    - name: "Remove Haskell (GHC + ghcup)"
+      shell: "bash"
+      run: "sudo rm -rf /opt/ghc /usr/local/.ghcup"
+
+    # CodeQL bundles (~5.4 GB).
+    - name: "Remove CodeQL bundles"
+      shell: "bash"
+      run: "sudo rm -rf /opt/hostedtoolcache/CodeQL"
+
+    # Boost C++ headers and prebuilt libraries (~350 MB).
+    - name: "Remove Boost"
+      shell: "bash"
+      run: "sudo rm -rf /usr/local/share/boost"
+
+    - name: "Report final disk usage"
+      shell: "bash"
+      run: "df -h /"

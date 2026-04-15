@@ -38,6 +38,9 @@ jobs:
           persist-credentials: false
           fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
 
+      - name: "Free up disk space"
+        uses: "./.github/actions/free-disk-space"
+
       - name: "Restore file mtimes from git"
         uses: "./.github/actions/git/restore-mtime"
 
@@ -91,6 +94,9 @@ jobs:
           persist-credentials: false
           fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
 
+      - name: "Free up disk space"
+        uses: "./.github/actions/free-disk-space"
+
       - name: "Restore file mtimes from git"
         uses: "./.github/actions/git/restore-mtime"
 
@@ -120,6 +126,9 @@ jobs:
         uses: "actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd" # v6.0.2
         with:
           persist-credentials: false
+
+      - name: "Free up disk space"
+        uses: "./.github/actions/free-disk-space"
 
       - name: "infra setup pipenv"
         uses: "./.github/actions/devcontainer/run"
