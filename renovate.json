@@ -44,9 +44,10 @@
       "allowedVersions": "<0.9.0"
     },
     {
-      "description": "@types/node: skip v25 — Node 25 not supported",
+      "description": "@types/node: no automatic major bumps — Node majors are upgraded manually and only to even LTS releases (e.g. 24 → 26). Minor/patch within the current major flow through normally.",
       "matchPackageNames": ["@types/node"],
-      "allowedVersions": "<25.0.0 || >=26.0.0"
+      "matchUpdateTypes": ["major"],
+      "enabled": false
     },
     {
       "description": "solar: manual bumps only — benchmark dep, upgrades must be coordinated with bencher baselines",
