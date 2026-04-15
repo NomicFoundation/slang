@@ -6,39 +6,68 @@ updates:
   - package-ecosystem: "cargo"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "monday"
     commit-message:
       prefix: "cargo"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 10
     cooldown:
       default-days: 7
       semver-major-days: 30
+    groups:
+      cargo-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
+      # Major updates are left as individual PRs: they often need code
+      # changes (e.g. nom 7→8, ariadne 0.2→0.6) which would block a group.
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "monday"
     commit-message:
       prefix: "github-actions"
     open-pull-requests-limit: 5
     cooldown:
       default-days: 7
+    groups:
+      github-actions-all:
+        patterns:
+          - "*"
+        # Includes majors: the SHA-pin comment adjustment is identical
+        # regardless of version, so one grouped PR amortizes that fix.
 
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "monday"
     commit-message:
       prefix: "npm"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 10
     cooldown:
       default-days: 7
       semver-major-days: 30
+    groups:
+      npm-types:
+        patterns:
+          - "@types/*"
+        # Includes majors: @types/* are type definitions, historically
+        # safe across majors (e.g. @types/node 12→24 merged cleanly).
+      npm-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
+        exclude-patterns:
+          - "@types/*"
 
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "monday"
     commit-message:
       prefix: "pip"
     open-pull-requests-limit: 5
@@ -53,3 +82,8 @@ updates:
       - dependency-name: "mkdocs-minify-plugin"
       - dependency-name: "mkdocs-pymdownx-material-extras"
       - dependency-name: "mike"
+    groups:
+      pip-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
