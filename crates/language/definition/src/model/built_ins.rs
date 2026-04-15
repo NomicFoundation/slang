@@ -3,7 +3,7 @@ use std::rc::Rc;
 use language_internal_macros::{derive_spanned_type, ParseInputTokens, WriteOutputTokens};
 use semver::Version;
 use serde::{Deserialize, Serialize};
-use strum_macros::EnumDiscriminants;
+use strum::EnumDiscriminants;
 
 use crate::model::VersionSpecifier;
 

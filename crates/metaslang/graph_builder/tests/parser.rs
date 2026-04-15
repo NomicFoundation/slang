@@ -22,8 +22,8 @@ use {
     Eq,
     PartialEq,
     serde::Serialize,
-    strum_macros::IntoStaticStr,
-    strum_macros::EnumString,
+    strum::IntoStaticStr,
+    strum::EnumString,
 )]
 pub enum NonterminalKind {
     Module,
@@ -37,8 +37,8 @@ pub enum NonterminalKind {
     Eq,
     PartialEq,
     serde::Serialize,
-    strum_macros::IntoStaticStr,
-    strum_macros::EnumString,
+    strum::IntoStaticStr,
+    strum::EnumString,
 )]
 pub enum TerminalKind {
     Identifier,
@@ -51,8 +51,8 @@ pub enum TerminalKind {
     Eq,
     PartialEq,
     serde::Serialize,
-    strum_macros::IntoStaticStr,
-    strum_macros::EnumString,
+    strum::IntoStaticStr,
+    strum::EnumString,
 )]
 pub enum EdgeLabel {
     #[default]

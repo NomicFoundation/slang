@@ -21,8 +21,8 @@ use {
     Eq,
     PartialEq,
     serde::Serialize,
-    strum_macros::IntoStaticStr,
-    strum_macros::EnumString,
+    strum::IntoStaticStr,
+    strum::EnumString,
 )]
 pub enum DummyKind {
     #[default]

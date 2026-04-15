@@ -82,7 +82,7 @@
 #![allow(clippy::unnecessary_semicolon)]
 
 #[cfg(test)]
-use {env_logger as _, indoc as _, string_interner as _, strum as _, strum_macros as _};
+use {env_logger as _, indoc as _, string_interner as _, strum as _};
 
 #[cfg(doc)]
 pub mod reference;

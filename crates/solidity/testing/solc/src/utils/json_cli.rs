@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
-use strum_macros::Display;
+use strum::Display;
 
 #[derive(Debug, Serialize)]
 pub struct CliInput {

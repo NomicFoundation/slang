@@ -9,8 +9,7 @@ use infra_utils::paths::PathExtensions;
 use serde_json::json;
 use solidity_testing_utils::config::{self, File, Project};
 use solidity_testing_utils::fetch::fetch;
-use strum::IntoEnumIterator;
-use strum_macros::{AsRefStr, EnumIter};
+use strum::{AsRefStr, EnumIter, IntoEnumIterator};
 
 #[derive(Clone, Copy, Debug, AsRefStr, EnumIter)]
 pub enum Subject {

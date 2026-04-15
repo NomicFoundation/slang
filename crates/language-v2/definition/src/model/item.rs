@@ -2,7 +2,7 @@ use std::rc::Rc;
 
 use language_v2_internal_macros::{derive_spanned_type, ParseInputTokens, WriteOutputTokens};
 use serde::{Deserialize, Serialize};
-use strum_macros::EnumDiscriminants;
+use strum::EnumDiscriminants;
 
 use crate::model::{
     EnumItem, FragmentItem, Identifier, KeywordItem, PrecedenceItem, RepeatedItem, SeparatedItem,
