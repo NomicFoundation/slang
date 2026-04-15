@@ -59,6 +59,16 @@
       "enabled": false
     },
     {
+      "description": "tree-sitter: manual bumps only — same benchmark-stability concern as tree-sitter-solidity (PR #1673); runtime changes can shift bencher numbers",
+      "matchPackageNames": ["tree-sitter"],
+      "enabled": false
+    },
+    {
+      "description": "bencher_cli: manual bumps only — the benchmark tool itself; mid-series digest changes break historical comparisons (see PR #1622 for deliberate manual upgrade)",
+      "matchPackageNames": ["bencher_cli"],
+      "enabled": false
+    },
+    {
       "description": "cargo: group minor/patch; majors stay individual",
       "matchManagers": ["cargo"],
       "matchUpdateTypes": ["minor", "patch"],
