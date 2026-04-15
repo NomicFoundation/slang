@@ -45,6 +45,16 @@
       "allowedVersions": "<25.0.0 || >=26.0.0"
     },
     {
+      "description": "solar: manual bumps only — benchmark dep, upgrades must be coordinated with bencher baselines",
+      "matchPackageNames": ["solar", "solar-compiler"],
+      "enabled": false
+    },
+    {
+      "description": "iai-callgrind: disabled pending migration to gungraun (issue #1690); crate was renamed upstream",
+      "matchPackageNames": ["iai-callgrind", "iai-callgrind-runner"],
+      "enabled": false
+    },
+    {
       "description": "cargo: group minor/patch; majors stay individual",
       "matchManagers": ["cargo"],
       "matchUpdateTypes": ["minor", "patch"],
