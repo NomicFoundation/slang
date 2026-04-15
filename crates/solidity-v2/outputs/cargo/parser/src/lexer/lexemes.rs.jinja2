@@ -1,5 +1,6 @@
 use std::ops::Range;
 
+use slang_solidity_v2_cst::terminals::TerminalKind;
 use strum::{Display, EnumString, IntoStaticStr};
 
 #[derive(Debug)]
@@ -27,5 +28,24 @@ impl LexemeKind {
                 {% if not loop.last %} | {% endif %}
             {% endfor %}
         )
+    }
+}
+
+#[allow(clippy::too_many_lines)]
+impl From<&LexemeKind> for TerminalKind {
+    fn from(kind: &LexemeKind) -> Self {
+        match kind {
+            LexemeKind::UNRECOGNIZED => TerminalKind::UNRECOGNIZED,
+
+            {% for kind in model.parser.lexer.all_lexeme_kinds -%}
+                {% if model.parser.lexer.trivia_lexeme_kinds is not containing(kind) -%}
+                    LexemeKind::{{ kind }} => TerminalKind::{{ kind | replace(from="_Reserved", to="") | replace(from="_Unreserved", to="") }},
+                {% endif -%}
+            {%- endfor %}
+
+            {% for kind in model.parser.lexer.trivia_lexeme_kinds -%}
+                LexemeKind::{{ kind }} => unreachable!("Trivia lexeme kind: {kind:?}"),
+            {%- endfor %}
+        }
     }
 }

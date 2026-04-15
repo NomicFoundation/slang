@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Unexpected Period. One of AddressKeyword_Reserved, AtKeyword_Unreserved, Bang, BoolKeyword_Reserved, BytesKeyword_Reserved, DecimalLiteral, DeleteKeyword_Reserved, ErrorKeyword_Unreserved, FalseKeyword_Reserved, FixedKeyword_Reserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, HexLiteral, HexStringLiteral, Identifier, IntKeyword_Reserved, LayoutKeyword_Unreserved, Minus, MinusMinus, NewKeyword_Reserved, OpenBracket, OpenParen, PayableKeyword_Reserved, PlusPlus, RevertKeyword_Unreserved, StringKeyword_Reserved, StringLiteral, SuperKeyword_Reserved, ThisKeyword_Reserved, Tilde, TransientKeyword_Unreserved, TrueKeyword_Reserved, TypeKeyword_Reserved, UfixedKeyword_Reserved, UintKeyword_Reserved, UnicodeStringLiteral was expected
+    Error: Unexpected Period. One of AddressKeyword, AtKeyword, Bang, BoolKeyword, BytesKeyword, DecimalLiteral, DeleteKeyword, ErrorKeyword, FalseKeyword, FixedKeyword, FromKeyword, GlobalKeyword, HexLiteral, HexStringLiteral, Identifier, IntKeyword, LayoutKeyword, Minus, MinusMinus, NewKeyword, OpenBracket, OpenParen, PayableKeyword, PlusPlus, RevertKeyword, StringKeyword, StringLiteral, SuperKeyword, ThisKeyword, Tilde, TransientKeyword, TrueKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UnicodeStringLiteral was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/DecimalNumberExpression/leading_period_ident_exponent_like/input.sol:1:19]
        │
      1 │ uint constant x = .e1;

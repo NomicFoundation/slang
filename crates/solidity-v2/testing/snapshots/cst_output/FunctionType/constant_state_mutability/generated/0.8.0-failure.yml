@@ -11,7 +11,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Unexpected ReturnsKeyword_Reserved. One of AtKeyword_Unreserved, ConstantKeyword_Reserved, ErrorKeyword_Unreserved, FromKeyword_Unreserved, GlobalKeyword_Unreserved, Identifier, ImmutableKeyword_Reserved, InternalKeyword_Reserved, LayoutKeyword_Unreserved, OverrideKeyword_Reserved, PrivateKeyword_Reserved, PublicKeyword_Reserved, RevertKeyword_Unreserved, TransientKeyword_Unreserved was expected
+    Error: Unexpected ReturnsKeyword. One of AtKeyword, ConstantKeyword, ErrorKeyword, FromKeyword, GlobalKeyword, Identifier, ImmutableKeyword, InternalKeyword, LayoutKeyword, OverrideKeyword, PrivateKeyword, PublicKeyword, RevertKeyword, TransientKeyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/FunctionType/constant_state_mutability/input.sol:3:31]
        │
      3 │ function () constant internal returns (uint)

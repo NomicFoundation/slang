@@ -7,7 +7,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Unexpected UNRECOGNIZED. One of AbicoderV1Keyword_Reserved, AbicoderV2Keyword_Reserved was expected
+    Error: Unexpected UNRECOGNIZED. One of AbicoderV1Keyword, AbicoderV2Keyword was expected
        ╭─[crates/solidity-v2/testing/snapshots/cst_output/PragmaDirective/abi_coder_unkown_identifier/input.sol:2:17]
        │
      2 │ pragma abicoder foo;
