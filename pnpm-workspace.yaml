@@ -36,7 +36,7 @@ catalog:
 
 overrides:
   # Temporary fixes until our dependencies are updated:
-  "basic-ftp@<5.2.0": "^5.2.0" # https://github.com/NomicFoundation/slang/security/dependabot/113
+  "basic-ftp@<5.2.2": "^5.2.2" # https://github.com/NomicFoundation/slang/security/dependabot/159
   "flatted@<3.4.0": "^3.4.0" # https://github.com/NomicFoundation/slang/security/dependabot/115
   "js-yaml@<3.14.2": "^3.14.2" # https://github.com/NomicFoundation/slang/security/dependabot/101
   "minimatch@<3.1.3": "^3.1.3" # https://github.com/NomicFoundation/slang/security/dependabot/108
@@ -45,6 +45,8 @@ overrides:
 
 # Dependency Resolution
 minimumReleaseAge: 10080 # 1 week
+minimumReleaseAgeExclude:
+  - "basic-ftp@5.2.2" # security fix GHSA-6v7q-wjvx-w8wg: https://github.com/NomicFoundation/slang/security/dependabot/159
 
 # Store Settings
 storeDir: ".hermit/.pnpm-store"
