@@ -104,5 +104,27 @@
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "dockerfile minor/patch"
     }
-  ]
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "packageRules": [
+      {
+        "description": "Allow vulnerability fix PRs for benchmark-adjacent deps that are otherwise set to enabled: false",
+        "matchPackageNames": [
+          "tree-sitter",
+          "tree-sitter-solidity",
+          "solar",
+          "solar-compiler",
+          "iai-callgrind",
+          "iai-callgrind-runner"
+        ],
+        "enabled": true
+      },
+      {
+        "description": "Allow vulnerability fix PRs for bencher_cli (git-source, matched by depName)",
+        "matchDepNames": ["bencher_cli"],
+        "enabled": true
+      }
+    ]
+  }
 }
