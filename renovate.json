@@ -64,8 +64,8 @@
       "enabled": false
     },
     {
-      "description": "bencher_cli: manual bumps only — the benchmark tool itself; mid-series digest changes break historical comparisons (see PR #1622 for deliberate manual upgrade)",
-      "matchPackageNames": ["bencher_cli"],
+      "description": "bencher_cli: manual bumps only — the benchmark tool itself; mid-series digest changes break historical comparisons. Git-source dep, so matched by depName (Cargo.toml key) rather than packageName (git URL).",
+      "matchDepNames": ["bencher_cli"],
       "enabled": false
     },
     {
