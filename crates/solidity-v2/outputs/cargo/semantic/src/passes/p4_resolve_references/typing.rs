@@ -225,8 +225,9 @@ impl Pass<'_> {
             // used as an external function. If the member is a *public*
             // function, change the expression typing to indicate the
             // external access.
-            if function_type.visibility == ir::FunctionVisibility::Public {
-                let external_function_type = function_type.with_external_visibility();
+            if function_type.is_externally_visible() {
+                let external_function_type =
+                    self.types.externalize_function_type(function_type.clone());
                 let type_id_with_external_visibility = self
                     .types
                     .register_type(Type::Function(external_function_type));

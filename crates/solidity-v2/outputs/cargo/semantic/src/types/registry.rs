@@ -265,7 +265,8 @@ impl TypeRegistry {
             ) => from_location.implicitly_convertible_to(*to_location),
 
             (Type::Function(from_function_type), Type::Function(to_function_type)) => {
-                // This is full equality except for definition_id which can differ
+                // This is full equality except for visibility and mutability
+                // which can be converted to, and definition_id which can differ
                 from_function_type.visibility.implicitly_convertible_to(to_function_type.visibility)
                     && from_function_type
                         .mutability
@@ -343,6 +344,33 @@ impl TypeRegistry {
             | (Type::String { .. }, Type::String { .. }) => true,
 
             _ => self.implicitly_convertible_to(from_type_id, to_type_id),
+        }
+    }
+
+    // Changes a function type to have external visibility and any parameters
+    // normalized for that (ie. `calldata` location is changed to `memory`)
+    pub fn externalize_function_type(&mut self, function_type: FunctionType) -> FunctionType {
+        FunctionType {
+            visibility: ir::FunctionVisibility::External,
+            parameter_types: function_type
+                .parameter_types
+                .into_iter()
+                .map(|parameter_type_id| {
+                    let parameter_type = self.get_type_by_id(parameter_type_id);
+                    if parameter_type
+                        .data_location()
+                        .is_some_and(|location| location == DataLocation::Calldata)
+                    {
+                        self.register_type_with_data_location(
+                            parameter_type.clone(),
+                            DataLocation::Memory,
+                        )
+                    } else {
+                        parameter_type_id
+                    }
+                })
+                .collect(),
+            ..function_type
         }
     }
 
