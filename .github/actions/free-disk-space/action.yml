@@ -10,38 +10,24 @@ description: |
 runs:
   using: "composite"
   steps:
-    - name: "Report disk usage and per-directory sizes"
-      shell: "bash"
-      run: |
-        echo "--- df before ---"
-        df -h /
-        echo "--- per-directory sizes ---"
-        sudo du -sh \
-          /usr/share/dotnet \
-          /usr/local/lib/android \
-          /opt/ghc \
-          /usr/local/.ghcup \
-          /opt/hostedtoolcache/CodeQL \
-          /usr/local/share/boost \
-          2>/dev/null || true
-
     # Remove pre-installed tooling slang doesn't use:
     #   - .NET SDK                          (~1.6  GB)
     #   - Android SDK + NDK                 (~11-14 GB, largest single item)
     #   - Haskell (system GHC + ghcup)      (~5-6  GB)
     #   - CodeQL bundles                    (~5.4  GB)
     #   - Boost C++ headers + prebuilt libs (~0.35 GB)
+    #
+    # The five subtrees are independent, so we background each `rm` and
+    # `wait` at the end — `rm` is I/O-bound on inode unlinks, and running
+    # them in parallel roughly halves wall time on the runner's SSD.
     - name: "Remove unused pre-installed tooling"
       shell: "bash"
       run: |
-        sudo rm -rf \
-          /usr/share/dotnet \
-          /usr/local/lib/android \
-          /opt/ghc \
-          /usr/local/.ghcup \
-          /opt/hostedtoolcache/CodeQL \
-          /usr/local/share/boost
-
-    - name: "Report disk usage after cleanup"
-      shell: "bash"
-      run: "df -h /"
+        df -h /
+        sudo rm -rf /usr/share/dotnet           &
+        sudo rm -rf /usr/local/lib/android      &
+        sudo rm -rf /opt/ghc /usr/local/.ghcup  &
+        sudo rm -rf /opt/hostedtoolcache/CodeQL &
+        sudo rm -rf /usr/local/share/boost      &
+        wait
+        df -h /
