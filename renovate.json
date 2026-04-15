@@ -2,5 +2,64 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended"
+  ],
+  "timezone": "UTC",
+  "schedule": ["before 9am on Monday"],
+  "minimumReleaseAge": "7 days",
+  "internalChecksFilter": "strict",
+  "ignoreDeps": ["cargo-cooldown-check"],
+  "packageRules": [
+    {
+      "description": "Extra cooldown for majors (matches Dependabot semver-major-days: 30)",
+      "matchUpdateTypes": ["major"],
+      "minimumReleaseAge": "30 days"
+    },
+    {
+      "description": "Freeze MkDocs pending migration evaluation (#1623)",
+      "matchPackageNames": [
+        "mkdocs",
+        "mkdocs-material",
+        "mkdocs-literate-nav",
+        "mkdocs-minify-plugin",
+        "mkdocs-pymdownx-material-extras",
+        "mike"
+      ],
+      "enabled": false
+    },
+    {
+      "description": "cargo: group minor/patch; majors stay individual",
+      "matchManagers": ["cargo"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "cargo minor/patch"
+    },
+    {
+      "description": "npm: group minor/patch; majors stay individual",
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "npm minor/patch"
+    },
+    {
+      "description": "pip (Pipenv): group minor/patch; majors stay individual",
+      "matchManagers": ["pipenv"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "pip minor/patch"
+    },
+    {
+      "description": "github-actions: group everything, including majors",
+      "matchManagers": ["github-actions"],
+      "groupName": "github-actions"
+    },
+    {
+      "description": "hermit (toolchain): group minor/patch; majors stay individual",
+      "matchManagers": ["hermit"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "hermit minor/patch"
+    },
+    {
+      "description": "dockerfile: group minor/patch; majors stay individual",
+      "matchManagers": ["dockerfile"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "dockerfile minor/patch"
+    }
   ]
 }
