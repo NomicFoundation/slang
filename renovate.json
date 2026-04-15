@@ -18,6 +18,7 @@
     },
     {
       "description": "Freeze MkDocs pending migration evaluation (#1623)",
+      "matchManagers": ["pipenv"],
       "matchPackageNames": [
         "mkdocs",
         "mkdocs-material",
@@ -29,9 +30,9 @@
       "enabled": false
     },
     {
-      "description": "ariadne: skip the 0.3–0.6 range — the 0.6 rewrite was deferred; post-0.6 releases contain the fixes needed to migrate, so allow those through.",
+      "description": "ariadne: skip the 0.3–0.6 range — the 0.6 rewrite was deferred; post-0.6 releases contain the fixes needed to migrate, so allow those through. Also keep 0.2.x patches open since that's the currently pinned branch.",
       "matchPackageNames": ["ariadne"],
-      "allowedVersions": ">0.6.0"
+      "allowedVersions": "<0.3.0 || >0.6.0"
     },
     {
       "description": "tree-sitter-solidity: manual bumps only — would affect bencher benchmark data, upgrade deliberately",
