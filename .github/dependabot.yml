@@ -51,17 +51,10 @@ updates:
       default-days: 7
       semver-major-days: 30
     groups:
-      npm-types:
-        patterns:
-          - "@types/*"
-        # Includes majors: @types/* are type definitions, historically
-        # safe across majors (e.g. @types/node 12→24 merged cleanly).
       npm-minor-patch:
         update-types:
           - "minor"
           - "patch"
-        exclude-patterns:
-          - "@types/*"
 
   - package-ecosystem: "pip"
     directory: "/"
