@@ -198,7 +198,7 @@ thiserror = { version = "2.0.12" }
 toml = { version = "0.8.20" }
 tree-sitter-solidity = { version = "1.2.11" }
 tree-sitter = { version = "0.24.7" }
-trybuild = { version = "1.0.104" }
+trybuild = { version = "1.0.115" }
 url = { version = "2.5.4", features = ["serde"] }
 wasm-tools = { version = "1.216.0" }
 wit-bindgen = { version = "0.52.0" }
