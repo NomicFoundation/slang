@@ -36,8 +36,7 @@ updates:
       github-actions-all:
         patterns:
           - "*"
-        # Includes majors: the SHA-pin comment adjustment is identical
-        # regardless of version, so one grouped PR amortizes that fix.
+        # Includes majors.
 
   - package-ecosystem: "npm"
     directory: "/"
