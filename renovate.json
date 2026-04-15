@@ -5,8 +5,12 @@
   "schedule": ["before 9am on Monday"],
   "minimumReleaseAge": "7 days",
   "internalChecksFilter": "strict",
-  "ignoreDeps": ["cargo-cooldown-check"],
   "packageRules": [
+    {
+      "description": "cargo-cooldown-check: custom hermit tool published via its own hermit source at NomicFoundation/cargo-cooldown-check, not in Renovate's default hermit registry. Upgrades are managed manually (e.g. `hermit install cargo-cooldown-check@latest`).",
+      "matchPackageNames": ["cargo-cooldown-check"],
+      "enabled": false
+    },
     {
       "description": "Extra cooldown for majors (matches Dependabot semver-major-days: 30)",
       "matchUpdateTypes": ["major"],
