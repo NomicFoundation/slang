@@ -53,71 +53,22 @@ pub enum AbiEntry {
     },
 }
 
+impl AbiEntry {
+    pub fn node_id(&self) -> NodeId {
+        match self {
+            AbiEntry::Constructor { node_id, .. }
+            | AbiEntry::Error { node_id, .. }
+            | AbiEntry::Event { node_id, .. }
+            | AbiEntry::Fallback { node_id, .. }
+            | AbiEntry::Function { node_id, .. }
+            | AbiEntry::Receive { node_id, .. } => *node_id,
+        }
+    }
+}
+
 impl PartialEq for AbiEntry {
     fn eq(&self, other: &Self) -> bool {
-        match (self, other) {
-            (
-                Self::Constructor {
-                    node_id: self_node_id,
-                    ..
-                },
-                Self::Constructor {
-                    node_id: other_node_id,
-                    ..
-                },
-            )
-            | (
-                Self::Error {
-                    node_id: self_node_id,
-                    ..
-                },
-                Self::Error {
-                    node_id: other_node_id,
-                    ..
-                },
-            )
-            | (
-                Self::Event {
-                    node_id: self_node_id,
-                    ..
-                },
-                Self::Event {
-                    node_id: other_node_id,
-                    ..
-                },
-            )
-            | (
-                Self::Fallback {
-                    node_id: self_node_id,
-                    ..
-                },
-                Self::Fallback {
-                    node_id: other_node_id,
-                    ..
-                },
-            )
-            | (
-                Self::Function {
-                    node_id: self_node_id,
-                    ..
-                },
-                Self::Function {
-                    node_id: other_node_id,
-                    ..
-                },
-            )
-            | (
-                Self::Receive {
-                    node_id: self_node_id,
-                    ..
-                },
-                Self::Receive {
-                    node_id: other_node_id,
-                    ..
-                },
-            ) => self_node_id == other_node_id,
-            _ => false,
-        }
+        self.node_id() == other.node_id()
     }
 }
 
@@ -128,7 +79,7 @@ impl Ord for AbiEntry {
         match (self, other) {
             (Self::Constructor { .. }, Self::Constructor { .. })
             | (Self::Fallback { .. }, Self::Fallback { .. })
-            | (Self::Receive { .. }, Self::Receive { .. }) => Ordering::Equal,
+            | (Self::Receive { .. }, Self::Receive { .. }) => self.node_id().cmp(&other.node_id()),
             (
                 Self::Error {
                     name: self_name, ..
@@ -152,7 +103,10 @@ impl Ord for AbiEntry {
                 Self::Function {
                     name: other_name, ..
                 },
-            ) => self_name.cmp(other_name),
+            ) => match self_name.cmp(other_name) {
+                Ordering::Equal => self.node_id().cmp(&other.node_id()),
+                name_ordering => name_ordering,
+            },
 
             (Self::Constructor { .. }, _) => Ordering::Less,
             (_, Self::Constructor { .. }) => Ordering::Greater,
