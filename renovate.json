@@ -105,6 +105,7 @@
       "groupName": "dockerfile minor/patch"
     }
   ],
+  "osvVulnerabilityAlerts": true,
   "vulnerabilityAlerts": {
     "enabled": true,
     "packageRules": [
