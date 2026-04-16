@@ -1,0 +1,145 @@
+{%- set target = model.ir_language_model.target -%}
+#[allow(clippy::wildcard_imports)]
+use super::nodes::*;
+use slang_solidity_v2_ir::ir;
+
+pub trait Visitor {
+  {%- for parent_type, sequence in target.sequences %}
+    fn enter_{{ parent_type | snake_case }}(&mut self, _node: &{{ parent_type }}) -> bool { true }
+    fn leave_{{ parent_type | snake_case }}(&mut self, _node: &{{ parent_type }}) {}
+  {% endfor -%}
+  {%- for parent_type, choice in target.choices %}
+    fn enter_{{ parent_type | snake_case }}(&mut self, _node: &{{ parent_type }}) -> bool { true }
+    fn leave_{{ parent_type | snake_case }}(&mut self, _node: &{{ parent_type }}) {}
+  {% endfor -%}
+  {%- for parent_type, collection in target.collections %}
+    {% if collection.item_type.is_terminal and
+          not target.terminals[collection.item_type.name].is_identifier %}
+      fn enter_{{ parent_type | snake_case }}(
+        &mut self, _items: &[ir::{{ collection.item_type.name }}],
+      ) -> bool { true }
+      fn leave_{{ parent_type | snake_case }}(
+        &mut self, _items: &[ir::{{ collection.item_type.name }}],
+      ) {}
+    {% else %}
+      fn enter_{{ parent_type | snake_case }}(&mut self, _items: &{{ parent_type }}) -> bool { true }
+      fn leave_{{ parent_type | snake_case }}(&mut self, _items: &{{ parent_type }}) {}
+    {% endif %}
+  {% endfor -%}
+  {%- for terminal_type, terminal in target.terminals %}
+    {%- if terminal.is_identifier %}
+      fn visit_{{ terminal_type | snake_case }}(&mut self, _node: &{{ terminal_type }}) {}
+    {% endif -%}
+  {% endfor -%}
+}
+
+//
+// Sequences
+//
+
+{% for parent_type, sequence in target.sequences %}
+  pub fn accept_{{ parent_type | snake_case }}(node: &{{ parent_type }}, visitor: &mut impl Visitor) {
+    if !visitor.enter_{{ parent_type | snake_case }}(node) {
+      return;
+    }
+    {% for field in sequence.fields -%}
+      {%- if field.is_optional -%}
+        {%- if not field.type.is_terminal -%}
+          if let Some(ref {{ field.label | snake_case }}) = node.{{ field.label | snake_case }}() {
+            accept_{{ field.type.name | snake_case }}({{ field.label | snake_case }}, visitor);
+          }
+        {%- elif target.terminals[field.type.name].is_identifier -%}
+          if let Some(ref {{ field.label | snake_case }}) = node.{{ field.label | snake_case }}() {
+            visitor.visit_{{ field.type.name | snake_case }}({{ field.label | snake_case }});
+          }
+        {%- endif -%}
+      {%- else -%}
+        {%- if not field.type.is_terminal -%}
+          accept_{{ field.type.name | snake_case }}(&node.{{ field.label | snake_case }}(), visitor);
+        {%- elif target.terminals[field.type.name].is_identifier -%}
+          visitor.visit_{{ field.type.name | snake_case }}(&node.{{ field.label | snake_case }}());
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+    visitor.leave_{{ parent_type | snake_case }}(node);
+  }
+
+{% endfor %}
+
+//
+// Choices
+//
+
+{% for parent_type, choice in target.choices %}
+  {%- set nonterminals = choice.variants | filter(attribute="kind", value="Nonterminal") -%}
+  {%- set unique_terminals = choice.variants | filter(attribute="kind", value="UniqueTerminal") -%}
+  {%- set non_unique_terminals = choice.variants | filter(attribute="kind", value="Terminal") -%}
+  {% if nonterminals | length == 0 %}
+    pub fn accept_{{ parent_type | snake_case }}(_node: &{{ parent_type }}, _visitor: &mut impl Visitor) {}
+  {% else %}
+    pub fn accept_{{ parent_type | snake_case }}(node: &{{ parent_type }}, visitor: &mut impl Visitor) {
+      if !visitor.enter_{{ parent_type | snake_case }}(node) {
+        return;
+      }
+      match node {
+        {% for nonterminal in nonterminals -%}
+          {{ parent_type }}::{{ nonterminal.name }}(ref {{ nonterminal.name | snake_case }}) => {
+            accept_{{ nonterminal.name | snake_case }}({{ nonterminal.name | snake_case }}, visitor);
+          }
+        {%- endfor %}
+        {%- if non_unique_terminals | length > 0 %}
+          {%- for terminal in non_unique_terminals -%}
+            {%- if target.terminals[terminal.name].is_identifier -%}
+              {{ parent_type }}::{{ terminal.name }}(ref {{ terminal.name | snake_case }}) => {
+                visitor.visit_{{ terminal.name | snake_case }}({{ terminal.name | snake_case }});
+              }
+            {%- else -%}
+              {{ parent_type }}::{{ terminal.name }}(_) => {}
+            {%- endif -%}
+          {%- endfor -%}
+        {% endif -%}
+        {%- if unique_terminals | length > 0 %}
+          {%- for terminal in unique_terminals -%}
+            {%- if not loop.first -%} | {%- endif -%}
+            {{ parent_type }}::{{ terminal.name }}
+          {%- endfor -%}
+          => {}
+        {% endif -%}
+      }
+      visitor.leave_{{ parent_type | snake_case }}(node);
+    }
+  {% endif %}
+{% endfor %}
+
+//
+// Repeated & Separated
+//
+
+{% for parent_type, collection in target.collections -%}
+  {% if collection.item_type.is_terminal and
+        not target.terminals[collection.item_type.name].is_identifier %}
+    {# non-identifier terminals #}
+    {% set collection_type = "[ir::" ~ collection.item_type.name ~ "]" %}
+  {% else %}
+    {% set collection_type = parent_type %}
+  {% endif %}
+  #[inline]
+  fn accept_{{ parent_type | snake_case }}(items: &{{ collection_type }}, visitor: &mut impl Visitor) {
+    if !visitor.enter_{{ parent_type | snake_case }}(items) {
+      return;
+    }
+    {%- if not collection.item_type.is_terminal %}
+      for item in items.iter() {
+        accept_{{ collection.item_type.name | snake_case }}(&item, visitor);
+      }
+    {% elif target.terminals[collection.item_type.name].is_identifier %}
+      for item in items.iter() {
+        visitor.visit_{{ collection.item_type.name | snake_case }}(&item);
+      }
+    {% else -%}
+      {# non-identifier terminal items are not visited #}
+    {% endif -%}
+    visitor.leave_{{ parent_type | snake_case }}(items);
+  }
+
+{% endfor %}

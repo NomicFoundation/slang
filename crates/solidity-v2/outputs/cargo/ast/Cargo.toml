@@ -4,8 +4,8 @@ rust-version.workspace = true
 edition.workspace = true
 publish = false
 
-name = "slang_solidity_v2"
-description = "Main compilation unit for the [slang_solidity](https://crates.io/crates/slang_solidity) crate."
+name = "slang_solidity_v2_ast"
+description = "AST interface for the [slang_solidity](https://crates.io/crates/slang_solidity) crate."
 homepage = "https://nomicfoundation.github.io/slang/"
 repository = "https://github.com/NomicFoundation/slang/"
 authors = [
@@ -19,15 +19,10 @@ keywords = ["utilities"]
 categories = ["compilers", "utilities"]
 
 [dependencies]
-slang_solidity_v2_ast = { workspace = true }
-slang_solidity_v2_common = { workspace = true }
+paste = { workspace = true }
+sha3 = { workspace = true }
 slang_solidity_v2_ir = { workspace = true }
-slang_solidity_v2_parser = { workspace = true }
 slang_solidity_v2_semantic = { workspace = true }
-thiserror = { workspace = true }
-
-[dev-dependencies]
-anyhow = { workspace = true }
 
 [lints]
 workspace = true
