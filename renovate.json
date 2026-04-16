@@ -67,11 +67,6 @@
       "enabled": false
     },
     {
-      "description": "bencher_cli: manual bumps only — the benchmark tool itself; mid-series digest changes break historical comparisons. Git-source dep, so matched by depName (Cargo.toml key) rather than packageName (git URL).",
-      "matchDepNames": ["bencher_cli"],
-      "enabled": false
-    },
-    {
       "description": "cargo: group minor/patch; majors stay individual",
       "matchManagers": ["cargo"],
       "matchUpdateTypes": ["minor", "patch"],
@@ -121,11 +116,6 @@
           "iai-callgrind",
           "iai-callgrind-runner"
         ],
-        "enabled": true
-      },
-      {
-        "description": "Allow vulnerability fix PRs for bencher_cli (git-source, matched by depName)",
-        "matchDepNames": ["bencher_cli"],
         "enabled": true
       }
     ]

@@ -57,7 +57,7 @@ Automated dependency updates are handled by [Renovate](https://docs.renovatebot.
 
 **Grouping strategy:** minor and patch updates are grouped into a single PR per ecosystem to reduce review overhead. Major-version bumps arrive as individual PRs, since they often require code changes. GitHub Actions updates are grouped including majors.
 
-**Manual-only dependencies:** some benchmark-adjacent crates (`tree-sitter`, `tree-sitter-solidity`, `solar`, `bencher_cli`) are excluded from automatic updates because version changes can affect benchmark baselines. Upgrade these deliberately. See the `renovate.json` `packageRules` descriptions for the rationale on each.
+**Manual-only dependencies:** some benchmark-adjacent crates (`tree-sitter`, `tree-sitter-solidity`, `solar`) are excluded from automatic updates because version changes can affect benchmark baselines. Upgrade these deliberately. See the `renovate.json` `packageRules` descriptions for the rationale on each.
 
 **Security:** Renovate opens vulnerability-fix PRs immediately (bypassing schedule and cooldown) using both GitHub's Security Advisory database and [OSV](https://osv.dev/). Security PRs are also enabled for the manually-managed benchmark deps above.
 
