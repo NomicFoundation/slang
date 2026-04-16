@@ -1,6 +1,6 @@
 use anyhow::{anyhow, Result};
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_parser::Parser;
+use slang_solidity_v2_cst::structured_cst::cst_consumer;
 
 use crate::ir;
 
@@ -13,7 +13,7 @@ contract Test is Base layout at 0 {}
 
     let version = LanguageVersion::V0_8_30;
     let source_unit_cst =
-        Parser::parse(CONTENTS, version).map_err(|message| anyhow!(format!("{message:?}")))?;
+        cst_consumer::parse(CONTENTS, version).map_err(|message| anyhow!(format!("{message:?}")))?;
     let source_unit = ir::build(&source_unit_cst, &CONTENTS);
 
     assert_eq!(2, source_unit.members.len());

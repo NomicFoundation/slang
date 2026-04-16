@@ -1,0 +1,120 @@
+{%- set target = model.structured_cst_model -%}
+#![allow(clippy::too_many_arguments)]
+#![allow(non_camel_case_types)]
+
+use std::ops::Range;
+
+use crate::parser::parser_helpers;
+
+/// A trait that abstracts over the construction of parser output nodes.
+///
+/// The LALRPOP grammar is generic over this trait: instead of calling concrete
+/// CST constructors, it calls methods on the consumer. This allows alternative
+/// consumers (e.g., direct IR builders) to use the same grammar without
+/// materializing a full CST.
+pub trait ParserConsumer {
+    // ========================
+    // === Associated Types ===
+    // ========================
+
+    // Terminals
+    {% for parent_type in target.terminals -%}
+    type {{ parent_type }};
+    {% endfor %}
+
+    // Sequences
+    {% for parent_type, _sequence in target.sequences -%}
+    type {{ parent_type }};
+    {% endfor %}
+
+    // Choices
+    {% for parent_type, _choice in target.choices -%}
+    type {{ parent_type }};
+    {% endfor %}
+
+    // Collections
+    {% for parent_type, _collection in target.collections -%}
+    type {{ parent_type }};
+    {% endfor %}
+
+    // =======================
+    // === Factory Methods ===
+    // =======================
+
+    // Terminal factory methods
+    {% for parent_type in target.terminals -%}
+    fn make_{{ parent_type | snake_case }}(&self, range: Range<usize>, source: &str) -> Self::{{ parent_type }};
+    {% endfor %}
+
+    // Sequence factory methods
+    {% for parent_type, sequence in target.sequences -%}
+    fn make_{{ parent_type | snake_case }}(
+        &self,
+        {%- for field in sequence.fields %}
+        {{ field.label | snake_case }}: {% if field.is_optional %}Option<{% endif %}Self::{{ field.field_type.name }}{% if field.is_optional %}>{% endif %},
+        {%- endfor %}
+    ) -> Self::{{ parent_type }};
+    {% endfor %}
+
+    // Choice variant factory methods
+    {% for parent_type, choice in target.choices -%}
+    {% for variant in choice.variants -%}
+    fn make_{{ parent_type | snake_case }}_{{ variant.variant_type.name | snake_case }}(
+        &self,
+        element: Self::{{ variant.variant_type.name }},
+    ) -> Self::{{ parent_type }};
+    {% endfor %}
+    {% endfor %}
+
+    // Collection factory methods
+    {% for parent_type, collection in target.collections -%}
+    fn make_{{ parent_type | snake_case }}(
+        &self,
+        elements: Vec<Self::{{ collection.item_type.name }}>,
+    ) -> Self::{{ parent_type }};
+    {% endfor %}
+
+    // ==============================
+    // === Special Helper Methods ===
+    // ==============================
+
+    /// Consume an `IndexAccessPath` and produce a `TypeName`.
+    ///
+    /// Requires `Self: Sized` because `IndexAccessPath<Self>` stores associated
+    /// types by value, not behind a reference.
+    fn make_type_name_from_index_access_path(
+        &self,
+        index_access_path: parser_helpers::IndexAccessPath<Self>,
+    ) -> Self::TypeName
+    where
+        Self: Sized;
+
+    /// Consume an `IndexAccessPath` and produce an `Expression`.
+    ///
+    /// Requires `Self: Sized` because `IndexAccessPath<Self>` stores associated
+    /// types by value, not behind a reference.
+    fn make_expression_from_index_access_path(
+        &self,
+        index_access_path: parser_helpers::IndexAccessPath<Self>,
+    ) -> Self::Expression
+    where
+        Self: Sized;
+
+    /// Consume an `IdentifierPath` and produce an `Expression` by folding it
+    /// into a chain of member access expressions.
+    fn make_expression_from_identifier_path(
+        &self,
+        identifier_path: Self::IdentifierPath,
+    ) -> Self::Expression;
+
+    /// Extract trailing state variable attributes from a function type.
+    ///
+    /// This is a parser disambiguation concern: in `function (uint a) internal internal foo;`,
+    /// the first `internal` belongs to the function type and the second to the state variable.
+    /// The LR(1) grammar cannot distinguish these, so the function type captures all compatible
+    /// attributes and this method extracts the trailing ones for the state variable definition.
+    fn extract_extra_attributes(
+        &self,
+        fun_type: Self::FunctionType,
+    ) -> (Self::FunctionType, Vec<Self::StateVariableAttribute>);
+}

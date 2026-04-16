@@ -299,7 +299,7 @@ mod tests {
 
     use num_bigint::ToBigInt;
     use slang_solidity_v2_common::versions::LanguageVersion;
-    use slang_solidity_v2_parser::Parser;
+    use slang_solidity_v2_cst::structured_cst::cst_consumer;
 
     use super::*;
 
@@ -323,7 +323,7 @@ mod tests {
     fn parse_expression(input: &str) -> ir::Expression {
         let source = format!("uint constant x = {input};");
         let version = LanguageVersion::V0_8_30;
-        let source_unit_cst = Parser::parse(&source, version).expect("failed to parse expression");
+        let source_unit_cst = cst_consumer::parse(&source, version).expect("failed to parse expression");
         let source_unit = ir::build(&source_unit_cst, &source);
         let member = source_unit.members.first().expect("no source unit members");
         match member {

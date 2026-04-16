@@ -17,7 +17,6 @@ slang_solidity = { workspace = true, features = ["__private_backend_api", "__pri
 slang_solidity_v2_common = { workspace = true }
 slang_solidity_v2_cst = { workspace = true }
 slang_solidity_v2_ir = { workspace = true }
-slang_solidity_v2_parser = { workspace = true }
 slang_solidity_v2_semantic = { workspace = true }
 solar = { workspace = true }
 solidity_testing_utils = { workspace = true }

@@ -106,19 +106,20 @@ mod lalrpop_rules {
 
 /// Helper methods to get constructors for nodes
 ///
-/// Note: See the `slang_solidity_v2_cst::structured_cst::nodes` module for details
+/// These produce method names for the `ParserConsumer` trait. The grammar template
+/// prepends `consumer.` to each constructor call.
 mod node_constructors {
     use language_v2_definition::model::Identifier;
 
     use super::RustCode;
     /// Get the constructor for `Identifier` `id`
     pub(super) fn constructor(id: &Identifier) -> RustCode {
-        RustCode(format!("new_{}", *id))
+        RustCode(format!("make_{}", *id))
     }
 
     /// Get the constructor for the variant `variant` from the enum `id`
     pub(super) fn variant_constructor(id: &Identifier, variant: &Identifier) -> RustCode {
-        RustCode(format!("new_{}_{}", *id, *variant))
+        RustCode(format!("make_{}_{}", *id, *variant))
     }
 }
 

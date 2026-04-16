@@ -1,0 +1,250 @@
+{%- set target = model.structured_cst_model -%}
+#![allow(clippy::too_many_arguments)]
+#![allow(non_camel_case_types)]
+
+use std::ops::Range;
+use std::rc::Rc;
+
+use slang_solidity_v2_common::versions::LanguageVersion;
+use slang_solidity_v2_parser::parser::consumer::ParserConsumer;
+use slang_solidity_v2_parser::parser::parser_helpers;
+use slang_solidity_v2_parser::{Parser, ParserError};
+
+use crate::structured_cst::nodes;
+
+/// A [`ParserConsumer`] that produces the structured CST.
+pub struct CstConsumer;
+
+/// Convenience function to parse Solidity source and produce a structured CST.
+pub fn parse(input: &str, version: LanguageVersion) -> Result<nodes::SourceUnit, ParserError> {
+    Parser::parse_with_consumer(input, version, &CstConsumer)
+}
+
+impl ParserConsumer for CstConsumer {
+    // ========================
+    // === Associated Types ===
+    // ========================
+
+    // Terminals
+    {% for parent_type in target.terminals -%}
+    type {{ parent_type }} = nodes::{{ parent_type }};
+    {% endfor %}
+
+    // Sequences
+    {% for parent_type, _sequence in target.sequences -%}
+    type {{ parent_type }} = nodes::{{ parent_type }};
+    {% endfor %}
+
+    // Choices
+    {% for parent_type, _choice in target.choices -%}
+    type {{ parent_type }} = nodes::{{ parent_type }};
+    {% endfor %}
+
+    // Collections
+    {% for parent_type, _collection in target.collections -%}
+    type {{ parent_type }} = nodes::{{ parent_type }};
+    {% endfor %}
+
+    // =======================
+    // === Factory Methods ===
+    // =======================
+
+    // Terminal factory methods
+    {% for parent_type in target.terminals -%}
+    fn make_{{ parent_type | snake_case }}(&self, range: Range<usize>, source: &str) -> nodes::{{ parent_type }} {
+        nodes::new_{{ parent_type | snake_case }}(range, source)
+    }
+    {% endfor %}
+
+    // Sequence factory methods
+    {% for parent_type, sequence in target.sequences -%}
+    fn make_{{ parent_type | snake_case }}(
+        &self,
+        {%- for field in sequence.fields %}
+        {{ field.label | snake_case }}: {% if field.is_optional %}Option<{% endif %}nodes::{{ field.field_type.name }}{% if field.is_optional %}>{% endif %},
+        {%- endfor %}
+    ) -> nodes::{{ parent_type }} {
+        nodes::new_{{ parent_type | snake_case }}(
+            {%- for field in sequence.fields %}
+            {{ field.label | snake_case }},
+            {%- endfor %}
+        )
+    }
+    {% endfor %}
+
+    // Choice variant factory methods
+    {% for parent_type, choice in target.choices -%}
+    {% for variant in choice.variants -%}
+    fn make_{{ parent_type | snake_case }}_{{ variant.variant_type.name | snake_case }}(
+        &self,
+        element: nodes::{{ variant.variant_type.name }},
+    ) -> nodes::{{ parent_type }} {
+        nodes::new_{{ parent_type | snake_case }}_{{ variant.variant_type.name | snake_case }}(element)
+    }
+    {% endfor %}
+    {% endfor %}
+
+    // Collection factory methods
+    {% for parent_type, collection in target.collections -%}
+    fn make_{{ parent_type | snake_case }}(
+        &self,
+        elements: Vec<nodes::{{ collection.item_type.name }}>,
+    ) -> nodes::{{ parent_type }} {
+        nodes::new_{{ parent_type | snake_case }}(elements)
+    }
+    {% endfor %}
+
+    // ==============================
+    // === Special Helper Methods ===
+    // ==============================
+
+    fn make_type_name_from_index_access_path(
+        &self,
+        index_access_path: parser_helpers::IndexAccessPath<Self>,
+    ) -> nodes::TypeName {
+        let parser_helpers::IndexAccessPath { path, indices } = index_access_path;
+
+        let mut type_name = match path {
+            parser_helpers::Path::IdentifierPath(path) => nodes::new_type_name_identifier_path(path),
+            parser_helpers::Path::ElementaryType(elem_type) => nodes::new_type_name_elementary_type(elem_type),
+        };
+
+        for index in indices {
+            assert!(
+                index.end.is_none(),
+                "Slicing is not supported in type names yet"
+            );
+            let array_type = nodes::new_array_type_name(
+                type_name,
+                index.open_bracket,
+                index.start,
+                index.close_bracket,
+            );
+            type_name = nodes::new_type_name_array_type_name(array_type);
+        }
+
+        type_name
+    }
+
+    fn make_expression_from_index_access_path(
+        &self,
+        index_access_path: parser_helpers::IndexAccessPath<Self>,
+    ) -> nodes::Expression {
+        let parser_helpers::IndexAccessPath { path, indices } = index_access_path;
+
+        let mut expression = match path {
+            parser_helpers::Path::IdentifierPath(path) => self.make_expression_from_identifier_path(path),
+            parser_helpers::Path::ElementaryType(elem_type) => nodes::new_expression_elementary_type(elem_type),
+        };
+
+        for index in indices {
+            let array_expression = nodes::new_index_access_expression(
+                expression,
+                index.open_bracket,
+                index.start,
+                index.end,
+                index.close_bracket,
+            );
+            expression = nodes::new_expression_index_access_expression(array_expression);
+        }
+
+        expression
+    }
+
+    fn make_expression_from_identifier_path(
+        &self,
+        identifier_path: nodes::IdentifierPath,
+    ) -> nodes::Expression {
+        identifier_path
+            .elements
+            .into_iter()
+            .fold(None, |acc, id| {
+                match acc {
+                    None => Some(match id {
+                        nodes::IdentifierPathElement::AddressKeyword(_) => {
+                            // TODO(v2) we should validate that this is not the case and fail gracefully
+                            // instead of returning a wrong identifier
+                            nodes::new_expression_identifier(nodes::Identifier { range: 0..0 })
+                        }
+                        nodes::IdentifierPathElement::Identifier(id) => {
+                            nodes::new_expression_identifier(id)
+                        }
+                    }),
+                    Some(acc) => Some(nodes::new_expression_member_access_expression(
+                        nodes::new_member_access_expression(
+                            acc,
+                            // TODO(v2) use real range
+                            nodes::Period { range: 0..0 },
+                            id,
+                        ),
+                    )),
+                }
+            })
+            .expect("IdentifierPath should have at least one element!")
+    }
+
+    fn extract_extra_attributes(
+        &self,
+        fun_type: nodes::FunctionType,
+    ) -> (nodes::FunctionType, Vec<nodes::StateVariableAttribute>) {
+        let nodes::FunctionTypeStruct {
+            function_keyword,
+            parameters,
+            attributes,
+            returns,
+        } = Rc::unwrap_or_clone(fun_type);
+        let mut vec = attributes.elements;
+
+        let mut seen_internal = false;
+        let mut seen_private = false;
+        let mut seen_public = false;
+        let mut duplicate_found = false;
+
+        let extracted = vec.extract_if(.., |attr| {
+            if duplicate_found {
+                true
+            } else {
+                let seen = match attr {
+                    nodes::FunctionTypeAttribute::InternalKeyword(_) => &mut seen_internal,
+                    nodes::FunctionTypeAttribute::PrivateKeyword(_) => &mut seen_private,
+                    nodes::FunctionTypeAttribute::PublicKeyword(_) => &mut seen_public,
+                    _ => return false,
+                };
+
+                if *seen {
+                    duplicate_found = true;
+                    true
+                } else {
+                    *seen = true;
+                    false
+                }
+            }
+        });
+
+        let extra_attributes: Vec<nodes::StateVariableAttribute> = extracted
+            .filter_map(|attr| {
+                match attr {
+                    nodes::FunctionTypeAttribute::InternalKeyword(terminal) => {
+                        Some(nodes::StateVariableAttribute::InternalKeyword(terminal))
+                    }
+                    nodes::FunctionTypeAttribute::PrivateKeyword(terminal) => {
+                        Some(nodes::StateVariableAttribute::PrivateKeyword(terminal))
+                    }
+                    nodes::FunctionTypeAttribute::PublicKeyword(terminal) => {
+                        Some(nodes::StateVariableAttribute::PublicKeyword(terminal))
+                    }
+                    _ => None,
+                }
+            })
+            .collect();
+
+        let new_fun_type = nodes::new_function_type(
+            function_keyword,
+            parameters,
+            nodes::new_function_type_attributes(vec),
+            returns,
+        );
+
+        (new_fun_type, extra_attributes)
+    }
+}

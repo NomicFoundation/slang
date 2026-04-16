@@ -1587,15 +1587,15 @@ language_v2_macros::compile!(Language(
 //
 // In order to solve this we use a trailing expression that captures both the expression and the members,
 // and then extract the members from it.
-ContractDefinition: ContractDefinition = {
+ContractDefinition: C::ContractDefinition = {
     // If no specifiers are present, we simply capture the members directly
     <abstract_keyword: (AbstractKeyword)?>  <contract_keyword: ContractKeyword>  <name: Identifier>  <open_brace: OpenBrace>  <members: ContractMembers>  <close_brace: CloseBrace>  => {
-        new_contract_definition(abstract_keyword, contract_keyword, name, new_contract_specifiers(vec![]), open_brace, members, close_brace)
+        consumer.make_contract_definition(abstract_keyword, contract_keyword, name, consumer.make_contract_specifiers(vec![]), open_brace, members, close_brace)
     },
     // If specifiers are present, we extract the trailing members from them
     <abstract_keyword: (AbstractKeyword)?>  <contract_keyword: ContractKeyword>  <name: Identifier>  <specifiers: ContractSpecifiersTrailingMembers>  => {
         let (specifiers, (open_brace, members, close_brace)) = specifiers;
-        new_contract_definition(abstract_keyword, contract_keyword, name, specifiers, open_brace, members, close_brace)
+        consumer.make_contract_definition(abstract_keyword, contract_keyword, name, specifiers, open_brace, members, close_brace)
     },
 };
 ")
@@ -1607,40 +1607,40 @@ ContractDefinition: ContractDefinition = {
                                     parser_options = ParserOptions(inline = false, verbatim = "
 // In this case, we require at least one specifier, the case with zero is handled above.
 // Note that the return type now includes the trailing members
-ContractSpecifiersTrailingMembers: (ContractSpecifiers, (OpenBrace, ContractMembers, CloseBrace)) = {
+ContractSpecifiersTrailingMembers: (C::ContractSpecifiers, (C::OpenBrace, C::ContractMembers, C::CloseBrace)) = {
     <mut contract_specifier: RepeatedAllowEmpty<<ContractSpecifier>>> <tail: ContractSpecifierTrailingMembers>  => {
         let (specifier, tail) = tail;
         contract_specifier.push(specifier);
-        (new_contract_specifiers(contract_specifier), tail)
+        (consumer.make_contract_specifiers(contract_specifier), tail)
     },
 };
-ContractSpecifierTrailingMembers: (ContractSpecifier, (OpenBrace, ContractMembers, CloseBrace)) = {
+ContractSpecifierTrailingMembers: (C::ContractSpecifier, (C::OpenBrace, C::ContractMembers, C::CloseBrace)) = {
     // Since there's no conflict with inheritance specifiers, we can parse them directly and
     // then parse the members
     <inheritance_specifier: InheritanceSpecifier> <open_brace: OpenBrace>  <members: ContractMembers>  <close_brace: CloseBrace>  => {
-        (new_contract_specifier_inheritance_specifier(inheritance_specifier), (open_brace, members, close_brace))
+        (consumer.make_contract_specifier_inheritance_specifier(inheritance_specifier), (open_brace, members, close_brace))
     },
     // For storage layout specifiers, we need to extract the trailing members from them
     <storage_layout_specifier: StorageLayoutSpecifierTrailingMembers>  => {
         let (storage_layout_specifier, tail) = storage_layout_specifier;
-        (new_contract_specifier_storage_layout_specifier(storage_layout_specifier), tail)
+        (consumer.make_contract_specifier_storage_layout_specifier(storage_layout_specifier), tail)
     },
 };
 
-StorageLayoutSpecifierTrailingMembers: (StorageLayoutSpecifier, (OpenBrace, ContractMembers, CloseBrace)) = {
+StorageLayoutSpecifierTrailingMembers: (C::StorageLayoutSpecifier, (C::OpenBrace, C::ContractMembers, C::CloseBrace)) = {
     // Instead of parsing a regular Expression, we parse one that captures the trailing members
     <layout_keyword: LayoutKeyword>  <at_keyword: AtKeyword>  <expression: ExpressionTrailingMembers>  => {
         let (expr, tail) = expression;
-        (new_storage_layout_specifier(layout_keyword, at_keyword, expr), tail)
+        (consumer.make_storage_layout_specifier(layout_keyword, at_keyword, expr), tail)
     },
 };
 
 // An expression followed by contract members
 // See the Expression rule for details
-ExpressionTrailingMembers: (Expression, (OpenBrace, ContractMembers, CloseBrace)) = {
+ExpressionTrailingMembers: (C::Expression, (C::OpenBrace, C::ContractMembers, C::CloseBrace)) = {
         <expression: Expression19<BracedContractMembers>>  => <>,
 };
-BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
+BracedContractMembers: (C::OpenBrace, C::ContractMembers, C::CloseBrace) = {
     <open_brace: OpenBrace>  <members: ContractMembers>  <close_brace: CloseBrace>  => {
         (open_brace, members, close_brace)
     },
@@ -1849,51 +1849,51 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
 // error definition or a state variable definition.
 //
 // To solve this we match against state variables where the type is exactly `error` as a special case.
-StateVariableDefinition: StateVariableDefinition = {
+StateVariableDefinition: C::StateVariableDefinition = {
     // When allowing any type except function types without return, we can parse normally.
     // Note the `IdentifierPathNoError`, it avoids matching against `error` as an identifier.
-    <type_name: TypeName1<FunctionTypeInternalReturn, IndexAccessPath<IdentifierPathNoError>>>  <attributes: StateVariableAttributes>  <name: Identifier>  <value: (StateVariableDefinitionValue)?>  <semicolon: Semicolon>  => new_state_variable_definition(<>),
+    <type_name: TypeName1<FunctionTypeInternalReturn, IndexAccessPath<IdentifierPathNoError>>>  <attributes: StateVariableAttributes>  <name: Identifier>  <value: (StateVariableDefinitionValue)?>  <semicolon: Semicolon>  => consumer.make_state_variable_definition(<>),
 
     // Special case for `error` type
     <l:@L> L_ErrorKeyword_Unreserved <r:@R>  <attributes: StateVariableAttributes>  <name: Identifier>  <value: (StateVariableDefinitionValue)?>  <semicolon: Semicolon> => {
-        let identifier = new_identifier(l..r, source);
-        let iap = parser_helpers::new_index_access_path_from_identifier_path(new_identifier_path(vec![new_identifier_path_element_identifier(identifier)]));
-        let type_name = parser_helpers::new_type_name_index_access_path(iap);
+        let identifier = consumer.make_identifier(l..r, source);
+        let iap = parser_helpers::new_index_access_path_from_identifier_path(consumer.make_identifier_path(vec![consumer.make_identifier_path_element_identifier(identifier)]));
+        let type_name = parser_helpers::new_type_name_index_access_path(consumer, iap);
 
-        new_state_variable_definition(type_name, attributes, name, value, semicolon)
+        consumer.make_state_variable_definition(type_name, attributes, name, value, semicolon)
     },
 
 
     // If the function type has no return, then we don't directly parse state variable attributes, we only do it if
     // we see a special one (one that can be a state variable attribute but not a function type attribute).
-    <type_name: FunctionTypeInternalNoReturn> <special_attributes: (<SpecialStateVariableAttribute> <StateVariableAttributes>)?> <name: Identifier>  <value: (StateVariableDefinitionValue)?>  <semicolon: Semicolon>  => {
-        let (function_type, mut extra_attributes) = parser_helpers::extract_extra_attributes(type_name);
+    <type_name: FunctionTypeInternalNoReturn> <special_attributes: (<SpecialStateVariableAttribute> <RepeatedAllowEmpty<<StateVariableAttribute>>>)?> <name: Identifier>  <value: (StateVariableDefinitionValue)?>  <semicolon: Semicolon>  => {
+        let (function_type, mut extra_attributes) = consumer.extract_extra_attributes(type_name);
         if let Some(special_attributes) = special_attributes {
             extra_attributes.push(special_attributes.0);
-            extra_attributes.extend(special_attributes.1.elements);
+            extra_attributes.extend(special_attributes.1);
         }
-        new_state_variable_definition(new_type_name_function_type(function_type), new_state_variable_attributes(extra_attributes), name, value, semicolon)
+        consumer.make_state_variable_definition(consumer.make_type_name_function_type(function_type), consumer.make_state_variable_attributes(extra_attributes), name, value, semicolon)
     },
 };
 
 // Match an identifier path that, if it's a single element, is not `error`
-IdentifierPathNoError: IdentifierPath = {
+IdentifierPathNoError: C::IdentifierPath = {
     // We either have any identifier with a tail (ie a period)
     <head: Identifier>  <mut tail: IdentifierPathTail>  => {
-        tail.insert(0, new_identifier_path_element_identifier(head));
-        new_identifier_path(tail)
+        tail.insert(0, consumer.make_identifier_path_element_identifier(head));
+        consumer.make_identifier_path(tail)
     },
     // or a single identifier that is not `error`
-    <head: SomeIdentifier<"ErrorKeyword_Unreserved">>  => new_identifier_path(vec![new_identifier_path_element_identifier(<>)]),
+    <head: SomeIdentifier<"ErrorKeyword_Unreserved">>  => consumer.make_identifier_path(vec![consumer.make_identifier_path_element_identifier(<>)]),
 };
 
 // These are the attributes that can appear in a state variable but not a function,
 // they can work as a limit between these definitions.
-SpecialStateVariableAttribute: StateVariableAttribute = {
-        <override_specifier: OverrideSpecifier>  => new_state_variable_attribute_override_specifier(<>),
-        <immutable_keyword: ImmutableKeyword>  => new_state_variable_attribute_immutable_keyword(<>),
-        <transient_keyword: TransientKeyword>  => new_state_variable_attribute_transient_keyword(<>),
-        <constant_keyword: ConstantKeyword>  => new_state_variable_attribute_constant_keyword(<>),
+SpecialStateVariableAttribute: C::StateVariableAttribute = {
+        <override_specifier: OverrideSpecifier>  => consumer.make_state_variable_attribute_override_specifier(<>),
+        <immutable_keyword: ImmutableKeyword>  => consumer.make_state_variable_attribute_immutable_keyword(<>),
+        <transient_keyword: TransientKeyword>  => consumer.make_state_variable_attribute_transient_keyword(<>),
+        <constant_keyword: ConstantKeyword>  => consumer.make_state_variable_attribute_constant_keyword(<>),
 };
 "#)
                                 ),
@@ -2264,29 +2264,29 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
 //    when it's certainly a type. `new_type_name_index_access_path` transforms an IAP into a TypeName.
 //    However, since a IAP and an array type conflict, we need to make sure that array types are only matched against
 //    base types that are not IAPs, hence the parametric IAPRule.
-TypeName0<FunctionRule, IAPRule>: TypeName = {
-    <function_type: FunctionRule> => new_type_name_function_type(<>),
-    <mapping_type: MappingType>  => new_type_name_mapping_type(<>),
-    <index_access_path: IAPRule> => parser_helpers::new_type_name_index_access_path(<>),
+TypeName0<FunctionRule, IAPRule>: C::TypeName = {
+    <function_type: FunctionRule> => consumer.make_type_name_function_type(<>),
+    <mapping_type: MappingType>  => consumer.make_type_name_mapping_type(<>),
+    <index_access_path: IAPRule> => parser_helpers::new_type_name_index_access_path(consumer, <>),
 };
-TypeName1<FunctionRule, IAPRule>: TypeName = {
-    <type_name: ArrayTypeName>  => new_type_name_array_type_name(<>),
+TypeName1<FunctionRule, IAPRule>: C::TypeName = {
+    <type_name: ArrayTypeName>  => consumer.make_type_name_array_type_name(<>),
     <type_name: TypeName0<FunctionRule, IAPRule>>  => <>,
 };
-TypeName: TypeName = {
+TypeName: C::TypeName = {
     // A regular type can have any function type and an IAP
     <type_name: TypeName1<FunctionType, IndexAccessPath<IdentifierPath>>>  => <>,
 };
 
 #[inline]
-ArrayTypeName: ArrayTypeName = {
+ArrayTypeName: C::ArrayTypeName = {
     // The base expression shouldn't end in a trailing IAP, if it does (like `a.b[c]`) it will be
     // handled by `new_type_name_index_access_path` above
-    <type_name: TypeName1<FunctionType, NoIndexAccessPath>>  <open_bracket: OpenBracket>  <index: (Expression)?>  <close_bracket: CloseBracket>  => new_array_type_name(<>),
+    <type_name: TypeName1<FunctionType, NoIndexAccessPath>>  <open_bracket: OpenBracket>  <index: (Expression)?>  <close_bracket: CloseBracket>  => consumer.make_array_type_name(<>),
 };
 
 // An empty rule to disable IAPs
-NoIndexAccessPath: parser_helpers::IndexAccessPath = {};
+NoIndexAccessPath: parser_helpers::IndexAccessPath<C> = {};
 ")
                                 ),
                                 Struct(
@@ -2301,17 +2301,17 @@ NoIndexAccessPath: parser_helpers::IndexAccessPath = {};
 // The only reason to split FunctionType into two rules is to allow StateVariableDefinition
 // to choose whether to allow FunctionTypes without returns or not.
 // Note: This could be solved with macros, but is short enough to be explicit
-FunctionType: FunctionType = {
+FunctionType: C::FunctionType = {
     FunctionTypeInternalNoReturn => <>,
     FunctionTypeInternalReturn => <>,
 };
 
-FunctionTypeInternalNoReturn: FunctionType = {
-    <function_keyword: FunctionKeyword>  <parameters: ParametersDeclaration>  <attributes: FunctionTypeAttributes>   => new_function_type(function_keyword, parameters, attributes, None),
+FunctionTypeInternalNoReturn: C::FunctionType = {
+    <function_keyword: FunctionKeyword>  <parameters: ParametersDeclaration>  <attributes: FunctionTypeAttributes>   => consumer.make_function_type(function_keyword, parameters, attributes, None),
 };
-FunctionTypeInternalReturn: FunctionType = {
-    <function_keyword: FunctionKeyword>  <parameters: ParametersDeclaration>  <attributes: FunctionTypeAttributes>  <returns: ReturnsDeclaration>  => new_function_type(function_keyword, parameters, attributes, Some(returns)),
-    
+FunctionTypeInternalReturn: C::FunctionType = {
+    <function_keyword: FunctionKeyword>  <parameters: ParametersDeclaration>  <attributes: FunctionTypeAttributes>  <returns: ReturnsDeclaration>  => consumer.make_function_type(function_keyword, parameters, attributes, Some(returns)),
+
 };
 ")
                                 ),
@@ -2460,22 +2460,22 @@ FunctionTypeInternalReturn: FunctionType = {
 // To solve it we introduce a special `VariableDeclarationStatement` that handles this case specifically,
 // since both this and `RevertStatement` are inlined, the parser doesn't need to reduce until it has seen the
 // entire statement.
-_Statement<TrailingElse>: Statement = {
-    <if_statement: IfStatement<TrailingElse>>  => new_statement_if_statement(<>),
-    <for_statement: ForStatement<TrailingElse>>  => new_statement_for_statement(<>),
-    <while_statement: WhileStatement<TrailingElse>>  => new_statement_while_statement(<>),
-    <do_while_statement: DoWhileStatement>  => new_statement_do_while_statement(<>),
-    <continue_statement: ContinueStatement>  => new_statement_continue_statement(<>),
-    <break_statement: BreakStatement>  => new_statement_break_statement(<>),
-    <return_statement: ReturnStatement>  => new_statement_return_statement(<>),
-    <emit_statement: EmitStatement>  => new_statement_emit_statement(<>),
-    <try_statement: TryStatement>  => new_statement_try_statement(<>),
-    <revert_statement: RevertStatement>  => new_statement_revert_statement(<>),
-    <assembly_statement: AssemblyStatement>  => new_statement_assembly_statement(<>),
-    <block: Block>  => new_statement_block(<>),
-    <unchecked_block: UncheckedBlock>  => new_statement_unchecked_block(<>),
-    <variable_declaration_statement: VariableDeclarationStatementSpecialRevert>  => new_statement_variable_declaration_statement(<>),
-    <expression_statement: ExpressionStatement>  => new_statement_expression_statement(<>),
+_Statement<TrailingElse>: C::Statement = {
+    <if_statement: IfStatement<TrailingElse>>  => consumer.make_statement_if_statement(<>),
+    <for_statement: ForStatement<TrailingElse>>  => consumer.make_statement_for_statement(<>),
+    <while_statement: WhileStatement<TrailingElse>>  => consumer.make_statement_while_statement(<>),
+    <do_while_statement: DoWhileStatement>  => consumer.make_statement_do_while_statement(<>),
+    <continue_statement: ContinueStatement>  => consumer.make_statement_continue_statement(<>),
+    <break_statement: BreakStatement>  => consumer.make_statement_break_statement(<>),
+    <return_statement: ReturnStatement>  => consumer.make_statement_return_statement(<>),
+    <emit_statement: EmitStatement>  => consumer.make_statement_emit_statement(<>),
+    <try_statement: TryStatement>  => consumer.make_statement_try_statement(<>),
+    <revert_statement: RevertStatement>  => consumer.make_statement_revert_statement(<>),
+    <assembly_statement: AssemblyStatement>  => consumer.make_statement_assembly_statement(<>),
+    <block: Block>  => consumer.make_statement_block(<>),
+    <unchecked_block: UncheckedBlock>  => consumer.make_statement_unchecked_block(<>),
+    <variable_declaration_statement: VariableDeclarationStatementSpecialRevert>  => consumer.make_statement_variable_declaration_statement(<>),
+    <expression_statement: ExpressionStatement>  => consumer.make_statement_expression_statement(<>),
 };
 
 // By default statements allow dangling `else`s
@@ -2486,43 +2486,43 @@ Statement = _Statement<"True">;
 //
 // Note: They need to be inline together with `RevertStatement` to actually avoid shift/reduce conflicts
 #[inline]
-VariableDeclarationStatementSpecialRevert: VariableDeclarationStatement = {
-    <target: VariableDeclarationTargetSpecialRevert>  <semicolon: Semicolon>  => new_variable_declaration_statement(<>),
+VariableDeclarationStatementSpecialRevert: C::VariableDeclarationStatement = {
+    <target: VariableDeclarationTargetSpecialRevert>  <semicolon: Semicolon>  => consumer.make_variable_declaration_statement(<>),
 };
 #[inline]
-VariableDeclarationTargetSpecialRevert: VariableDeclarationTarget = {
-    <single_typed_declaration: SingleTypedDeclarationSpecialRevert>  => new_variable_declaration_target_single_typed_declaration(<>),
-    <multi_typed_declaration: MultiTypedDeclaration>  => new_variable_declaration_target_multi_typed_declaration(<>),
+VariableDeclarationTargetSpecialRevert: C::VariableDeclarationTarget = {
+    <single_typed_declaration: SingleTypedDeclarationSpecialRevert>  => consumer.make_variable_declaration_target_single_typed_declaration(<>),
+    <multi_typed_declaration: MultiTypedDeclaration>  => consumer.make_variable_declaration_target_multi_typed_declaration(<>),
 };
 #[inline]
-SingleTypedDeclarationSpecialRevert: SingleTypedDeclaration = {
-    <declaration: VariableDeclarationSpecialRevert>  <value: (VariableDeclarationValue)?>  => new_single_typed_declaration(<>),
+SingleTypedDeclarationSpecialRevert: C::SingleTypedDeclaration = {
+    <declaration: VariableDeclarationSpecialRevert>  <value: (VariableDeclarationValue)?>  => consumer.make_single_typed_declaration(<>),
 };
 #[inline]
-VariableDeclarationSpecialRevert: VariableDeclaration = {
+VariableDeclarationSpecialRevert: C::VariableDeclaration = {
     // A regular type that is not `revert`
     //
     // Note: we're tempted to inline TypeNames, but they are recursive, that's why we extract the special case
-    <type_name: TypeName1<FunctionType, IndexAccessPath<IdentifierPathNoRevert>>>  <storage_location: (StorageLocation)?>  <name: Identifier>  => new_variable_declaration(<>),
+    <type_name: TypeName1<FunctionType, IndexAccessPath<IdentifierPathNoRevert>>>  <storage_location: (StorageLocation)?>  <name: Identifier>  => consumer.make_variable_declaration(<>),
     // The special `revert` type
     <l:@L> L_RevertKeyword_Unreserved <r:@R>  <storage_location: (StorageLocation)?>  <name: Identifier>  => {
-        let identifier = new_identifier(l..r, source);
-        let iap = parser_helpers::new_index_access_path_from_identifier_path(new_identifier_path(vec![new_identifier_path_element_identifier(identifier)]));
-        let type_name = parser_helpers::new_type_name_index_access_path(iap);
-        new_variable_declaration(type_name, storage_location, name)
+        let identifier = consumer.make_identifier(l..r, source);
+        let iap = parser_helpers::new_index_access_path_from_identifier_path(consumer.make_identifier_path(vec![consumer.make_identifier_path_element_identifier(identifier)]));
+        let type_name = parser_helpers::new_type_name_index_access_path(consumer, iap);
+        consumer.make_variable_declaration(type_name, storage_location, name)
     }
 };
 
 // An IdentifierPath that cannot be `revert`, used to disambiguate from the `revert` type
 #[inline]
-IdentifierPathNoRevert: IdentifierPath = {
+IdentifierPathNoRevert: C::IdentifierPath = {
     // We either have any identifier with a tail (ie a period)
     <head: Identifier> <mut tail: IdentifierPathTail>  => {
-        tail.insert(0, new_identifier_path_element_identifier(head));
-        new_identifier_path(tail)
+        tail.insert(0, consumer.make_identifier_path_element_identifier(head));
+        consumer.make_identifier_path(tail)
     },
     // or a single identifier that is not `revert`
-    <head: SomeIdentifier<"RevertKeyword_Unreserved">>  => new_identifier_path(vec![new_identifier_path_element_identifier(<>)]),
+    <head: SomeIdentifier<"RevertKeyword_Unreserved">>  => consumer.make_identifier_path(vec![consumer.make_identifier_path_element_identifier(<>)]),
 };
 "#)
                                 ),
@@ -2612,14 +2612,14 @@ IdentifierPathNoRevert: IdentifierPath = {
 // is seen.
 //
 // Since they also share a prefix (`(,,,`) we need to have a common prefix rule to avoid reduce/reduce conflicts.
-MultiTypedDeclarationElements: MultiTypedDeclarationElements = {
+MultiTypedDeclarationElements: C::MultiTypedDeclarationElements = {
     <prefix: TuplePrefix> <differentiator: VariableDeclaration> <typed_tuple_deconstruction_element: (Comma <Separated<Comma, <MultiTypedDeclarationElement>>>)?>  => {
-        let mut elements = vec![new_multi_typed_declaration_element(None); prefix];
-        elements.push(new_multi_typed_declaration_element(Some(differentiator)));
+        let mut elements: Vec<_> = (0..prefix).map(|_| consumer.make_multi_typed_declaration_element(None)).collect();
+        elements.push(consumer.make_multi_typed_declaration_element(Some(differentiator)));
         elements.extend(typed_tuple_deconstruction_element.unwrap_or(vec![]));
-        new_multi_typed_declaration_elements(elements)
+        consumer.make_multi_typed_declaration_elements(elements)
     },
-    
+
 };
 
 // TuplePrefix counts how many leading commas we have in a tuple deconstruction or
@@ -2667,10 +2667,10 @@ TuplePrefix: usize = {
                                     ),
                                     parser_options = ParserOptions(inline = false, verbatim = r#"
 // As explained in the `Statement` rule, this solves the dangling else problem
-IfStatement<TrailingElse>: IfStatement = {
+IfStatement<TrailingElse>: C::IfStatement = {
     // IfStatement only allows `if`s without an else if TrailingElse == "True"
-    <if_keyword: IfKeyword>  <open_paren: OpenParen>  <condition: Expression>  <close_paren: CloseParen>  <body: _Statement<"True">> if TrailingElse == "True"  => new_if_statement(<>, None),
-    <if_keyword: IfKeyword>  <open_paren: OpenParen>  <condition: Expression>  <close_paren: CloseParen>  <body: _Statement<"False">>  <else_keyword: ElseKeyword>  <else_branch: _Statement<TrailingElse>>  => new_if_statement(if_keyword, open_paren, condition, close_paren, body, Some(new_else_branch(else_keyword, else_branch))),
+    <if_keyword: IfKeyword>  <open_paren: OpenParen>  <condition: Expression>  <close_paren: CloseParen>  <body: _Statement<"True">> if TrailingElse == "True"  => consumer.make_if_statement(<>, None),
+    <if_keyword: IfKeyword>  <open_paren: OpenParen>  <condition: Expression>  <close_paren: CloseParen>  <body: _Statement<"False">>  <else_keyword: ElseKeyword>  <else_branch: _Statement<TrailingElse>>  => consumer.make_if_statement(if_keyword, open_paren, condition, close_paren, body, Some(consumer.make_else_branch(else_keyword, else_branch))),
 };
 "#)
                                 ),
@@ -2696,8 +2696,8 @@ IfStatement<TrailingElse>: IfStatement = {
 // As explained in the `Statement` rule, this solves the dangling else problem
 //
 // Since a `ForStatement` can have a trailing `Statement` we need to parametrize it as well
-ForStatement<TrailingElse>: ForStatement = {
-        <for_keyword: ForKeyword>  <open_paren: OpenParen>  <initialization: ForStatementInitialization>  <condition: ForStatementCondition>  <iterator: (Expression)?>  <close_paren: CloseParen>  <body: _Statement<TrailingElse>>  => new_for_statement(<>),
+ForStatement<TrailingElse>: C::ForStatement = {
+        <for_keyword: ForKeyword>  <open_paren: OpenParen>  <initialization: ForStatementInitialization>  <condition: ForStatementCondition>  <iterator: (Expression)?>  <close_paren: CloseParen>  <body: _Statement<TrailingElse>>  => consumer.make_for_statement(<>),
 };"#)
                                 ),
                                 Enum(
@@ -2728,8 +2728,8 @@ ForStatement<TrailingElse>: ForStatement = {
 // As explained in the `Statement` rule, this solves the dangling else problem
 //
 // Since a `WhileStatement` can have a trailing `Statement` we need to parametrize it as well
-WhileStatement<TrailingElse>: WhileStatement = {
-        <while_keyword: WhileKeyword>  <open_paren: OpenParen>  <condition: Expression>  <close_paren: CloseParen>  <body: _Statement<TrailingElse>>  => new_while_statement(<>),
+WhileStatement<TrailingElse>: C::WhileStatement = {
+        <while_keyword: WhileKeyword>  <open_paren: OpenParen>  <condition: Expression>  <close_paren: CloseParen>  <body: _Statement<TrailingElse>>  => consumer.make_while_statement(<>),
 };"#)
                                 ),
                                 Struct(
@@ -2795,19 +2795,19 @@ WhileStatement<TrailingElse>: WhileStatement = {
 // start parsing a block (a reduce) or whether it should keep parsing a call options expression (a shift).
 //
 // We use expressions with a trailing block to solve this, and steal the block from there.
-TryStatement: TryStatement = {
+TryStatement: C::TryStatement = {
     // a `ReturnsDeclaration` acts as a disambiguator
     <try_keyword: TryKeyword>  <expression: Expression>  <returns: ReturnsDeclaration>  <body: Block>  <catch_clauses: CatchClauses>  => {
-        new_try_statement(try_keyword, expression, Some(returns), body, catch_clauses)
+        consumer.make_try_statement(try_keyword, expression, Some(returns), body, catch_clauses)
     },
     <try_keyword: TryKeyword>  <expression: ExpressionTrailingBlock>   <catch_clauses: CatchClauses>  => {
         let (expr, body) = expression;
-        new_try_statement(try_keyword, expr, None, body, catch_clauses)
+        consumer.make_try_statement(try_keyword, expr, None, body, catch_clauses)
     },
 };
 
 // An expression followed by a block
-ExpressionTrailingBlock: (Expression, Block) = {
+ExpressionTrailingBlock: (C::Expression, C::Block) = {
         <expression: Expression19<Block>>  => <>,
 };
 "#)
@@ -3189,204 +3189,204 @@ ExpressionTrailingBlock: (Expression, Block) = {
 //    that will be matched against when possible, and lifted up through the recursion.
 //    This seems to not have any effect, but it allows the parser to postpone reductions.
 // 5. Finally, expressions have multiple precedence levels and associativity, we handle this explicitely here.
-Expression0<IndexAccessPathRule, NewExpressionRule>: Expression = {
+Expression0<IndexAccessPathRule, NewExpressionRule>: C::Expression = {
     // The Rule used here is parametric
-    <index_access_path: IndexAccessPathRule> => parser_helpers::new_expression_index_access_path(<>),
+    <index_access_path: IndexAccessPathRule> => parser_helpers::new_expression_index_access_path(consumer, <>),
     // The Rule used here is parametric
-    <new_expression: NewExpressionRule> => new_expression_new_expression(<>),
-    <tuple_expression: TupleExpression>  => new_expression_tuple_expression(<>),
-    <type_expression: TypeExpression>  => new_expression_type_expression(<>),
-    <array_expression: ArrayExpression>  => new_expression_array_expression(<>),
-    <hex_number_expression: HexNumberExpression>  => new_expression_hex_number_expression(<>),
-    <decimal_number_expression: DecimalNumberExpression>  => new_expression_decimal_number_expression(<>),
-    <string_expression: StringExpression>  => new_expression_string_expression(<>),
-    <payable_keyword: PayableKeyword>  => new_expression_payable_keyword(<>),
-    <this_keyword: ThisKeyword>  => new_expression_this_keyword(<>),
-    <super_keyword: SuperKeyword>  => new_expression_super_keyword(<>),
-    <true_keyword: TrueKeyword>  => new_expression_true_keyword(<>),
-    <false_keyword: FalseKeyword>  => new_expression_false_keyword(<>),
+    <new_expression: NewExpressionRule> => consumer.make_expression_new_expression(<>),
+    <tuple_expression: TupleExpression>  => consumer.make_expression_tuple_expression(<>),
+    <type_expression: TypeExpression>  => consumer.make_expression_type_expression(<>),
+    <array_expression: ArrayExpression>  => consumer.make_expression_array_expression(<>),
+    <hex_number_expression: HexNumberExpression>  => consumer.make_expression_hex_number_expression(<>),
+    <decimal_number_expression: DecimalNumberExpression>  => consumer.make_expression_decimal_number_expression(<>),
+    <string_expression: StringExpression>  => consumer.make_expression_string_expression(<>),
+    <payable_keyword: PayableKeyword>  => consumer.make_expression_payable_keyword(<>),
+    <this_keyword: ThisKeyword>  => consumer.make_expression_this_keyword(<>),
+    <super_keyword: SuperKeyword>  => consumer.make_expression_super_keyword(<>),
+    <true_keyword: TrueKeyword>  => consumer.make_expression_true_keyword(<>),
+    <false_keyword: FalseKeyword>  => consumer.make_expression_false_keyword(<>),
 };
 
 // An IAP that doesn't match anything
-NoIndexAccessPath_Expr: parser_helpers::IndexAccessPath = {};
+NoIndexAccessPath_Expr: parser_helpers::IndexAccessPath<C> = {};
 
 // We simplifiy all these levels of expressions into a single one, there's no need
 // for precedence here
-Expression1<IndexAccessPathRule, NewExpressionRule>: Expression = {
+Expression1<IndexAccessPathRule, NewExpressionRule>: C::Expression = {
     // When parsing an index acces expression, the sub expression shouldn't trail in an index access path
     // Nor should it trail on a NewExpression
-    <expression: Expression1<NoIndexAccessPath_Expr, NoNewExpression>>  <open_bracket: OpenBracket>  <start: (Expression)?>  <end: (IndexAccessEnd)?>  <close_bracket: CloseBracket>  => new_expression_index_access_expression(new_index_access_expression(<>)),
+    <expression: Expression1<NoIndexAccessPath_Expr, NoNewExpression>>  <open_bracket: OpenBracket>  <start: (Expression)?>  <end: (IndexAccessEnd)?>  <close_bracket: CloseBracket>  => consumer.make_expression_index_access_expression(consumer.make_index_access_expression(<>)),
     // When parsing a member access expression, the sub expression shouldn't trail in a path
     // Nor should it trail on a NewExpression
-    <expression: Expression1<IndexAccessPath<NoIdentPath>, NoNewExpression>>  <period: Period>  <member: IdentifierPathElement>  => new_expression_member_access_expression(new_member_access_expression(<>)),
+    <expression: Expression1<IndexAccessPath<NoIdentPath>, NoNewExpression>>  <period: Period>  <member: IdentifierPathElement>  => consumer.make_expression_member_access_expression(consumer.make_member_access_expression(<>)),
 
     // Both the braces and the arguments declaration serve as markers for disambiguation, therefore
     // resetting the parametric rules.
-    <expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>>  <open_brace: OpenBrace>  <options: CallOptions>  <close_brace: CloseBrace>  => new_expression_call_options_expression(new_call_options_expression(<>)),
-    <expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>>  <arguments: ArgumentsDeclaration>  => new_expression_function_call_expression(new_function_call_expression(<>)),
+    <expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>>  <open_brace: OpenBrace>  <options: CallOptions>  <close_brace: CloseBrace>  => consumer.make_expression_call_options_expression(consumer.make_call_options_expression(<>)),
+    <expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>>  <arguments: ArgumentsDeclaration>  => consumer.make_expression_function_call_expression(consumer.make_function_call_expression(<>)),
 
     <expression: Expression0<IndexAccessPathRule, NewExpressionRule>>  => <>,
 };
 
-// A Matcher for an empty NewExpression 
-NoNewExpression: NewExpression = {};
+// A Matcher for an empty NewExpression
+NoNewExpression: C::NewExpression = {};
 
 // Tail is a rule identifying what comes after the expression, whatever is captured is added to the tuple result
-Expression5<Tail>: (Expression, Tail) = {
+Expression5<Tail>: (C::Expression, Tail) = {
     <expression_prefix_expression_operator: Expression_PrefixExpression_Operator>  <expression: Expression5<Tail>>  => {
         let (expr, tail) = expression;
-        (new_expression_prefix_expression(new_prefix_expression(expression_prefix_expression_operator, expr)), tail)
+        (consumer.make_expression_prefix_expression(consumer.make_prefix_expression(expression_prefix_expression_operator, expr)), tail)
     },
-    
+
     // A tail can appear just after a postfix or primary expression
     <expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>> <tail: Tail> => {
         (expression, tail)
     },
 };
-Expression6<Tail>: (Expression, Tail) = {
+Expression6<Tail>: (C::Expression, Tail) = {
     // This is the only other postfix expression that can overwrite a trailing element
     // Note that the recursive call expects no tail at all
     <expression: Expression6<EmptyTail>>  <expression_postfix_expression_operator: Expression_PostfixExpression_Operator> <tail: Tail>  => {
         // This is monomorphized by LALRPOP, so we can't really fix this
         #[allow(clippy::ignored_unit_patterns)]
         let (expr, _) = expression;
-        (new_expression_postfix_expression(new_postfix_expression(expr, expression_postfix_expression_operator)), tail)
+        (consumer.make_expression_postfix_expression(consumer.make_postfix_expression(expr, expression_postfix_expression_operator)), tail)
     },
-    
+
     <expression: Expression5<Tail>>  => <>,
 };
-Expression7<Tail>: (Expression, Tail) = {
+Expression7<Tail>: (C::Expression, Tail) = {
     // Note that only the right recursive rule matches a tail, the left recursive expects no tail
     <expression: Expression6<EmptyTail>>  <operator: AsteriskAsterisk>  <expression_2: Expression7<Tail>>  => {
         #[allow(clippy::ignored_unit_patterns)]
         let (e, _) = expression;
         let (e2, tail) = expression_2;
-        (new_expression_exponentiation_expression(new_exponentiation_expression(e, operator, e2)), tail)
+        (consumer.make_expression_exponentiation_expression(consumer.make_exponentiation_expression(e, operator, e2)), tail)
     },
-    
+
     <expression: Expression6<Tail>>  => <>,
 };
-Expression8<Tail>: (Expression, Tail) = {
+Expression8<Tail>: (C::Expression, Tail) = {
     <expression: Expression8<EmptyTail>>  <expression_multiplicative_expression_operator: Expression_MultiplicativeExpression_Operator>  <expression_2: Expression7<Tail>>  => {
         #[allow(clippy::ignored_unit_patterns)]
         let (e, _) = expression;
         let (e2, tail) = expression_2;
-        (new_expression_multiplicative_expression(new_multiplicative_expression(e, expression_multiplicative_expression_operator, e2)), tail)
+        (consumer.make_expression_multiplicative_expression(consumer.make_multiplicative_expression(e, expression_multiplicative_expression_operator, e2)), tail)
     },
-    
+
     <expression: Expression7<Tail>>  => <>,
 };
-Expression9<Tail>: (Expression, Tail) = {
+Expression9<Tail>: (C::Expression, Tail) = {
     <expression: Expression9<EmptyTail>>  <expression_additive_expression_operator: Expression_AdditiveExpression_Operator>  <expression_2: Expression8<Tail>>  => {
         #[allow(clippy::ignored_unit_patterns)]
         let (e, _) = expression;
         let (e2, tail) = expression_2;
-        (new_expression_additive_expression(new_additive_expression(e, expression_additive_expression_operator, e2)), tail)
+        (consumer.make_expression_additive_expression(consumer.make_additive_expression(e, expression_additive_expression_operator, e2)), tail)
     },
-    
+
     <expression: Expression8<Tail>>  => <>,
 };
-Expression10<Tail>: (Expression, Tail) = {
+Expression10<Tail>: (C::Expression, Tail) = {
     <expression: Expression10<EmptyTail>>  <expression_shift_expression_operator: Expression_ShiftExpression_Operator>  <expression_2: Expression9<Tail>>  => {
         #[allow(clippy::ignored_unit_patterns)]
         let (e, _) = expression;
         let (e2, tail) = expression_2;
-        (new_expression_shift_expression(new_shift_expression(e, expression_shift_expression_operator, e2)), tail)
+        (consumer.make_expression_shift_expression(consumer.make_shift_expression(e, expression_shift_expression_operator, e2)), tail)
     },
-    
+
     <expression: Expression9<Tail>>  => <>,
 };
-Expression11<Tail>: (Expression, Tail) = {
+Expression11<Tail>: (C::Expression, Tail) = {
     <expression: Expression11<EmptyTail>>  <operator: Ampersand>  <expression_2: Expression10<Tail>>  => {
         #[allow(clippy::ignored_unit_patterns)]
         let (e, _) = expression;
         let (e2, tail) = expression_2;
-        (new_expression_bitwise_and_expression(new_bitwise_and_expression(e, operator, e2)), tail)
+        (consumer.make_expression_bitwise_and_expression(consumer.make_bitwise_and_expression(e, operator, e2)), tail)
     },
-    
+
     <expression: Expression10<Tail>>  => <>,
 };
-Expression12<Tail>: (Expression, Tail) = {
+Expression12<Tail>: (C::Expression, Tail) = {
     <expression: Expression12<EmptyTail>>  <operator: Caret>  <expression_2: Expression11<Tail>>  => {
         #[allow(clippy::ignored_unit_patterns)]
         let (e, _) = expression;
         let (e2, tail) = expression_2;
-        (new_expression_bitwise_xor_expression(new_bitwise_xor_expression(e, operator, e2)), tail)
+        (consumer.make_expression_bitwise_xor_expression(consumer.make_bitwise_xor_expression(e, operator, e2)), tail)
     },
-    
+
     <expression: Expression11<Tail>>  => <>,
 };
-Expression13<Tail>: (Expression, Tail) = {
+Expression13<Tail>: (C::Expression, Tail) = {
     <expression: Expression13<EmptyTail>>  <operator: Bar>  <expression_2: Expression12<Tail>>  => {
         #[allow(clippy::ignored_unit_patterns)]
         let (e, _) = expression;
         let (e2, tail) = expression_2;
-        (new_expression_bitwise_or_expression(new_bitwise_or_expression(e, operator, e2)), tail)
+        (consumer.make_expression_bitwise_or_expression(consumer.make_bitwise_or_expression(e, operator, e2)), tail)
     },
-    
+
     <expression: Expression12<Tail>>  => <>,
 };
-Expression14<Tail>: (Expression, Tail) = {
+Expression14<Tail>: (C::Expression, Tail) = {
     <expression: Expression14<EmptyTail>>  <expression_inequality_expression_operator: Expression_InequalityExpression_Operator>  <expression_2: Expression13<Tail>>  => {
         #[allow(clippy::ignored_unit_patterns)]
         let (e, _) = expression;
         let (e2, tail) = expression_2;
-        (new_expression_inequality_expression(new_inequality_expression(e, expression_inequality_expression_operator, e2)), tail)
+        (consumer.make_expression_inequality_expression(consumer.make_inequality_expression(e, expression_inequality_expression_operator, e2)), tail)
     },
-    
+
     <expression: Expression13<Tail>>  => <>,
 };
-Expression15<Tail>: (Expression, Tail) = {
+Expression15<Tail>: (C::Expression, Tail) = {
     <expression: Expression15<EmptyTail>>  <expression_equality_expression_operator: Expression_EqualityExpression_Operator>  <expression_2: Expression14<Tail>>  => {
         #[allow(clippy::ignored_unit_patterns)]
         let (e, _) = expression;
         let (e2, tail) = expression_2;
-        (new_expression_equality_expression(new_equality_expression(e, expression_equality_expression_operator, e2)), tail)
+        (consumer.make_expression_equality_expression(consumer.make_equality_expression(e, expression_equality_expression_operator, e2)), tail)
     },
-    
+
     <expression: Expression14<Tail>>  => <>,
 };
-Expression16<Tail>: (Expression, Tail) = {
+Expression16<Tail>: (C::Expression, Tail) = {
     <expression: Expression16<EmptyTail>>  <operator: AmpersandAmpersand>  <expression_2: Expression15<Tail>>  => {
         #[allow(clippy::ignored_unit_patterns)]
         let (e, _) = expression;
         let (e2, tail) = expression_2;
-        (new_expression_and_expression(new_and_expression(e, operator, e2)), tail)
+        (consumer.make_expression_and_expression(consumer.make_and_expression(e, operator, e2)), tail)
     },
-    
+
     <expression: Expression15<Tail>>  => <>,
 };
-Expression17<Tail>: (Expression, Tail) = {
+Expression17<Tail>: (C::Expression, Tail) = {
     <expression: Expression17<EmptyTail>>  <operator: BarBar>  <expression_2: Expression16<Tail>>  => {
         #[allow(clippy::ignored_unit_patterns)]
         let (e, _) = expression;
         let (e2, tail) = expression_2;
-        (new_expression_or_expression(new_or_expression(e, operator, e2)), tail)
+        (consumer.make_expression_or_expression(consumer.make_or_expression(e, operator, e2)), tail)
     },
-    
+
     <expression: Expression16<Tail>>  => <>,
 };
-Expression19<Tail>: (Expression, Tail) = {
+Expression19<Tail>: (C::Expression, Tail) = {
     <expression: Expression17<EmptyTail>>  <question_mark: QuestionMark>  <true_expression: Expression19<EmptyTail>>  <colon: Colon>  <false_expression: Expression19<Tail>>  => {
         #[allow(clippy::ignored_unit_patterns)]
         let (cond_expr, _) = expression;
         #[allow(clippy::ignored_unit_patterns)]
         let (true_expr, _) = true_expression;
         let (false_expr, tail) = false_expression;
-        (new_expression_conditional_expression(new_conditional_expression(cond_expr, question_mark, true_expr, colon, false_expr)), tail)
+        (consumer.make_expression_conditional_expression(consumer.make_conditional_expression(cond_expr, question_mark, true_expr, colon, false_expr)), tail)
     },
-    
+
     <expression: Expression17<EmptyTail>>  <expression_assignment_expression_operator: Expression_AssignmentExpression_Operator>  <expression_2: Expression19<Tail>>  => {
         #[allow(clippy::ignored_unit_patterns)]
         let (e, _) = expression;
         let (e2, tail) = expression_2;
-        (new_expression_assignment_expression(new_assignment_expression(e, expression_assignment_expression_operator, e2)), tail)
+        (consumer.make_expression_assignment_expression(consumer.make_assignment_expression(e, expression_assignment_expression_operator, e2)), tail)
     },
-    
+
     <expression: Expression17<Tail>>  => <>,
 };
 
-Expression: Expression = {
+Expression: C::Expression = {
     // By default, we expect no tail
     <expression: Expression19<EmptyTail>>  => expression.0,
 };
@@ -3397,67 +3397,67 @@ EmptyTail: () = {
 };
 
 // The different operators are used like choices, and wrapped accordingly
-Expression_PrefixExpression_Operator: Expression_PrefixExpression_Operator = {
-    <operator: PlusPlus>  => new_expression_prefix_expression_operator_plus_plus(<>),
-    <operator: MinusMinus>  => new_expression_prefix_expression_operator_minus_minus(<>),
-    <operator: Tilde>  => new_expression_prefix_expression_operator_tilde(<>),
-    <operator: Bang>  => new_expression_prefix_expression_operator_bang(<>),
-    <operator: Minus>  => new_expression_prefix_expression_operator_minus(<>),
-    <operator: DeleteKeyword>  => new_expression_prefix_expression_operator_delete_keyword(<>),
+Expression_PrefixExpression_Operator: C::Expression_PrefixExpression_Operator = {
+    <operator: PlusPlus>  => consumer.make_expression_prefix_expression_operator_plus_plus(<>),
+    <operator: MinusMinus>  => consumer.make_expression_prefix_expression_operator_minus_minus(<>),
+    <operator: Tilde>  => consumer.make_expression_prefix_expression_operator_tilde(<>),
+    <operator: Bang>  => consumer.make_expression_prefix_expression_operator_bang(<>),
+    <operator: Minus>  => consumer.make_expression_prefix_expression_operator_minus(<>),
+    <operator: DeleteKeyword>  => consumer.make_expression_prefix_expression_operator_delete_keyword(<>),
 };
-Expression_PostfixExpression_Operator: Expression_PostfixExpression_Operator = {
-    <operator: PlusPlus>  => new_expression_postfix_expression_operator_plus_plus(<>),
-    <operator: MinusMinus>  => new_expression_postfix_expression_operator_minus_minus(<>),
+Expression_PostfixExpression_Operator: C::Expression_PostfixExpression_Operator = {
+    <operator: PlusPlus>  => consumer.make_expression_postfix_expression_operator_plus_plus(<>),
+    <operator: MinusMinus>  => consumer.make_expression_postfix_expression_operator_minus_minus(<>),
 };
-Expression_MultiplicativeExpression_Operator: Expression_MultiplicativeExpression_Operator = {
-    <operator: Asterisk>  => new_expression_multiplicative_expression_operator_asterisk(<>),
-    <operator: Slash>  => new_expression_multiplicative_expression_operator_slash(<>),
-    <operator: Percent>  => new_expression_multiplicative_expression_operator_percent(<>),
+Expression_MultiplicativeExpression_Operator: C::Expression_MultiplicativeExpression_Operator = {
+    <operator: Asterisk>  => consumer.make_expression_multiplicative_expression_operator_asterisk(<>),
+    <operator: Slash>  => consumer.make_expression_multiplicative_expression_operator_slash(<>),
+    <operator: Percent>  => consumer.make_expression_multiplicative_expression_operator_percent(<>),
 };
-Expression_AdditiveExpression_Operator: Expression_AdditiveExpression_Operator = {
-    <operator: Plus>  => new_expression_additive_expression_operator_plus(<>),
-    <operator: Minus>  => new_expression_additive_expression_operator_minus(<>),
+Expression_AdditiveExpression_Operator: C::Expression_AdditiveExpression_Operator = {
+    <operator: Plus>  => consumer.make_expression_additive_expression_operator_plus(<>),
+    <operator: Minus>  => consumer.make_expression_additive_expression_operator_minus(<>),
 };
-Expression_ShiftExpression_Operator: Expression_ShiftExpression_Operator = {
-    <operator: LessThanLessThan>  => new_expression_shift_expression_operator_less_than_less_than(<>),
-    <operator: GreaterThanGreaterThan>  => new_expression_shift_expression_operator_greater_than_greater_than(<>),
-    <operator: GreaterThanGreaterThanGreaterThan>  => new_expression_shift_expression_operator_greater_than_greater_than_greater_than(<>),
+Expression_ShiftExpression_Operator: C::Expression_ShiftExpression_Operator = {
+    <operator: LessThanLessThan>  => consumer.make_expression_shift_expression_operator_less_than_less_than(<>),
+    <operator: GreaterThanGreaterThan>  => consumer.make_expression_shift_expression_operator_greater_than_greater_than(<>),
+    <operator: GreaterThanGreaterThanGreaterThan>  => consumer.make_expression_shift_expression_operator_greater_than_greater_than_greater_than(<>),
 };
-Expression_InequalityExpression_Operator: Expression_InequalityExpression_Operator = {
-    <operator: LessThan>  => new_expression_inequality_expression_operator_less_than(<>),
-    <operator: GreaterThan>  => new_expression_inequality_expression_operator_greater_than(<>),
-    <operator: LessThanEqual>  => new_expression_inequality_expression_operator_less_than_equal(<>),
-    <operator: GreaterThanEqual>  => new_expression_inequality_expression_operator_greater_than_equal(<>),
+Expression_InequalityExpression_Operator: C::Expression_InequalityExpression_Operator = {
+    <operator: LessThan>  => consumer.make_expression_inequality_expression_operator_less_than(<>),
+    <operator: GreaterThan>  => consumer.make_expression_inequality_expression_operator_greater_than(<>),
+    <operator: LessThanEqual>  => consumer.make_expression_inequality_expression_operator_less_than_equal(<>),
+    <operator: GreaterThanEqual>  => consumer.make_expression_inequality_expression_operator_greater_than_equal(<>),
 };
-Expression_EqualityExpression_Operator: Expression_EqualityExpression_Operator = {
-    <operator: EqualEqual>  => new_expression_equality_expression_operator_equal_equal(<>),
-    <operator: BangEqual>  => new_expression_equality_expression_operator_bang_equal(<>),
+Expression_EqualityExpression_Operator: C::Expression_EqualityExpression_Operator = {
+    <operator: EqualEqual>  => consumer.make_expression_equality_expression_operator_equal_equal(<>),
+    <operator: BangEqual>  => consumer.make_expression_equality_expression_operator_bang_equal(<>),
 };
-Expression_AssignmentExpression_Operator: Expression_AssignmentExpression_Operator = {
-    <operator: Equal>  => new_expression_assignment_expression_operator_equal(<>),
-    <operator: BarEqual>  => new_expression_assignment_expression_operator_bar_equal(<>),
-    <operator: PlusEqual>  => new_expression_assignment_expression_operator_plus_equal(<>),
-    <operator: MinusEqual>  => new_expression_assignment_expression_operator_minus_equal(<>),
-    <operator: CaretEqual>  => new_expression_assignment_expression_operator_caret_equal(<>),
-    <operator: SlashEqual>  => new_expression_assignment_expression_operator_slash_equal(<>),
-    <operator: PercentEqual>  => new_expression_assignment_expression_operator_percent_equal(<>),
-    <operator: AsteriskEqual>  => new_expression_assignment_expression_operator_asterisk_equal(<>),
-    <operator: AmpersandEqual>  => new_expression_assignment_expression_operator_ampersand_equal(<>),
-    <operator: LessThanLessThanEqual>  => new_expression_assignment_expression_operator_less_than_less_than_equal(<>),
-    <operator: GreaterThanGreaterThanEqual>  => new_expression_assignment_expression_operator_greater_than_greater_than_equal(<>),
-    <operator: GreaterThanGreaterThanGreaterThanEqual>  => new_expression_assignment_expression_operator_greater_than_greater_than_greater_than_equal(<>),
+Expression_AssignmentExpression_Operator: C::Expression_AssignmentExpression_Operator = {
+    <operator: Equal>  => consumer.make_expression_assignment_expression_operator_equal(<>),
+    <operator: BarEqual>  => consumer.make_expression_assignment_expression_operator_bar_equal(<>),
+    <operator: PlusEqual>  => consumer.make_expression_assignment_expression_operator_plus_equal(<>),
+    <operator: MinusEqual>  => consumer.make_expression_assignment_expression_operator_minus_equal(<>),
+    <operator: CaretEqual>  => consumer.make_expression_assignment_expression_operator_caret_equal(<>),
+    <operator: SlashEqual>  => consumer.make_expression_assignment_expression_operator_slash_equal(<>),
+    <operator: PercentEqual>  => consumer.make_expression_assignment_expression_operator_percent_equal(<>),
+    <operator: AsteriskEqual>  => consumer.make_expression_assignment_expression_operator_asterisk_equal(<>),
+    <operator: AmpersandEqual>  => consumer.make_expression_assignment_expression_operator_ampersand_equal(<>),
+    <operator: LessThanLessThanEqual>  => consumer.make_expression_assignment_expression_operator_less_than_less_than_equal(<>),
+    <operator: GreaterThanGreaterThanEqual>  => consumer.make_expression_assignment_expression_operator_greater_than_greater_than_equal(<>),
+    <operator: GreaterThanGreaterThanGreaterThanEqual>  => consumer.make_expression_assignment_expression_operator_greater_than_greater_than_greater_than_equal(<>),
 };
 
 // A rule matching en empty `IdentifierPath`
-NoIdentPath: IdentifierPath = {};
+NoIdentPath: C::IdentifierPath = {};
 
 // An Index Access Path that is parametric over the IdentifierPath rule used for member access and index access
-IndexAccessPath<IdentPathRule>: parser_helpers::IndexAccessPath = {
+IndexAccessPath<IdentPathRule>: parser_helpers::IndexAccessPath<C> = {
     // As before, we usually care about trailing constructs, so the brackets serve as markers to reset the parametric rule
     <iap: IndexAccessPath<IdentifierPath>> <open_bracket: OpenBracket>  <start: (Expression)?>  <end: (IndexAccessEnd)?>  <close_bracket: CloseBracket>  => parser_helpers::index_access_path_add_index(<>),
     <IndexAccessPath1<IdentPathRule>>  => <>,
 };
-IndexAccessPath1<IdentPathRule>: parser_helpers::IndexAccessPath = {
+IndexAccessPath1<IdentPathRule>: parser_helpers::IndexAccessPath<C> = {
     <identifier: IdentPathRule> => parser_helpers::new_index_access_path_from_identifier_path(<>),
     <elementary_type: ElementaryType>  => parser_helpers::new_index_access_path_from_elementary_type(<>),
 };
@@ -3562,12 +3562,12 @@ IndexAccessPath1<IdentPathRule>: parser_helpers::IndexAccessPath = {
 //
 // We do this to avoid the amibiguity of `try new function () returns (uint) ...`, where the returns clause may be
 // parsed either as part of the function type or as part of a try statement.
-NewExpression: NewExpression = {
-    <new_keyword: NewKeyword>  <type_name: TypeName1<NoFunctionType, IndexAccessPath<IdentifierPath>>>  => new_new_expression(<>),
-    
+NewExpression: C::NewExpression = {
+    <new_keyword: NewKeyword>  <type_name: TypeName1<NoFunctionType, IndexAccessPath<IdentifierPath>>>  => consumer.make_new_expression(<>),
+
 };
 
-NoFunctionType: FunctionType = {};
+NoFunctionType: C::FunctionType = {};
 "#)
                                 ),
                                 Struct(
@@ -3587,20 +3587,20 @@ NoFunctionType: FunctionType = {};
                                         verbatim = r#"
 // See the comment around TupleDeconstructionStatement for an explanation of this rule.
 #[inline]
-TupleValues: TupleValues = {
+TupleValues: C::TupleValues = {
     <prefix: TuplePrefix> => {
         // We need to add an extra empty element here, since the trailing comma indicates
         // an additional empty tuple value.
-        let elements = vec![new_tuple_value(None); prefix + 1];
-        new_tuple_values(elements)
+        let elements: Vec<_> = (0..prefix + 1).map(|_| consumer.make_tuple_value(None)).collect();
+        consumer.make_tuple_values(elements)
     },
     <prefix: TuplePrefix> <differentiator: Expression> <tuple_value: (Comma <Separated<Comma, <TupleValue>>>)?>  => {
-        let mut elements = vec![new_tuple_value(None); prefix];
-        elements.push(new_tuple_value(Some(differentiator)));
+        let mut elements: Vec<_> = (0..prefix).map(|_| consumer.make_tuple_value(None)).collect();
+        elements.push(consumer.make_tuple_value(Some(differentiator)));
         elements.extend(tuple_value.unwrap_or(vec![]));
-        new_tuple_values(elements)
+        consumer.make_tuple_values(elements)
     },
-    
+
 };
 "#)
                                 ),
@@ -3884,25 +3884,25 @@ TupleValues: TupleValues = {
                                     parser_options = ParserOptions(inline = false, verbatim = r#"
 // We need to force this to differentiate the first element from not being
 // an `AddressKeyword`
-IdentifierPath: IdentifierPath = {
+IdentifierPath: C::IdentifierPath = {
     <head: Identifier>  <tail: (IdentifierPathTail)?>  => {
         match tail {
             Some(mut tail) => {
-                tail.insert(0, new_identifier_path_element_identifier(head));
-                new_identifier_path(tail)
+                tail.insert(0, consumer.make_identifier_path_element_identifier(head));
+                consumer.make_identifier_path(tail)
             },
-            None => new_identifier_path(vec![new_identifier_path_element_identifier(head)]),
+            None => consumer.make_identifier_path(vec![consumer.make_identifier_path_element_identifier(head)]),
         }
     },
-    
+
 };
-IdentifierPathTail: Vec<IdentifierPathElement> = {
+IdentifierPathTail: Vec<C::IdentifierPathElement> = {
     Period  <elements: IdentifierPathTailElements>  => <>,
-    
+
 };
-IdentifierPathTailElements: Vec<IdentifierPathElement> = {
+IdentifierPathTailElements: Vec<C::IdentifierPathElement> = {
     <member_access_identifier: Separated<Period, <IdentifierPathElement>>>  => <>,
-    
+
 };
 "#)
 

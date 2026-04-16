@@ -3,7 +3,8 @@ use std::rc::Rc;
 
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeId};
-use slang_solidity_v2_parser::{Parser, ParserError};
+use slang_solidity_v2_cst::structured_cst::cst_consumer;
+use slang_solidity_v2_parser::ParserError;
 use slang_solidity_v2_semantic::context::{extract_import_paths_from_source_unit, SemanticContext};
 
 use super::file::File;
@@ -31,7 +32,7 @@ impl InternalCompilationBuilder {
             });
         }
 
-        let source_unit_cst = Parser::parse(contents, self.language_version)?;
+        let source_unit_cst = cst_consumer::parse(contents, self.language_version)?;
         let source_unit = ir::build(&source_unit_cst, &contents);
         let import_paths = extract_import_paths_from_source_unit(&source_unit);
 

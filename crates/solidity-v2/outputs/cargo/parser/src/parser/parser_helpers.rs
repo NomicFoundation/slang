@@ -2,51 +2,38 @@
 //!
 //! They shouldn't be used outside of the parser, and should be transformed into AST nodes.
 
-use std::rc::Rc;
-
-use slang_solidity_v2_cst::structured_cst::nodes::{
-    new_array_type_name, new_expression_elementary_type, new_expression_identifier,
-    new_expression_index_access_expression, new_expression_member_access_expression,
-    new_function_type, new_function_type_attributes, new_index_access_expression,
-    new_member_access_expression, new_type_name_array_type_name, new_type_name_elementary_type,
-    new_type_name_identifier_path, CloseBracket, ElementaryType, Expression, FunctionType,
-    FunctionTypeAttribute, FunctionTypeStruct, Identifier, IdentifierPath, IdentifierPathElement,
-    IndexAccessEnd, OpenBracket, Period, StateVariableAttribute, TypeName,
-};
+use crate::parser::consumer::ParserConsumer;
 
 /// An `IndexAccessPath` represents a path or elementary type followed by
 /// zero or more index accesses, e.g. `foo.bar[0][1:3]` or `uint256[5][]`
 ///
 /// It's heavily inspired by solc
 /// <https://github.com/argotorg/solidity/blob/194b114664c7daebc2ff68af3c573272f5d28913/libsolidity/parsing/Parser.h#L198-L209>
-#[derive(Debug)]
-pub(crate) struct IndexAccessPath {
-    pub path: Path,
-    pub indices: Vec<Index>,
+pub struct IndexAccessPath<C: ParserConsumer> {
+    pub path: Path<C>,
+    pub indices: Vec<Index<C>>,
 }
 
-#[derive(Debug)]
-pub(crate) enum Path {
-    IdentifierPath(IdentifierPath),
-    ElementaryType(ElementaryType),
+pub enum Path<C: ParserConsumer> {
+    IdentifierPath(C::IdentifierPath),
+    ElementaryType(C::ElementaryType),
 }
 
-#[derive(Debug)]
-pub(crate) struct Index {
-    pub open_bracket: OpenBracket,
-    pub start: Option<Expression>,
-    pub end: Option<IndexAccessEnd>,
-    pub close_bracket: CloseBracket,
+pub struct Index<C: ParserConsumer> {
+    pub open_bracket: C::OpenBracket,
+    pub start: Option<C::Expression>,
+    pub end: Option<C::IndexAccessEnd>,
+    pub close_bracket: C::CloseBracket,
 }
 
 /// Given an IAP it adds a new index to it
-pub(crate) fn index_access_path_add_index(
-    mut iap: IndexAccessPath,
-    open_bracket: OpenBracket,
-    start: Option<Expression>,
-    end: Option<IndexAccessEnd>,
-    close_bracket: CloseBracket,
-) -> IndexAccessPath {
+pub(crate) fn index_access_path_add_index<C: ParserConsumer>(
+    mut iap: IndexAccessPath<C>,
+    open_bracket: C::OpenBracket,
+    start: Option<C::Expression>,
+    end: Option<C::IndexAccessEnd>,
+    close_bracket: C::CloseBracket,
+) -> IndexAccessPath<C> {
     iap.indices.push(Index {
         open_bracket,
         start,
@@ -57,9 +44,9 @@ pub(crate) fn index_access_path_add_index(
 }
 
 /// Creates an IAP from an identifier path
-pub(crate) fn new_index_access_path_from_identifier_path(
-    identifier_path: IdentifierPath,
-) -> IndexAccessPath {
+pub(crate) fn new_index_access_path_from_identifier_path<C: ParserConsumer>(
+    identifier_path: C::IdentifierPath,
+) -> IndexAccessPath<C> {
     IndexAccessPath {
         path: Path::IdentifierPath(identifier_path),
         indices: vec![],
@@ -67,164 +54,27 @@ pub(crate) fn new_index_access_path_from_identifier_path(
 }
 
 /// Creates a new IAP from an elementary type
-pub(crate) fn new_index_access_path_from_elementary_type(
-    elementary_type: ElementaryType,
-) -> IndexAccessPath {
+pub(crate) fn new_index_access_path_from_elementary_type<C: ParserConsumer>(
+    elementary_type: C::ElementaryType,
+) -> IndexAccessPath<C> {
     IndexAccessPath {
         path: Path::ElementaryType(elementary_type),
         indices: vec![],
     }
 }
 
-/// Consumes an IAP and creates a `TypeName`
-///
-/// TODO(v2): Return an error if any index has slicing rather than panicing
-pub(crate) fn new_type_name_index_access_path(index_access_path: IndexAccessPath) -> TypeName {
-    let IndexAccessPath { path, indices } = index_access_path;
-
-    let mut type_name = match path {
-        Path::IdentifierPath(path) => new_type_name_identifier_path(path),
-        Path::ElementaryType(elem_type) => new_type_name_elementary_type(elem_type),
-    };
-
-    for index in indices {
-        assert!(
-            index.end.is_none(),
-            "Slicing is not supported in type names yet"
-        );
-        let array_type = new_array_type_name(
-            type_name,
-            index.open_bracket,
-            index.start,
-            index.close_bracket,
-        );
-        type_name = new_type_name_array_type_name(array_type);
-    }
-
-    type_name
+/// Consumes an IAP and creates a `TypeName` by delegating to the consumer
+pub(crate) fn new_type_name_index_access_path<C: ParserConsumer>(
+    consumer: &C,
+    index_access_path: IndexAccessPath<C>,
+) -> C::TypeName {
+    consumer.make_type_name_from_index_access_path(index_access_path)
 }
 
-/// Consumes an IAP and returns an Expression
-pub(crate) fn new_expression_index_access_path(index_access_path: IndexAccessPath) -> Expression {
-    let IndexAccessPath { path, indices } = index_access_path;
-
-    let mut expression = match path {
-        Path::IdentifierPath(path) => new_expression_identifier_path(path),
-        Path::ElementaryType(elem_type) => new_expression_elementary_type(elem_type),
-    };
-
-    for index in indices {
-        let array_expression = new_index_access_expression(
-            expression,
-            index.open_bracket,
-            index.start,
-            index.end,
-            index.close_bracket,
-        );
-        expression = new_expression_index_access_expression(array_expression);
-    }
-
-    expression
-}
-
-pub(crate) fn new_expression_identifier_path(identifier_path: IdentifierPath) -> Expression {
-    identifier_path
-        .elements
-        .into_iter()
-        .fold(None, |acc, id| {
-            match acc {
-                None => Some(match id {
-                    IdentifierPathElement::AddressKeyword(_) => {
-                        // TODO(v2) we should validate that this is not the case and fail gracefully
-                        // instead of returning a wrong identifier
-                        new_expression_identifier(Identifier { range: 0..0 })
-                    }
-                    IdentifierPathElement::Identifier(id) => new_expression_identifier(id),
-                }),
-                Some(acc) => Some(new_expression_member_access_expression(
-                    new_member_access_expression(
-                        acc,
-                        // TODO(v2) use real range
-                        Period { range: 0..0 },
-                        id,
-                    ),
-                )),
-            }
-        })
-        .expect("IdentifierPath should have at least one element!")
-}
-
-/// We use this function to share attributes between a state variable that has a function type.
-/// We find and split the attributes from the function type as needed
-/// TODO(v2) fail gracefully if a wrong attribute is found
-pub(crate) fn extract_extra_attributes(
-    fun_type: FunctionType,
-) -> (FunctionType, Vec<StateVariableAttribute>) {
-    // Move all matching attributes to extra_attributes if duplicate_found, else only the first occurrence
-    let mut seen_internal = false;
-    let mut seen_private = false;
-    let mut seen_public = false;
-    let mut duplicate_found = false;
-
-    let FunctionTypeStruct {
-        function_keyword,
-        parameters,
-        attributes,
-        returns,
-    } = Rc::unwrap_or_clone(fun_type);
-    let mut vec = attributes.elements;
-
-    let extracted = vec.extract_if(.., |attr| {
-        if duplicate_found {
-            // After the first duplicate is found, all matching attributes are extracted
-            true
-        } else {
-            let seen = match attr {
-                FunctionTypeAttribute::InternalKeyword(_) => &mut seen_internal,
-                FunctionTypeAttribute::PrivateKeyword(_) => &mut seen_private,
-                FunctionTypeAttribute::PublicKeyword(_) => &mut seen_public,
-                _ => return false,
-            };
-
-            if *seen {
-                // If a given attribute has already been seen, mark duplicate_found and extract it
-                duplicate_found = true;
-                true
-            } else {
-                // If it's the first time we see this attribute, mark it as seen and don't extract it
-                *seen = true;
-                false
-            }
-        }
-    });
-
-    let extra_attributes: Vec<StateVariableAttribute> = extracted
-        .filter_map(|attr| {
-            match attr {
-                FunctionTypeAttribute::InternalKeyword(terminal) => {
-                    Some(StateVariableAttribute::InternalKeyword(terminal))
-                }
-                FunctionTypeAttribute::PrivateKeyword(terminal) => {
-                    Some(StateVariableAttribute::PrivateKeyword(terminal))
-                }
-                FunctionTypeAttribute::PublicKeyword(terminal) => {
-                    Some(StateVariableAttribute::PublicKeyword(terminal))
-                }
-                _ => {
-                    // TODO(v2): For now we skip this item
-                    // but we should fail gracefully in the future
-                    None
-                }
-            }
-        })
-        .collect();
-
-    let new_fun_type = new_function_type(
-        function_keyword,
-        parameters,
-        new_function_type_attributes(vec),
-        returns,
-    );
-
-    (new_fun_type, extra_attributes)
+/// Consumes an IAP and returns an Expression by delegating to the consumer
+pub(crate) fn new_expression_index_access_path<C: ParserConsumer>(
+    consumer: &C,
+    index_access_path: IndexAccessPath<C>,
+) -> C::Expression {
+    consumer.make_expression_from_index_access_path(index_access_path)
 }

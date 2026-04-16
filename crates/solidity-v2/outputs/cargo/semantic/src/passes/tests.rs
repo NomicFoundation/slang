@@ -1,7 +1,7 @@
 use anyhow::{anyhow, Result};
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeId};
-use slang_solidity_v2_parser::Parser;
+use slang_solidity_v2_cst::structured_cst::cst_consumer;
 
 use crate::binder::{Binder, Resolution};
 use crate::context::SemanticFile;
@@ -32,7 +32,7 @@ impl SemanticFile for TestFile {
 fn build_file(name: &str, contents: &str) -> Result<TestFile> {
     let version = LanguageVersion::V0_8_30;
     let source_unit_cst =
-        Parser::parse(contents, version).map_err(|message| anyhow!(format!("{message:?}")))?;
+        cst_consumer::parse(contents, version).map_err(|message| anyhow!(format!("{message:?}")))?;
     let source_unit = ir::build(&source_unit_cst, &contents);
     Ok(TestFile {
         id: name.to_string(),

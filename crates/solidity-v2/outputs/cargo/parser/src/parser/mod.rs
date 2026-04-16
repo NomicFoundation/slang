@@ -1,11 +1,13 @@
 use lalrpop_util::lalrpop_mod;
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit;
 
 use crate::lexer::{LexemeKind, Lexer};
 use crate::parser::parser_error::ParserError;
 
-mod parser_helpers;
+pub mod parser_helpers;
+
+#[path = "consumer.generated.rs"]
+pub mod consumer;
 
 lalrpop_mod!(
     // Since this is generated code that we don't track, we rather not check for formatting
@@ -33,10 +35,15 @@ pub mod parser_error;
 pub struct Parser;
 
 impl Parser {
-    pub fn parse(input: &str, version: LanguageVersion) -> Result<SourceUnit, ParserError> {
+    /// Parse Solidity source with a custom consumer.
+    pub fn parse_with_consumer<C: consumer::ParserConsumer>(
+        input: &str,
+        version: LanguageVersion,
+        consumer: &C,
+    ) -> Result<C::SourceUnit, ParserError> {
         let lexer = Lexer::new(input, version);
         let parser = grammar::SourceUnitParser::new();
-        parser.parse(input, lexer).map_err(|e| e.into())
+        parser.parse(input, consumer, lexer).map_err(|e| e.into())
     }
 }
 

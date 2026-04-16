@@ -4,7 +4,7 @@ use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::validation::validate_syntax_version;
-use slang_solidity_v2_parser::Parser as V2Parser;
+use slang_solidity_v2_cst::structured_cst::cst_consumer;
 use solidity_v2_language::SolidityDefinition;
 
 pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
@@ -28,7 +28,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
         .collect();
 
     for &lang_version in &tested_versions {
-        let v2_parse = V2Parser::parse(&source, lang_version);
+        let v2_parse = cst_consumer::parse(&source, lang_version);
 
         // TODO(v2): these tests should really go through 'CompilationUnit' once it is ready.
         // This way, we won't have to call individual validation APIs.

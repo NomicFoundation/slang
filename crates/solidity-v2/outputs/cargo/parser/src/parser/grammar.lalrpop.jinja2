@@ -1,8 +1,8 @@
 use crate::lexer::LexemeKind;
-use slang_solidity_v2_cst::structured_cst::nodes::*;
+use crate::parser::consumer::ParserConsumer;
 use crate::parser::parser_helpers;
 
-grammar<'source>(source: &'source str);
+grammar<'source, C>(source: &'source str, consumer: &C) where C: ParserConsumer;
 
 SeparatedAllowEmpty<S, T>: Vec<T> = {
     => vec![],
@@ -49,12 +49,12 @@ Repeated<T>: Vec<T> = {
 
     {%- for item in item.content -%}
     {% if item.inline %}#[inline]
-    {% endif %}{% if item.public -%} pub {% endif -%} {{ item.name }}: {{ item.producing_type }} = {
+    {% endif %}{% if item.public -%} pub {% endif -%} {{ item.name }}: C::{{ item.producing_type }} = {
         {% for option in item.options -%}
             {% for field in option.fields -%}
                 <{{ field.capturing_name | snake_case }}: {{ field.rule }}> {{ " " }}
             {%- endfor %}=> {% if option.constructor -%}
-            {{ option.constructor | snake_case }}(<>)
+            consumer.{{ option.constructor | snake_case }}(<>)
             {%- else -%}
             <>
             {%- endif %},
@@ -80,14 +80,14 @@ Repeated<T>: Vec<T> = {
 {% for id, lexemes in model.parser.terminals -%}
 {% if id != "Identifier" -%}
 #[inline]
-{{ id }}: {{ id }} = {
+{{ id }}: C::{{ id }} = {
 {% for lexeme in lexemes %}
-        <l:@L> L_{{ lexeme }} <r:@L> => new_{{id | snake_case}}(l..r, source),
+        <l:@L> L_{{ lexeme }} <r:@L> => consumer.make_{{id | snake_case}}(l..r, source),
 {% endfor %}
 };
 {%- else -%}
 #[inline]
-Identifier: Identifier = {
+Identifier: C::Identifier = {
     SomeIdentifier<""> => <>,
 };
 
@@ -95,9 +95,9 @@ Identifier: Identifier = {
 //
 // We allow to pass parameters for certain tokens that are disallowed,
 // this is an easy way to express "Any identifier except `X`" as `SomeIdentifier<"X">`
-SomeIdentifier<Except>: {{ id }} = {
+SomeIdentifier<Except>: C::{{ id }} = {
 {% for lexeme in lexemes %}
-        <l:@L> L_{{ lexeme }} <r:@L> if Except !~ "{{ lexeme }}" => new_{{id | snake_case}}(l..r, source),
+        <l:@L> L_{{ lexeme }} <r:@L> if Except !~ "{{ lexeme }}" => consumer.make_{{id | snake_case}}(l..r, source),
 {% endfor %}
 };
 

@@ -3792,6 +3792,7 @@ name = "slang_solidity_v2"
 version = "1.3.4"
 dependencies = [
  "slang_solidity_v2_common",
+ "slang_solidity_v2_cst",
  "slang_solidity_v2_ir",
  "slang_solidity_v2_parser",
  "slang_solidity_v2_semantic",
@@ -3811,6 +3812,7 @@ name = "slang_solidity_v2_cst"
 version = "1.3.4"
 dependencies = [
  "slang_solidity_v2_common",
+ "slang_solidity_v2_parser",
 ]
 
 [[package]]
@@ -3832,7 +3834,6 @@ dependencies = [
  "logos",
  "regex",
  "slang_solidity_v2_common",
- "slang_solidity_v2_cst",
  "strum",
  "strum_macros",
 ]
@@ -4118,7 +4119,6 @@ dependencies = [
  "slang_solidity_v2_common",
  "slang_solidity_v2_cst",
  "slang_solidity_v2_ir",
- "slang_solidity_v2_parser",
  "slang_solidity_v2_semantic",
  "solar-compiler",
  "solidity_testing_utils",
