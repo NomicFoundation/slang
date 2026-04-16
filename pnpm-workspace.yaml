@@ -47,8 +47,6 @@ overrides:
 minimumReleaseAge: 10080 # 1 week
 minimumReleaseAgeExclude:
   - "basic-ftp@5.2.2" # security fix GHSA-6v7q-wjvx-w8wg: https://github.com/NomicFoundation/slang/security/dependabot/159
-  # Renovate security update: pnpm@10.28.2
-  - pnpm@10.28.2
 
 # Store Settings
 storeDir: ".hermit/.pnpm-store"
