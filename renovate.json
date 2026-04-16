@@ -53,6 +53,13 @@
       "groupName": "cargo minor/patch"
     },
     {
+      "description": "cargo: pre-1.0 crates treat 0.x→0.y as major (Cargo semver convention); ungroup from minor/patch so they land as individual PRs",
+      "matchManagers": ["cargo"],
+      "matchCurrentVersion": "<1.0.0",
+      "matchUpdateTypes": ["minor"],
+      "groupName": null
+    },
+    {
       "description": "npm: group minor/patch; majors stay individual",
       "matchManagers": ["npm"],
       "matchUpdateTypes": ["minor", "patch"],
