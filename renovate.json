@@ -36,12 +36,6 @@
       "allowedVersions": "<0.3.0 || >0.6.0"
     },
     {
-      "description": "Benchmark comparison deps: grouped so version changes that affect perf baselines land in one PR",
-      "matchPackageNames": ["tree-sitter", "tree-sitter-solidity", "solar", "solar-compiler"],
-      "groupName": "benchmark deps",
-      "labels": ["ci:perf"]
-    },
-    {
       "description": "@types/node: no automatic major bumps — Node majors are upgraded manually and only to even LTS releases (e.g. 24 → 26). Minor/patch within the current major flow through normally.",
       "matchPackageNames": ["@types/node"],
       "matchUpdateTypes": ["major"],
@@ -86,6 +80,12 @@
       "matchManagers": ["dockerfile"],
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "dockerfile minor/patch"
+    },
+    {
+      "description": "Benchmark comparison deps: grouped so version changes that affect perf baselines land in one PR. Must come after per-manager grouping rules so this groupName takes precedence.",
+      "matchPackageNames": ["tree-sitter", "tree-sitter-solidity", "solar", "solar-compiler"],
+      "groupName": "benchmark deps",
+      "labels": ["ci:perf"]
     }
   ],
   "osvVulnerabilityAlerts": true,
