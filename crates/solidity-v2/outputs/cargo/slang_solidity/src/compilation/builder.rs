@@ -87,12 +87,12 @@ impl<E, C: CompilationBuilderConfig<Error = E>> CompilationBuilder<E, C> {
 
         if let Some(source) = source {
             // TODO(v2): move to a proper diagnostics API (reporter)
-            let AddFileResponse { import_paths } = self
-                .internal
-                .add_file(file_id.into(), &source)
-                .map_err(|err| CompilationBuilderError::ParserError(err))?;
+            let AddFileResponse { import_paths } =
+                self.internal
+                    .add_file(file_id.into(), source)
+                    .map_err(|err| CompilationBuilderError::ParserError(err))?;
 
-            for (node_id, import_path) in import_paths {
+            for import_path in import_paths {
                 let import_id = self
                     .config
                     .resolve_import(file_id, &import_path)
@@ -100,7 +100,7 @@ impl<E, C: CompilationBuilderConfig<Error = E>> CompilationBuilder<E, C> {
 
                 if let Some(import_id) = &import_id {
                     self.internal
-                        .resolve_import(file_id, node_id, import_id.clone())
+                        .resolve_import(file_id, import_path, import_id.clone())
                         .unwrap_or_else(|_| panic!("{file_id} should have been added"));
                     self.add_file(import_id)?;
                 }

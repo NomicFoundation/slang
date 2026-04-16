@@ -4048,6 +4048,7 @@ dependencies = [
  "anyhow",
  "slang_solidity_v2_ast",
  "slang_solidity_v2_common",
+ "slang_solidity_v2_cst",
  "slang_solidity_v2_ir",
  "slang_solidity_v2_parser",
  "slang_solidity_v2_semantic",
