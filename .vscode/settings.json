@@ -43,5 +43,6 @@
     "Regenerate Jinja Templates": ["**/*.jinja2"]
   },
   "js/ts.tsdk.path": "node_modules/typescript/lib",
-  "yaml.validate": false // Disable LSP validation for YAML files, as it is handled by our own cargo tasks
+  "yaml.validate": false, // Disable LSP validation for YAML files, as it is handled by our own cargo tasks
+  "json.schemaDownload.trustedDomains": ["https://docs.renovatebot.com"]
 }
