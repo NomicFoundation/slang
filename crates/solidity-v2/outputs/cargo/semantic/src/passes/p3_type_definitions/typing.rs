@@ -3,7 +3,7 @@ use slang_solidity_v2_ir::ir::NodeId;
 
 use super::Pass;
 use crate::binder::{Definition, Scope};
-use crate::types::{DataLocation, FunctionType, FunctionTypeKind, Type, TypeId};
+use crate::types::{DataLocation, FunctionType, Type, TypeId};
 
 impl Pass<'_> {
     pub(super) fn type_of_identifier_path(
@@ -141,18 +141,13 @@ impl Pass<'_> {
         } else {
             self.types.void()
         };
-        let kind = (&function_definition.mutability).into();
-        let external = matches!(
-            function_definition.visibility,
-            ir::FunctionVisibility::External | ir::FunctionVisibility::Public
-        );
         Some(self.types.register_type(Type::Function(FunctionType {
             definition_id: Some(function_definition.id()),
             implicit_receiver_type,
             parameter_types,
             return_type,
-            external,
-            kind,
+            visibility: function_definition.visibility,
+            mutability: function_definition.mutability,
         })))
     }
 
@@ -243,8 +238,8 @@ impl Pass<'_> {
             implicit_receiver_type: Some(receiver_type_id),
             parameter_types,
             return_type,
-            external: true,
-            kind: FunctionTypeKind::View,
+            visibility: ir::FunctionVisibility::Public,
+            mutability: ir::FunctionMutability::View,
         });
         Some(self.types.register_type(getter_type))
     }

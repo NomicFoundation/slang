@@ -1,0 +1,151 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (14):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["memory_internal" @ input.sol:2:14] (function, type: function (bytes memory) returns void)
+- Def: #3 ["memory_external" @ input.sol:3:14] (function, type: function (bytes memory) returns void)
+- Def: #4 ["memory_private" @ input.sol:4:14] (function, type: function (bytes memory) returns void)
+- Def: #5 ["memory_public" @ input.sol:5:14] (function, type: function (bytes memory) returns void)
+- Def: #6 ["calldata_internal" @ input.sol:7:14] (function, type: function (bytes calldata) returns void)
+- Def: #7 ["calldata_external" @ input.sol:8:14] (function, type: function (bytes calldata) returns void)
+- Def: #8 ["calldata_private" @ input.sol:9:14] (function, type: function (bytes calldata) returns void)
+- Def: #9 ["calldata_public" @ input.sol:10:14] (function, type: function (bytes calldata) returns void)
+- Def: #10 ["memory_callback" @ input.sol:12:14] (function, type: function (function (bytes memory) returns void) returns void)
+- Def: #11 ["memory_callback" @ input.sol:13:14] (function, type: function (function (bytes memory) returns void) returns void)
+- Def: #12 ["calldata_callback" @ input.sol:15:14] (function, type: function (function (bytes calldata) returns void) returns void)
+- Def: #13 ["calldata_callback" @ input.sol:17:14] (function, type: function (function (bytes calldata) returns void) returns void)
+- Def: #14 ["test" @ input.sol:19:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (20):
+- Ref: ["memory_callback" @ input.sol:20:9] -> #10
+- Ref: ["memory_internal" @ input.sol:20:25] -> #2
+- Ref: ["memory_callback" @ input.sol:21:9] -> #11
+- Ref: ["memory_external" @ input.sol:21:30] -> #3
+- Ref: ["memory_callback" @ input.sol:22:9] -> #10
+- Ref: ["memory_private" @ input.sol:22:25] -> #4
+- Ref: ["memory_callback" @ input.sol:23:9] -> #10
+- Ref: ["memory_public" @ input.sol:23:25] -> #5
+- Ref: ["memory_callback" @ input.sol:24:9] -> #11
+- Ref: ["memory_public" @ input.sol:24:30] -> #5
+- Ref: ["memory_callback" @ input.sol:26:9] -> #11
+- Ref: ["calldata_external" @ input.sol:26:30] -> #7
+- Ref: ["memory_callback" @ input.sol:27:9] -> #11
+- Ref: ["calldata_public" @ input.sol:27:30] -> #9
+- Ref: ["calldata_callback" @ input.sol:33:9] -> #12
+- Ref: ["calldata_internal" @ input.sol:33:27] -> #6
+- Ref: ["calldata_callback" @ input.sol:34:9] -> #12
+- Ref: ["calldata_private" @ input.sol:34:27] -> #8
+- Ref: ["calldata_callback" @ input.sol:35:9] -> #12
+- Ref: ["calldata_public" @ input.sol:35:27] -> #9
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     function memory_internal(bytes memory) internal {}
+    │              ───────┬───────  
+    │                     ╰───────── name: 2
+  3 │     function memory_external(bytes memory) external {}
+    │              ───────┬───────  
+    │                     ╰───────── name: 3
+  4 │     function memory_private(bytes memory) private {}
+    │              ───────┬──────  
+    │                     ╰──────── name: 4
+  5 │     function memory_public(bytes memory) public {}
+    │              ──────┬──────  
+    │                    ╰──────── name: 5
+    │ 
+  7 │     function calldata_internal(bytes calldata) internal {}
+    │              ────────┬────────  
+    │                      ╰────────── name: 6
+  8 │     function calldata_external(bytes calldata) external {}
+    │              ────────┬────────  
+    │                      ╰────────── name: 7
+  9 │     function calldata_private(bytes calldata) private {}
+    │              ────────┬───────  
+    │                      ╰───────── name: 8
+ 10 │     function calldata_public(bytes calldata) public {}
+    │              ───────┬───────  
+    │                     ╰───────── name: 9
+    │ 
+ 12 │     function memory_callback(function(bytes memory) internal) private pure {}
+    │              ───────┬───────  
+    │                     ╰───────── name: 10
+ 13 │     function memory_callback(function(bytes memory) external) private pure {}
+    │              ───────┬───────  
+    │                     ╰───────── name: 11
+    │ 
+ 15 │     function calldata_callback(function(bytes calldata) internal) private pure {}
+    │              ────────┬────────  
+    │                      ╰────────── name: 12
+    │ 
+ 17 │     function calldata_callback(function(bytes calldata) external) private pure {}
+    │              ────────┬────────  
+    │                      ╰────────── name: 13
+    │ 
+ 19 │     function test() internal view {
+    │              ──┬─  
+    │                ╰─── name: 14
+ 20 │         memory_callback(memory_internal);
+    │         ───────┬─────── ───────┬───────  
+    │                ╰───────────────────────── ref: 10
+    │                                │         
+    │                                ╰───────── ref: 2
+ 21 │         memory_callback(this.memory_external);  // resolves to the external variant
+    │         ───────┬───────      ───────┬───────  
+    │                ╰────────────────────────────── ref: 11
+    │                                     │         
+    │                                     ╰───────── ref: 3
+ 22 │         memory_callback(memory_private);
+    │         ───────┬─────── ───────┬──────  
+    │                ╰──────────────────────── ref: 10
+    │                                │        
+    │                                ╰──────── ref: 4
+ 23 │         memory_callback(memory_public);
+    │         ───────┬─────── ──────┬──────  
+    │                ╰─────────────────────── ref: 10
+    │                               │        
+    │                               ╰──────── ref: 5
+ 24 │         memory_callback(this.memory_public);    // resolves to the external variant
+    │         ───────┬───────      ──────┬──────  
+    │                ╰──────────────────────────── ref: 11
+    │                                    │        
+    │                                    ╰──────── ref: 5
+    │ 
+ 26 │         memory_callback(this.calldata_external);
+    │         ───────┬───────      ────────┬────────  
+    │                ╰──────────────────────────────── ref: 11
+    │                                      │          
+    │                                      ╰────────── ref: 7
+ 27 │         memory_callback(this.calldata_public);
+    │         ───────┬───────      ───────┬───────  
+    │                ╰────────────────────────────── ref: 11
+    │                                     │         
+    │                                     ╰───────── ref: 9
+    │ 
+ 33 │         calldata_callback(calldata_internal);
+    │         ────────┬──────── ────────┬────────  
+    │                 ╰──────────────────────────── ref: 12
+    │                                   │          
+    │                                   ╰────────── ref: 6
+ 34 │         calldata_callback(calldata_private);
+    │         ────────┬──────── ────────┬───────  
+    │                 ╰─────────────────────────── ref: 12
+    │                                   │         
+    │                                   ╰───────── ref: 8
+ 35 │         calldata_callback(calldata_public);
+    │         ────────┬──────── ───────┬───────  
+    │                 ╰────────────────────────── ref: 12
+    │                                  │         
+    │                                  ╰───────── ref: 9
+────╯

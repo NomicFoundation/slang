@@ -199,7 +199,11 @@ impl Pass<'_> {
         }
     }
 
-    pub(super) fn typing_of_resolution_as_getter(&self, resolution: &Resolution) -> Typing {
+    pub(super) fn typing_of_resolution_as_contract_member(
+        &mut self,
+        resolution: &Resolution,
+    ) -> Typing {
+        // Check if the target is a state variable, and if it has a getter
         if let Resolution::Definition(definition_id) = resolution {
             if let Definition::StateVariable(state_var_definition) =
                 self.binder.find_definition_by_id(*definition_id).unwrap()
@@ -209,7 +213,29 @@ impl Pass<'_> {
                 }
             }
         }
-        self.typing_of_resolution(resolution)
+
+        let mut typing = self.typing_of_resolution(resolution);
+        let resolved_type = typing
+            .as_type_id()
+            .map(|type_id| self.types.get_type_by_id(type_id));
+
+        if let Some(Type::Function(function_type)) = resolved_type {
+            // If the resolved type is a function and the operand is either
+            // `this` or something of an address type, the function is being
+            // used as an external function. If the member is a *public*
+            // function, change the expression typing to indicate the
+            // external access.
+            if function_type.is_externally_visible() {
+                let external_function_type =
+                    self.types.externalize_function_type(function_type.clone());
+                let type_id_with_external_visibility = self
+                    .types
+                    .register_type(Type::Function(external_function_type));
+                typing = Typing::Resolved(type_id_with_external_visibility);
+            }
+        }
+
+        typing
     }
 
     fn type_id_of_receiver(&self, operand: &ir::Expression) -> Option<TypeId> {

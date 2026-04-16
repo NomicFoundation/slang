@@ -1,4 +1,4 @@
-use slang_solidity_v2_ir::ir::{self, NodeId};
+use slang_solidity_v2_ir::ir::{self, FunctionMutability, FunctionVisibility, NodeId};
 
 mod parsing;
 mod registry;
@@ -90,10 +90,70 @@ pub struct FunctionType {
     pub implicit_receiver_type: Option<TypeId>,
     pub parameter_types: Vec<TypeId>,
     pub return_type: TypeId,
-    // TODO: a bool is not sufficient in some corner cases and we need to
-    // distinguish between public and external
-    pub external: bool,
-    pub kind: FunctionTypeKind,
+    pub visibility: FunctionVisibility,
+    pub mutability: FunctionMutability,
+}
+
+impl FunctionType {
+    pub fn is_externally_visible(&self) -> bool {
+        matches!(
+            self.visibility,
+            FunctionVisibility::External | FunctionVisibility::Public
+        )
+    }
+}
+
+pub trait ImplicitlyConvertible<T> {
+    fn implicitly_convertible_to(&self, target: T) -> bool;
+}
+
+impl ImplicitlyConvertible<FunctionVisibility> for FunctionVisibility {
+    fn implicitly_convertible_to(&self, target: Self) -> bool {
+        matches!(
+            (self, target),
+            // public can convert to public, external or internal (if called
+            // internally)
+            (
+                FunctionVisibility::Public,
+                FunctionVisibility::Public
+                    | FunctionVisibility::Internal
+                    | FunctionVisibility::External,
+            )
+                // private converts to private or internal
+                | (
+                    FunctionVisibility::Private,
+                    FunctionVisibility::Private | FunctionVisibility::Internal,
+                )
+                // internal and external only convert to themselves
+                | (FunctionVisibility::Internal, FunctionVisibility::Internal)
+                | (FunctionVisibility::External, FunctionVisibility::External)
+        )
+    }
+}
+
+impl ImplicitlyConvertible<FunctionMutability> for FunctionMutability {
+    fn implicitly_convertible_to(&self, target: Self) -> bool {
+        matches!(
+            (self, target),
+            // pure converts to view or non-payable
+            (
+                FunctionMutability::Pure,
+                FunctionMutability::Pure | FunctionMutability::View | FunctionMutability::NonPayable,
+            )
+                // view converts to non-payable
+                | (
+                FunctionMutability::View,
+                FunctionMutability::View | FunctionMutability::NonPayable
+            )
+                // non-payable does not implicitly convert to any other kind
+                | (FunctionMutability::NonPayable, FunctionMutability::NonPayable)
+                // payable converts to non-payable
+                | (
+                    FunctionMutability::Payable,
+                    FunctionMutability::Payable | FunctionMutability::NonPayable,
+                )
+        )
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
@@ -107,16 +167,15 @@ pub enum DataLocation {
 }
 
 impl DataLocation {
-    pub fn implicitly_convertible_to(&self, target: Self) -> bool {
-        match (self, target) {
-            (from, to) if *from == to => true,
-            (DataLocation::Storage | DataLocation::Calldata, DataLocation::Memory) => true,
-            _ => false,
-        }
-    }
-
-    pub fn overrides(&self, target: Self) -> bool {
-        *self == target || (*self == Self::Memory && target == Self::Calldata)
+    // When calling external functions, it is irrelevant if the data location of
+    // the parameters is ``calldata`` or ``memory``, the encoding of the data
+    // does not change. Because of that, changing the data location when
+    // overriding external functions is allowed.
+    // See https://github.com/argotorg/solidity/pull/12850
+    pub fn overrides_in_external_function(&self, target: Self) -> bool {
+        *self == target
+            || (*self == Self::Memory && target == Self::Calldata)
+            || (*self == Self::Calldata && target == Self::Memory)
     }
 }
 
@@ -130,46 +189,12 @@ impl From<&ir::StorageLocation> for DataLocation {
     }
 }
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
-pub enum FunctionTypeKind {
-    Pure,
-    View,
-    NonPayable,
-    Payable,
-}
-
-impl FunctionTypeKind {
-    pub fn implicitly_convertible_to(&self, target: Self) -> bool {
-        matches!(
-            (self, target),
-            // pure converts to view or non-payable
-            (
-                FunctionTypeKind::Pure,
-                FunctionTypeKind::Pure | FunctionTypeKind::View | FunctionTypeKind::NonPayable,
-            )
-                // view converts to non-payable
-                | (
-                FunctionTypeKind::View,
-                FunctionTypeKind::View | FunctionTypeKind::NonPayable
-            )
-                // non-payable does not implicitly convert to any other kind
-                | (FunctionTypeKind::NonPayable, FunctionTypeKind::NonPayable)
-                // payable converts to non-payable
-                | (
-                    FunctionTypeKind::Payable,
-                    FunctionTypeKind::Payable | FunctionTypeKind::NonPayable,
-                )
-        )
-    }
-}
-
-impl From<&ir::FunctionMutability> for FunctionTypeKind {
-    fn from(value: &ir::FunctionMutability) -> Self {
-        match value {
-            ir::FunctionMutability::Pure => Self::Pure,
-            ir::FunctionMutability::View => Self::View,
-            ir::FunctionMutability::NonPayable => Self::NonPayable,
-            ir::FunctionMutability::Payable => Self::Payable,
+impl ImplicitlyConvertible<DataLocation> for DataLocation {
+    fn implicitly_convertible_to(&self, target: Self) -> bool {
+        match (self, target) {
+            (from, to) if *from == to => true,
+            (DataLocation::Storage | DataLocation::Calldata, DataLocation::Memory) => true,
+            _ => false,
         }
     }
 }

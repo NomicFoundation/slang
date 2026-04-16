@@ -1,8 +1,10 @@
 use std::collections::HashMap;
 
 use indexmap::IndexSet;
+use slang_solidity_v2_ir::ir;
 
 use super::{DataLocation, FunctionType, LiteralKind, Type, TypeId};
+use crate::types::ImplicitlyConvertible;
 
 /// The `TypeRegistry` stores an index of registered types, both elementary
 /// types and user defined types. Each type is given a `TypeId` for efficient
@@ -263,11 +265,12 @@ impl TypeRegistry {
             ) => from_location.implicitly_convertible_to(*to_location),
 
             (Type::Function(from_function_type), Type::Function(to_function_type)) => {
-                // This is full equality except for definition_id which can differ
-                from_function_type.external == to_function_type.external
+                // This is full equality except for visibility and mutability
+                // which can be converted to, and definition_id which can differ
+                from_function_type.visibility.implicitly_convertible_to(to_function_type.visibility)
                     && from_function_type
-                        .kind
-                        .implicitly_convertible_to(to_function_type.kind)
+                        .mutability
+                        .implicitly_convertible_to(to_function_type.mutability)
                     && from_function_type.parameter_types == to_function_type.parameter_types
                     && from_function_type.return_type == to_function_type.return_type
             }
@@ -344,6 +347,33 @@ impl TypeRegistry {
         }
     }
 
+    // Changes a function type to have external visibility and any parameters
+    // normalized for that (ie. `calldata` location is changed to `memory`)
+    pub fn externalize_function_type(&mut self, function_type: FunctionType) -> FunctionType {
+        FunctionType {
+            visibility: ir::FunctionVisibility::External,
+            parameter_types: function_type
+                .parameter_types
+                .into_iter()
+                .map(|parameter_type_id| {
+                    let parameter_type = self.get_type_by_id(parameter_type_id);
+                    if parameter_type
+                        .data_location()
+                        .is_some_and(|location| location == DataLocation::Calldata)
+                    {
+                        self.register_type_with_data_location(
+                            parameter_type.clone(),
+                            DataLocation::Memory,
+                        )
+                    } else {
+                        parameter_type_id
+                    }
+                })
+                .collect(),
+            ..function_type
+        }
+    }
+
     pub fn find_canonical_type_id(&self, type_id: TypeId) -> Option<TypeId> {
         let canonical_type = match self.get_type_by_id(type_id) {
             Type::Array { element_type, .. } => {
@@ -376,16 +406,16 @@ impl TypeRegistry {
             Type::Function(FunctionType {
                 parameter_types,
                 return_type,
-                external,
-                kind,
+                visibility,
+                mutability,
                 ..
             }) => Type::Function(FunctionType {
                 definition_id: None,
                 implicit_receiver_type: None,
                 parameter_types: parameter_types.clone(),
                 return_type: *return_type,
-                external: *external,
-                kind: *kind,
+                visibility: *visibility,
+                mutability: *mutability,
             }),
 
             Type::Address { .. }
@@ -493,89 +523,114 @@ impl TypeRegistry {
         {
             return false;
         }
+
+        // In general, parameter types must match exactly for functions to
+        // override others.
         if ftype.parameter_types == other.parameter_types {
+            true
+
+        // The exception is if the `other` function is external which allows
+        // changing the data location of parameters from `memory` to `calldata`
+        // (or viceversa) if the visibility of `ftype` is external or public.
+        } else if matches!(other.visibility, ir::FunctionVisibility::External)
+            && matches!(
+                ftype.visibility,
+                ir::FunctionVisibility::External | ir::FunctionVisibility::Public
+            )
+        {
+            ftype
+                .parameter_types
+                .iter()
+                .zip(other.parameter_types.iter())
+                .all(|(ptype_left, ptype_right)| {
+                    self.parameter_type_overrides_in_external_function(*ptype_left, *ptype_right)
+                })
+        } else {
+            // Parameter types don't match: `ftype` *does not* override `other`.
+            false
+        }
+    }
+
+    // Returns true if a the `left` type can override the `right` type in an
+    // external function signature. External functions allow changing data
+    // location from `memory` to `calldata` and viceversa.
+    fn parameter_type_overrides_in_external_function(&self, left: TypeId, right: TypeId) -> bool {
+        if left == right {
             return true;
         }
-        // TODO(validation): check that return parameters match
-
-        // check if all parameter types are equal except maybe in the data
-        // location: memory can override calldata as the location of a parameter
-        ftype
-            .parameter_types
-            .iter()
-            .zip(other.parameter_types.iter())
-            .all(|(ptype_left, ptype_right)| {
-                if ptype_left == ptype_right {
-                    return true;
-                }
-                let type_left = self.get_type_by_id(*ptype_left);
-                let type_right = self.get_type_by_id(*ptype_right);
-                match (type_left, type_right) {
-                    (
-                        Type::Array {
-                            element_type: element_type_left,
-                            location: location_left,
-                        },
-                        Type::Array {
-                            element_type: element_type_right,
-                            location: location_right,
-                        },
-                    ) => {
-                        element_type_left == element_type_right
-                            && location_left.overrides(*location_right)
-                    }
-                    (
-                        Type::FixedSizeArray {
-                            element_type: element_type_left,
-                            size: size_left,
-                            location: location_left,
-                        },
-                        Type::FixedSizeArray {
-                            element_type: element_type_right,
-                            size: size_right,
-                            location: location_right,
-                        },
-                    ) => {
-                        element_type_left == element_type_right
-                            && size_left == size_right
-                            && location_left.overrides(*location_right)
-                    }
-                    (
-                        Type::Bytes {
-                            location: location_left,
-                        },
-                        Type::Bytes {
-                            location: location_right,
-                        },
+        let type_left = self.get_type_by_id(left);
+        let type_right = self.get_type_by_id(right);
+        match (type_left, type_right) {
+            (
+                Type::Array {
+                    element_type: element_type_left,
+                    location: location_left,
+                },
+                Type::Array {
+                    element_type: element_type_right,
+                    location: location_right,
+                },
+            ) => {
+                location_left.overrides_in_external_function(*location_right)
+                    && self.parameter_type_overrides_in_external_function(
+                        *element_type_left,
+                        *element_type_right,
                     )
-                    | (
-                        Type::String {
-                            location: location_left,
-                        },
-                        Type::String {
-                            location: location_right,
-                        },
-                    ) => location_left.overrides(*location_right),
-                    (
-                        Type::Struct {
-                            definition_id: definition_id_left,
-                            location: location_left,
-                        },
-                        Type::Struct {
-                            definition_id: definition_id_right,
-                            location: location_right,
-                        },
-                    ) => {
-                        definition_id_left == definition_id_right
-                            && location_left.overrides(*location_right)
-                    }
-                    _ => {
-                        // anything else is not compatible because it should have
-                        // the same type_id, or is not a valid type for a parameter
-                        false
-                    }
-                }
-            })
+            }
+            (
+                Type::FixedSizeArray {
+                    element_type: element_type_left,
+                    size: size_left,
+                    location: location_left,
+                },
+                Type::FixedSizeArray {
+                    element_type: element_type_right,
+                    size: size_right,
+                    location: location_right,
+                },
+            ) => {
+                size_left == size_right
+                    && location_left.overrides_in_external_function(*location_right)
+                    && self.parameter_type_overrides_in_external_function(
+                        *element_type_left,
+                        *element_type_right,
+                    )
+            }
+            (
+                Type::Bytes {
+                    location: location_left,
+                },
+                Type::Bytes {
+                    location: location_right,
+                },
+            )
+            | (
+                Type::String {
+                    location: location_left,
+                },
+                Type::String {
+                    location: location_right,
+                },
+            ) => location_left.overrides_in_external_function(*location_right),
+            (
+                Type::Struct {
+                    definition_id: definition_id_left,
+                    location: location_left,
+                },
+                Type::Struct {
+                    definition_id: definition_id_right,
+                    location: location_right,
+                },
+            ) => {
+                definition_id_left == definition_id_right
+                    && location_left.overrides_in_external_function(*location_right)
+            }
+            _ => {
+                // anything else is not compatible because it should have
+                // the same type_id, or is not a valid type for a parameter
+                false
+            }
+        }
     }
 }
 

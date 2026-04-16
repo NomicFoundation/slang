@@ -63,7 +63,7 @@ impl Pass<'_> {
                     self.parameters_match_positional_arguments(
                         parameters,
                         argument_typings,
-                        function_type.external,
+                        function_type.is_externally_visible(),
                     )
                 } else if parameters.len() == argument_typings.len() + 1
                     && function_type.implicit_receiver_type.is_none()
@@ -80,7 +80,7 @@ impl Pass<'_> {
                     self.parameters_match_positional_arguments(
                         &parameters[1..],
                         argument_typings,
-                        function_type.external,
+                        function_type.is_externally_visible(),
                     )
                 } else {
                     false
@@ -90,7 +90,7 @@ impl Pass<'_> {
                 self.parameters_match_positional_arguments(
                     parameters,
                     argument_typings,
-                    function_type.external,
+                    function_type.is_externally_visible(),
                 )
             } else {
                 false
@@ -172,7 +172,7 @@ impl Pass<'_> {
                 self.parameters_match_named_arguments(
                     parameters,
                     argument_typings,
-                    function_type.external,
+                    function_type.is_externally_visible(),
                 )
             } else if let Some(receiver_type_id) = receiver_type_id {
                 // we have a receiver type, so check the first parameter type
@@ -188,7 +188,7 @@ impl Pass<'_> {
                     self.parameters_match_named_arguments(
                         &parameters[1..],
                         argument_typings,
-                        function_type.external,
+                        function_type.is_externally_visible(),
                     )
                 } else {
                     false
