@@ -1,7 +1,8 @@
 use slang_solidity_v2_ir::ir;
 
 use crate::abi::{
-    selector_from_signature, type_as_abi_parameter, AbiEntry, AbiMutability, AbiParameter,
+    selector_from_signature, type_as_abi_parameter, AbiConstructor, AbiEntry, AbiFallback,
+    AbiFunction, AbiMutability, AbiParameter, AbiReceive,
 };
 use crate::ast::{FunctionDefinitionStruct, FunctionVisibility, ParametersStruct};
 
@@ -33,26 +34,26 @@ impl FunctionDefinitionStruct {
         let state_mutability: AbiMutability = self.ir_node.mutability;
 
         match self.ir_node.kind {
-            ir::FunctionKind::Regular => Some(AbiEntry::Function {
+            ir::FunctionKind::Regular => Some(AbiEntry::Function(AbiFunction {
                 node_id,
                 name: name?,
                 inputs,
                 outputs,
                 state_mutability,
-            }),
-            ir::FunctionKind::Constructor => Some(AbiEntry::Constructor {
+            })),
+            ir::FunctionKind::Constructor => Some(AbiEntry::Constructor(AbiConstructor {
                 node_id,
                 inputs,
                 state_mutability,
-            }),
-            ir::FunctionKind::Fallback => Some(AbiEntry::Fallback {
+            })),
+            ir::FunctionKind::Fallback => Some(AbiEntry::Fallback(AbiFallback {
                 node_id,
                 state_mutability,
-            }),
-            ir::FunctionKind::Receive => Some(AbiEntry::Receive {
+            })),
+            ir::FunctionKind::Receive => Some(AbiEntry::Receive(AbiReceive {
                 node_id,
                 state_mutability,
-            }),
+            })),
             ir::FunctionKind::Modifier => None,
         }
     }
@@ -83,11 +84,11 @@ impl ParametersStruct {
             let indexed = parameter.indexed;
             // Bail out with `None` if any of the parameters fails typing
             let type_id = self.semantic.binder().node_typing(node_id).as_type_id()?;
-            let (r#type, components) = type_as_abi_parameter(&self.semantic, type_id)?;
+            let (type_name, components) = type_as_abi_parameter(&self.semantic, type_id)?;
             result.push(AbiParameter {
                 node_id: Some(node_id),
                 name,
-                r#type,
+                type_name,
                 components,
                 indexed,
             });

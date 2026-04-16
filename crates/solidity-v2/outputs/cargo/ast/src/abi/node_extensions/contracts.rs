@@ -112,13 +112,13 @@ impl ContractDefinitionStruct {
             let label = state_variable.ir_node.name.unparse().to_string();
             let slot = ptr.div(SemanticContext::SLOT_SIZE);
             let offset = ptr % SemanticContext::SLOT_SIZE;
-            let r#type = self.semantic.type_internal_name(variable_type_id);
+            let type_name = self.semantic.type_internal_name(variable_type_id);
             storage_layout.push(StorageItem {
                 node_id,
                 label,
                 slot,
                 offset,
-                r#type,
+                type_name,
             });
 
             // ready pointer for the next variable

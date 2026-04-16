@@ -10,60 +10,192 @@ use slang_solidity_v2_semantic::context::SemanticContext;
 use slang_solidity_v2_semantic::types::{Type, TypeId};
 
 pub struct ContractAbi {
-    pub node_id: NodeId,
-    pub name: String,
-    pub file_id: String,
-    pub entries: Vec<AbiEntry>,
-    pub storage_layout: Vec<StorageItem>,
-    pub transient_storage_layout: Vec<StorageItem>,
+    node_id: NodeId,
+    name: String,
+    file_id: String,
+    entries: Vec<AbiEntry>,
+    storage_layout: Vec<StorageItem>,
+    transient_storage_layout: Vec<StorageItem>,
+}
+
+impl ContractAbi {
+    pub fn node_id(&self) -> NodeId {
+        self.node_id
+    }
+
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+
+    pub fn file_id(&self) -> &str {
+        &self.file_id
+    }
+
+    pub fn entries(&self) -> &[AbiEntry] {
+        &self.entries
+    }
+
+    pub fn storage_layout(&self) -> &[StorageItem] {
+        &self.storage_layout
+    }
+
+    pub fn transient_storage_layout(&self) -> &[StorageItem] {
+        &self.transient_storage_layout
+    }
 }
 
 pub type AbiMutability = ir::FunctionMutability;
 
 #[derive(Clone, Debug)]
+pub struct AbiConstructor {
+    node_id: NodeId,
+    inputs: Vec<AbiParameter>,
+    state_mutability: AbiMutability,
+}
+
+impl AbiConstructor {
+    pub fn node_id(&self) -> NodeId {
+        self.node_id
+    }
+
+    pub fn inputs(&self) -> &[AbiParameter] {
+        &self.inputs
+    }
+
+    pub fn state_mutability(&self) -> &AbiMutability {
+        &self.state_mutability
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct AbiError {
+    node_id: NodeId,
+    name: String,
+    inputs: Vec<AbiParameter>,
+}
+
+impl AbiError {
+    pub fn node_id(&self) -> NodeId {
+        self.node_id
+    }
+
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+
+    pub fn inputs(&self) -> &[AbiParameter] {
+        &self.inputs
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct AbiEvent {
+    node_id: NodeId,
+    name: String,
+    inputs: Vec<AbiParameter>,
+    anonymous: bool,
+}
+
+impl AbiEvent {
+    pub fn node_id(&self) -> NodeId {
+        self.node_id
+    }
+
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+
+    pub fn inputs(&self) -> &[AbiParameter] {
+        &self.inputs
+    }
+
+    pub fn anonymous(&self) -> bool {
+        self.anonymous
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct AbiFallback {
+    node_id: NodeId,
+    state_mutability: AbiMutability,
+}
+
+impl AbiFallback {
+    pub fn node_id(&self) -> NodeId {
+        self.node_id
+    }
+
+    pub fn state_mutability(&self) -> &AbiMutability {
+        &self.state_mutability
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct AbiFunction {
+    node_id: NodeId,
+    name: String,
+    inputs: Vec<AbiParameter>,
+    outputs: Vec<AbiParameter>,
+    state_mutability: AbiMutability,
+}
+
+impl AbiFunction {
+    pub fn node_id(&self) -> NodeId {
+        self.node_id
+    }
+
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+
+    pub fn inputs(&self) -> &[AbiParameter] {
+        &self.inputs
+    }
+
+    pub fn outputs(&self) -> &[AbiParameter] {
+        &self.outputs
+    }
+
+    pub fn state_mutability(&self) -> &AbiMutability {
+        &self.state_mutability
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct AbiReceive {
+    node_id: NodeId,
+    state_mutability: AbiMutability,
+}
+
+impl AbiReceive {
+    pub fn node_id(&self) -> NodeId {
+        self.node_id
+    }
+
+    pub fn state_mutability(&self) -> &AbiMutability {
+        &self.state_mutability
+    }
+}
+
+#[derive(Clone, Debug)]
 pub enum AbiEntry {
-    Constructor {
-        node_id: NodeId,
-        inputs: Vec<AbiParameter>,
-        state_mutability: AbiMutability,
-    },
-    Error {
-        node_id: NodeId,
-        name: String,
-        inputs: Vec<AbiParameter>,
-    },
-    Event {
-        node_id: NodeId,
-        name: String,
-        inputs: Vec<AbiParameter>,
-        anonymous: bool,
-    },
-    Fallback {
-        node_id: NodeId,
-        state_mutability: AbiMutability,
-    },
-    Function {
-        node_id: NodeId,
-        name: String,
-        inputs: Vec<AbiParameter>,
-        outputs: Vec<AbiParameter>,
-        state_mutability: AbiMutability,
-    },
-    Receive {
-        node_id: NodeId,
-        state_mutability: AbiMutability,
-    },
+    Constructor(AbiConstructor),
+    Error(AbiError),
+    Event(AbiEvent),
+    Fallback(AbiFallback),
+    Function(AbiFunction),
+    Receive(AbiReceive),
 }
 
 impl AbiEntry {
     pub fn node_id(&self) -> NodeId {
         match self {
-            AbiEntry::Constructor { node_id, .. }
-            | AbiEntry::Error { node_id, .. }
-            | AbiEntry::Event { node_id, .. }
-            | AbiEntry::Fallback { node_id, .. }
-            | AbiEntry::Function { node_id, .. }
-            | AbiEntry::Receive { node_id, .. } => *node_id,
+            AbiEntry::Constructor(inner) => inner.node_id(),
+            AbiEntry::Error(inner) => inner.node_id(),
+            AbiEntry::Event(inner) => inner.node_id(),
+            AbiEntry::Fallback(inner) => inner.node_id(),
+            AbiEntry::Function(inner) => inner.node_id(),
+            AbiEntry::Receive(inner) => inner.node_id(),
         }
     }
 }
@@ -79,47 +211,38 @@ impl Eq for AbiEntry {}
 impl Ord for AbiEntry {
     fn cmp(&self, other: &Self) -> Ordering {
         match (self, other) {
-            (Self::Constructor { .. }, Self::Constructor { .. })
-            | (Self::Fallback { .. }, Self::Fallback { .. })
-            | (Self::Receive { .. }, Self::Receive { .. }) => self.node_id().cmp(&other.node_id()),
-            (
-                Self::Error {
-                    name: self_name, ..
-                },
-                Self::Error {
-                    name: other_name, ..
-                },
-            )
-            | (
-                Self::Event {
-                    name: self_name, ..
-                },
-                Self::Event {
-                    name: other_name, ..
-                },
-            )
-            | (
-                Self::Function {
-                    name: self_name, ..
-                },
-                Self::Function {
-                    name: other_name, ..
-                },
-            ) => match self_name.cmp(other_name) {
-                Ordering::Equal => self.node_id().cmp(&other.node_id()),
-                name_ordering => name_ordering,
-            },
+            (Self::Constructor(_), Self::Constructor(_))
+            | (Self::Fallback(_), Self::Fallback(_))
+            | (Self::Receive(_), Self::Receive(_)) => self.node_id().cmp(&other.node_id()),
+            (Self::Error(self_inner), Self::Error(other_inner)) => {
+                match self_inner.name.cmp(&other_inner.name) {
+                    Ordering::Equal => self.node_id().cmp(&other.node_id()),
+                    name_ordering => name_ordering,
+                }
+            }
+            (Self::Event(self_inner), Self::Event(other_inner)) => {
+                match self_inner.name.cmp(&other_inner.name) {
+                    Ordering::Equal => self.node_id().cmp(&other.node_id()),
+                    name_ordering => name_ordering,
+                }
+            }
+            (Self::Function(self_inner), Self::Function(other_inner)) => {
+                match self_inner.name.cmp(&other_inner.name) {
+                    Ordering::Equal => self.node_id().cmp(&other.node_id()),
+                    name_ordering => name_ordering,
+                }
+            }
 
-            (Self::Constructor { .. }, _) => Ordering::Less,
-            (_, Self::Constructor { .. }) => Ordering::Greater,
-            (Self::Error { .. }, _) => Ordering::Less,
-            (_, Self::Error { .. }) => Ordering::Greater,
-            (Self::Event { .. }, _) => Ordering::Less,
-            (_, Self::Event { .. }) => Ordering::Greater,
-            (Self::Fallback { .. }, _) => Ordering::Less,
-            (_, Self::Fallback { .. }) => Ordering::Greater,
-            (Self::Function { .. }, _) => Ordering::Less,
-            (_, Self::Function { .. }) => Ordering::Greater,
+            (Self::Constructor(_), _) => Ordering::Less,
+            (_, Self::Constructor(_)) => Ordering::Greater,
+            (Self::Error(_), _) => Ordering::Less,
+            (_, Self::Error(_)) => Ordering::Greater,
+            (Self::Event(_), _) => Ordering::Less,
+            (_, Self::Event(_)) => Ordering::Greater,
+            (Self::Fallback(_), _) => Ordering::Less,
+            (_, Self::Fallback(_)) => Ordering::Greater,
+            (Self::Function(_), _) => Ordering::Less,
+            (_, Self::Function(_)) => Ordering::Greater,
         }
     }
 }
@@ -132,27 +255,85 @@ impl PartialOrd for AbiEntry {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ParameterComponent {
-    pub name: String,
-    pub r#type: String,
-    pub components: Vec<ParameterComponent>,
+    name: String,
+    type_name: String,
+    components: Vec<ParameterComponent>,
+}
+
+impl ParameterComponent {
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+
+    pub fn type_name(&self) -> &str {
+        &self.type_name
+    }
+
+    pub fn components(&self) -> &[ParameterComponent] {
+        &self.components
+    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct AbiParameter {
-    pub node_id: Option<NodeId>, // will be `None` if the function is a generated getter
-    pub name: Option<String>,
-    pub r#type: String,
-    pub components: Vec<ParameterComponent>,
-    pub indexed: bool,
+    node_id: Option<NodeId>, // will be `None` if the function is a generated getter
+    name: Option<String>,
+    type_name: String,
+    components: Vec<ParameterComponent>,
+    indexed: bool,
+}
+
+impl AbiParameter {
+    pub fn node_id(&self) -> Option<NodeId> {
+        self.node_id
+    }
+
+    pub fn name(&self) -> Option<&str> {
+        self.name.as_deref()
+    }
+
+    pub fn type_name(&self) -> &str {
+        &self.type_name
+    }
+
+    pub fn components(&self) -> &[ParameterComponent] {
+        &self.components
+    }
+
+    pub fn indexed(&self) -> bool {
+        self.indexed
+    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct StorageItem {
-    pub node_id: NodeId,
-    pub label: String,
-    pub slot: usize,
-    pub offset: usize,
-    pub r#type: String,
+    node_id: NodeId,
+    label: String,
+    slot: usize,
+    offset: usize,
+    type_name: String,
+}
+
+impl StorageItem {
+    pub fn node_id(&self) -> NodeId {
+        self.node_id
+    }
+
+    pub fn label(&self) -> &str {
+        &self.label
+    }
+
+    pub fn slot(&self) -> usize {
+        self.slot
+    }
+
+    pub fn offset(&self) -> usize {
+        self.offset
+    }
+
+    pub fn type_name(&self) -> &str {
+        &self.type_name
+    }
 }
 
 pub fn selector_from_signature(signature: &str) -> u32 {
@@ -173,20 +354,20 @@ pub(crate) fn extract_function_type_parameters_abi(
     };
     let mut inputs = Vec::new();
     for parameter_type_id in &function_type.parameter_types {
-        let (r#type, components) = type_as_abi_parameter(semantic, *parameter_type_id)?;
+        let (type_name, components) = type_as_abi_parameter(semantic, *parameter_type_id)?;
         inputs.push(AbiParameter {
             node_id: None,
             name: None,
-            r#type,
+            type_name,
             components,
             indexed: false,
         });
     }
-    let (r#type, components) = type_as_abi_parameter(semantic, function_type.return_type)?;
+    let (type_name, components) = type_as_abi_parameter(semantic, function_type.return_type)?;
     let outputs = vec![AbiParameter {
         node_id: None,
         name: None,
-        r#type,
+        type_name,
         components,
         indexed: false,
     }];
@@ -216,10 +397,10 @@ pub(crate) fn type_as_abi_parameter(
             for member in &definition.ir_node.members {
                 let name = member.name.unparse().to_string();
                 let member_type_id = semantic.binder().node_typing(member.id()).as_type_id()?;
-                let (r#type, subcomponents) = type_as_abi_parameter(semantic, member_type_id)?;
+                let (type_name, subcomponents) = type_as_abi_parameter(semantic, member_type_id)?;
                 components.push(ParameterComponent {
                     name,
-                    r#type,
+                    type_name,
                     components: subcomponents,
                 });
             }

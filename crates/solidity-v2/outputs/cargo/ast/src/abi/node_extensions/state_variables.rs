@@ -1,8 +1,8 @@
 use slang_solidity_v2_semantic::binder;
 
 use crate::abi::{
-    extract_function_type_parameters_abi, selector_from_signature, AbiEntry, AbiMutability,
-    AbiParameter,
+    extract_function_type_parameters_abi, selector_from_signature, AbiEntry, AbiFunction,
+    AbiMutability, AbiParameter,
 };
 use crate::ast::{StateVariableDefinitionStruct, StateVariableVisibility};
 
@@ -28,13 +28,13 @@ impl StateVariableDefinitionStruct {
         }
         let (inputs, outputs) = self.extract_getter_type_parameters_abi()?;
 
-        Some(AbiEntry::Function {
+        Some(AbiEntry::Function(AbiFunction {
             node_id: self.ir_node.id(),
             name: self.ir_node.name.unparse().to_string(),
             inputs,
             outputs,
             state_mutability: AbiMutability::View,
-        })
+        }))
     }
 
     pub fn compute_selector(&self) -> Option<u32> {
@@ -48,7 +48,7 @@ impl StateVariableDefinitionStruct {
             name = self.ir_node.name.unparse(),
             parameters = inputs
                 .into_iter()
-                .map(|parameter| parameter.r#type)
+                .map(|parameter| parameter.type_name().to_owned())
                 .collect::<Vec<_>>()
                 .join(","),
         );
