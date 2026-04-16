@@ -68,8 +68,8 @@ pub fn build_files(
         .collect()
 }
 
-pub fn run(project: &'static SolidityProject, files: Vec<File>) {
-    test(project, files);
+pub fn run(project: &'static SolidityProject, files: Vec<File>) -> SemanticContext {
+    test(project, files)
 }
 
 pub fn test(project: &'static SolidityProject, files: Vec<impl SemanticFile>) -> SemanticContext {

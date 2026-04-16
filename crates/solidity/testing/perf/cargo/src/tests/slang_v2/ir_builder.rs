@@ -13,6 +13,13 @@ pub fn run(
     project: &'static SolidityProject,
     sources: Vec<(String, InputSourceUnit)>,
 ) -> Vec<SourceUnit> {
+    test(project, sources)
+}
+
+pub fn test(
+    project: &'static SolidityProject,
+    sources: Vec<(String, InputSourceUnit)>,
+) -> Vec<SourceUnit> {
     let mut ir_source_units = Vec::new();
     for (name, source) in sources {
         ir_source_units.push(ir::build(
@@ -24,13 +31,6 @@ pub fn run(
         ));
     }
     ir_source_units
-}
-
-pub fn test(
-    project: &'static SolidityProject,
-    sources: Vec<(String, InputSourceUnit)>,
-) -> Vec<SourceUnit> {
-    run(project, sources)
 }
 
 pub fn count_contracts(source_units: &Vec<SourceUnit>) -> usize {
