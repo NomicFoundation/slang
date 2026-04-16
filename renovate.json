@@ -93,6 +93,11 @@
       "matchPackageNames": ["tree-sitter", "tree-sitter-solidity", "solar", "solar-compiler"],
       "groupName": "benchmark deps",
       "labels": ["ci:perf"]
+    },
+    {
+      "description": "strum: used in CST hot path via derive macros; flag for perf review",
+      "matchPackageNames": ["strum"],
+      "labels": ["ci:perf"]
     }
   ],
   "labels": ["dependencies"],
