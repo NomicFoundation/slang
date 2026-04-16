@@ -15,10 +15,6 @@ pub struct NodeIdGenerator {
 }
 
 impl NodeIdGenerator {
-    pub fn new(initial: usize) -> Self {
-        Self { next_id: initial }
-    }
-
     /// Returns a `NodeId` greater than any previously returned by this
     /// generator.
     /// The returned ID is unique and suitable for use as a total-order key.
@@ -31,7 +27,7 @@ impl NodeIdGenerator {
 
 impl Default for NodeIdGenerator {
     fn default() -> Self {
-        Self::new(1usize)
+        Self { next_id: 1usize }
     }
 }
 
