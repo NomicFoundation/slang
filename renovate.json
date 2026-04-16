@@ -53,6 +53,13 @@
       "groupName": "cargo minor/patch"
     },
     {
+      "description": "cargo: pre-1.0 crates treat 0.x→0.y as major (Cargo semver convention); ungroup from minor/patch so they land as individual PRs",
+      "matchManagers": ["cargo"],
+      "matchCurrentVersion": "<1.0.0",
+      "matchUpdateTypes": ["minor"],
+      "groupName": null
+    },
+    {
       "description": "npm: group minor/patch; majors stay individual",
       "matchManagers": ["npm"],
       "matchUpdateTypes": ["minor", "patch"],
@@ -85,6 +92,11 @@
       "description": "Benchmark comparison deps: grouped so version changes that affect perf baselines land in one PR. Must come after per-manager grouping rules so this groupName takes precedence.",
       "matchPackageNames": ["tree-sitter", "tree-sitter-solidity", "solar", "solar-compiler"],
       "groupName": "benchmark deps",
+      "labels": ["ci:perf"]
+    },
+    {
+      "description": "strum: used in CST hot path via derive macros; flag for perf review",
+      "matchPackageNames": ["strum"],
       "labels": ["ci:perf"]
     }
   ],
