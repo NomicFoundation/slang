@@ -36,9 +36,10 @@
       "allowedVersions": "<0.3.0 || >0.6.0"
     },
     {
-      "description": "tree-sitter-solidity: manual bumps only — would affect bencher benchmark data, upgrade deliberately",
-      "matchPackageNames": ["tree-sitter-solidity"],
-      "enabled": false
+      "description": "Benchmark comparison deps: grouped so version changes that affect perf baselines land in one PR",
+      "matchPackageNames": ["tree-sitter", "tree-sitter-solidity", "solar", "solar-compiler"],
+      "groupName": "benchmark deps",
+      "labels": ["ci:perf"]
     },
     {
       "description": "toml: hold below 0.9 — 0.9 / 1.0 not yet adopted",
@@ -52,18 +53,8 @@
       "enabled": false
     },
     {
-      "description": "solar: manual bumps only — benchmark dep, upgrades must be coordinated with bencher baselines",
-      "matchPackageNames": ["solar", "solar-compiler"],
-      "enabled": false
-    },
-    {
       "description": "iai-callgrind: disabled pending migration to gungraun (issue #1690); crate was renamed upstream",
       "matchPackageNames": ["iai-callgrind", "iai-callgrind-runner"],
-      "enabled": false
-    },
-    {
-      "description": "tree-sitter: manual bumps only — same benchmark-stability concern as tree-sitter-solidity; runtime changes can shift bencher numbers",
-      "matchPackageNames": ["tree-sitter"],
       "enabled": false
     },
     {
@@ -107,15 +98,8 @@
     "enabled": true,
     "packageRules": [
       {
-        "description": "Allow vulnerability fix PRs for benchmark-adjacent deps that are otherwise set to enabled: false",
-        "matchPackageNames": [
-          "tree-sitter",
-          "tree-sitter-solidity",
-          "solar",
-          "solar-compiler",
-          "iai-callgrind",
-          "iai-callgrind-runner"
-        ],
+        "description": "Allow vulnerability fix PRs for iai-callgrind which is otherwise disabled",
+        "matchPackageNames": ["iai-callgrind", "iai-callgrind-runner"],
         "enabled": true
       }
     ]
