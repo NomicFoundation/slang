@@ -10,7 +10,7 @@
       "description": "cargo-cooldown-check: custom hermit source, point Renovate at its index release",
       "matchManagers": ["hermit"],
       "matchPackageNames": ["cargo-cooldown-check"],
-      "registryUrls": ["https://github.com/NomicFoundation/cargo-cooldown-check"]
+      "defaultRegistryUrls": ["https://github.com/NomicFoundation/cargo-cooldown-check"]
     },
     {
       "description": "Extra cooldown for majors (matches Dependabot semver-major-days: 30)",
