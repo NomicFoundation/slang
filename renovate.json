@@ -1,0 +1,108 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "timezone": "UTC",
+  "schedule": ["before 9am on Monday"],
+  "minimumReleaseAge": "7 days",
+  "internalChecksFilter": "strict",
+  "packageRules": [
+    {
+      "description": "cargo-cooldown-check: custom hermit source, point Renovate at its index release",
+      "matchManagers": ["hermit"],
+      "matchPackageNames": ["cargo-cooldown-check"],
+      "registryUrls": ["https://github.com/NomicFoundation/cargo-cooldown-check"]
+    },
+    {
+      "description": "Extra cooldown for majors (matches Dependabot semver-major-days: 30)",
+      "matchUpdateTypes": ["major"],
+      "minimumReleaseAge": "30 days"
+    },
+    {
+      "description": "Freeze MkDocs pending migration evaluation (#1623)",
+      "matchManagers": ["pipenv"],
+      "matchPackageNames": [
+        "mkdocs",
+        "mkdocs-material",
+        "mkdocs-literate-nav",
+        "mkdocs-minify-plugin",
+        "mkdocs-pymdownx-material-extras",
+        "mike"
+      ],
+      "enabled": false
+    },
+    {
+      "description": "ariadne: skip the 0.3–0.6 range — the 0.6 rewrite was deferred; post-0.6 releases contain the fixes needed to migrate, so allow those through. Also keep 0.2.x patches open since that's the currently pinned branch.",
+      "matchPackageNames": ["ariadne"],
+      "allowedVersions": "<0.3.0 || >0.6.0"
+    },
+    {
+      "description": "@types/node: no automatic major bumps — Node majors are upgraded manually and only to even LTS releases (e.g. 24 → 26). Minor/patch within the current major flow through normally.",
+      "matchPackageNames": ["@types/node"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
+      "description": "iai-callgrind: disabled pending migration to gungraun (issue #1690); crate was renamed upstream",
+      "matchPackageNames": ["iai-callgrind", "iai-callgrind-runner"],
+      "enabled": false
+    },
+    {
+      "description": "cargo: group minor/patch; majors stay individual",
+      "matchManagers": ["cargo"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "cargo minor/patch"
+    },
+    {
+      "description": "npm: group minor/patch; majors stay individual",
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "npm minor/patch"
+    },
+    {
+      "description": "pip (Pipenv): group minor/patch; majors stay individual",
+      "matchManagers": ["pipenv"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "pip minor/patch"
+    },
+    {
+      "description": "github-actions: group everything, including majors",
+      "matchManagers": ["github-actions"],
+      "groupName": "github-actions"
+    },
+    {
+      "description": "hermit (toolchain): group minor/patch; majors stay individual",
+      "matchManagers": ["hermit"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "hermit minor/patch"
+    },
+    {
+      "description": "dockerfile: group minor/patch; majors stay individual",
+      "matchManagers": ["dockerfile"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "dockerfile minor/patch"
+    },
+    {
+      "description": "Benchmark comparison deps: grouped so version changes that affect perf baselines land in one PR. Must come after per-manager grouping rules so this groupName takes precedence.",
+      "matchPackageNames": ["tree-sitter", "tree-sitter-solidity", "solar", "solar-compiler"],
+      "groupName": "benchmark deps",
+      "labels": ["ci:perf"]
+    }
+  ],
+  "labels": ["dependencies"],
+  "configMigration": true,
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 9am on Friday"]
+  },
+  "osvVulnerabilityAlerts": true,
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "packageRules": [
+      {
+        "description": "Allow vulnerability fix PRs for iai-callgrind which is otherwise disabled",
+        "matchPackageNames": ["iai-callgrind", "iai-callgrind-runner"],
+        "enabled": true
+      }
+    ]
+  }
+}

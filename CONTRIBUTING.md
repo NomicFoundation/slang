@@ -53,7 +53,15 @@ We manage versioning through [changesets](https://github.com/changesets/changese
 
 ## Managing Dependencies
 
-Our `$REPO_ROOT/.github/dependabot.yml` config runs automatic updates to our dependencies on a weekly basis. This handles `github-actions`, `npm`, `cargo`, and `pip` packages. However, two kinds of dependencies still need to be updated manually for now:
+Automated dependency updates are handled by [Renovate](https://docs.renovatebot.com/) via `$REPO_ROOT/renovate.json`. The config runs on a weekly schedule (Mondays) and covers `cargo`, `npm`, `pipenv`, `github-actions`, `hermit`, and `dockerfile` dependencies.
+
+**Grouping strategy:** minor and patch updates are grouped into a single PR per ecosystem to reduce review overhead. Major-version bumps arrive as individual PRs, since they often require code changes. GitHub Actions updates are grouped including majors.
+
+**Benchmark dependencies:** `tree-sitter`, `tree-sitter-solidity`, and `solar` are grouped into a dedicated PR labeled `ci:perf`, since version changes can affect benchmark baselines. This keeps them isolated from other dependency updates so regressions are easy to attribute.
+
+**Security:** Renovate opens vulnerability-fix PRs immediately (bypassing schedule and cooldown) using both GitHub's Security Advisory database and [OSV](https://osv.dev/).
+
+The following still need to be updated manually:
 
 1. Rust toolchains: `$RUST_STABLE_VERSION` and `$RUST_NIGHTLY_VERSION` defined in `hermit.hcl` and updated via `rustup install`.
-2. Hermit binaries defined in `$REPO_ROOT/bin/XXX.pkg`, and updated via `hermit install`.
+2. Node.js major versions (only even LTS releases): bump the hermit package, then `@types/node` follows automatically.
