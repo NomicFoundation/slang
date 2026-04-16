@@ -42,11 +42,6 @@
       "labels": ["ci:perf"]
     },
     {
-      "description": "toml: hold below 0.9 — 0.9 / 1.0 not yet adopted",
-      "matchPackageNames": ["toml"],
-      "allowedVersions": "<0.9.0"
-    },
-    {
       "description": "@types/node: no automatic major bumps — Node majors are upgraded manually and only to even LTS releases (e.g. 24 → 26). Minor/patch within the current major flow through normally.",
       "matchPackageNames": ["@types/node"],
       "matchUpdateTypes": ["major"],
