@@ -3,8 +3,9 @@ use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_cst::structured_cst::validation::validate_syntax_version;
 use slang_solidity_v2_cst::structured_cst::cst_consumer;
+use slang_solidity_v2_cst::structured_cst::validation::validate_syntax_version;
+use slang_solidity_v2_ir::ir;
 use solidity_v2_language::SolidityDefinition;
 
 pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
@@ -37,6 +38,20 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             Ok(parsed_cst) => validate_syntax_version(parsed_cst, lang_version),
             Err(_) => Vec::new(),
         };
+
+        // When the CST parses successfully, also build the IR via both pipelines
+        // (cst_consumer + CstToIrBuilder, and the direct ir_consumer) and assert
+        // they produce identical IR trees. This uses the snapshot corpus as a
+        // broad equivalence test for the direct-IR consumer.
+        if let Ok(ref parsed_cst) = v2_parse {
+            let ir_via_cst = ir::build(parsed_cst, &source);
+            let ir_direct = ir::ir_consumer::parse(&source, lang_version)
+                .expect("ir_consumer parse should succeed when cst_consumer succeeds");
+            assert_eq!(
+                ir_via_cst, ir_direct,
+                "IR pipelines diverged for {source_id} at {lang_version}",
+            );
+        }
 
         let v2_output = (v2_parse, validation_errors);
 

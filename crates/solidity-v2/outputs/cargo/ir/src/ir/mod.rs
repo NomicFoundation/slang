@@ -4,6 +4,8 @@ pub use nodes::*;
 
 mod builder;
 
+pub mod ir_consumer;
+
 mod source;
 pub use source::Source;
 

@@ -16,7 +16,7 @@ pub struct NodeId(usize);
 
 pub type AbicoderPragma = Rc<AbicoderPragmaStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct AbicoderPragmaStruct {
     pub version: AbicoderVersion,
 }
@@ -29,7 +29,7 @@ impl AbicoderPragmaStruct {
 
 pub type AdditiveExpression = Rc<AdditiveExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct AdditiveExpressionStruct {
     pub left_operand: Expression,
     pub expression_additive_expression_operator: Expression_AdditiveExpression_Operator,
@@ -44,7 +44,7 @@ impl AdditiveExpressionStruct {
 
 pub type AddressType = Rc<AddressTypeStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct AddressTypeStruct {
     pub payable_keyword: bool,
 }
@@ -57,7 +57,7 @@ impl AddressTypeStruct {
 
 pub type AndExpression = Rc<AndExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct AndExpressionStruct {
     pub left_operand: Expression,
     pub right_operand: Expression,
@@ -71,7 +71,7 @@ impl AndExpressionStruct {
 
 pub type ArrayExpression = Rc<ArrayExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ArrayExpressionStruct {
     pub items: ArrayValues,
 }
@@ -84,7 +84,7 @@ impl ArrayExpressionStruct {
 
 pub type ArrayTypeName = Rc<ArrayTypeNameStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ArrayTypeNameStruct {
     pub operand: TypeName,
     pub index: Option<Expression>,
@@ -98,7 +98,7 @@ impl ArrayTypeNameStruct {
 
 pub type AssemblyStatement = Rc<AssemblyStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct AssemblyStatementStruct {
     pub label: Option<StringLiteral>,
     pub flags: Option<YulFlags>,
@@ -113,7 +113,7 @@ impl AssemblyStatementStruct {
 
 pub type AssignmentExpression = Rc<AssignmentExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct AssignmentExpressionStruct {
     pub left_operand: Expression,
     pub expression_assignment_expression_operator: Expression_AssignmentExpression_Operator,
@@ -128,7 +128,7 @@ impl AssignmentExpressionStruct {
 
 pub type BitwiseAndExpression = Rc<BitwiseAndExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct BitwiseAndExpressionStruct {
     pub left_operand: Expression,
     pub right_operand: Expression,
@@ -142,7 +142,7 @@ impl BitwiseAndExpressionStruct {
 
 pub type BitwiseOrExpression = Rc<BitwiseOrExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct BitwiseOrExpressionStruct {
     pub left_operand: Expression,
     pub right_operand: Expression,
@@ -156,7 +156,7 @@ impl BitwiseOrExpressionStruct {
 
 pub type BitwiseXorExpression = Rc<BitwiseXorExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct BitwiseXorExpressionStruct {
     pub left_operand: Expression,
     pub right_operand: Expression,
@@ -170,7 +170,7 @@ impl BitwiseXorExpressionStruct {
 
 pub type Block = Rc<BlockStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct BlockStruct {
     pub statements: Statements,
 }
@@ -183,7 +183,7 @@ impl BlockStruct {
 
 pub type BreakStatement = Rc<BreakStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct BreakStatementStruct {}
 
 impl BreakStatementStruct {
@@ -194,7 +194,7 @@ impl BreakStatementStruct {
 
 pub type CallOptionsExpression = Rc<CallOptionsExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct CallOptionsExpressionStruct {
     pub operand: Expression,
     pub options: CallOptions,
@@ -208,7 +208,7 @@ impl CallOptionsExpressionStruct {
 
 pub type CatchClause = Rc<CatchClauseStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct CatchClauseStruct {
     pub error: Option<CatchClauseError>,
     pub body: Block,
@@ -222,7 +222,7 @@ impl CatchClauseStruct {
 
 pub type CatchClauseError = Rc<CatchClauseErrorStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct CatchClauseErrorStruct {
     pub name: Option<Identifier>,
     pub parameters: Parameters,
@@ -236,7 +236,7 @@ impl CatchClauseErrorStruct {
 
 pub type ConditionalExpression = Rc<ConditionalExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ConditionalExpressionStruct {
     pub operand: Expression,
     pub true_expression: Expression,
@@ -251,7 +251,7 @@ impl ConditionalExpressionStruct {
 
 pub type ConstantDefinition = Rc<ConstantDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ConstantDefinitionStruct {
     pub type_name: TypeName,
     pub name: Identifier,
@@ -267,7 +267,7 @@ impl ConstantDefinitionStruct {
 
 pub type ContinueStatement = Rc<ContinueStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ContinueStatementStruct {}
 
 impl ContinueStatementStruct {
@@ -278,7 +278,7 @@ impl ContinueStatementStruct {
 
 pub type ContractDefinition = Rc<ContractDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ContractDefinitionStruct {
     pub abstract_keyword: bool,
     pub name: Identifier,
@@ -295,7 +295,7 @@ impl ContractDefinitionStruct {
 
 pub type DecimalNumberExpression = Rc<DecimalNumberExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct DecimalNumberExpressionStruct {
     pub literal: DecimalLiteral,
     pub unit: Option<NumberUnit>,
@@ -309,7 +309,7 @@ impl DecimalNumberExpressionStruct {
 
 pub type DoWhileStatement = Rc<DoWhileStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct DoWhileStatementStruct {
     pub body: Statement,
     pub condition: Expression,
@@ -323,7 +323,7 @@ impl DoWhileStatementStruct {
 
 pub type EmitStatement = Rc<EmitStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct EmitStatementStruct {
     pub event: IdentifierPath,
     pub arguments: ArgumentsDeclaration,
@@ -337,7 +337,7 @@ impl EmitStatementStruct {
 
 pub type EnumDefinition = Rc<EnumDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct EnumDefinitionStruct {
     pub name: Identifier,
     pub members: EnumMembers,
@@ -351,7 +351,7 @@ impl EnumDefinitionStruct {
 
 pub type EqualityExpression = Rc<EqualityExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct EqualityExpressionStruct {
     pub left_operand: Expression,
     pub expression_equality_expression_operator: Expression_EqualityExpression_Operator,
@@ -366,7 +366,7 @@ impl EqualityExpressionStruct {
 
 pub type ErrorDefinition = Rc<ErrorDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ErrorDefinitionStruct {
     pub name: Identifier,
     pub parameters: Parameters,
@@ -380,7 +380,7 @@ impl ErrorDefinitionStruct {
 
 pub type EventDefinition = Rc<EventDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct EventDefinitionStruct {
     pub name: Identifier,
     pub anonymous_keyword: bool,
@@ -395,7 +395,7 @@ impl EventDefinitionStruct {
 
 pub type ExperimentalPragma = Rc<ExperimentalPragmaStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ExperimentalPragmaStruct {
     pub feature: ExperimentalFeature,
 }
@@ -408,7 +408,7 @@ impl ExperimentalPragmaStruct {
 
 pub type ExponentiationExpression = Rc<ExponentiationExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ExponentiationExpressionStruct {
     pub left_operand: Expression,
     pub right_operand: Expression,
@@ -422,7 +422,7 @@ impl ExponentiationExpressionStruct {
 
 pub type ExpressionStatement = Rc<ExpressionStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ExpressionStatementStruct {
     pub expression: Expression,
 }
@@ -435,7 +435,7 @@ impl ExpressionStatementStruct {
 
 pub type ForStatement = Rc<ForStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ForStatementStruct {
     pub initialization: ForStatementInitialization,
     pub condition: ForStatementCondition,
@@ -451,7 +451,7 @@ impl ForStatementStruct {
 
 pub type FunctionCallExpression = Rc<FunctionCallExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct FunctionCallExpressionStruct {
     pub operand: Expression,
     pub arguments: ArgumentsDeclaration,
@@ -465,7 +465,7 @@ impl FunctionCallExpressionStruct {
 
 pub type FunctionDefinition = Rc<FunctionDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct FunctionDefinitionStruct {
     pub kind: FunctionKind,
     pub name: Option<Identifier>,
@@ -487,7 +487,7 @@ impl FunctionDefinitionStruct {
 
 pub type FunctionType = Rc<FunctionTypeStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct FunctionTypeStruct {
     pub parameters: Parameters,
     pub visibility: FunctionVisibility,
@@ -503,7 +503,7 @@ impl FunctionTypeStruct {
 
 pub type HexNumberExpression = Rc<HexNumberExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct HexNumberExpressionStruct {
     pub literal: HexLiteral,
 }
@@ -516,7 +516,7 @@ impl HexNumberExpressionStruct {
 
 pub type IfStatement = Rc<IfStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct IfStatementStruct {
     pub condition: Expression,
     pub body: Statement,
@@ -531,7 +531,7 @@ impl IfStatementStruct {
 
 pub type ImportDeconstruction = Rc<ImportDeconstructionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ImportDeconstructionStruct {
     pub symbols: ImportDeconstructionSymbols,
     pub path: StringLiteral,
@@ -545,7 +545,7 @@ impl ImportDeconstructionStruct {
 
 pub type ImportDeconstructionSymbol = Rc<ImportDeconstructionSymbolStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ImportDeconstructionSymbolStruct {
     pub name: Identifier,
     pub alias: Option<Identifier>,
@@ -559,7 +559,7 @@ impl ImportDeconstructionSymbolStruct {
 
 pub type IndexAccessExpression = Rc<IndexAccessExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct IndexAccessExpressionStruct {
     pub operand: Expression,
     pub start: Option<Expression>,
@@ -574,7 +574,7 @@ impl IndexAccessExpressionStruct {
 
 pub type InequalityExpression = Rc<InequalityExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct InequalityExpressionStruct {
     pub left_operand: Expression,
     pub expression_inequality_expression_operator: Expression_InequalityExpression_Operator,
@@ -589,7 +589,7 @@ impl InequalityExpressionStruct {
 
 pub type InheritanceType = Rc<InheritanceTypeStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct InheritanceTypeStruct {
     pub type_name: IdentifierPath,
     pub arguments: Option<ArgumentsDeclaration>,
@@ -603,7 +603,7 @@ impl InheritanceTypeStruct {
 
 pub type InterfaceDefinition = Rc<InterfaceDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct InterfaceDefinitionStruct {
     pub name: Identifier,
     pub inheritance: Option<InheritanceTypes>,
@@ -618,7 +618,7 @@ impl InterfaceDefinitionStruct {
 
 pub type LibraryDefinition = Rc<LibraryDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct LibraryDefinitionStruct {
     pub name: Identifier,
     pub members: LibraryMembers,
@@ -632,7 +632,7 @@ impl LibraryDefinitionStruct {
 
 pub type MappingType = Rc<MappingTypeStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct MappingTypeStruct {
     pub key_type: Parameter,
     pub value_type: Parameter,
@@ -646,7 +646,7 @@ impl MappingTypeStruct {
 
 pub type MemberAccessExpression = Rc<MemberAccessExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct MemberAccessExpressionStruct {
     pub operand: Expression,
     pub member: Identifier,
@@ -660,7 +660,7 @@ impl MemberAccessExpressionStruct {
 
 pub type ModifierInvocation = Rc<ModifierInvocationStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ModifierInvocationStruct {
     pub name: IdentifierPath,
     pub arguments: Option<ArgumentsDeclaration>,
@@ -674,7 +674,7 @@ impl ModifierInvocationStruct {
 
 pub type MultiTypedDeclaration = Rc<MultiTypedDeclarationStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct MultiTypedDeclarationStruct {
     pub elements: MultiTypedDeclarationElements,
     pub value: Expression,
@@ -688,7 +688,7 @@ impl MultiTypedDeclarationStruct {
 
 pub type MultiTypedDeclarationElement = Rc<MultiTypedDeclarationElementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct MultiTypedDeclarationElementStruct {
     pub member: Option<VariableDeclaration>,
 }
@@ -701,7 +701,7 @@ impl MultiTypedDeclarationElementStruct {
 
 pub type MultiplicativeExpression = Rc<MultiplicativeExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct MultiplicativeExpressionStruct {
     pub left_operand: Expression,
     pub expression_multiplicative_expression_operator: Expression_MultiplicativeExpression_Operator,
@@ -716,7 +716,7 @@ impl MultiplicativeExpressionStruct {
 
 pub type NamedArgument = Rc<NamedArgumentStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct NamedArgumentStruct {
     pub name: Identifier,
     pub value: Expression,
@@ -730,7 +730,7 @@ impl NamedArgumentStruct {
 
 pub type NewExpression = Rc<NewExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct NewExpressionStruct {
     pub type_name: TypeName,
 }
@@ -743,7 +743,7 @@ impl NewExpressionStruct {
 
 pub type OrExpression = Rc<OrExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct OrExpressionStruct {
     pub left_operand: Expression,
     pub right_operand: Expression,
@@ -757,7 +757,7 @@ impl OrExpressionStruct {
 
 pub type Parameter = Rc<ParameterStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ParameterStruct {
     pub type_name: TypeName,
     pub storage_location: Option<StorageLocation>,
@@ -773,7 +773,7 @@ impl ParameterStruct {
 
 pub type PathImport = Rc<PathImportStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct PathImportStruct {
     pub path: StringLiteral,
     pub alias: Option<Identifier>,
@@ -787,7 +787,7 @@ impl PathImportStruct {
 
 pub type PostfixExpression = Rc<PostfixExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct PostfixExpressionStruct {
     pub operand: Expression,
     pub expression_postfix_expression_operator: Expression_PostfixExpression_Operator,
@@ -801,7 +801,7 @@ impl PostfixExpressionStruct {
 
 pub type PragmaDirective = Rc<PragmaDirectiveStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct PragmaDirectiveStruct {
     pub pragma: Pragma,
 }
@@ -814,7 +814,7 @@ impl PragmaDirectiveStruct {
 
 pub type PrefixExpression = Rc<PrefixExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct PrefixExpressionStruct {
     pub expression_prefix_expression_operator: Expression_PrefixExpression_Operator,
     pub operand: Expression,
@@ -828,7 +828,7 @@ impl PrefixExpressionStruct {
 
 pub type ReturnStatement = Rc<ReturnStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ReturnStatementStruct {
     pub expression: Option<Expression>,
 }
@@ -841,7 +841,7 @@ impl ReturnStatementStruct {
 
 pub type RevertStatement = Rc<RevertStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct RevertStatementStruct {
     pub error: IdentifierPath,
     pub arguments: ArgumentsDeclaration,
@@ -855,7 +855,7 @@ impl RevertStatementStruct {
 
 pub type ShiftExpression = Rc<ShiftExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ShiftExpressionStruct {
     pub left_operand: Expression,
     pub expression_shift_expression_operator: Expression_ShiftExpression_Operator,
@@ -870,7 +870,7 @@ impl ShiftExpressionStruct {
 
 pub type SingleTypedDeclaration = Rc<SingleTypedDeclarationStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct SingleTypedDeclarationStruct {
     pub declaration: VariableDeclaration,
     pub value: Option<Expression>,
@@ -884,7 +884,7 @@ impl SingleTypedDeclarationStruct {
 
 pub type SourceUnit = Rc<SourceUnitStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct SourceUnitStruct {
     pub members: SourceUnitMembers,
 }
@@ -897,7 +897,7 @@ impl SourceUnitStruct {
 
 pub type StateVariableDefinition = Rc<StateVariableDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct StateVariableDefinitionStruct {
     pub type_name: TypeName,
     pub name: Identifier,
@@ -915,7 +915,7 @@ impl StateVariableDefinitionStruct {
 
 pub type StructDefinition = Rc<StructDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct StructDefinitionStruct {
     pub name: Identifier,
     pub members: StructMembers,
@@ -929,7 +929,7 @@ impl StructDefinitionStruct {
 
 pub type StructMember = Rc<StructMemberStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct StructMemberStruct {
     pub type_name: TypeName,
     pub name: Identifier,
@@ -943,7 +943,7 @@ impl StructMemberStruct {
 
 pub type TryStatement = Rc<TryStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct TryStatementStruct {
     pub expression: Expression,
     pub returns: Option<Parameters>,
@@ -959,7 +959,7 @@ impl TryStatementStruct {
 
 pub type TupleExpression = Rc<TupleExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct TupleExpressionStruct {
     pub items: TupleValues,
 }
@@ -972,7 +972,7 @@ impl TupleExpressionStruct {
 
 pub type TupleValue = Rc<TupleValueStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct TupleValueStruct {
     pub expression: Option<Expression>,
 }
@@ -985,7 +985,7 @@ impl TupleValueStruct {
 
 pub type TypeExpression = Rc<TypeExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct TypeExpressionStruct {
     pub type_name: TypeName,
 }
@@ -998,7 +998,7 @@ impl TypeExpressionStruct {
 
 pub type UncheckedBlock = Rc<UncheckedBlockStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct UncheckedBlockStruct {
     pub block: Block,
 }
@@ -1011,7 +1011,7 @@ impl UncheckedBlockStruct {
 
 pub type UserDefinedValueTypeDefinition = Rc<UserDefinedValueTypeDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct UserDefinedValueTypeDefinitionStruct {
     pub name: Identifier,
     pub value_type: ElementaryType,
@@ -1025,7 +1025,7 @@ impl UserDefinedValueTypeDefinitionStruct {
 
 pub type UsingDeconstruction = Rc<UsingDeconstructionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct UsingDeconstructionStruct {
     pub symbols: UsingDeconstructionSymbols,
 }
@@ -1038,7 +1038,7 @@ impl UsingDeconstructionStruct {
 
 pub type UsingDeconstructionSymbol = Rc<UsingDeconstructionSymbolStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct UsingDeconstructionSymbolStruct {
     pub name: IdentifierPath,
     pub alias: Option<UsingOperator>,
@@ -1052,7 +1052,7 @@ impl UsingDeconstructionSymbolStruct {
 
 pub type UsingDirective = Rc<UsingDirectiveStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct UsingDirectiveStruct {
     pub clause: UsingClause,
     pub target: UsingTarget,
@@ -1067,7 +1067,7 @@ impl UsingDirectiveStruct {
 
 pub type VariableDeclaration = Rc<VariableDeclarationStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct VariableDeclarationStruct {
     pub type_name: TypeName,
     pub storage_location: Option<StorageLocation>,
@@ -1082,7 +1082,7 @@ impl VariableDeclarationStruct {
 
 pub type VariableDeclarationStatement = Rc<VariableDeclarationStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct VariableDeclarationStatementStruct {
     pub target: VariableDeclarationTarget,
 }
@@ -1095,7 +1095,7 @@ impl VariableDeclarationStatementStruct {
 
 pub type VersionPragma = Rc<VersionPragmaStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct VersionPragmaStruct {
     pub sets: VersionExpressionSets,
 }
@@ -1108,7 +1108,7 @@ impl VersionPragmaStruct {
 
 pub type VersionRange = Rc<VersionRangeStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct VersionRangeStruct {
     pub start: VersionLiteral,
     pub end: VersionLiteral,
@@ -1122,7 +1122,7 @@ impl VersionRangeStruct {
 
 pub type VersionTerm = Rc<VersionTermStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct VersionTermStruct {
     pub operator: Option<VersionOperator>,
     pub literal: VersionLiteral,
@@ -1136,7 +1136,7 @@ impl VersionTermStruct {
 
 pub type WhileStatement = Rc<WhileStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct WhileStatementStruct {
     pub condition: Expression,
     pub body: Statement,
@@ -1150,7 +1150,7 @@ impl WhileStatementStruct {
 
 pub type YulBlock = Rc<YulBlockStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulBlockStruct {
     pub statements: YulStatements,
 }
@@ -1163,7 +1163,7 @@ impl YulBlockStruct {
 
 pub type YulBreakStatement = Rc<YulBreakStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulBreakStatementStruct {}
 
 impl YulBreakStatementStruct {
@@ -1174,7 +1174,7 @@ impl YulBreakStatementStruct {
 
 pub type YulContinueStatement = Rc<YulContinueStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulContinueStatementStruct {}
 
 impl YulContinueStatementStruct {
@@ -1185,7 +1185,7 @@ impl YulContinueStatementStruct {
 
 pub type YulDefaultCase = Rc<YulDefaultCaseStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulDefaultCaseStruct {
     pub body: YulBlock,
 }
@@ -1198,7 +1198,7 @@ impl YulDefaultCaseStruct {
 
 pub type YulForStatement = Rc<YulForStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulForStatementStruct {
     pub initialization: YulBlock,
     pub condition: YulExpression,
@@ -1214,7 +1214,7 @@ impl YulForStatementStruct {
 
 pub type YulFunctionCallExpression = Rc<YulFunctionCallExpressionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulFunctionCallExpressionStruct {
     pub operand: YulExpression,
     pub arguments: YulArguments,
@@ -1228,7 +1228,7 @@ impl YulFunctionCallExpressionStruct {
 
 pub type YulFunctionDefinition = Rc<YulFunctionDefinitionStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulFunctionDefinitionStruct {
     pub name: Identifier,
     pub parameters: YulParameters,
@@ -1244,7 +1244,7 @@ impl YulFunctionDefinitionStruct {
 
 pub type YulIfStatement = Rc<YulIfStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulIfStatementStruct {
     pub condition: YulExpression,
     pub body: YulBlock,
@@ -1258,7 +1258,7 @@ impl YulIfStatementStruct {
 
 pub type YulLeaveStatement = Rc<YulLeaveStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulLeaveStatementStruct {}
 
 impl YulLeaveStatementStruct {
@@ -1269,7 +1269,7 @@ impl YulLeaveStatementStruct {
 
 pub type YulSwitchStatement = Rc<YulSwitchStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulSwitchStatementStruct {
     pub expression: YulExpression,
     pub cases: YulSwitchCases,
@@ -1283,7 +1283,7 @@ impl YulSwitchStatementStruct {
 
 pub type YulValueCase = Rc<YulValueCaseStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulValueCaseStruct {
     pub value: YulLiteral,
     pub body: YulBlock,
@@ -1297,7 +1297,7 @@ impl YulValueCaseStruct {
 
 pub type YulVariableAssignmentStatement = Rc<YulVariableAssignmentStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulVariableAssignmentStatementStruct {
     pub variables: YulPaths,
     pub expression: YulExpression,
@@ -1311,7 +1311,7 @@ impl YulVariableAssignmentStatementStruct {
 
 pub type YulVariableDeclarationStatement = Rc<YulVariableDeclarationStatementStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulVariableDeclarationStatementStruct {
     pub variables: YulVariableNames,
     pub value: Option<YulVariableDeclarationValue>,
@@ -1325,7 +1325,7 @@ impl YulVariableDeclarationStatementStruct {
 
 pub type YulVariableDeclarationValue = Rc<YulVariableDeclarationValueStruct>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct YulVariableDeclarationValueStruct {
     pub expression: YulExpression,
 }
@@ -1346,13 +1346,13 @@ pub enum AbicoderVersion {
     AbicoderV2Keyword,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum ArgumentsDeclaration {
     PositionalArguments(PositionalArguments),
     NamedArguments(NamedArguments),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum ContractMember {
     UsingDirective(UsingDirective),
     FunctionDefinition(FunctionDefinition),
@@ -1365,7 +1365,7 @@ pub enum ContractMember {
     ConstantDefinition(ConstantDefinition),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum ElementaryType {
     AddressType(AddressType),
     BytesKeyword(BytesKeyword),
@@ -1377,14 +1377,14 @@ pub enum ElementaryType {
     StringKeyword,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum ExperimentalFeature {
     StringLiteral(StringLiteral),
     ABIEncoderV2Keyword,
     SMTCheckerKeyword,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Expression {
     AssignmentExpression(AssignmentExpression),
     ConditionalExpression(ConditionalExpression),
@@ -1487,13 +1487,13 @@ pub enum Expression_ShiftExpression_Operator {
     LessThanLessThan,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum ForStatementCondition {
     ExpressionStatement(ExpressionStatement),
     Semicolon,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum ForStatementInitialization {
     VariableDeclarationStatement(VariableDeclarationStatement),
     ExpressionStatement(ExpressionStatement),
@@ -1525,7 +1525,7 @@ pub enum FunctionVisibility {
     External,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum ImportClause {
     PathImport(PathImport),
     ImportDeconstruction(ImportDeconstruction),
@@ -1543,14 +1543,14 @@ pub enum NumberUnit {
     WeeksKeyword,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Pragma {
     VersionPragma(VersionPragma),
     AbicoderPragma(AbicoderPragma),
     ExperimentalPragma(ExperimentalPragma),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum SourceUnitMember {
     PragmaDirective(PragmaDirective),
     ImportClause(ImportClause),
@@ -1582,7 +1582,7 @@ pub enum StateVariableVisibility {
     Internal,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Statement {
     IfStatement(IfStatement),
     ForStatement(ForStatement),
@@ -1608,14 +1608,14 @@ pub enum StorageLocation {
     CallDataKeyword,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum StringExpression {
     StringLiterals(StringLiterals),
     HexStringLiterals(HexStringLiterals),
     UnicodeStringLiterals(UnicodeStringLiterals),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum TypeName {
     ArrayTypeName(ArrayTypeName),
     FunctionType(FunctionType),
@@ -1624,7 +1624,7 @@ pub enum TypeName {
     IdentifierPath(IdentifierPath),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum UsingClause {
     IdentifierPath(IdentifierPath),
     UsingDeconstruction(UsingDeconstruction),
@@ -1649,25 +1649,25 @@ pub enum UsingOperator {
     Tilde,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum UsingTarget {
     TypeName(TypeName),
     Asterisk,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum VariableDeclarationTarget {
     SingleTypedDeclaration(SingleTypedDeclaration),
     MultiTypedDeclaration(MultiTypedDeclaration),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum VersionExpression {
     VersionRange(VersionRange),
     VersionTerm(VersionTerm),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum VersionLiteral {
     SimpleVersionLiteral(SimpleVersionLiteral),
     StringLiteral(StringLiteral),
@@ -1684,14 +1684,14 @@ pub enum VersionOperator {
     PragmaGreaterThanEqual,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum YulExpression {
     YulFunctionCallExpression(YulFunctionCallExpression),
     YulLiteral(YulLiteral),
     YulPath(YulPath),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum YulLiteral {
     DecimalLiteral(DecimalLiteral),
     HexLiteral(HexLiteral),
@@ -1701,7 +1701,7 @@ pub enum YulLiteral {
     FalseKeyword,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum YulStatement {
     YulBlock(YulBlock),
     YulFunctionDefinition(YulFunctionDefinition),
@@ -1716,7 +1716,7 @@ pub enum YulStatement {
     YulExpression(YulExpression),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum YulSwitchCase {
     YulDefaultCase(YulDefaultCase),
     YulValueCase(YulValueCase),

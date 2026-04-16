@@ -1,0 +1,336 @@
+{%- set cst = model.structured_cst_model -%}
+{%- set ir_builder = model.ir_language_model.builder -%}
+{%- set ir_target = model.ir_language_model.target -%}
+#![allow(clippy::too_many_arguments)]
+#![allow(non_camel_case_types)]
+#![allow(unused_variables)]
+
+use std::ops::Range;
+use std::rc::Rc;
+
+use slang_solidity_v2_parser::parser::consumer::ParserConsumer;
+use slang_solidity_v2_parser::parser::parser_helpers;
+
+use super::{intermediate, IrConsumer};
+use crate::ir::nodes as output;
+
+impl<'source> ParserConsumer for IrConsumer<'source> {
+    // ============================================
+    // === Associated Types: Terminals ===
+    // ============================================
+    {% for terminal in cst.terminals -%}
+    {%- if ir_builder.normalized_terminals[terminal] is defined -%}
+        {%- set norm = ir_builder.normalized_terminals[terminal] -%}
+        {%- if norm.is_unique %}
+    type {{ terminal }} = Range<usize>;
+        {%- else %}
+    type {{ terminal }} = output::{{ norm.target }};
+        {%- endif %}
+    {%- elif ir_builder.terminals[terminal] is defined -%}
+        {%- if ir_builder.terminals[terminal].is_unique %}
+    type {{ terminal }} = Range<usize>;
+        {%- else %}
+    type {{ terminal }} = output::{{ terminal }};
+        {%- endif %}
+    {%- else %}
+    type {{ terminal }} = Range<usize>;
+    {%- endif %}
+    {% endfor %}
+
+    // ============================================
+    // === Associated Types: Sequences ===
+    // ============================================
+    {% for parent_type, _sequence in cst.sequences -%}
+    {%- if ir_builder.collapsed_sequences[parent_type] is defined -%}
+        {%- set collapsed = ir_builder.collapsed_sequences[parent_type] -%}
+        {%- if collapsed.target_type.kind == "UniqueTerminal" %}
+    type {{ parent_type }} = Range<usize>;
+        {%- else %}
+    type {{ parent_type }} = output::{{ collapsed.target_type.name }};
+        {%- endif %}
+    {%- elif parent_type == "FunctionType" %}
+    type {{ parent_type }} = intermediate::IrFunctionType;
+    {%- elif ir_builder.sequences[parent_type] is defined %}
+    type {{ parent_type }} = output::{{ parent_type }};
+    {%- else -%}
+    {# Removed sequence — map to intermediate or unified output type #}
+    {%- if parent_type == "ConstructorDefinition"
+        or parent_type == "FallbackFunctionDefinition"
+        or parent_type == "ReceiveFunctionDefinition"
+        or parent_type == "ModifierDefinition" %}
+    type {{ parent_type }} = output::FunctionDefinition;
+    {%- elif parent_type == "EventParameter"
+        or parent_type == "ErrorParameter"
+        or parent_type == "MappingKey"
+        or parent_type == "MappingValue" %}
+    type {{ parent_type }} = output::Parameter;
+    {%- elif parent_type == "EventParametersDeclaration"
+        or parent_type == "ErrorParametersDeclaration" %}
+    type {{ parent_type }} = output::Parameters;
+    {%- elif parent_type == "NamedImport" %}
+    type {{ parent_type }} = output::PathImport;
+    {%- elif parent_type == "IndexAccessEnd" %}
+    type {{ parent_type }} = Option<output::Expression>;
+    {%- elif parent_type == "OverrideSpecifier" %}
+    type {{ parent_type }} = output::OverridePaths;
+    {%- elif parent_type == "PositionalArgumentsDeclaration" %}
+    type {{ parent_type }} = output::PositionalArguments;
+    {%- elif parent_type == "NamedArgumentsDeclaration" %}
+    type {{ parent_type }} = output::NamedArguments;
+    {%- elif parent_type == "InheritanceSpecifier" %}
+    type {{ parent_type }} = output::InheritanceType;
+    {%- elif parent_type == "StorageLayoutSpecifier" %}
+    type {{ parent_type }} = output::Expression;
+    {%- else %}
+    type {{ parent_type }} = (); // TODO: unmapped removed sequence {{ parent_type }}
+    {%- endif %}
+    {%- endif %}
+    {% endfor %}
+
+    // ============================================
+    // === Associated Types: Choices ===
+    // ============================================
+    {% for parent_type, _choice in cst.choices -%}
+    {%- if ir_builder.collapsed_choices[parent_type] is defined -%}
+        {%- set collapsed = ir_builder.collapsed_choices[parent_type] -%}
+        {%- if collapsed.target.kind == "UniqueTerminal" %}
+    type {{ parent_type }} = Range<usize>;
+        {%- else %}
+    type {{ parent_type }} = output::{{ collapsed.target.name }};
+        {%- endif %}
+    {%- elif ir_builder.choices[parent_type] is defined %}
+    type {{ parent_type }} = output::{{ parent_type }};
+    {%- else -%}
+    {# Removed choice #}
+    {%- if parent_type == "FunctionAttribute" %}
+    type {{ parent_type }} = intermediate::IrFunctionAttribute;
+    {%- elif parent_type == "ConstructorAttribute" %}
+    type {{ parent_type }} = intermediate::IrConstructorAttribute;
+    {%- elif parent_type == "FallbackFunctionAttribute" %}
+    type {{ parent_type }} = intermediate::IrFallbackFunctionAttribute;
+    {%- elif parent_type == "ReceiveFunctionAttribute" %}
+    type {{ parent_type }} = intermediate::IrReceiveFunctionAttribute;
+    {%- elif parent_type == "ModifierAttribute" %}
+    type {{ parent_type }} = intermediate::IrModifierAttribute;
+    {%- elif parent_type == "StateVariableAttribute" %}
+    type {{ parent_type }} = intermediate::IrStateVariableAttribute;
+    {%- elif parent_type == "FunctionTypeAttribute" %}
+    type {{ parent_type }} = intermediate::IrFunctionTypeAttribute;
+    {%- elif parent_type == "ContractSpecifier" %}
+    type {{ parent_type }} = intermediate::IrContractSpecifier;
+    {%- elif parent_type == "FunctionName" %}
+    type {{ parent_type }} = (output::FunctionKind, Option<output::Identifier>);
+    {%- elif parent_type == "FunctionBody" %}
+    type {{ parent_type }} = Option<output::Block>;
+    {%- elif parent_type == "MappingKeyType" %}
+    type {{ parent_type }} = output::TypeName;
+    {%- else %}
+    type {{ parent_type }} = (); // TODO: unmapped removed choice {{ parent_type }}
+    {%- endif %}
+    {%- endif %}
+    {% endfor %}
+
+    // ============================================
+    // === Associated Types: Collections ===
+    // ============================================
+    {% for parent_type, _collection in cst.collections -%}
+    {%- if ir_builder.collections[parent_type] is defined %}
+    type {{ parent_type }} = output::{{ parent_type }};
+    {%- else -%}
+    {# Removed collection — map to intermediate vector or IR collection #}
+    {%- if parent_type == "FunctionAttributes" %}
+    type {{ parent_type }} = Vec<intermediate::IrFunctionAttribute>;
+    {%- elif parent_type == "ConstructorAttributes" %}
+    type {{ parent_type }} = Vec<intermediate::IrConstructorAttribute>;
+    {%- elif parent_type == "FallbackFunctionAttributes" %}
+    type {{ parent_type }} = Vec<intermediate::IrFallbackFunctionAttribute>;
+    {%- elif parent_type == "ReceiveFunctionAttributes" %}
+    type {{ parent_type }} = Vec<intermediate::IrReceiveFunctionAttribute>;
+    {%- elif parent_type == "ModifierAttributes" %}
+    type {{ parent_type }} = Vec<intermediate::IrModifierAttribute>;
+    {%- elif parent_type == "StateVariableAttributes" %}
+    type {{ parent_type }} = Vec<intermediate::IrStateVariableAttribute>;
+    {%- elif parent_type == "FunctionTypeAttributes" %}
+    type {{ parent_type }} = Vec<intermediate::IrFunctionTypeAttribute>;
+    {%- elif parent_type == "ContractSpecifiers" %}
+    type {{ parent_type }} = Vec<intermediate::IrContractSpecifier>;
+    {%- elif parent_type == "EventParameters" or parent_type == "ErrorParameters" %}
+    type {{ parent_type }} = output::Parameters;
+    {%- else %}
+    type {{ parent_type }} = (); // TODO: unmapped removed collection {{ parent_type }}
+    {%- endif %}
+    {%- endif %}
+    {% endfor %}
+
+    // ============================================
+    // === Terminal Factory Methods ===
+    // ============================================
+    {% for terminal in cst.terminals -%}
+    {%- set is_unique_out = true -%}
+    {%- set target_name = terminal -%}
+    {%- if ir_builder.normalized_terminals[terminal] is defined -%}
+        {%- set norm = ir_builder.normalized_terminals[terminal] -%}
+        {%- set is_unique_out = norm.is_unique -%}
+        {%- set target_name = norm.target -%}
+    {%- elif ir_builder.terminals[terminal] is defined -%}
+        {%- set is_unique_out = ir_builder.terminals[terminal].is_unique -%}
+    {%- endif %}
+    {%- if is_unique_out %}
+    fn make_{{ terminal | snake_case }}(&self, range: Range<usize>, _source: &str) -> Self::{{ terminal }} {
+        range
+    }
+    {%- else %}
+    fn make_{{ terminal | snake_case }}(&self, range: Range<usize>, source: &str) -> Self::{{ terminal }} {
+        Rc::new(output::{{ target_name }}Struct {
+            range: range.clone(),
+            text: source[range].to_owned(),
+        })
+    }
+    {%- endif %}
+    {% endfor %}
+
+    // ============================================
+    // === Collection Factory Methods ===
+    // ============================================
+    {% for parent_type, collection in cst.collections -%}
+    fn make_{{ parent_type | snake_case }}(&self, elements: Vec<Self::{{ collection.item_type.name }}>) -> Self::{{ parent_type }} {
+        elements
+    }
+    {% endfor %}
+
+    // ============================================
+    // === Sequence Factory Methods ===
+    // ============================================
+    {% for parent_type, sequence in cst.sequences -%}
+    fn make_{{ parent_type | snake_case }}(
+        &self,
+        {%- for field in sequence.fields %}
+        {{ field.label | snake_case }}: {% if field.is_optional %}Option<{% endif %}Self::{{ field.field_type.name }}{% if field.is_optional %}>{% endif %},
+        {%- endfor %}
+    ) -> Self::{{ parent_type }} {
+    {%- if ir_builder.collapsed_sequences[parent_type] is defined -%}
+        {%- set collapsed = ir_builder.collapsed_sequences[parent_type] %}
+        {{ collapsed.label | snake_case }}
+    {%- elif ir_builder.sequences[parent_type] is defined -%}
+        {%- set seq = ir_builder.sequences[parent_type] -%}
+        {%- if seq.has_added_fields %}
+        self.build_{{ parent_type | snake_case }}_impl(
+            {%- for field in sequence.fields %}
+            {{ field.label | snake_case }},
+            {%- endfor %}
+        )
+        {%- else %}
+        Rc::new(output::{{ parent_type }}Struct {
+            {%- for ir_field in seq.fields %}
+            {%- if ir_field.target_type.kind == "UniqueTerminal" and ir_field.is_optional %}
+            {{ ir_field.label | snake_case }}: {{ ir_field.label | snake_case }}.is_some(),
+            {%- else %}
+            {{ ir_field.label | snake_case }},
+            {%- endif %}
+            {%- endfor %}
+        })
+        {%- endif %}
+    {%- else %}
+        self.build_{{ parent_type | snake_case }}_impl(
+            {%- for field in sequence.fields %}
+            {{ field.label | snake_case }},
+            {%- endfor %}
+        )
+    {%- endif %}
+    }
+    {% endfor %}
+
+    // ============================================
+    // === Choice Variant Factory Methods ===
+    // ============================================
+    {% for parent_type, choice in cst.choices -%}
+    {% for variant in choice.variants -%}
+    {%- set vname = variant.variant_type.name -%}
+    {%- set cst_is_terminal = variant.variant_type.kind == "Terminal" -%}
+    {%- set ir_variant_found = false -%}
+    {%- set ir_variant_is_unique = false -%}
+    {%- set ir_variant_target_name = vname -%}
+    {%- if ir_builder.choices[parent_type] is defined -%}
+        {%- set matches = ir_builder.choices[parent_type].variants | filter(attribute="source.name", value=vname) -%}
+        {%- if matches | length > 0 -%}
+            {%- set mv = matches | first -%}
+            {%- set ir_variant_found = true -%}
+            {%- set ir_variant_target_name = mv.target.name -%}
+            {%- if mv.target.kind == "UniqueTerminal" -%}
+                {%- set ir_variant_is_unique = true -%}
+            {%- endif -%}
+        {%- endif -%}
+    {%- endif -%}
+    fn make_{{ parent_type | snake_case }}_{{ vname | snake_case }}(
+        &self,
+        element: Self::{{ vname }},
+    ) -> Self::{{ parent_type }} {
+    {%- if ir_builder.collapsed_choices[parent_type] is defined -%}
+        {%- if cst_is_terminal and ir_builder.terminals[vname] is defined and ir_builder.terminals[vname].is_unique %}
+        {# Collapsed choice: unique-terminal variant must be synthesized from range #}
+        self.build_{{ parent_type | snake_case }}_{{ vname | snake_case }}_impl(element)
+        {%- elif cst_is_terminal and ir_builder.normalized_terminals[vname] is defined and ir_builder.normalized_terminals[vname].is_unique %}
+        self.build_{{ parent_type | snake_case }}_{{ vname | snake_case }}_impl(element)
+        {%- else %}
+        element
+        {%- endif %}
+    {%- elif ir_builder.choices[parent_type] is defined %}
+        {%- if parent_type == "ContractMember" and vname == "StateVariableDefinition" %}
+        {# Special: constant state variables may be transmuted into ConstantDefinition #}
+        self.build_{{ parent_type | snake_case }}_{{ vname | snake_case }}_impl(element)
+        {%- elif ir_variant_found and ir_variant_is_unique %}
+        output::{{ parent_type }}::{{ ir_variant_target_name }}
+        {%- elif ir_variant_found and parent_type == "TypeName" and vname == "FunctionType" %}
+        output::{{ parent_type }}::{{ ir_variant_target_name }}(element.into_output())
+        {%- elif ir_variant_found %}
+        output::{{ parent_type }}::{{ ir_variant_target_name }}(element)
+        {%- else %}
+        {# Variant removed in IR: delegate to hand-written #}
+        self.build_{{ parent_type | snake_case }}_{{ vname | snake_case }}_impl(element)
+        {%- endif %}
+    {%- else -%}
+        {# Removed choice: delegate #}
+        self.build_{{ parent_type | snake_case }}_{{ vname | snake_case }}_impl(element)
+    {%- endif %}
+    }
+    {% endfor %}
+    {% endfor %}
+
+    // ============================================
+    // === Special Helper Methods ===
+    // ============================================
+
+    fn make_type_name_from_index_access_path(
+        &self,
+        index_access_path: parser_helpers::IndexAccessPath<Self>,
+    ) -> Self::TypeName
+    where
+        Self: Sized,
+    {
+        self.build_type_name_from_index_access_path_impl(index_access_path)
+    }
+
+    fn make_expression_from_index_access_path(
+        &self,
+        index_access_path: parser_helpers::IndexAccessPath<Self>,
+    ) -> Self::Expression
+    where
+        Self: Sized,
+    {
+        self.build_expression_from_index_access_path_impl(index_access_path)
+    }
+
+    fn make_expression_from_identifier_path(
+        &self,
+        identifier_path: Self::IdentifierPath,
+    ) -> Self::Expression {
+        self.build_expression_from_identifier_path_impl(identifier_path)
+    }
+
+    fn extract_extra_attributes(
+        &self,
+        fun_type: Self::FunctionType,
+    ) -> (Self::FunctionType, Vec<Self::StateVariableAttribute>) {
+        self.extract_extra_attributes_impl(fun_type)
+    }
+}
