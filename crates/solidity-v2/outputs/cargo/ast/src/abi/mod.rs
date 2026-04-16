@@ -1,3 +1,5 @@
+mod node_extensions;
+
 use std::cmp::Ordering;
 use std::rc::Rc;
 
