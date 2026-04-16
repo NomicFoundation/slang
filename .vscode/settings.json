@@ -15,6 +15,7 @@
     "**/generated/**": true,
     "**/*.generated.*": true
   },
+  "json.schemaDownload.trustedDomains": ["https://docs.renovatebot.com"],
   "rust-analyzer.check.allTargets": true,
   "rust-analyzer.check.command": "clippy",
   "rust-analyzer.check.features": "all",
@@ -43,6 +44,5 @@
     "Regenerate Jinja Templates": ["**/*.jinja2"]
   },
   "js/ts.tsdk.path": "node_modules/typescript/lib",
-  "yaml.validate": false, // Disable LSP validation for YAML files, as it is handled by our own cargo tasks
-  "json.schemaDownload.trustedDomains": ["https://docs.renovatebot.com"]
+  "yaml.validate": false // Disable LSP validation for YAML files, as it is handled by our own cargo tasks
 }
