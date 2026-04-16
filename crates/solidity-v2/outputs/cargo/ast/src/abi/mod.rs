@@ -208,6 +208,9 @@ impl PartialEq for AbiEntry {
 
 impl Eq for AbiEntry {}
 
+// The ordering defined by this implementation is alphabetical "type" + "name",
+// same as `solc`'s. For equal names we use the `node_id` as the tie breaker to
+// keep consistency with the `PartialEq` implementation.
 impl Ord for AbiEntry {
     fn cmp(&self, other: &Self) -> Ordering {
         match (self, other) {
