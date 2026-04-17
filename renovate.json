@@ -102,10 +102,6 @@
   ],
   "labels": ["dependencies"],
   "configMigration": true,
-  "lockFileMaintenance": {
-    "enabled": true,
-    "schedule": ["before 9am on Friday"]
-  },
   "osvVulnerabilityAlerts": true,
   "vulnerabilityAlerts": {
     "enabled": true,
