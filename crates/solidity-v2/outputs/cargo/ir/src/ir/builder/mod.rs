@@ -4,7 +4,6 @@ use slang_solidity_v2_cst::structured_cst::nodes as input;
 
 #[path = "default.generated.rs"]
 mod default;
-use default::Builder;
 
 use super::Source;
 use crate::ir::nodes as output;
@@ -43,12 +42,12 @@ pub fn build_source_unit(
     builder.build_source_unit(source_unit)
 }
 
-struct CstToIrBuilder<'a, S: Source> {
+pub(crate) struct CstToIrBuilder<'a, S: Source> {
     source: &'a S,
     id_generator: &'a mut NodeIdGenerator,
 }
 
-impl<S: Source> Builder for CstToIrBuilder<'_, S> {
+impl<S: Source> CstToIrBuilder<'_, S> {
     fn next_id(&mut self) -> output::NodeId {
         self.id_generator.next_id()
     }

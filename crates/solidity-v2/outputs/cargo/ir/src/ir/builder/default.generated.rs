@@ -8,24 +8,25 @@ use std::rc::Rc;
 
 use slang_solidity_v2_cst::structured_cst::nodes as input;
 
-use crate::ir::nodes as output;
+use super::CstToIrBuilder;
+use crate::ir::{nodes as output, Source};
 
-pub trait Builder {
-    fn next_id(&mut self) -> output::NodeId;
-    fn unparse_range(&self, range: std::ops::Range<usize>) -> String;
-
+impl<S: Source> CstToIrBuilder<'_, S> {
     //
     // Sequences
     //
 
-    fn build_abicoder_pragma(&mut self, source: &input::AbicoderPragma) -> output::AbicoderPragma {
+    pub(super) fn build_abicoder_pragma(
+        &mut self,
+        source: &input::AbicoderPragma,
+    ) -> output::AbicoderPragma {
         let id = self.next_id();
         let version = self.build_abicoder_version(&source.version);
 
         Rc::new(output::AbicoderPragmaStruct { id, version })
     }
 
-    fn build_additive_expression(
+    pub(super) fn build_additive_expression(
         &mut self,
         source: &input::AdditiveExpression,
     ) -> output::AdditiveExpression {
@@ -45,7 +46,10 @@ pub trait Builder {
         })
     }
 
-    fn build_address_type(&mut self, source: &input::AddressType) -> output::AddressType {
+    pub(super) fn build_address_type(
+        &mut self,
+        source: &input::AddressType,
+    ) -> output::AddressType {
         let id = self.next_id();
         let payable_keyword = source.payable_keyword.is_some();
 
@@ -55,7 +59,10 @@ pub trait Builder {
         })
     }
 
-    fn build_and_expression(&mut self, source: &input::AndExpression) -> output::AndExpression {
+    pub(super) fn build_and_expression(
+        &mut self,
+        source: &input::AndExpression,
+    ) -> output::AndExpression {
         let id = self.next_id();
         let left_operand = self.build_expression(&source.left_operand);
         let right_operand = self.build_expression(&source.right_operand);
@@ -67,7 +74,7 @@ pub trait Builder {
         })
     }
 
-    fn build_array_expression(
+    pub(super) fn build_array_expression(
         &mut self,
         source: &input::ArrayExpression,
     ) -> output::ArrayExpression {
@@ -77,7 +84,10 @@ pub trait Builder {
         Rc::new(output::ArrayExpressionStruct { id, items })
     }
 
-    fn build_array_type_name(&mut self, source: &input::ArrayTypeName) -> output::ArrayTypeName {
+    pub(super) fn build_array_type_name(
+        &mut self,
+        source: &input::ArrayTypeName,
+    ) -> output::ArrayTypeName {
         let id = self.next_id();
         let operand = self.build_type_name(&source.operand);
         let index = source
@@ -88,7 +98,7 @@ pub trait Builder {
         Rc::new(output::ArrayTypeNameStruct { id, operand, index })
     }
 
-    fn build_assembly_statement(
+    pub(super) fn build_assembly_statement(
         &mut self,
         source: &input::AssemblyStatement,
     ) -> output::AssemblyStatement {
@@ -111,7 +121,7 @@ pub trait Builder {
         })
     }
 
-    fn build_assignment_expression(
+    pub(super) fn build_assignment_expression(
         &mut self,
         source: &input::AssignmentExpression,
     ) -> output::AssignmentExpression {
@@ -131,7 +141,7 @@ pub trait Builder {
         })
     }
 
-    fn build_bitwise_and_expression(
+    pub(super) fn build_bitwise_and_expression(
         &mut self,
         source: &input::BitwiseAndExpression,
     ) -> output::BitwiseAndExpression {
@@ -146,7 +156,7 @@ pub trait Builder {
         })
     }
 
-    fn build_bitwise_or_expression(
+    pub(super) fn build_bitwise_or_expression(
         &mut self,
         source: &input::BitwiseOrExpression,
     ) -> output::BitwiseOrExpression {
@@ -161,7 +171,7 @@ pub trait Builder {
         })
     }
 
-    fn build_bitwise_xor_expression(
+    pub(super) fn build_bitwise_xor_expression(
         &mut self,
         source: &input::BitwiseXorExpression,
     ) -> output::BitwiseXorExpression {
@@ -176,20 +186,23 @@ pub trait Builder {
         })
     }
 
-    fn build_block(&mut self, source: &input::Block) -> output::Block {
+    pub(super) fn build_block(&mut self, source: &input::Block) -> output::Block {
         let id = self.next_id();
         let statements = self.build_statements(&source.statements);
 
         Rc::new(output::BlockStruct { id, statements })
     }
 
-    fn build_break_statement(&mut self, source: &input::BreakStatement) -> output::BreakStatement {
+    pub(super) fn build_break_statement(
+        &mut self,
+        source: &input::BreakStatement,
+    ) -> output::BreakStatement {
         let id = self.next_id();
 
         Rc::new(output::BreakStatementStruct { id })
     }
 
-    fn build_call_options_expression(
+    pub(super) fn build_call_options_expression(
         &mut self,
         source: &input::CallOptionsExpression,
     ) -> output::CallOptionsExpression {
@@ -204,7 +217,10 @@ pub trait Builder {
         })
     }
 
-    fn build_catch_clause(&mut self, source: &input::CatchClause) -> output::CatchClause {
+    pub(super) fn build_catch_clause(
+        &mut self,
+        source: &input::CatchClause,
+    ) -> output::CatchClause {
         let id = self.next_id();
         let error = source
             .error
@@ -215,7 +231,7 @@ pub trait Builder {
         Rc::new(output::CatchClauseStruct { id, error, body })
     }
 
-    fn build_catch_clause_error(
+    pub(super) fn build_catch_clause_error(
         &mut self,
         source: &input::CatchClauseError,
     ) -> output::CatchClauseError {
@@ -233,7 +249,7 @@ pub trait Builder {
         })
     }
 
-    fn build_conditional_expression(
+    pub(super) fn build_conditional_expression(
         &mut self,
         source: &input::ConditionalExpression,
     ) -> output::ConditionalExpression {
@@ -250,12 +266,7 @@ pub trait Builder {
         })
     }
 
-    fn build_constant_definition(
-        &mut self,
-        source: &input::ConstantDefinition,
-    ) -> output::ConstantDefinition;
-
-    fn build_continue_statement(
+    pub(super) fn build_continue_statement(
         &mut self,
         source: &input::ContinueStatement,
     ) -> output::ContinueStatement {
@@ -264,12 +275,7 @@ pub trait Builder {
         Rc::new(output::ContinueStatementStruct { id })
     }
 
-    fn build_contract_definition(
-        &mut self,
-        source: &input::ContractDefinition,
-    ) -> output::ContractDefinition;
-
-    fn build_decimal_number_expression(
+    pub(super) fn build_decimal_number_expression(
         &mut self,
         source: &input::DecimalNumberExpression,
     ) -> output::DecimalNumberExpression {
@@ -283,7 +289,7 @@ pub trait Builder {
         Rc::new(output::DecimalNumberExpressionStruct { id, literal, unit })
     }
 
-    fn build_do_while_statement(
+    pub(super) fn build_do_while_statement(
         &mut self,
         source: &input::DoWhileStatement,
     ) -> output::DoWhileStatement {
@@ -298,7 +304,10 @@ pub trait Builder {
         })
     }
 
-    fn build_emit_statement(&mut self, source: &input::EmitStatement) -> output::EmitStatement {
+    pub(super) fn build_emit_statement(
+        &mut self,
+        source: &input::EmitStatement,
+    ) -> output::EmitStatement {
         let id = self.next_id();
         let event = self.build_identifier_path(&source.event);
         let arguments = self.build_arguments_declaration(&source.arguments);
@@ -310,7 +319,10 @@ pub trait Builder {
         })
     }
 
-    fn build_enum_definition(&mut self, source: &input::EnumDefinition) -> output::EnumDefinition {
+    pub(super) fn build_enum_definition(
+        &mut self,
+        source: &input::EnumDefinition,
+    ) -> output::EnumDefinition {
         let id = self.next_id();
         let name = self.build_identifier(&source.name);
         let members = self.build_enum_members(&source.members);
@@ -318,7 +330,7 @@ pub trait Builder {
         Rc::new(output::EnumDefinitionStruct { id, name, members })
     }
 
-    fn build_equality_expression(
+    pub(super) fn build_equality_expression(
         &mut self,
         source: &input::EqualityExpression,
     ) -> output::EqualityExpression {
@@ -338,17 +350,7 @@ pub trait Builder {
         })
     }
 
-    fn build_error_definition(
-        &mut self,
-        source: &input::ErrorDefinition,
-    ) -> output::ErrorDefinition;
-
-    fn build_event_definition(
-        &mut self,
-        source: &input::EventDefinition,
-    ) -> output::EventDefinition;
-
-    fn build_experimental_pragma(
+    pub(super) fn build_experimental_pragma(
         &mut self,
         source: &input::ExperimentalPragma,
     ) -> output::ExperimentalPragma {
@@ -358,7 +360,7 @@ pub trait Builder {
         Rc::new(output::ExperimentalPragmaStruct { id, feature })
     }
 
-    fn build_exponentiation_expression(
+    pub(super) fn build_exponentiation_expression(
         &mut self,
         source: &input::ExponentiationExpression,
     ) -> output::ExponentiationExpression {
@@ -373,7 +375,7 @@ pub trait Builder {
         })
     }
 
-    fn build_expression_statement(
+    pub(super) fn build_expression_statement(
         &mut self,
         source: &input::ExpressionStatement,
     ) -> output::ExpressionStatement {
@@ -383,7 +385,10 @@ pub trait Builder {
         Rc::new(output::ExpressionStatementStruct { id, expression })
     }
 
-    fn build_for_statement(&mut self, source: &input::ForStatement) -> output::ForStatement {
+    pub(super) fn build_for_statement(
+        &mut self,
+        source: &input::ForStatement,
+    ) -> output::ForStatement {
         let id = self.next_id();
         let initialization = self.build_for_statement_initialization(&source.initialization);
         let condition = self.build_for_statement_condition(&source.condition);
@@ -402,7 +407,7 @@ pub trait Builder {
         })
     }
 
-    fn build_function_call_expression(
+    pub(super) fn build_function_call_expression(
         &mut self,
         source: &input::FunctionCallExpression,
     ) -> output::FunctionCallExpression {
@@ -417,14 +422,7 @@ pub trait Builder {
         })
     }
 
-    fn build_function_definition(
-        &mut self,
-        source: &input::FunctionDefinition,
-    ) -> output::FunctionDefinition;
-
-    fn build_function_type(&mut self, source: &input::FunctionType) -> output::FunctionType;
-
-    fn build_hex_number_expression(
+    pub(super) fn build_hex_number_expression(
         &mut self,
         source: &input::HexNumberExpression,
     ) -> output::HexNumberExpression {
@@ -434,7 +432,10 @@ pub trait Builder {
         Rc::new(output::HexNumberExpressionStruct { id, literal })
     }
 
-    fn build_if_statement(&mut self, source: &input::IfStatement) -> output::IfStatement {
+    pub(super) fn build_if_statement(
+        &mut self,
+        source: &input::IfStatement,
+    ) -> output::IfStatement {
         let id = self.next_id();
         let condition = self.build_expression(&source.condition);
         let body = self.build_statement(&source.body);
@@ -451,7 +452,7 @@ pub trait Builder {
         })
     }
 
-    fn build_import_deconstruction(
+    pub(super) fn build_import_deconstruction(
         &mut self,
         source: &input::ImportDeconstruction,
     ) -> output::ImportDeconstruction {
@@ -462,7 +463,7 @@ pub trait Builder {
         Rc::new(output::ImportDeconstructionStruct { id, symbols, path })
     }
 
-    fn build_import_deconstruction_symbol(
+    pub(super) fn build_import_deconstruction_symbol(
         &mut self,
         source: &input::ImportDeconstructionSymbol,
     ) -> output::ImportDeconstructionSymbol {
@@ -476,12 +477,7 @@ pub trait Builder {
         Rc::new(output::ImportDeconstructionSymbolStruct { id, name, alias })
     }
 
-    fn build_index_access_expression(
-        &mut self,
-        source: &input::IndexAccessExpression,
-    ) -> output::IndexAccessExpression;
-
-    fn build_inequality_expression(
+    pub(super) fn build_inequality_expression(
         &mut self,
         source: &input::InequalityExpression,
     ) -> output::InequalityExpression {
@@ -501,7 +497,7 @@ pub trait Builder {
         })
     }
 
-    fn build_inheritance_type(
+    pub(super) fn build_inheritance_type(
         &mut self,
         source: &input::InheritanceType,
     ) -> output::InheritanceType {
@@ -519,7 +515,7 @@ pub trait Builder {
         })
     }
 
-    fn build_interface_definition(
+    pub(super) fn build_interface_definition(
         &mut self,
         source: &input::InterfaceDefinition,
     ) -> output::InterfaceDefinition {
@@ -539,7 +535,7 @@ pub trait Builder {
         })
     }
 
-    fn build_library_definition(
+    pub(super) fn build_library_definition(
         &mut self,
         source: &input::LibraryDefinition,
     ) -> output::LibraryDefinition {
@@ -550,9 +546,7 @@ pub trait Builder {
         Rc::new(output::LibraryDefinitionStruct { id, name, members })
     }
 
-    fn build_mapping_type(&mut self, source: &input::MappingType) -> output::MappingType;
-
-    fn build_member_access_expression(
+    pub(super) fn build_member_access_expression(
         &mut self,
         source: &input::MemberAccessExpression,
     ) -> output::MemberAccessExpression {
@@ -567,7 +561,7 @@ pub trait Builder {
         })
     }
 
-    fn build_modifier_invocation(
+    pub(super) fn build_modifier_invocation(
         &mut self,
         source: &input::ModifierInvocation,
     ) -> output::ModifierInvocation {
@@ -585,7 +579,7 @@ pub trait Builder {
         })
     }
 
-    fn build_multi_typed_declaration(
+    pub(super) fn build_multi_typed_declaration(
         &mut self,
         source: &input::MultiTypedDeclaration,
     ) -> output::MultiTypedDeclaration {
@@ -600,7 +594,7 @@ pub trait Builder {
         })
     }
 
-    fn build_multi_typed_declaration_element(
+    pub(super) fn build_multi_typed_declaration_element(
         &mut self,
         source: &input::MultiTypedDeclarationElement,
     ) -> output::MultiTypedDeclarationElement {
@@ -613,7 +607,7 @@ pub trait Builder {
         Rc::new(output::MultiTypedDeclarationElementStruct { id, member })
     }
 
-    fn build_multiplicative_expression(
+    pub(super) fn build_multiplicative_expression(
         &mut self,
         source: &input::MultiplicativeExpression,
     ) -> output::MultiplicativeExpression {
@@ -633,7 +627,10 @@ pub trait Builder {
         })
     }
 
-    fn build_named_argument(&mut self, source: &input::NamedArgument) -> output::NamedArgument {
+    pub(super) fn build_named_argument(
+        &mut self,
+        source: &input::NamedArgument,
+    ) -> output::NamedArgument {
         let id = self.next_id();
         let name = self.build_identifier(&source.name);
         let value = self.build_expression(&source.value);
@@ -641,14 +638,20 @@ pub trait Builder {
         Rc::new(output::NamedArgumentStruct { id, name, value })
     }
 
-    fn build_new_expression(&mut self, source: &input::NewExpression) -> output::NewExpression {
+    pub(super) fn build_new_expression(
+        &mut self,
+        source: &input::NewExpression,
+    ) -> output::NewExpression {
         let id = self.next_id();
         let type_name = self.build_type_name(&source.type_name);
 
         Rc::new(output::NewExpressionStruct { id, type_name })
     }
 
-    fn build_or_expression(&mut self, source: &input::OrExpression) -> output::OrExpression {
+    pub(super) fn build_or_expression(
+        &mut self,
+        source: &input::OrExpression,
+    ) -> output::OrExpression {
         let id = self.next_id();
         let left_operand = self.build_expression(&source.left_operand);
         let right_operand = self.build_expression(&source.right_operand);
@@ -660,9 +663,7 @@ pub trait Builder {
         })
     }
 
-    fn build_parameter(&mut self, source: &input::Parameter) -> output::Parameter;
-
-    fn build_path_import(&mut self, source: &input::PathImport) -> output::PathImport {
+    pub(super) fn build_path_import(&mut self, source: &input::PathImport) -> output::PathImport {
         let id = self.next_id();
         let path = self.build_string_literal(&source.path);
         let alias = source
@@ -673,7 +674,7 @@ pub trait Builder {
         Rc::new(output::PathImportStruct { id, path, alias })
     }
 
-    fn build_postfix_expression(
+    pub(super) fn build_postfix_expression(
         &mut self,
         source: &input::PostfixExpression,
     ) -> output::PostfixExpression {
@@ -691,7 +692,7 @@ pub trait Builder {
         })
     }
 
-    fn build_pragma_directive(
+    pub(super) fn build_pragma_directive(
         &mut self,
         source: &input::PragmaDirective,
     ) -> output::PragmaDirective {
@@ -701,7 +702,7 @@ pub trait Builder {
         Rc::new(output::PragmaDirectiveStruct { id, pragma })
     }
 
-    fn build_prefix_expression(
+    pub(super) fn build_prefix_expression(
         &mut self,
         source: &input::PrefixExpression,
     ) -> output::PrefixExpression {
@@ -719,7 +720,7 @@ pub trait Builder {
         })
     }
 
-    fn build_return_statement(
+    pub(super) fn build_return_statement(
         &mut self,
         source: &input::ReturnStatement,
     ) -> output::ReturnStatement {
@@ -732,7 +733,7 @@ pub trait Builder {
         Rc::new(output::ReturnStatementStruct { id, expression })
     }
 
-    fn build_revert_statement(
+    pub(super) fn build_revert_statement(
         &mut self,
         source: &input::RevertStatement,
     ) -> output::RevertStatement {
@@ -747,7 +748,7 @@ pub trait Builder {
         })
     }
 
-    fn build_shift_expression(
+    pub(super) fn build_shift_expression(
         &mut self,
         source: &input::ShiftExpression,
     ) -> output::ShiftExpression {
@@ -766,7 +767,7 @@ pub trait Builder {
         })
     }
 
-    fn build_single_typed_declaration(
+    pub(super) fn build_single_typed_declaration(
         &mut self,
         source: &input::SingleTypedDeclaration,
     ) -> output::SingleTypedDeclaration {
@@ -784,19 +785,14 @@ pub trait Builder {
         })
     }
 
-    fn build_source_unit(&mut self, source: &input::SourceUnit) -> output::SourceUnit {
+    pub(super) fn build_source_unit(&mut self, source: &input::SourceUnit) -> output::SourceUnit {
         let id = self.next_id();
         let members = self.build_source_unit_members(&source.members);
 
         Rc::new(output::SourceUnitStruct { id, members })
     }
 
-    fn build_state_variable_definition(
-        &mut self,
-        source: &input::StateVariableDefinition,
-    ) -> output::StateVariableDefinition;
-
-    fn build_struct_definition(
+    pub(super) fn build_struct_definition(
         &mut self,
         source: &input::StructDefinition,
     ) -> output::StructDefinition {
@@ -807,7 +803,10 @@ pub trait Builder {
         Rc::new(output::StructDefinitionStruct { id, name, members })
     }
 
-    fn build_struct_member(&mut self, source: &input::StructMember) -> output::StructMember {
+    pub(super) fn build_struct_member(
+        &mut self,
+        source: &input::StructMember,
+    ) -> output::StructMember {
         let id = self.next_id();
         let type_name = self.build_type_name(&source.type_name);
         let name = self.build_identifier(&source.name);
@@ -819,7 +818,10 @@ pub trait Builder {
         })
     }
 
-    fn build_try_statement(&mut self, source: &input::TryStatement) -> output::TryStatement {
+    pub(super) fn build_try_statement(
+        &mut self,
+        source: &input::TryStatement,
+    ) -> output::TryStatement {
         let id = self.next_id();
         let expression = self.build_expression(&source.expression);
         let returns = source
@@ -838,7 +840,7 @@ pub trait Builder {
         })
     }
 
-    fn build_tuple_expression(
+    pub(super) fn build_tuple_expression(
         &mut self,
         source: &input::TupleExpression,
     ) -> output::TupleExpression {
@@ -848,7 +850,7 @@ pub trait Builder {
         Rc::new(output::TupleExpressionStruct { id, items })
     }
 
-    fn build_tuple_value(&mut self, source: &input::TupleValue) -> output::TupleValue {
+    pub(super) fn build_tuple_value(&mut self, source: &input::TupleValue) -> output::TupleValue {
         let id = self.next_id();
         let expression = source
             .expression
@@ -858,21 +860,27 @@ pub trait Builder {
         Rc::new(output::TupleValueStruct { id, expression })
     }
 
-    fn build_type_expression(&mut self, source: &input::TypeExpression) -> output::TypeExpression {
+    pub(super) fn build_type_expression(
+        &mut self,
+        source: &input::TypeExpression,
+    ) -> output::TypeExpression {
         let id = self.next_id();
         let type_name = self.build_type_name(&source.type_name);
 
         Rc::new(output::TypeExpressionStruct { id, type_name })
     }
 
-    fn build_unchecked_block(&mut self, source: &input::UncheckedBlock) -> output::UncheckedBlock {
+    pub(super) fn build_unchecked_block(
+        &mut self,
+        source: &input::UncheckedBlock,
+    ) -> output::UncheckedBlock {
         let id = self.next_id();
         let block = self.build_block(&source.block);
 
         Rc::new(output::UncheckedBlockStruct { id, block })
     }
 
-    fn build_user_defined_value_type_definition(
+    pub(super) fn build_user_defined_value_type_definition(
         &mut self,
         source: &input::UserDefinedValueTypeDefinition,
     ) -> output::UserDefinedValueTypeDefinition {
@@ -887,7 +895,7 @@ pub trait Builder {
         })
     }
 
-    fn build_using_deconstruction(
+    pub(super) fn build_using_deconstruction(
         &mut self,
         source: &input::UsingDeconstruction,
     ) -> output::UsingDeconstruction {
@@ -897,7 +905,7 @@ pub trait Builder {
         Rc::new(output::UsingDeconstructionStruct { id, symbols })
     }
 
-    fn build_using_deconstruction_symbol(
+    pub(super) fn build_using_deconstruction_symbol(
         &mut self,
         source: &input::UsingDeconstructionSymbol,
     ) -> output::UsingDeconstructionSymbol {
@@ -911,7 +919,10 @@ pub trait Builder {
         Rc::new(output::UsingDeconstructionSymbolStruct { id, name, alias })
     }
 
-    fn build_using_directive(&mut self, source: &input::UsingDirective) -> output::UsingDirective {
+    pub(super) fn build_using_directive(
+        &mut self,
+        source: &input::UsingDirective,
+    ) -> output::UsingDirective {
         let id = self.next_id();
         let clause = self.build_using_clause(&source.clause);
         let target = self.build_using_target(&source.target);
@@ -925,7 +936,7 @@ pub trait Builder {
         })
     }
 
-    fn build_variable_declaration(
+    pub(super) fn build_variable_declaration(
         &mut self,
         source: &input::VariableDeclaration,
     ) -> output::VariableDeclaration {
@@ -945,7 +956,7 @@ pub trait Builder {
         })
     }
 
-    fn build_variable_declaration_statement(
+    pub(super) fn build_variable_declaration_statement(
         &mut self,
         source: &input::VariableDeclarationStatement,
     ) -> output::VariableDeclarationStatement {
@@ -955,14 +966,20 @@ pub trait Builder {
         Rc::new(output::VariableDeclarationStatementStruct { id, target })
     }
 
-    fn build_version_pragma(&mut self, source: &input::VersionPragma) -> output::VersionPragma {
+    pub(super) fn build_version_pragma(
+        &mut self,
+        source: &input::VersionPragma,
+    ) -> output::VersionPragma {
         let id = self.next_id();
         let sets = self.build_version_expression_sets(&source.sets);
 
         Rc::new(output::VersionPragmaStruct { id, sets })
     }
 
-    fn build_version_range(&mut self, source: &input::VersionRange) -> output::VersionRange {
+    pub(super) fn build_version_range(
+        &mut self,
+        source: &input::VersionRange,
+    ) -> output::VersionRange {
         let id = self.next_id();
         let start = self.build_version_literal(&source.start);
         let end = self.build_version_literal(&source.end);
@@ -970,7 +987,10 @@ pub trait Builder {
         Rc::new(output::VersionRangeStruct { id, start, end })
     }
 
-    fn build_version_term(&mut self, source: &input::VersionTerm) -> output::VersionTerm {
+    pub(super) fn build_version_term(
+        &mut self,
+        source: &input::VersionTerm,
+    ) -> output::VersionTerm {
         let id = self.next_id();
         let operator = source
             .operator
@@ -985,7 +1005,10 @@ pub trait Builder {
         })
     }
 
-    fn build_while_statement(&mut self, source: &input::WhileStatement) -> output::WhileStatement {
+    pub(super) fn build_while_statement(
+        &mut self,
+        source: &input::WhileStatement,
+    ) -> output::WhileStatement {
         let id = self.next_id();
         let condition = self.build_expression(&source.condition);
         let body = self.build_statement(&source.body);
@@ -997,14 +1020,14 @@ pub trait Builder {
         })
     }
 
-    fn build_yul_block(&mut self, source: &input::YulBlock) -> output::YulBlock {
+    pub(super) fn build_yul_block(&mut self, source: &input::YulBlock) -> output::YulBlock {
         let id = self.next_id();
         let statements = self.build_yul_statements(&source.statements);
 
         Rc::new(output::YulBlockStruct { id, statements })
     }
 
-    fn build_yul_break_statement(
+    pub(super) fn build_yul_break_statement(
         &mut self,
         source: &input::YulBreakStatement,
     ) -> output::YulBreakStatement {
@@ -1013,7 +1036,7 @@ pub trait Builder {
         Rc::new(output::YulBreakStatementStruct { id })
     }
 
-    fn build_yul_continue_statement(
+    pub(super) fn build_yul_continue_statement(
         &mut self,
         source: &input::YulContinueStatement,
     ) -> output::YulContinueStatement {
@@ -1022,14 +1045,17 @@ pub trait Builder {
         Rc::new(output::YulContinueStatementStruct { id })
     }
 
-    fn build_yul_default_case(&mut self, source: &input::YulDefaultCase) -> output::YulDefaultCase {
+    pub(super) fn build_yul_default_case(
+        &mut self,
+        source: &input::YulDefaultCase,
+    ) -> output::YulDefaultCase {
         let id = self.next_id();
         let body = self.build_yul_block(&source.body);
 
         Rc::new(output::YulDefaultCaseStruct { id, body })
     }
 
-    fn build_yul_for_statement(
+    pub(super) fn build_yul_for_statement(
         &mut self,
         source: &input::YulForStatement,
     ) -> output::YulForStatement {
@@ -1048,7 +1074,7 @@ pub trait Builder {
         })
     }
 
-    fn build_yul_function_call_expression(
+    pub(super) fn build_yul_function_call_expression(
         &mut self,
         source: &input::YulFunctionCallExpression,
     ) -> output::YulFunctionCallExpression {
@@ -1063,7 +1089,7 @@ pub trait Builder {
         })
     }
 
-    fn build_yul_function_definition(
+    pub(super) fn build_yul_function_definition(
         &mut self,
         source: &input::YulFunctionDefinition,
     ) -> output::YulFunctionDefinition {
@@ -1085,7 +1111,10 @@ pub trait Builder {
         })
     }
 
-    fn build_yul_if_statement(&mut self, source: &input::YulIfStatement) -> output::YulIfStatement {
+    pub(super) fn build_yul_if_statement(
+        &mut self,
+        source: &input::YulIfStatement,
+    ) -> output::YulIfStatement {
         let id = self.next_id();
         let condition = self.build_yul_expression(&source.condition);
         let body = self.build_yul_block(&source.body);
@@ -1097,7 +1126,7 @@ pub trait Builder {
         })
     }
 
-    fn build_yul_leave_statement(
+    pub(super) fn build_yul_leave_statement(
         &mut self,
         source: &input::YulLeaveStatement,
     ) -> output::YulLeaveStatement {
@@ -1106,7 +1135,7 @@ pub trait Builder {
         Rc::new(output::YulLeaveStatementStruct { id })
     }
 
-    fn build_yul_switch_statement(
+    pub(super) fn build_yul_switch_statement(
         &mut self,
         source: &input::YulSwitchStatement,
     ) -> output::YulSwitchStatement {
@@ -1121,7 +1150,10 @@ pub trait Builder {
         })
     }
 
-    fn build_yul_value_case(&mut self, source: &input::YulValueCase) -> output::YulValueCase {
+    pub(super) fn build_yul_value_case(
+        &mut self,
+        source: &input::YulValueCase,
+    ) -> output::YulValueCase {
         let id = self.next_id();
         let value = self.build_yul_literal(&source.value);
         let body = self.build_yul_block(&source.body);
@@ -1129,7 +1161,7 @@ pub trait Builder {
         Rc::new(output::YulValueCaseStruct { id, value, body })
     }
 
-    fn build_yul_variable_assignment_statement(
+    pub(super) fn build_yul_variable_assignment_statement(
         &mut self,
         source: &input::YulVariableAssignmentStatement,
     ) -> output::YulVariableAssignmentStatement {
@@ -1144,7 +1176,7 @@ pub trait Builder {
         })
     }
 
-    fn build_yul_variable_declaration_statement(
+    pub(super) fn build_yul_variable_declaration_statement(
         &mut self,
         source: &input::YulVariableDeclarationStatement,
     ) -> output::YulVariableDeclarationStatement {
@@ -1162,7 +1194,7 @@ pub trait Builder {
         })
     }
 
-    fn build_yul_variable_declaration_value(
+    pub(super) fn build_yul_variable_declaration_value(
         &mut self,
         source: &input::YulVariableDeclarationValue,
     ) -> output::YulVariableDeclarationValue {
@@ -1176,93 +1208,99 @@ pub trait Builder {
     // Collapsed sequences
     //
 
-    fn build_else_branch(&mut self, source: &input::ElseBranch) -> output::Statement {
+    pub(super) fn build_else_branch(&mut self, source: &input::ElseBranch) -> output::Statement {
         self.build_statement(&source.body)
     }
 
-    fn build_import_alias(&mut self, source: &input::ImportAlias) -> output::Identifier {
+    pub(super) fn build_import_alias(&mut self, source: &input::ImportAlias) -> output::Identifier {
         self.build_identifier(&source.identifier)
     }
 
-    fn build_import_directive(&mut self, source: &input::ImportDirective) -> output::ImportClause {
+    pub(super) fn build_import_directive(
+        &mut self,
+        source: &input::ImportDirective,
+    ) -> output::ImportClause {
         self.build_import_clause(&source.clause)
     }
 
-    fn build_inheritance_specifier(
+    pub(super) fn build_inheritance_specifier(
         &mut self,
         source: &input::InheritanceSpecifier,
     ) -> output::InheritanceTypes {
         self.build_inheritance_types(&source.types)
     }
 
-    fn build_named_argument_group(
+    pub(super) fn build_named_argument_group(
         &mut self,
         source: &input::NamedArgumentGroup,
     ) -> output::NamedArguments {
         self.build_named_arguments(&source.arguments)
     }
 
-    fn build_override_paths_declaration(
+    pub(super) fn build_override_paths_declaration(
         &mut self,
         source: &input::OverridePathsDeclaration,
     ) -> output::OverridePaths {
         self.build_override_paths(&source.paths)
     }
 
-    fn build_parameters_declaration(
+    pub(super) fn build_parameters_declaration(
         &mut self,
         source: &input::ParametersDeclaration,
     ) -> output::Parameters {
         self.build_parameters(&source.parameters)
     }
 
-    fn build_returns_declaration(
+    pub(super) fn build_returns_declaration(
         &mut self,
         source: &input::ReturnsDeclaration,
     ) -> output::Parameters {
         self.build_parameters_declaration(&source.variables)
     }
 
-    fn build_state_variable_definition_value(
+    pub(super) fn build_state_variable_definition_value(
         &mut self,
         source: &input::StateVariableDefinitionValue,
     ) -> output::Expression {
         self.build_expression(&source.value)
     }
 
-    fn build_storage_layout_specifier(
+    pub(super) fn build_storage_layout_specifier(
         &mut self,
         source: &input::StorageLayoutSpecifier,
     ) -> output::Expression {
         self.build_expression(&source.expression)
     }
 
-    fn build_using_alias(&mut self, source: &input::UsingAlias) -> output::UsingOperator {
+    pub(super) fn build_using_alias(
+        &mut self,
+        source: &input::UsingAlias,
+    ) -> output::UsingOperator {
         self.build_using_operator(&source.operator)
     }
 
-    fn build_variable_declaration_value(
+    pub(super) fn build_variable_declaration_value(
         &mut self,
         source: &input::VariableDeclarationValue,
     ) -> output::Expression {
         self.build_expression(&source.expression)
     }
 
-    fn build_yul_flags_declaration(
+    pub(super) fn build_yul_flags_declaration(
         &mut self,
         source: &input::YulFlagsDeclaration,
     ) -> output::YulFlags {
         self.build_yul_flags(&source.flags)
     }
 
-    fn build_yul_parameters_declaration(
+    pub(super) fn build_yul_parameters_declaration(
         &mut self,
         source: &input::YulParametersDeclaration,
     ) -> output::YulParameters {
         self.build_yul_parameters(&source.parameters)
     }
 
-    fn build_yul_returns_declaration(
+    pub(super) fn build_yul_returns_declaration(
         &mut self,
         source: &input::YulReturnsDeclaration,
     ) -> output::YulVariableNames {
@@ -1273,7 +1311,8 @@ pub trait Builder {
     // Choices
     //
 
-    fn default_build_abicoder_version(
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_abicoder_version(
         &mut self,
         source: &input::AbicoderVersion,
     ) -> output::AbicoderVersion {
@@ -1288,15 +1327,10 @@ pub trait Builder {
             }
         }
     }
-    fn build_abicoder_version(
-        &mut self,
-        source: &input::AbicoderVersion,
-    ) -> output::AbicoderVersion {
-        self.default_build_abicoder_version(source)
-    }
 
+    #[allow(clippy::unused_self)]
     #[allow(dead_code)]
-    fn default_build_arguments_declaration(
+    pub(super) fn default_build_arguments_declaration(
         &mut self,
         source: &input::ArgumentsDeclaration,
     ) -> output::ArgumentsDeclaration {
@@ -1306,13 +1340,10 @@ pub trait Builder {
             _ => panic!("Unexpected variant {source:?}"),
         }
     }
-    fn build_arguments_declaration(
-        &mut self,
-        source: &input::ArgumentsDeclaration,
-    ) -> output::ArgumentsDeclaration;
 
+    #[allow(clippy::unused_self)]
     #[allow(dead_code)]
-    fn default_build_contract_member(
+    pub(super) fn default_build_contract_member(
         &mut self,
         source: &input::ContractMember,
     ) -> output::ContractMember {
@@ -1358,9 +1389,9 @@ pub trait Builder {
             _ => panic!("Unexpected variant {source:?}"),
         }
     }
-    fn build_contract_member(&mut self, source: &input::ContractMember) -> output::ContractMember;
 
-    fn default_build_elementary_type(
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_elementary_type(
         &mut self,
         source: &input::ElementaryType,
     ) -> output::ElementaryType {
@@ -1389,11 +1420,9 @@ pub trait Builder {
             }
         }
     }
-    fn build_elementary_type(&mut self, source: &input::ElementaryType) -> output::ElementaryType {
-        self.default_build_elementary_type(source)
-    }
 
-    fn default_build_experimental_feature(
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_experimental_feature(
         &mut self,
         source: &input::ExperimentalFeature,
     ) -> output::ExperimentalFeature {
@@ -1413,14 +1442,9 @@ pub trait Builder {
             }
         }
     }
-    fn build_experimental_feature(
-        &mut self,
-        source: &input::ExperimentalFeature,
-    ) -> output::ExperimentalFeature {
-        self.default_build_experimental_feature(source)
-    }
 
-    fn default_build_expression(&mut self, source: &input::Expression) -> output::Expression {
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_expression(&mut self, source: &input::Expression) -> output::Expression {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
@@ -1553,11 +1577,9 @@ pub trait Builder {
             }
         }
     }
-    fn build_expression(&mut self, source: &input::Expression) -> output::Expression {
-        self.default_build_expression(source)
-    }
 
-    fn default_build_expression_additive_expression_operator(
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_expression_additive_expression_operator(
         &mut self,
         source: &input::Expression_AdditiveExpression_Operator,
     ) -> output::Expression_AdditiveExpression_Operator {
@@ -1572,14 +1594,9 @@ pub trait Builder {
             }
         }
     }
-    fn build_expression_additive_expression_operator(
-        &mut self,
-        source: &input::Expression_AdditiveExpression_Operator,
-    ) -> output::Expression_AdditiveExpression_Operator {
-        self.default_build_expression_additive_expression_operator(source)
-    }
 
-    fn default_build_expression_assignment_expression_operator(
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_expression_assignment_expression_operator(
         &mut self,
         source: &input::Expression_AssignmentExpression_Operator,
     ) -> output::Expression_AssignmentExpression_Operator {
@@ -1624,14 +1641,9 @@ pub trait Builder {
                 }
               }
     }
-    fn build_expression_assignment_expression_operator(
-        &mut self,
-        source: &input::Expression_AssignmentExpression_Operator,
-    ) -> output::Expression_AssignmentExpression_Operator {
-        self.default_build_expression_assignment_expression_operator(source)
-    }
 
-    fn default_build_expression_equality_expression_operator(
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_expression_equality_expression_operator(
         &mut self,
         source: &input::Expression_EqualityExpression_Operator,
     ) -> output::Expression_EqualityExpression_Operator {
@@ -1646,14 +1658,9 @@ pub trait Builder {
             }
         }
     }
-    fn build_expression_equality_expression_operator(
-        &mut self,
-        source: &input::Expression_EqualityExpression_Operator,
-    ) -> output::Expression_EqualityExpression_Operator {
-        self.default_build_expression_equality_expression_operator(source)
-    }
 
-    fn default_build_expression_inequality_expression_operator(
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_expression_inequality_expression_operator(
         &mut self,
         source: &input::Expression_InequalityExpression_Operator,
     ) -> output::Expression_InequalityExpression_Operator {
@@ -1674,14 +1681,9 @@ pub trait Builder {
             }
         }
     }
-    fn build_expression_inequality_expression_operator(
-        &mut self,
-        source: &input::Expression_InequalityExpression_Operator,
-    ) -> output::Expression_InequalityExpression_Operator {
-        self.default_build_expression_inequality_expression_operator(source)
-    }
 
-    fn default_build_expression_multiplicative_expression_operator(
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_expression_multiplicative_expression_operator(
         &mut self,
         source: &input::Expression_MultiplicativeExpression_Operator,
     ) -> output::Expression_MultiplicativeExpression_Operator {
@@ -1699,14 +1701,9 @@ pub trait Builder {
             }
         }
     }
-    fn build_expression_multiplicative_expression_operator(
-        &mut self,
-        source: &input::Expression_MultiplicativeExpression_Operator,
-    ) -> output::Expression_MultiplicativeExpression_Operator {
-        self.default_build_expression_multiplicative_expression_operator(source)
-    }
 
-    fn default_build_expression_postfix_expression_operator(
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_expression_postfix_expression_operator(
         &mut self,
         source: &input::Expression_PostfixExpression_Operator,
     ) -> output::Expression_PostfixExpression_Operator {
@@ -1721,14 +1718,9 @@ pub trait Builder {
             }
         }
     }
-    fn build_expression_postfix_expression_operator(
-        &mut self,
-        source: &input::Expression_PostfixExpression_Operator,
-    ) -> output::Expression_PostfixExpression_Operator {
-        self.default_build_expression_postfix_expression_operator(source)
-    }
 
-    fn default_build_expression_prefix_expression_operator(
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_expression_prefix_expression_operator(
         &mut self,
         source: &input::Expression_PrefixExpression_Operator,
     ) -> output::Expression_PrefixExpression_Operator {
@@ -1755,14 +1747,9 @@ pub trait Builder {
             }
         }
     }
-    fn build_expression_prefix_expression_operator(
-        &mut self,
-        source: &input::Expression_PrefixExpression_Operator,
-    ) -> output::Expression_PrefixExpression_Operator {
-        self.default_build_expression_prefix_expression_operator(source)
-    }
 
-    fn default_build_expression_shift_expression_operator(
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_expression_shift_expression_operator(
         &mut self,
         source: &input::Expression_ShiftExpression_Operator,
     ) -> output::Expression_ShiftExpression_Operator {
@@ -1780,14 +1767,9 @@ pub trait Builder {
             }
         }
     }
-    fn build_expression_shift_expression_operator(
-        &mut self,
-        source: &input::Expression_ShiftExpression_Operator,
-    ) -> output::Expression_ShiftExpression_Operator {
-        self.default_build_expression_shift_expression_operator(source)
-    }
 
-    fn default_build_for_statement_condition(
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_for_statement_condition(
         &mut self,
         source: &input::ForStatementCondition,
     ) -> output::ForStatementCondition {
@@ -1802,14 +1784,9 @@ pub trait Builder {
             input::ForStatementCondition::Semicolon(_) => output::ForStatementCondition::Semicolon,
         }
     }
-    fn build_for_statement_condition(
-        &mut self,
-        source: &input::ForStatementCondition,
-    ) -> output::ForStatementCondition {
-        self.default_build_for_statement_condition(source)
-    }
 
-    fn default_build_for_statement_initialization(
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_for_statement_initialization(
         &mut self,
         source: &input::ForStatementInitialization,
     ) -> output::ForStatementInitialization {
@@ -1831,15 +1808,10 @@ pub trait Builder {
             }
         }
     }
-    fn build_for_statement_initialization(
-        &mut self,
-        source: &input::ForStatementInitialization,
-    ) -> output::ForStatementInitialization {
-        self.default_build_for_statement_initialization(source)
-    }
 
+    #[allow(clippy::unused_self)]
     #[allow(dead_code)]
-    fn default_build_import_clause(
+    pub(super) fn default_build_import_clause(
         &mut self,
         source: &input::ImportClause,
     ) -> output::ImportClause {
@@ -1857,9 +1829,9 @@ pub trait Builder {
             _ => panic!("Unexpected variant {source:?}"),
         }
     }
-    fn build_import_clause(&mut self, source: &input::ImportClause) -> output::ImportClause;
 
-    fn default_build_number_unit(&mut self, source: &input::NumberUnit) -> output::NumberUnit {
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_number_unit(&mut self, source: &input::NumberUnit) -> output::NumberUnit {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
@@ -1873,11 +1845,9 @@ pub trait Builder {
             input::NumberUnit::WeeksKeyword(_) => output::NumberUnit::WeeksKeyword,
         }
     }
-    fn build_number_unit(&mut self, source: &input::NumberUnit) -> output::NumberUnit {
-        self.default_build_number_unit(source)
-    }
 
-    fn default_build_pragma(&mut self, source: &input::Pragma) -> output::Pragma {
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_pragma(&mut self, source: &input::Pragma) -> output::Pragma {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
@@ -1894,11 +1864,9 @@ pub trait Builder {
             }
         }
     }
-    fn build_pragma(&mut self, source: &input::Pragma) -> output::Pragma {
-        self.default_build_pragma(source)
-    }
 
-    fn default_build_source_unit_member(
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_source_unit_member(
         &mut self,
         source: &input::SourceUnitMember,
     ) -> output::SourceUnitMember {
@@ -1972,14 +1940,9 @@ pub trait Builder {
             }
         }
     }
-    fn build_source_unit_member(
-        &mut self,
-        source: &input::SourceUnitMember,
-    ) -> output::SourceUnitMember {
-        self.default_build_source_unit_member(source)
-    }
 
-    fn default_build_statement(&mut self, source: &input::Statement) -> output::Statement {
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_statement(&mut self, source: &input::Statement) -> output::Statement {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
@@ -2038,11 +2001,9 @@ pub trait Builder {
             }
         }
     }
-    fn build_statement(&mut self, source: &input::Statement) -> output::Statement {
-        self.default_build_statement(source)
-    }
 
-    fn default_build_storage_location(
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_storage_location(
         &mut self,
         source: &input::StorageLocation,
     ) -> output::StorageLocation {
@@ -2054,14 +2015,9 @@ pub trait Builder {
             input::StorageLocation::CallDataKeyword(_) => output::StorageLocation::CallDataKeyword,
         }
     }
-    fn build_storage_location(
-        &mut self,
-        source: &input::StorageLocation,
-    ) -> output::StorageLocation {
-        self.default_build_storage_location(source)
-    }
 
-    fn default_build_string_expression(
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_string_expression(
         &mut self,
         source: &input::StringExpression,
     ) -> output::StringExpression {
@@ -2085,14 +2041,9 @@ pub trait Builder {
             }
         }
     }
-    fn build_string_expression(
-        &mut self,
-        source: &input::StringExpression,
-    ) -> output::StringExpression {
-        self.default_build_string_expression(source)
-    }
 
-    fn default_build_type_name(&mut self, source: &input::TypeName) -> output::TypeName {
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_type_name(&mut self, source: &input::TypeName) -> output::TypeName {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
@@ -2113,11 +2064,12 @@ pub trait Builder {
             }
         }
     }
-    fn build_type_name(&mut self, source: &input::TypeName) -> output::TypeName {
-        self.default_build_type_name(source)
-    }
 
-    fn default_build_using_clause(&mut self, source: &input::UsingClause) -> output::UsingClause {
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_using_clause(
+        &mut self,
+        source: &input::UsingClause,
+    ) -> output::UsingClause {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
@@ -2131,11 +2083,9 @@ pub trait Builder {
             }
         }
     }
-    fn build_using_clause(&mut self, source: &input::UsingClause) -> output::UsingClause {
-        self.default_build_using_clause(source)
-    }
 
-    fn default_build_using_operator(
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_using_operator(
         &mut self,
         source: &input::UsingOperator,
     ) -> output::UsingOperator {
@@ -2159,11 +2109,12 @@ pub trait Builder {
             input::UsingOperator::Tilde(_) => output::UsingOperator::Tilde,
         }
     }
-    fn build_using_operator(&mut self, source: &input::UsingOperator) -> output::UsingOperator {
-        self.default_build_using_operator(source)
-    }
 
-    fn default_build_using_target(&mut self, source: &input::UsingTarget) -> output::UsingTarget {
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_using_target(
+        &mut self,
+        source: &input::UsingTarget,
+    ) -> output::UsingTarget {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
@@ -2173,11 +2124,9 @@ pub trait Builder {
             input::UsingTarget::Asterisk(_) => output::UsingTarget::Asterisk,
         }
     }
-    fn build_using_target(&mut self, source: &input::UsingTarget) -> output::UsingTarget {
-        self.default_build_using_target(source)
-    }
 
-    fn default_build_variable_declaration_target(
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_variable_declaration_target(
         &mut self,
         source: &input::VariableDeclarationTarget,
     ) -> output::VariableDeclarationTarget {
@@ -2196,14 +2145,9 @@ pub trait Builder {
             ),
         }
     }
-    fn build_variable_declaration_target(
-        &mut self,
-        source: &input::VariableDeclarationTarget,
-    ) -> output::VariableDeclarationTarget {
-        self.default_build_variable_declaration_target(source)
-    }
 
-    fn default_build_version_expression(
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_version_expression(
         &mut self,
         source: &input::VersionExpression,
     ) -> output::VersionExpression {
@@ -2218,14 +2162,9 @@ pub trait Builder {
             }
         }
     }
-    fn build_version_expression(
-        &mut self,
-        source: &input::VersionExpression,
-    ) -> output::VersionExpression {
-        self.default_build_version_expression(source)
-    }
 
-    fn default_build_version_literal(
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_version_literal(
         &mut self,
         source: &input::VersionLiteral,
     ) -> output::VersionLiteral {
@@ -2244,11 +2183,9 @@ pub trait Builder {
             }
         }
     }
-    fn build_version_literal(&mut self, source: &input::VersionLiteral) -> output::VersionLiteral {
-        self.default_build_version_literal(source)
-    }
 
-    fn default_build_version_operator(
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_version_operator(
         &mut self,
         source: &input::VersionOperator,
     ) -> output::VersionOperator {
@@ -2270,14 +2207,9 @@ pub trait Builder {
             }
         }
     }
-    fn build_version_operator(
-        &mut self,
-        source: &input::VersionOperator,
-    ) -> output::VersionOperator {
-        self.default_build_version_operator(source)
-    }
 
-    fn default_build_yul_expression(
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_yul_expression(
         &mut self,
         source: &input::YulExpression,
     ) -> output::YulExpression {
@@ -2297,11 +2229,9 @@ pub trait Builder {
             }
         }
     }
-    fn build_yul_expression(&mut self, source: &input::YulExpression) -> output::YulExpression {
-        self.default_build_yul_expression(source)
-    }
 
-    fn default_build_yul_literal(&mut self, source: &input::YulLiteral) -> output::YulLiteral {
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_yul_literal(&mut self, source: &input::YulLiteral) -> output::YulLiteral {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
@@ -2325,11 +2255,9 @@ pub trait Builder {
             }
         }
     }
-    fn build_yul_literal(&mut self, source: &input::YulLiteral) -> output::YulLiteral {
-        self.default_build_yul_literal(source)
-    }
 
-    fn default_build_yul_statement(
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_yul_statement(
         &mut self,
         source: &input::YulStatement,
     ) -> output::YulStatement {
@@ -2387,11 +2315,9 @@ pub trait Builder {
             }
         }
     }
-    fn build_yul_statement(&mut self, source: &input::YulStatement) -> output::YulStatement {
-        self.default_build_yul_statement(source)
-    }
 
-    fn default_build_yul_switch_case(
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_yul_switch_case(
         &mut self,
         source: &input::YulSwitchCase,
     ) -> output::YulSwitchCase {
@@ -2406,15 +2332,12 @@ pub trait Builder {
             }
         }
     }
-    fn build_yul_switch_case(&mut self, source: &input::YulSwitchCase) -> output::YulSwitchCase {
-        self.default_build_yul_switch_case(source)
-    }
 
     //
     // Collapsed choices
     //
 
-    fn build_identifier_path_element(
+    pub(super) fn build_identifier_path_element(
         &mut self,
         source: &input::IdentifierPathElement,
     ) -> output::Identifier {
@@ -2442,7 +2365,10 @@ pub trait Builder {
     // Repeated & Separated
     //
 
-    fn build_array_values(&mut self, source: &input::ArrayValues) -> output::ArrayValues {
+    pub(super) fn build_array_values(
+        &mut self,
+        source: &input::ArrayValues,
+    ) -> output::ArrayValues {
         source
             .elements
             .iter()
@@ -2450,7 +2376,10 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_call_options(&mut self, source: &input::CallOptions) -> output::CallOptions {
+    pub(super) fn build_call_options(
+        &mut self,
+        source: &input::CallOptions,
+    ) -> output::CallOptions {
         source
             .elements
             .iter()
@@ -2458,7 +2387,10 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_catch_clauses(&mut self, source: &input::CatchClauses) -> output::CatchClauses {
+    pub(super) fn build_catch_clauses(
+        &mut self,
+        source: &input::CatchClauses,
+    ) -> output::CatchClauses {
         source
             .elements
             .iter()
@@ -2466,7 +2398,7 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_contract_members(
+    pub(super) fn build_contract_members(
         &mut self,
         source: &input::ContractMembers,
     ) -> output::ContractMembers {
@@ -2477,7 +2409,10 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_enum_members(&mut self, source: &input::EnumMembers) -> output::EnumMembers {
+    pub(super) fn build_enum_members(
+        &mut self,
+        source: &input::EnumMembers,
+    ) -> output::EnumMembers {
         source
             .elements
             .iter()
@@ -2485,7 +2420,7 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_hex_string_literals(
+    pub(super) fn build_hex_string_literals(
         &mut self,
         source: &input::HexStringLiterals,
     ) -> output::HexStringLiterals {
@@ -2496,7 +2431,10 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_identifier_path(&mut self, source: &input::IdentifierPath) -> output::IdentifierPath {
+    pub(super) fn build_identifier_path(
+        &mut self,
+        source: &input::IdentifierPath,
+    ) -> output::IdentifierPath {
         source
             .elements
             .iter()
@@ -2504,7 +2442,7 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_import_deconstruction_symbols(
+    pub(super) fn build_import_deconstruction_symbols(
         &mut self,
         source: &input::ImportDeconstructionSymbols,
     ) -> output::ImportDeconstructionSymbols {
@@ -2515,7 +2453,7 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_inheritance_types(
+    pub(super) fn build_inheritance_types(
         &mut self,
         source: &input::InheritanceTypes,
     ) -> output::InheritanceTypes {
@@ -2526,7 +2464,7 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_interface_members(
+    pub(super) fn build_interface_members(
         &mut self,
         source: &input::InterfaceMembers,
     ) -> output::InterfaceMembers {
@@ -2537,7 +2475,10 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_library_members(&mut self, source: &input::LibraryMembers) -> output::LibraryMembers {
+    pub(super) fn build_library_members(
+        &mut self,
+        source: &input::LibraryMembers,
+    ) -> output::LibraryMembers {
         source
             .elements
             .iter()
@@ -2545,7 +2486,7 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_multi_typed_declaration_elements(
+    pub(super) fn build_multi_typed_declaration_elements(
         &mut self,
         source: &input::MultiTypedDeclarationElements,
     ) -> output::MultiTypedDeclarationElements {
@@ -2556,7 +2497,10 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_named_arguments(&mut self, source: &input::NamedArguments) -> output::NamedArguments {
+    pub(super) fn build_named_arguments(
+        &mut self,
+        source: &input::NamedArguments,
+    ) -> output::NamedArguments {
         source
             .elements
             .iter()
@@ -2564,7 +2508,10 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_override_paths(&mut self, source: &input::OverridePaths) -> output::OverridePaths {
+    pub(super) fn build_override_paths(
+        &mut self,
+        source: &input::OverridePaths,
+    ) -> output::OverridePaths {
         source
             .elements
             .iter()
@@ -2572,7 +2519,7 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_parameters(&mut self, source: &input::Parameters) -> output::Parameters {
+    pub(super) fn build_parameters(&mut self, source: &input::Parameters) -> output::Parameters {
         source
             .elements
             .iter()
@@ -2580,7 +2527,7 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_positional_arguments(
+    pub(super) fn build_positional_arguments(
         &mut self,
         source: &input::PositionalArguments,
     ) -> output::PositionalArguments {
@@ -2591,7 +2538,7 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_simple_version_literal(
+    pub(super) fn build_simple_version_literal(
         &mut self,
         source: &input::SimpleVersionLiteral,
     ) -> output::SimpleVersionLiteral {
@@ -2602,7 +2549,7 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_source_unit_members(
+    pub(super) fn build_source_unit_members(
         &mut self,
         source: &input::SourceUnitMembers,
     ) -> output::SourceUnitMembers {
@@ -2613,7 +2560,7 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_statements(&mut self, source: &input::Statements) -> output::Statements {
+    pub(super) fn build_statements(&mut self, source: &input::Statements) -> output::Statements {
         source
             .elements
             .iter()
@@ -2621,7 +2568,10 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_string_literals(&mut self, source: &input::StringLiterals) -> output::StringLiterals {
+    pub(super) fn build_string_literals(
+        &mut self,
+        source: &input::StringLiterals,
+    ) -> output::StringLiterals {
         source
             .elements
             .iter()
@@ -2629,7 +2579,10 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_struct_members(&mut self, source: &input::StructMembers) -> output::StructMembers {
+    pub(super) fn build_struct_members(
+        &mut self,
+        source: &input::StructMembers,
+    ) -> output::StructMembers {
         source
             .elements
             .iter()
@@ -2637,7 +2590,10 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_tuple_values(&mut self, source: &input::TupleValues) -> output::TupleValues {
+    pub(super) fn build_tuple_values(
+        &mut self,
+        source: &input::TupleValues,
+    ) -> output::TupleValues {
         source
             .elements
             .iter()
@@ -2645,7 +2601,7 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_unicode_string_literals(
+    pub(super) fn build_unicode_string_literals(
         &mut self,
         source: &input::UnicodeStringLiterals,
     ) -> output::UnicodeStringLiterals {
@@ -2656,7 +2612,7 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_using_deconstruction_symbols(
+    pub(super) fn build_using_deconstruction_symbols(
         &mut self,
         source: &input::UsingDeconstructionSymbols,
     ) -> output::UsingDeconstructionSymbols {
@@ -2667,7 +2623,7 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_version_expression_set(
+    pub(super) fn build_version_expression_set(
         &mut self,
         source: &input::VersionExpressionSet,
     ) -> output::VersionExpressionSet {
@@ -2678,7 +2634,7 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_version_expression_sets(
+    pub(super) fn build_version_expression_sets(
         &mut self,
         source: &input::VersionExpressionSets,
     ) -> output::VersionExpressionSets {
@@ -2689,7 +2645,10 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_yul_arguments(&mut self, source: &input::YulArguments) -> output::YulArguments {
+    pub(super) fn build_yul_arguments(
+        &mut self,
+        source: &input::YulArguments,
+    ) -> output::YulArguments {
         source
             .elements
             .iter()
@@ -2697,7 +2656,7 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_yul_flags(&mut self, source: &input::YulFlags) -> output::YulFlags {
+    pub(super) fn build_yul_flags(&mut self, source: &input::YulFlags) -> output::YulFlags {
         source
             .elements
             .iter()
@@ -2705,7 +2664,10 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_yul_parameters(&mut self, source: &input::YulParameters) -> output::YulParameters {
+    pub(super) fn build_yul_parameters(
+        &mut self,
+        source: &input::YulParameters,
+    ) -> output::YulParameters {
         source
             .elements
             .iter()
@@ -2713,7 +2675,7 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_yul_path(&mut self, source: &input::YulPath) -> output::YulPath {
+    pub(super) fn build_yul_path(&mut self, source: &input::YulPath) -> output::YulPath {
         source
             .elements
             .iter()
@@ -2721,7 +2683,7 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_yul_paths(&mut self, source: &input::YulPaths) -> output::YulPaths {
+    pub(super) fn build_yul_paths(&mut self, source: &input::YulPaths) -> output::YulPaths {
         source
             .elements
             .iter()
@@ -2729,7 +2691,10 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_yul_statements(&mut self, source: &input::YulStatements) -> output::YulStatements {
+    pub(super) fn build_yul_statements(
+        &mut self,
+        source: &input::YulStatements,
+    ) -> output::YulStatements {
         source
             .elements
             .iter()
@@ -2737,7 +2702,10 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_yul_switch_cases(&mut self, source: &input::YulSwitchCases) -> output::YulSwitchCases {
+    pub(super) fn build_yul_switch_cases(
+        &mut self,
+        source: &input::YulSwitchCases,
+    ) -> output::YulSwitchCases {
         source
             .elements
             .iter()
@@ -2745,7 +2713,7 @@ pub trait Builder {
             .collect()
     }
 
-    fn build_yul_variable_names(
+    pub(super) fn build_yul_variable_names(
         &mut self,
         source: &input::YulVariableNames,
     ) -> output::YulVariableNames {
@@ -2760,7 +2728,10 @@ pub trait Builder {
     // Terminals
     //
 
-    fn build_bytes_keyword(&mut self, source: &input::BytesKeyword) -> output::BytesKeyword {
+    pub(super) fn build_bytes_keyword(
+        &mut self,
+        source: &input::BytesKeyword,
+    ) -> output::BytesKeyword {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::BytesKeywordStruct {
             id: self.next_id(),
@@ -2769,7 +2740,10 @@ pub trait Builder {
         })
     }
 
-    fn build_decimal_literal(&mut self, source: &input::DecimalLiteral) -> output::DecimalLiteral {
+    pub(super) fn build_decimal_literal(
+        &mut self,
+        source: &input::DecimalLiteral,
+    ) -> output::DecimalLiteral {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::DecimalLiteralStruct {
             id: self.next_id(),
@@ -2778,7 +2752,10 @@ pub trait Builder {
         })
     }
 
-    fn build_fixed_keyword(&mut self, source: &input::FixedKeyword) -> output::FixedKeyword {
+    pub(super) fn build_fixed_keyword(
+        &mut self,
+        source: &input::FixedKeyword,
+    ) -> output::FixedKeyword {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::FixedKeywordStruct {
             id: self.next_id(),
@@ -2787,7 +2764,7 @@ pub trait Builder {
         })
     }
 
-    fn build_hex_literal(&mut self, source: &input::HexLiteral) -> output::HexLiteral {
+    pub(super) fn build_hex_literal(&mut self, source: &input::HexLiteral) -> output::HexLiteral {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::HexLiteralStruct {
             id: self.next_id(),
@@ -2796,7 +2773,7 @@ pub trait Builder {
         })
     }
 
-    fn build_hex_string_literal(
+    pub(super) fn build_hex_string_literal(
         &mut self,
         source: &input::HexStringLiteral,
     ) -> output::HexStringLiteral {
@@ -2808,7 +2785,7 @@ pub trait Builder {
         })
     }
 
-    fn build_identifier(&mut self, source: &input::Identifier) -> output::Identifier {
+    pub(super) fn build_identifier(&mut self, source: &input::Identifier) -> output::Identifier {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::IdentifierStruct {
             id: self.next_id(),
@@ -2817,7 +2794,7 @@ pub trait Builder {
         })
     }
 
-    fn build_int_keyword(&mut self, source: &input::IntKeyword) -> output::IntKeyword {
+    pub(super) fn build_int_keyword(&mut self, source: &input::IntKeyword) -> output::IntKeyword {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::IntKeywordStruct {
             id: self.next_id(),
@@ -2826,7 +2803,10 @@ pub trait Builder {
         })
     }
 
-    fn build_string_literal(&mut self, source: &input::StringLiteral) -> output::StringLiteral {
+    pub(super) fn build_string_literal(
+        &mut self,
+        source: &input::StringLiteral,
+    ) -> output::StringLiteral {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::StringLiteralStruct {
             id: self.next_id(),
@@ -2835,7 +2815,10 @@ pub trait Builder {
         })
     }
 
-    fn build_ufixed_keyword(&mut self, source: &input::UfixedKeyword) -> output::UfixedKeyword {
+    pub(super) fn build_ufixed_keyword(
+        &mut self,
+        source: &input::UfixedKeyword,
+    ) -> output::UfixedKeyword {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::UfixedKeywordStruct {
             id: self.next_id(),
@@ -2844,7 +2827,10 @@ pub trait Builder {
         })
     }
 
-    fn build_uint_keyword(&mut self, source: &input::UintKeyword) -> output::UintKeyword {
+    pub(super) fn build_uint_keyword(
+        &mut self,
+        source: &input::UintKeyword,
+    ) -> output::UintKeyword {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::UintKeywordStruct {
             id: self.next_id(),
@@ -2853,7 +2839,7 @@ pub trait Builder {
         })
     }
 
-    fn build_unicode_string_literal(
+    pub(super) fn build_unicode_string_literal(
         &mut self,
         source: &input::UnicodeStringLiteral,
     ) -> output::UnicodeStringLiteral {
@@ -2865,7 +2851,7 @@ pub trait Builder {
         })
     }
 
-    fn build_version_specifier(
+    pub(super) fn build_version_specifier(
         &mut self,
         source: &input::VersionSpecifier,
     ) -> output::VersionSpecifier {
@@ -2881,7 +2867,7 @@ pub trait Builder {
     // Normalized Terminals
     //
 
-    fn build_pragma_string_literal(
+    pub(super) fn build_pragma_string_literal(
         &mut self,
         source: &input::PragmaStringLiteral,
     ) -> output::StringLiteral {
@@ -2893,7 +2879,7 @@ pub trait Builder {
         })
     }
 
-    fn build_yul_decimal_literal(
+    pub(super) fn build_yul_decimal_literal(
         &mut self,
         source: &input::YulDecimalLiteral,
     ) -> output::DecimalLiteral {
@@ -2905,7 +2891,10 @@ pub trait Builder {
         })
     }
 
-    fn build_yul_hex_literal(&mut self, source: &input::YulHexLiteral) -> output::HexLiteral {
+    pub(super) fn build_yul_hex_literal(
+        &mut self,
+        source: &input::YulHexLiteral,
+    ) -> output::HexLiteral {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::HexLiteralStruct {
             id: self.next_id(),
@@ -2914,7 +2903,7 @@ pub trait Builder {
         })
     }
 
-    fn build_yul_hex_string_literal(
+    pub(super) fn build_yul_hex_string_literal(
         &mut self,
         source: &input::YulHexStringLiteral,
     ) -> output::HexStringLiteral {
@@ -2926,7 +2915,10 @@ pub trait Builder {
         })
     }
 
-    fn build_yul_identifier(&mut self, source: &input::YulIdentifier) -> output::Identifier {
+    pub(super) fn build_yul_identifier(
+        &mut self,
+        source: &input::YulIdentifier,
+    ) -> output::Identifier {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::IdentifierStruct {
             id: self.next_id(),
@@ -2935,7 +2927,7 @@ pub trait Builder {
         })
     }
 
-    fn build_yul_string_literal(
+    pub(super) fn build_yul_string_literal(
         &mut self,
         source: &input::YulStringLiteral,
     ) -> output::StringLiteral {
