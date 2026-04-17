@@ -4520,15 +4520,17 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                         BuiltInDefinition(name = TypeRuntimeCode),
                         BuiltInDefinition(name = TypeInterfaceId),
                         BuiltInDefinition(
-                            name = TypeMin,
+                            name = TypeEnumMin,
                             enabled = From("0.8.8"),
                             internal_parameter = "TypeId"
                         ),
                         BuiltInDefinition(
-                            name = TypeMax,
+                            name = TypeEnumMax,
                             enabled = From("0.8.8"),
                             internal_parameter = "TypeId"
-                        )
+                        ),
+                        BuiltInDefinition(name = TypeMin, internal_parameter = "TypeId"),
+                        BuiltInDefinition(name = TypeMax, internal_parameter = "TypeId")
                     ]
                 ),
                 BuiltInScope(
@@ -4543,7 +4545,10 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                         BuiltInDefinition(name = ErrorOrPanic),
                         BuiltInDefinition(name = Length),
                         BuiltInDefinition(name = ModifierUnderscore),
-                        BuiltInDefinition(name = Selector, enabled = From("0.8.4")),
+                        BuiltInDefinition(name = ErrorSelector, enabled = From("0.8.4")),
+                        BuiltInDefinition(name = EventSelector, enabled = From("0.8.15")),
+                        BuiltInDefinition(name = FunctionAddress, enabled = From("0.8.2")),
+                        BuiltInDefinition(name = FunctionSelector),
                         BuiltInDefinition(name = StringConcat),
                         BuiltInDefinition(
                             name = Unwrap,

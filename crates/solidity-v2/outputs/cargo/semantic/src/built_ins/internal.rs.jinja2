@@ -1,13 +1,13 @@
+use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_common::built_ins::BuiltIn as PublicBuiltIn;
 use slang_solidity_v2_ir::ir::NodeId;
 use crate::types::TypeId;
 
-/// This is the internal representation of a built-in resolution and typing and
-/// it's richer than the public enum defined in the `common` crate which is
-/// generated from the language definition because it contains additional
-/// information about the specific built-in use. Eg. `.push()` or `AraryPush`
-/// needs to carry the type of the original array to correctly resolve the type
-/// in the function call context.
+/// This is the internal representation of a built-in resolution and typing.
+/// It's richer than the public enum defined in the `common` crate because it
+/// contains additional information about the specific built-in use. Eg.
+/// `.push()` or `AraryPush` needs to carry the type of the original array to
+/// correctly resolve the type in a function call context.
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub enum BuiltIn {
     {% for context in model.language.built_ins -%}
@@ -23,6 +23,8 @@ pub enum BuiltIn {
 }
 
 impl BuiltIn {
+    /// Converts this internal built-in representation to the public enum type
+    /// defined in the `common` crate.
     #[allow(clippy::too_many_lines)]
     pub fn to_public(&self) -> PublicBuiltIn {
         match self {
@@ -36,4 +38,25 @@ impl BuiltIn {
             {% endfor %}
         }
     }
+
+    // Version ranges for built-ins introduced or deprecated in the supported versions
+
+    {% for context in model.language.built_ins -%}
+    {%- for scope in context.scopes -%}
+    {%- for definition in scope.definitions -%}
+      {%- if definition.enabled.type == "From" %}
+        {%- set v = definition.enabled.from | split(pat=".") | join(sep="_") -%}
+        pub(super) const {{ definition.name | snake_case | upper }}_FROM: LanguageVersion = LanguageVersion::V{{ v }};
+      {%- elif definition.enabled.type == "Till" %}
+        {%- set v = definition.enabled.till | split(pat=".") | join(sep="_") -%}
+        pub(super) const {{ definition.name | snake_case | upper }}_TILL: LanguageVersion = LanguageVersion::V{{ v }};
+      {%- elif definition.enabled.type == "Range" %}
+        {%- set vf = definition.enabled.from | split(pat=".") | join(sep="_") -%}
+        {%- set vt = definition.enabled.till | split(pat=".") | join(sep="_") -%}
+        pub(super) const {{ definition.name | snake_case | upper }}_FROM: LanguageVersion = LanguageVersion::V{{ vf }};
+        pub(super) const {{ definition.name | snake_case | upper }}_TILL: LanguageVersion = LanguageVersion::V{{ vt }};
+      {% endif -%}
+    {%- endfor -%}
+    {%- endfor -%}
+    {%- endfor -%}
 }
