@@ -15,6 +15,8 @@ pub(crate) fn run(analysis: &mut Analysis) {
 
     check_enum_items(analysis);
     check_precedence_items(analysis);
+
+    check_built_in_definitions(analysis);
 }
 
 fn collect_top_level_items(analysis: &mut Analysis) {
@@ -112,6 +114,25 @@ fn check_precedence_items(analysis: &mut Analysis) {
                 analysis
                     .errors
                     .add(reference, &Errors::ExistingExpression(reference));
+            }
+        }
+    }
+}
+
+fn check_built_in_definitions(analysis: &mut Analysis) {
+    let language = Rc::clone(&analysis.language);
+
+    let mut definition_names = HashSet::new();
+
+    for built_in_context in &language.built_ins {
+        for built_in_scope in &built_in_context.scopes {
+            for built_in_definition in &built_in_scope.definitions {
+                let name = &built_in_definition.name;
+                if !definition_names.insert(&**name) {
+                    analysis
+                        .errors
+                        .add(name, &Errors::ExistingBuiltInDefinition(name));
+                }
             }
         }
     }
@@ -254,6 +275,8 @@ enum Errors<'err> {
     ExistingVariant(&'err Identifier),
     #[error("An expression with the name '{0}' already exists.")]
     ExistingExpression(&'err Identifier),
+    #[error("A built-in definition with the name '{0}' already exists.")]
+    ExistingBuiltInDefinition(&'err Identifier),
     #[error("All operators under the same expression must have the same model and type.")]
     OperatorMismatch,
 }
