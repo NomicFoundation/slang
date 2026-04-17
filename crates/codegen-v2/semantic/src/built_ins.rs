@@ -16,6 +16,7 @@ pub struct BuiltInScopeModel {
 #[derive(Serialize)]
 pub struct BuiltInDefinitionModel {
     pub name: String,
+    pub internal_parameter: Option<String>,
 }
 
 pub fn build_built_ins_model(language: &Language) -> Vec<BuiltInContextModel> {
@@ -34,6 +35,7 @@ pub fn build_built_ins_model(language: &Language) -> Vec<BuiltInContextModel> {
                         .iter()
                         .map(|def| BuiltInDefinitionModel {
                             name: def.name.to_string(),
+                            internal_parameter: def.internal_parameter.clone(),
                         })
                         .collect(),
                 })

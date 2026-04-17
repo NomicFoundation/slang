@@ -1,0 +1,39 @@
+use slang_solidity_v2_common::built_ins::BuiltIn as PublicBuiltIn;
+use slang_solidity_v2_ir::ir::NodeId;
+use crate::types::TypeId;
+
+/// This is the internal representation of a built-in resolution and typing and
+/// it's richer than the public enum defined in the `common` crate which is
+/// generated from the language definition because it contains additional
+/// information about the specific built-in use. Eg. `.push()` or `AraryPush`
+/// needs to carry the type of the original array to correctly resolve the type
+/// in the function call context.
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+pub enum BuiltIn {
+    {% for context in model.language.built_ins -%}
+    {% for scope in context.scopes -%}
+    {% for definition in scope.definitions %}
+    {{ definition.name }}
+      {%- if definition.internal_parameter -%}
+        ({{ definition.internal_parameter }})
+      {%- endif -%},
+    {%- endfor %}
+    {% endfor -%}
+    {% endfor %}
+}
+
+impl BuiltIn {
+    #[allow(clippy::too_many_lines)]
+    pub fn to_public(&self) -> PublicBuiltIn {
+        match self {
+            {% for context in model.language.built_ins -%}
+            {% for scope in context.scopes -%}
+            {% for definition in scope.definitions %}
+            Self::{{ definition.name }}{% if definition.internal_parameter %}(_){% endif %} =>
+              PublicBuiltIn::{{ definition.name }},
+            {%- endfor %}
+            {% endfor -%}
+            {% endfor %}
+        }
+    }
+}

@@ -219,7 +219,11 @@ fn check_built_in_scope(analysis: &mut Analysis, scope: &SpannedBuiltInScope) {
 }
 
 fn check_built_in_definition(analysis: &mut Analysis, definition: &SpannedBuiltInDefinition) {
-    let SpannedBuiltInDefinition { name: _, enabled } = definition;
+    let SpannedBuiltInDefinition {
+        name: _,
+        enabled,
+        internal_parameter: _,
+    } = definition;
 
     check_version_specifier(analysis, enabled.as_ref());
 }
