@@ -9,8 +9,11 @@ pub fn setup(project: &str) -> (&'static SolidityProject, Vec<(String, InputSour
     (project, parsed)
 }
 
-pub fn run(project: &'static SolidityProject, sources: Vec<(String, InputSourceUnit)>) {
-    test(project, sources);
+pub fn run(
+    project: &'static SolidityProject,
+    sources: Vec<(String, InputSourceUnit)>,
+) -> Vec<SourceUnit> {
+    test(project, sources)
 }
 
 pub fn test(
