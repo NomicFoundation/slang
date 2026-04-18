@@ -1,0 +1,5 @@
+error: expected identifier
+  --> src/fail/p0_parsing/code_string_literal/test.rs:17:83
+   |
+17 |                         parser_options = ParserOptions(inline = false, verbatim = "raw string not accepted")
+   |                                                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^

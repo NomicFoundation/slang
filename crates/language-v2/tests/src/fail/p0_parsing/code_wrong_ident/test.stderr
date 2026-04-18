@@ -1,0 +1,5 @@
+error: Expected `Code(...)` DSL node.
+  --> src/fail/p0_parsing/code_wrong_ident/test.rs:17:83
+   |
+17 |                         parser_options = ParserOptions(inline = false, verbatim = NotCode(body))
+   |                                                                                   ^^^^^^^

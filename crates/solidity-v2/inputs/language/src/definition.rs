@@ -1580,7 +1580,9 @@ language_v2_macros::compile!(Language(
                                         members = Required(ContractMembers),
                                         close_brace = Required(CloseBrace)
                                     ),
-                                    parser_options = ParserOptions(inline = false, verbatim = "
+                                    parser_options = ParserOptions(
+                                        inline = false,
+                                        verbatim = Code(
 // Contracts are syntactically complex (for an LR parser) since the storage layout specifier
 // has a trailing expression, which can have a trailing option call (`{ ... }`), which conflicts
 // with the contract members block.
@@ -1598,13 +1600,16 @@ ContractDefinition: ContractDefinition = {
         new_contract_definition(abstract_keyword, contract_keyword, name, specifiers, open_brace, members, close_brace)
     },
 };
-")
+                                        )
+                                    )
                                 ),
                                 Repeated(
                                     name = ContractSpecifiers,
                                     reference = ContractSpecifier,
                                     allow_empty = true,
-                                    parser_options = ParserOptions(inline = false, verbatim = "
+                                    parser_options = ParserOptions(
+                                        inline = false,
+                                        verbatim = Code(
 // In this case, we require at least one specifier, the case with zero is handled above.
 // Note that the return type now includes the trailing members
 ContractSpecifiersTrailingMembers: (ContractSpecifiers, (OpenBrace, ContractMembers, CloseBrace)) = {
@@ -1641,11 +1646,10 @@ ExpressionTrailingMembers: (Expression, (OpenBrace, ContractMembers, CloseBrace)
         <expression: Expression19<BracedContractMembers>>  => <>,
 };
 BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
-    <open_brace: OpenBrace>  <members: ContractMembers>  <close_brace: CloseBrace>  => {
-        (open_brace, members, close_brace)
-    },
+    <open_brace: OpenBrace>  <members: ContractMembers>  <close_brace: CloseBrace>  => (open_brace, members, close_brace),
 };
-")
+                                        )
+                                    )
                                 ),
                                 Enum(
                                     name = ContractSpecifier,
@@ -1831,7 +1835,9 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
                                         value = Optional(reference = StateVariableDefinitionValue),
                                         semicolon = Required(Semicolon)
                                     ),
-                                    parser_options = ParserOptions(inline = false, verbatim = r#"
+                                    parser_options = ParserOptions(
+                                        inline = false,
+                                        verbatim = Code(
 // State variable definitions have a conflict when used with function types, since some attributes
 // can be both function type attributes and state variable attributes.
 // For example in `function (uint a) internal internal foo;`, the first `internal` is a function type attribute,
@@ -1840,7 +1846,7 @@ BracedContractMembers: (OpenBrace, ContractMembers, CloseBrace) = {
 // To disambiguate in these cases we need to count, everything from the second attribute onwards
 // belongs to the state variable. This is very hard to do in LR(1) grammars, so we resort to letting
 // the function type capture all compatible attributes, and then extract the trailing ones to use them in the state variable.
-// 
+//
 // This is done by splitting the state variable rules into two cases, one where any type is allowed, except function types
 // that do not specify a return; and one where only function types without return are allowed.
 //
@@ -1895,7 +1901,8 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
         <transient_keyword: TransientKeyword>  => new_state_variable_attribute_transient_keyword(<>),
         <constant_keyword: ConstantKeyword>  => new_state_variable_attribute_constant_keyword(<>),
 };
-"#)
+                                        )
+                                    )
                                 ),
                                 Struct(
                                     name = StateVariableDefinitionValue,
@@ -2253,7 +2260,9 @@ SpecialStateVariableAttribute: StateVariableAttribute = {
                                         PrimaryExpression(reference = ElementaryType),
                                         PrimaryExpression(reference = IdentifierPath)
                                     ],
-                                    parser_options = ParserOptions(inline = false, verbatim = "
+                                    parser_options = ParserOptions(
+                                        inline = false,
+                                        verbatim = Code(
 // TypeName has two peculiarities:
 // 1. We need to parametrize the FunctionRule to allow StateVariableDefinition to disable FunctionTypes without returns.
 //    Note that the ArrayTypeName doesn't respect this; most of these manual cases care about trailing constructs, as
@@ -2287,7 +2296,8 @@ ArrayTypeName: ArrayTypeName = {
 
 // An empty rule to disable IAPs
 NoIndexAccessPath: parser_helpers::IndexAccessPath = {};
-")
+                                        )
+                                    )
                                 ),
                                 Struct(
                                     name = FunctionType,
@@ -2297,7 +2307,9 @@ NoIndexAccessPath: parser_helpers::IndexAccessPath = {};
                                         attributes = Required(FunctionTypeAttributes),
                                         returns = Optional(reference = ReturnsDeclaration)
                                     ),
-                                    parser_options = ParserOptions(inline = false, verbatim = "
+                                    parser_options = ParserOptions(
+                                        inline = false,
+                                        verbatim = Code(
 // The only reason to split FunctionType into two rules is to allow StateVariableDefinition
 // to choose whether to allow FunctionTypes without returns or not.
 // Note: This could be solved with macros, but is short enough to be explicit
@@ -2311,9 +2323,10 @@ FunctionTypeInternalNoReturn: FunctionType = {
 };
 FunctionTypeInternalReturn: FunctionType = {
     <function_keyword: FunctionKeyword>  <parameters: ParametersDeclaration>  <attributes: FunctionTypeAttributes>  <returns: ReturnsDeclaration>  => new_function_type(function_keyword, parameters, attributes, Some(returns)),
-    
+
 };
-")
+                                        )
+                                    )
                                 ),
                                 Repeated(
                                     name = FunctionTypeAttributes,
@@ -2442,7 +2455,9 @@ FunctionTypeInternalReturn: FunctionType = {
                                         EnumVariant(reference = VariableDeclarationStatement),
                                         EnumVariant(reference = ExpressionStatement)
                                     ],
-                                    parser_options = ParserOptions(inline = false, verbatim = r#"
+                                    parser_options = ParserOptions(
+                                        inline = false,
+                                        verbatim = Code(
 // There's two issues with `Statement`:
 //
 // This is a common problem in grammars[1]. To not reinvent the wheel we follow advice from
@@ -2524,7 +2539,8 @@ IdentifierPathNoRevert: IdentifierPath = {
     // or a single identifier that is not `revert`
     <head: SomeIdentifier<"RevertKeyword_Unreserved">>  => new_identifier_path(vec![new_identifier_path_element_identifier(<>)]),
 };
-"#)
+                                        )
+                                    )
                                 ),
                                 Struct(
                                     name = UncheckedBlock,
@@ -2600,7 +2616,9 @@ IdentifierPathNoRevert: IdentifierPath = {
                                     name = MultiTypedDeclarationElements,
                                     reference = MultiTypedDeclarationElement,
                                     separator = Comma,
-                                    parser_options = ParserOptions(inline = false, verbatim = r#"
+                                    parser_options = ParserOptions(
+                                        inline = false,
+                                        verbatim = Code(
 // MultiTypedDeclaration conflict with tuple expression, for example, the following is ambiguous:
 //
 // |--------|  => Assignment expression
@@ -2619,7 +2637,7 @@ MultiTypedDeclarationElements: MultiTypedDeclarationElements = {
         elements.extend(typed_tuple_deconstruction_element.unwrap_or(vec![]));
         new_multi_typed_declaration_elements(elements)
     },
-    
+
 };
 
 // TuplePrefix counts how many leading commas we have in a tuple deconstruction or
@@ -2629,7 +2647,8 @@ TuplePrefix: usize = {
     Comma  <rest: TuplePrefix>  => 1 + rest,
     => 0,
 };
-"#)
+                                        )
+                                    )
                                 ),
                                 Struct(
                                     name = MultiTypedDeclarationElement,
@@ -2665,14 +2684,17 @@ TuplePrefix: usize = {
                                         body = Required(Statement),
                                         else_branch = Optional(reference = ElseBranch)
                                     ),
-                                    parser_options = ParserOptions(inline = false, verbatim = r#"
+                                    parser_options = ParserOptions(
+                                        inline = false,
+                                        verbatim = Code(
 // As explained in the `Statement` rule, this solves the dangling else problem
 IfStatement<TrailingElse>: IfStatement = {
     // IfStatement only allows `if`s without an else if TrailingElse == "True"
     <if_keyword: IfKeyword>  <open_paren: OpenParen>  <condition: Expression>  <close_paren: CloseParen>  <body: _Statement<"True">> if TrailingElse == "True"  => new_if_statement(<>, None),
     <if_keyword: IfKeyword>  <open_paren: OpenParen>  <condition: Expression>  <close_paren: CloseParen>  <body: _Statement<"False">>  <else_keyword: ElseKeyword>  <else_branch: _Statement<TrailingElse>>  => new_if_statement(if_keyword, open_paren, condition, close_paren, body, Some(new_else_branch(else_keyword, else_branch))),
 };
-"#)
+                                        )
+                                    )
                                 ),
                                 Struct(
                                     name = ElseBranch,
@@ -2692,13 +2714,17 @@ IfStatement<TrailingElse>: IfStatement = {
                                         close_paren = Required(CloseParen),
                                         body = Required(Statement)
                                     ),
-                                    parser_options = ParserOptions(inline = false, verbatim = r#"
+                                    parser_options = ParserOptions(
+                                        inline = false,
+                                        verbatim = Code(
 // As explained in the `Statement` rule, this solves the dangling else problem
 //
 // Since a `ForStatement` can have a trailing `Statement` we need to parametrize it as well
 ForStatement<TrailingElse>: ForStatement = {
         <for_keyword: ForKeyword>  <open_paren: OpenParen>  <initialization: ForStatementInitialization>  <condition: ForStatementCondition>  <iterator: (Expression)?>  <close_paren: CloseParen>  <body: _Statement<TrailingElse>>  => new_for_statement(<>),
-};"#)
+};
+                                        )
+                                    )
                                 ),
                                 Enum(
                                     name = ForStatementInitialization,
@@ -2724,13 +2750,17 @@ ForStatement<TrailingElse>: ForStatement = {
                                         close_paren = Required(CloseParen),
                                         body = Required(Statement)
                                     ),
-                                    parser_options = ParserOptions(inline = false, verbatim = r#"
+                                    parser_options = ParserOptions(
+                                        inline = false,
+                                        verbatim = Code(
 // As explained in the `Statement` rule, this solves the dangling else problem
 //
 // Since a `WhileStatement` can have a trailing `Statement` we need to parametrize it as well
 WhileStatement<TrailingElse>: WhileStatement = {
         <while_keyword: WhileKeyword>  <open_paren: OpenParen>  <condition: Expression>  <close_paren: CloseParen>  <body: _Statement<TrailingElse>>  => new_while_statement(<>),
-};"#)
+};
+                                        )
+                                    )
                                 ),
                                 Struct(
                                     name = DoWhileStatement,
@@ -2789,7 +2819,9 @@ WhileStatement<TrailingElse>: WhileStatement = {
                                         body = Required(Block),
                                         catch_clauses = Required(CatchClauses)
                                     ),
-                                    parser_options = ParserOptions(inline = false, verbatim = r#"
+                                    parser_options = ParserOptions(
+                                        inline = false,
+                                        verbatim = Code(
 // A try statement conflicts with expressions since an expression can have named arguments (similar to a block)
 // at the end. For example, if the parser sees `try foo { a` it doesn't know whether foo is an expression and it should
 // start parsing a block (a reduce) or whether it should keep parsing a call options expression (a shift).
@@ -2810,7 +2842,8 @@ TryStatement: TryStatement = {
 ExpressionTrailingBlock: (Expression, Block) = {
         <expression: Expression19<Block>>  => <>,
 };
-"#)
+                                        )
+                                    )
                                 ),
                                 Repeated(
                                     name = CatchClauses,
@@ -3162,7 +3195,7 @@ ExpressionTrailingBlock: (Expression, Block) = {
                                     ],
                                     parser_options = ParserOptions(
                                         inline = false,
-                                        verbatim = r#"
+                                        verbatim = Code(
 // Expression has a lot of tricky cases:
 // 1. There's conflicts with `TypeName`, for example `a.b[c]` can be either a member access over an identifier path, or
 //    an array type, depending on what comes next. As explained on the `TypeName` rule, we need to delay reduction of
@@ -3228,7 +3261,7 @@ Expression1<IndexAccessPathRule, NewExpressionRule>: Expression = {
     <expression: Expression0<IndexAccessPathRule, NewExpressionRule>>  => <>,
 };
 
-// A Matcher for an empty NewExpression 
+// A Matcher for an empty NewExpression
 NoNewExpression: NewExpression = {};
 
 // Tail is a rule identifying what comes after the expression, whatever is captured is added to the tuple result
@@ -3237,11 +3270,9 @@ Expression5<Tail>: (Expression, Tail) = {
         let (expr, tail) = expression;
         (new_expression_prefix_expression(new_prefix_expression(expression_prefix_expression_operator, expr)), tail)
     },
-    
+
     // A tail can appear just after a postfix or primary expression
-    <expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>> <tail: Tail> => {
-        (expression, tail)
-    },
+    <expression: Expression1<IndexAccessPath<IdentifierPath>, NewExpression>> <tail: Tail> => (expression, tail),
 };
 Expression6<Tail>: (Expression, Tail) = {
     // This is the only other postfix expression that can overwrite a trailing element
@@ -3252,7 +3283,7 @@ Expression6<Tail>: (Expression, Tail) = {
         let (expr, _) = expression;
         (new_expression_postfix_expression(new_postfix_expression(expr, expression_postfix_expression_operator)), tail)
     },
-    
+
     <expression: Expression5<Tail>>  => <>,
 };
 Expression7<Tail>: (Expression, Tail) = {
@@ -3263,7 +3294,7 @@ Expression7<Tail>: (Expression, Tail) = {
         let (e2, tail) = expression_2;
         (new_expression_exponentiation_expression(new_exponentiation_expression(e, operator, e2)), tail)
     },
-    
+
     <expression: Expression6<Tail>>  => <>,
 };
 Expression8<Tail>: (Expression, Tail) = {
@@ -3273,7 +3304,7 @@ Expression8<Tail>: (Expression, Tail) = {
         let (e2, tail) = expression_2;
         (new_expression_multiplicative_expression(new_multiplicative_expression(e, expression_multiplicative_expression_operator, e2)), tail)
     },
-    
+
     <expression: Expression7<Tail>>  => <>,
 };
 Expression9<Tail>: (Expression, Tail) = {
@@ -3283,7 +3314,7 @@ Expression9<Tail>: (Expression, Tail) = {
         let (e2, tail) = expression_2;
         (new_expression_additive_expression(new_additive_expression(e, expression_additive_expression_operator, e2)), tail)
     },
-    
+
     <expression: Expression8<Tail>>  => <>,
 };
 Expression10<Tail>: (Expression, Tail) = {
@@ -3293,7 +3324,7 @@ Expression10<Tail>: (Expression, Tail) = {
         let (e2, tail) = expression_2;
         (new_expression_shift_expression(new_shift_expression(e, expression_shift_expression_operator, e2)), tail)
     },
-    
+
     <expression: Expression9<Tail>>  => <>,
 };
 Expression11<Tail>: (Expression, Tail) = {
@@ -3303,7 +3334,7 @@ Expression11<Tail>: (Expression, Tail) = {
         let (e2, tail) = expression_2;
         (new_expression_bitwise_and_expression(new_bitwise_and_expression(e, operator, e2)), tail)
     },
-    
+
     <expression: Expression10<Tail>>  => <>,
 };
 Expression12<Tail>: (Expression, Tail) = {
@@ -3313,7 +3344,7 @@ Expression12<Tail>: (Expression, Tail) = {
         let (e2, tail) = expression_2;
         (new_expression_bitwise_xor_expression(new_bitwise_xor_expression(e, operator, e2)), tail)
     },
-    
+
     <expression: Expression11<Tail>>  => <>,
 };
 Expression13<Tail>: (Expression, Tail) = {
@@ -3323,7 +3354,7 @@ Expression13<Tail>: (Expression, Tail) = {
         let (e2, tail) = expression_2;
         (new_expression_bitwise_or_expression(new_bitwise_or_expression(e, operator, e2)), tail)
     },
-    
+
     <expression: Expression12<Tail>>  => <>,
 };
 Expression14<Tail>: (Expression, Tail) = {
@@ -3333,7 +3364,7 @@ Expression14<Tail>: (Expression, Tail) = {
         let (e2, tail) = expression_2;
         (new_expression_inequality_expression(new_inequality_expression(e, expression_inequality_expression_operator, e2)), tail)
     },
-    
+
     <expression: Expression13<Tail>>  => <>,
 };
 Expression15<Tail>: (Expression, Tail) = {
@@ -3343,7 +3374,7 @@ Expression15<Tail>: (Expression, Tail) = {
         let (e2, tail) = expression_2;
         (new_expression_equality_expression(new_equality_expression(e, expression_equality_expression_operator, e2)), tail)
     },
-    
+
     <expression: Expression14<Tail>>  => <>,
 };
 Expression16<Tail>: (Expression, Tail) = {
@@ -3353,7 +3384,7 @@ Expression16<Tail>: (Expression, Tail) = {
         let (e2, tail) = expression_2;
         (new_expression_and_expression(new_and_expression(e, operator, e2)), tail)
     },
-    
+
     <expression: Expression15<Tail>>  => <>,
 };
 Expression17<Tail>: (Expression, Tail) = {
@@ -3363,7 +3394,7 @@ Expression17<Tail>: (Expression, Tail) = {
         let (e2, tail) = expression_2;
         (new_expression_or_expression(new_or_expression(e, operator, e2)), tail)
     },
-    
+
     <expression: Expression16<Tail>>  => <>,
 };
 Expression19<Tail>: (Expression, Tail) = {
@@ -3375,14 +3406,14 @@ Expression19<Tail>: (Expression, Tail) = {
         let (false_expr, tail) = false_expression;
         (new_expression_conditional_expression(new_conditional_expression(cond_expr, question_mark, true_expr, colon, false_expr)), tail)
     },
-    
+
     <expression: Expression17<EmptyTail>>  <expression_assignment_expression_operator: Expression_AssignmentExpression_Operator>  <expression_2: Expression19<Tail>>  => {
         #[allow(clippy::ignored_unit_patterns)]
         let (e, _) = expression;
         let (e2, tail) = expression_2;
         (new_expression_assignment_expression(new_assignment_expression(e, expression_assignment_expression_operator, e2)), tail)
     },
-    
+
     <expression: Expression17<Tail>>  => <>,
 };
 
@@ -3461,8 +3492,8 @@ IndexAccessPath1<IdentPathRule>: parser_helpers::IndexAccessPath = {
     <identifier: IdentPathRule> => parser_helpers::new_index_access_path_from_identifier_path(<>),
     <elementary_type: ElementaryType>  => parser_helpers::new_index_access_path_from_elementary_type(<>),
 };
-"#
-                            )
+                                        )
+                                    )
                                 ),
                                 Struct(
                                     name = IndexAccessEnd,
@@ -3556,7 +3587,7 @@ IndexAccessPath1<IdentPathRule>: parser_helpers::IndexAccessPath = {
                                     ),
                                     parser_options = ParserOptions(
                                         inline = false,
-                                        verbatim = r#"
+                                        verbatim = Code(
 // We avoid function types entirely in new expressions, this is ok since they're not allowed
 // in Solidity, but the error will be syntactic rather than semantic, which may be confusing.
 //
@@ -3564,11 +3595,12 @@ IndexAccessPath1<IdentPathRule>: parser_helpers::IndexAccessPath = {
 // parsed either as part of the function type or as part of a try statement.
 NewExpression: NewExpression = {
     <new_keyword: NewKeyword>  <type_name: TypeName1<NoFunctionType, IndexAccessPath<IdentifierPath>>>  => new_new_expression(<>),
-    
+
 };
 
 NoFunctionType: FunctionType = {};
-"#)
+                                        )
+                                    )
                                 ),
                                 Struct(
                                     name = TupleExpression,
@@ -3584,7 +3616,7 @@ NoFunctionType: FunctionType = {};
                                     separator = Comma,
                                     parser_options = ParserOptions(
                                         inline = false,
-                                        verbatim = r#"
+                                        verbatim = Code(
 // See the comment around TupleDeconstructionStatement for an explanation of this rule.
 #[inline]
 TupleValues: TupleValues = {
@@ -3600,9 +3632,10 @@ TupleValues: TupleValues = {
         elements.extend(tuple_value.unwrap_or(vec![]));
         new_tuple_values(elements)
     },
-    
+
 };
-"#)
+                                        )
+                                    )
                                 ),
                                 Struct(
                                     name = TupleValue,
@@ -3881,7 +3914,9 @@ TupleValues: TupleValues = {
                                     name = IdentifierPath,
                                     reference = IdentifierPathElement,
                                     separator = Period,
-                                    parser_options = ParserOptions(inline = false, verbatim = r#"
+                                    parser_options = ParserOptions(
+                                        inline = false,
+                                        verbatim = Code(
 // We need to force this to differentiate the first element from not being
 // an `AddressKeyword`
 IdentifierPath: IdentifierPath = {
@@ -3894,18 +3929,18 @@ IdentifierPath: IdentifierPath = {
             None => new_identifier_path(vec![new_identifier_path_element_identifier(head)]),
         }
     },
-    
+
 };
 IdentifierPathTail: Vec<IdentifierPathElement> = {
     Period  <elements: IdentifierPathTailElements>  => <>,
-    
+
 };
 IdentifierPathTailElements: Vec<IdentifierPathElement> = {
     <member_access_identifier: Separated<Period, <IdentifierPathElement>>>  => <>,
-    
-};
-"#)
 
+};
+                                        )
+                                    )
                                 ),
                                 Enum(
                                     // An element of an identifier path can be either an identifier or the reserved `address` keyword
