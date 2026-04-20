@@ -1,7 +1,7 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 use slang_solidity_v2_common::built_ins::BuiltIn as PublicBuiltIn;
-use slang_solidity_v2_common::versions::LanguageVersion;
+use slang_solidity_v2_common::versions::{LanguageVersion, LanguageVersionSpecifier};
 use slang_solidity_v2_ir::ir::NodeId;
 
 use crate::types::TypeId;
@@ -356,25 +356,84 @@ impl BuiltIn {
 
     // Version ranges for built-ins introduced or deprecated in the supported versions
 
-    pub(super) const BLOBHASH_FROM: LanguageVersion = LanguageVersion::V0_8_24;
-    pub(super) const ABI_ENCODE_CALL_FROM: LanguageVersion = LanguageVersion::V0_8_11;
-    pub(super) const BLOCK_BASEFEE_FROM: LanguageVersion = LanguageVersion::V0_8_7;
-    pub(super) const BLOCK_BLOBBASEFEE_FROM: LanguageVersion = LanguageVersion::V0_8_24;
-    pub(super) const BLOCK_PREVRANDAO_FROM: LanguageVersion = LanguageVersion::V0_8_18;
-    pub(super) const TYPE_ENUM_MIN_FROM: LanguageVersion = LanguageVersion::V0_8_8;
-    pub(super) const TYPE_ENUM_MAX_FROM: LanguageVersion = LanguageVersion::V0_8_8;
-    pub(super) const ERROR_SELECTOR_FROM: LanguageVersion = LanguageVersion::V0_8_4;
-    pub(super) const EVENT_SELECTOR_FROM: LanguageVersion = LanguageVersion::V0_8_15;
-    pub(super) const FUNCTION_ADDRESS_FROM: LanguageVersion = LanguageVersion::V0_8_2;
-    pub(super) const UNWRAP_FROM: LanguageVersion = LanguageVersion::V0_8_8;
-    pub(super) const WRAP_FROM: LanguageVersion = LanguageVersion::V0_8_8;
-    pub(super) const YUL_BASEFEE_FROM: LanguageVersion = LanguageVersion::V0_8_7;
-    pub(super) const YUL_BLOBBASEFEE_FROM: LanguageVersion = LanguageVersion::V0_8_24;
-    pub(super) const YUL_BLOBHASH_FROM: LanguageVersion = LanguageVersion::V0_8_24;
-    pub(super) const YUL_CLZ_FROM: LanguageVersion = LanguageVersion::V0_8_31;
-    pub(super) const YUL_DIFFICULTY_TILL: LanguageVersion = LanguageVersion::V0_8_18;
-    pub(super) const YUL_MCOPY_FROM: LanguageVersion = LanguageVersion::V0_8_24;
-    pub(super) const YUL_PREVRANDAO_FROM: LanguageVersion = LanguageVersion::V0_8_18;
-    pub(super) const YUL_TLOAD_FROM: LanguageVersion = LanguageVersion::V0_8_24;
-    pub(super) const YUL_TSTORE_FROM: LanguageVersion = LanguageVersion::V0_8_24;
+    pub(super) const BLOBHASH_VERSIONS: LanguageVersionSpecifier = LanguageVersionSpecifier::From {
+        from: LanguageVersion::V0_8_24,
+    };
+    pub(super) const ABI_ENCODE_CALL_VERSIONS: LanguageVersionSpecifier =
+        LanguageVersionSpecifier::From {
+            from: LanguageVersion::V0_8_11,
+        };
+    pub(super) const BLOCK_BASEFEE_VERSIONS: LanguageVersionSpecifier =
+        LanguageVersionSpecifier::From {
+            from: LanguageVersion::V0_8_7,
+        };
+    pub(super) const BLOCK_BLOBBASEFEE_VERSIONS: LanguageVersionSpecifier =
+        LanguageVersionSpecifier::From {
+            from: LanguageVersion::V0_8_24,
+        };
+    pub(super) const BLOCK_PREVRANDAO_VERSIONS: LanguageVersionSpecifier =
+        LanguageVersionSpecifier::From {
+            from: LanguageVersion::V0_8_18,
+        };
+    pub(super) const TYPE_ENUM_MIN_VERSIONS: LanguageVersionSpecifier =
+        LanguageVersionSpecifier::From {
+            from: LanguageVersion::V0_8_8,
+        };
+    pub(super) const TYPE_ENUM_MAX_VERSIONS: LanguageVersionSpecifier =
+        LanguageVersionSpecifier::From {
+            from: LanguageVersion::V0_8_8,
+        };
+    pub(super) const ERROR_SELECTOR_VERSIONS: LanguageVersionSpecifier =
+        LanguageVersionSpecifier::From {
+            from: LanguageVersion::V0_8_4,
+        };
+    pub(super) const EVENT_SELECTOR_VERSIONS: LanguageVersionSpecifier =
+        LanguageVersionSpecifier::From {
+            from: LanguageVersion::V0_8_15,
+        };
+    pub(super) const FUNCTION_ADDRESS_VERSIONS: LanguageVersionSpecifier =
+        LanguageVersionSpecifier::From {
+            from: LanguageVersion::V0_8_2,
+        };
+    pub(super) const UNWRAP_VERSIONS: LanguageVersionSpecifier = LanguageVersionSpecifier::From {
+        from: LanguageVersion::V0_8_8,
+    };
+    pub(super) const WRAP_VERSIONS: LanguageVersionSpecifier = LanguageVersionSpecifier::From {
+        from: LanguageVersion::V0_8_8,
+    };
+    pub(super) const YUL_BASEFEE_VERSIONS: LanguageVersionSpecifier =
+        LanguageVersionSpecifier::From {
+            from: LanguageVersion::V0_8_7,
+        };
+    pub(super) const YUL_BLOBBASEFEE_VERSIONS: LanguageVersionSpecifier =
+        LanguageVersionSpecifier::From {
+            from: LanguageVersion::V0_8_24,
+        };
+    pub(super) const YUL_BLOBHASH_VERSIONS: LanguageVersionSpecifier =
+        LanguageVersionSpecifier::From {
+            from: LanguageVersion::V0_8_24,
+        };
+    pub(super) const YUL_CLZ_VERSIONS: LanguageVersionSpecifier = LanguageVersionSpecifier::From {
+        from: LanguageVersion::V0_8_31,
+    };
+    pub(super) const YUL_DIFFICULTY_VERSIONS: LanguageVersionSpecifier =
+        LanguageVersionSpecifier::Till {
+            till: LanguageVersion::V0_8_18,
+        };
+    pub(super) const YUL_MCOPY_VERSIONS: LanguageVersionSpecifier =
+        LanguageVersionSpecifier::From {
+            from: LanguageVersion::V0_8_24,
+        };
+    pub(super) const YUL_PREVRANDAO_VERSIONS: LanguageVersionSpecifier =
+        LanguageVersionSpecifier::From {
+            from: LanguageVersion::V0_8_18,
+        };
+    pub(super) const YUL_TLOAD_VERSIONS: LanguageVersionSpecifier =
+        LanguageVersionSpecifier::From {
+            from: LanguageVersion::V0_8_24,
+        };
+    pub(super) const YUL_TSTORE_VERSIONS: LanguageVersionSpecifier =
+        LanguageVersionSpecifier::From {
+            from: LanguageVersion::V0_8_24,
+        };
 }

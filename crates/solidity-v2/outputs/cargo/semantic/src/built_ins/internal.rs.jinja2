@@ -1,4 +1,4 @@
-use slang_solidity_v2_common::versions::LanguageVersion;
+use slang_solidity_v2_common::versions::{LanguageVersion, LanguageVersionSpecifier};
 use slang_solidity_v2_common::built_ins::BuiltIn as PublicBuiltIn;
 use slang_solidity_v2_ir::ir::NodeId;
 use crate::types::TypeId;
@@ -44,17 +44,22 @@ impl BuiltIn {
     {% for context in model.language.built_ins -%}
     {%- for scope in context.scopes -%}
     {%- for definition in scope.definitions -%}
-      {%- if definition.enabled.type == "From" %}
-        {%- set v = definition.enabled.from | split(pat=".") | join(sep="_") -%}
-        pub(super) const {{ definition.name | snake_case | upper }}_FROM: LanguageVersion = LanguageVersion::V{{ v }};
-      {%- elif definition.enabled.type == "Till" %}
-        {%- set v = definition.enabled.till | split(pat=".") | join(sep="_") -%}
-        pub(super) const {{ definition.name | snake_case | upper }}_TILL: LanguageVersion = LanguageVersion::V{{ v }};
-      {%- elif definition.enabled.type == "Range" %}
-        {%- set vf = definition.enabled.from | split(pat=".") | join(sep="_") -%}
-        {%- set vt = definition.enabled.till | split(pat=".") | join(sep="_") -%}
-        pub(super) const {{ definition.name | snake_case | upper }}_FROM: LanguageVersion = LanguageVersion::V{{ vf }};
-        pub(super) const {{ definition.name | snake_case | upper }}_TILL: LanguageVersion = LanguageVersion::V{{ vt }};
+      {%- if definition.enabled.type != "Always" %}
+        pub(super) const {{ definition.name | snake_case | upper }}_VERSIONS: LanguageVersionSpecifier =
+        {%- if definition.enabled.type == "From" %}
+          {%- set v = definition.enabled.from | split(pat=".") | join(sep="_") -%}
+          LanguageVersionSpecifier::From { from: LanguageVersion::V{{ v }} };
+        {%- elif definition.enabled.type == "Till" %}
+          {%- set v = definition.enabled.till | split(pat=".") | join(sep="_") -%}
+          LanguageVersionSpecifier::Till { till: LanguageVersion::V{{ v }} };
+        {%- elif definition.enabled.type == "Range" %}
+          {%- set vf = definition.enabled.from | split(pat=".") | join(sep="_") -%}
+          {%- set vt = definition.enabled.till | split(pat=".") | join(sep="_") -%}
+          LanguageVersionSpecifier::Range {
+              from: LanguageVersion::V{{ vf }},
+              till: LanguageVersion::V{{ vt }},
+          };
+        {% endif -%}
       {% endif -%}
     {%- endfor -%}
     {%- endfor -%}
