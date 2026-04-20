@@ -32,7 +32,8 @@ fn go(project: &SolidityProject, count: bool) -> usize {
 
     let mut result = 0;
     // Enter the context and parse the file.
-    let _ = sess.enter(|| -> solar::interface::Result<()> {
+    // `enter_sequential` runs the closure on the current thread
+    let _ = sess.enter_sequential(|| -> solar::interface::Result<()> {
         // Use one arena for the entire parsing
         let arena = ast::Arena::new();
 
