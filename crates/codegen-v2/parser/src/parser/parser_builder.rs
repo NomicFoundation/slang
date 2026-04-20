@@ -75,7 +75,7 @@ impl<'a> ParserBuilder<'a> {
         }) = parser_options
         {
             // If there's a verbatim rule, then skip generating the rules
-            return LALRPOPItem::Verbatim(verbatim.to_string());
+            return LALRPOPItem::Verbatim(verbatim.value.clone());
         }
 
         // Translate the LanguageItem into LALRPOP items

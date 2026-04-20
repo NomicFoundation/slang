@@ -1,5 +1,3 @@
-use std::ops::Deref;
-
 use language_v2_internal_macros::WriteOutputTokens;
 use proc_macro2::{Delimiter, Group, TokenStream};
 use serde::{Deserialize, Serialize};
@@ -15,22 +13,14 @@ use crate::internals::{Error, ErrorsCollection, ParseHelpers, ParseInputTokens, 
 /// verbatim and stores the result as a `String`.
 ///
 /// The body must tokenize as valid Rust (balanced delimiters, etc.), but is otherwise
-/// free-form. `//` comments are stripped by the Rust lexer before the proc-macro sees
-/// them and are not preserved in the captured string.
+/// free-form. Comments are stripped by the Rust lexer before the proc-macro sees them,
+/// so they are not preserved in the captured string.
 #[derive(
     Clone, Debug, Deserialize, Eq, Hash, Ord, PartialEq, PartialOrd, Serialize, WriteOutputTokens,
 )]
 #[serde(transparent)]
 pub struct Code {
     pub value: String,
-}
-
-impl Deref for Code {
-    type Target = String;
-
-    fn deref(&self) -> &Self::Target {
-        &self.value
-    }
 }
 
 impl ParseInputTokens for Code {
@@ -41,7 +31,7 @@ impl ParseInputTokens for Code {
     /// source-level formatting — turning `Foo<T>` into `Foo < T >`, which
     /// LALRPOP rejects when the captured string is embedded into a generated
     /// `.lalrpop` grammar.
-    /// 
+    ///
     /// Note: If you find a valid reason to support it, do it and comment the reason.
     fn parse_value(input: ParseStream<'_>, _: &mut ErrorsCollection) -> Result<Self> {
         let tokens: TokenStream = ParseHelpers::syn(input)?;

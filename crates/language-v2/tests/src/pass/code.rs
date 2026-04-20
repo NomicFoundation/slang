@@ -17,7 +17,7 @@ language_v2_macros::compile!(Language(
                         parser_options = ParserOptions(
                             inline = false,
                             verbatim = Code(
-                                Foo: Foo = {
+                                Foo: Foo<T> = {
                                     <bar: Bar> => new_foo(bar),
                                 };
                             )
@@ -45,7 +45,7 @@ fn captures_body_tokens() {
     else {
         panic!("expected parser_options.verbatim to be Some");
     };
-    let text = code.to_string();
+    let text = code.value.clone();
 
     // Body tokens round-trip (whitespace is normalized by TokenStream::to_string, so
     // spacing between individual tokens is not guaranteed — we just check key fragments
@@ -56,6 +56,18 @@ fn captures_body_tokens() {
             "missing {fragment:?} in body, got: {text:?}",
         );
     }
+
+    // Make sure spaces are kept as they were originally (e.g. no extra spaces around angle brackets).
+    //
+    // This could be an issue for tools like LALRPOP
+    assert!(
+        text.contains("Foo<T>"),
+        "generic angle brackets lost Joint spacing (expected `Foo<T>`), got: {text:?}",
+    );
+    assert!(
+        !text.contains("Foo < T >"),
+        "generic angle brackets were rendered with spaces (`Foo < T >`), got: {text:?}",
+    );
 
     // Outer delimiter chars are not in the captured string (they are the DSL delimiters,
     // consumed by `parse_named_value` before the body parser runs).
