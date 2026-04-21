@@ -6,7 +6,6 @@ use slang_solidity_v2::compilation::unit::CompilationUnit;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir::visitor::{accept_source_unit, Visitor};
 use slang_solidity_v2_ir::ir::Identifier;
-use slang_solidity_v2_parser::ParserError;
 use slang_solidity_v2_semantic::binder::{Definition, Resolution, Typing};
 use slang_solidity_v2_semantic::context::{SemanticContext, SemanticFile};
 use slang_solidity_v2_semantic::types::{DataLocation, FunctionType, LiteralKind, Type, TypeId};
@@ -16,7 +15,6 @@ use slang_solidity_v2_semantic::types::{DataLocation, FunctionType, LiteralKind,
 pub(crate) struct ReportData<'a> {
     pub(crate) compilation: &'a CompilationUnit,
     pub(crate) files: &'a BTreeMap<String, String>,
-    pub(crate) parse_errors: Vec<(String, ParserError)>,
     pub(crate) all_definitions: Vec<CollectedDefinition>,
     pub(crate) all_references: Vec<CollectedReference>,
     pub(crate) unbound_identifiers: Vec<CollectedIdentifier>,
@@ -50,7 +48,6 @@ impl<'a> ReportData<'a> {
     pub(crate) fn prepare(
         compilation: &'a CompilationUnit,
         files: &'a BTreeMap<String, String>,
-        parse_errors: Vec<(String, ParserError)>,
     ) -> Self {
         let all_identifiers = collect_all_identifiers(compilation, files);
         let (all_definitions, all_references, unbound_identifiers) =
@@ -63,7 +60,6 @@ impl<'a> ReportData<'a> {
         Self {
             compilation,
             files,
-            parse_errors,
             all_definitions,
             all_references,
             unbound_identifiers,
@@ -72,7 +68,7 @@ impl<'a> ReportData<'a> {
     }
 
     pub(crate) fn all_resolved(&self) -> bool {
-        self.parse_errors.is_empty()
+        self.compilation.diagnostics().is_empty()
             && self.unbound_identifiers.is_empty()
             && self
                 .all_references

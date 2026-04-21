@@ -1,4 +1,3 @@
-use anyhow::Result;
 use slang_solidity_v2_ast::ast::{self, ContractBase, ContractMember, Definition, FunctionKind};
 use slang_solidity_v2_common::built_ins::BuiltIn;
 
@@ -24,8 +23,8 @@ impl ast::visitor::Visitor for IdentifierCounter {
 }
 
 #[test]
-fn test_ast_visitor() -> Result<()> {
-    let unit = fixtures::Counter::build_compilation_unit()?;
+fn test_ast_visitor() {
+    let unit = fixtures::Counter::build_compilation_unit();
 
     let main_ast = unit.get_file_ast_root("main.sol").unwrap();
 
@@ -53,13 +52,11 @@ fn test_ast_visitor() -> Result<()> {
     assert_eq!(activatable_visitor.total, 31);
     assert_eq!(activatable_visitor.definitions, 10);
     assert_eq!(activatable_visitor.references, 22);
-
-    Ok(())
 }
 
 #[test]
-fn test_identifier_path_resolve_to_immediate_definition() -> Result<()> {
-    let unit = fixtures::Counter::build_compilation_unit()?;
+fn test_identifier_path_resolve_to_immediate_definition() {
+    let unit = fixtures::Counter::build_compilation_unit();
 
     let counter = unit
         .find_contract_by_name("Counter")
@@ -90,13 +87,11 @@ fn test_identifier_path_resolve_to_immediate_definition() -> Result<()> {
         counter_bases[1].resolve_to_immediate_definition(),
         Some(ast::Definition::ImportedSymbol(_))
     ));
-
-    Ok(())
 }
 
 #[test]
-fn test_identifier_path_resolve_to_immediate_resolves_to_direct_definition() -> Result<()> {
-    let unit = fixtures::ChainedImports::build_compilation_unit()?;
+fn test_identifier_path_resolve_to_immediate_resolves_to_direct_definition() {
+    let unit = fixtures::ChainedImports::build_compilation_unit();
 
     let a1 = unit.find_contract_by_name("A1").expect("contract is found");
     let i1_typename = a1
@@ -117,13 +112,11 @@ fn test_identifier_path_resolve_to_immediate_resolves_to_direct_definition() -> 
         (i1, i1_immediate),
         (ast::Definition::Interface(_), ast::Definition::Interface(_))
     ));
-
-    Ok(())
 }
 
 #[test]
-fn test_chained_imports_resolution() -> Result<()> {
-    let unit = fixtures::ChainedImports::build_compilation_unit()?;
+fn test_chained_imports_resolution() {
+    let unit = fixtures::ChainedImports::build_compilation_unit();
 
     let a1 = unit.find_contract_by_name("A1").expect("contract is found");
     let b1_typename = a1
@@ -157,13 +150,11 @@ fn test_chained_imports_resolution() -> Result<()> {
         panic!("b3 resolves to a contract");
     };
     assert_eq!(b3_contract.name().name(), "B3");
-
-    Ok(())
 }
 
 #[test]
-fn test_get_type() -> Result<()> {
-    let unit = fixtures::Counter::build_compilation_unit()?;
+fn test_get_type() {
+    let unit = fixtures::Counter::build_compilation_unit();
 
     let ownable = unit
         .find_contract_by_name("Ownable")
@@ -189,13 +180,11 @@ fn test_get_type() -> Result<()> {
         .get_type()
         .expect("_owner state variable has resolved type");
     assert!(matches!(owner_type, ast::Type::Address(_)));
-
-    Ok(())
 }
 
 #[test]
-fn test_function_get_type() -> Result<()> {
-    let unit = fixtures::Counter::build_compilation_unit()?;
+fn test_function_get_type() {
+    let unit = fixtures::Counter::build_compilation_unit();
 
     let counter = unit
         .find_contract_by_name("Counter")
@@ -229,13 +218,11 @@ fn test_function_get_type() -> Result<()> {
     assert!(function_type
         .associated_definition()
         .is_some_and(|definition| matches!(definition, ast::Definition::Function(_))));
-
-    Ok(())
 }
 
 #[test]
-fn test_contract_direct_bases() -> Result<()> {
-    let unit = fixtures::Counter::build_compilation_unit()?;
+fn test_contract_direct_bases() {
+    let unit = fixtures::Counter::build_compilation_unit();
 
     let counter = unit
         .find_contract_by_name("Counter")
@@ -251,13 +238,11 @@ fn test_contract_direct_bases() -> Result<()> {
         panic!("Base is not a contract");
     };
     assert_eq!(activatable.name().name(), "Activatable");
-
-    Ok(())
 }
 
 #[test]
-fn test_contract_compute_linearised_bases() -> Result<()> {
-    let unit = fixtures::Counter::build_compilation_unit()?;
+fn test_contract_compute_linearised_bases() {
+    let unit = fixtures::Counter::build_compilation_unit();
 
     let counter = unit
         .find_contract_by_name("Counter")
@@ -277,13 +262,11 @@ fn test_contract_compute_linearised_bases() -> Result<()> {
         panic!("Base is not a contract");
     };
     assert_eq!(ownable.name().name(), "Ownable");
-
-    Ok(())
 }
 
 #[test]
-fn test_definition_references() -> Result<()> {
-    let unit = fixtures::Counter::build_compilation_unit()?;
+fn test_definition_references() {
+    let unit = fixtures::Counter::build_compilation_unit();
 
     let ownable = unit
         .find_contract_by_name("Ownable")
@@ -323,13 +306,11 @@ fn test_definition_references() -> Result<()> {
         .is_some_and(|modifier| modifier
             .name()
             .is_some_and(|name| name.name() == "onlyOwner"))));
-
-    Ok(())
 }
 
 #[test]
-fn test_contract_compute_linearised_state_variables() -> Result<()> {
-    let unit = fixtures::Counter::build_compilation_unit()?;
+fn test_contract_compute_linearised_state_variables() {
+    let unit = fixtures::Counter::build_compilation_unit();
 
     let counter = unit
         .find_contract_by_name("Counter")
@@ -342,13 +323,11 @@ fn test_contract_compute_linearised_state_variables() -> Result<()> {
     assert_eq!(state_variables[1].name().name(), "_state");
     assert_eq!(state_variables[2].name().name(), "count");
     assert_eq!(state_variables[3].name().name(), "_clickers");
-
-    Ok(())
 }
 
 #[test]
-fn test_contract_compute_linearised_functions() -> Result<()> {
-    let unit = fixtures::Counter::build_compilation_unit()?;
+fn test_contract_compute_linearised_functions() {
+    let unit = fixtures::Counter::build_compilation_unit();
 
     let counter = unit
         .find_contract_by_name("Counter")
@@ -372,13 +351,11 @@ fn test_contract_compute_linearised_functions() -> Result<()> {
     assert!(functions[4]
         .name()
         .is_some_and(|name| name.name() == "isEnabled"));
-
-    Ok(())
 }
 
 #[test]
-fn test_contract_constructor_and_modifiers() -> Result<()> {
-    let unit = fixtures::Counter::build_compilation_unit()?;
+fn test_contract_constructor_and_modifiers() {
+    let unit = fixtures::Counter::build_compilation_unit();
 
     let counter = unit
         .find_contract_by_name("Counter")
@@ -389,13 +366,11 @@ fn test_contract_constructor_and_modifiers() -> Result<()> {
 
     let modifiers = counter.modifiers();
     assert_eq!(modifiers.len(), 0);
-
-    Ok(())
 }
 
 #[test]
-fn test_contract_compute_linearised_functions_with_overrides() -> Result<()> {
-    let unit = fixtures::Overrides::build_compilation_unit()?;
+fn test_contract_compute_linearised_functions_with_overrides() {
+    let unit = fixtures::Overrides::build_compilation_unit();
 
     let inherited = unit
         .find_contract_by_name("Inherited")
@@ -411,13 +386,11 @@ fn test_contract_compute_linearised_functions_with_overrides() -> Result<()> {
     assert!(functions[2]
         .name()
         .is_some_and(|name| name.name() == "override_me"));
-
-    Ok(())
 }
 
 #[test]
-fn test_resolve_to_built_in() -> Result<()> {
-    let unit = fixtures::Counter::build_compilation_unit()?;
+fn test_resolve_to_built_in() {
+    let unit = fixtures::Counter::build_compilation_unit();
 
     // Collect all identifiers that resolve to built-ins from the ownable.sol file,
     // which contains `msg.sender` and `require`.
@@ -447,8 +420,6 @@ fn test_resolve_to_built_in() -> Result<()> {
         "expected Require built-in, found: {:?}",
         built_in_collector.found,
     );
-
-    Ok(())
 }
 
 #[derive(Default)]
@@ -465,8 +436,8 @@ impl ast::visitor::Visitor for BuiltInCollector {
 }
 
 #[test]
-fn test_get_file_id_and_text_range() -> Result<()> {
-    let unit = fixtures::Counter::build_compilation_unit()?;
+fn test_get_file_id_and_text_range() {
+    let unit = fixtures::Counter::build_compilation_unit();
 
     let ownable = unit
         .find_contract_by_name("Ownable")
@@ -500,6 +471,4 @@ fn test_get_file_id_and_text_range() -> Result<()> {
         .find_contract_by_name("Counter")
         .expect("contract is found");
     assert_eq!(counter.get_file_id(), "main.sol");
-
-    Ok(())
 }

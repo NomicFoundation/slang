@@ -54,10 +54,10 @@ pub fn render(source: &str, source_id: &str, result: &ParseOutput) -> (bool, Str
 
     let ParseOutput {
         source_unit,
-        errors,
+        diagnostics,
     } = result;
 
-    let errors: Vec<String> = errors
+    let errors: Vec<String> = diagnostics
         .iter()
         .map(|e| diagnostic::render(e, source_id, source, false))
         .collect();

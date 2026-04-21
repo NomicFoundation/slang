@@ -27,7 +27,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
         .collect();
 
     for &lang_version in &tested_versions {
-        let v2_output = V2Parser::parse(&source, lang_version);
+        let v2_output = V2Parser::parse(&source_id, &source, lang_version);
 
         match last_output {
             // Skip this version if it produces the same output.

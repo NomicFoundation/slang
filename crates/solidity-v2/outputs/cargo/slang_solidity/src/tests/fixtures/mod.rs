@@ -1,11 +1,8 @@
 use std::rc::Rc;
 
-use anyhow::Result;
 use slang_solidity_v2_common::versions::LanguageVersion;
 
-use crate::compilation::builder::{
-    CompilationBuilder, CompilationBuilderConfig, CompilationBuilderError,
-};
+use crate::compilation::builder::{CompilationBuilder, CompilationBuilderConfig};
 use crate::compilation::unit::CompilationUnit;
 
 mod abi_with_tuples;
@@ -44,7 +41,7 @@ macro_rules! define_fixture {
 
         impl $name {
             pub(crate) fn build_compilation_unit(
-            ) -> anyhow::Result<std::rc::Rc<$crate::compilation::unit::CompilationUnit>> {
+            ) -> std::rc::Rc<$crate::compilation::unit::CompilationUnit> {
                 $crate::tests::fixtures::build_compilation_unit_from_fixture(FILES)
             }
         }
@@ -61,86 +58,74 @@ struct FixtureBuildConfig<'a> {
 }
 
 impl CompilationBuilderConfig for FixtureBuildConfig<'_> {
-    type Error = anyhow::Error;
-
-    fn read_file(&mut self, file_id: &str) -> Result<Option<String>> {
-        Ok(self
-            .files
+    fn read_file(&mut self, file_id: &str) -> Result<String, String> {
+        self.files
             .iter()
             .find(|file| file.id == file_id)
-            .map(|file| file.contents.to_owned()))
+            .map(|file| file.contents.to_owned())
+            .ok_or_else(|| format!("fixture file not found: {file_id}"))
     }
 
     fn resolve_import(
         &mut self,
         _source_file_id: &str,
         import_path: &str,
-    ) -> Result<Option<String>> {
-        let path = import_path
+    ) -> Result<String, String> {
+        import_path
             .strip_prefix(|c: char| matches!(c, '"' | '\''))
-            .and_then(|p| p.strip_suffix(|c: char| matches!(c, '"' | '\'')));
-        Ok(path.map(|p| p.to_owned()))
+            .and_then(|p| p.strip_suffix(|c: char| matches!(c, '"' | '\'')))
+            .map(|p| p.to_owned())
+            .ok_or_else(|| format!("failed to resolve import: {import_path}"))
     }
 }
 
 pub(super) fn build_compilation_unit_from_fixture(
     files: &[FixtureFile<'_>],
-) -> Result<Rc<CompilationUnit>> {
+) -> Rc<CompilationUnit> {
     let version = LanguageVersion::V0_8_30;
     let mut builder = CompilationBuilder::create(version, FixtureBuildConfig { files });
 
     for file in files {
-        builder.add_file(file.id).map_err(|error| match error {
-            CompilationBuilderError::ParserError(error) => {
-                anyhow::anyhow!("Parser error: {error:?}")
-            }
-            CompilationBuilderError::UserError(error) => error,
-        })?;
+        builder.add_file(file.id.to_owned());
     }
 
-    Ok(Rc::new(builder.build()))
+    Rc::new(builder.build())
 }
 
 // Fixture build tests
 
 #[test]
-fn test_build_abi_with_tuples_fixture() -> Result<()> {
-    let unit = AbiWithTuples::build_compilation_unit()?;
+fn test_build_abi_with_tuples_fixture() {
+    let unit = AbiWithTuples::build_compilation_unit();
     assert_eq!(1, unit.files().len());
-    Ok(())
 }
 
 #[test]
-fn test_build_chained_imports_fixture() -> Result<()> {
-    let unit = ChainedImports::build_compilation_unit()?;
+fn test_build_chained_imports_fixture() {
+    let unit = ChainedImports::build_compilation_unit();
     assert_eq!(3, unit.files().len());
-    Ok(())
 }
 
 #[test]
-fn test_build_counter_fixture() -> Result<()> {
-    let unit = Counter::build_compilation_unit()?;
+fn test_build_counter_fixture() {
+    let unit = Counter::build_compilation_unit();
     assert_eq!(3, unit.files().len());
-    Ok(())
 }
 
 #[test]
-fn test_build_full_abi_fixture() -> Result<()> {
-    let unit = FullAbi::build_compilation_unit()?;
+fn test_build_full_abi_fixture() {
+    let unit = FullAbi::build_compilation_unit();
     assert_eq!(1, unit.files().len());
-    Ok(())
 }
 
 #[test]
-fn test_build_overrides_fixture() -> Result<()> {
-    let unit = Overrides::build_compilation_unit()?;
+fn test_build_overrides_fixture() {
+    let unit = Overrides::build_compilation_unit();
     assert_eq!(1, unit.files().len());
-    Ok(())
 }
 
 #[test]
-fn test_build_storage_layout_fixture() -> Result<()> {
-    let unit = StorageLayout::build_compilation_unit()?;
+fn test_build_storage_layout_fixture() {
+    let unit = StorageLayout::build_compilation_unit();
     assert_eq!(1, unit.files().len());
-    Ok(())
 }

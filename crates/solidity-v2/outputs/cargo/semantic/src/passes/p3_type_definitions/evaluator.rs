@@ -326,9 +326,13 @@ mod tests {
 
         let ParseOutput {
             source_unit,
-            errors,
-        } = Parser::parse(&source, version);
-        assert!(errors.is_empty(), "Parser errors: {errors:?}");
+            diagnostics,
+        } = Parser::parse("test.sol", &source, version);
+
+        assert!(
+            diagnostics.is_empty(),
+            "Parser diagnostics: {diagnostics:?}"
+        );
 
         let mut id_generator = ir::NodeIdGenerator::default();
         let source_unit = ir::build(&source_unit, &source, &mut id_generator);
