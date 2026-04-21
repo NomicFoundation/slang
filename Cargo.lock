@@ -3883,7 +3883,6 @@ name = "slang_solidity"
 version = "1.3.4"
 dependencies = [
  "ariadne",
- "hex",
  "indexmap",
  "metaslang_bindings",
  "metaslang_cst",
