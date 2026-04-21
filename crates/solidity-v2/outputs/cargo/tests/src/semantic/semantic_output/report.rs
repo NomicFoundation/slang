@@ -1,11 +1,11 @@
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use std::fmt::Write;
 use std::ops::Range;
 
 use anyhow::Result;
 use ariadne::{Color, Config, Label, Report, ReportBuilder, ReportKind, Source};
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_ir::ir::NodeId;
-use slang_solidity_v2_parser::ParserError;
 use slang_solidity_v2_semantic::binder::Resolution;
 use slang_solidity_v2_semantic::context::{SemanticContext, SemanticFile};
 use solidity_v2_testing_utils::reporting::diagnostic;
@@ -26,15 +26,14 @@ pub(crate) fn binder_report(report_data: &'_ ReportData<'_>) -> Result<String> {
     let ReportData {
         compilation,
         files,
-        parse_errors,
         all_definitions,
         all_references,
         unbound_identifiers,
         definitions_by_id,
     } = report_data;
 
-    if !parse_errors.is_empty() {
-        report_parse_errors(&mut report, parse_errors, files)?;
+    if !compilation.diagnostics().is_empty() {
+        report_diagnostics(&mut report, compilation.diagnostics(), files)?;
         writeln!(report, "{SEPARATOR}")?;
     }
 
@@ -127,15 +126,16 @@ fn report_unbound_identifiers(
     Ok(())
 }
 
-fn report_parse_errors(
+fn report_diagnostics(
     report: &mut String,
-    parse_errors: &[(String, ParserError)],
-    file_contents: &HashMap<String, String>,
+    diagnostics: &DiagnosticCollection,
+    file_contents: &BTreeMap<String, String>,
 ) -> Result<()> {
     writeln!(report, "Parse errors:")?;
-    for (file_id, error) in parse_errors {
+    for diagnostic in diagnostics {
+        let file_id = diagnostic.file_id();
         let source = file_contents.get(file_id).cloned().unwrap_or_default();
-        let rendered = diagnostic::render(error, file_id, &source, false);
+        let rendered = diagnostic::render(diagnostic, file_id, &source, false);
         write!(report, "{rendered}")?;
     }
     Ok(())

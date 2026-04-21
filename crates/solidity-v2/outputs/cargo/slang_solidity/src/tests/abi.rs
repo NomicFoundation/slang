@@ -1,4 +1,3 @@
-use anyhow::Result;
 use slang_solidity_v2_ast::abi::AbiEntry;
 
 use super::fixtures;
@@ -40,8 +39,8 @@ macro_rules! assert_components_eq {
 }
 
 #[test]
-fn test_get_contracts_abi() -> Result<()> {
-    let unit = fixtures::Counter::build_compilation_unit()?;
+fn test_get_contracts_abi() {
+    let unit = fixtures::Counter::build_compilation_unit();
 
     let contracts = unit.compute_contracts_abi();
     assert_eq!(1, contracts.len());
@@ -58,8 +57,6 @@ fn test_get_contracts_abi() -> Result<()> {
     assert!(matches!(&entries[4], AbiEntry::Function(f) if f.name() == "enable"));
     assert!(matches!(&entries[5], AbiEntry::Function(f) if f.name() == "increment"));
     assert!(matches!(&entries[6], AbiEntry::Function(f) if f.name() == "isEnabled"));
-
-    Ok(())
 }
 
 macro_rules! assert_layout_item_eq {
@@ -72,8 +69,8 @@ macro_rules! assert_layout_item_eq {
 }
 
 #[test]
-fn test_storage_layout() -> Result<()> {
-    let unit = fixtures::StorageLayout::build_compilation_unit()?;
+fn test_storage_layout() {
+    let unit = fixtures::StorageLayout::build_compilation_unit();
 
     let counter = unit
         .find_contract_by_name("C")
@@ -100,13 +97,11 @@ fn test_storage_layout() -> Result<()> {
 
     let transient_layout = counter_abi.transient_storage_layout();
     assert!(transient_layout.is_empty());
-
-    Ok(())
 }
 
 #[test]
-fn test_transient_and_custom_storage_layout() -> Result<()> {
-    let unit = fixtures::StorageLayout::build_compilation_unit()?;
+fn test_transient_and_custom_storage_layout() {
+    let unit = fixtures::StorageLayout::build_compilation_unit();
 
     let d_contract = unit
         .find_contract_by_name("D")
@@ -136,13 +131,11 @@ fn test_transient_and_custom_storage_layout() -> Result<()> {
     assert_eq!(e_transient_layout.len(), 2);
     assert_layout_item_eq!(e_transient_layout[0], "qt", 0, 0, "int8");
     assert_layout_item_eq!(e_transient_layout[1], "rt", 0, 1, "bytes5");
-
-    Ok(())
 }
 
 #[test]
-fn test_function_selector() -> Result<()> {
-    let unit = fixtures::Counter::build_compilation_unit()?;
+fn test_function_selector() {
+    let unit = fixtures::Counter::build_compilation_unit();
 
     let counter = unit
         .find_contract_by_name("Counter")
@@ -166,13 +159,11 @@ fn test_function_selector() -> Result<()> {
     assert_eq!(state_variables[1].compute_selector(), None); // _state
     assert_eq!(state_variables[2].compute_selector(), Some(0x0666_1abd_u32)); // count()
     assert_eq!(state_variables[3].compute_selector(), None); // _clickers
-
-    Ok(())
 }
 
 #[test]
-fn test_full_abi_with_events_and_errors() -> Result<()> {
-    let unit = fixtures::FullAbi::build_compilation_unit()?;
+fn test_full_abi_with_events_and_errors() {
+    let unit = fixtures::FullAbi::build_compilation_unit();
 
     let contracts_abi = unit.compute_contracts_abi();
     assert_eq!(contracts_abi.len(), 1);
@@ -190,13 +181,11 @@ fn test_full_abi_with_events_and_errors() -> Result<()> {
     assert!(matches!(&entries[6], AbiEntry::Function(f) if f.name() == "b"));
     assert!(matches!(&entries[7], AbiEntry::Function(f) if f.name() == "foo"));
     assert!(matches!(entries[8], AbiEntry::Receive(_)));
-
-    Ok(())
 }
 
 #[test]
-fn test_abi_entries_with_tuples() -> Result<()> {
-    let unit = fixtures::AbiWithTuples::build_compilation_unit()?;
+fn test_abi_entries_with_tuples() {
+    let unit = fixtures::AbiWithTuples::build_compilation_unit();
 
     let contracts_abi = unit.compute_contracts_abi();
     assert_eq!(contracts_abi.len(), 1);
@@ -269,13 +258,11 @@ fn test_abi_entries_with_tuples() -> Result<()> {
     assert!(outputs[2].name().is_none());
     assert_eq!(outputs[2].type_name(), "uint256");
     assert!(outputs[2].components().is_empty());
-
-    Ok(())
 }
 
 #[test]
-fn test_selectors_for_functions_with_tuple_parameters() -> Result<()> {
-    let unit = fixtures::AbiWithTuples::build_compilation_unit()?;
+fn test_selectors_for_functions_with_tuple_parameters() {
+    let unit = fixtures::AbiWithTuples::build_compilation_unit();
 
     let test = unit
         .find_contract_by_name("Test")
@@ -286,6 +273,4 @@ fn test_selectors_for_functions_with_tuple_parameters() -> Result<()> {
     assert_eq!(functions[0].compute_selector(), Some(0x6f2b_e728_u32));
     // g()
     assert_eq!(functions[1].compute_selector(), Some(0xe217_9b8e_u32));
-
-    Ok(())
 }

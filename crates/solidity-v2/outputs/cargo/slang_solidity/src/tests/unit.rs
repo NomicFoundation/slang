@@ -1,11 +1,10 @@
-use anyhow::Result;
 use slang_solidity_v2_ast::ast::Definition;
 
 use super::fixtures;
 
 #[test]
-fn test_get_file_ast_root() -> Result<()> {
-    let unit = fixtures::Counter::build_compilation_unit()?;
+fn test_get_file_ast_root() {
+    let unit = fixtures::Counter::build_compilation_unit();
 
     assert_eq!(unit.files().len(), 3);
 
@@ -54,23 +53,19 @@ fn test_get_file_ast_root() -> Result<()> {
         panic!("Counter base is a contract");
     };
     assert_eq!(activatable_contract.name().name(), "Activatable");
-
-    Ok(())
 }
 
 #[test]
-fn test_get_all_definitions() -> Result<()> {
-    let unit = fixtures::Counter::build_compilation_unit()?;
+fn test_get_all_definitions() {
+    let unit = fixtures::Counter::build_compilation_unit();
 
     let count = unit.all_definitions().count();
     assert_eq!(count, 22);
-
-    Ok(())
 }
 
 #[test]
-fn test_find_contract_by_name() -> Result<()> {
-    let unit = fixtures::Counter::build_compilation_unit()?;
+fn test_find_contract_by_name() {
+    let unit = fixtures::Counter::build_compilation_unit();
 
     let counter = unit
         .find_contract_by_name("Counter")
@@ -87,6 +82,4 @@ fn test_find_contract_by_name() -> Result<()> {
     assert!(ownable.abstract_keyword());
     assert_eq!(activatable.name().name(), "Activatable");
     assert!(activatable.abstract_keyword());
-
-    Ok(())
 }

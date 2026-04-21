@@ -4,6 +4,7 @@ use slang_solidity_v2_ir::ir::{self, NodeId};
 use slang_solidity_v2_semantic::context::SemanticFile;
 
 pub struct File {
+    // TODO(v2): abstract this into a `FileId` type
     id: String,
     ir_root: ir::SourceUnit,
     resolved_imports: HashMap<NodeId, String>,
