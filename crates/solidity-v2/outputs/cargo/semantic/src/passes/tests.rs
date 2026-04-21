@@ -33,10 +33,13 @@ impl SemanticFile for TestFile {
 fn build_file(name: &str, contents: &str) -> TestFile {
     let ParseOutput {
         source_unit,
-        errors,
-    } = Parser::parse(contents, LanguageVersion::V0_8_30);
+        diagnostics,
+    } = Parser::parse(name, contents, LanguageVersion::V0_8_30);
 
-    assert!(errors.is_empty(), "Parser errors: {errors:?}");
+    assert!(
+        diagnostics.is_empty(),
+        "Parser diagnostics: {diagnostics:?}"
+    );
 
     let ir_root = ir::build(&source_unit, &contents);
     TestFile {

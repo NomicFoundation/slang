@@ -78,10 +78,13 @@ contract Counter is Ownable {
 
     let ParseOutput {
         source_unit,
-        errors,
-    } = Parser::parse(CONTENTS, LanguageVersion::V0_8_30);
+        diagnostics,
+    } = Parser::parse("test.sol", CONTENTS, LanguageVersion::V0_8_30);
 
-    assert!(errors.is_empty(), "Parser errors: {errors:?}");
+    assert!(
+        diagnostics.is_empty(),
+        "Parser diagnostics: {diagnostics:?}"
+    );
 
     let source_unit = ir::build(&source_unit, &CONTENTS);
 

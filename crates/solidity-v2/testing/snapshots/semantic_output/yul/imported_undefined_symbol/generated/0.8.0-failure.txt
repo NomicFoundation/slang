@@ -1,5 +1,10 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+Parse errors:
+Error: Missing file: file not found: slots.sol
+   ─[slots.sol:0:0]
+------------------------------------------------------------------------
+
 Definitions (6):
 - Def: #1 ["slot" @ input.sol:1:10] (imported symbol)
 - Def: #2 ["Foo" @ input.sol:3:10] (contract)

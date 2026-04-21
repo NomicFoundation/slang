@@ -22,10 +22,13 @@ contract MyContract {
 
     let ParseOutput {
         source_unit,
-        errors,
-    } = Parser::parse(CONTENTS, LanguageVersion::V0_8_30);
+        diagnostics,
+    } = Parser::parse("test.sol", CONTENTS, LanguageVersion::V0_8_30);
 
-    assert!(errors.is_empty(), "Parser errors: {errors:?}");
+    assert!(
+        diagnostics.is_empty(),
+        "Parser diagnostics: {diagnostics:?}"
+    );
 
     let source_unit = ir::build(&source_unit, &CONTENTS);
     assert_eq!(2, source_unit.members.len());
@@ -86,10 +89,13 @@ contract Test is Base layout at 0 {}
 
     let ParseOutput {
         source_unit,
-        errors,
-    } = Parser::parse(CONTENTS, LanguageVersion::V0_8_30);
+        diagnostics,
+    } = Parser::parse("test.sol", CONTENTS, LanguageVersion::V0_8_30);
 
-    assert!(errors.is_empty(), "Parser errors: {errors:?}");
+    assert!(
+        diagnostics.is_empty(),
+        "Parser diagnostics: {diagnostics:?}"
+    );
 
     let source_unit = ir::build(&source_unit, &CONTENTS);
     assert_eq!(2, source_unit.members.len());

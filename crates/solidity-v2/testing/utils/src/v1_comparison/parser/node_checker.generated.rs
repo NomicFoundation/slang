@@ -7,10 +7,11 @@ use std::ops::Range;
 use slang_solidity::cst::{
     Edge, EdgeLabel, Node, NodeKind, NonterminalKind, TextIndex, TextRange as V1TextRange,
 };
+use slang_solidity_v2_common::diagnostics::DiagnosticSeverity;
 #[allow(clippy::wildcard_imports)]
 use slang_solidity_v2_cst::structured_cst::nodes::*;
 
-use crate::reporting::diagnostic::{Diagnostic, Severity};
+use crate::reporting::diagnostic::RenderDiagnostic;
 
 /// An error found when checking a node
 #[derive(Clone, Debug)]
@@ -19,13 +20,13 @@ pub struct NodeCheckerError {
     pub text_range: Range<usize>,
 }
 
-impl Diagnostic for NodeCheckerError {
+impl RenderDiagnostic for NodeCheckerError {
     fn text_range(&self) -> Range<usize> {
         self.text_range.clone()
     }
 
-    fn severity(&self) -> Severity {
-        Severity::Error
+    fn severity(&self) -> DiagnosticSeverity {
+        DiagnosticSeverity::Error
     }
 
     fn message(&self) -> String {

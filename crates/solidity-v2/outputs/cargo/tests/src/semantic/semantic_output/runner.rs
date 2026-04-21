@@ -1,15 +1,11 @@
-use std::collections::HashMap;
-use std::convert::Infallible;
+use std::collections::BTreeMap;
 
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
-use slang_solidity_v2::compilation::builder::{
-    CompilationBuilder, CompilationBuilderConfig, CompilationBuilderError,
-};
+use slang_solidity_v2::compilation::builder::{CompilationBuilder, CompilationBuilderConfig};
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_parser::ParserError;
 use solidity_v2_language::SolidityDefinition;
 
 use super::report::binder_report;
@@ -18,22 +14,24 @@ use crate::utils::multi_part_file::split_multi_file;
 use crate::utils::path_resolver;
 
 struct TestConfig {
-    files: HashMap<String, String>,
+    files: BTreeMap<String, String>,
 }
 
 impl CompilationBuilderConfig for TestConfig {
-    type Error = Infallible;
-
-    fn read_file(&mut self, file_id: &str) -> Result<Option<String>, Self::Error> {
-        Ok(self.files.get(file_id).cloned())
+    fn read_file(&mut self, file_id: &str) -> Result<String, String> {
+        self.files
+            .get(file_id)
+            .cloned()
+            .ok_or_else(|| format!("file not found: {file_id}"))
     }
 
     fn resolve_import(
         &mut self,
         source_file_id: &str,
         import_path: &str,
-    ) -> Result<Option<String>, Self::Error> {
-        Ok(path_resolver::resolve_import(source_file_id, import_path))
+    ) -> Result<String, String> {
+        path_resolver::resolve_import(source_file_id, import_path)
+            .ok_or_else(|| format!("unresolved import: {import_path} (from {source_file_id})"))
     }
 }
 
@@ -49,7 +47,8 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
 
     let multi_part = split_multi_file(&contents);
 
-    let files: HashMap<String, String> = multi_part
+    // Use a sorted map so file iteration order is deterministic across runs.
+    let files: BTreeMap<String, String> = multi_part
         .parts
         .iter()
         .map(|part| (part.name.to_string(), part.contents.to_string()))
@@ -69,25 +68,16 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         };
         let mut builder = CompilationBuilder::create(version, config);
 
-        let mut parse_errors: Vec<(String, ParserError)> = Vec::new();
         // While `builder.add_file()` recursively adds dependencies, so adding
         // the root file would be enough, we don't want to depend on the
         // ordering of the parts in `input.sol`. Calling `add_file()` on files
         // already added is idempotent, so to be sure we add all parts.
         for file in files.keys() {
-            match builder.add_file(file) {
-                Ok(()) => {}
-                Err(CompilationBuilderError::ParserError(errors)) => {
-                    for error in errors {
-                        parse_errors.push((file.clone(), error));
-                    }
-                }
-                Err(CompilationBuilderError::UserError(infallible)) => match infallible {},
-            }
+            builder.add_file(file.clone());
         }
 
         let compilation = builder.build();
-        let report_data = ReportData::prepare(&compilation, &files, parse_errors);
+        let report_data = ReportData::prepare(&compilation, &files);
 
         let status = if report_data.all_resolved() {
             "success"
