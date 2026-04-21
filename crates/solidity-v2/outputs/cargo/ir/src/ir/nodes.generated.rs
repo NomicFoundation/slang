@@ -6,15 +6,7 @@ use std::ops::Range;
 use std::rc::Rc;
 use std::vec::Vec;
 
-#[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
-#[repr(transparent)]
-pub struct NodeId(usize);
-
-impl From<usize> for NodeId {
-    fn from(value: usize) -> Self {
-        Self(value)
-    }
-}
+pub use slang_solidity_v2_common::nodes::NodeId;
 
 //
 // Sequences
