@@ -19,7 +19,6 @@ use std::cmp::max;
 use std::fmt::Write;
 use std::ops::Range;
 
-use slang_solidity_v2_cst::structured_cst::validation::SyntaxVersionError;
 use slang_solidity_v2_parser::ParseOutput;
 
 use crate::reporting::diagnostic;
@@ -46,40 +45,24 @@ pub(crate) fn format_label_kind(label: &str, kind: &str) -> String {
 ///
 /// Returns a tuple of (`is_success`, `rendered_output`), where `is_success` is true if
 /// `result` had no errors.
-pub fn render(
-    source: &str,
-    source_id: &str,
-    result: &(ParseOutput, Vec<SyntaxVersionError>),
-) -> (bool, String) {
+pub fn render(source: &str, source_id: &str, result: &ParseOutput) -> (bool, String) {
     let mut w = String::new();
 
     // Write the source code
     write_source(&mut w, source);
     writeln!(&mut w).unwrap();
 
-    // Write the errors
-    let (
-        ParseOutput {
-            source_unit,
-            errors,
-        },
-        validation_errors,
-    ) = result;
+    let ParseOutput {
+        source_unit,
+        errors,
+    } = result;
 
-    // TODO(v2): this will move to the `Diagnostic` reporter API:
-    let mut all_errors = Vec::new();
-    all_errors.extend(
-        errors
-            .iter()
-            .map(|e| diagnostic::render(e, source_id, source, false)),
-    );
-    all_errors.extend(
-        validation_errors
-            .iter()
-            .map(|e| diagnostic::render(e, source_id, source, false)),
-    );
+    let errors: Vec<String> = errors
+        .iter()
+        .map(|e| diagnostic::render(e, source_id, source, false))
+        .collect();
 
-    let is_success = !write_errors(&mut w, &all_errors).unwrap();
+    let is_success = !write_errors(&mut w, &errors).unwrap();
 
     // Write the Tree
     writeln!(&mut w, "Tree:").unwrap();

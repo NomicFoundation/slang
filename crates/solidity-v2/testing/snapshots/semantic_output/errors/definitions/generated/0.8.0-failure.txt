@@ -1,0 +1,59 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: This syntax was introduced in version '0.8.4'.
+   ╭─[input.sol:1:1]
+   │
+ 1 │ error TopLevelError(int x, int y);
+   │ ─────────────────┬────────────────  
+   │                  ╰────────────────── Error occurred here.
+───╯Error: This syntax was introduced in version '0.8.4'.
+   ╭─[input.sol:4:5]
+   │
+ 4 │     error ContractError(int x, int y);
+   │     ─────────────────┬────────────────  
+   │                      ╰────────────────── Error occurred here.
+───╯
+------------------------------------------------------------------------
+
+Definitions (7):
+- Def: #1 ["TopLevelError" @ input.sol:1:7] (error)
+- Def: #2 ["x" @ input.sol:1:25] (parameter, type: int256)
+- Def: #3 ["y" @ input.sol:1:32] (parameter, type: int256)
+- Def: #4 ["Test" @ input.sol:3:10] (contract)
+- Def: #5 ["ContractError" @ input.sol:4:11] (error)
+- Def: #6 ["x" @ input.sol:4:29] (parameter, type: int256)
+- Def: #7 ["y" @ input.sol:4:36] (parameter, type: int256)
+
+------------------------------------------------------------------------
+
+References (0):
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ error TopLevelError(int x, int y);
+   │       ──────┬──────     ┬      ┬  
+   │             ╰───────────────────── name: 1
+   │                         │      │  
+   │                         ╰───────── name: 2
+   │                                │  
+   │                                ╰── name: 3
+   │ 
+ 3 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 4
+ 4 │     error ContractError(int x, int y);
+   │           ──────┬──────     ┬      ┬  
+   │                 ╰───────────────────── name: 5
+   │                             │      │  
+   │                             ╰───────── name: 6
+   │                                    │  
+   │                                    ╰── name: 7
+───╯

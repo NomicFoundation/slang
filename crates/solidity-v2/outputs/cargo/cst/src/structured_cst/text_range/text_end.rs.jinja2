@@ -2,43 +2,45 @@
 
 #![allow(clippy::wildcard_imports)]
 
+use std::rc::Rc;
+
 use crate::structured_cst::nodes::*;
 
 /// A trait for CST nodes that can report the end offset of their text range.
 pub(super) trait TextEnd {
     /// Returns the end offset of this node's text, or `None` if the node is empty.
-    fn text_end(&self) -> Option<usize>;
+    fn calculate_text_end(&self) -> Option<usize>;
 }
 
 impl<T: TextEnd> TextEnd for Option<T> {
-    fn text_end(&self) -> Option<usize> {
-        self.as_ref().and_then(TextEnd::text_end)
+    fn calculate_text_end(&self) -> Option<usize> {
+        self.as_ref().and_then(TextEnd::calculate_text_end)
+    }
+}
+
+impl<T: TextEnd> TextEnd for Rc<T> {
+    fn calculate_text_end(&self) -> Option<usize> {
+        (**self).calculate_text_end()
     }
 }
 
 {% for parent_type, sequence in target.sequences %}
     impl TextEnd for {{ parent_type }}Struct {
-        fn text_end(&self) -> Option<usize> {
+        fn calculate_text_end(&self) -> Option<usize> {
             None
             {%- for field in sequence.fields | reverse %}
-                .or_else(|| self.{{ field.label | snake_case }}.text_end())
+                .or_else(|| self.{{ field.label | snake_case }}.calculate_text_end())
             {%- endfor %}
-        }
-    }
-
-    impl TextEnd for {{ parent_type }} {
-        fn text_end(&self) -> Option<usize> {
-            self.as_ref().text_end()
         }
     }
 {% endfor %}
 
 {% for parent_type, choice in target.choices %}
     impl TextEnd for {{ parent_type }} {
-        fn text_end(&self) -> Option<usize> {
+        fn calculate_text_end(&self) -> Option<usize> {
             match self {
                 {%- for variant in choice.variants %}
-                    {{ parent_type }}::{{ variant.variant_type.name }}(child) => child.text_end(),
+                    {{ parent_type }}::{{ variant.variant_type.name }}(child) => child.calculate_text_end(),
                 {%- endfor %}
             }
         }
@@ -47,15 +49,15 @@ impl<T: TextEnd> TextEnd for Option<T> {
 
 {% for parent_type, collection in target.collections %}
     impl TextEnd for {{ parent_type }} {
-        fn text_end(&self) -> Option<usize> {
-            self.elements.iter().rev().find_map(TextEnd::text_end)
+        fn calculate_text_end(&self) -> Option<usize> {
+            self.elements.iter().rev().find_map(TextEnd::calculate_text_end)
         }
     }
 {% endfor %}
 
 {% for parent_type in target.terminals %}
     impl TextEnd for {{ parent_type }} {
-        fn text_end(&self) -> Option<usize> {
+        fn calculate_text_end(&self) -> Option<usize> {
             Some(self.range.end)
         }
     }
