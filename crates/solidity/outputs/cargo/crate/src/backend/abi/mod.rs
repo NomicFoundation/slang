@@ -395,17 +395,20 @@ impl FunctionDefinitionStruct {
         }
     }
 
+    pub fn compute_canonical_signature(&self) -> Option<String> {
+        let name = self.ir_node.name.as_ref()?.unparse();
+        let parameters = self.parameters().compute_canonical_signature()?;
+        Some(format!("{name}({parameters})"))
+    }
+
     pub fn compute_selector(&self) -> Option<u32> {
         if !self.is_externally_visible() {
             return None;
         }
-        let name = self.ir_node.name.as_ref()?.unparse();
-        let signature = format!(
-            "{name}({parameters})",
-            parameters = self.parameters().compute_canonical_signature()?,
-        );
-
-        Some(selector_from_signature(&signature))
+        // TODO: derive the selector from a dedicated external-signature variant
+        // instead of the generic canonical signature.
+        self.compute_canonical_signature()
+            .map(|sig| selector_from_signature(&sig))
     }
 }
 
@@ -474,23 +477,27 @@ impl StateVariableDefinitionStruct {
         })
     }
 
+    pub fn compute_canonical_signature(&self) -> Option<String> {
+        let (inputs, _) = self.extract_getter_type_parameters_abi()?;
+        let parameters = inputs
+            .into_iter()
+            .map(|parameter| parameter.r#type)
+            .collect::<Vec<_>>()
+            .join(",");
+        Some(format!(
+            "{name}({parameters})",
+            name = self.ir_node.name.unparse(),
+        ))
+    }
+
     pub fn compute_selector(&self) -> Option<u32> {
         if !self.is_externally_visible() {
             return None;
         }
-        let (inputs, _) = self.extract_getter_type_parameters_abi()?;
-
-        let signature = format!(
-            "{name}({parameters})",
-            name = self.ir_node.name.unparse(),
-            parameters = inputs
-                .into_iter()
-                .map(|parameter| parameter.r#type)
-                .collect::<Vec<_>>()
-                .join(","),
-        );
-
-        Some(selector_from_signature(&signature))
+        // TODO: derive the selector from a dedicated external-signature variant
+        // instead of the generic canonical signature.
+        self.compute_canonical_signature()
+            .map(|sig| selector_from_signature(&sig))
     }
 }
 
@@ -566,6 +573,12 @@ fn selector_from_signature(signature: &str) -> u32 {
 }
 
 impl ErrorDefinitionStruct {
+    pub fn compute_canonical_signature(&self) -> Option<String> {
+        let name = self.ir_node.name.unparse();
+        let parameters = self.parameters().compute_canonical_signature()?;
+        Some(format!("{name}({parameters})"))
+    }
+
     pub fn compute_abi_entry(&self) -> Option<AbiEntry> {
         let inputs = self.parameters().compute_abi_parameters()?;
 
@@ -578,6 +591,12 @@ impl ErrorDefinitionStruct {
 }
 
 impl EventDefinitionStruct {
+    pub fn compute_canonical_signature(&self) -> Option<String> {
+        let name = self.ir_node.name.unparse();
+        let parameters = self.parameters().compute_canonical_signature()?;
+        Some(format!("{name}({parameters})"))
+    }
+
     pub fn compute_abi_entry(&self) -> Option<AbiEntry> {
         let inputs = self.parameters().compute_abi_parameters()?;
 
