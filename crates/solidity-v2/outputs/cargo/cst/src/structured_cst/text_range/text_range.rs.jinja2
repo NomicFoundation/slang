@@ -3,6 +3,7 @@
 #![allow(clippy::wildcard_imports)]
 
 use std::ops::Range;
+use std::rc::Rc;
 
 use crate::structured_cst::nodes::*;
 
@@ -10,53 +11,51 @@ use super::text_end::TextEnd;
 use super::text_start::TextStart;
 
 /// A trait for CST nodes that can report their text range in the source.
-/// Note: this value is calculated lazily, and not stored on the node itself.
 pub trait TextRange {
     /// Returns the text range of this node, or `None` if the node is empty.
-    /// Note: this value is calculated lazily, and not stored on the node itself.
-    fn text_range(&self) -> Option<Range<usize>>;
+    fn calculate_text_range(&self) -> Option<Range<usize>>;
 }
 
 impl<T: TextRange> TextRange for Option<T> {
-    fn text_range(&self) -> Option<Range<usize>> {
-        self.as_ref().and_then(TextRange::text_range)
+    fn calculate_text_range(&self) -> Option<Range<usize>> {
+        self.as_ref().and_then(TextRange::calculate_text_range)
+    }
+}
+
+impl<T: TextRange> TextRange for Rc<T> {
+    fn calculate_text_range(&self) -> Option<Range<usize>> {
+        (**self).calculate_text_range()
     }
 }
 
 {% for parent_type, sequence in target.sequences %}
     impl TextRange for {{ parent_type }}Struct {
-        fn text_range(&self) -> Option<Range<usize>> {
-            Some(self.text_start()?..self.text_end()?)
-        }
-    }
-
-    impl TextRange for {{ parent_type }} {
-        fn text_range(&self) -> Option<Range<usize>> {
-            self.as_ref().text_range()
+        fn calculate_text_range(&self) -> Option<Range<usize>> {
+            Some(self.calculate_text_start()?..self.calculate_text_end()?)
         }
     }
 {% endfor %}
 
 {% for parent_type, choice in target.choices %}
     impl TextRange for {{ parent_type }} {
-        fn text_range(&self) -> Option<Range<usize>> {
-            Some(self.text_start()?..self.text_end()?)
+        fn calculate_text_range(&self) -> Option<Range<usize>> {
+            Some(self.calculate_text_start()?..self.calculate_text_end()?)
         }
     }
 {% endfor %}
 
 {% for parent_type, collection in target.collections %}
     impl TextRange for {{ parent_type }} {
-        fn text_range(&self) -> Option<Range<usize>> {
-            Some(self.text_start()?..self.text_end()?)
+        fn calculate_text_range(&self) -> Option<Range<usize>> {
+            Some(self.calculate_text_start()?..self.calculate_text_end()?)
         }
     }
 {% endfor %}
 
 {% for parent_type in target.terminals %}
     impl TextRange for {{ parent_type }} {
-        fn text_range(&self) -> Option<Range<usize>> {
-            Some(self.text_start()?..self.text_end()?)
+        fn calculate_text_range(&self) -> Option<Range<usize>> {
+            Some(self.calculate_text_start()?..self.calculate_text_end()?)
         }
     }
 {% endfor %}

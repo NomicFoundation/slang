@@ -1,6 +1,7 @@
 use std::collections::BTreeSet;
 use std::ops::Range;
 
+use slang_solidity_v2_common::versions::LanguageVersionSpecifier;
 use slang_solidity_v2_cst::terminals::TerminalKind;
 
 use crate::lexer::LexemeKind;
@@ -19,6 +20,10 @@ pub enum ParserError {
     ExtraTerminal {
         range: Range<usize>,
         found: TerminalKind,
+    },
+    SyntaxVersion {
+        range: Range<usize>,
+        enabled: LanguageVersionSpecifier,
     },
 }
 

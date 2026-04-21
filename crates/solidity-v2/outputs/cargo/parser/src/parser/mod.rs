@@ -6,8 +6,10 @@ use slang_solidity_v2_cst::structured_cst::nodes::{
 
 use crate::lexer::{LexemeKind, Lexer};
 use crate::parser::parser_error::ParserError;
+use crate::parser::validation::validate_syntax_version;
 
 mod parser_helpers;
+mod validation;
 
 lalrpop_mod!(
     // Since this is generated code that we don't track, we rather not check for formatting
@@ -46,10 +48,13 @@ impl Parser {
         let lexer = Lexer::new(input, version);
         let parser = grammar::SourceUnitParser::new();
         match parser.parse(input, lexer) {
-            Ok(source_unit) => ParseOutput {
-                source_unit,
-                errors: vec![],
-            },
+            Ok(source_unit) => {
+                let errors = validate_syntax_version(&source_unit, version);
+                ParseOutput {
+                    source_unit,
+                    errors,
+                }
+            }
             Err(e) => ParseOutput {
                 source_unit: new_source_unit(new_source_unit_members(vec![])),
                 errors: vec![e.into()],
