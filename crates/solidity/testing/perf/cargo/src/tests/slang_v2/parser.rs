@@ -15,9 +15,9 @@ pub fn run(project: &SolidityProject) -> Vec<(String, SourceUnit)> {
     for (key, source) in &project.sources {
         let ParseOutput {
             source_unit,
-            errors,
-        } = Parser::parse(source, lang_version);
-        assert!(errors.is_empty());
+            diagnostics,
+        } = Parser::parse(key, source, lang_version);
+        assert!(diagnostics.is_empty());
 
         source_units.push((key.clone(), source_unit));
     }

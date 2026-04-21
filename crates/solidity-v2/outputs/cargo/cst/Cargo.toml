@@ -19,8 +19,5 @@ keywords = ["CST"]
 categories = ["compilers", "CST"]
 
 
-[dependencies]
-strum = { workspace = true }
-
 [lints]
 workspace = true

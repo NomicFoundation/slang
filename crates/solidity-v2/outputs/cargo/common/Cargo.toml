@@ -19,7 +19,9 @@ keywords = ["utilities"]
 categories = ["compilers", "utilities"]
 
 [dependencies]
+itertools = { workspace = true }
 semver = { workspace = true }
+strum = { workspace = true }
 thiserror = { workspace = true }
 
 [lints]

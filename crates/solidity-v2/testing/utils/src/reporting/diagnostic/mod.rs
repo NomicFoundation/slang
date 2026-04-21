@@ -2,41 +2,33 @@
 
 use std::ops::Range;
 
-pub mod implementations;
+use slang_solidity_v2_common::diagnostics::DiagnosticSeverity;
 
-/// The severity of a diagnostic.
-///
-/// Explicitly compatible with the [LSP protocol](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#diagnosticSeverity).
-#[allow(dead_code)]
-#[repr(u8)]
-pub enum Severity {
-    Error = 1,
-    Warning = 2,
-    Information = 3,
-    Hint = 4,
-}
+mod implementations;
 
 /// A compiler diagnostic that can be rendered to a user.
 ///
-/// TODO(v2): Replace `trait Diagnostic` with a compilation-level parent enum for all errors
-/// exposed in the public API, when `CompilationUnit` is introduced.
-pub trait Diagnostic {
+/// TODO(v2): remove [`RenderDiagnostic`] once `NodeChecker` is deprecated. We should be using
+/// the `Diagnostic` public API directly and its provided extensions.
+pub trait RenderDiagnostic {
     /// The character range of the source that this diagnostic applies to.
     fn text_range(&self) -> Range<usize>;
     /// The severity of this diagnostic.
-    fn severity(&self) -> Severity;
+    fn severity(&self) -> DiagnosticSeverity;
     /// The primary message associated with this diagnostic.
     fn message(&self) -> String;
 }
 
-pub fn render<D: Diagnostic>(error: &D, source_id: &str, source: &str, with_color: bool) -> String {
+pub fn render<D: RenderDiagnostic>(
+    error: &D,
+    source_id: &str,
+    source: &str,
+    with_color: bool,
+) -> String {
     use ariadne::{Color, Config, Label, Report, ReportKind, Source};
 
     let (kind, color) = match error.severity() {
-        Severity::Error => (ReportKind::Error, Color::Red),
-        Severity::Warning => (ReportKind::Warning, Color::Yellow),
-        Severity::Information => (ReportKind::Advice, Color::Blue),
-        Severity::Hint => (ReportKind::Advice, Color::Blue),
+        DiagnosticSeverity::Error => (ReportKind::Error, Color::Red),
     };
 
     let message = error.message();
