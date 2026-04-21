@@ -98,6 +98,25 @@
       "description": "strum: used in CST hot path via derive macros; flag for perf review",
       "matchPackageNames": ["strum"],
       "labels": ["ci:perf"]
+    },
+    {
+      "description": "bencher_cli: handled by customManagers entry below that tracks release tags — disable built-in cargo digest updates so the two don't fight.",
+      "matchPackageNames": ["bencher_cli"],
+      "matchManagers": ["cargo"],
+      "enabled": false
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Track bencher_cli by release tag, not default-branch HEAD. Regex pairs with the two marker lines in Cargo.toml — if you reformat those, update this pattern too.",
+      "managerFilePatterns": ["/^Cargo\\.toml$/"],
+      "matchStrings": [
+        "# __SLANG_BENCHER_CLI_RELEASE__ \\(keep in sync\\) https://github\\.com/bencherdev/bencher/releases/tag/(?<currentValue>v[^\\s]+)\\s*\\nbencher_cli = \\{ git = \"https://github\\.com/bencherdev/bencher\", rev = \"(?<currentDigest>[a-f0-9]+)\"\\s*\\}\\s*#\\s*__SLANG_BENCHER_CLI_RELEASE__"
+      ],
+      "depNameTemplate": "bencherdev/bencher",
+      "packageNameTemplate": "https://github.com/bencherdev/bencher",
+      "datasourceTemplate": "git-tags"
     }
   ],
   "labels": ["dependencies"],
