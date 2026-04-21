@@ -117,6 +117,13 @@ Whenever you see this annotation, it means all occurrences of that marker must b
 grep -r "__MARKER_NAME__" .
 ```
 
+## Renovate Config
+
+When editing `renovate.json` (or any `Cargo.toml` line paired with its custom regex manager via a [sync marker](#sync-markers)), validate locally before pushing:
+
+- **Schema check:** `npx --yes --package renovate -- renovate-config-validator renovate.json`
+- **Full extraction dry-run:** `LOG_LEVEL=debug npx --yes renovate --platform=local --dry-run=full` — confirms each dep shows the expected `skipReason` / `updates`. Catches gotchas like `matchPackageNames` failing to match git-source cargo deps (where `packageName` is the git URL, not the `Cargo.toml` key — use `matchDepNames` for those).
+
 ## Snapshot Tests
 
 For testing, we maintain snapshots checked into the repo:
