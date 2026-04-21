@@ -58,17 +58,20 @@ impl FunctionDefinitionStruct {
         }
     }
 
+    pub fn compute_canonical_signature(&self) -> Option<String> {
+        let name = self.ir_node.name.as_ref()?.unparse();
+        let parameters = self.parameters().compute_canonical_signature()?;
+        Some(format!("{name}({parameters})"))
+    }
+
     pub fn compute_selector(&self) -> Option<u32> {
         if !self.is_externally_visible() {
             return None;
         }
-        let name = self.ir_node.name.as_ref()?.unparse();
-        let signature = format!(
-            "{name}({parameters})",
-            parameters = self.parameters().compute_canonical_signature()?,
-        );
-
-        Some(selector_from_signature(&signature))
+        // TODO: derive the selector from a dedicated external-signature variant
+        // instead of the generic canonical signature.
+        self.compute_canonical_signature()
+            .map(|sig| selector_from_signature(&sig))
     }
 }
 
