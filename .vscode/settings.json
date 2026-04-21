@@ -15,7 +15,9 @@
     "**/generated/**": true,
     "**/*.generated.*": true
   },
-  "json.schemaDownload.trustedDomains": ["https://docs.renovatebot.com"],
+  "json.schemaDownload.trustedDomains": {
+    "https://docs.renovatebot.com/renovate-schema.json": true
+  },
   "rust-analyzer.check.allTargets": true,
   "rust-analyzer.check.command": "clippy",
   "rust-analyzer.check.features": "all",
