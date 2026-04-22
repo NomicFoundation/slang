@@ -199,6 +199,14 @@ mod tests {
     }
 
     #[test]
+    fn decode_multiple_ascii_escapes() {
+        assert_eq!(
+            decode_escape_sequences(r#"\t\n\r\'\"\\"#),
+            &[0x09, 0x0a, 0x0d, 0x27, 0x22, 0x5c]
+        );
+    }
+
+    #[test]
     fn decode_line_continuation_lf() {
         // Backslash followed by raw LF → empty.
         assert_eq!(decode_escape_sequences("a\\\nb"), b"ab");
@@ -235,6 +243,24 @@ mod tests {
         assert_eq!(decode_escape_sequences(r"\u00e9"), &[0xC3, 0xA9]);
         // U+2713 ✓ → 0xE2 0x9C 0x93.
         assert_eq!(decode_escape_sequences(r"\u2713"), &[0xE2, 0x9C, 0x93]);
+    }
+
+    #[test]
+    fn decode_unicode_escape_combined_multibyte() {
+        // Dollar sign
+        assert_eq!(decode_escape_sequences(r"aaa\u0024aaa"), b"aaa$aaa");
+        // Cent
+        assert_eq!(decode_escape_sequences(r"aaa\u00A2aaa"), b"aaa\xc2\xa2aaa");
+        // Euro
+        assert_eq!(
+            decode_escape_sequences(r"aaa\u20ACaaa"),
+            b"aaa\xe2\x82\xacaaa"
+        );
+        // All combined
+        assert_eq!(
+            decode_escape_sequences(r"\u0024\u00A2\u20AC"),
+            b"$\xc2\xa2\xe2\x82\xac"
+        );
     }
 
     #[test]
