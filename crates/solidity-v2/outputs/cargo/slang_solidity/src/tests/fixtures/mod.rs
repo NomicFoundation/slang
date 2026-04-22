@@ -1,12 +1,11 @@
 use std::rc::Rc;
 
 use anyhow::Result;
-use slang_solidity_v2_common::versions::LanguageVersion;
 
-use crate::compilation::builder::{
-    CompilationBuilder, CompilationBuilderConfig, CompilationBuilderError,
+use crate::compilation::{
+    CompilationBuilder, CompilationBuilderConfig, CompilationBuilderError, CompilationUnit,
 };
-use crate::compilation::unit::CompilationUnit;
+use crate::utils::LanguageVersion;
 
 mod abi_with_tuples;
 mod chained_imports;
@@ -44,7 +43,7 @@ macro_rules! define_fixture {
 
         impl $name {
             pub(crate) fn build_compilation_unit(
-            ) -> anyhow::Result<std::rc::Rc<$crate::compilation::unit::CompilationUnit>> {
+            ) -> anyhow::Result<std::rc::Rc<$crate::compilation::CompilationUnit>> {
                 $crate::tests::fixtures::build_compilation_unit_from_fixture(FILES)
             }
         }

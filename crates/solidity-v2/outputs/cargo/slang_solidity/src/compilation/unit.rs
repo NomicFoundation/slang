@@ -45,7 +45,8 @@ impl CompilationUnit {
         self.files.get(id).cloned()
     }
 
-    // TODO: this should be semi-public
+    #[cfg(feature = "__private_testing_utils")]
+    #[doc(hidden)]
     pub fn semantic(&self) -> &Rc<SemanticContext> {
         &self.semantic
     }
