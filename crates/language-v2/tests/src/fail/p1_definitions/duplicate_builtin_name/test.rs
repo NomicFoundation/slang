@@ -3,7 +3,7 @@
 language_v2_macros::compile!(Language(
     name = Foo,
     root_item = Bar,
-    versions = ["1.0.0", "1.0.0", "3.0.0"],
+    versions = ["1.0.0"],
     contexts = [LexicalContext(
         name = Foo,
         sections = [Section(
@@ -14,7 +14,19 @@ language_v2_macros::compile!(Language(
             )]
         )]
     )],
-    built_ins = []
+    built_ins = [BuiltInContext(
+        name = Foo,
+        scopes = [
+            BuiltInScope(
+                name = ScopeOne,
+                definitions = [BuiltInDefinition(name = Baz)]
+            ),
+            BuiltInScope(
+                name = ScopeTwo,
+                definitions = [BuiltInDefinition(name = Baz)]
+            )
+        ]
+    )]
 ));
 
 fn main() {}

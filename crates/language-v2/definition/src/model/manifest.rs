@@ -5,7 +5,7 @@ use language_v2_internal_macros::{derive_spanned_type, ParseInputTokens, WriteOu
 use semver::Version;
 use serde::{Deserialize, Serialize};
 
-use crate::model::{Field, Identifier, Item, VersionSpecifier};
+use crate::model::{BuiltInContext, Field, Identifier, Item, VersionSpecifier};
 
 /// A representation of a Language definition
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -20,8 +20,12 @@ pub struct Language {
     /// The supported versions of the language
     pub versions: IndexSet<Version>,
 
-    /// The lexical contexts of the language, splitting grammar elements based on which lexer can recognize their terminals.
+    /// The lexical contexts of the language, splitting grammar elements based
+    /// on which lexer can recognize their terminals.
     pub contexts: Vec<LexicalContext>,
+
+    /// Built-in definitions for the language, organized by context and scope.
+    pub built_ins: Vec<BuiltInContext>,
 }
 
 impl Language {
@@ -30,10 +34,11 @@ impl Language {
         self.contexts.iter().flat_map(|context| context.items())
     }
 
-    /// Collects all versions that change the language in a breaking way.
+    /// Collects all versions that change the language syntax in a breaking way.
     ///
-    /// Includes the first supported version.
-    pub fn collect_breaking_versions(&self) -> BTreeSet<Version> {
+    /// Includes the first supported version. Only considers grammar items
+    /// (structs, enums, tokens, etc.), not built-in definitions.
+    pub fn collect_syntax_breaking_versions(&self) -> BTreeSet<Version> {
         let first = self.versions.first().unwrap().clone();
         let mut res = BTreeSet::from_iter([first]);
 
@@ -93,9 +98,30 @@ impl Language {
 
         res
     }
+
+    /// Collects all versions that change the language semantics in a breaking way.
+    ///
+    /// Includes the first supported version. Considers both grammar items and
+    /// built-in definitions.
+    pub fn collect_semantic_breaking_versions(&self) -> BTreeSet<Version> {
+        let mut res = self.collect_syntax_breaking_versions();
+
+        for context in &self.built_ins {
+            for scope in &context.scopes {
+                for definition in &scope.definitions {
+                    if let Some(spec) = &definition.enabled {
+                        res.extend(spec.breaking_versions().cloned());
+                    }
+                }
+            }
+        }
+
+        res
+    }
 }
 
-/// A section is a named container for topics, used for organizing the large grammar definition in user documentation.  
+/// A section is a named container for topics, used for organizing the large
+/// grammar definition in user documentation.
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 pub struct LexicalContext {

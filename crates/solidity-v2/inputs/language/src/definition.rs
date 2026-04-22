@@ -4428,5 +4428,239 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                 ]
             )]
         )
+    ],
+    built_ins = [
+        BuiltInContext(
+            name = Solidity,
+            scopes = [
+                BuiltInScope(
+                    name = Global,
+                    definitions = [
+                        BuiltInDefinition(name = Abi),
+                        BuiltInDefinition(name = Addmod),
+                        BuiltInDefinition(name = Assert),
+                        BuiltInDefinition(name = Blobhash, enabled = From("0.8.24")),
+                        BuiltInDefinition(name = Block),
+                        BuiltInDefinition(name = Blockhash),
+                        BuiltInDefinition(name = Ecrecover),
+                        BuiltInDefinition(name = Gasleft),
+                        BuiltInDefinition(name = Keccak256),
+                        BuiltInDefinition(name = Msg),
+                        BuiltInDefinition(name = Mulmod),
+                        BuiltInDefinition(name = Require),
+                        BuiltInDefinition(name = Revert),
+                        BuiltInDefinition(name = Ripemd160),
+                        BuiltInDefinition(name = Selfdestruct),
+                        BuiltInDefinition(name = Sha256),
+                        BuiltInDefinition(name = Tx)
+                    ]
+                ),
+                BuiltInScope(
+                    name = Abi,
+                    definitions = [
+                        BuiltInDefinition(name = AbiDecode),
+                        BuiltInDefinition(name = AbiEncode),
+                        BuiltInDefinition(name = AbiEncodeCall, enabled = From("0.8.11")),
+                        BuiltInDefinition(name = AbiEncodePacked),
+                        BuiltInDefinition(name = AbiEncodeWithSelector),
+                        BuiltInDefinition(name = AbiEncodeWithSignature)
+                    ]
+                ),
+                BuiltInScope(
+                    name = Block,
+                    definitions = [
+                        BuiltInDefinition(name = BlockBasefee, enabled = From("0.8.7")),
+                        BuiltInDefinition(name = BlockBlobbasefee, enabled = From("0.8.24")),
+                        BuiltInDefinition(name = BlockChainid),
+                        BuiltInDefinition(name = BlockCoinbase),
+                        BuiltInDefinition(name = BlockDifficulty),
+                        BuiltInDefinition(name = BlockGaslimit),
+                        BuiltInDefinition(name = BlockNumber),
+                        BuiltInDefinition(name = BlockPrevrandao, enabled = From("0.8.18")),
+                        BuiltInDefinition(name = BlockTimestamp)
+                    ]
+                ),
+                BuiltInScope(
+                    name = Msg,
+                    definitions = [
+                        BuiltInDefinition(name = MsgData),
+                        BuiltInDefinition(name = MsgSender),
+                        BuiltInDefinition(name = MsgSig),
+                        BuiltInDefinition(name = MsgValue)
+                    ]
+                ),
+                BuiltInScope(
+                    name = Tx,
+                    definitions = [
+                        BuiltInDefinition(name = TxGasPrice),
+                        BuiltInDefinition(name = TxOrigin)
+                    ]
+                ),
+                BuiltInScope(
+                    name = Address,
+                    definitions = [
+                        BuiltInDefinition(name = Address),
+                        BuiltInDefinition(name = AddressBalance),
+                        BuiltInDefinition(name = AddressCall),
+                        BuiltInDefinition(name = AddressCallcode),
+                        BuiltInDefinition(name = AddressCode),
+                        BuiltInDefinition(name = AddressCodehash),
+                        BuiltInDefinition(name = AddressDelegatecall),
+                        BuiltInDefinition(name = AddressSend),
+                        BuiltInDefinition(name = AddressStaticcall),
+                        BuiltInDefinition(name = AddressTransfer)
+                    ]
+                ),
+                BuiltInScope(
+                    name = Type,
+                    definitions = [
+                        BuiltInDefinition(name = Type, internal_parameter = "TypeId"),
+                        BuiltInDefinition(name = TypeName),
+                        BuiltInDefinition(name = TypeCreationCode),
+                        BuiltInDefinition(name = TypeRuntimeCode),
+                        BuiltInDefinition(name = TypeInterfaceId),
+                        BuiltInDefinition(
+                            name = TypeEnumMin,
+                            enabled = From("0.8.8"),
+                            internal_parameter = "TypeId"
+                        ),
+                        BuiltInDefinition(
+                            name = TypeEnumMax,
+                            enabled = From("0.8.8"),
+                            internal_parameter = "TypeId"
+                        ),
+                        BuiltInDefinition(name = TypeMin, internal_parameter = "TypeId"),
+                        BuiltInDefinition(name = TypeMax, internal_parameter = "TypeId")
+                    ]
+                ),
+                BuiltInScope(
+                    name = Contextual,
+                    definitions = [
+                        BuiltInDefinition(name = ArrayPop),
+                        BuiltInDefinition(name = ArrayPush, internal_parameter = "TypeId"),
+                        BuiltInDefinition(name = BytesConcat),
+                        BuiltInDefinition(name = CallOptionGas),
+                        BuiltInDefinition(name = CallOptionSalt),
+                        BuiltInDefinition(name = CallOptionValue),
+                        BuiltInDefinition(name = ErrorOrPanic),
+                        BuiltInDefinition(name = Length),
+                        BuiltInDefinition(name = ModifierUnderscore),
+                        BuiltInDefinition(name = ErrorSelector, enabled = From("0.8.4")),
+                        BuiltInDefinition(name = EventSelector, enabled = From("0.8.15")),
+                        BuiltInDefinition(name = FunctionAddress, enabled = From("0.8.2")),
+                        BuiltInDefinition(name = FunctionSelector),
+                        BuiltInDefinition(name = StringConcat),
+                        BuiltInDefinition(
+                            name = Unwrap,
+                            enabled = From("0.8.8"),
+                            internal_parameter = "NodeId"
+                        ),
+                        BuiltInDefinition(
+                            name = Wrap,
+                            enabled = From("0.8.8"),
+                            internal_parameter = "NodeId"
+                        )
+                    ]
+                )
+            ]
+        ),
+        BuiltInContext(
+            name = Yul,
+            scopes = [
+                BuiltInScope(
+                    name = Global,
+                    definitions = [
+                        BuiltInDefinition(name = YulAdd),
+                        BuiltInDefinition(name = YulAddmod),
+                        BuiltInDefinition(name = YulAddress),
+                        BuiltInDefinition(name = YulAnd),
+                        BuiltInDefinition(name = YulBalance),
+                        BuiltInDefinition(name = YulBasefee, enabled = From("0.8.7")),
+                        BuiltInDefinition(name = YulBlobbasefee, enabled = From("0.8.24")),
+                        BuiltInDefinition(name = YulBlobhash, enabled = From("0.8.24")),
+                        BuiltInDefinition(name = YulBlockhash),
+                        BuiltInDefinition(name = YulByte),
+                        BuiltInDefinition(name = YulCall),
+                        BuiltInDefinition(name = YulCallcode),
+                        BuiltInDefinition(name = YulCalldatacopy),
+                        BuiltInDefinition(name = YulCalldataload),
+                        BuiltInDefinition(name = YulCalldatasize),
+                        BuiltInDefinition(name = YulCaller),
+                        BuiltInDefinition(name = YulCallvalue),
+                        BuiltInDefinition(name = YulChainid),
+                        BuiltInDefinition(name = YulClz, enabled = From("0.8.31")),
+                        BuiltInDefinition(name = YulCodecopy),
+                        BuiltInDefinition(name = YulCodesize),
+                        BuiltInDefinition(name = YulCoinbase),
+                        BuiltInDefinition(name = YulCreate),
+                        BuiltInDefinition(name = YulCreate2),
+                        BuiltInDefinition(name = YulDelegatecall),
+                        BuiltInDefinition(name = YulDifficulty, enabled = Till("0.8.18")),
+                        BuiltInDefinition(name = YulDiv),
+                        BuiltInDefinition(name = YulEq),
+                        BuiltInDefinition(name = YulExp),
+                        BuiltInDefinition(name = YulExtcodecopy),
+                        BuiltInDefinition(name = YulExtcodehash),
+                        BuiltInDefinition(name = YulExtcodesize),
+                        BuiltInDefinition(name = YulGas),
+                        BuiltInDefinition(name = YulGaslimit),
+                        BuiltInDefinition(name = YulGasprice),
+                        BuiltInDefinition(name = YulGt),
+                        BuiltInDefinition(name = YulInvalid),
+                        BuiltInDefinition(name = YulIszero),
+                        BuiltInDefinition(name = YulKeccak256),
+                        BuiltInDefinition(name = YulLog, internal_parameter = "u8"),
+                        BuiltInDefinition(name = YulLt),
+                        BuiltInDefinition(name = YulMcopy, enabled = From("0.8.24")),
+                        BuiltInDefinition(name = YulMload),
+                        BuiltInDefinition(name = YulMod),
+                        BuiltInDefinition(name = YulMsize),
+                        BuiltInDefinition(name = YulMstore),
+                        BuiltInDefinition(name = YulMstore8),
+                        BuiltInDefinition(name = YulMul),
+                        BuiltInDefinition(name = YulMulmod),
+                        BuiltInDefinition(name = YulNot),
+                        BuiltInDefinition(name = YulNumber),
+                        BuiltInDefinition(name = YulOr),
+                        BuiltInDefinition(name = YulOrigin),
+                        BuiltInDefinition(name = YulPop),
+                        BuiltInDefinition(name = YulPrevrandao, enabled = From("0.8.18")),
+                        BuiltInDefinition(name = YulReturn),
+                        BuiltInDefinition(name = YulReturndatacopy),
+                        BuiltInDefinition(name = YulReturndatasize),
+                        BuiltInDefinition(name = YulRevert),
+                        BuiltInDefinition(name = YulSar),
+                        BuiltInDefinition(name = YulSdiv),
+                        BuiltInDefinition(name = YulSelfbalance),
+                        BuiltInDefinition(name = YulSelfdestruct),
+                        BuiltInDefinition(name = YulSgt),
+                        BuiltInDefinition(name = YulShl),
+                        BuiltInDefinition(name = YulShr),
+                        BuiltInDefinition(name = YulSignextend),
+                        BuiltInDefinition(name = YulSload),
+                        BuiltInDefinition(name = YulSlt),
+                        BuiltInDefinition(name = YulSmod),
+                        BuiltInDefinition(name = YulSstore),
+                        BuiltInDefinition(name = YulStaticcall),
+                        BuiltInDefinition(name = YulStop),
+                        BuiltInDefinition(name = YulSub),
+                        BuiltInDefinition(name = YulTimestamp),
+                        BuiltInDefinition(name = YulTload, enabled = From("0.8.24")),
+                        BuiltInDefinition(name = YulTstore, enabled = From("0.8.24")),
+                        BuiltInDefinition(name = YulXor)
+                    ]
+                ),
+                BuiltInScope(
+                    name = Suffix,
+                    definitions = [
+                        BuiltInDefinition(name = YulAddressField),
+                        BuiltInDefinition(name = YulLengthField),
+                        BuiltInDefinition(name = YulOffset),
+                        BuiltInDefinition(name = YulSelector),
+                        BuiltInDefinition(name = YulSlot)
+                    ]
+                )
+            ]
+        )
     ]
 ));

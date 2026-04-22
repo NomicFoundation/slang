@@ -17,5 +17,15 @@ pub enum LanguageVersionSpecifier {
     },
 }
 
+impl LanguageVersionSpecifier {
+    pub fn contains(&self, other: LanguageVersion) -> bool {
+        match self {
+            LanguageVersionSpecifier::From { from } => other >= *from,
+            LanguageVersionSpecifier::Till { till } => other < *till,
+            LanguageVersionSpecifier::Range { from, till } => other >= *from && other < *till,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests;

@@ -56,7 +56,7 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         .collect();
 
     let tested_versions: Vec<LanguageVersion> = SolidityDefinition::create()
-        .collect_breaking_versions()
+        .collect_semantic_breaking_versions()
         .into_iter()
         .filter_map(|version| LanguageVersion::try_from(version).ok())
         .collect();

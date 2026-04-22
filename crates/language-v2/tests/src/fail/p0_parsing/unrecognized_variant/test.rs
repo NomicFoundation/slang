@@ -19,7 +19,8 @@ language_v2_macros::compile!(Language(
                 Topic(title = "Topic Two", items = [Unrecognized(true)])
             ]
         )]
-    )]
+    )],
+    built_ins = []
 ));
 
 fn main() {}

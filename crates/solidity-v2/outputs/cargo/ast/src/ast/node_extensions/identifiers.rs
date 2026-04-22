@@ -1,6 +1,6 @@
+use slang_solidity_v2_common::built_ins::BuiltIn;
 use slang_solidity_v2_ir::ir::NodeId;
 use slang_solidity_v2_semantic::binder;
-use slang_solidity_v2_semantic::built_ins::BuiltIn;
 
 use super::super::nodes::{IdentifierPathStruct, IdentifierStruct};
 use crate::ast::references::references_binding_to_definition;
@@ -53,7 +53,7 @@ impl IdentifierStruct {
             .binder()
             .find_reference_by_identifier_node_id(self.ir_node.id())?;
         match &reference.resolution {
-            binder::Resolution::BuiltIn(built_in) => Some(*built_in),
+            binder::Resolution::BuiltIn(built_in) => Some(built_in.to_public()),
             _ => None,
         }
     }

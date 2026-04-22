@@ -1,186 +1,12 @@
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_ir::ir::NodeId;
 
 use super::binder::{Binder, Definition, Typing};
 use super::types::{DataLocation, LiteralKind, Type, TypeId, TypeRegistry};
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum BuiltIn {
-    Abi,
-    AbiDecode,
-    AbiEncode,
-    AbiEncodeCall,
-    AbiEncodePacked,
-    AbiEncodeWithSelector,
-    AbiEncodeWithSignature,
-    Addmod,
-    Address,
-    AddressBalance,
-    AddressCall,
-    AddressCallcode,
-    AddressCode,
-    AddressCodehash,
-    AddressDelegatecall,
-    AddressSend,
-    AddressStaticcall,
-    AddressTransfer,
-    ArrayPop,
-    ArrayPush(TypeId),
-    Assert,
-    Blobhash,
-    Block,
-    BlockBasefee,
-    BlockBlobbasefee,
-    BlockChainid,
-    BlockCoinbase,
-    BlockDifficulty,
-    BlockGaslimit,
-    BlockNumber,
-    BlockPrevrandao,
-    BlockTimestamp,
-    Blockhash,
-    BytesConcat,
-    CallOptionGas,
-    CallOptionSalt,
-    CallOptionValue,
-    Ecrecover,
-    ErrorOrPanic,
-    Gasleft,
-    Keccak256,
-    LegacyCallOptionGas(LegacyCall),
-    LegacyCallOptionValue(LegacyCall),
-    LegacyCallOptionValueNew(TypeId),
-    Length,
-    Log(u8),
-    ModifierUnderscore,
-    Msg,
-    MsgData,
-    MsgGas,
-    MsgSender,
-    MsgSig,
-    MsgValue,
-    Mulmod,
-    Now,
-    Require,
-    Revert,
-    Ripemd160,
-    Selector,
-    Selfdestruct,
-    Sha256,
-    Sha3,
-    StringConcat,
-    Suicide,
-    Tx,
-    TxGasPrice,
-    TxOrigin,
-    Type(TypeId),
-    TypeName,
-    TypeCreationCode,
-    TypeRuntimeCode,
-    TypeInterfaceId,
-    TypeMin(TypeId),
-    TypeMax(TypeId),
-    Unwrap(NodeId),
-    Wrap(NodeId),
+#[path = "internal.generated.rs"]
+mod internal;
 
-    YulAdd,
-    YulAddmod,
-    YulAddress,
-    YulAddressField,
-    YulAnd,
-    YulBalance,
-    YulBasefee,
-    YulBlobbasefee,
-    YulBlobhash,
-    YulBlockhash,
-    YulByte,
-    YulCallcode,
-    YulCalldatacopy,
-    YulCalldataload,
-    YulCalldatasize,
-    YulCaller,
-    YulCall,
-    YulCallvalue,
-    YulChainid,
-    YulClz,
-    YulCodecopy,
-    YulCodesize,
-    YulCoinbase,
-    YulCreate,
-    YulCreate2,
-    YulDelegatecall,
-    YulDifficulty,
-    YulDiv,
-    YulDup(u8),
-    YulEq,
-    YulExp,
-    YulExtcodecopy,
-    YulExtcodehash,
-    YulExtcodesize,
-    YulGas,
-    YulGaslimit,
-    YulGasprice,
-    YulGt,
-    YulInvalid,
-    YulIszero,
-    YulJump,
-    YulJumpi,
-    YulKeccak256,
-    YulLengthField,
-    YulLog(u8),
-    YulLt,
-    YulMcopy,
-    YulMload,
-    YulMod,
-    YulMsize,
-    YulMstore8,
-    YulMstore,
-    YulMul,
-    YulMulmod,
-    YulNot,
-    YulNumber,
-    YulOffset,
-    YulOr,
-    YulOrigin,
-    YulPop,
-    YulPrevrandao,
-    YulReturn,
-    YulReturndatacopy,
-    YulReturndatasize,
-    YulRevert,
-    YulSar,
-    YulSdiv,
-    YulSelector,
-    YulSelfbalance,
-    YulSelfdestruct,
-    YulSgt,
-    YulSha3,
-    YulShl,
-    YulShr,
-    YulSignextend,
-    YulSload,
-    YulSlot,
-    YulSlt,
-    YulSmod,
-    YulSstore,
-    YulStaticcall,
-    YulStop,
-    YulSub,
-    YulSuicide,
-    YulSwap(u8),
-    YulTimestamp,
-    YulTload,
-    YulTstore,
-    YulXor,
-}
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum LegacyCall {
-    Call,
-    Delegatecall,
-    Staticcall,
-    User(TypeId),
-}
+pub use internal::BuiltIn;
 
 pub(crate) struct BuiltInsResolver<'a> {
     language_version: LanguageVersion,
@@ -206,7 +32,7 @@ impl<'a> BuiltInsResolver<'a> {
             "abi" => Some(BuiltIn::Abi),
             "addmod" => Some(BuiltIn::Addmod),
             "assert" => Some(BuiltIn::Assert),
-            "blobhash" if self.language_version >= LanguageVersion::V0_8_24 => {
+            "blobhash" if BuiltIn::BLOBHASH_VERSIONS.contains(self.language_version) => {
                 Some(BuiltIn::Blobhash)
             }
             "block" => Some(BuiltIn::Block),
@@ -236,13 +62,13 @@ impl<'a> BuiltInsResolver<'a> {
             "address" => Some(BuiltIn::YulAddress),
             "and" => Some(BuiltIn::YulAnd),
             "balance" => Some(BuiltIn::YulBalance),
-            "basefee" if self.language_version >= LanguageVersion::V0_8_7 => {
+            "basefee" if BuiltIn::YUL_BASEFEE_VERSIONS.contains(self.language_version) => {
                 Some(BuiltIn::YulBasefee)
             }
-            "blobbasefee" if self.language_version >= LanguageVersion::V0_8_24 => {
+            "blobbasefee" if BuiltIn::YUL_BLOBBASEFEE_VERSIONS.contains(self.language_version) => {
                 Some(BuiltIn::YulBlobbasefee)
             }
-            "blobhash" if self.language_version >= LanguageVersion::V0_8_24 => {
+            "blobhash" if BuiltIn::YUL_BLOBHASH_VERSIONS.contains(self.language_version) => {
                 Some(BuiltIn::YulBlobhash)
             }
             "blockhash" => Some(BuiltIn::YulBlockhash),
@@ -255,14 +81,16 @@ impl<'a> BuiltInsResolver<'a> {
             "call" => Some(BuiltIn::YulCall),
             "callvalue" => Some(BuiltIn::YulCallvalue),
             "chainid" => Some(BuiltIn::YulChainid),
-            "clz" if self.language_version >= LanguageVersion::V0_8_31 => Some(BuiltIn::YulClz),
+            "clz" if BuiltIn::YUL_CLZ_VERSIONS.contains(self.language_version) => {
+                Some(BuiltIn::YulClz)
+            }
             "codecopy" => Some(BuiltIn::YulCodecopy),
             "codesize" => Some(BuiltIn::YulCodesize),
             "coinbase" => Some(BuiltIn::YulCoinbase),
             "create" => Some(BuiltIn::YulCreate),
             "create2" => Some(BuiltIn::YulCreate2),
             "delegatecall" => Some(BuiltIn::YulDelegatecall),
-            "difficulty" if self.language_version < LanguageVersion::V0_8_18 => {
+            "difficulty" if BuiltIn::YUL_DIFFICULTY_VERSIONS.contains(self.language_version) => {
                 Some(BuiltIn::YulDifficulty)
             }
             "div" => Some(BuiltIn::YulDiv),
@@ -283,7 +111,9 @@ impl<'a> BuiltInsResolver<'a> {
                 Some(BuiltIn::YulLog(arity))
             }
             "lt" => Some(BuiltIn::YulLt),
-            "mcopy" if self.language_version >= LanguageVersion::V0_8_24 => Some(BuiltIn::YulMcopy),
+            "mcopy" if BuiltIn::YUL_MCOPY_VERSIONS.contains(self.language_version) => {
+                Some(BuiltIn::YulMcopy)
+            }
             "mload" => Some(BuiltIn::YulMload),
             "mod" => Some(BuiltIn::YulMod),
             "msize" => Some(BuiltIn::YulMsize),
@@ -296,7 +126,7 @@ impl<'a> BuiltInsResolver<'a> {
             "or" => Some(BuiltIn::YulOr),
             "origin" => Some(BuiltIn::YulOrigin),
             "pop" => Some(BuiltIn::YulPop),
-            "prevrandao" if self.language_version >= LanguageVersion::V0_8_18 => {
+            "prevrandao" if BuiltIn::YUL_PREVRANDAO_VERSIONS.contains(self.language_version) => {
                 Some(BuiltIn::YulPrevrandao)
             }
             "return" => Some(BuiltIn::YulReturn),
@@ -319,8 +149,10 @@ impl<'a> BuiltInsResolver<'a> {
             "stop" => Some(BuiltIn::YulStop),
             "sub" => Some(BuiltIn::YulSub),
             "timestamp" => Some(BuiltIn::YulTimestamp),
-            "tload" if self.language_version >= LanguageVersion::V0_8_24 => Some(BuiltIn::YulTload),
-            "tstore" if self.language_version >= LanguageVersion::V0_8_24 => {
+            "tload" if BuiltIn::YUL_TLOAD_VERSIONS.contains(self.language_version) => {
+                Some(BuiltIn::YulTload)
+            }
+            "tstore" if BuiltIn::YUL_TSTORE_VERSIONS.contains(self.language_version) => {
                 Some(BuiltIn::YulTstore)
             }
             "xor" => Some(BuiltIn::YulXor),
@@ -334,7 +166,9 @@ impl<'a> BuiltInsResolver<'a> {
             BuiltIn::Abi => match symbol {
                 "decode" => Some(BuiltIn::AbiDecode),
                 "encode" => Some(BuiltIn::AbiEncode),
-                "encodeCall" if self.language_version >= LanguageVersion::V0_8_11 => {
+                "encodeCall"
+                    if BuiltIn::ABI_ENCODE_CALL_VERSIONS.contains(self.language_version) =>
+                {
                     Some(BuiltIn::AbiEncodeCall)
                 }
                 "encodePacked" => Some(BuiltIn::AbiEncodePacked),
@@ -343,20 +177,22 @@ impl<'a> BuiltInsResolver<'a> {
                 _ => None,
             },
             BuiltIn::Block => match symbol {
-                "basefee" if self.language_version >= LanguageVersion::V0_8_7 => {
+                "basefee" if BuiltIn::BLOCK_BASEFEE_VERSIONS.contains(self.language_version) => {
                     Some(BuiltIn::BlockBasefee)
                 }
-                "blobbasefee" if self.language_version >= LanguageVersion::V0_8_24 => {
+                "blobbasefee"
+                    if BuiltIn::BLOCK_BLOBBASEFEE_VERSIONS.contains(self.language_version) =>
+                {
                     Some(BuiltIn::BlockBlobbasefee)
                 }
-                "chainid" if self.language_version >= LanguageVersion::V0_8_0 => {
-                    Some(BuiltIn::BlockChainid)
-                }
+                "chainid" => Some(BuiltIn::BlockChainid),
                 "coinbase" => Some(BuiltIn::BlockCoinbase),
                 "difficulty" => Some(BuiltIn::BlockDifficulty),
                 "gaslimit" => Some(BuiltIn::BlockGaslimit),
                 "number" => Some(BuiltIn::BlockNumber),
-                "prevrandao" if self.language_version >= LanguageVersion::V0_8_18 => {
+                "prevrandao"
+                    if BuiltIn::BLOCK_PREVRANDAO_VERSIONS.contains(self.language_version) =>
+                {
                     Some(BuiltIn::BlockPrevrandao)
                 }
                 "timestamp" => Some(BuiltIn::BlockTimestamp),
@@ -380,13 +216,15 @@ impl<'a> BuiltInsResolver<'a> {
                     "interfaceId" => Some(BuiltIn::TypeInterfaceId),
                     _ => None,
                 },
-                Type::Enum { .. } if self.language_version >= LanguageVersion::V0_8_8 => {
-                    match symbol {
-                        "min" => Some(BuiltIn::TypeMin(*type_id)),
-                        "max" => Some(BuiltIn::TypeMax(*type_id)),
-                        _ => None,
+                Type::Enum { .. } => match symbol {
+                    "min" if BuiltIn::TYPE_ENUM_MIN_VERSIONS.contains(self.language_version) => {
+                        Some(BuiltIn::TypeEnumMin(*type_id))
                     }
-                }
+                    "max" if BuiltIn::TYPE_ENUM_MAX_VERSIONS.contains(self.language_version) => {
+                        Some(BuiltIn::TypeEnumMax(*type_id))
+                    }
+                    _ => None,
+                },
                 Type::Integer { .. } => match symbol {
                     "min" => Some(BuiltIn::TypeMin(*type_id)),
                     "max" => Some(BuiltIn::TypeMax(*type_id)),
@@ -412,26 +250,26 @@ impl<'a> BuiltInsResolver<'a> {
     ) -> Option<BuiltIn> {
         match definition {
             Definition::Error(_) => match symbol {
-                "selector" if self.language_version >= LanguageVersion::V0_8_4 => {
-                    Some(BuiltIn::Selector)
+                "selector" if BuiltIn::ERROR_SELECTOR_VERSIONS.contains(self.language_version) => {
+                    Some(BuiltIn::ErrorSelector)
                 }
                 _ => None,
             },
             Definition::Event(_) => match symbol {
-                "selector" if self.language_version >= LanguageVersion::V0_8_15 => {
-                    Some(BuiltIn::Selector)
+                "selector" if BuiltIn::EVENT_SELECTOR_VERSIONS.contains(self.language_version) => {
+                    Some(BuiltIn::EventSelector)
                 }
                 _ => None,
             },
-            Definition::UserDefinedValueType(_)
-                if self.language_version >= LanguageVersion::V0_8_8 =>
-            {
-                match symbol {
-                    "wrap" => Some(BuiltIn::Wrap(definition.node_id())),
-                    "unwrap" => Some(BuiltIn::Unwrap(definition.node_id())),
-                    _ => None,
+            Definition::UserDefinedValueType(_) => match symbol {
+                "wrap" if BuiltIn::WRAP_VERSIONS.contains(self.language_version) => {
+                    Some(BuiltIn::Wrap(definition.node_id()))
                 }
-            }
+                "unwrap" if BuiltIn::UNWRAP_VERSIONS.contains(self.language_version) => {
+                    Some(BuiltIn::Unwrap(definition.node_id()))
+                }
+                _ => None,
+            },
             _ => None,
         }
     }
@@ -455,23 +293,17 @@ impl<'a> BuiltInsResolver<'a> {
         }
     }
 
-    fn lookup_member_of_address(&self, symbol: &str, payable: bool) -> Option<BuiltIn> {
+    fn lookup_member_of_address(symbol: &str, payable: bool) -> Option<BuiltIn> {
         match symbol {
             "balance" => Some(BuiltIn::AddressBalance),
-            "code" if self.language_version >= LanguageVersion::V0_8_0 => {
-                Some(BuiltIn::AddressCode)
-            }
-            "codehash" if self.language_version >= LanguageVersion::V0_8_0 => {
-                Some(BuiltIn::AddressCodehash)
-            }
+            "code" => Some(BuiltIn::AddressCode),
+            "codehash" => Some(BuiltIn::AddressCodehash),
             "call" => Some(BuiltIn::AddressCall),
             "callcode" if !payable => Some(BuiltIn::AddressCallcode),
             "delegatecall" => Some(BuiltIn::AddressDelegatecall),
             "send" if payable => Some(BuiltIn::AddressSend),
             "staticcall" => Some(BuiltIn::AddressStaticcall),
-            "transfer" if payable || self.language_version < LanguageVersion::V0_8_0 => {
-                Some(BuiltIn::AddressTransfer)
-            }
+            "transfer" if payable => Some(BuiltIn::AddressTransfer),
             _ => None,
         }
     }
@@ -483,7 +315,7 @@ impl<'a> BuiltInsResolver<'a> {
     ) -> Option<BuiltIn> {
         let type_ = self.types.get_type_by_id(type_id);
         match type_ {
-            Type::Address { payable } => self.lookup_member_of_address(symbol, *payable),
+            Type::Address { payable } => Self::lookup_member_of_address(symbol, *payable),
             Type::Array { element_type, .. } => match symbol {
                 "length" => Some(BuiltIn::Length),
                 "pop" => Some(BuiltIn::ArrayPop),
@@ -513,10 +345,13 @@ impl<'a> BuiltInsResolver<'a> {
             Type::Function(ftype) => {
                 if ftype.is_externally_visible() {
                     match symbol {
-                        "address" if self.language_version >= LanguageVersion::V0_8_2 => {
-                            Some(BuiltIn::Address)
+                        "address"
+                            if BuiltIn::FUNCTION_ADDRESS_VERSIONS
+                                .contains(self.language_version) =>
+                        {
+                            Some(BuiltIn::FunctionAddress)
                         }
-                        "selector" => Some(BuiltIn::Selector),
+                        "selector" => Some(BuiltIn::FunctionSelector),
                         _ => None,
                     }
                 } else {
@@ -524,7 +359,7 @@ impl<'a> BuiltInsResolver<'a> {
                 }
             }
             Type::Integer { .. } => None,
-            Type::Literal(LiteralKind::Address) => self.lookup_member_of_address(symbol, false),
+            Type::Literal(LiteralKind::Address) => Self::lookup_member_of_address(symbol, false),
             Type::Literal(_) => None,
             Type::Mapping { .. } => None,
             Type::String { .. } => match symbol {
@@ -574,7 +409,7 @@ impl<'a> BuiltInsResolver<'a> {
     pub(crate) fn typing_of(&self, built_in: &BuiltIn) -> Typing {
         match built_in {
             // variables and members
-            BuiltIn::Address => Typing::Resolved(self.types.address()),
+            BuiltIn::Address | BuiltIn::FunctionAddress => Typing::Resolved(self.types.address()),
             BuiltIn::AddressBalance => Typing::Resolved(self.types.uint256()),
             BuiltIn::AddressCode => Typing::Resolved(self.types.bytes_memory()),
             BuiltIn::AddressCodehash => Typing::Resolved(self.types.bytes32()),
@@ -588,21 +423,21 @@ impl<'a> BuiltInsResolver<'a> {
             BuiltIn::BlockPrevrandao => Typing::Resolved(self.types.uint256()),
             BuiltIn::BlockTimestamp => Typing::Resolved(self.types.uint256()),
             BuiltIn::Length => Typing::Resolved(self.types.uint256()),
-            BuiltIn::MsgGas => Typing::Resolved(self.types.uint256()),
             BuiltIn::MsgData => Typing::Resolved(self.types.bytes_calldata()),
             BuiltIn::MsgSender => Typing::Resolved(self.types.address()),
             BuiltIn::MsgSig => Typing::Resolved(self.types.bytes4()),
             BuiltIn::MsgValue => Typing::Resolved(self.types.uint256()),
-            BuiltIn::Now => Typing::Resolved(self.types.uint256()),
-            BuiltIn::Selector => Typing::Resolved(self.types.bytes4()),
+            BuiltIn::ErrorSelector | BuiltIn::EventSelector | BuiltIn::FunctionSelector => {
+                Typing::Resolved(self.types.bytes4())
+            }
             BuiltIn::TxGasPrice => Typing::Resolved(self.types.uint256()),
             BuiltIn::TxOrigin => Typing::Resolved(self.types.address()),
             BuiltIn::TypeName => Typing::Resolved(self.types.string()),
             BuiltIn::TypeCreationCode => Typing::Resolved(self.types.bytes_memory()),
             BuiltIn::TypeRuntimeCode => Typing::Resolved(self.types.bytes_memory()),
             BuiltIn::TypeInterfaceId => Typing::Resolved(self.types.bytes4()),
-            BuiltIn::TypeMin(type_id) => Typing::Resolved(*type_id),
-            BuiltIn::TypeMax(type_id) => Typing::Resolved(*type_id),
+            BuiltIn::TypeEnumMin(type_id) | BuiltIn::TypeMin(type_id) => Typing::Resolved(*type_id),
+            BuiltIn::TypeEnumMax(type_id) | BuiltIn::TypeMax(type_id) => Typing::Resolved(*type_id),
 
             // built-in functions and types
             BuiltIn::Abi
@@ -626,13 +461,9 @@ impl<'a> BuiltInsResolver<'a> {
             | BuiltIn::Block
             | BuiltIn::Blockhash
             | BuiltIn::BytesConcat
-            | BuiltIn::LegacyCallOptionGas(_)
-            | BuiltIn::LegacyCallOptionValue(_)
-            | BuiltIn::LegacyCallOptionValueNew(_)
             | BuiltIn::Ecrecover
             | BuiltIn::Gasleft
             | BuiltIn::Keccak256
-            | BuiltIn::Log(_)
             | BuiltIn::ModifierUnderscore
             | BuiltIn::Mulmod
             | BuiltIn::Msg
@@ -641,9 +472,7 @@ impl<'a> BuiltInsResolver<'a> {
             | BuiltIn::Ripemd160
             | BuiltIn::Selfdestruct
             | BuiltIn::Sha256
-            | BuiltIn::Sha3
             | BuiltIn::StringConcat
-            | BuiltIn::Suicide
             | BuiltIn::Tx
             | BuiltIn::Wrap(_)
             | BuiltIn::Unwrap(_) => Typing::BuiltIn(*built_in),
@@ -674,13 +503,7 @@ impl<'a> BuiltInsResolver<'a> {
             BuiltIn::AddressCall => Typing::Resolved(self.types.boolean_bytes_tuple()),
             BuiltIn::AddressCallcode => Typing::Resolved(self.types.boolean_bytes_tuple()),
             BuiltIn::AddressDelegatecall => Typing::Resolved(self.types.boolean_bytes_tuple()),
-            BuiltIn::AddressSend if self.language_version < LanguageVersion::V0_8_0 => {
-                Typing::Resolved(self.types.boolean())
-            }
             BuiltIn::AddressStaticcall => Typing::Resolved(self.types.boolean_bytes_tuple()),
-            BuiltIn::AddressTransfer if self.language_version < LanguageVersion::V0_8_0 => {
-                Typing::Resolved(self.types.void())
-            }
             BuiltIn::ArrayPush(type_id) => {
                 if argument_typings.is_empty() {
                     Typing::Resolved(*type_id)
@@ -696,25 +519,13 @@ impl<'a> BuiltInsResolver<'a> {
             BuiltIn::Ecrecover => Typing::Resolved(self.types.address()),
             BuiltIn::Gasleft => Typing::Resolved(self.types.uint256()),
             BuiltIn::Keccak256 => Typing::Resolved(self.types.bytes32()),
-            BuiltIn::LegacyCallOptionGas(call_type) | BuiltIn::LegacyCallOptionValue(call_type) => {
-                match call_type {
-                    LegacyCall::Call => Typing::BuiltIn(BuiltIn::AddressCall),
-                    LegacyCall::Delegatecall => Typing::BuiltIn(BuiltIn::AddressDelegatecall),
-                    LegacyCall::Staticcall => Typing::BuiltIn(BuiltIn::AddressStaticcall),
-                    LegacyCall::User(type_id) => Typing::Resolved(*type_id),
-                }
-            }
-            BuiltIn::LegacyCallOptionValueNew(type_id) => Typing::NewExpression(*type_id),
-            BuiltIn::Log(_) => Typing::Resolved(self.types.void()),
             BuiltIn::Mulmod => Typing::Resolved(self.types.uint256()),
             BuiltIn::Require => Typing::Resolved(self.types.void()),
             BuiltIn::Revert => Typing::Resolved(self.types.void()),
             BuiltIn::Ripemd160 => Typing::Resolved(self.types.bytes20()),
             BuiltIn::Selfdestruct => Typing::Resolved(self.types.void()),
             BuiltIn::Sha256 => Typing::Resolved(self.types.bytes32()),
-            BuiltIn::Sha3 => Typing::Resolved(self.types.bytes32()),
             BuiltIn::StringConcat => Typing::Resolved(self.types.string()),
-            BuiltIn::Suicide => Typing::Resolved(self.types.void()),
             BuiltIn::Unwrap(definition_id) => {
                 let Some(Definition::UserDefinedValueType(udvt)) =
                     self.binder.find_definition_by_id(*definition_id)

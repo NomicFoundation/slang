@@ -13,7 +13,8 @@ language_v2_macros::compile!(Language(
                 items = [Token(name = Bar, scanner = Atom(""))]
             )]
         )]
-    )]
+    )],
+    built_ins = []
 ));
 
 fn main() {}

@@ -1,0 +1,5 @@
+error: A built-in definition with the name 'Baz' already exists.
+  --> src/fail/p1_definitions/duplicate_builtin_name/test.rs:26:57
+   |
+26 |                 definitions = [BuiltInDefinition(name = Baz)]
+   |                                                         ^^^
