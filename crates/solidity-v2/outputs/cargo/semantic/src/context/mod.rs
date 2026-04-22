@@ -123,7 +123,7 @@ impl SemanticContext {
         reference.resolution.as_definition_id()
     }
 
-    pub fn definition_canonical_name(&self, definition_id: NodeId) -> String {
+    pub(crate) fn definition_canonical_name(&self, definition_id: NodeId) -> String {
         self.binder
             .find_definition_by_id(definition_id)
             .unwrap()
@@ -252,8 +252,8 @@ impl SemanticContext {
     }
 
     pub const SLOT_SIZE: usize = 32;
-    pub const ADDRESS_BYTE_SIZE: usize = 20;
-    pub const SELECTOR_SIZE: usize = 4;
+    pub(crate) const ADDRESS_BYTE_SIZE: usize = 20;
+    pub(crate) const SELECTOR_SIZE: usize = 4;
 
     pub fn storage_size_of_type_id(&self, type_id: TypeId) -> Option<usize> {
         match self.types.get_type_by_id(type_id) {
