@@ -8,6 +8,12 @@ impl ErrorDefinitionStruct {
         Some(format!("{name}({parameters})"))
     }
 
+    pub fn compute_internal_signature(&self) -> Option<String> {
+        let name = self.ir_node.name.unparse();
+        let parameters = self.parameters().compute_internal_signature()?;
+        Some(format!("{name}({parameters})"))
+    }
+
     pub fn compute_abi_entry(&self) -> Option<AbiEntry> {
         let inputs = self.parameters().compute_abi_parameters()?;
 
