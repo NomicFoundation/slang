@@ -3473,21 +3473,14 @@ impl YulVariableDeclarationValueStruct {
 // Choices
 //
 
-pub enum AbicoderVersion {
-    AbicoderV1Keyword,
-    AbicoderV2Keyword,
-}
+pub use ir::AbicoderVersion;
 
-#[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_abicoder_version(
     ir_node: &ir::AbicoderVersion,
-    semantic: &Rc<SemanticContext>,
+    _semantic: &Rc<SemanticContext>,
 ) -> AbicoderVersion {
-    match ir_node {
-        ir::AbicoderVersion::AbicoderV1Keyword => AbicoderVersion::AbicoderV1Keyword,
-        ir::AbicoderVersion::AbicoderV2Keyword => AbicoderVersion::AbicoderV2Keyword,
-    }
+    *ir_node
 }
 
 pub enum ArgumentsDeclaration {
@@ -3758,244 +3751,84 @@ pub(crate) fn create_expression(
     }
 }
 
-pub enum Expression_AdditiveExpression_Operator {
-    Minus,
-    Plus,
-}
+pub use ir::Expression_AdditiveExpression_Operator;
 
-#[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_expression_additive_expression_operator(
     ir_node: &ir::Expression_AdditiveExpression_Operator,
-    semantic: &Rc<SemanticContext>,
+    _semantic: &Rc<SemanticContext>,
 ) -> Expression_AdditiveExpression_Operator {
-    match ir_node {
-        ir::Expression_AdditiveExpression_Operator::Minus => {
-            Expression_AdditiveExpression_Operator::Minus
-        }
-        ir::Expression_AdditiveExpression_Operator::Plus => {
-            Expression_AdditiveExpression_Operator::Plus
-        }
-    }
+    *ir_node
 }
 
-pub enum Expression_AssignmentExpression_Operator {
-    AmpersandEqual,
-    AsteriskEqual,
-    BarEqual,
-    CaretEqual,
-    Equal,
-    GreaterThanGreaterThanEqual,
-    GreaterThanGreaterThanGreaterThanEqual,
-    LessThanLessThanEqual,
-    MinusEqual,
-    PercentEqual,
-    PlusEqual,
-    SlashEqual,
-}
+pub use ir::Expression_AssignmentExpression_Operator;
 
-#[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_expression_assignment_expression_operator(
     ir_node: &ir::Expression_AssignmentExpression_Operator,
-    semantic: &Rc<SemanticContext>,
+    _semantic: &Rc<SemanticContext>,
 ) -> Expression_AssignmentExpression_Operator {
-    match ir_node {
-        ir::Expression_AssignmentExpression_Operator::AmpersandEqual => {
-            Expression_AssignmentExpression_Operator::AmpersandEqual
-        }
-        ir::Expression_AssignmentExpression_Operator::AsteriskEqual => {
-            Expression_AssignmentExpression_Operator::AsteriskEqual
-        }
-        ir::Expression_AssignmentExpression_Operator::BarEqual => {
-            Expression_AssignmentExpression_Operator::BarEqual
-        }
-        ir::Expression_AssignmentExpression_Operator::CaretEqual => {
-            Expression_AssignmentExpression_Operator::CaretEqual
-        }
-        ir::Expression_AssignmentExpression_Operator::Equal => {
-            Expression_AssignmentExpression_Operator::Equal
-        }
-        ir::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanEqual => {
-            Expression_AssignmentExpression_Operator::GreaterThanGreaterThanEqual
-        }
-        ir::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanGreaterThanEqual => {
-            Expression_AssignmentExpression_Operator::GreaterThanGreaterThanGreaterThanEqual
-        }
-        ir::Expression_AssignmentExpression_Operator::LessThanLessThanEqual => {
-            Expression_AssignmentExpression_Operator::LessThanLessThanEqual
-        }
-        ir::Expression_AssignmentExpression_Operator::MinusEqual => {
-            Expression_AssignmentExpression_Operator::MinusEqual
-        }
-        ir::Expression_AssignmentExpression_Operator::PercentEqual => {
-            Expression_AssignmentExpression_Operator::PercentEqual
-        }
-        ir::Expression_AssignmentExpression_Operator::PlusEqual => {
-            Expression_AssignmentExpression_Operator::PlusEqual
-        }
-        ir::Expression_AssignmentExpression_Operator::SlashEqual => {
-            Expression_AssignmentExpression_Operator::SlashEqual
-        }
-    }
+    *ir_node
 }
 
-pub enum Expression_EqualityExpression_Operator {
-    BangEqual,
-    EqualEqual,
-}
+pub use ir::Expression_EqualityExpression_Operator;
 
-#[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_expression_equality_expression_operator(
     ir_node: &ir::Expression_EqualityExpression_Operator,
-    semantic: &Rc<SemanticContext>,
+    _semantic: &Rc<SemanticContext>,
 ) -> Expression_EqualityExpression_Operator {
-    match ir_node {
-        ir::Expression_EqualityExpression_Operator::BangEqual => {
-            Expression_EqualityExpression_Operator::BangEqual
-        }
-        ir::Expression_EqualityExpression_Operator::EqualEqual => {
-            Expression_EqualityExpression_Operator::EqualEqual
-        }
-    }
+    *ir_node
 }
 
-pub enum Expression_InequalityExpression_Operator {
-    GreaterThan,
-    GreaterThanEqual,
-    LessThan,
-    LessThanEqual,
-}
+pub use ir::Expression_InequalityExpression_Operator;
 
-#[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_expression_inequality_expression_operator(
     ir_node: &ir::Expression_InequalityExpression_Operator,
-    semantic: &Rc<SemanticContext>,
+    _semantic: &Rc<SemanticContext>,
 ) -> Expression_InequalityExpression_Operator {
-    match ir_node {
-        ir::Expression_InequalityExpression_Operator::GreaterThan => {
-            Expression_InequalityExpression_Operator::GreaterThan
-        }
-        ir::Expression_InequalityExpression_Operator::GreaterThanEqual => {
-            Expression_InequalityExpression_Operator::GreaterThanEqual
-        }
-        ir::Expression_InequalityExpression_Operator::LessThan => {
-            Expression_InequalityExpression_Operator::LessThan
-        }
-        ir::Expression_InequalityExpression_Operator::LessThanEqual => {
-            Expression_InequalityExpression_Operator::LessThanEqual
-        }
-    }
+    *ir_node
 }
 
-pub enum Expression_MultiplicativeExpression_Operator {
-    Asterisk,
-    Percent,
-    Slash,
-}
+pub use ir::Expression_MultiplicativeExpression_Operator;
 
-#[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_expression_multiplicative_expression_operator(
     ir_node: &ir::Expression_MultiplicativeExpression_Operator,
-    semantic: &Rc<SemanticContext>,
+    _semantic: &Rc<SemanticContext>,
 ) -> Expression_MultiplicativeExpression_Operator {
-    match ir_node {
-        ir::Expression_MultiplicativeExpression_Operator::Asterisk => {
-            Expression_MultiplicativeExpression_Operator::Asterisk
-        }
-        ir::Expression_MultiplicativeExpression_Operator::Percent => {
-            Expression_MultiplicativeExpression_Operator::Percent
-        }
-        ir::Expression_MultiplicativeExpression_Operator::Slash => {
-            Expression_MultiplicativeExpression_Operator::Slash
-        }
-    }
+    *ir_node
 }
 
-pub enum Expression_PostfixExpression_Operator {
-    MinusMinus,
-    PlusPlus,
-}
+pub use ir::Expression_PostfixExpression_Operator;
 
-#[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_expression_postfix_expression_operator(
     ir_node: &ir::Expression_PostfixExpression_Operator,
-    semantic: &Rc<SemanticContext>,
+    _semantic: &Rc<SemanticContext>,
 ) -> Expression_PostfixExpression_Operator {
-    match ir_node {
-        ir::Expression_PostfixExpression_Operator::MinusMinus => {
-            Expression_PostfixExpression_Operator::MinusMinus
-        }
-        ir::Expression_PostfixExpression_Operator::PlusPlus => {
-            Expression_PostfixExpression_Operator::PlusPlus
-        }
-    }
+    *ir_node
 }
 
-pub enum Expression_PrefixExpression_Operator {
-    Bang,
-    DeleteKeyword,
-    Minus,
-    MinusMinus,
-    PlusPlus,
-    Tilde,
-}
+pub use ir::Expression_PrefixExpression_Operator;
 
-#[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_expression_prefix_expression_operator(
     ir_node: &ir::Expression_PrefixExpression_Operator,
-    semantic: &Rc<SemanticContext>,
+    _semantic: &Rc<SemanticContext>,
 ) -> Expression_PrefixExpression_Operator {
-    match ir_node {
-        ir::Expression_PrefixExpression_Operator::Bang => {
-            Expression_PrefixExpression_Operator::Bang
-        }
-        ir::Expression_PrefixExpression_Operator::DeleteKeyword => {
-            Expression_PrefixExpression_Operator::DeleteKeyword
-        }
-        ir::Expression_PrefixExpression_Operator::Minus => {
-            Expression_PrefixExpression_Operator::Minus
-        }
-        ir::Expression_PrefixExpression_Operator::MinusMinus => {
-            Expression_PrefixExpression_Operator::MinusMinus
-        }
-        ir::Expression_PrefixExpression_Operator::PlusPlus => {
-            Expression_PrefixExpression_Operator::PlusPlus
-        }
-        ir::Expression_PrefixExpression_Operator::Tilde => {
-            Expression_PrefixExpression_Operator::Tilde
-        }
-    }
+    *ir_node
 }
 
-pub enum Expression_ShiftExpression_Operator {
-    GreaterThanGreaterThan,
-    GreaterThanGreaterThanGreaterThan,
-    LessThanLessThan,
-}
+pub use ir::Expression_ShiftExpression_Operator;
 
-#[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_expression_shift_expression_operator(
     ir_node: &ir::Expression_ShiftExpression_Operator,
-    semantic: &Rc<SemanticContext>,
+    _semantic: &Rc<SemanticContext>,
 ) -> Expression_ShiftExpression_Operator {
-    match ir_node {
-        ir::Expression_ShiftExpression_Operator::GreaterThanGreaterThan => {
-            Expression_ShiftExpression_Operator::GreaterThanGreaterThan
-        }
-        ir::Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan => {
-            Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan
-        }
-        ir::Expression_ShiftExpression_Operator::LessThanLessThan => {
-            Expression_ShiftExpression_Operator::LessThanLessThan
-        }
-    }
+    *ir_node
 }
 
 pub enum ForStatementCondition {
@@ -4046,69 +3879,34 @@ pub(crate) fn create_for_statement_initialization(
     }
 }
 
-pub enum FunctionKind {
-    Regular,
-    Constructor,
-    Fallback,
-    Receive,
-    Modifier,
-}
+pub use ir::FunctionKind;
 
-#[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_function_kind(
     ir_node: &ir::FunctionKind,
-    semantic: &Rc<SemanticContext>,
+    _semantic: &Rc<SemanticContext>,
 ) -> FunctionKind {
-    match ir_node {
-        ir::FunctionKind::Regular => FunctionKind::Regular,
-        ir::FunctionKind::Constructor => FunctionKind::Constructor,
-        ir::FunctionKind::Fallback => FunctionKind::Fallback,
-        ir::FunctionKind::Receive => FunctionKind::Receive,
-        ir::FunctionKind::Modifier => FunctionKind::Modifier,
-    }
+    *ir_node
 }
 
-pub enum FunctionMutability {
-    Pure,
-    View,
-    NonPayable,
-    Payable,
-}
+pub use ir::FunctionMutability;
 
-#[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_function_mutability(
     ir_node: &ir::FunctionMutability,
-    semantic: &Rc<SemanticContext>,
+    _semantic: &Rc<SemanticContext>,
 ) -> FunctionMutability {
-    match ir_node {
-        ir::FunctionMutability::Pure => FunctionMutability::Pure,
-        ir::FunctionMutability::View => FunctionMutability::View,
-        ir::FunctionMutability::NonPayable => FunctionMutability::NonPayable,
-        ir::FunctionMutability::Payable => FunctionMutability::Payable,
-    }
+    *ir_node
 }
 
-pub enum FunctionVisibility {
-    Public,
-    Private,
-    Internal,
-    External,
-}
+pub use ir::FunctionVisibility;
 
-#[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_function_visibility(
     ir_node: &ir::FunctionVisibility,
-    semantic: &Rc<SemanticContext>,
+    _semantic: &Rc<SemanticContext>,
 ) -> FunctionVisibility {
-    match ir_node {
-        ir::FunctionVisibility::Public => FunctionVisibility::Public,
-        ir::FunctionVisibility::Private => FunctionVisibility::Private,
-        ir::FunctionVisibility::Internal => FunctionVisibility::Internal,
-        ir::FunctionVisibility::External => FunctionVisibility::External,
-    }
+    *ir_node
 }
 
 pub enum ImportClause {
@@ -4132,33 +3930,14 @@ pub(crate) fn create_import_clause(
     }
 }
 
-pub enum NumberUnit {
-    WeiKeyword,
-    GweiKeyword,
-    EtherKeyword,
-    SecondsKeyword,
-    MinutesKeyword,
-    HoursKeyword,
-    DaysKeyword,
-    WeeksKeyword,
-}
+pub use ir::NumberUnit;
 
-#[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_number_unit(
     ir_node: &ir::NumberUnit,
-    semantic: &Rc<SemanticContext>,
+    _semantic: &Rc<SemanticContext>,
 ) -> NumberUnit {
-    match ir_node {
-        ir::NumberUnit::WeiKeyword => NumberUnit::WeiKeyword,
-        ir::NumberUnit::GweiKeyword => NumberUnit::GweiKeyword,
-        ir::NumberUnit::EtherKeyword => NumberUnit::EtherKeyword,
-        ir::NumberUnit::SecondsKeyword => NumberUnit::SecondsKeyword,
-        ir::NumberUnit::MinutesKeyword => NumberUnit::MinutesKeyword,
-        ir::NumberUnit::HoursKeyword => NumberUnit::HoursKeyword,
-        ir::NumberUnit::DaysKeyword => NumberUnit::DaysKeyword,
-        ir::NumberUnit::WeeksKeyword => NumberUnit::WeeksKeyword,
-    }
+    *ir_node
 }
 
 pub enum Pragma {
@@ -4250,44 +4029,24 @@ pub(crate) fn create_source_unit_member(
     }
 }
 
-pub enum StateVariableMutability {
-    Mutable,
-    Constant,
-    Immutable,
-    Transient,
-}
+pub use ir::StateVariableMutability;
 
-#[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_state_variable_mutability(
     ir_node: &ir::StateVariableMutability,
-    semantic: &Rc<SemanticContext>,
+    _semantic: &Rc<SemanticContext>,
 ) -> StateVariableMutability {
-    match ir_node {
-        ir::StateVariableMutability::Mutable => StateVariableMutability::Mutable,
-        ir::StateVariableMutability::Constant => StateVariableMutability::Constant,
-        ir::StateVariableMutability::Immutable => StateVariableMutability::Immutable,
-        ir::StateVariableMutability::Transient => StateVariableMutability::Transient,
-    }
+    *ir_node
 }
 
-pub enum StateVariableVisibility {
-    Public,
-    Private,
-    Internal,
-}
+pub use ir::StateVariableVisibility;
 
-#[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_state_variable_visibility(
     ir_node: &ir::StateVariableVisibility,
-    semantic: &Rc<SemanticContext>,
+    _semantic: &Rc<SemanticContext>,
 ) -> StateVariableVisibility {
-    match ir_node {
-        ir::StateVariableVisibility::Public => StateVariableVisibility::Public,
-        ir::StateVariableVisibility::Private => StateVariableVisibility::Private,
-        ir::StateVariableVisibility::Internal => StateVariableVisibility::Internal,
-    }
+    *ir_node
 }
 
 pub enum Statement {
@@ -4363,23 +4122,14 @@ pub(crate) fn create_statement(
     }
 }
 
-pub enum StorageLocation {
-    MemoryKeyword,
-    StorageKeyword,
-    CallDataKeyword,
-}
+pub use ir::StorageLocation;
 
-#[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_storage_location(
     ir_node: &ir::StorageLocation,
-    semantic: &Rc<SemanticContext>,
+    _semantic: &Rc<SemanticContext>,
 ) -> StorageLocation {
-    match ir_node {
-        ir::StorageLocation::MemoryKeyword => StorageLocation::MemoryKeyword,
-        ir::StorageLocation::StorageKeyword => StorageLocation::StorageKeyword,
-        ir::StorageLocation::CallDataKeyword => StorageLocation::CallDataKeyword,
-    }
+    *ir_node
 }
 
 pub enum StringExpression {
@@ -4461,47 +4211,14 @@ pub(crate) fn create_using_clause(
     }
 }
 
-pub enum UsingOperator {
-    Ampersand,
-    Asterisk,
-    BangEqual,
-    Bar,
-    Caret,
-    EqualEqual,
-    GreaterThan,
-    GreaterThanEqual,
-    LessThan,
-    LessThanEqual,
-    Minus,
-    Percent,
-    Plus,
-    Slash,
-    Tilde,
-}
+pub use ir::UsingOperator;
 
-#[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_using_operator(
     ir_node: &ir::UsingOperator,
-    semantic: &Rc<SemanticContext>,
+    _semantic: &Rc<SemanticContext>,
 ) -> UsingOperator {
-    match ir_node {
-        ir::UsingOperator::Ampersand => UsingOperator::Ampersand,
-        ir::UsingOperator::Asterisk => UsingOperator::Asterisk,
-        ir::UsingOperator::BangEqual => UsingOperator::BangEqual,
-        ir::UsingOperator::Bar => UsingOperator::Bar,
-        ir::UsingOperator::Caret => UsingOperator::Caret,
-        ir::UsingOperator::EqualEqual => UsingOperator::EqualEqual,
-        ir::UsingOperator::GreaterThan => UsingOperator::GreaterThan,
-        ir::UsingOperator::GreaterThanEqual => UsingOperator::GreaterThanEqual,
-        ir::UsingOperator::LessThan => UsingOperator::LessThan,
-        ir::UsingOperator::LessThanEqual => UsingOperator::LessThanEqual,
-        ir::UsingOperator::Minus => UsingOperator::Minus,
-        ir::UsingOperator::Percent => UsingOperator::Percent,
-        ir::UsingOperator::Plus => UsingOperator::Plus,
-        ir::UsingOperator::Slash => UsingOperator::Slash,
-        ir::UsingOperator::Tilde => UsingOperator::Tilde,
-    }
+    *ir_node
 }
 
 pub enum UsingTarget {
@@ -4591,31 +4308,14 @@ pub(crate) fn create_version_literal(
     }
 }
 
-pub enum VersionOperator {
-    PragmaCaret,
-    PragmaTilde,
-    PragmaEqual,
-    PragmaLessThan,
-    PragmaGreaterThan,
-    PragmaLessThanEqual,
-    PragmaGreaterThanEqual,
-}
+pub use ir::VersionOperator;
 
-#[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_version_operator(
     ir_node: &ir::VersionOperator,
-    semantic: &Rc<SemanticContext>,
+    _semantic: &Rc<SemanticContext>,
 ) -> VersionOperator {
-    match ir_node {
-        ir::VersionOperator::PragmaCaret => VersionOperator::PragmaCaret,
-        ir::VersionOperator::PragmaTilde => VersionOperator::PragmaTilde,
-        ir::VersionOperator::PragmaEqual => VersionOperator::PragmaEqual,
-        ir::VersionOperator::PragmaLessThan => VersionOperator::PragmaLessThan,
-        ir::VersionOperator::PragmaGreaterThan => VersionOperator::PragmaGreaterThan,
-        ir::VersionOperator::PragmaLessThanEqual => VersionOperator::PragmaLessThanEqual,
-        ir::VersionOperator::PragmaGreaterThanEqual => VersionOperator::PragmaGreaterThanEqual,
-    }
+    *ir_node
 }
 
 pub enum YulExpression {
