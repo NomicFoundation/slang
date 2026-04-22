@@ -153,6 +153,10 @@ impl CargoController {
         // so any change reflects a real code change, not noise.
         // We also keep the window small (only 2 measurements), for the same reason.
         let threshold = |measure| BencherThreshold::new(measure, "0.01").with_max_sample_size("2");
+
+        // We don't add thresholds for l1-hits, l2-hits, and ram-hits, since there's not a simple
+        // rule that could catch all cases (ie more l1-hits is better if total bytes read remains the same,
+        // but less l1-hits is also better if it decreases total bytes read)
         run_bench(
             self.dry_run.get(),
             self.pr_benchmark,
@@ -161,9 +165,6 @@ impl CargoController {
             &[
                 threshold("estimated-cycles"),
                 threshold("instructions"),
-                threshold("l1-hits"),
-                threshold("l2-hits"),
-                threshold("ram-hits"),
                 threshold("total-read-write"),
                 threshold("total-bytes"),
                 threshold("total-blocks"),
