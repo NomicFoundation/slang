@@ -110,6 +110,29 @@ jobs:
         if: "${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'main' }}"
         uses: "./.github/actions/cache/cargo-cooldown/save"
 
+  renovate-config-check:
+    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+
+    permissions:
+      contents: "read"
+
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd" # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: "Renovate schema check"
+        run: "./bin/npx --yes --package renovate -- renovate-config-validator renovate.json"
+
+      - name: "Renovate extraction dry-run"
+        env:
+          # Without a token, github-tags/github-releases lookups (e.g. bencher_cli) hit the
+          # anonymous 60 req/hr rate limit shared across the runner IP.
+          GITHUB_COM_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          LOG_LEVEL: "debug"
+        run: "./bin/npx --yes renovate --platform=local --dry-run=full"
+
   # The full CI runs on the bare runner so it can reuse the cargo-target cache;
   # reproducing that cache-mount setup inside a devcontainer would slow CI down
   # rather than speed it up. This job is kept as a minimal smoke test that the
