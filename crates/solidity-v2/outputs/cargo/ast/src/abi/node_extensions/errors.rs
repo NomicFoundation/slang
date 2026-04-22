@@ -1,4 +1,4 @@
-use crate::abi::{AbiEntry, AbiError};
+use crate::abi::{selector_from_signature, AbiEntry, AbiError};
 use crate::ast::ErrorDefinitionStruct;
 
 impl ErrorDefinitionStruct {
@@ -22,5 +22,10 @@ impl ErrorDefinitionStruct {
             name: self.ir_node.name.unparse().to_string(),
             inputs,
         }))
+    }
+
+    pub fn compute_selector(&self) -> Option<u32> {
+        self.compute_canonical_signature()
+            .map(|sig| selector_from_signature(&sig))
     }
 }

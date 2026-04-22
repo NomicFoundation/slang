@@ -171,6 +171,25 @@ fn test_function_selector() -> Result<()> {
 }
 
 #[test]
+fn test_events_and_errors_selectors() -> Result<()> {
+    let unit = fixtures::FullAbi::build_compilation_unit()?;
+
+    let test_contract = unit
+        .find_contract_by_name("Test")
+        .expect("Test contract can be found");
+
+    let events = test_contract.events();
+    assert_eq!(events.len(), 1);
+    assert_eq!(events[0].compute_selector(), Some(0xb9b1_0fa6)); // Event(uint256,bytes)
+
+    let errors = test_contract.errors();
+    assert_eq!(errors.len(), 1);
+    assert_eq!(errors[0].compute_selector(), Some(0xcf47_9181)); // InsufficientBalance(uint256,uint256)
+
+    Ok(())
+}
+
+#[test]
 fn test_full_abi_with_events_and_errors() -> Result<()> {
     let unit = fixtures::FullAbi::build_compilation_unit()?;
 
