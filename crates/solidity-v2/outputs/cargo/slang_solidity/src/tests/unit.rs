@@ -1,7 +1,7 @@
 use anyhow::Result;
-use slang_solidity_v2_ast::ast::Definition;
 
 use super::fixtures;
+use crate::ast::Definition;
 
 #[test]
 fn test_get_file_ast_root() -> Result<()> {
