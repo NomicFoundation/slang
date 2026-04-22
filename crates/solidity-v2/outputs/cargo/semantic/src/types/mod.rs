@@ -104,7 +104,7 @@ impl FunctionType {
     }
 }
 
-pub trait ImplicitlyConvertible<T> {
+pub(crate) trait ImplicitlyConvertible<T> {
     fn implicitly_convertible_to(&self, target: T) -> bool;
 }
 

@@ -16,7 +16,7 @@ use scopes::ContractScope;
 pub(crate) use scopes::{FileScope, ParameterDefinition, ParametersScope, Scope, UsingDirective};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct ScopeId(usize);
+pub(crate) struct ScopeId(usize);
 
 //////////////////////////////////////////////////////////////////////////////
 // Binder
@@ -221,7 +221,8 @@ impl Binder {
         self.linearisations.get(&node_id)
     }
 
-    pub fn linearisations(&self) -> &HashMap<NodeId, Vec<NodeId>> {
+    #[cfg(test)]
+    pub(crate) fn linearisations(&self) -> &HashMap<NodeId, Vec<NodeId>> {
         &self.linearisations
     }
 

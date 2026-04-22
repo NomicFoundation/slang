@@ -89,16 +89,16 @@ impl Default for TypeRegistry {
 }
 
 impl TypeRegistry {
-    pub fn find_type(&self, type_: &Type) -> Option<TypeId> {
+    pub(crate) fn find_type(&self, type_: &Type) -> Option<TypeId> {
         self.types.get_index_of(type_).map(TypeId)
     }
 
-    pub fn register_type(&mut self, type_: Type) -> TypeId {
+    pub(crate) fn register_type(&mut self, type_: Type) -> TypeId {
         let (index, _) = self.types.insert_full(type_);
         TypeId(index)
     }
 
-    pub fn register_super_types(&mut self, type_id: TypeId, super_types: Vec<TypeId>) {
+    pub(crate) fn register_super_types(&mut self, type_id: TypeId, super_types: Vec<TypeId>) {
         self.super_types.insert(type_id, super_types);
     }
 
@@ -107,7 +107,11 @@ impl TypeRegistry {
     }
 
     #[allow(clippy::too_many_lines)]
-    pub fn implicitly_convertible_to(&self, from_type_id: TypeId, to_type_id: TypeId) -> bool {
+    pub(crate) fn implicitly_convertible_to(
+        &self,
+        from_type_id: TypeId,
+        to_type_id: TypeId,
+    ) -> bool {
         if from_type_id == to_type_id {
             return true;
         }
@@ -288,7 +292,7 @@ impl TypeRegistry {
 
     // Similar to `implicitly_convertible_to` above, but with relaxed rules for
     // data location
-    pub fn implicitly_convertible_to_for_external_call(
+    pub(crate) fn implicitly_convertible_to_for_external_call(
         &self,
         from_type_id: TypeId,
         to_type_id: TypeId,
@@ -349,7 +353,10 @@ impl TypeRegistry {
 
     // Changes a function type to have external visibility and any parameters
     // normalized for that (ie. `calldata` location is changed to `memory`)
-    pub fn externalize_function_type(&mut self, function_type: FunctionType) -> FunctionType {
+    pub(crate) fn externalize_function_type(
+        &mut self,
+        function_type: FunctionType,
+    ) -> FunctionType {
         FunctionType {
             visibility: ir::FunctionVisibility::External,
             parameter_types: function_type
@@ -374,7 +381,7 @@ impl TypeRegistry {
         }
     }
 
-    pub fn find_canonical_type_id(&self, type_id: TypeId) -> Option<TypeId> {
+    pub(crate) fn find_canonical_type_id(&self, type_id: TypeId) -> Option<TypeId> {
         let canonical_type = match self.get_type_by_id(type_id) {
             Type::Array { element_type, .. } => {
                 let element_type = self.find_canonical_type_id(*element_type)?;
@@ -444,7 +451,7 @@ impl TypeRegistry {
         self.register_type_with_data_location(type_, location)
     }
 
-    pub fn register_type_with_data_location(
+    pub(crate) fn register_type_with_data_location(
         &mut self,
         type_: Type,
         location: DataLocation,
@@ -495,7 +502,7 @@ impl TypeRegistry {
 
     // Return a type that can be stored in the EVM. In short, convert literal
     // types into the appropriate "real" type
-    pub fn reified_type(&mut self, type_id: TypeId) -> TypeId {
+    pub(crate) fn reified_type(&mut self, type_id: TypeId) -> TypeId {
         let Type::Literal(kind) = self.get_type_by_id(type_id) else {
             return type_id;
         };
@@ -654,52 +661,53 @@ impl TypeRegistry {
 
 // Convenience accessors for pre-defined types
 impl TypeRegistry {
-    pub fn address(&self) -> TypeId {
+    pub(crate) fn address(&self) -> TypeId {
         self.address_type_id
     }
-    pub fn address_payable(&self) -> TypeId {
+    pub(crate) fn address_payable(&self) -> TypeId {
         self.address_payable_type_id
     }
-    pub fn boolean(&self) -> TypeId {
+    pub(crate) fn boolean(&self) -> TypeId {
         self.boolean_type_id
     }
-    pub fn boolean_bytes_tuple(&self) -> TypeId {
+    pub(crate) fn boolean_bytes_tuple(&self) -> TypeId {
         self.boolean_bytes_tuple_type_id
     }
-    pub fn bytes_calldata(&self) -> TypeId {
+    pub(crate) fn bytes_calldata(&self) -> TypeId {
         self.bytes_calldata_type_id
     }
-    pub fn bytes_memory(&self) -> TypeId {
+    pub(crate) fn bytes_memory(&self) -> TypeId {
         self.bytes_memory_type_id
     }
-    pub fn bytes1(&self) -> TypeId {
+    pub(crate) fn bytes1(&self) -> TypeId {
         self.bytes1_type_id
     }
-    pub fn bytes20(&self) -> TypeId {
+    pub(crate) fn bytes20(&self) -> TypeId {
         self.bytes20_type_id
     }
-    pub fn bytes32(&self) -> TypeId {
+    pub(crate) fn bytes32(&self) -> TypeId {
         self.bytes32_type_id
     }
-    pub fn bytes4(&self) -> TypeId {
+    pub(crate) fn bytes4(&self) -> TypeId {
         self.bytes4_type_id
     }
-    pub fn string(&self) -> TypeId {
+    pub(crate) fn string(&self) -> TypeId {
         self.string_type_id
     }
-    pub fn uint256(&self) -> TypeId {
+    pub(crate) fn uint256(&self) -> TypeId {
         self.uint256_type_id
     }
-    pub fn uint8(&self) -> TypeId {
+    pub(crate) fn uint8(&self) -> TypeId {
         self.uint8_type_id
     }
-    pub fn void(&self) -> TypeId {
+    pub(crate) fn void(&self) -> TypeId {
         self.void_type_id
     }
 }
 
+#[cfg(test)]
 impl TypeRegistry {
-    pub fn iter_types(&self) -> impl Iterator<Item = (TypeId, &Type)> {
+    pub(crate) fn iter_types(&self) -> impl Iterator<Item = (TypeId, &Type)> {
         (0usize..).map(TypeId).zip(self.types.iter())
     }
 }
