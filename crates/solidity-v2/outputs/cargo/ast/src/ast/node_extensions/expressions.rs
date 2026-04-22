@@ -32,11 +32,7 @@ impl StringExpression {
             StringExpression::HexStringLiterals(terminals) => {
                 for terminal in terminals {
                     let content = strip_prefix_and_quotes(&terminal.text, "hex");
-                    result.extend(
-                        (0..content.len())
-                            .step_by(2)
-                            .map(|i| u8::from_str_radix(&content[i..i + 2], 16).unwrap()),
-                    );
+                    result.extend(decode_hex_string(content));
                 }
             }
             StringExpression::UnicodeStringLiterals(terminals) => {
@@ -63,6 +59,21 @@ fn strip_prefix_and_quotes<'a>(text: &'a str, prefix: &str) -> &'a str {
                 })
         })
         .unwrap_or(text)
+}
+
+fn decode_hex_string(content: &str) -> Vec<u8> {
+    let mut result = Vec::with_capacity(content.len() / 2);
+    let mut i = 0usize;
+    while i < content.len() {
+        // Decode pairs of hex digits skipping over underscore separators
+        if content.as_bytes()[i] == b'_' {
+            i += 1;
+        }
+        // Parser grammar guarantees that we have at least 2 more digits
+        result.push(u8::from_str_radix(&content[i..i + 2], 16).unwrap());
+        i += 2;
+    }
+    result
 }
 
 fn decode_escape_sequences(content: &str) -> Vec<u8> {
@@ -143,7 +154,19 @@ impl FunctionCallExpressionStruct {
 
 #[cfg(test)]
 mod tests {
-    use super::{decode_escape_sequences, strip_prefix_and_quotes};
+    use super::{decode_escape_sequences, decode_hex_string, strip_prefix_and_quotes};
+
+    // ----- decode_hex_string ------
+
+    #[test]
+    fn decode_hex_string_no_underscores() {
+        assert_eq!(decode_hex_string("303132"), b"012");
+    }
+
+    #[test]
+    fn decode_hex_string_with_underscores() {
+        assert_eq!(decode_hex_string("30_31_32"), b"012");
+    }
 
     // ----- decode_escape_sequences -----
 
