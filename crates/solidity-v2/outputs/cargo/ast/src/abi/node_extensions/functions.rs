@@ -115,7 +115,10 @@ impl ParametersStruct {
 
     fn parameter_types_iter(&self) -> impl Iterator<Item = Option<TypeId>> + '_ {
         self.ir_nodes.iter().map(|parameter| {
-            self.semantic.binder().node_typing(parameter.id()).as_type_id()
+            self.semantic
+                .binder()
+                .node_typing(parameter.id())
+                .as_type_id()
         })
     }
 
