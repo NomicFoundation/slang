@@ -2,6 +2,7 @@
 
 #![allow(unused)]
 #![allow(non_camel_case_types)]
+use std::ops::Range;
 use std::rc::Rc;
 
 use slang_solidity_v2_common::nodes::NodeId;
@@ -9,6 +10,21 @@ use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::context::SemanticContext;
 
 use super::types::Type;
+
+pub struct NodeLocation {
+    file_id: String,
+    text_range: Range<usize>,
+}
+
+impl NodeLocation {
+    pub fn file_id(&self) -> &str {
+        &self.file_id
+    }
+
+    pub fn text_range(&self) -> &Range<usize> {
+        &self.text_range
+    }
+}
 
 //
 // Sequences
@@ -42,6 +58,13 @@ impl AbicoderPragmaStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -87,6 +110,13 @@ impl AdditiveExpressionStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type AddressType = Rc<AddressTypeStruct>;
@@ -117,6 +147,13 @@ impl AddressTypeStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -153,6 +190,13 @@ impl AndExpressionStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type ArrayExpression = Rc<ArrayExpressionStruct>;
@@ -183,6 +227,13 @@ impl ArrayExpressionStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -222,6 +273,13 @@ impl ArrayTypeNameStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type AssemblyStatement = Rc<AssemblyStatementStruct>;
@@ -260,6 +318,13 @@ impl AssemblyStatementStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -305,6 +370,13 @@ impl AssignmentExpressionStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type BitwiseAndExpression = Rc<BitwiseAndExpressionStruct>;
@@ -339,6 +411,13 @@ impl BitwiseAndExpressionStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -375,6 +454,13 @@ impl BitwiseOrExpressionStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type BitwiseXorExpression = Rc<BitwiseXorExpressionStruct>;
@@ -410,6 +496,13 @@ impl BitwiseXorExpressionStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type Block = Rc<BlockStruct>;
@@ -438,6 +531,13 @@ impl BlockStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type BreakStatement = Rc<BreakStatementStruct>;
@@ -464,6 +564,13 @@ impl BreakStatementStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -499,6 +606,13 @@ impl CallOptionsExpressionStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -538,6 +652,13 @@ impl CatchClauseStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type CatchClauseError = Rc<CatchClauseErrorStruct>;
@@ -575,6 +696,13 @@ impl CatchClauseErrorStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -614,6 +742,13 @@ impl ConditionalExpressionStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -664,6 +799,13 @@ impl ConstantDefinitionStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type ContinueStatement = Rc<ContinueStatementStruct>;
@@ -690,6 +832,13 @@ impl ContinueStatementStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -741,6 +890,13 @@ impl ContractDefinitionStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type DecimalNumberExpression = Rc<DecimalNumberExpressionStruct>;
@@ -779,6 +935,13 @@ impl DecimalNumberExpressionStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type DoWhileStatement = Rc<DoWhileStatementStruct>;
@@ -813,6 +976,13 @@ impl DoWhileStatementStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -849,6 +1019,13 @@ impl EmitStatementStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type EnumDefinition = Rc<EnumDefinitionStruct>;
@@ -883,6 +1060,13 @@ impl EnumDefinitionStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -928,6 +1112,13 @@ impl EqualityExpressionStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type ErrorDefinition = Rc<ErrorDefinitionStruct>;
@@ -962,6 +1153,13 @@ impl ErrorDefinitionStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -1002,6 +1200,13 @@ impl EventDefinitionStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type ExperimentalPragma = Rc<ExperimentalPragmaStruct>;
@@ -1032,6 +1237,13 @@ impl ExperimentalPragmaStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -1068,6 +1280,13 @@ impl ExponentiationExpressionStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type ExpressionStatement = Rc<ExpressionStatementStruct>;
@@ -1098,6 +1317,13 @@ impl ExpressionStatementStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -1145,6 +1371,13 @@ impl ForStatementStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type FunctionCallExpression = Rc<FunctionCallExpressionStruct>;
@@ -1179,6 +1412,13 @@ impl FunctionCallExpressionStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -1259,6 +1499,13 @@ impl FunctionDefinitionStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type FunctionType = Rc<FunctionTypeStruct>;
@@ -1305,6 +1552,13 @@ impl FunctionTypeStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type HexNumberExpression = Rc<HexNumberExpressionStruct>;
@@ -1335,6 +1589,13 @@ impl HexNumberExpressionStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -1378,6 +1639,13 @@ impl IfStatementStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type ImportDeconstruction = Rc<ImportDeconstructionStruct>;
@@ -1412,6 +1680,13 @@ impl ImportDeconstructionStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -1450,6 +1725,13 @@ impl ImportDeconstructionSymbolStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -1496,6 +1778,13 @@ impl IndexAccessExpressionStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type InequalityExpression = Rc<InequalityExpressionStruct>;
@@ -1540,6 +1829,13 @@ impl InequalityExpressionStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type InheritanceType = Rc<InheritanceTypeStruct>;
@@ -1577,6 +1873,13 @@ impl InheritanceTypeStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -1620,6 +1923,13 @@ impl InterfaceDefinitionStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type LibraryDefinition = Rc<LibraryDefinitionStruct>;
@@ -1654,6 +1964,13 @@ impl LibraryDefinitionStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -1690,6 +2007,13 @@ impl MappingTypeStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type MemberAccessExpression = Rc<MemberAccessExpressionStruct>;
@@ -1724,6 +2048,13 @@ impl MemberAccessExpressionStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -1763,6 +2094,13 @@ impl ModifierInvocationStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type MultiTypedDeclaration = Rc<MultiTypedDeclarationStruct>;
@@ -1798,6 +2136,13 @@ impl MultiTypedDeclarationStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type MultiTypedDeclarationElement = Rc<MultiTypedDeclarationElementStruct>;
@@ -1831,6 +2176,13 @@ impl MultiTypedDeclarationElementStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -1876,6 +2228,13 @@ impl MultiplicativeExpressionStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type NamedArgument = Rc<NamedArgumentStruct>;
@@ -1911,6 +2270,13 @@ impl NamedArgumentStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type NewExpression = Rc<NewExpressionStruct>;
@@ -1941,6 +2307,13 @@ impl NewExpressionStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -1976,6 +2349,13 @@ impl OrExpressionStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -2023,6 +2403,13 @@ impl ParameterStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type PathImport = Rc<PathImportStruct>;
@@ -2057,6 +2444,13 @@ impl PathImportStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -2096,6 +2490,13 @@ impl PostfixExpressionStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type PragmaDirective = Rc<PragmaDirectiveStruct>;
@@ -2126,6 +2527,13 @@ impl PragmaDirectiveStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -2165,6 +2573,13 @@ impl PrefixExpressionStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type ReturnStatement = Rc<ReturnStatementStruct>;
@@ -2198,6 +2613,13 @@ impl ReturnStatementStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -2233,6 +2655,13 @@ impl RevertStatementStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -2276,6 +2705,13 @@ impl ShiftExpressionStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type SingleTypedDeclaration = Rc<SingleTypedDeclarationStruct>;
@@ -2314,6 +2750,13 @@ impl SingleTypedDeclarationStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type SourceUnit = Rc<SourceUnitStruct>;
@@ -2341,6 +2784,13 @@ impl SourceUnitStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -2399,6 +2849,13 @@ impl StateVariableDefinitionStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type StructDefinition = Rc<StructDefinitionStruct>;
@@ -2434,6 +2891,13 @@ impl StructDefinitionStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type StructMember = Rc<StructMemberStruct>;
@@ -2468,6 +2932,13 @@ impl StructMemberStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -2515,6 +2986,13 @@ impl TryStatementStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type TupleExpression = Rc<TupleExpressionStruct>;
@@ -2545,6 +3023,13 @@ impl TupleExpressionStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -2577,6 +3062,13 @@ impl TupleValueStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type TypeExpression = Rc<TypeExpressionStruct>;
@@ -2608,6 +3100,13 @@ impl TypeExpressionStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type UncheckedBlock = Rc<UncheckedBlockStruct>;
@@ -2638,6 +3137,13 @@ impl UncheckedBlockStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -2674,6 +3180,13 @@ impl UserDefinedValueTypeDefinitionStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type UsingDeconstruction = Rc<UsingDeconstructionStruct>;
@@ -2704,6 +3217,13 @@ impl UsingDeconstructionStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -2743,6 +3263,13 @@ impl UsingDeconstructionSymbolStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type UsingDirective = Rc<UsingDirectiveStruct>;
@@ -2781,6 +3308,13 @@ impl UsingDirectiveStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -2824,6 +3358,13 @@ impl VariableDeclarationStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type VariableDeclarationStatement = Rc<VariableDeclarationStatementStruct>;
@@ -2855,6 +3396,13 @@ impl VariableDeclarationStatementStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type VersionPragma = Rc<VersionPragmaStruct>;
@@ -2885,6 +3433,13 @@ impl VersionPragmaStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -2920,6 +3475,13 @@ impl VersionRangeStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -2959,6 +3521,13 @@ impl VersionTermStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type WhileStatement = Rc<WhileStatementStruct>;
@@ -2994,6 +3563,13 @@ impl WhileStatementStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type YulBlock = Rc<YulBlockStruct>;
@@ -3022,6 +3598,13 @@ impl YulBlockStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type YulBreakStatement = Rc<YulBreakStatementStruct>;
@@ -3049,6 +3632,13 @@ impl YulBreakStatementStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type YulContinueStatement = Rc<YulContinueStatementStruct>;
@@ -3075,6 +3665,13 @@ impl YulContinueStatementStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -3106,6 +3703,13 @@ impl YulDefaultCaseStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -3150,6 +3754,13 @@ impl YulForStatementStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type YulFunctionCallExpression = Rc<YulFunctionCallExpressionStruct>;
@@ -3184,6 +3795,13 @@ impl YulFunctionCallExpressionStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -3231,6 +3849,13 @@ impl YulFunctionDefinitionStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type YulIfStatement = Rc<YulIfStatementStruct>;
@@ -3266,6 +3891,13 @@ impl YulIfStatementStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type YulLeaveStatement = Rc<YulLeaveStatementStruct>;
@@ -3292,6 +3924,13 @@ impl YulLeaveStatementStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -3328,6 +3967,13 @@ impl YulSwitchStatementStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type YulValueCase = Rc<YulValueCaseStruct>;
@@ -3363,6 +4009,13 @@ impl YulValueCaseStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type YulVariableAssignmentStatement = Rc<YulVariableAssignmentStatementStruct>;
@@ -3397,6 +4050,13 @@ impl YulVariableAssignmentStatementStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -3436,6 +4096,13 @@ impl YulVariableDeclarationStatementStruct {
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
+    }
 }
 
 pub type YulVariableDeclarationValue = Rc<YulVariableDeclarationValueStruct>;
@@ -3466,6 +4133,13 @@ impl YulVariableDeclarationValueStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }
 
@@ -5714,5 +6388,12 @@ impl IdentifierStruct {
 
     pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+            text_range: self.ir_node.range.clone(),
+        }
     }
 }

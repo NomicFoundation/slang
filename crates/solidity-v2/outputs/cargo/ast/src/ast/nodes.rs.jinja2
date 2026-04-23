@@ -1,12 +1,28 @@
 {%- set target = model.ir_language_model.target -%}
 #![allow(unused)]
 #![allow(non_camel_case_types)]
+use std::ops::Range;
 use std::rc::Rc;
 
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::context::SemanticContext;
 use super::types::Type;
+
+pub struct NodeLocation {
+    file_id: String,
+    text_range: Range<usize>,
+}
+
+impl NodeLocation {
+    pub fn file_id(&self) -> &str {
+        &self.file_id
+    }
+
+    pub fn text_range(&self) -> &Range<usize> {
+        &self.text_range
+    }
+}
 
 //
 // Sequences
@@ -102,6 +118,13 @@ use super::types::Type;
 
     pub fn get_type(&self) -> Option<Type> {
       Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_location(&self) -> NodeLocation {
+      NodeLocation {
+        file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+        text_range: self.ir_node.range.clone(),
+      }
     }
   }
 
@@ -252,6 +275,13 @@ use super::types::Type;
 
       pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+      }
+
+      pub fn get_location(&self) -> NodeLocation {
+        NodeLocation {
+          file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
+          text_range: self.ir_node.range.clone(),
+        }
       }
     }
   {% endif %}
