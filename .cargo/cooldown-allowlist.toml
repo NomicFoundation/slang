@@ -1,0 +1,9 @@
+[[allow.exact]]
+# Fixes RUSTSEC-2026-0097 (no earlier 0.8.x patch available).
+crate = "rand"
+version = "0.8.6"
+
+[[allow.exact]]
+# Fixes RUSTSEC-2026-0104 (RUSTSEC-2026-0098/0099 are also fixed, in 0.103.12).
+crate = "rustls-webpki"
+version = "0.103.13"
