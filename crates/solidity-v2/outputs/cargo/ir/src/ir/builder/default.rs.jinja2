@@ -8,6 +8,7 @@ use std::rc::Rc;
 use crate::ir::nodes as output;
 use crate::ir::Source;
 use slang_solidity_v2_cst::structured_cst::nodes as input;
+use slang_solidity_v2_cst::structured_cst::text_range::TextRange;
 use super::CstToIrBuilder;
 
 impl<S: Source> CstToIrBuilder<'_, S> {
@@ -19,6 +20,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
       pub(super) fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }}
       {
         let id = self.next_id();
+        let range = source.text_range().unwrap_or_default();
         {%- for field in sequence.fields %}
           let {{ field.label | snake_case }} =
           {%- if field.is_optional -%}
@@ -37,6 +39,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
         Rc::new(output::{{ parent_type }}Struct {
           id,
+          range,
           {%- for field in sequence.fields -%}
             {{ field.label | snake_case }},
           {%- endfor %}
