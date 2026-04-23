@@ -50,8 +50,6 @@ overrides:
 
 # Dependency Resolution
 minimumReleaseAge: 10080 # 1 week
-minimumReleaseAgeExclude:
-  - "basic-ftp@5.3.0" # security fix GHSA-rp42-5vxx-qpwr
 
 # Store Settings
 storeDir: ".hermit/.pnpm-store"
