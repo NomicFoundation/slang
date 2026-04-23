@@ -1,14 +1,17 @@
 use std::rc::Rc;
 
+use node_mapper::NodeMapper;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 
-use crate::binder::{Binder, Definition, Reference, Scope};
+use crate::binder::{Binder, Definition, Reference};
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_resolve_references,
 };
 use crate::types::{Type, TypeId, TypeRegistry};
+
+mod node_mapper;
 
 /// Trait for files that can be used as input to the semantic analysis passes.
 pub trait SemanticFile {
@@ -48,6 +51,7 @@ pub fn extract_import_paths_from_source_unit(
 pub struct SemanticContext {
     binder: Binder,
     types: TypeRegistry,
+    node_mapper: NodeMapper,
 }
 
 impl SemanticContext {
@@ -60,7 +64,13 @@ impl SemanticContext {
         p3_type_definitions::run(files, &mut binder, &mut types);
         p4_resolve_references::run(files, &mut binder, &mut types, language_version);
 
-        Self { binder, types }
+        let node_mapper = NodeMapper::build_from(files);
+
+        Self {
+            binder,
+            types,
+            node_mapper,
+        }
     }
 
     // TODO: this should not be public
@@ -96,12 +106,8 @@ impl SemanticContext {
 }
 
 impl SemanticContext {
-    pub fn node_id_to_file_id(&self, node_id: NodeId) -> Option<String> {
-        let scope_id = self.binder().scope_id_for_node_id(node_id)?;
-        let Scope::File(file_scope) = self.binder().get_scope_by_id(scope_id) else {
-            return None;
-        };
-        Some(file_scope.file_id.clone())
+    pub fn file_id_from_node_id(&self, node_id: NodeId) -> String {
+        self.node_mapper.file_id_from_node_id(node_id)
     }
 
     pub fn resolve_reference_identifier_to_definition_id(&self, node_id: NodeId) -> Option<NodeId> {

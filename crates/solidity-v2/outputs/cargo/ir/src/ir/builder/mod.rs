@@ -1,6 +1,7 @@
 use std::rc::Rc;
 
 use slang_solidity_v2_cst::structured_cst::nodes as input;
+use slang_solidity_v2_cst::structured_cst::text_range::TextRange;
 
 #[path = "default.generated.rs"]
 mod default;
@@ -65,6 +66,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::ConstantDefinition,
     ) -> output::ConstantDefinition {
         let id = self.next_id();
+        let range = source.text_range().unwrap_or_default();
         let type_name = self.build_type_name(&source.type_name);
         let name = self.build_identifier(&source.name);
         let visibility = None;
@@ -72,6 +74,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
         Rc::new(output::ConstantDefinitionStruct {
             id,
+            range,
             type_name,
             name,
             visibility,
@@ -84,6 +87,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::ContractDefinition,
     ) -> output::ContractDefinition {
         let id = self.next_id();
+        let range = source.text_range().unwrap_or_default();
         let abstract_keyword = source.abstract_keyword.is_some();
         let name = self.build_identifier(&source.name);
         let members = self.build_contract_members(&source.members);
@@ -109,6 +113,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
         Rc::new(output::ContractDefinitionStruct {
             id,
+            range,
             abstract_keyword,
             name,
             inheritance_types,
@@ -122,6 +127,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::ErrorDefinition,
     ) -> output::ErrorDefinition {
         let id = self.next_id();
+        let range = source.text_range().unwrap_or_default();
         let name = self.build_identifier(&source.name);
         let parameters = source
             .members
@@ -133,6 +139,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
         Rc::new(output::ErrorDefinitionStruct {
             id,
+            range,
             name,
             parameters,
         })
@@ -143,6 +150,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::EventDefinition,
     ) -> output::EventDefinition {
         let id = self.next_id();
+        let range = source.text_range().unwrap_or_default();
         let name = self.build_identifier(&source.name);
         let anonymous_keyword = source.anonymous_keyword.is_some();
         let parameters = source
@@ -155,6 +163,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
         Rc::new(output::EventDefinitionStruct {
             id,
+            range,
             name,
             anonymous_keyword,
             parameters,
@@ -166,6 +175,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::FunctionDefinition,
     ) -> output::FunctionDefinition {
         let id = self.next_id();
+        let range = source.text_range().unwrap_or_default();
         let (kind, name) = match &source.name {
             input::FunctionName::Identifier(identifier) => (
                 output::FunctionKind::Regular,
@@ -193,6 +203,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
         Rc::new(output::FunctionDefinitionStruct {
             id,
+            range,
             kind,
             name,
             parameters,
@@ -208,6 +219,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
     fn build_function_type(&mut self, source: &input::FunctionType) -> output::FunctionType {
         let id = self.next_id();
+        let range = source.text_range().unwrap_or_default();
         let parameters = self.build_parameters_declaration(&source.parameters);
         let visibility = Self::function_type_visibility(&source.attributes);
         let mutability = Self::function_type_mutability(&source.attributes);
@@ -218,6 +230,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
         Rc::new(output::FunctionTypeStruct {
             id,
+            range,
             parameters,
             visibility,
             mutability,
@@ -230,6 +243,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::IndexAccessExpression,
     ) -> output::IndexAccessExpression {
         let id = self.next_id();
+        let range = source.text_range().unwrap_or_default();
         let operand = self.build_expression(&source.operand);
         let start = source
             .start
@@ -242,6 +256,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
         Rc::new(output::IndexAccessExpressionStruct {
             id,
+            range,
             operand,
             start,
             end,
@@ -250,11 +265,13 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
     fn build_mapping_type(&mut self, source: &input::MappingType) -> output::MappingType {
         let id = self.next_id();
+        let range = source.text_range().unwrap_or_default();
         let key_type = self.build_mapping_key_as_parameter(&source.key_type);
         let value_type = self.build_mapping_value_as_parameter(&source.value_type);
 
         Rc::new(output::MappingTypeStruct {
             id,
+            range,
             key_type,
             value_type,
         })
@@ -262,6 +279,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
     fn build_parameter(&mut self, source: &input::Parameter) -> output::Parameter {
         let id = self.next_id();
+        let range = source.text_range().unwrap_or_default();
         let type_name = self.build_type_name(&source.type_name);
         let storage_location = source
             .storage_location
@@ -271,6 +289,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
         Rc::new(output::ParameterStruct {
             id,
+            range,
             type_name,
             storage_location,
             name,
@@ -283,6 +302,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::StateVariableDefinition,
     ) -> output::StateVariableDefinition {
         let id = self.next_id();
+        let range = source.text_range().unwrap_or_default();
         let type_name = self.build_type_name(&source.type_name);
         let name = self.build_identifier(&source.name);
         let value = source
@@ -295,6 +315,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
         Rc::new(output::StateVariableDefinitionStruct {
             id,
+            range,
             type_name,
             name,
             value,
@@ -500,6 +521,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::ConstructorDefinition,
     ) -> output::FunctionDefinition {
         let id = self.next_id();
+        let range = source.text_range().unwrap_or_default();
         let kind = output::FunctionKind::Constructor;
         let name = None;
         let parameters = self.build_parameters_declaration(&source.parameters);
@@ -515,6 +537,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
         Rc::new(output::FunctionDefinitionStruct {
             id,
+            range,
             kind,
             name,
             parameters,
@@ -579,6 +602,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::FallbackFunctionDefinition,
     ) -> output::FunctionDefinition {
         let id = self.next_id();
+        let range = source.text_range().unwrap_or_default();
         let kind = output::FunctionKind::Fallback;
         let name = None;
         let parameters = self.build_parameters_declaration(&source.parameters);
@@ -601,6 +625,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
         Rc::new(output::FunctionDefinitionStruct {
             id,
+            range,
             kind,
             name,
             parameters,
@@ -669,6 +694,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::ReceiveFunctionDefinition,
     ) -> output::FunctionDefinition {
         let id = self.next_id();
+        let range = source.text_range().unwrap_or_default();
         let kind = output::FunctionKind::Receive;
         let name = None;
         let parameters = self.build_parameters_declaration(&source.parameters);
@@ -689,6 +715,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
         Rc::new(output::FunctionDefinitionStruct {
             id,
+            range,
             kind,
             name,
             parameters,
@@ -737,6 +764,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::ModifierDefinition,
     ) -> output::FunctionDefinition {
         let id = self.next_id();
+        let range = source.text_range().unwrap_or_default();
         let kind = output::FunctionKind::Modifier;
         let name = Some(self.build_identifier(&source.name));
         let parameters = source.parameters.as_ref().map_or(Vec::new(), |parameter| {
@@ -757,6 +785,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
         Rc::new(output::FunctionDefinitionStruct {
             id,
+            range,
             kind,
             name,
             parameters,
@@ -848,6 +877,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     ) -> output::ConstantDefinition {
         Rc::new(output::ConstantDefinitionStruct {
             id: state_variable_definition.id(),
+            range: state_variable_definition.range,
             type_name: state_variable_definition.type_name,
             name: state_variable_definition.name,
             visibility: Some(state_variable_definition.visibility),
@@ -877,11 +907,13 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
     fn build_mapping_key_as_parameter(&mut self, source: &input::MappingKey) -> output::Parameter {
         let id = self.next_id();
+        let range = source.text_range().unwrap_or_default();
         let type_name = self.build_mapping_key_type(&source.key_type);
         let name = source.name.as_ref().map(|name| self.build_identifier(name));
 
         Rc::new(output::ParameterStruct {
             id,
+            range,
             type_name,
             storage_location: None,
             name,
@@ -905,11 +937,13 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::MappingValue,
     ) -> output::Parameter {
         let id = self.next_id();
+        let range = source.text_range().unwrap_or_default();
         let type_name = self.build_type_name(&source.type_name);
         let name = source.name.as_ref().map(|name| self.build_identifier(name));
 
         Rc::new(output::ParameterStruct {
             id,
+            range,
             type_name,
             storage_location: None,
             name,
@@ -926,10 +960,16 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::NamedImport,
     ) -> output::PathImport {
         let id = self.next_id();
+        let range = source.text_range().unwrap_or_default();
         let path = self.build_string_literal(&source.path);
         let alias = Some(self.build_import_alias(&source.alias));
 
-        Rc::new(output::PathImportStruct { id, path, alias })
+        Rc::new(output::PathImportStruct {
+            id,
+            range,
+            path,
+            alias,
+        })
     }
 
     //
@@ -938,12 +978,14 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
     fn build_event_parameter(&mut self, source: &input::EventParameter) -> output::Parameter {
         let id = self.next_id();
+        let range = source.text_range().unwrap_or_default();
         let type_name = self.build_type_name(&source.type_name);
         let indexed = source.indexed_keyword.is_some();
         let name = source.name.as_ref().map(|name| self.build_identifier(name));
 
         Rc::new(output::ParameterStruct {
             id,
+            range,
             type_name,
             storage_location: None,
             name,
@@ -953,11 +995,13 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
     fn build_error_parameter(&mut self, source: &input::ErrorParameter) -> output::Parameter {
         let id = self.next_id();
+        let range = source.text_range().unwrap_or_default();
         let type_name = self.build_type_name(&source.type_name);
         let name = source.name.as_ref().map(|name| self.build_identifier(name));
 
         Rc::new(output::ParameterStruct {
             id,
+            range,
             type_name,
             storage_location: None,
             name,
