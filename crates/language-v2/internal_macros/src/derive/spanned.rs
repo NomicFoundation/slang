@@ -152,7 +152,7 @@ fn get_spanned_type(input: Type) -> Type {
 
         // These are model Types that don't have a derived 'SpannedXXX' type.
         // Let's just wrap it in 'Spanned<T>':
-        "Identifier" => {
+        "Code" | "Identifier" => {
             parse_quote! {
                 crate::internals::Spanned<#input>
             }

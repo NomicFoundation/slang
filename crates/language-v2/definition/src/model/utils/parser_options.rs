@@ -1,6 +1,8 @@
 use language_v2_internal_macros::{derive_spanned_type, ParseInputTokens, WriteOutputTokens};
 use serde::{Deserialize, Serialize};
 
+use crate::model::utils::Code;
+
 /// Options that are used during parser generation.
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
@@ -13,5 +15,5 @@ pub struct ParserOptions {
     ///
     /// Helpful to solve complex parsing situations.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub verbatim: Option<String>,
+    pub verbatim: Option<Code>,
 }
