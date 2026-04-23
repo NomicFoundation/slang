@@ -17,6 +17,7 @@ pub(super) use slang_solidity_v2_common::nodes::NodeId;
   #[derive(Debug)]
   pub struct {{ parent_type }}Struct {
     pub(crate) id: NodeId,
+    pub range: Range<usize>,
     {%- for field in sequence.fields %}
       pub {{ field.label | snake_case }}:
       {%- if field.type.kind == "UniqueTerminal" -%}
