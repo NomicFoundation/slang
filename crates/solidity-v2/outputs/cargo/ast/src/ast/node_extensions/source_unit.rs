@@ -2,7 +2,7 @@ use super::super::{ContractDefinition, SourceUnitMember, SourceUnitStruct};
 
 impl SourceUnitStruct {
     pub fn file_id(&self) -> String {
-        self.semantic.node_id_to_file_id(self.ir_node.id()).unwrap()
+        self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 
     pub fn contracts(&self) -> Vec<ContractDefinition> {
