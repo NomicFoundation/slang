@@ -4,7 +4,8 @@
 #![allow(non_camel_case_types)]
 use std::rc::Rc;
 
-use slang_solidity_v2_ir::ir::{self, NodeId};
+use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::context::SemanticContext;
 
 use super::types::Type;

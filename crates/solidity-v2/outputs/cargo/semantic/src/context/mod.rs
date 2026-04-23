@@ -1,7 +1,8 @@
 use std::rc::Rc;
 
+use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_ir::ir::{self, NodeId};
+use slang_solidity_v2_ir::ir;
 
 use crate::binder::{Binder, Definition, Reference, Scope};
 use crate::passes::{

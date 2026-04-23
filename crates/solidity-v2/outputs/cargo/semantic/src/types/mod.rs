@@ -1,4 +1,5 @@
-use slang_solidity_v2_ir::ir::{self, FunctionMutability, FunctionVisibility, NodeId};
+use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_ir::ir::{self, FunctionMutability, FunctionVisibility};
 
 mod parsing;
 mod registry;

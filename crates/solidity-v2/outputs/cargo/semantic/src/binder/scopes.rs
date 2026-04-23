@@ -1,6 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
-use slang_solidity_v2_ir::ir::{self, NodeId};
+use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_ir::ir;
 
 use super::ScopeId;
 use crate::types::TypeId;

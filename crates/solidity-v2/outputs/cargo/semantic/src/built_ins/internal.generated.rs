@@ -1,8 +1,8 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 use slang_solidity_v2_common::built_ins::BuiltIn as PublicBuiltIn;
+use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::{LanguageVersion, LanguageVersionSpecifier};
-use slang_solidity_v2_ir::ir::NodeId;
 
 use crate::types::TypeId;
 

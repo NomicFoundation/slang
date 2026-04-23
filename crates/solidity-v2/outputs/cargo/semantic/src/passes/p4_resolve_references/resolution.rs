@@ -1,7 +1,8 @@
 use std::collections::HashSet;
 use std::rc::Rc;
 
-use slang_solidity_v2_ir::ir::{self, NodeId};
+use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_ir::ir;
 
 use super::{Pass, ScopeFrame};
 use crate::binder::{

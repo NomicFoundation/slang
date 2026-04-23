@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
-use slang_solidity_v2_ir::ir::{self, NodeId};
+use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::binder;
 use slang_solidity_v2_semantic::context::{
     extract_import_paths_from_source_unit, SemanticContext, SemanticFile,
@@ -29,7 +30,7 @@ impl SemanticFile for File {
         &self.ir_root
     }
 
-    fn resolved_import_by_node_id(&self, node_id: ir::NodeId) -> Option<&String> {
+    fn resolved_import_by_node_id(&self, node_id: NodeId) -> Option<&String> {
         self.resolved_imports.get(&node_id)
     }
 }

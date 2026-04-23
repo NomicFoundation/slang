@@ -24,10 +24,10 @@ contract MyContract {
         source_unit,
         errors,
     } = Parser::parse(CONTENTS, LanguageVersion::V0_8_30);
-
     assert!(errors.is_empty(), "Parser errors: {errors:?}");
 
-    let source_unit = ir::build(&source_unit, &CONTENTS);
+    let mut id_generator = ir::NodeIdGenerator::default();
+    let source_unit = ir::build(&source_unit, &CONTENTS, &mut id_generator);
     assert_eq!(2, source_unit.members.len());
     assert!(matches!(
         source_unit.members[0],
@@ -88,11 +88,14 @@ contract Test is Base layout at 0 {}
         source_unit,
         errors,
     } = Parser::parse(CONTENTS, LanguageVersion::V0_8_30);
-
     assert!(errors.is_empty(), "Parser errors: {errors:?}");
 
-    let source_unit = ir::build(&source_unit, &CONTENTS);
+    let mut id_generator = ir::NodeIdGenerator::default();
+    let source_unit = ir::build(&source_unit, &CONTENTS, &mut id_generator);
+    let sentinel_node_id = id_generator.next_id();
+
     assert_eq!(2, source_unit.members.len());
+    assert!(source_unit.id() < sentinel_node_id);
 
     let ir::SourceUnitMember::ContractDefinition(base_contract) = &source_unit.members[0] else {
         panic!("Expected ContractDefinition");
@@ -100,6 +103,8 @@ contract Test is Base layout at 0 {}
     assert_eq!("Base", base_contract.name.unparse());
     assert!(base_contract.inheritance_types.is_empty());
     assert!(base_contract.storage_layout.is_none());
+    assert!(base_contract.id() < sentinel_node_id);
+    assert!(base_contract.name.id() < sentinel_node_id);
 
     let ir::SourceUnitMember::ContractDefinition(test_contract) = &source_unit.members[1] else {
         panic!("Expected ContractDefinition");
@@ -116,4 +121,6 @@ contract Test is Base layout at 0 {}
             .join(".")
     );
     assert!(test_contract.storage_layout.is_some());
+    assert!(test_contract.id() < sentinel_node_id);
+    assert!(test_contract.name.id() < sentinel_node_id);
 }

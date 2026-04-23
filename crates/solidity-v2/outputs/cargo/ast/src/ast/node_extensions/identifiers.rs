@@ -1,5 +1,5 @@
 use slang_solidity_v2_common::built_ins::BuiltIn;
-use slang_solidity_v2_ir::ir::NodeId;
+use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::binder;
 
 use super::super::nodes::{IdentifierPathStruct, IdentifierStruct};

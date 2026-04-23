@@ -10,4 +10,4 @@ pub use source::Source;
 #[path = "visitor.generated.rs"]
 pub mod visitor;
 
-pub use builder::build_source_unit as build;
+pub use builder::{build_source_unit as build, NodeIdGenerator};

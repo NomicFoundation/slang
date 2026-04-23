@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
 use paste::paste;
-use slang_solidity_v2_ir::ir::NodeId;
+use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::binder;
 use slang_solidity_v2_semantic::context::SemanticContext;
 

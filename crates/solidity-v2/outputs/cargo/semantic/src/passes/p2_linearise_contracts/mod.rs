@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
-use slang_solidity_v2_ir::ir::{self, NodeId};
+use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_ir::ir;
 
 use super::common::resolve_identifier_path_in_scope;
 use crate::binder::{Binder, ContractDefinition, Definition, InterfaceDefinition, ScopeId};

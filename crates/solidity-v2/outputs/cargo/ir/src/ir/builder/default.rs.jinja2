@@ -6,19 +6,20 @@
 
 use std::rc::Rc;
 use crate::ir::nodes as output;
+use crate::ir::Source;
 use slang_solidity_v2_cst::structured_cst::nodes as input;
+use super::CstToIrBuilder;
 
-pub trait Builder {
-  fn unparse_range(&self, range: std::ops::Range<usize>) -> String;
-
+impl<S: Source> CstToIrBuilder<'_, S> {
   //
   // Sequences
   //
   {% for parent_type, sequence in builder.sequences %}
-    fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }}
     {% if not sequence.has_added_fields %}
+      pub(super) fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }}
       {
-        {% for field in sequence.fields %}
+        let id = self.next_id();
+        {%- for field in sequence.fields %}
           let {{ field.label | snake_case }} =
           {%- if field.is_optional -%}
             {%- if field.type.kind == "UniqueTerminal" -%}
@@ -35,13 +36,12 @@ pub trait Builder {
         {%- endfor %}
 
         Rc::new(output::{{ parent_type }}Struct {
+          id,
           {%- for field in sequence.fields -%}
             {{ field.label | snake_case }},
           {%- endfor %}
         })
       }
-    {% else %}
-      ;
     {% endif %}
   {% endfor %}
 
@@ -49,7 +49,7 @@ pub trait Builder {
   // Collapsed sequences
   //
   {% for parent_type, collapsed in builder.collapsed_sequences %}
-    fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ collapsed.target_type.name }}
+    pub(super) fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ collapsed.target_type.name }}
     {
       self.build_{{ collapsed.type.name | snake_case }}(&source.{{ collapsed.label }})
     }
@@ -60,10 +60,18 @@ pub trait Builder {
   //
   {% for parent_type, choice in builder.choices %}
     {% if not choice.is_new -%}
+      #[allow(clippy::unused_self)]
       {% if choice.has_removed_variants -%}
         #[allow(dead_code)]
+        pub(super) fn default_build_{{ parent_type | snake_case }}(
+          &mut self, source: &input::{{ parent_type }},
+        ) -> output::{{ parent_type }}
+      {%- else -%}
+        pub(super) fn build_{{ parent_type | snake_case }}(
+          &mut self, source: &input::{{ parent_type }},
+        ) -> output::{{ parent_type }}
       {%- endif %}
-      fn default_build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }} {
+      {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
@@ -85,14 +93,6 @@ pub trait Builder {
           {% endif -%}
         }
       }
-      fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }}
-      {%- if choice.has_removed_variants -%}
-        ;
-      {%- else -%}
-        {
-          self.default_build_{{ parent_type | snake_case }}(source)
-        }
-      {%- endif %}
     {%- endif %}
   {% endfor %}
 
@@ -100,12 +100,13 @@ pub trait Builder {
   // Collapsed choices
   //
   {% for parent_type, collapsed in builder.collapsed_choices %}
-    fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ collapsed.target.name }} {
+    pub(super) fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ collapsed.target.name }} {
       match source {
         {% for variant in collapsed.variants -%}
           input::{{ parent_type }}::{{ variant.source.name }}(terminal) => {
             let text = self.unparse_range(terminal.range.clone());
             Rc::new(output::{{ collapsed.target.name }}Struct {
+              id: self.next_id(),
               range: terminal.range.clone(),
               text,
             })
@@ -121,7 +122,7 @@ pub trait Builder {
 
   {% for parent_type, collection in builder.collections %}
     {% if not collection.is_new -%}
-      fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }} {
+      pub(super) fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }} {
         source.elements.iter().map(|item|
           self.build_{{ collection.item_type.name | snake_case }}(item)
         ).collect()
@@ -137,9 +138,10 @@ pub trait Builder {
     {# Unique terminals don't need cloning because they are not present in the IR, #}
     {# and new terminals cannot be automatically built #}
     {% if not terminal.is_new and not terminal.is_unique %}
-      fn build_{{ terminal_type | snake_case }}(&mut self, source: &input::{{ terminal_type }}) -> output::{{ terminal_type }} {
+      pub(super) fn build_{{ terminal_type | snake_case }}(&mut self, source: &input::{{ terminal_type }}) -> output::{{ terminal_type }} {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::{{ terminal_type }}Struct {
+          id: self.next_id(),
           range: source.range.clone(),
           text,
         })
@@ -152,9 +154,10 @@ pub trait Builder {
   //
   {% for source_type, normalized in builder.normalized_terminals %}
     {% if not normalized.is_unique %}
-      fn build_{{ source_type | snake_case }}(&mut self, source: &input::{{ source_type }}) -> output::{{ normalized.target }} {
+      pub(super) fn build_{{ source_type | snake_case }}(&mut self, source: &input::{{ source_type }}) -> output::{{ normalized.target }} {
         let text = self.unparse_range(source.range.clone());
         Rc::new(output::{{ normalized.target }}Struct {
+          id: self.next_id(),
           range: source.range.clone(),
           text,
         })

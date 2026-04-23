@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 
+use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_ir::ir::{self, NodeId};
+use slang_solidity_v2_ir::ir::{self, NodeIdGenerator};
 use slang_solidity_v2_parser::{ParseOutput, Parser};
 
 use crate::binder::{Binder, Resolution};
@@ -30,7 +31,7 @@ impl SemanticFile for TestFile {
     }
 }
 
-fn build_file(name: &str, contents: &str) -> TestFile {
+fn build_file(name: &str, contents: &str, id_generator: &mut NodeIdGenerator) -> TestFile {
     let ParseOutput {
         source_unit,
         errors,
@@ -38,7 +39,7 @@ fn build_file(name: &str, contents: &str) -> TestFile {
 
     assert!(errors.is_empty(), "Parser errors: {errors:?}");
 
-    let ir_root = ir::build(&source_unit, &contents);
+    let ir_root = ir::build(&source_unit, &contents, id_generator);
     TestFile {
         id: name.to_string(),
         ir_root,
@@ -52,7 +53,8 @@ contract Base {}
 contract Test is Base layout at 0 {}
     "###;
 
-    let file = build_file("test.sol", CONTENTS);
+    let mut id_generator = NodeIdGenerator::default();
+    let file = build_file("test.sol", CONTENTS, &mut id_generator);
 
     let files = [file];
     let mut binder = Binder::default();
@@ -104,7 +106,8 @@ abstract contract B is C {}
 interface A is C {}
 "#;
 
-    let file = build_file("test.sol", CONTENTS);
+    let mut id_generator = NodeIdGenerator::default();
+    let file = build_file("test.sol", CONTENTS, &mut id_generator);
 
     let files = [file];
     let mut binder = Binder::default();
@@ -143,7 +146,8 @@ contract Test is Base, Foo { // Base should resolve to the contract, not the var
 }
 "#;
 
-    let file = build_file("test.sol", CONTENTS);
+    let mut id_generator = NodeIdGenerator::default();
+    let file = build_file("test.sol", CONTENTS, &mut id_generator);
 
     let files = [file];
     let mut binder = Binder::default();
@@ -189,7 +193,8 @@ contract Test is Base {
 }
     "###;
 
-    let file = build_file("test.sol", CONTENTS);
+    let mut id_generator = NodeIdGenerator::default();
+    let file = build_file("test.sol", CONTENTS, &mut id_generator);
 
     let files = [file];
     let mut binder = Binder::default();
@@ -241,7 +246,8 @@ contract Test is Base {
 }
     "###;
 
-    let file = build_file("test.sol", CONTENTS);
+    let mut id_generator = NodeIdGenerator::default();
+    let file = build_file("test.sol", CONTENTS, &mut id_generator);
 
     let files = [file];
     let mut binder = Binder::default();

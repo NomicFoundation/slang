@@ -5,9 +5,7 @@ use std::rc::Rc;
 use std::ops::Range;
 use std::vec::Vec;
 
-#[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
-#[repr(transparent)]
-pub struct NodeId(usize);
+pub(super) use slang_solidity_v2_common::nodes::NodeId;
 
 //
 // Sequences
@@ -18,6 +16,7 @@ pub struct NodeId(usize);
 
   #[derive(Debug)]
   pub struct {{ parent_type }}Struct {
+    pub(crate) id: NodeId,
     {%- for field in sequence.fields %}
       pub {{ field.label | snake_case }}:
       {%- if field.type.kind == "UniqueTerminal" -%}
@@ -37,8 +36,8 @@ pub struct NodeId(usize);
   }
 
   impl {{ parent_type }}Struct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
-      NodeId(Rc::as_ptr(self) as usize)
+    pub fn id(&self) -> NodeId {
+      self.id
     }
   }
 
@@ -93,13 +92,14 @@ pub struct NodeId(usize);
 
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct {{ terminal_type }}Struct {
+      pub(crate) id: NodeId,
       pub range: Range<usize>,
       pub text: String,
     }
 
     impl {{ terminal_type }}Struct {
-      pub fn id(self: &Rc<Self>) -> NodeId {
-        NodeId(Rc::as_ptr(self) as usize)
+      pub fn id(&self) -> NodeId {
+        self.id
       }
 
       pub fn unparse(&self) -> &str {

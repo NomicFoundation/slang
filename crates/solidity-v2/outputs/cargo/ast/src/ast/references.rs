@@ -1,7 +1,8 @@
 use std::rc::Rc;
 
 use slang_solidity_v2_common::built_ins::BuiltIn;
-use slang_solidity_v2_ir::ir::{self, NodeId};
+use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::context::SemanticContext;
 
 use super::{create_identifier, Definition, Identifier};

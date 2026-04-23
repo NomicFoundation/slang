@@ -1,5 +1,5 @@
 use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit as InputSourceUnit;
-use slang_solidity_v2_ir::ir::{self, SourceUnit, SourceUnitMember};
+use slang_solidity_v2_ir::ir::{self, NodeIdGenerator, SourceUnit, SourceUnitMember};
 
 use crate::dataset::SolidityProject;
 
@@ -20,6 +20,7 @@ pub fn test(
     project: &'static SolidityProject,
     sources: Vec<(String, InputSourceUnit)>,
 ) -> Vec<SourceUnit> {
+    let mut id_generator = NodeIdGenerator::default();
     let mut ir_source_units = Vec::new();
     for (name, source) in sources {
         ir_source_units.push(ir::build(
@@ -28,6 +29,7 @@ pub fn test(
                 .sources
                 .get(&name)
                 .expect("Source not found in project"),
+            &mut id_generator,
         ));
     }
     ir_source_units
