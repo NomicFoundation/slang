@@ -4,7 +4,8 @@ use std::cmp::Ordering;
 use std::rc::Rc;
 
 use sha3::{Digest, Keccak256};
-use slang_solidity_v2_ir::ir::{self, NodeId};
+use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::binder::Definition;
 use slang_solidity_v2_semantic::context::SemanticContext;
 use slang_solidity_v2_semantic::types::{Type, TypeId};

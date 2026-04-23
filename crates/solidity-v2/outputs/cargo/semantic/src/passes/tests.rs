@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 
+use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_ir::ir::{self, NodeId, NodeIdGenerator};
+use slang_solidity_v2_ir::ir::{self, NodeIdGenerator};
 use slang_solidity_v2_parser::{ParseOutput, Parser};
 
 use crate::binder::{Binder, Resolution};

@@ -4,7 +4,7 @@ use std::ops::Range;
 
 use anyhow::Result;
 use ariadne::{Color, Config, Label, Report, ReportBuilder, ReportKind, Source};
-use slang_solidity_v2_ir::ir::NodeId;
+use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_parser::ParserError;
 use slang_solidity_v2_semantic::binder::Resolution;
 use slang_solidity_v2_semantic::context::{SemanticContext, SemanticFile};

@@ -1,5 +1,6 @@
+use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
-use slang_solidity_v2_ir::ir::{self, NodeId};
 
 use crate::binder::{Binder, Definition, FileScope, ParametersScope, Scope, ScopeId};
 use crate::context::SemanticFile;

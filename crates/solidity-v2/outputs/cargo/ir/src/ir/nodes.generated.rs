@@ -6,7 +6,7 @@ use std::ops::Range;
 use std::rc::Rc;
 use std::vec::Vec;
 
-pub use slang_solidity_v2_common::nodes::NodeId;
+pub(super) use slang_solidity_v2_common::nodes::NodeId;
 
 //
 // Sequences

@@ -1,4 +1,4 @@
-use slang_solidity_v2_ir::ir::NodeId;
+use slang_solidity_v2_common::nodes::NodeId;
 
 use super::Pass;
 use crate::binder::{Definition, ParameterDefinition, Scope, Typing};
