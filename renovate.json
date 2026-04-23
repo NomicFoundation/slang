@@ -100,8 +100,8 @@
       "labels": ["ci:perf"]
     },
     {
-      "description": "bencher_cli: handled by customManagers entry below that tracks release tags — disable built-in cargo digest updates so the two don't fight.",
-      "matchPackageNames": ["bencher_cli"],
+      "description": "bencher_cli: handled by customManagers entry below that tracks release tags — disable built-in cargo digest updates so the two don't fight. Note: matches on depName (Cargo.toml key), not packageName (which is the git URL for git-source deps).",
+      "matchDepNames": ["bencher_cli"],
       "matchManagers": ["cargo"],
       "enabled": false
     }
