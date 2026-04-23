@@ -70,7 +70,7 @@ fn extract_with_label(v: &mut Vec<(Edge, TextIndex)>, label: EdgeLabel) -> Optio
     }
 }
 
-/// Compute children with their text offsets, filtering out trivia and separators.
+/// Compute children with their text offsets, filtering out trivia.
 ///
 /// This computes offsets BEFORE filtering so that offsets remain accurate.
 ///
@@ -83,8 +83,8 @@ fn children_with_offsets(node: &Node, text_offset: TextIndex) -> Vec<(Edge, Text
         let child_offset = current_offset;
         current_offset += child.node.text_len();
 
-        // Skip trivia and separators (V2 doesn't parse them)
-        if child.node.is_trivia() || child.label == EdgeLabel::Separator {
+        // Skip trivia
+        if child.node.is_trivia() {
             continue;
         }
 
@@ -110,20 +110,50 @@ fn check_tuple_values_as_deconstruction_elements(
         ), node_range)];
     }
 
-    let children = children_with_offsets(node, text_offset);
-
-    if children.len() != tuple_values.elements.len() {
-        return vec![NodeCheckerError::new(format!(
-            "Expected {} elements, but got {}",
-            tuple_values.elements.len(), children.len()
-        ), node_range)];
-    }
-
+    let v1_children = children_with_offsets(node, text_offset);
+    let mut v1_iter = v1_children.iter();
     let mut errors = vec![];
 
-    for (v2_value, (v1_child, v1_offset)) in tuple_values.elements.iter().zip(children.iter()) {
-        errors.extend(check_tuple_value_as_deconstruction_element(
-            v2_value, &v1_child.node, *v1_offset,
+    match &**tuple_values {
+        slang_solidity_v2_cst::separated::SeparatedList::Empty => {}
+        slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+            if let Some((child, child_offset)) = v1_iter.next() {
+                errors.extend(check_tuple_value_as_deconstruction_element(
+                    first, &child.node, *child_offset,
+                ));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected first element in TupleDeconstructionElements".to_string(),
+                    node_range.clone(),
+                ));
+            }
+            for (v2_sep, v2_elem) in rest {
+                if let Some((child, child_offset)) = v1_iter.next() {
+                    errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        "Expected separator in TupleDeconstructionElements".to_string(),
+                        node_range.clone(),
+                    ));
+                }
+                if let Some((child, child_offset)) = v1_iter.next() {
+                    errors.extend(check_tuple_value_as_deconstruction_element(
+                        v2_elem, &child.node, *child_offset,
+                    ));
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        "Expected element after separator in TupleDeconstructionElements".to_string(),
+                        node_range.clone(),
+                    ));
+                }
+            }
+        }
+    }
+
+    if v1_iter.next().is_some() {
+        errors.push(NodeCheckerError::new(
+            "Unexpected remaining V1 children in TupleDeconstructionElements".to_string(),
+            node_range,
         ));
     }
 
@@ -1125,55 +1155,49 @@ impl NodeChecker for MultiTypedDeclarationElements {
             ), node_range)];
         }
 
-        let children = children_with_offsets(node, text_offset);
-
-        if children.len() != self.elements.len() {
-            return vec![NodeCheckerError::new(format!(
-                "Expected {} elements, but got: {:#?}",
-                self.elements.len(),
-                children
-            ), node_range)];
-        }
-
+        let v1_children = children_with_offsets(node, text_offset);
+        let mut v1_iter = v1_children.iter();
         let mut errors = vec![];
 
-        for (i, (child, child_offset)) in children.iter().enumerate() {
-            let element = &self.elements[i];
-            errors.extend(element.check_node_with_offset(&child.node, *child_offset));
+        match &**self {
+            slang_solidity_v2_cst::separated::SeparatedList::Empty => {}
+            slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+                if let Some((child, child_offset)) = v1_iter.next() {
+                    errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        "Expected first element in MultiTypedDeclarationElements".to_string(),
+                        node_range.clone(),
+                    ));
+                }
+                for (v2_sep, v2_elem) in rest {
+                    if let Some((child, child_offset)) = v1_iter.next() {
+                        errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
+                    } else {
+                        errors.push(NodeCheckerError::new(
+                            "Expected separator in MultiTypedDeclarationElements".to_string(),
+                            node_range.clone(),
+                        ));
+                    }
+                    if let Some((child, child_offset)) = v1_iter.next() {
+                        errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
+                    } else {
+                        errors.push(NodeCheckerError::new(
+                            "Expected element after separator in MultiTypedDeclarationElements".to_string(),
+                            node_range.clone(),
+                        ));
+                    }
+                }
+            }
         }
-        errors
-    }
-}
 
-{% elif parent_type == "UntypedTupleDeclarationElements" %}
-/// `NodeChecker` for `UntypedTupleDeclarationElements` maps to V1's `TupleDeconstructionElements`
-impl NodeChecker for UntypedTupleDeclarationElements {
-    fn check_node_with_offset(&self, node: &Node, text_offset: TextIndex) -> Vec<NodeCheckerError> {
-        let node_range = text_offset..(text_offset + node.text_len());
-
-        if node.kind() != NodeKind::Nonterminal(NonterminalKind::TupleDeconstructionElements) {
-            return vec![NodeCheckerError::new(format!(
-                "Expected node kind to be TupleDeconstructionElements, but it was {}",
-                node.kind()
-            ), node_range)];
+        if v1_iter.next().is_some() {
+            errors.push(NodeCheckerError::new(
+                "Unexpected remaining V1 children in MultiTypedDeclarationElements".to_string(),
+                node_range,
+            ));
         }
 
-        let children = children_with_offsets(node, text_offset);
-
-        if children.len() != self.elements.len() {
-            return vec![NodeCheckerError::new(format!(
-                "Expected {} elements, but got: {:#?}",
-                self.elements.len(),
-                children
-            ), node_range)];
-        }
-
-        let mut errors = vec![];
-
-        for (i, (child, child_offset)) in children.iter().enumerate() {
-            let element = &self.elements[i];
-            errors.extend(element.check_node_with_offset(&child.node, *child_offset));
-        }
         errors
     }
 }
@@ -1196,18 +1220,64 @@ impl NodeChecker for {{ parent_type }} {
             return vec![NodeCheckerError::new(format!("Expected node kind to be {}, but it was {}", NonterminalKind::{{ old_parent_type }}, node.kind()), node_range)];
         }
 
-        let children = children_with_offsets(node, text_offset);
-
-        if children.len() != self.elements.len() {
-            return vec![NodeCheckerError::new(format!("Expected {} elements, but got: {:#?}", self.elements.len(), children), node_range)];
-        }
-
+        let v1_children = children_with_offsets(node, text_offset);
+        let mut v1_iter = v1_children.iter();
         let mut errors = vec![];
 
-        for (i, (child, child_offset)) in children.iter().enumerate() {
-            let element = &self.elements[i];
-            errors.extend(element.check_node_with_offset(&child.node, *child_offset));
+        {% if collection.separator_type -%}
+        // Separated collection: destructure V2 SeparatedList, match against V1 children
+        match &**self {
+            slang_solidity_v2_cst::separated::SeparatedList::Empty => {}
+            slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+                if let Some((child, child_offset)) = v1_iter.next() {
+                    errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        "Expected first element in separated collection".to_string(),
+                        node_range.clone(),
+                    ));
+                }
+                for (v2_sep, v2_elem) in rest {
+                    if let Some((child, child_offset)) = v1_iter.next() {
+                        errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
+                    } else {
+                        errors.push(NodeCheckerError::new(
+                            "Expected separator in separated collection".to_string(),
+                            node_range.clone(),
+                        ));
+                    }
+                    if let Some((child, child_offset)) = v1_iter.next() {
+                        errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
+                    } else {
+                        errors.push(NodeCheckerError::new(
+                            "Expected element after separator in separated collection".to_string(),
+                            node_range.clone(),
+                        ));
+                    }
+                }
+            }
         }
+        {%- else %}
+        // Repeated collection: no separators
+        for element in self.elements() {
+            if let Some((child, child_offset)) = v1_iter.next() {
+                errors.extend(element.check_node_with_offset(&child.node, *child_offset));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected element in repeated collection".to_string(),
+                    node_range.clone(),
+                ));
+            }
+        }
+        {%- endif %}
+
+        if v1_iter.next().is_some() {
+            errors.push(NodeCheckerError::new(
+                "Unexpected remaining V1 children in {{ old_parent_type }}".to_string(),
+                node_range,
+            ));
+        }
+
         errors
     }
 }

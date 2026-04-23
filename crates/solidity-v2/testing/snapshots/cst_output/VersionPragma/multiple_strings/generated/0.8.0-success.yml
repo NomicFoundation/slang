@@ -20,6 +20,7 @@ Tree:
                           - (item꞉ VersionExpression) ► (version_term꞉ VersionTerm): # '^"1.2.3"' (121..129)
                               - (operator꞉ VersionOperator) ► (pragma_caret꞉ PragmaCaret): "^" # (121..122)
                               - (literal꞉ VersionLiteral) ► (pragma_string_literal꞉ PragmaStringLiteral): '"1.2.3"' # (122..129)
+                      - (separator꞉ PragmaBarBar): "||" # (130..132)
                       - (item꞉ VersionExpressionSet): # '"4.5.6"-''7.8.9''' (133..148)
                           - (item꞉ VersionExpression) ► (version_range꞉ VersionRange): # '"4.5.6"-''7.8.9''' (133..148)
                               - (start꞉ VersionLiteral) ► (pragma_string_literal꞉ PragmaStringLiteral): '"4.5.6"' # (133..140)

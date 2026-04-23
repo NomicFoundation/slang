@@ -2247,24 +2247,21 @@ pub trait Builder {
 
     fn build_array_values(&mut self, source: &input::ArrayValues) -> output::ArrayValues {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_expression(item))
             .collect()
     }
 
     fn build_call_options(&mut self, source: &input::CallOptions) -> output::CallOptions {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_named_argument(item))
             .collect()
     }
 
     fn build_catch_clauses(&mut self, source: &input::CatchClauses) -> output::CatchClauses {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_catch_clause(item))
             .collect()
     }
@@ -2274,16 +2271,14 @@ pub trait Builder {
         source: &input::ContractMembers,
     ) -> output::ContractMembers {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_contract_member(item))
             .collect()
     }
 
     fn build_enum_members(&mut self, source: &input::EnumMembers) -> output::EnumMembers {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_identifier(item))
             .collect()
     }
@@ -2293,16 +2288,14 @@ pub trait Builder {
         source: &input::HexStringLiterals,
     ) -> output::HexStringLiterals {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_hex_string_literal(item))
             .collect()
     }
 
     fn build_identifier_path(&mut self, source: &input::IdentifierPath) -> output::IdentifierPath {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_identifier_path_element(item))
             .collect()
     }
@@ -2312,8 +2305,7 @@ pub trait Builder {
         source: &input::ImportDeconstructionSymbols,
     ) -> output::ImportDeconstructionSymbols {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_import_deconstruction_symbol(item))
             .collect()
     }
@@ -2323,8 +2315,7 @@ pub trait Builder {
         source: &input::InheritanceTypes,
     ) -> output::InheritanceTypes {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_inheritance_type(item))
             .collect()
     }
@@ -2334,16 +2325,14 @@ pub trait Builder {
         source: &input::InterfaceMembers,
     ) -> output::InterfaceMembers {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_contract_member(item))
             .collect()
     }
 
     fn build_library_members(&mut self, source: &input::LibraryMembers) -> output::LibraryMembers {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_contract_member(item))
             .collect()
     }
@@ -2353,32 +2342,28 @@ pub trait Builder {
         source: &input::MultiTypedDeclarationElements,
     ) -> output::MultiTypedDeclarationElements {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_multi_typed_declaration_element(item))
             .collect()
     }
 
     fn build_named_arguments(&mut self, source: &input::NamedArguments) -> output::NamedArguments {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_named_argument(item))
             .collect()
     }
 
     fn build_override_paths(&mut self, source: &input::OverridePaths) -> output::OverridePaths {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_identifier_path(item))
             .collect()
     }
 
     fn build_parameters(&mut self, source: &input::Parameters) -> output::Parameters {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_parameter(item))
             .collect()
     }
@@ -2388,8 +2373,7 @@ pub trait Builder {
         source: &input::PositionalArguments,
     ) -> output::PositionalArguments {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_expression(item))
             .collect()
     }
@@ -2399,8 +2383,7 @@ pub trait Builder {
         source: &input::SimpleVersionLiteral,
     ) -> output::SimpleVersionLiteral {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_version_specifier(item))
             .collect()
     }
@@ -2410,40 +2393,35 @@ pub trait Builder {
         source: &input::SourceUnitMembers,
     ) -> output::SourceUnitMembers {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_source_unit_member(item))
             .collect()
     }
 
     fn build_statements(&mut self, source: &input::Statements) -> output::Statements {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_statement(item))
             .collect()
     }
 
     fn build_string_literals(&mut self, source: &input::StringLiterals) -> output::StringLiterals {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_string_literal(item))
             .collect()
     }
 
     fn build_struct_members(&mut self, source: &input::StructMembers) -> output::StructMembers {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_struct_member(item))
             .collect()
     }
 
     fn build_tuple_values(&mut self, source: &input::TupleValues) -> output::TupleValues {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_tuple_value(item))
             .collect()
     }
@@ -2453,8 +2431,7 @@ pub trait Builder {
         source: &input::UnicodeStringLiterals,
     ) -> output::UnicodeStringLiterals {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_unicode_string_literal(item))
             .collect()
     }
@@ -2464,8 +2441,7 @@ pub trait Builder {
         source: &input::UsingDeconstructionSymbols,
     ) -> output::UsingDeconstructionSymbols {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_using_deconstruction_symbol(item))
             .collect()
     }
@@ -2475,8 +2451,7 @@ pub trait Builder {
         source: &input::VersionExpressionSet,
     ) -> output::VersionExpressionSet {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_version_expression(item))
             .collect()
     }
@@ -2486,64 +2461,56 @@ pub trait Builder {
         source: &input::VersionExpressionSets,
     ) -> output::VersionExpressionSets {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_version_expression_set(item))
             .collect()
     }
 
     fn build_yul_arguments(&mut self, source: &input::YulArguments) -> output::YulArguments {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_yul_expression(item))
             .collect()
     }
 
     fn build_yul_flags(&mut self, source: &input::YulFlags) -> output::YulFlags {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_yul_string_literal(item))
             .collect()
     }
 
     fn build_yul_parameters(&mut self, source: &input::YulParameters) -> output::YulParameters {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_yul_identifier(item))
             .collect()
     }
 
     fn build_yul_path(&mut self, source: &input::YulPath) -> output::YulPath {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_yul_identifier(item))
             .collect()
     }
 
     fn build_yul_paths(&mut self, source: &input::YulPaths) -> output::YulPaths {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_yul_path(item))
             .collect()
     }
 
     fn build_yul_statements(&mut self, source: &input::YulStatements) -> output::YulStatements {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_yul_statement(item))
             .collect()
     }
 
     fn build_yul_switch_cases(&mut self, source: &input::YulSwitchCases) -> output::YulSwitchCases {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_yul_switch_case(item))
             .collect()
     }
@@ -2553,8 +2520,7 @@ pub trait Builder {
         source: &input::YulVariableNames,
     ) -> output::YulVariableNames {
         source
-            .elements
-            .iter()
+            .elements()
             .map(|item| self.build_yul_identifier(item))
             .collect()
     }

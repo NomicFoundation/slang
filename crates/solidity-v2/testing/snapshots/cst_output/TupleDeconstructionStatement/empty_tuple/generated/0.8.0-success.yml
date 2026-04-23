@@ -34,11 +34,15 @@ Tree:
                                   - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "(,,,,) = rhs" (147..159)
                                       - (left_operand꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "(,,,,)" (147..153)
                                           - (open_paren꞉ OpenParen): "(" # (147..148)
-                                          - (items꞉ TupleValues):
+                                          - (items꞉ TupleValues): # ",,,," (148..152)
                                               - (item꞉ TupleValue): []
+                                              - (separator꞉ Comma): "," # (148..149)
                                               - (item꞉ TupleValue): []
+                                              - (separator꞉ Comma): "," # (149..150)
                                               - (item꞉ TupleValue): []
+                                              - (separator꞉ Comma): "," # (150..151)
                                               - (item꞉ TupleValue): []
+                                              - (separator꞉ Comma): "," # (151..152)
                                               - (item꞉ TupleValue): []
                                           - (close_paren꞉ CloseParen): ")" # (152..153)
                                       - (expression_assignment_expression_operator꞉ Expression_AssignmentExpression_Operator) ► (equal꞉ Equal): "=" # (154..155)

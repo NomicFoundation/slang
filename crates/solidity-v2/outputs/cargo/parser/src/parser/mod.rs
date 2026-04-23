@@ -20,6 +20,7 @@ lalrpop_mod!(
     #[allow(clippy::cloned_instead_of_copied)]
     #[allow(clippy::cast_sign_loss)]
     #[allow(clippy::too_many_lines)]
+    #[allow(clippy::type_complexity)]
     #[allow(clippy::unused_self)]
     // We use this to allow wildcard import of node constructors
     #[allow(clippy::wildcard_imports)]

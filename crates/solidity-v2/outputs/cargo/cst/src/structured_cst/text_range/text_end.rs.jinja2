@@ -48,7 +48,7 @@ impl<T: TextEnd> TextEnd for Option<T> {
 {% for parent_type, collection in target.collections %}
     impl TextEnd for {{ parent_type }} {
         fn text_end(&self) -> Option<usize> {
-            self.elements.iter().rev().find_map(TextEnd::text_end)
+            self.elements().rev().find_map(TextEnd::text_end)
         }
     }
 {% endfor %}

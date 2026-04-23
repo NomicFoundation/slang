@@ -33,11 +33,14 @@ Tree:
                                   - (expression꞉ Expression) ► (assignment_expression꞉ AssignmentExpression): # "(, second, , fourth) = rhs" (151..177)
                                       - (left_operand꞉ Expression) ► (tuple_expression꞉ TupleExpression): # "(, second, , fourth)" (151..171)
                                           - (open_paren꞉ OpenParen): "(" # (151..152)
-                                          - (items꞉ TupleValues): # "second, , fourth" (154..170)
+                                          - (items꞉ TupleValues): # ", second, , fourth" (152..170)
                                               - (item꞉ TupleValue): []
+                                              - (separator꞉ Comma): "," # (152..153)
                                               - (item꞉ TupleValue): # "second" (154..160)
                                                   - (expression꞉ Expression) ► (identifier꞉ Identifier): "second" # (154..160)
+                                              - (separator꞉ Comma): "," # (160..161)
                                               - (item꞉ TupleValue): []
+                                              - (separator꞉ Comma): "," # (162..163)
                                               - (item꞉ TupleValue): # "fourth" (164..170)
                                                   - (expression꞉ Expression) ► (identifier꞉ Identifier): "fourth" # (164..170)
                                           - (close_paren꞉ CloseParen): ")" # (170..171)
