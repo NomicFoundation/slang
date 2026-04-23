@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::rc::Rc;
 
 use slang_solidity_v2_common::versions::LanguageVersion;
@@ -194,6 +195,14 @@ impl SemanticContext {
     }
 
     pub fn type_canonical_name(&self, type_id: TypeId) -> Option<String> {
+        self.type_canonical_name_impl(type_id, &mut HashSet::new())
+    }
+
+    fn type_canonical_name_impl(
+        &self,
+        type_id: TypeId,
+        visited_structs: &mut HashSet<NodeId>,
+    ) -> Option<String> {
         match self.types.get_type_by_id(type_id) {
             Type::Address { .. }
             | Type::Boolean
@@ -205,12 +214,12 @@ impl SemanticContext {
             | Type::String { .. } => Some(self.type_internal_name(type_id)),
 
             Type::Array { element_type, .. } => self
-                .type_canonical_name(*element_type)
+                .type_canonical_name_impl(*element_type, visited_structs)
                 .map(|element| format!("{element}[]",)),
             Type::FixedSizeArray {
                 element_type, size, ..
             } => self
-                .type_canonical_name(*element_type)
+                .type_canonical_name_impl(*element_type, visited_structs)
                 .map(|element| format!("{element}[{size}]",)),
 
             Type::Contract { .. } | Type::Interface { .. } => Some("address".to_string()),
@@ -218,6 +227,13 @@ impl SemanticContext {
             Type::Enum { .. } => Some("uint8".to_string()),
 
             Type::Struct { definition_id, .. } => {
+                // Recursive structs are not valid Solidity, but guard against cycles
+                // to avoid unbounded recursion if malformed types reach this point.
+                // TODO(validation): The recursion should be detected in the
+                // `type_definition` pass.
+                if !visited_structs.insert(*definition_id) {
+                    return None;
+                }
                 let Definition::Struct(struct_) = self
                     .binder
                     .find_definition_by_id(*definition_id)
@@ -228,9 +244,11 @@ impl SemanticContext {
                 let mut fields = Vec::new();
                 for member in &struct_.ir_node.members {
                     let member_type_id = self.binder.node_typing(member.id()).as_type_id()?;
-                    let field_type = self.type_canonical_name(member_type_id)?;
+                    let field_type =
+                        self.type_canonical_name_impl(member_type_id, visited_structs)?;
                     fields.push(field_type);
                 }
+                visited_structs.remove(definition_id);
                 Some(format!("({fields})", fields = fields.join(",")))
             }
 
@@ -243,7 +261,7 @@ impl SemanticContext {
                     unreachable!("definition in user defined value type is not a UDVT");
                 };
                 udvt.target_type_id
-                    .and_then(|type_id| self.type_canonical_name(type_id))
+                    .and_then(|type_id| self.type_canonical_name_impl(type_id, visited_structs))
             }
 
             Type::Literal(_) | Type::Mapping { .. } | Type::Tuple { .. } | Type::Void => None,
@@ -255,6 +273,14 @@ impl SemanticContext {
     pub const SELECTOR_SIZE: usize = 4;
 
     pub fn storage_size_of_type_id(&self, type_id: TypeId) -> Option<usize> {
+        self.storage_size_of_type_id_impl(type_id, &mut HashSet::new())
+    }
+
+    fn storage_size_of_type_id_impl(
+        &self,
+        type_id: TypeId,
+        visited_structs: &mut HashSet<NodeId>,
+    ) -> Option<usize> {
         match self.types.get_type_by_id(type_id) {
             Type::Address { .. } | Type::Contract { .. } | Type::Interface { .. } => {
                 Some(Self::ADDRESS_BYTE_SIZE)
@@ -272,7 +298,8 @@ impl SemanticContext {
             Type::FixedSizeArray {
                 element_type, size, ..
             } => {
-                let element_size = self.storage_size_of_type_id(*element_type)?;
+                let element_size =
+                    self.storage_size_of_type_id_impl(*element_type, visited_structs)?;
                 if element_size > Self::SLOT_SIZE {
                     let slots_per_element = element_size.div_ceil(Self::SLOT_SIZE);
                     Some(slots_per_element * size * Self::SLOT_SIZE)
@@ -293,6 +320,13 @@ impl SemanticContext {
                 }
             }
             Type::Struct { definition_id, .. } => {
+                // Recursive structs are not valid Solidity, but guard against cycles
+                // to avoid unbounded recursion if malformed types reach this point.
+                // TODO(validation): The recursion should be detected in the
+                // `type_definition` pass.
+                if !visited_structs.insert(*definition_id) {
+                    return None;
+                }
                 let Definition::Struct(struct_definition) =
                     self.binder.find_definition_by_id(*definition_id)?
                 else {
@@ -301,13 +335,15 @@ impl SemanticContext {
                 let mut ptr: usize = 0;
                 for member in &struct_definition.ir_node.members {
                     let member_type_id = self.binder.node_typing(member.id()).as_type_id()?;
-                    let member_size = self.storage_size_of_type_id(member_type_id)?;
+                    let member_size =
+                        self.storage_size_of_type_id_impl(member_type_id, visited_structs)?;
                     let remaining_bytes = Self::SLOT_SIZE - (ptr % Self::SLOT_SIZE);
                     if remaining_bytes < Self::SLOT_SIZE && member_size >= remaining_bytes {
                         ptr += remaining_bytes;
                     }
                     ptr += member_size;
                 }
+                visited_structs.remove(definition_id);
                 // round up the final allocation to a full slot, because the
                 // next variable needs to start at the next slot anyway
                 ptr = ptr.div_ceil(Self::SLOT_SIZE) * Self::SLOT_SIZE;
@@ -319,7 +355,10 @@ impl SemanticContext {
                 else {
                     return None;
                 };
-                self.storage_size_of_type_id(user_defined_value.target_type_id?)
+                self.storage_size_of_type_id_impl(
+                    user_defined_value.target_type_id?,
+                    visited_structs,
+                )
             }
 
             Type::Literal(_) => None,

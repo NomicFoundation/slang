@@ -405,8 +405,6 @@ impl FunctionDefinitionStruct {
         if !self.is_externally_visible() {
             return None;
         }
-        // TODO: derive the selector from a dedicated external-signature variant
-        // instead of the generic canonical signature.
         self.compute_canonical_signature()
             .map(|sig| selector_from_signature(&sig))
     }
@@ -494,8 +492,6 @@ impl StateVariableDefinitionStruct {
         if !self.is_externally_visible() {
             return None;
         }
-        // TODO: derive the selector from a dedicated external-signature variant
-        // instead of the generic canonical signature.
         self.compute_canonical_signature()
             .map(|sig| selector_from_signature(&sig))
     }
