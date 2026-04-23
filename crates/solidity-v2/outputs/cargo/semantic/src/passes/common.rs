@@ -18,7 +18,7 @@ pub(super) fn resolve_identifier_path_in_scope(
     let mut last_resolution: Resolution = Resolution::Unresolved;
 
     for identifier in identifier_path {
-        let symbol = identifier.unparse();
+        let symbol = identifier.string_id;
         let resolution = if let Some(scope_id) = scope_id {
             if use_lexical_resolution {
                 binder.resolve_in_scope(scope_id, symbol)
@@ -54,7 +54,7 @@ pub(super) fn resolve_identifier_path_in_scope(
                     resolved_file_id, ..
                 }) => resolved_file_id
                     .as_ref()
-                    .and_then(|resolved_file_id| binder.scope_id_for_file_id(resolved_file_id)),
+                    .and_then(|resolved_file_id| binder.scope_id_for_file_id(*resolved_file_id)),
                 Definition::Contract(_) | Definition::Interface(_) | Definition::Library(_) => {
                     use_lexical_resolution = false;
                     binder.scope_id_for_node_id(definition.node_id())

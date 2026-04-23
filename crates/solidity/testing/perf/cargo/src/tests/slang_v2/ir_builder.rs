@@ -1,4 +1,5 @@
 use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit as InputSourceUnit;
+use slang_solidity_v2_ir::interner::Interner;
 use slang_solidity_v2_ir::ir::{self, SourceUnit, SourceUnitMember};
 
 use crate::dataset::SolidityProject;
@@ -12,14 +13,15 @@ pub fn setup(project: &str) -> (&'static SolidityProject, Vec<(String, InputSour
 pub fn run(
     project: &'static SolidityProject,
     sources: Vec<(String, InputSourceUnit)>,
-) -> Vec<SourceUnit> {
+) -> (Interner, Vec<SourceUnit>) {
     test(project, sources)
 }
 
 pub fn test(
     project: &'static SolidityProject,
     sources: Vec<(String, InputSourceUnit)>,
-) -> Vec<SourceUnit> {
+) -> (Interner, Vec<SourceUnit>) {
+    let mut interner = Interner::new();
     let mut ir_source_units = Vec::new();
     for (name, source) in sources {
         ir_source_units.push(ir::build(
@@ -28,9 +30,10 @@ pub fn test(
                 .sources
                 .get(&name)
                 .expect("Source not found in project"),
+            &mut interner,
         ));
     }
-    ir_source_units
+    (interner, ir_source_units)
 }
 
 pub fn count_contracts(source_units: &Vec<SourceUnit>) -> usize {

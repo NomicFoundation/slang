@@ -1,6 +1,7 @@
 use std::collections::HashSet;
 use std::rc::Rc;
 
+use slang_solidity_v2_ir::interner::StringId;
 use slang_solidity_v2_ir::ir::{self, NodeId};
 
 use super::{Pass, ScopeFrame};
@@ -12,10 +13,17 @@ use crate::types::{FunctionType, Type, TypeId};
 /// Lexical style resolution of symbols
 impl Pass<'_> {
     // This is a "top-level" (ie. not a member access) resolution method
-    pub(super) fn resolve_symbol_in_scope(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
+    pub(super) fn resolve_symbol_in_scope(
+        &self,
+        scope_id: ScopeId,
+        symbol: StringId,
+    ) -> Resolution {
         let resolution = self.binder.resolve_in_scope(scope_id, symbol);
         match &resolution {
-            Resolution::Unresolved => self.built_ins_resolver().lookup_global(symbol).into(),
+            Resolution::Unresolved => self
+                .built_ins_resolver()
+                .lookup_global(self.interner.resolve(symbol))
+                .into(),
             Resolution::Ambiguous(definition_ids) => {
                 // Try to disambiguate known cases
                 let first_id = definition_ids.first().copied().unwrap();
@@ -123,7 +131,7 @@ impl Pass<'_> {
         Resolution::from(filtered_definitions)
     }
 
-    pub(super) fn resolve_symbol_in_typing(&self, typing: &Typing, symbol: &str) -> Resolution {
+    pub(super) fn resolve_symbol_in_typing(&self, typing: &Typing, symbol: StringId) -> Resolution {
         match typing {
             Typing::Unresolved => Resolution::Unresolved,
             Typing::Undetermined(type_ids) => {
@@ -183,7 +191,7 @@ impl Pass<'_> {
             Typing::MetaType(type_) => {
                 if let Some(built_in) = self
                     .built_ins_resolver()
-                    .lookup_member_of_meta_type(type_, symbol)
+                    .lookup_member_of_meta_type(type_, self.interner.resolve(symbol))
                 {
                     Resolution::BuiltIn(built_in)
                 } else {
@@ -201,7 +209,7 @@ impl Pass<'_> {
                         if let Some(scope_id) = import_definition
                             .resolved_file_id
                             .as_ref()
-                            .and_then(|file_id| self.binder.scope_id_for_file_id(file_id))
+                            .and_then(|file_id| self.binder.scope_id_for_file_id(*file_id))
                         {
                             self.binder.resolve_in_scope(scope_id, symbol)
                         } else {
@@ -221,18 +229,18 @@ impl Pass<'_> {
                     }
                     _ => self
                         .built_ins_resolver()
-                        .lookup_member_of_user_definition(definition, symbol)
+                        .lookup_member_of_user_definition(definition, self.interner.resolve(symbol))
                         .into(),
                 }
             }
             Typing::BuiltIn(built_in) => self
                 .built_ins_resolver()
-                .lookup_member_of(built_in, symbol)
+                .lookup_member_of(built_in, self.interner.resolve(symbol))
                 .into(),
         }
     }
 
-    fn resolve_symbol_in_type(&self, type_id: TypeId, symbol: &str) -> Resolution {
+    fn resolve_symbol_in_type(&self, type_id: TypeId, symbol: StringId) -> Resolution {
         let type_ = self.types.get_type_by_id(type_id);
 
         // Resolve direct members of the type first
@@ -243,7 +251,7 @@ impl Pass<'_> {
                     .resolve_in_contract_scope(scope_id, symbol, ResolveOptions::External)
                     .or_else(|| {
                         self.built_ins_resolver()
-                            .lookup_member_of_type_id(type_id, symbol)
+                            .lookup_member_of_type_id(type_id, self.interner.resolve(symbol))
                             .into()
                     })
             }
@@ -261,7 +269,7 @@ impl Pass<'_> {
         Resolution::from(definition_ids).or_else(|| {
             // If still unresolved, try with a built-in
             self.built_ins_resolver()
-                .lookup_member_of_type_id(type_id, symbol)
+                .lookup_member_of_type_id(type_id, self.interner.resolve(symbol))
                 .into()
         })
     }
@@ -269,7 +277,7 @@ impl Pass<'_> {
     fn add_attached_functions_for_type(
         &self,
         receiver_type_id: TypeId,
-        symbol: &str,
+        symbol: StringId,
         definition_ids: &mut Vec<NodeId>,
     ) {
         let active_directives = self.active_using_directives_for_type(receiver_type_id);
@@ -356,7 +364,7 @@ impl Pass<'_> {
         let mut use_contract_lookup = true;
         for (index, identifier) in identifier_path.iter().enumerate() {
             let resolution = if let Some(scope_id) = scope_id {
-                let symbol = identifier.unparse();
+                let symbol = identifier.string_id;
                 if use_contract_lookup {
                     use_contract_lookup = false;
                     self.resolve_symbol_in_scope(scope_id, symbol)
@@ -407,7 +415,7 @@ impl Pass<'_> {
             let resolution =
                 parameters_scope_id.map_or(Resolution::Unresolved, |parameters_scope_id| {
                     self.binder
-                        .resolve_in_scope_as_namespace(parameters_scope_id, identifier.unparse())
+                        .resolve_in_scope_as_namespace(parameters_scope_id, identifier.string_id)
                 });
             let reference = Reference::new(Rc::clone(identifier), resolution);
             self.binder.insert_reference(reference);
@@ -418,12 +426,14 @@ impl Pass<'_> {
     pub(super) fn resolve_symbol_in_yul_scope(
         &self,
         scope_id: ScopeId,
-        symbol: &str,
+        symbol: StringId,
     ) -> Resolution {
         let resolution =
             self.filter_overriden_definitions(self.binder.resolve_in_scope(scope_id, symbol));
         if resolution == Resolution::Unresolved {
-            self.built_ins_resolver().lookup_yul_global(symbol).into()
+            self.built_ins_resolver()
+                .lookup_yul_global(self.interner.resolve(symbol))
+                .into()
         } else {
             resolution
         }
@@ -431,14 +441,14 @@ impl Pass<'_> {
 
     pub(super) fn resolve_yul_suffix(
         &self,
-        symbol: &str,
+        symbol: StringId,
         parent_resolution: &Resolution,
     ) -> Resolution {
         match parent_resolution {
             Resolution::Definition(node_id) => {
                 if let Some(definition) = self.binder.find_definition_by_id(*node_id) {
                     self.built_ins_resolver()
-                        .lookup_yul_suffix(definition, symbol)
+                        .lookup_yul_suffix(definition, self.interner.resolve(symbol))
                         .into()
                 } else {
                     Resolution::Unresolved

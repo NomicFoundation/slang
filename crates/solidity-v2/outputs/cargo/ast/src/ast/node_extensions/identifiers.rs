@@ -12,7 +12,7 @@ impl IdentifierStruct {
     }
 
     pub fn name(&self) -> String {
-        self.ir_node.unparse().to_string()
+        self.ir_node.unparse(self.semantic.interner()).to_string()
     }
 
     pub fn is_reference(&self) -> bool {
@@ -89,7 +89,7 @@ impl IdentifierPathStruct {
     pub fn name(&self) -> String {
         self.ir_nodes
             .iter()
-            .map(|ir_node| ir_node.unparse())
+            .map(|ir_node| ir_node.unparse(self.semantic.interner()))
             .collect::<Vec<_>>()
             .join(".")
     }

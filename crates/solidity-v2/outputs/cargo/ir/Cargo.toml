@@ -19,6 +19,7 @@ keywords = ["utilities"]
 categories = ["compilers", "utilities"]
 
 [dependencies]
+indexmap = { workspace = true }
 slang_solidity_v2_cst = { workspace = true }
 
 [dev-dependencies]

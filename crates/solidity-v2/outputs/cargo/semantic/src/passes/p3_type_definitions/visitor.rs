@@ -51,6 +51,7 @@ impl Visitor for Pass<'_> {
                 base_slot_expression,
                 self.current_contract_or_file_scope_id(),
                 self,
+                self.interner,
             ) {
                 let Definition::Contract(contract_definition) =
                     self.binder.get_definition_mut(node.id())
@@ -115,11 +116,11 @@ impl Visitor for Pass<'_> {
             let scope_id = imported_symbol
                 .resolved_file_id
                 .as_ref()
-                .and_then(|file_id| self.binder.scope_id_for_file_id(file_id));
+                .and_then(|file_id| self.binder.scope_id_for_file_id(*file_id));
 
             let resolution = scope_id.map_or(Resolution::Unresolved, |scope_id| {
                 self.binder
-                    .resolve_in_scope(scope_id, symbol.name.unparse())
+                    .resolve_in_scope(scope_id, symbol.name.string_id)
             });
             let reference = Reference::new(Rc::clone(&symbol.name), resolution);
             self.binder.insert_reference(reference);
@@ -354,10 +355,10 @@ impl Visitor for Pass<'_> {
                                 });
                             // TODO(validation): *all* definitions should point to functions
 
-                            symbols.insert(symbol_name.unparse().to_string(), definition_ids);
+                            symbols.insert(symbol_name.string_id, definition_ids);
 
                             if let Some(operator) = &symbol.alias {
-                                operators.insert(*operator, symbol_name.unparse().to_string());
+                                operators.insert(*operator, symbol_name.string_id);
                             }
                         }
 
@@ -421,7 +422,7 @@ impl Visitor for Pass<'_> {
 
     fn enter_catch_clause_error(&mut self, node: &ir::CatchClauseError) -> bool {
         if let Some(name) = &node.name {
-            let resolution = match name.unparse() {
+            let resolution = match name.unparse(self.interner) {
                 "Error" | "Panic" => Resolution::BuiltIn(BuiltIn::ErrorOrPanic),
                 _ => Resolution::Unresolved,
             };

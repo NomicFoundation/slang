@@ -1,3 +1,4 @@
+use slang_solidity_v2_ir::interner::Interner;
 use slang_solidity_v2_ir::ir::{self, NodeId};
 
 use crate::binder::{Binder, Definition, Scope, ScopeId};
@@ -18,12 +19,17 @@ mod visitor;
 /// Finally, public state variables will be assigned an equivalent getter
 /// function type. This happens after the main typing pass to ensure all types
 /// are already registered.
-pub fn run(files: &[impl SemanticFile], binder: &mut Binder, types: &mut TypeRegistry) {
+pub fn run(
+    files: &[impl SemanticFile],
+    binder: &mut Binder,
+    types: &mut TypeRegistry,
+    interner: &Interner,
+) {
     for file in files {
-        Pass::visit_file(file, binder, types);
+        Pass::visit_file(file, binder, types, interner);
     }
     for file in files {
-        Pass::visit_file_type_getters(file, binder, types);
+        Pass::visit_file_type_getters(file, binder, types, interner);
     }
 }
 
@@ -31,15 +37,22 @@ struct Pass<'a> {
     scope_stack: Vec<ScopeId>,
     binder: &'a mut Binder,
     types: &'a mut TypeRegistry,
+    interner: &'a Interner,
     current_receiver_type: Option<TypeId>,
 }
 
 impl<'a> Pass<'a> {
-    fn visit_file(file: &impl SemanticFile, binder: &'a mut Binder, types: &'a mut TypeRegistry) {
+    fn visit_file(
+        file: &impl SemanticFile,
+        binder: &'a mut Binder,
+        types: &'a mut TypeRegistry,
+        interner: &'a Interner,
+    ) {
         let mut pass = Self {
             scope_stack: Vec::new(),
             binder,
             types,
+            interner,
             current_receiver_type: None,
         };
         ir::visitor::accept_source_unit(file.ir_root(), &mut pass);
@@ -56,11 +69,13 @@ impl<'a> Pass<'a> {
         file: &impl SemanticFile,
         binder: &'a mut Binder,
         types: &'a mut TypeRegistry,
+        interner: &'a Interner,
     ) {
         let mut pass = Self {
             scope_stack: Vec::new(),
             binder,
             types,
+            interner,
             current_receiver_type: None,
         };
         pass.type_getters_from(file.ir_root());

@@ -115,8 +115,9 @@ impl Visitor for Pass<'_> {
 
     fn enter_expression(&mut self, node: &ir::Expression) -> bool {
         if let ir::Expression::Identifier(identifier) = node {
-            let symbol = identifier.unparse();
-            let resolution = if symbol == "_" && self.is_in_modifier_scope() {
+            let symbol = identifier.string_id;
+            let resolution = if self.interner.resolve(symbol) == "_" && self.is_in_modifier_scope()
+            {
                 Resolution::BuiltIn(BuiltIn::ModifierUnderscore)
             } else {
                 let scope_id = self.current_scope_id();
@@ -129,13 +130,13 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_hex_number_expression(&mut self, node: &ir::HexNumberExpression) {
-        let kind = Self::hex_number_literal_kind(node);
+        let kind = self.hex_number_literal_kind(node);
         let type_id = self.types.register_type(Type::Literal(kind));
         self.binder.set_node_type(node.id(), Some(type_id));
     }
 
     fn leave_decimal_number_expression(&mut self, node: &ir::DecimalNumberExpression) {
-        let type_ = if node.unit.is_none() && node.literal.unparse() == "0" {
+        let type_ = if node.unit.is_none() && node.literal.unparse(self.interner) == "0" {
             Type::Literal(LiteralKind::Zero)
         } else {
             Type::Literal(LiteralKind::DecimalInteger)
@@ -147,7 +148,7 @@ impl Visitor for Pass<'_> {
     fn leave_string_expression(&mut self, node: &ir::StringExpression) {
         let type_id = self
             .types
-            .register_type(Self::type_of_string_expression(node));
+            .register_type(self.type_of_string_expression(node));
         let node_id = Self::string_expression_node_id(node);
         self.binder.set_node_type(node_id, Some(type_id));
     }
@@ -317,7 +318,7 @@ impl Visitor for Pass<'_> {
         // typing information of the operand expression
         let operand_typing = self.typing_of_expression(&node.operand);
         let resolution = self.filter_overriden_definitions(
-            self.resolve_symbol_in_typing(&operand_typing, node.member.unparse()),
+            self.resolve_symbol_in_typing(&operand_typing, node.member.string_id),
         );
 
         // If the operand is either `this` or a contract/interface reference
@@ -477,8 +478,10 @@ impl Visitor for Pass<'_> {
     fn enter_call_options_expression(&mut self, node: &ir::CallOptionsExpression) -> bool {
         for option in &node.options {
             let identifier = &option.name;
-            let resolution =
-                crate::built_ins::BuiltInsResolver::lookup_call_option(identifier.unparse()).into();
+            let resolution = crate::built_ins::BuiltInsResolver::lookup_call_option(
+                self.interner.resolve(identifier.string_id),
+            )
+            .into();
             let reference = Reference::new(Rc::clone(identifier), resolution);
             self.binder.insert_reference(reference);
         }
@@ -497,13 +500,13 @@ impl Visitor for Pass<'_> {
 
         let scope_id = self.current_scope_id();
         let identifier = &items[0];
-        let resolution = self.resolve_symbol_in_yul_scope(scope_id, identifier.unparse());
+        let resolution = self.resolve_symbol_in_yul_scope(scope_id, identifier.string_id);
         let reference = Reference::new(Rc::clone(identifier), resolution.clone());
         self.binder.insert_reference(reference);
 
         if items.len() > 1 {
             let suffix = &items[1];
-            let resolution = self.resolve_yul_suffix(suffix.unparse(), &resolution);
+            let resolution = self.resolve_yul_suffix(suffix.string_id, &resolution);
             let reference = Reference::new(Rc::clone(suffix), resolution);
             self.binder.insert_reference(reference);
         }

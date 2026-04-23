@@ -1,6 +1,7 @@
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_parser::{ParseOutput, Parser};
 
+use crate::interner::Interner;
 use crate::ir;
 
 #[test]
@@ -27,7 +28,8 @@ contract MyContract {
 
     assert!(errors.is_empty(), "Parser errors: {errors:?}");
 
-    let source_unit = ir::build(&source_unit, &CONTENTS);
+    let mut interner = Interner::new();
+    let source_unit = ir::build(&source_unit, &CONTENTS, &mut interner);
     assert_eq!(2, source_unit.members.len());
     assert!(matches!(
         source_unit.members[0],
@@ -42,14 +44,14 @@ contract MyContract {
     let ir::SourceUnitMember::ContractDefinition(ref contract) = source_unit.members[1] else {
         panic!("Expected ContractDefinition");
     };
-    assert_eq!("MyContract", contract.name.unparse());
+    assert_eq!("MyContract", contract.name.unparse(&interner));
     assert_eq!(3, contract.members.len());
 
     // MyContract.owner state variable
     let ir::ContractMember::StateVariableDefinition(ref state_var) = contract.members[0] else {
         panic!("Expected StateVariableDefinition");
     };
-    assert_eq!("owner", state_var.name.unparse());
+    assert_eq!("owner", state_var.name.unparse(&interner));
 
     // MyContract constructor
     let ir::ContractMember::FunctionDefinition(ref constructor) = contract.members[1] else {
@@ -66,7 +68,7 @@ contract MyContract {
     };
     assert_eq!(ir::FunctionKind::Regular, function.kind);
     let function_name = function.name.as_ref().expect("function has a name");
-    assert_eq!("test", function_name.unparse());
+    assert_eq!("test", function_name.unparse(&interner));
     assert_eq!(ir::FunctionVisibility::Public, function.visibility);
     assert_eq!(ir::FunctionMutability::View, function.mutability);
     assert_eq!(0, function.parameters.len());
@@ -91,27 +93,28 @@ contract Test is Base layout at 0 {}
 
     assert!(errors.is_empty(), "Parser errors: {errors:?}");
 
-    let source_unit = ir::build(&source_unit, &CONTENTS);
+    let mut interner = Interner::new();
+    let source_unit = ir::build(&source_unit, &CONTENTS, &mut interner);
     assert_eq!(2, source_unit.members.len());
 
     let ir::SourceUnitMember::ContractDefinition(base_contract) = &source_unit.members[0] else {
         panic!("Expected ContractDefinition");
     };
-    assert_eq!("Base", base_contract.name.unparse());
+    assert_eq!("Base", base_contract.name.unparse(&interner));
     assert!(base_contract.inheritance_types.is_empty());
     assert!(base_contract.storage_layout.is_none());
 
     let ir::SourceUnitMember::ContractDefinition(test_contract) = &source_unit.members[1] else {
         panic!("Expected ContractDefinition");
     };
-    assert_eq!("Test", test_contract.name.unparse());
+    assert_eq!("Test", test_contract.name.unparse(&interner));
     assert_eq!(1, test_contract.inheritance_types.len());
     assert_eq!(
         "Base",
         test_contract.inheritance_types[0]
             .type_name
             .iter()
-            .map(|node| node.unparse())
+            .map(|node| node.unparse(&interner))
             .collect::<Vec<_>>()
             .join(".")
     );

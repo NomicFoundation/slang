@@ -398,7 +398,7 @@ pub(crate) fn type_as_abi_parameter(
             };
             let mut components = Vec::new();
             for member in &definition.ir_node.members {
-                let name = member.name.unparse().to_string();
+                let name = member.name.unparse(semantic.interner()).to_string();
                 let member_type_id = semantic.binder().node_typing(member.id()).as_type_id()?;
                 let (type_name, subcomponents) = type_as_abi_parameter(semantic, member_type_id)?;
                 components.push(ParameterComponent {

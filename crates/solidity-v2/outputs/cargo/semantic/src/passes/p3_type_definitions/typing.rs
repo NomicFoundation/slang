@@ -90,25 +90,23 @@ impl Pass<'_> {
                 }))
             }
             ir::ElementaryType::BytesKeyword(bytes_keyword) => {
-                Type::from_bytes_keyword(bytes_keyword.unparse(), data_location)
+                Type::from_bytes_keyword(bytes_keyword.unparse(self.interner), data_location)
                     .map(|type_| self.types.register_type(type_))
             }
             ir::ElementaryType::IntKeyword(int_keyword) => Some(
                 self.types
-                    .register_type(Type::from_int_keyword(int_keyword.unparse())),
+                    .register_type(Type::from_int_keyword(int_keyword.unparse(self.interner))),
             ),
             ir::ElementaryType::UintKeyword(uint_keyword) => Some(
                 self.types
-                    .register_type(Type::from_uint_keyword(uint_keyword.unparse())),
+                    .register_type(Type::from_uint_keyword(uint_keyword.unparse(self.interner))),
             ),
-            ir::ElementaryType::FixedKeyword(fixed_keyword) => Some(
-                self.types
-                    .register_type(Type::from_fixed_keyword(fixed_keyword.unparse())),
-            ),
-            ir::ElementaryType::UfixedKeyword(ufixed_keyword) => Some(
-                self.types
-                    .register_type(Type::from_ufixed_keyword(ufixed_keyword.unparse())),
-            ),
+            ir::ElementaryType::FixedKeyword(fixed_keyword) => Some(self.types.register_type(
+                Type::from_fixed_keyword(fixed_keyword.unparse(self.interner)),
+            )),
+            ir::ElementaryType::UfixedKeyword(ufixed_keyword) => Some(self.types.register_type(
+                Type::from_ufixed_keyword(ufixed_keyword.unparse(self.interner)),
+            )),
             ir::ElementaryType::BoolKeyword => Some(self.types.boolean()),
             // No ByteKeyword in v2 (removed since Solidity >= 0.8.0)
             ir::ElementaryType::StringKeyword => data_location.map(|data_location| {

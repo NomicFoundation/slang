@@ -3,12 +3,14 @@ use std::rc::Rc;
 
 use slang_solidity_v2_ast::{abi, ast};
 use slang_solidity_v2_common::versions::LanguageVersion;
+use slang_solidity_v2_ir::interner::Interner;
 use slang_solidity_v2_semantic::context::{SemanticContext, SemanticFile};
 
 use super::file::File;
 
 pub struct CompilationUnit {
     language_version: LanguageVersion,
+    interner: Rc<Interner>,
     files: BTreeMap<String, Rc<File>>,
     semantic: Rc<SemanticContext>,
 }
@@ -18,13 +20,15 @@ impl CompilationUnit {
         language_version: LanguageVersion,
         files: Vec<File>,
         semantic: Rc<SemanticContext>,
+        interner: Rc<Interner>,
     ) -> Self {
         let files: BTreeMap<String, Rc<File>> = files
             .into_iter()
-            .map(|file| (file.id().to_string(), Rc::new(file)))
+            .map(|file| (interner.resolve(file.file_id()).to_string(), Rc::new(file)))
             .collect();
         Self {
             language_version,
+            interner,
             files,
             semantic,
         }
@@ -43,6 +47,10 @@ impl CompilationUnit {
     /// Returns the file with the specified ID, if it exists.
     pub fn file(&self, id: &str) -> Option<Rc<File>> {
         self.files.get(id).cloned()
+    }
+
+    pub fn interner(&self) -> &Interner {
+        &self.interner
     }
 
     // TODO: this should be semi-public

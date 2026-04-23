@@ -2,7 +2,7 @@ use slang_solidity_v2_ir::ir::visitor::Visitor;
 use slang_solidity_v2_ir::ir::{self, NodeId};
 
 use crate::binder::{Binder, Definition, FileScope, ParametersScope, Scope, ScopeId};
-use crate::context::SemanticFile;
+use crate::context::{FileId, SemanticFile};
 
 /// In this pass all definitions are collected with their naming identifiers.
 /// Also lexical (and other kinds of) scopes are identified and linked together,
@@ -116,10 +116,8 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
             .insert_definition_in_scope(definition, self.current_scope_id());
     }
 
-    fn resolve_import_path(&self, import_node_id: NodeId) -> Option<String> {
-        self.current_file
-            .resolved_import_by_node_id(import_node_id)
-            .cloned()
+    fn resolve_import_path(&mut self, import_node_id: NodeId) -> Option<FileId> {
+        self.current_file.resolved_import_by_node_id(import_node_id)
 
         // TODO(validation): emit an error/warning if the file cannot be resolved
     }
@@ -130,7 +128,10 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
     fn collect_parameters(&mut self, parameters: &ir::Parameters) -> ScopeId {
         let mut scope = ParametersScope::new();
         for parameter in parameters {
-            scope.add_parameter(parameter.name.as_ref().map(|id| &id.text), parameter.id());
+            scope.add_parameter(
+                parameter.name.as_ref().map(|id| id.string_id),
+                parameter.id(),
+            );
             if parameter.name.is_some() {
                 let definition = Definition::new_parameter(parameter);
                 self.binder.insert_definition_no_scope(definition);
@@ -170,7 +171,7 @@ impl<'a, F: SemanticFile> Pass<'a, F> {
 
 impl<F: SemanticFile> Visitor for Pass<'_, F> {
     fn enter_source_unit(&mut self, node: &ir::SourceUnit) -> bool {
-        let scope = Scope::new_file(node.id(), self.current_file.id());
+        let scope = Scope::new_file(node.id(), self.current_file.file_id());
         self.enter_scope(scope);
 
         true
@@ -240,11 +241,8 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
         let imported_file_id = self.resolve_import_path(node.id());
 
         for symbol in &node.symbols {
-            let definition = Definition::new_imported_symbol(
-                symbol,
-                symbol.name.unparse().to_owned(),
-                imported_file_id.clone(),
-            );
+            let definition =
+                Definition::new_imported_symbol(symbol, symbol.name.string_id, imported_file_id);
             self.insert_definition_in_current_scope(definition);
         }
 
@@ -266,10 +264,10 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
                     let current_scope_node_id = self.current_scope().node_id();
                     let enclosing_definition =
                         self.binder.find_definition_by_id(current_scope_node_id);
-                    let enclosing_contract_name =
+                    let enclosing_contract_string_id =
                         if let Some(enclosing_definition) = enclosing_definition {
                             if matches!(enclosing_definition, Definition::Contract(_)) {
-                                Some(enclosing_definition.identifier().unparse())
+                                Some(enclosing_definition.identifier().string_id)
                             } else {
                                 None
                             }
@@ -277,8 +275,8 @@ impl<F: SemanticFile> Visitor for Pass<'_, F> {
                             None
                         };
 
-                    if enclosing_contract_name
-                        .is_some_and(|contract_name| contract_name == name.unparse())
+                    if enclosing_contract_string_id
+                        .is_some_and(|contract_id| contract_id == name.string_id)
                     {
                         // TODO(validation): there cannot be a function with the
                         // same name as the enclosing contract (since Solidity

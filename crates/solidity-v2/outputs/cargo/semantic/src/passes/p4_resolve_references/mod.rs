@@ -1,4 +1,5 @@
 use slang_solidity_v2_common::versions::LanguageVersion;
+use slang_solidity_v2_ir::interner::Interner;
 use slang_solidity_v2_ir::ir::{self, NodeId};
 
 use crate::binder::{Binder, Scope, ScopeId};
@@ -21,9 +22,10 @@ pub fn run(
     binder: &mut Binder,
     types: &mut TypeRegistry,
     language_version: LanguageVersion,
+    interner: &Interner,
 ) {
     for file in files {
-        Pass::visit_file(file, binder, types, language_version);
+        Pass::visit_file(file, binder, types, language_version, interner);
     }
     // update definition->references reverse mapping
     binder.update_definitions_to_references_index();
@@ -42,6 +44,7 @@ struct Pass<'a> {
     scope_stack: Vec<ScopeFrame>,
     binder: &'a mut Binder,
     types: &'a mut TypeRegistry,
+    interner: &'a Interner,
 }
 
 impl<'a> Pass<'a> {
@@ -50,12 +53,14 @@ impl<'a> Pass<'a> {
         binder: &'a mut Binder,
         types: &'a mut TypeRegistry,
         language_version: LanguageVersion,
+        interner: &'a Interner,
     ) {
         let mut pass = Self {
             language_version,
             scope_stack: Vec::new(),
             binder,
             types,
+            interner,
         };
         ir::visitor::accept_source_unit(file.ir_root(), &mut pass);
         assert!(pass.scope_stack.is_empty());

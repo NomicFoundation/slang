@@ -66,7 +66,8 @@ mod unit_tests {
         fn ir_builder() {
             let (project, source_units) =
                 crate::tests::slang_v2::ir_builder::setup(super::PROJECT_TO_TEST);
-            let ir_source_units = crate::tests::slang_v2::ir_builder::test(project, source_units);
+            let (_, ir_source_units) =
+                crate::tests::slang_v2::ir_builder::test(project, source_units);
             let ir_contract_count =
                 crate::tests::slang_v2::ir_builder::count_contracts(&ir_source_units);
             assert_eq!(ir_contract_count, super::CONTRACT_COUNT);
@@ -74,9 +75,10 @@ mod unit_tests {
 
         #[test]
         fn semantic() {
-            let (project, input_files) =
+            let (project, interner, input_files) =
                 crate::tests::slang_v2::semantic::setup(super::PROJECT_TO_TEST);
-            let semantic_context = crate::tests::slang_v2::semantic::test(project, input_files);
+            let semantic_context =
+                crate::tests::slang_v2::semantic::test(project, interner, input_files);
             let semantic_contract_count =
                 crate::tests::slang_v2::semantic::count_contracts(&semantic_context);
             assert_eq!(semantic_contract_count, super::CONTRACT_COUNT);

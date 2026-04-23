@@ -1,36 +1,37 @@
 use std::collections::HashMap;
 
 use slang_solidity_v2_common::versions::LanguageVersion;
+use slang_solidity_v2_ir::interner::Interner;
 use slang_solidity_v2_ir::ir::{self, NodeId};
 use slang_solidity_v2_parser::{ParseOutput, Parser};
 
 use crate::binder::{Binder, Resolution};
-use crate::context::SemanticFile;
+use crate::context::{FileId, SemanticFile};
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_resolve_references,
 };
 use crate::types::TypeRegistry;
 
 struct TestFile {
-    id: String,
+    file_id: FileId,
     ir_root: ir::SourceUnit,
 }
 
 impl SemanticFile for TestFile {
-    fn id(&self) -> &str {
-        &self.id
+    fn file_id(&self) -> FileId {
+        self.file_id
     }
 
     fn ir_root(&self) -> &ir::SourceUnit {
         &self.ir_root
     }
 
-    fn resolved_import_by_node_id(&self, _node_id: NodeId) -> Option<&String> {
+    fn resolved_import_by_node_id(&self, _node_id: NodeId) -> Option<FileId> {
         None
     }
 }
 
-fn build_file(name: &str, contents: &str) -> TestFile {
+fn build_file(name: &str, contents: &str, interner: &mut Interner) -> TestFile {
     let ParseOutput {
         source_unit,
         errors,
@@ -38,11 +39,9 @@ fn build_file(name: &str, contents: &str) -> TestFile {
 
     assert!(errors.is_empty(), "Parser errors: {errors:?}");
 
-    let ir_root = ir::build(&source_unit, &contents);
-    TestFile {
-        id: name.to_string(),
-        ir_root,
-    }
+    let ir_root = ir::build(&source_unit, &contents, interner);
+    let file_id = interner.intern(name);
+    TestFile { file_id, ir_root }
 }
 
 #[test]
@@ -52,7 +51,8 @@ contract Base {}
 contract Test is Base layout at 0 {}
     "###;
 
-    let file = build_file("test.sol", CONTENTS);
+    let mut interner = Interner::default();
+    let file = build_file("test.sol", CONTENTS, &mut interner);
 
     let files = [file];
     let mut binder = Binder::default();
@@ -65,14 +65,14 @@ contract Test is Base layout at 0 {}
     assert_eq!(2, binder.linearisations().len());
 }
 
-fn get_contract_to_bases_map(binder: &Binder) -> HashMap<String, Vec<String>> {
+fn get_contract_to_bases_map(binder: &Binder, interner: &Interner) -> HashMap<String, Vec<String>> {
     let mut contract_to_bases = HashMap::new();
     for (key, values) in binder.linearisations() {
         let contract_name = binder
             .find_definition_by_id(*key)
             .unwrap()
             .identifier()
-            .unparse()
+            .unparse(interner)
             .to_string();
 
         let base_names: Vec<String> = values
@@ -82,7 +82,7 @@ fn get_contract_to_bases_map(binder: &Binder) -> HashMap<String, Vec<String>> {
                     .find_definition_by_id(*value)
                     .unwrap()
                     .identifier()
-                    .unparse()
+                    .unparse(interner)
                     .to_string()
             })
             .collect();
@@ -104,14 +104,15 @@ abstract contract B is C {}
 interface A is C {}
 "#;
 
-    let file = build_file("test.sol", CONTENTS);
+    let mut interner = Interner::default();
+    let file = build_file("test.sol", CONTENTS, &mut interner);
 
     let files = [file];
     let mut binder = Binder::default();
     p1_collect_definitions::run(&files, &mut binder);
     p2_linearise_contracts::run(&files, &mut binder);
 
-    let contract_to_bases = get_contract_to_bases_map(&binder);
+    let contract_to_bases = get_contract_to_bases_map(&binder, &interner);
 
     let mut expected = HashMap::new();
     expected.insert(
@@ -143,14 +144,15 @@ contract Test is Base, Foo { // Base should resolve to the contract, not the var
 }
 "#;
 
-    let file = build_file("test.sol", CONTENTS);
+    let mut interner = Interner::default();
+    let file = build_file("test.sol", CONTENTS, &mut interner);
 
     let files = [file];
     let mut binder = Binder::default();
     p1_collect_definitions::run(&files, &mut binder);
     p2_linearise_contracts::run(&files, &mut binder);
 
-    let contract_to_bases = get_contract_to_bases_map(&binder);
+    let contract_to_bases = get_contract_to_bases_map(&binder, &interner);
 
     let mut expected = HashMap::new();
     expected.insert("Base".to_string(), vec!["Base".to_string()]);
@@ -189,7 +191,8 @@ contract Test is Base {
 }
     "###;
 
-    let file = build_file("test.sol", CONTENTS);
+    let mut interner = Interner::default();
+    let file = build_file("test.sol", CONTENTS, &mut interner);
 
     let files = [file];
     let mut binder = Binder::default();
@@ -199,7 +202,7 @@ contract Test is Base {
     p2_linearise_contracts::run(&files, &mut binder);
 
     let types_before = types.iter_types().count();
-    p3_type_definitions::run(&files, &mut binder, &mut types);
+    p3_type_definitions::run(&files, &mut binder, &mut types, &interner);
     let types_after = types.iter_types().count();
 
     // The pass registers new types for: contracts, mappings, structs, enums,
@@ -241,7 +244,8 @@ contract Test is Base {
 }
     "###;
 
-    let file = build_file("test.sol", CONTENTS);
+    let mut interner = Interner::default();
+    let file = build_file("test.sol", CONTENTS, &mut interner);
 
     let files = [file];
     let mut binder = Binder::default();
@@ -250,8 +254,8 @@ contract Test is Base {
 
     p1_collect_definitions::run(&files, &mut binder);
     p2_linearise_contracts::run(&files, &mut binder);
-    p3_type_definitions::run(&files, &mut binder, &mut types);
-    p4_resolve_references::run(&files, &mut binder, &mut types, language_version);
+    p3_type_definitions::run(&files, &mut binder, &mut types, &interner);
+    p4_resolve_references::run(&files, &mut binder, &mut types, language_version, &interner);
 
     // Verify that references were created and most are resolved
     let references = binder.references();

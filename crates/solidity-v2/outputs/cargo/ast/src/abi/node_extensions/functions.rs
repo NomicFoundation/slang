@@ -30,7 +30,7 @@ impl FunctionDefinitionStruct {
             .ir_node
             .name
             .as_ref()
-            .map(|name| name.unparse().to_string());
+            .map(|name| name.unparse(self.semantic.interner()).to_string());
         let state_mutability: AbiMutability = self.ir_node.mutability;
 
         match self.ir_node.kind {
@@ -62,7 +62,11 @@ impl FunctionDefinitionStruct {
         if !self.is_externally_visible() {
             return None;
         }
-        let name = self.ir_node.name.as_ref()?.unparse();
+        let name = self
+            .ir_node
+            .name
+            .as_ref()?
+            .unparse(self.semantic.interner());
         let signature = format!(
             "{name}({parameters})",
             parameters = self.parameters().compute_canonical_signature()?,
@@ -80,7 +84,7 @@ impl ParametersStruct {
             let name = parameter
                 .name
                 .as_ref()
-                .map(|name| name.unparse().to_string());
+                .map(|name| name.unparse(self.semantic.interner()).to_string());
             let indexed = parameter.indexed;
             // Bail out with `None` if any of the parameters fails typing
             let type_id = self.semantic.binder().node_typing(node_id).as_type_id()?;

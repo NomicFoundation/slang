@@ -1,8 +1,10 @@
 use std::rc::Rc;
 
+use slang_solidity_v2_ir::interner::StringId;
 use slang_solidity_v2_ir::ir::{self, NodeId};
 
 use super::ScopeId;
+use crate::context::FileId;
 use crate::types::TypeId;
 
 //////////////////////////////////////////////////////////////////////////////
@@ -81,14 +83,14 @@ pub struct FunctionDefinition {
 #[derive(Debug)]
 pub struct ImportDefinition {
     pub ir_node: ir::PathImport,
-    pub resolved_file_id: Option<String>,
+    pub resolved_file_id: Option<FileId>,
 }
 
 #[derive(Debug)]
 pub struct ImportedSymbolDefinition {
     pub ir_node: ir::ImportDeconstructionSymbol,
-    pub symbol: String,
-    pub resolved_file_id: Option<String>,
+    pub symbol: StringId,
+    pub resolved_file_id: Option<FileId>,
 }
 
 #[derive(Debug)]
@@ -342,7 +344,7 @@ impl Definition {
         })
     }
 
-    pub(crate) fn new_import(ir_node: &ir::PathImport, resolved_file_id: Option<String>) -> Self {
+    pub(crate) fn new_import(ir_node: &ir::PathImport, resolved_file_id: Option<FileId>) -> Self {
         assert!(
             ir_node.alias.is_some(),
             "Definition can only be created for aliased imports"
@@ -356,8 +358,8 @@ impl Definition {
 
     pub(crate) fn new_imported_symbol(
         ir_node: &ir::ImportDeconstructionSymbol,
-        symbol: String,
-        resolved_file_id: Option<String>,
+        symbol: StringId,
+        resolved_file_id: Option<FileId>,
     ) -> Self {
         Self::ImportedSymbol(ImportedSymbolDefinition {
             ir_node: Rc::clone(ir_node),

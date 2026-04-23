@@ -1,3 +1,4 @@
+use slang_solidity_v2_ir::interner::StringId;
 use slang_solidity_v2_ir::ir::{self, NodeId};
 
 use super::Pass;
@@ -81,7 +82,7 @@ impl Pass<'_> {
                 .binder
                 .node_typing(Self::string_expression_node_id(string_expression)),
             ir::Expression::ElementaryType(elementary_type) => {
-                Typing::MetaType(Self::type_of_elementary_type(elementary_type))
+                Typing::MetaType(self.type_of_elementary_type(elementary_type))
             }
             ir::Expression::Identifier(identifier) => self.typing_of_identifier(identifier),
             ir::Expression::PayableKeyword => Typing::MetaType(Type::Address { payable: true }),
@@ -90,23 +91,27 @@ impl Pass<'_> {
         }
     }
 
-    fn type_of_elementary_type(elementary_type: &ir::ElementaryType) -> Type {
+    fn type_of_elementary_type(&self, elementary_type: &ir::ElementaryType) -> Type {
         match elementary_type {
             ir::ElementaryType::AddressType(address_type) => Type::Address {
                 payable: address_type.payable_keyword,
             },
-            ir::ElementaryType::BytesKeyword(terminal) => {
-                Type::from_bytes_keyword(terminal.unparse(), Some(DataLocation::Memory)).unwrap()
+            ir::ElementaryType::BytesKeyword(terminal) => Type::from_bytes_keyword(
+                terminal.unparse(self.interner),
+                Some(DataLocation::Memory),
+            )
+            .unwrap(),
+            ir::ElementaryType::IntKeyword(terminal) => {
+                Type::from_int_keyword(terminal.unparse(self.interner))
             }
-            ir::ElementaryType::IntKeyword(terminal) => Type::from_int_keyword(terminal.unparse()),
             ir::ElementaryType::UintKeyword(terminal) => {
-                Type::from_uint_keyword(terminal.unparse())
+                Type::from_uint_keyword(terminal.unparse(self.interner))
             }
             ir::ElementaryType::FixedKeyword(terminal) => {
-                Type::from_fixed_keyword(terminal.unparse())
+                Type::from_fixed_keyword(terminal.unparse(self.interner))
             }
             ir::ElementaryType::UfixedKeyword(terminal) => {
-                Type::from_ufixed_keyword(terminal.unparse())
+                Type::from_ufixed_keyword(terminal.unparse(self.interner))
             }
             ir::ElementaryType::BoolKeyword => Type::Boolean,
             ir::ElementaryType::StringKeyword => Type::String {
@@ -412,12 +417,12 @@ impl Pass<'_> {
     pub(super) fn collect_named_argument_typings(
         &self,
         arguments: &[ir::NamedArgument],
-    ) -> Vec<(String, Typing)> {
+    ) -> Vec<(StringId, Typing)> {
         arguments
             .iter()
             .map(|argument| {
                 (
-                    argument.name.unparse().to_string(),
+                    argument.name.string_id,
                     self.typing_of_expression(&argument.value),
                 )
             })
@@ -542,12 +547,12 @@ impl Pass<'_> {
         }
     }
 
-    pub(super) fn type_of_string_expression(node: &ir::StringExpression) -> Type {
+    pub(super) fn type_of_string_expression(&self, node: &ir::StringExpression) -> Type {
         let kind = match node {
             ir::StringExpression::StringLiterals(strings) => {
                 let size = strings.iter().fold(0usize, |acc, string| {
                     // TODO: consider escaped characters
-                    acc + string.unparse().len() - 2
+                    acc + string.unparse(self.interner).len() - 2
                 });
                 LiteralKind::String {
                     bytes: u32::try_from(size).unwrap(),
@@ -556,7 +561,7 @@ impl Pass<'_> {
             ir::StringExpression::HexStringLiterals(hex_strings) => {
                 let size = hex_strings.iter().fold(0usize, |acc, hex_string| {
                     // 5 is the length of the `hex` prefix plus the quotes
-                    acc + (hex_string.unparse().len() - 5) / 2
+                    acc + (hex_string.unparse(self.interner).len() - 5) / 2
                 });
                 LiteralKind::String {
                     bytes: u32::try_from(size).unwrap(),
@@ -566,7 +571,7 @@ impl Pass<'_> {
                 let size = unicode_strings.iter().fold(0usize, |acc, unicode_string| {
                     // TODO: actually parse the string
                     // 9 is the length of the `unicode` prefix plus quotes
-                    acc + unicode_string.unparse().len() - 9
+                    acc + unicode_string.unparse(self.interner).len() - 9
                 });
                 LiteralKind::String {
                     bytes: u32::try_from(size).unwrap(),
@@ -577,9 +582,10 @@ impl Pass<'_> {
     }
 
     pub(super) fn hex_number_literal_kind(
+        &self,
         hex_number_expression: &ir::HexNumberExpression,
     ) -> LiteralKind {
-        let hex_number = hex_number_expression.literal.unparse();
+        let hex_number = hex_number_expression.literal.unparse(self.interner);
         if hex_number.len() == 42 {
             // TODO(validation): verify the address is valid (ie. has a valid checksum)
             // We need at least an implementation of SHA3 to compute the checksum
