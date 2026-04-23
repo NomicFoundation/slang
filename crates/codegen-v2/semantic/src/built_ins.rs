@@ -37,7 +37,10 @@ pub fn build_built_ins_model(language: &Language) -> Vec<BuiltInContextModel> {
                         .map(|def| BuiltInDefinitionModel {
                             name: def.name.to_string(),
                             enabled: def.enabled.clone().unwrap_or(VersionSpecifier::Always),
-                            internal_parameter: def.internal_parameter.clone(),
+                            internal_parameter: def
+                                .internal_parameter
+                                .as_ref()
+                                .map(|x| x.value.clone()),
                         })
                         .collect(),
                 })

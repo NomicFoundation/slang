@@ -4549,7 +4549,7 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                 BuiltInScope(
                     name = Type,
                     definitions = [
-                        BuiltInDefinition(name = Type, internal_parameter = "TypeId"),
+                        BuiltInDefinition(name = Type, internal_parameter = Code(TypeId)),
                         BuiltInDefinition(name = TypeName),
                         BuiltInDefinition(name = TypeCreationCode),
                         BuiltInDefinition(name = TypeRuntimeCode),
@@ -4557,22 +4557,22 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                         BuiltInDefinition(
                             name = TypeEnumMin,
                             enabled = From("0.8.8"),
-                            internal_parameter = "TypeId"
+                            internal_parameter = Code(TypeId)
                         ),
                         BuiltInDefinition(
                             name = TypeEnumMax,
                             enabled = From("0.8.8"),
-                            internal_parameter = "TypeId"
+                            internal_parameter = Code(TypeId)
                         ),
-                        BuiltInDefinition(name = TypeMin, internal_parameter = "TypeId"),
-                        BuiltInDefinition(name = TypeMax, internal_parameter = "TypeId")
+                        BuiltInDefinition(name = TypeMin, internal_parameter = Code(TypeId)),
+                        BuiltInDefinition(name = TypeMax, internal_parameter = Code(TypeId))
                     ]
                 ),
                 BuiltInScope(
                     name = Contextual,
                     definitions = [
                         BuiltInDefinition(name = ArrayPop),
-                        BuiltInDefinition(name = ArrayPush, internal_parameter = "TypeId"),
+                        BuiltInDefinition(name = ArrayPush, internal_parameter = Code(TypeId)),
                         BuiltInDefinition(name = BytesConcat),
                         BuiltInDefinition(name = CallOptionGas),
                         BuiltInDefinition(name = CallOptionSalt),
@@ -4588,12 +4588,12 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                         BuiltInDefinition(
                             name = Unwrap,
                             enabled = From("0.8.8"),
-                            internal_parameter = "NodeId"
+                            internal_parameter = Code(NodeId)
                         ),
                         BuiltInDefinition(
                             name = Wrap,
                             enabled = From("0.8.8"),
-                            internal_parameter = "NodeId"
+                            internal_parameter = Code(NodeId)
                         )
                     ]
                 )
@@ -4644,7 +4644,7 @@ IdentifierPathTailElements: Vec<IdentifierPathElement> = {
                         BuiltInDefinition(name = YulInvalid),
                         BuiltInDefinition(name = YulIszero),
                         BuiltInDefinition(name = YulKeccak256),
-                        BuiltInDefinition(name = YulLog, internal_parameter = "u8"),
+                        BuiltInDefinition(name = YulLog, internal_parameter = Code(u8)),
                         BuiltInDefinition(name = YulLt),
                         BuiltInDefinition(name = YulMcopy, enabled = From("0.8.24")),
                         BuiltInDefinition(name = YulMload),
