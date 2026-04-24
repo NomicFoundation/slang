@@ -7,7 +7,7 @@ use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 use infra_utils::paths::PathExtensions;
 use serde_json::json;
-use solidity_testing_utils::config::{self, File, Project};
+use solidity_testing_utils::config;
 use solidity_testing_utils::fetch::fetch;
 use strum::{AsRefStr, EnumIter, IntoEnumIterator};
 
@@ -45,14 +45,12 @@ type Timings = HashMap<String, f64>;
 
 impl NpmController {
     fn execute(&self) -> Result<()> {
-        let config = config::read_config()?;
-
         if let Some(hash) = &self.contract {
             let result = self.run_benchmarks("custom", hash, self.entrypoint.as_deref())?;
             publish(result.into_iter())
         } else {
-            let file_benchmarks = self.individual_file_benchmarks(&config.files)?;
-            let project_benchmarks = self.project_benchmarks(&config.projects)?;
+            let file_benchmarks = self.individual_file_benchmarks(config::FILES)?;
+            let project_benchmarks = self.project_benchmarks(config::PROJECTS)?;
             publish(file_benchmarks.into_iter().chain(project_benchmarks))
         }
     }
@@ -79,31 +77,31 @@ impl NpmController {
         }
     }
 
-    fn individual_file_benchmarks(&self, files: &Vec<File>) -> Result<Timings> {
+    fn individual_file_benchmarks(&self, files: &[config::File]) -> Result<Timings> {
         let mut results = HashMap::<String, f64>::new();
 
         let pattern_regex = self.compute_regex()?;
         for file in files {
-            if !pattern_regex.is_match(&file.name) {
+            if !pattern_regex.is_match(file.name) {
                 continue;
             }
 
-            let result = self.run_benchmarks(&file.name, &file.hash, Some(&file.file))?;
+            let result = self.run_benchmarks(file.name, file.hash, Some(file.file))?;
             results.extend(result);
         }
         Ok(results)
     }
 
-    fn project_benchmarks(&self, projects: &Vec<Project>) -> Result<Timings> {
+    fn project_benchmarks(&self, projects: &[config::Project]) -> Result<Timings> {
         let mut results = HashMap::<String, f64>::new();
         let pattern_regex = self.compute_regex()?;
 
         for project in projects {
-            if !pattern_regex.is_match(&project.name) {
+            if !pattern_regex.is_match(project.name) {
                 continue;
             }
 
-            let result = self.run_benchmarks(&project.name, &project.hash, None)?;
+            let result = self.run_benchmarks(project.name, project.hash, None)?;
             results.extend(result);
         }
         Ok(results)

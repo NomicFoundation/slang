@@ -4456,7 +4456,6 @@ dependencies = [
  "anyhow",
  "infra_utils",
  "reqwest",
- "serde",
  "serde_json",
  "url",
 ]
