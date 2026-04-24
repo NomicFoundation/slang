@@ -3,7 +3,7 @@ use std::rc::Rc;
 use paste::paste;
 
 use super::Definition;
-use crate::backend::types::{self, DataLocation, FunctionTypeKind, TypeId};
+use crate::backend::types::{self, DataLocation, FunctionTypeKind, LiteralKind, TypeId};
 use crate::backend::SemanticAnalysis;
 
 // __SLANG_TYPE_TYPES__ keep in sync with binder types
@@ -309,7 +309,15 @@ impl InterfaceType {
     }
 }
 
-impl LiteralType {}
+impl LiteralType {
+    /// Returns the narrowed kind of this literal type.
+    pub fn kind(&self) -> LiteralKind {
+        let types::Type::Literal(kind) = self.internal_type() else {
+            unreachable!("LiteralType wraps a literal variant by construction")
+        };
+        kind.clone()
+    }
+}
 
 impl MappingType {
     pub fn key_type(&self) -> Type {

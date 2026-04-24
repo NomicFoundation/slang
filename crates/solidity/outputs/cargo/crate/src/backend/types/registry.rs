@@ -145,7 +145,7 @@ impl TypeRegistry {
             (
                 Type::Literal(
                     LiteralKind::Zero
-                    | LiteralKind::DecimalInteger
+                    | LiteralKind::DecimalInteger { signed: false, .. }
                     // TODO: rationals cannot be always converted to integers,
                     // unless their fractional part is zero. But for now and
                     // without further information about the literal number
@@ -159,10 +159,17 @@ impl TypeRegistry {
                 true
             }
 
+            // A signed decimal literal (produced by `-literal`) may only
+            // implicitly convert to a signed integer type.
+            (
+                Type::Literal(LiteralKind::DecimalInteger { signed: true, .. }),
+                Type::Integer { signed: true, .. },
+            ) => true,
+
             (
                 Type::Literal(
                     LiteralKind::Zero
-                    | LiteralKind::DecimalInteger
+                    | LiteralKind::DecimalInteger { .. }
                     | LiteralKind::Rational
                     | LiteralKind::HexInteger { .. },
                 ),
@@ -171,10 +178,10 @@ impl TypeRegistry {
             (
                 Type::Literal(
                     LiteralKind::Zero
-                    | LiteralKind::DecimalInteger
+                    | LiteralKind::DecimalInteger { .. }
                     | LiteralKind::HexInteger { .. },
                 ),
-                Type::Literal(LiteralKind::DecimalInteger),
+                Type::Literal(LiteralKind::DecimalInteger { .. }),
             ) |
             (
                 Type::Literal(
@@ -483,7 +490,7 @@ impl TypeRegistry {
             // will convert 1, 2, 3, etc into uint8 and 1.2 into ufixed8x1
             LiteralKind::Zero
             | LiteralKind::Rational
-            | LiteralKind::DecimalInteger
+            | LiteralKind::DecimalInteger { .. }
             | LiteralKind::HexInteger { .. } => self.uint256(),
             LiteralKind::HexString { .. } | LiteralKind::String { .. } => self.string(),
             LiteralKind::Address => self.address(),

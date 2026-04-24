@@ -4,8 +4,10 @@ use super::Pass;
 use crate::backend::binder::{Reference, Resolution, Typing};
 use crate::backend::ir::ir2_flat_contracts::visitor::Visitor;
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
+use crate::backend::passes::p4_type_definitions::evaluator::{
+    evaluate_decimal_number_expression, ConstantValue,
+};
 use crate::backend::types::{DataLocation, LiteralKind, Type};
-use crate::cst::TerminalKind;
 use crate::utils::versions::{VERSION_0_5_0, VERSION_0_7_0};
 
 impl Visitor for Pass<'_> {
@@ -142,7 +144,16 @@ impl Visitor for Pass<'_> {
         let type_ = if node.unit.is_none() && node.literal.unparse() == "0" {
             Type::Literal(LiteralKind::Zero)
         } else {
-            Type::Literal(LiteralKind::DecimalInteger)
+            match evaluate_decimal_number_expression(node) {
+                Some(ConstantValue::Integer(value)) => {
+                    let bytes = u32::try_from(value.bits().div_ceil(8)).unwrap().max(1);
+                    Type::Literal(LiteralKind::DecimalInteger {
+                        bytes,
+                        signed: false,
+                    })
+                }
+                None => Type::Literal(LiteralKind::Rational),
+            }
         };
         let type_id = self.types.register_type(type_);
         self.binder.set_node_type(node.node_id, Some(type_id));
@@ -273,22 +284,7 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_prefix_expression(&mut self, node: &input_ir::PrefixExpression) {
-        let type_id = match node.operator.kind {
-            TerminalKind::PlusPlus
-            | TerminalKind::Plus
-            | TerminalKind::MinusMinus
-            | TerminalKind::Minus
-            | TerminalKind::Tilde => {
-                // TODO(validation): check that the operand is integer
-                self.typing_of_expression(&node.operand).as_type_id()
-            }
-            TerminalKind::Bang => {
-                // TODO(validation): check that the operand is boolean
-                Some(self.types.boolean())
-            }
-            TerminalKind::DeleteKeyword => Some(self.types.void()),
-            _ => None,
-        };
+        let type_id = self.type_of_prefix_expression(node);
         self.binder.set_node_type(node.node_id, type_id);
     }
 
