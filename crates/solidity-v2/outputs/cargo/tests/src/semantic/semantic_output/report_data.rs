@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::fmt::Display;
 use std::ops::Range;
 
-use slang_solidity_v2::compilation::unit::CompilationUnit;
+use slang_solidity_v2::compilation::CompilationUnit;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir::visitor::{accept_source_unit, Visitor};
 use slang_solidity_v2_ir::ir::Identifier;

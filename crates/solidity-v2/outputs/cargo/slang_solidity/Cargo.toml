@@ -18,6 +18,9 @@ license = "MIT"
 keywords = ["utilities"]
 categories = ["compilers", "utilities"]
 
+[features]
+__private_testing_utils = []
+
 [dependencies]
 slang_solidity_v2_ast = { workspace = true }
 slang_solidity_v2_common = { workspace = true }

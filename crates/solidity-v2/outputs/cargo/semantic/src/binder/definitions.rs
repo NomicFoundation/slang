@@ -39,14 +39,14 @@ pub enum Definition {
 #[derive(Debug)]
 pub struct ConstantDefinition {
     pub ir_node: ir::ConstantDefinition,
-    pub scope_id: ScopeId,
+    pub(crate) scope_id: ScopeId,
 }
 
 #[derive(Debug)]
 pub struct ContractDefinition {
     pub ir_node: ir::ContractDefinition,
     pub bases: Option<Vec<NodeId>>,
-    pub constructor_parameters_scope_id: Option<ScopeId>,
+    pub(crate) constructor_parameters_scope_id: Option<ScopeId>,
     pub base_slot: Option<usize>,
 }
 
@@ -63,19 +63,19 @@ pub struct EnumMemberDefinition {
 #[derive(Debug)]
 pub struct ErrorDefinition {
     pub ir_node: ir::ErrorDefinition,
-    pub parameters_scope_id: ScopeId,
+    pub(crate) parameters_scope_id: ScopeId,
 }
 
 #[derive(Debug)]
 pub struct EventDefinition {
     pub ir_node: ir::EventDefinition,
-    pub parameters_scope_id: ScopeId,
+    pub(crate) parameters_scope_id: ScopeId,
 }
 
 #[derive(Debug)]
 pub struct FunctionDefinition {
     pub ir_node: ir::FunctionDefinition,
-    pub parameters_scope_id: ScopeId,
+    pub(crate) parameters_scope_id: ScopeId,
     pub visibility: ir::FunctionVisibility,
 }
 
