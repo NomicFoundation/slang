@@ -4,8 +4,8 @@ use super::Pass;
 use crate::backend::binder::{Definition, Resolution, Typing};
 use crate::backend::built_ins::BuiltIn;
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
-use crate::backend::types::{DataLocation, FunctionType, LiteralKind, Type, TypeId};
-use crate::cst::{NodeId, TerminalNode};
+use crate::backend::types::{ConstantValue, DataLocation, FunctionType, LiteralKind, Type, TypeId};
+use crate::cst::{NodeId, TerminalKind, TerminalNode};
 use crate::utils::versions::{VERSION_0_5_0, VERSION_0_8_0};
 
 impl Pass<'_> {
@@ -176,6 +176,52 @@ impl Pass<'_> {
             }
         } else {
             None
+        }
+    }
+
+    pub(super) fn type_of_prefix_expression(
+        &mut self,
+        node: &input_ir::PrefixExpression,
+    ) -> Option<TypeId> {
+        match node.operator.kind {
+            TerminalKind::Minus => {
+                // `-literal` folds into a signed literal kind carrying the
+                // two's-complement width of the negated value, matching
+                // solc's `RationalNumberType::integerType()` behaviour for
+                // negated rational-number literals.
+                let folded = match &node.operand {
+                    input_ir::Expression::DecimalNumberExpression(decimal_number) => {
+                        ConstantValue::from_decimal_number(decimal_number)
+                    }
+                    input_ir::Expression::HexNumberExpression(hex_number) => {
+                        ConstantValue::from_hex_number(hex_number)
+                    }
+                    _ => None,
+                };
+                if let Some(constant) = &folded {
+                    let ConstantValue::Integer(magnitude) = constant;
+                    if magnitude.sign() != num_bigint::Sign::NoSign {
+                        return Some(
+                            self.types
+                                .register_type(Type::Literal(constant.get_signed_literal_kind())),
+                        );
+                    }
+                }
+                self.typing_of_expression(&node.operand).as_type_id()
+            }
+            TerminalKind::PlusPlus
+            | TerminalKind::Plus
+            | TerminalKind::MinusMinus
+            | TerminalKind::Tilde => {
+                // TODO(validation): check that the operand is integer
+                self.typing_of_expression(&node.operand).as_type_id()
+            }
+            TerminalKind::Bang => {
+                // TODO(validation): check that the operand is boolean
+                Some(self.types.boolean())
+            }
+            TerminalKind::DeleteKeyword => Some(self.types.void()),
+            _ => None,
         }
     }
 
@@ -580,9 +626,13 @@ impl Pass<'_> {
     ) -> LiteralKind {
         if hex_number_expression.unit.is_some() {
             // this is deprecated in Solidity >= 0.5.0 anyway
-            return LiteralKind::DecimalInteger;
+            return LiteralKind::DecimalInteger {
+                bytes: 32,
+                signed: false,
+            };
         }
-        let hex_number = hex_number_expression.literal.unparse();
+        let mut hex_number = hex_number_expression.literal.unparse();
+        hex_number.retain(|character| character != '_');
         if hex_number.len() == 42 {
             // TODO(validation): verify the address is valid (ie. has a valid checksum)
             // We need at least an implementation of SHA3 to compute the checksum
