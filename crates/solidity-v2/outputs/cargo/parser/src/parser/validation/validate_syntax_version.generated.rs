@@ -6,24 +6,13 @@
 use std::ops::Range;
 
 use slang_solidity_v2_common::versions::{LanguageVersion, LanguageVersionSpecifier};
+use slang_solidity_v2_cst::structured_cst::nodes::*;
+use slang_solidity_v2_cst::structured_cst::TextRange;
 
-use crate::structured_cst::nodes::*;
-use crate::structured_cst::text_range::TextRange;
-
-/// An error produced when a CST node is not valid for the given language version.
-#[derive(Clone, Debug, PartialEq)]
-pub struct SyntaxVersionError {
-    /// The text range of the invalid node.
-    pub range: Range<usize>,
-    /// The version specifier that this syntax is enabled in.
-    pub enabled: LanguageVersionSpecifier,
-}
+use crate::parser::parser_error::ParserError;
 
 /// Validate that all nodes in the given `SourceUnit` are valid for the given language version.
-pub fn validate_syntax_version(
-    root: &SourceUnit,
-    version: LanguageVersion,
-) -> Vec<SyntaxVersionError> {
+pub fn validate_syntax_version(root: &SourceUnit, version: LanguageVersion) -> Vec<ParserError> {
     let mut errors = Vec::new();
     check_source_unit(root, version, &mut errors);
     errors
@@ -31,7 +20,7 @@ pub fn validate_syntax_version(
 
 fn expect_range(range: &impl TextRange) -> Range<usize> {
     range
-        .text_range()
+        .calculate_text_range()
         .expect("Structured CST node should have a range")
 }
 
@@ -42,7 +31,7 @@ fn expect_range(range: &impl TextRange) -> Range<usize> {
 fn check_additive_expression(
     node: &AdditiveExpression,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -54,7 +43,7 @@ fn check_additive_expression(
 fn check_and_expression(
     node: &AndExpression,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -66,7 +55,7 @@ fn check_and_expression(
 fn check_array_expression(
     node: &ArrayExpression,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -76,7 +65,7 @@ fn check_array_expression(
 fn check_array_type_name(
     node: &ArrayTypeName,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -90,13 +79,13 @@ fn check_array_type_name(
 fn check_assembly_statement(
     node: &AssemblyStatement,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
     if let Some(ref child) = node.flags {
         if version < LanguageVersion::V0_8_13 {
-            errors.push(SyntaxVersionError {
+            errors.push(ParserError::SyntaxVersion {
                 range: expect_range(child),
                 enabled: LanguageVersionSpecifier::From {
                     from: LanguageVersion::V0_8_13,
@@ -111,7 +100,7 @@ fn check_assembly_statement(
 fn check_assignment_expression(
     node: &AssignmentExpression,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -123,7 +112,7 @@ fn check_assignment_expression(
 fn check_bitwise_and_expression(
     node: &BitwiseAndExpression,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -135,7 +124,7 @@ fn check_bitwise_and_expression(
 fn check_bitwise_or_expression(
     node: &BitwiseOrExpression,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -147,7 +136,7 @@ fn check_bitwise_or_expression(
 fn check_bitwise_xor_expression(
     node: &BitwiseXorExpression,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -156,7 +145,7 @@ fn check_bitwise_xor_expression(
     check_expression(&node.right_operand, version, errors);
 }
 
-fn check_block(node: &Block, version: LanguageVersion, errors: &mut Vec<SyntaxVersionError>) {
+fn check_block(node: &Block, version: LanguageVersion, errors: &mut Vec<ParserError>) {
     let node = node.as_ref();
 
     check_statements(&node.statements, version, errors);
@@ -165,7 +154,7 @@ fn check_block(node: &Block, version: LanguageVersion, errors: &mut Vec<SyntaxVe
 fn check_call_options_expression(
     node: &CallOptionsExpression,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -174,11 +163,7 @@ fn check_call_options_expression(
     check_call_options(&node.options, version, errors);
 }
 
-fn check_catch_clause(
-    node: &CatchClause,
-    version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
-) {
+fn check_catch_clause(node: &CatchClause, version: LanguageVersion, errors: &mut Vec<ParserError>) {
     let node = node.as_ref();
 
     if let Some(ref child) = node.error {
@@ -191,7 +176,7 @@ fn check_catch_clause(
 fn check_catch_clause_error(
     node: &CatchClauseError,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -201,7 +186,7 @@ fn check_catch_clause_error(
 fn check_conditional_expression(
     node: &ConditionalExpression,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -215,7 +200,7 @@ fn check_conditional_expression(
 fn check_constant_definition(
     node: &ConstantDefinition,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -227,7 +212,7 @@ fn check_constant_definition(
 fn check_constructor_definition(
     node: &ConstructorDefinition,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -241,7 +226,7 @@ fn check_constructor_definition(
 fn check_contract_definition(
     node: &ContractDefinition,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -253,7 +238,7 @@ fn check_contract_definition(
 fn check_do_while_statement(
     node: &DoWhileStatement,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -262,11 +247,7 @@ fn check_do_while_statement(
     check_expression(&node.condition, version, errors);
 }
 
-fn check_else_branch(
-    node: &ElseBranch,
-    version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
-) {
+fn check_else_branch(node: &ElseBranch, version: LanguageVersion, errors: &mut Vec<ParserError>) {
     let node = node.as_ref();
 
     check_statement(&node.body, version, errors);
@@ -275,7 +256,7 @@ fn check_else_branch(
 fn check_emit_statement(
     node: &EmitStatement,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -285,7 +266,7 @@ fn check_emit_statement(
 fn check_equality_expression(
     node: &EqualityExpression,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -297,12 +278,12 @@ fn check_equality_expression(
 fn check_error_definition(
     node: &ErrorDefinition,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
     if version < LanguageVersion::V0_8_4 {
-        errors.push(SyntaxVersionError {
+        errors.push(ParserError::SyntaxVersion {
             range: expect_range(node),
             enabled: LanguageVersionSpecifier::From {
                 from: LanguageVersion::V0_8_4,
@@ -317,12 +298,12 @@ fn check_error_definition(
 fn check_error_parameter(
     node: &ErrorParameter,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
     if version < LanguageVersion::V0_8_4 {
-        errors.push(SyntaxVersionError {
+        errors.push(ParserError::SyntaxVersion {
             range: expect_range(node),
             enabled: LanguageVersionSpecifier::From {
                 from: LanguageVersion::V0_8_4,
@@ -337,12 +318,12 @@ fn check_error_parameter(
 fn check_error_parameters_declaration(
     node: &ErrorParametersDeclaration,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
     if version < LanguageVersion::V0_8_4 {
-        errors.push(SyntaxVersionError {
+        errors.push(ParserError::SyntaxVersion {
             range: expect_range(node),
             enabled: LanguageVersionSpecifier::From {
                 from: LanguageVersion::V0_8_4,
@@ -357,7 +338,7 @@ fn check_error_parameters_declaration(
 fn check_event_definition(
     node: &EventDefinition,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -367,7 +348,7 @@ fn check_event_definition(
 fn check_event_parameter(
     node: &EventParameter,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -377,7 +358,7 @@ fn check_event_parameter(
 fn check_event_parameters_declaration(
     node: &EventParametersDeclaration,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -387,7 +368,7 @@ fn check_event_parameters_declaration(
 fn check_exponentiation_expression(
     node: &ExponentiationExpression,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -399,7 +380,7 @@ fn check_exponentiation_expression(
 fn check_expression_statement(
     node: &ExpressionStatement,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -409,7 +390,7 @@ fn check_expression_statement(
 fn check_fallback_function_definition(
     node: &FallbackFunctionDefinition,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -426,7 +407,7 @@ fn check_fallback_function_definition(
 fn check_for_statement(
     node: &ForStatement,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -443,7 +424,7 @@ fn check_for_statement(
 fn check_function_call_expression(
     node: &FunctionCallExpression,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -455,7 +436,7 @@ fn check_function_call_expression(
 fn check_function_definition(
     node: &FunctionDefinition,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -472,7 +453,7 @@ fn check_function_definition(
 fn check_function_type(
     node: &FunctionType,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -483,11 +464,7 @@ fn check_function_type(
     }
 }
 
-fn check_if_statement(
-    node: &IfStatement,
-    version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
-) {
+fn check_if_statement(node: &IfStatement, version: LanguageVersion, errors: &mut Vec<ParserError>) {
     let node = node.as_ref();
 
     check_expression(&node.condition, version, errors);
@@ -501,7 +478,7 @@ fn check_if_statement(
 fn check_index_access_end(
     node: &IndexAccessEnd,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -513,7 +490,7 @@ fn check_index_access_end(
 fn check_index_access_expression(
     node: &IndexAccessExpression,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -530,7 +507,7 @@ fn check_index_access_expression(
 fn check_inequality_expression(
     node: &InequalityExpression,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -542,7 +519,7 @@ fn check_inequality_expression(
 fn check_inheritance_specifier(
     node: &InheritanceSpecifier,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -552,7 +529,7 @@ fn check_inheritance_specifier(
 fn check_inheritance_type(
     node: &InheritanceType,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -564,7 +541,7 @@ fn check_inheritance_type(
 fn check_interface_definition(
     node: &InterfaceDefinition,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -578,23 +555,19 @@ fn check_interface_definition(
 fn check_library_definition(
     node: &LibraryDefinition,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
     check_library_members(&node.members, version, errors);
 }
 
-fn check_mapping_key(
-    node: &MappingKey,
-    version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
-) {
+fn check_mapping_key(node: &MappingKey, version: LanguageVersion, errors: &mut Vec<ParserError>) {
     let node = node.as_ref();
 
     if let Some(ref child) = node.name {
         if version < LanguageVersion::V0_8_18 {
-            errors.push(SyntaxVersionError {
+            errors.push(ParserError::SyntaxVersion {
                 range: expect_range(child),
                 enabled: LanguageVersionSpecifier::From {
                     from: LanguageVersion::V0_8_18,
@@ -604,11 +577,7 @@ fn check_mapping_key(
     }
 }
 
-fn check_mapping_type(
-    node: &MappingType,
-    version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
-) {
+fn check_mapping_type(node: &MappingType, version: LanguageVersion, errors: &mut Vec<ParserError>) {
     let node = node.as_ref();
 
     check_mapping_key(&node.key_type, version, errors);
@@ -619,14 +588,14 @@ fn check_mapping_type(
 fn check_mapping_value(
     node: &MappingValue,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
     check_type_name(&node.type_name, version, errors);
     if let Some(ref child) = node.name {
         if version < LanguageVersion::V0_8_18 {
-            errors.push(SyntaxVersionError {
+            errors.push(ParserError::SyntaxVersion {
                 range: expect_range(child),
                 enabled: LanguageVersionSpecifier::From {
                     from: LanguageVersion::V0_8_18,
@@ -639,7 +608,7 @@ fn check_mapping_value(
 fn check_member_access_expression(
     node: &MemberAccessExpression,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -649,7 +618,7 @@ fn check_member_access_expression(
 fn check_modifier_definition(
     node: &ModifierDefinition,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -663,7 +632,7 @@ fn check_modifier_definition(
 fn check_modifier_invocation(
     node: &ModifierInvocation,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -675,7 +644,7 @@ fn check_modifier_invocation(
 fn check_multi_typed_declaration(
     node: &MultiTypedDeclaration,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -687,7 +656,7 @@ fn check_multi_typed_declaration(
 fn check_multi_typed_declaration_element(
     node: &MultiTypedDeclarationElement,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -699,7 +668,7 @@ fn check_multi_typed_declaration_element(
 fn check_multiplicative_expression(
     node: &MultiplicativeExpression,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -711,7 +680,7 @@ fn check_multiplicative_expression(
 fn check_named_argument(
     node: &NamedArgument,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -721,7 +690,7 @@ fn check_named_argument(
 fn check_named_argument_group(
     node: &NamedArgumentGroup,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -731,7 +700,7 @@ fn check_named_argument_group(
 fn check_named_arguments_declaration(
     node: &NamedArgumentsDeclaration,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -741,7 +710,7 @@ fn check_named_arguments_declaration(
 fn check_new_expression(
     node: &NewExpression,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -751,7 +720,7 @@ fn check_new_expression(
 fn check_or_expression(
     node: &OrExpression,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -760,11 +729,7 @@ fn check_or_expression(
     check_expression(&node.right_operand, version, errors);
 }
 
-fn check_parameter(
-    node: &Parameter,
-    version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
-) {
+fn check_parameter(node: &Parameter, version: LanguageVersion, errors: &mut Vec<ParserError>) {
     let node = node.as_ref();
 
     check_type_name(&node.type_name, version, errors);
@@ -773,7 +738,7 @@ fn check_parameter(
 fn check_parameters_declaration(
     node: &ParametersDeclaration,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -783,7 +748,7 @@ fn check_parameters_declaration(
 fn check_positional_arguments_declaration(
     node: &PositionalArgumentsDeclaration,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -793,7 +758,7 @@ fn check_positional_arguments_declaration(
 fn check_postfix_expression(
     node: &PostfixExpression,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -803,7 +768,7 @@ fn check_postfix_expression(
 fn check_prefix_expression(
     node: &PrefixExpression,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -813,7 +778,7 @@ fn check_prefix_expression(
 fn check_receive_function_definition(
     node: &ReceiveFunctionDefinition,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -827,7 +792,7 @@ fn check_receive_function_definition(
 fn check_return_statement(
     node: &ReturnStatement,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -839,7 +804,7 @@ fn check_return_statement(
 fn check_returns_declaration(
     node: &ReturnsDeclaration,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -849,12 +814,12 @@ fn check_returns_declaration(
 fn check_revert_statement(
     node: &RevertStatement,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
     if version < LanguageVersion::V0_8_4 {
-        errors.push(SyntaxVersionError {
+        errors.push(ParserError::SyntaxVersion {
             range: expect_range(node),
             enabled: LanguageVersionSpecifier::From {
                 from: LanguageVersion::V0_8_4,
@@ -869,7 +834,7 @@ fn check_revert_statement(
 fn check_shift_expression(
     node: &ShiftExpression,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -881,7 +846,7 @@ fn check_shift_expression(
 fn check_single_typed_declaration(
     node: &SingleTypedDeclaration,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -891,11 +856,7 @@ fn check_single_typed_declaration(
     }
 }
 
-fn check_source_unit(
-    node: &SourceUnit,
-    version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
-) {
+fn check_source_unit(node: &SourceUnit, version: LanguageVersion, errors: &mut Vec<ParserError>) {
     let node = node.as_ref();
 
     check_source_unit_members(&node.members, version, errors);
@@ -904,7 +865,7 @@ fn check_source_unit(
 fn check_state_variable_definition(
     node: &StateVariableDefinition,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -920,7 +881,7 @@ fn check_state_variable_definition(
 fn check_state_variable_definition_value(
     node: &StateVariableDefinitionValue,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -930,12 +891,12 @@ fn check_state_variable_definition_value(
 fn check_storage_layout_specifier(
     node: &StorageLayoutSpecifier,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
     if version < LanguageVersion::V0_8_29 {
-        errors.push(SyntaxVersionError {
+        errors.push(ParserError::SyntaxVersion {
             range: expect_range(node),
             enabled: LanguageVersionSpecifier::From {
                 from: LanguageVersion::V0_8_29,
@@ -950,7 +911,7 @@ fn check_storage_layout_specifier(
 fn check_struct_definition(
     node: &StructDefinition,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -960,7 +921,7 @@ fn check_struct_definition(
 fn check_struct_member(
     node: &StructMember,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -970,7 +931,7 @@ fn check_struct_member(
 fn check_try_statement(
     node: &TryStatement,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -987,18 +948,14 @@ fn check_try_statement(
 fn check_tuple_expression(
     node: &TupleExpression,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
     check_tuple_values(&node.items, version, errors);
 }
 
-fn check_tuple_value(
-    node: &TupleValue,
-    version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
-) {
+fn check_tuple_value(node: &TupleValue, version: LanguageVersion, errors: &mut Vec<ParserError>) {
     let node = node.as_ref();
 
     if let Some(ref child) = node.expression {
@@ -1009,7 +966,7 @@ fn check_tuple_value(
 fn check_type_expression(
     node: &TypeExpression,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -1019,7 +976,7 @@ fn check_type_expression(
 fn check_unchecked_block(
     node: &UncheckedBlock,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -1029,12 +986,12 @@ fn check_unchecked_block(
 fn check_user_defined_value_type_definition(
     node: &UserDefinedValueTypeDefinition,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
     if version < LanguageVersion::V0_8_8 {
-        errors.push(SyntaxVersionError {
+        errors.push(ParserError::SyntaxVersion {
             range: expect_range(node),
             enabled: LanguageVersionSpecifier::From {
                 from: LanguageVersion::V0_8_8,
@@ -1044,15 +1001,11 @@ fn check_user_defined_value_type_definition(
     }
 }
 
-fn check_using_alias(
-    node: &UsingAlias,
-    version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
-) {
+fn check_using_alias(node: &UsingAlias, version: LanguageVersion, errors: &mut Vec<ParserError>) {
     let node = node.as_ref();
 
     if version < LanguageVersion::V0_8_19 {
-        errors.push(SyntaxVersionError {
+        errors.push(ParserError::SyntaxVersion {
             range: expect_range(node),
             enabled: LanguageVersionSpecifier::From {
                 from: LanguageVersion::V0_8_19,
@@ -1067,12 +1020,12 @@ fn check_using_alias(
 fn check_using_deconstruction(
     node: &UsingDeconstruction,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
     if version < LanguageVersion::V0_8_13 {
-        errors.push(SyntaxVersionError {
+        errors.push(ParserError::SyntaxVersion {
             range: expect_range(node),
             enabled: LanguageVersionSpecifier::From {
                 from: LanguageVersion::V0_8_13,
@@ -1087,12 +1040,12 @@ fn check_using_deconstruction(
 fn check_using_deconstruction_symbol(
     node: &UsingDeconstructionSymbol,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
     if version < LanguageVersion::V0_8_13 {
-        errors.push(SyntaxVersionError {
+        errors.push(ParserError::SyntaxVersion {
             range: expect_range(node),
             enabled: LanguageVersionSpecifier::From {
                 from: LanguageVersion::V0_8_13,
@@ -1103,7 +1056,7 @@ fn check_using_deconstruction_symbol(
 
     if let Some(ref child) = node.alias {
         if version < LanguageVersion::V0_8_19 {
-            errors.push(SyntaxVersionError {
+            errors.push(ParserError::SyntaxVersion {
                 range: expect_range(child),
                 enabled: LanguageVersionSpecifier::From {
                     from: LanguageVersion::V0_8_19,
@@ -1118,7 +1071,7 @@ fn check_using_deconstruction_symbol(
 fn check_using_directive(
     node: &UsingDirective,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -1127,7 +1080,7 @@ fn check_using_directive(
     check_using_target(&node.target, version, errors);
     if let Some(ref child) = node.global_keyword {
         if version < LanguageVersion::V0_8_13 {
-            errors.push(SyntaxVersionError {
+            errors.push(ParserError::SyntaxVersion {
                 range: expect_range(child),
                 enabled: LanguageVersionSpecifier::From {
                     from: LanguageVersion::V0_8_13,
@@ -1140,7 +1093,7 @@ fn check_using_directive(
 fn check_variable_declaration(
     node: &VariableDeclaration,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -1150,7 +1103,7 @@ fn check_variable_declaration(
 fn check_variable_declaration_statement(
     node: &VariableDeclarationStatement,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -1160,7 +1113,7 @@ fn check_variable_declaration_statement(
 fn check_variable_declaration_value(
     node: &VariableDeclarationValue,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -1170,7 +1123,7 @@ fn check_variable_declaration_value(
 fn check_while_statement(
     node: &WhileStatement,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
@@ -1182,12 +1135,12 @@ fn check_while_statement(
 fn check_yul_flags_declaration(
     node: &YulFlagsDeclaration,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     let node = node.as_ref();
 
     if version < LanguageVersion::V0_8_13 {
-        errors.push(SyntaxVersionError {
+        errors.push(ParserError::SyntaxVersion {
             range: expect_range(node),
             enabled: LanguageVersionSpecifier::From {
                 from: LanguageVersion::V0_8_13,
@@ -1206,7 +1159,7 @@ fn check_yul_flags_declaration(
 fn check_arguments_declaration(
     node: &ArgumentsDeclaration,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     match node {
         ArgumentsDeclaration::PositionalArgumentsDeclaration(child) => {
@@ -1221,7 +1174,7 @@ fn check_arguments_declaration(
 fn check_constructor_attribute(
     node: &ConstructorAttribute,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     match node {
         ConstructorAttribute::ModifierInvocation(child) => {
@@ -1236,7 +1189,7 @@ fn check_constructor_attribute(
 fn check_contract_member(
     node: &ContractMember,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     match node {
         ContractMember::UsingDirective(child) => {
@@ -1266,7 +1219,7 @@ fn check_contract_member(
         }
         ContractMember::ErrorDefinition(child) => {
             if version < LanguageVersion::V0_8_4 {
-                errors.push(SyntaxVersionError {
+                errors.push(ParserError::SyntaxVersion {
                     range: expect_range(child),
                     enabled: LanguageVersionSpecifier::From {
                         from: LanguageVersion::V0_8_4,
@@ -1278,7 +1231,7 @@ fn check_contract_member(
         }
         ContractMember::UserDefinedValueTypeDefinition(child) => {
             if version < LanguageVersion::V0_8_8 {
-                errors.push(SyntaxVersionError {
+                errors.push(ParserError::SyntaxVersion {
                     range: expect_range(child),
                     enabled: LanguageVersionSpecifier::From {
                         from: LanguageVersion::V0_8_8,
@@ -1297,7 +1250,7 @@ fn check_contract_member(
 fn check_contract_specifier(
     node: &ContractSpecifier,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     match node {
         ContractSpecifier::InheritanceSpecifier(child) => {
@@ -1305,7 +1258,7 @@ fn check_contract_specifier(
         }
         ContractSpecifier::StorageLayoutSpecifier(child) => {
             if version < LanguageVersion::V0_8_29 {
-                errors.push(SyntaxVersionError {
+                errors.push(ParserError::SyntaxVersion {
                     range: expect_range(child),
                     enabled: LanguageVersionSpecifier::From {
                         from: LanguageVersion::V0_8_29,
@@ -1318,11 +1271,7 @@ fn check_contract_specifier(
     }
 }
 
-fn check_expression(
-    node: &Expression,
-    version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
-) {
+fn check_expression(node: &Expression, version: LanguageVersion, errors: &mut Vec<ParserError>) {
     match node {
         Expression::AssignmentExpression(child) => {
             check_assignment_expression(child, version, errors);
@@ -1409,7 +1358,7 @@ fn check_expression(
 fn check_fallback_function_attribute(
     node: &FallbackFunctionAttribute,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     match node {
         FallbackFunctionAttribute::ModifierInvocation(child) => {
@@ -1427,7 +1376,7 @@ fn check_fallback_function_attribute(
 fn check_for_statement_condition(
     node: &ForStatementCondition,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     match node {
         ForStatementCondition::ExpressionStatement(child) => {
@@ -1440,7 +1389,7 @@ fn check_for_statement_condition(
 fn check_for_statement_initialization(
     node: &ForStatementInitialization,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     match node {
         ForStatementInitialization::VariableDeclarationStatement(child) => {
@@ -1456,7 +1405,7 @@ fn check_for_statement_initialization(
 fn check_function_attribute(
     node: &FunctionAttribute,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     match node {
         FunctionAttribute::ModifierInvocation(child) => {
@@ -1477,7 +1426,7 @@ fn check_function_attribute(
 fn check_function_body(
     node: &FunctionBody,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     match node {
         FunctionBody::Block(child) => {
@@ -1490,7 +1439,7 @@ fn check_function_body(
 fn check_receive_function_attribute(
     node: &ReceiveFunctionAttribute,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     match node {
         ReceiveFunctionAttribute::ModifierInvocation(child) => {
@@ -1506,7 +1455,7 @@ fn check_receive_function_attribute(
 fn check_source_unit_member(
     node: &SourceUnitMember,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     match node {
         SourceUnitMember::PragmaDirective(_) => {}
@@ -1529,7 +1478,7 @@ fn check_source_unit_member(
         }
         SourceUnitMember::ErrorDefinition(child) => {
             if version < LanguageVersion::V0_8_4 {
-                errors.push(SyntaxVersionError {
+                errors.push(ParserError::SyntaxVersion {
                     range: expect_range(child),
                     enabled: LanguageVersionSpecifier::From {
                         from: LanguageVersion::V0_8_4,
@@ -1541,7 +1490,7 @@ fn check_source_unit_member(
         }
         SourceUnitMember::UserDefinedValueTypeDefinition(child) => {
             if version < LanguageVersion::V0_8_8 {
-                errors.push(SyntaxVersionError {
+                errors.push(ParserError::SyntaxVersion {
                     range: expect_range(child),
                     enabled: LanguageVersionSpecifier::From {
                         from: LanguageVersion::V0_8_8,
@@ -1553,7 +1502,7 @@ fn check_source_unit_member(
         }
         SourceUnitMember::UsingDirective(child) => {
             if version < LanguageVersion::V0_8_13 {
-                errors.push(SyntaxVersionError {
+                errors.push(ParserError::SyntaxVersion {
                     range: expect_range(child),
                     enabled: LanguageVersionSpecifier::From {
                         from: LanguageVersion::V0_8_13,
@@ -1565,7 +1514,7 @@ fn check_source_unit_member(
         }
         SourceUnitMember::EventDefinition(child) => {
             if version < LanguageVersion::V0_8_22 {
-                errors.push(SyntaxVersionError {
+                errors.push(ParserError::SyntaxVersion {
                     range: expect_range(child),
                     enabled: LanguageVersionSpecifier::From {
                         from: LanguageVersion::V0_8_22,
@@ -1584,7 +1533,7 @@ fn check_source_unit_member(
 fn check_state_variable_attribute(
     node: &StateVariableAttribute,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     match node {
         StateVariableAttribute::OverrideSpecifier(_) => {}
@@ -1595,7 +1544,7 @@ fn check_state_variable_attribute(
         StateVariableAttribute::ImmutableKeyword(_) => {}
         StateVariableAttribute::TransientKeyword(child) => {
             if version < LanguageVersion::V0_8_27 {
-                errors.push(SyntaxVersionError {
+                errors.push(ParserError::SyntaxVersion {
                     range: expect_range(child),
                     enabled: LanguageVersionSpecifier::From {
                         from: LanguageVersion::V0_8_27,
@@ -1607,11 +1556,7 @@ fn check_state_variable_attribute(
     }
 }
 
-fn check_statement(
-    node: &Statement,
-    version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
-) {
+fn check_statement(node: &Statement, version: LanguageVersion, errors: &mut Vec<ParserError>) {
     match node {
         Statement::IfStatement(child) => {
             check_if_statement(child, version, errors);
@@ -1638,7 +1583,7 @@ fn check_statement(
         }
         Statement::RevertStatement(child) => {
             if version < LanguageVersion::V0_8_4 {
-                errors.push(SyntaxVersionError {
+                errors.push(ParserError::SyntaxVersion {
                     range: expect_range(child),
                     enabled: LanguageVersionSpecifier::From {
                         from: LanguageVersion::V0_8_4,
@@ -1666,11 +1611,7 @@ fn check_statement(
     }
 }
 
-fn check_type_name(
-    node: &TypeName,
-    version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
-) {
+fn check_type_name(node: &TypeName, version: LanguageVersion, errors: &mut Vec<ParserError>) {
     match node {
         TypeName::ArrayTypeName(child) => {
             check_array_type_name(child, version, errors);
@@ -1686,16 +1627,12 @@ fn check_type_name(
     }
 }
 
-fn check_using_clause(
-    node: &UsingClause,
-    version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
-) {
+fn check_using_clause(node: &UsingClause, version: LanguageVersion, errors: &mut Vec<ParserError>) {
     match node {
         UsingClause::IdentifierPath(_) => {}
         UsingClause::UsingDeconstruction(child) => {
             if version < LanguageVersion::V0_8_13 {
-                errors.push(SyntaxVersionError {
+                errors.push(ParserError::SyntaxVersion {
                     range: expect_range(child),
                     enabled: LanguageVersionSpecifier::From {
                         from: LanguageVersion::V0_8_13,
@@ -1711,10 +1648,10 @@ fn check_using_clause(
 fn check_using_operator(
     node: &UsingOperator,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     if version < LanguageVersion::V0_8_19 {
-        errors.push(SyntaxVersionError {
+        errors.push(ParserError::SyntaxVersion {
             range: expect_range(node),
             enabled: LanguageVersionSpecifier::From {
                 from: LanguageVersion::V0_8_19,
@@ -1742,11 +1679,7 @@ fn check_using_operator(
     }
 }
 
-fn check_using_target(
-    node: &UsingTarget,
-    version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
-) {
+fn check_using_target(node: &UsingTarget, version: LanguageVersion, errors: &mut Vec<ParserError>) {
     match node {
         UsingTarget::TypeName(child) => {
             check_type_name(child, version, errors);
@@ -1758,7 +1691,7 @@ fn check_using_target(
 fn check_variable_declaration_target(
     node: &VariableDeclarationTarget,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     match node {
         VariableDeclarationTarget::SingleTypedDeclaration(child) => {
@@ -1774,21 +1707,13 @@ fn check_variable_declaration_target(
 // Collection validators
 //
 
-fn check_array_values(
-    node: &ArrayValues,
-    version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
-) {
+fn check_array_values(node: &ArrayValues, version: LanguageVersion, errors: &mut Vec<ParserError>) {
     for child in &node.elements {
         check_expression(child, version, errors);
     }
 }
 
-fn check_call_options(
-    node: &CallOptions,
-    version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
-) {
+fn check_call_options(node: &CallOptions, version: LanguageVersion, errors: &mut Vec<ParserError>) {
     for child in &node.elements {
         check_named_argument(child, version, errors);
     }
@@ -1797,7 +1722,7 @@ fn check_call_options(
 fn check_catch_clauses(
     node: &CatchClauses,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     for child in &node.elements {
         check_catch_clause(child, version, errors);
@@ -1807,7 +1732,7 @@ fn check_catch_clauses(
 fn check_constructor_attributes(
     node: &ConstructorAttributes,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     for child in &node.elements {
         check_constructor_attribute(child, version, errors);
@@ -1817,7 +1742,7 @@ fn check_constructor_attributes(
 fn check_contract_members(
     node: &ContractMembers,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     for child in &node.elements {
         check_contract_member(child, version, errors);
@@ -1827,7 +1752,7 @@ fn check_contract_members(
 fn check_contract_specifiers(
     node: &ContractSpecifiers,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     for child in &node.elements {
         check_contract_specifier(child, version, errors);
@@ -1837,10 +1762,10 @@ fn check_contract_specifiers(
 fn check_error_parameters(
     node: &ErrorParameters,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     if version < LanguageVersion::V0_8_4 {
-        errors.push(SyntaxVersionError {
+        errors.push(ParserError::SyntaxVersion {
             range: expect_range(node),
             enabled: LanguageVersionSpecifier::From {
                 from: LanguageVersion::V0_8_4,
@@ -1856,7 +1781,7 @@ fn check_error_parameters(
 fn check_event_parameters(
     node: &EventParameters,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     for child in &node.elements {
         check_event_parameter(child, version, errors);
@@ -1866,7 +1791,7 @@ fn check_event_parameters(
 fn check_fallback_function_attributes(
     node: &FallbackFunctionAttributes,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     for child in &node.elements {
         check_fallback_function_attribute(child, version, errors);
@@ -1876,7 +1801,7 @@ fn check_fallback_function_attributes(
 fn check_function_attributes(
     node: &FunctionAttributes,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     for child in &node.elements {
         check_function_attribute(child, version, errors);
@@ -1886,7 +1811,7 @@ fn check_function_attributes(
 fn check_inheritance_types(
     node: &InheritanceTypes,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     for child in &node.elements {
         check_inheritance_type(child, version, errors);
@@ -1896,7 +1821,7 @@ fn check_inheritance_types(
 fn check_interface_members(
     node: &InterfaceMembers,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     for child in &node.elements {
         check_contract_member(child, version, errors);
@@ -1906,7 +1831,7 @@ fn check_interface_members(
 fn check_library_members(
     node: &LibraryMembers,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     for child in &node.elements {
         check_contract_member(child, version, errors);
@@ -1916,7 +1841,7 @@ fn check_library_members(
 fn check_multi_typed_declaration_elements(
     node: &MultiTypedDeclarationElements,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     for child in &node.elements {
         check_multi_typed_declaration_element(child, version, errors);
@@ -1926,18 +1851,14 @@ fn check_multi_typed_declaration_elements(
 fn check_named_arguments(
     node: &NamedArguments,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     for child in &node.elements {
         check_named_argument(child, version, errors);
     }
 }
 
-fn check_parameters(
-    node: &Parameters,
-    version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
-) {
+fn check_parameters(node: &Parameters, version: LanguageVersion, errors: &mut Vec<ParserError>) {
     for child in &node.elements {
         check_parameter(child, version, errors);
     }
@@ -1946,7 +1867,7 @@ fn check_parameters(
 fn check_positional_arguments(
     node: &PositionalArguments,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     for child in &node.elements {
         check_expression(child, version, errors);
@@ -1956,7 +1877,7 @@ fn check_positional_arguments(
 fn check_receive_function_attributes(
     node: &ReceiveFunctionAttributes,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     for child in &node.elements {
         check_receive_function_attribute(child, version, errors);
@@ -1966,7 +1887,7 @@ fn check_receive_function_attributes(
 fn check_source_unit_members(
     node: &SourceUnitMembers,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     for child in &node.elements {
         check_source_unit_member(child, version, errors);
@@ -1976,18 +1897,14 @@ fn check_source_unit_members(
 fn check_state_variable_attributes(
     node: &StateVariableAttributes,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     for child in &node.elements {
         check_state_variable_attribute(child, version, errors);
     }
 }
 
-fn check_statements(
-    node: &Statements,
-    version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
-) {
+fn check_statements(node: &Statements, version: LanguageVersion, errors: &mut Vec<ParserError>) {
     for child in &node.elements {
         check_statement(child, version, errors);
     }
@@ -1996,18 +1913,14 @@ fn check_statements(
 fn check_struct_members(
     node: &StructMembers,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     for child in &node.elements {
         check_struct_member(child, version, errors);
     }
 }
 
-fn check_tuple_values(
-    node: &TupleValues,
-    version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
-) {
+fn check_tuple_values(node: &TupleValues, version: LanguageVersion, errors: &mut Vec<ParserError>) {
     for child in &node.elements {
         check_tuple_value(child, version, errors);
     }
@@ -2016,10 +1929,10 @@ fn check_tuple_values(
 fn check_using_deconstruction_symbols(
     node: &UsingDeconstructionSymbols,
     version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
+    errors: &mut Vec<ParserError>,
 ) {
     if version < LanguageVersion::V0_8_13 {
-        errors.push(SyntaxVersionError {
+        errors.push(ParserError::SyntaxVersion {
             range: expect_range(node),
             enabled: LanguageVersionSpecifier::From {
                 from: LanguageVersion::V0_8_13,
@@ -2032,13 +1945,9 @@ fn check_using_deconstruction_symbols(
     }
 }
 
-fn check_yul_flags(
-    node: &YulFlags,
-    version: LanguageVersion,
-    errors: &mut Vec<SyntaxVersionError>,
-) {
+fn check_yul_flags(node: &YulFlags, version: LanguageVersion, errors: &mut Vec<ParserError>) {
     if version < LanguageVersion::V0_8_13 {
-        errors.push(SyntaxVersionError {
+        errors.push(ParserError::SyntaxVersion {
             range: expect_range(node),
             enabled: LanguageVersionSpecifier::From {
                 from: LanguageVersion::V0_8_13,
