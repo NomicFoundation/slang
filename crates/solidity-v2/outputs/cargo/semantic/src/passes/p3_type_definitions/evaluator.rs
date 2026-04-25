@@ -334,7 +334,15 @@ mod tests {
             "Parser diagnostics: {diagnostics:?}"
         );
 
-        let source_unit = ir::build(&source_unit, &source);
+        let ir::BuildOutput {
+            source_unit,
+            diagnostics: ir_diagnostics,
+        } = ir::build("test.sol", &source_unit, &source);
+
+        assert!(
+            ir_diagnostics.is_empty(),
+            "IR builder diagnostics: {ir_diagnostics:?}"
+        );
         let member = source_unit.members.first().expect("no source unit members");
         match member {
             ir::SourceUnitMember::ConstantDefinition(definition) => definition

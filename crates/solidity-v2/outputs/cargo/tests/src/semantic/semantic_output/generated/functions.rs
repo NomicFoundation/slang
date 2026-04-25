@@ -22,6 +22,11 @@ fn implicit_location_conversion() -> Result<()> {
 }
 
 #[test]
+fn multiple_mutability_keywords() -> Result<()> {
+    run(T, "multiple_mutability_keywords")
+}
+
+#[test]
 fn overrides_interface_method() -> Result<()> {
     run(T, "overrides_interface_method")
 }

@@ -30,7 +30,15 @@ contract MyContract {
         "Parser diagnostics: {diagnostics:?}"
     );
 
-    let source_unit = ir::build(&source_unit, &CONTENTS);
+    let ir::BuildOutput {
+        source_unit,
+        diagnostics: ir_diagnostics,
+    } = ir::build("test.sol", &source_unit, &CONTENTS);
+
+    assert!(
+        ir_diagnostics.is_empty(),
+        "IR builder diagnostics: {ir_diagnostics:?}"
+    );
     assert_eq!(2, source_unit.members.len());
     assert!(matches!(
         source_unit.members[0],
@@ -97,7 +105,15 @@ contract Test is Base layout at 0 {}
         "Parser diagnostics: {diagnostics:?}"
     );
 
-    let source_unit = ir::build(&source_unit, &CONTENTS);
+    let ir::BuildOutput {
+        source_unit,
+        diagnostics: ir_diagnostics,
+    } = ir::build("test.sol", &source_unit, &CONTENTS);
+
+    assert!(
+        ir_diagnostics.is_empty(),
+        "IR builder diagnostics: {ir_diagnostics:?}"
+    );
     assert_eq!(2, source_unit.members.len());
 
     let ir::SourceUnitMember::ContractDefinition(base_contract) = &source_unit.members[0] else {

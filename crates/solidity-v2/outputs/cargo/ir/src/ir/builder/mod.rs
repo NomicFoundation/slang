@@ -1,6 +1,9 @@
 use std::rc::Rc;
 
-use slang_solidity_v2_cst::structured_cst::nodes as input;
+use slang_solidity_v2_common::diagnostics::kinds::semantic::MultipleMutabilityKeywords;
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
+use slang_solidity_v2_common::terminals::TerminalKind;
+use slang_solidity_v2_cst::structured_cst::{nodes as input, TextRange};
 
 #[path = "default.generated.rs"]
 mod default;
@@ -9,16 +12,34 @@ use default::Builder;
 use super::Source;
 use crate::ir::nodes as output;
 
+/// The output of a CST → IR build operation, containing both the flattened
+/// source unit and any semantic diagnostics emitted during the build.
+pub struct BuildOutput {
+    pub source_unit: output::SourceUnit,
+    pub diagnostics: DiagnosticCollection,
+}
+
 pub fn build_source_unit(
+    file_id: &str,
     source_unit: &input::SourceUnit,
     source: &impl Source,
-) -> output::SourceUnit {
-    let mut builder = CstToIrBuilder { source };
-    builder.build_source_unit(source_unit)
+) -> BuildOutput {
+    let mut builder = CstToIrBuilder {
+        source,
+        file_id,
+        diagnostics: DiagnosticCollection::new(),
+    };
+    let source_unit = builder.build_source_unit(source_unit);
+    BuildOutput {
+        source_unit,
+        diagnostics: builder.diagnostics,
+    }
 }
 
 struct CstToIrBuilder<'a, S: Source> {
     pub source: &'a S,
+    file_id: &'a str,
+    diagnostics: DiagnosticCollection,
 }
 
 impl<S: Source> Builder for CstToIrBuilder<'_, S> {
@@ -134,7 +155,7 @@ impl<S: Source> Builder for CstToIrBuilder<'_, S> {
         };
         let parameters = self.build_parameters_declaration(&source.parameters);
         let visibility = Self::function_visibility(&source.attributes);
-        let mutability = Self::function_mutability(&source.attributes);
+        let mutability = self.function_mutability(&source.attributes);
         let virtual_keyword = source
             .attributes
             .elements
@@ -166,7 +187,7 @@ impl<S: Source> Builder for CstToIrBuilder<'_, S> {
     fn build_function_type(&mut self, source: &input::FunctionType) -> output::FunctionType {
         let parameters = self.build_parameters_declaration(&source.parameters);
         let visibility = Self::function_type_visibility(&source.attributes);
-        let mutability = Self::function_type_mutability(&source.attributes);
+        let mutability = self.function_type_mutability(&source.attributes);
         let returns = source
             .returns
             .as_ref()
@@ -354,17 +375,43 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         )
     }
 
-    fn function_mutability(attributes: &input::FunctionAttributes) -> output::FunctionMutability {
-        // TODO(validation): only a single mutability keyword can be provided
-        attributes.elements.iter().fold(
-            output::FunctionMutability::NonPayable,
-            |mutability, attribute| match attribute {
-                input::FunctionAttribute::PayableKeyword(_) => output::FunctionMutability::Payable,
-                input::FunctionAttribute::PureKeyword(_) => output::FunctionMutability::Pure,
-                input::FunctionAttribute::ViewKeyword(_) => output::FunctionMutability::View,
-                _ => mutability,
-            },
-        )
+    fn function_mutability(
+        &mut self,
+        attributes: &input::FunctionAttributes,
+    ) -> output::FunctionMutability {
+        let mut first: Option<(TerminalKind, output::FunctionMutability)> = None;
+        for attribute in &attributes.elements {
+            let (second_kind, mutability) = match attribute {
+                input::FunctionAttribute::PayableKeyword(_) => (
+                    TerminalKind::PayableKeyword,
+                    output::FunctionMutability::Payable,
+                ),
+                input::FunctionAttribute::PureKeyword(_) => {
+                    (TerminalKind::PureKeyword, output::FunctionMutability::Pure)
+                }
+                input::FunctionAttribute::ViewKeyword(_) => {
+                    (TerminalKind::ViewKeyword, output::FunctionMutability::View)
+                }
+                _ => continue,
+            };
+            match first {
+                None => first = Some((second_kind, mutability)),
+                Some((first_kind, _)) => {
+                    let range = attribute
+                        .calculate_text_range()
+                        .expect("mutability keyword always has a text range");
+                    self.diagnostics.push(
+                        self.file_id.to_owned(),
+                        range,
+                        MultipleMutabilityKeywords {
+                            first: first_kind,
+                            second: second_kind,
+                        },
+                    );
+                }
+            }
+        }
+        first.map_or(output::FunctionMutability::NonPayable, |(_, m)| m)
     }
 
     fn function_override_specifier(
@@ -422,20 +469,42 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     }
 
     fn function_type_mutability(
+        &mut self,
         attributes: &input::FunctionTypeAttributes,
     ) -> output::FunctionMutability {
-        // TODO(validation): only a single mutability keyword can be provided
-        attributes.elements.iter().fold(
-            output::FunctionMutability::NonPayable,
-            |mutability, attribute| match attribute {
-                input::FunctionTypeAttribute::PayableKeyword(_) => {
-                    output::FunctionMutability::Payable
+        let mut first: Option<(TerminalKind, output::FunctionMutability)> = None;
+        for attribute in &attributes.elements {
+            let (second_kind, mutability) = match attribute {
+                input::FunctionTypeAttribute::PayableKeyword(_) => (
+                    TerminalKind::PayableKeyword,
+                    output::FunctionMutability::Payable,
+                ),
+                input::FunctionTypeAttribute::PureKeyword(_) => {
+                    (TerminalKind::PureKeyword, output::FunctionMutability::Pure)
                 }
-                input::FunctionTypeAttribute::PureKeyword(_) => output::FunctionMutability::Pure,
-                input::FunctionTypeAttribute::ViewKeyword(_) => output::FunctionMutability::View,
-                _ => mutability,
-            },
-        )
+                input::FunctionTypeAttribute::ViewKeyword(_) => {
+                    (TerminalKind::ViewKeyword, output::FunctionMutability::View)
+                }
+                _ => continue,
+            };
+            match first {
+                None => first = Some((second_kind, mutability)),
+                Some((first_kind, _)) => {
+                    let range = attribute
+                        .calculate_text_range()
+                        .expect("mutability keyword always has a text range");
+                    self.diagnostics.push(
+                        self.file_id.to_owned(),
+                        range,
+                        MultipleMutabilityKeywords {
+                            first: first_kind,
+                            second: second_kind,
+                        },
+                    );
+                }
+            }
+        }
+        first.map_or(output::FunctionMutability::NonPayable, |(_, m)| m)
     }
 
     //

@@ -41,7 +41,16 @@ fn build_file(name: &str, contents: &str) -> TestFile {
         "Parser diagnostics: {diagnostics:?}"
     );
 
-    let ir_root = ir::build(&source_unit, &contents);
+    let ir::BuildOutput {
+        source_unit: ir_root,
+        diagnostics: ir_diagnostics,
+    } = ir::build(name, &source_unit, &contents);
+
+    assert!(
+        ir_diagnostics.is_empty(),
+        "IR builder diagnostics: {ir_diagnostics:?}"
+    );
+
     TestFile {
         id: name.to_string(),
         ir_root,
