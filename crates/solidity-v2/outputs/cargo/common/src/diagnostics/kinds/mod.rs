@@ -12,31 +12,31 @@ use crate::diagnostics::severity::DiagnosticSeverity;
 /// [`DiagnosticExtensions`] instead of matching on this enum directly.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum DiagnosticKind {
-    /// A diagnostic produced while parsing source text.
-    Syntax(SyntaxDiagnosticKind),
     /// A diagnostic produced while driving the compilation pipeline.
     Compilation(CompilationDiagnosticKind),
+    /// A diagnostic produced while parsing source text.
+    Syntax(SyntaxDiagnosticKind),
 }
 
 impl DiagnosticExtensions for DiagnosticKind {
     fn severity(&self) -> DiagnosticSeverity {
         match self {
-            Self::Syntax(d) => d.severity(),
             Self::Compilation(d) => d.severity(),
+            Self::Syntax(d) => d.severity(),
         }
     }
 
     fn code(&self) -> &'static str {
         match self {
-            Self::Syntax(d) => d.code(),
             Self::Compilation(d) => d.code(),
+            Self::Syntax(d) => d.code(),
         }
     }
 
     fn message(&self) -> String {
         match self {
-            Self::Syntax(d) => d.message(),
             Self::Compilation(d) => d.message(),
+            Self::Syntax(d) => d.message(),
         }
     }
 }
