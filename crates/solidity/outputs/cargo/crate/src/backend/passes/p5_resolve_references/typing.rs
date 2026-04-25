@@ -4,10 +4,7 @@ use super::Pass;
 use crate::backend::binder::{Definition, Resolution, Typing};
 use crate::backend::built_ins::BuiltIn;
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
-use crate::backend::passes::p4_type_definitions::evaluator::{
-    evaluate_decimal_number_expression, evaluate_hex_number_expression, ConstantValue,
-};
-use crate::backend::types::{DataLocation, FunctionType, LiteralKind, Type, TypeId};
+use crate::backend::types::{ConstantValue, DataLocation, FunctionType, LiteralKind, Type, TypeId};
 use crate::cst::{NodeId, TerminalKind, TerminalNode};
 use crate::utils::versions::{VERSION_0_5_0, VERSION_0_8_0};
 
@@ -194,23 +191,20 @@ impl Pass<'_> {
                 // negated rational-number literals.
                 let folded = match &node.operand {
                     input_ir::Expression::DecimalNumberExpression(decimal_number) => {
-                        evaluate_decimal_number_expression(decimal_number)
+                        ConstantValue::from_decimal_number(decimal_number)
                     }
                     input_ir::Expression::HexNumberExpression(hex_number) => {
-                        evaluate_hex_number_expression(hex_number)
+                        ConstantValue::from_hex_number(hex_number)
                     }
                     _ => None,
                 };
-                if let Some(ConstantValue::Integer(magnitude)) = folded {
+                if let Some(constant) = &folded {
+                    let ConstantValue::Integer(magnitude) = constant;
                     if magnitude.sign() != num_bigint::Sign::NoSign {
-                        let negated_bits = (magnitude - 1u32).bits() + 1;
-                        let bytes = u32::try_from(negated_bits.div_ceil(8)).unwrap().max(1);
-                        return Some(self.types.register_type(Type::Literal(
-                            LiteralKind::DecimalInteger {
-                                bytes,
-                                signed: true,
-                            },
-                        )));
+                        return Some(
+                            self.types
+                                .register_type(Type::Literal(constant.get_signed_literal_kind())),
+                        );
                     }
                 }
                 self.typing_of_expression(&node.operand).as_type_id()
@@ -637,12 +631,8 @@ impl Pass<'_> {
                 signed: false,
             };
         }
-        let hex_number: String = hex_number_expression
-            .literal
-            .unparse()
-            .chars()
-            .filter(|character| *character != '_')
-            .collect();
+        let mut hex_number = hex_number_expression.literal.unparse();
+        hex_number.retain(|character| character != '_');
         if hex_number.len() == 42 {
             // TODO(validation): verify the address is valid (ie. has a valid checksum)
             // We need at least an implementation of SHA3 to compute the checksum

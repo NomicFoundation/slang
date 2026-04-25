@@ -6,7 +6,7 @@ use crate::backend::semantic::SemanticAnalysis;
 use crate::backend::types::{Type, TypeId, TypeRegistry};
 use crate::cst::NodeId;
 
-pub(crate) mod evaluator;
+mod evaluator;
 mod resolution;
 mod typing;
 mod visitor;
