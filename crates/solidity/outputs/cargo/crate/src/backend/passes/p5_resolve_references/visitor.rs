@@ -4,10 +4,7 @@ use super::Pass;
 use crate::backend::binder::{Reference, Resolution, Typing};
 use crate::backend::ir::ir2_flat_contracts::visitor::Visitor;
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
-use crate::backend::passes::p4_type_definitions::evaluator::{
-    evaluate_decimal_number_expression, ConstantValue,
-};
-use crate::backend::types::{DataLocation, LiteralKind, Type};
+use crate::backend::types::{ConstantValue, DataLocation, LiteralKind, Type};
 use crate::utils::versions::{VERSION_0_5_0, VERSION_0_7_0};
 
 impl Visitor for Pass<'_> {
@@ -144,14 +141,8 @@ impl Visitor for Pass<'_> {
         let type_ = if node.unit.is_none() && node.literal.unparse() == "0" {
             Type::Literal(LiteralKind::Zero)
         } else {
-            match evaluate_decimal_number_expression(node) {
-                Some(ConstantValue::Integer(value)) => {
-                    let bytes = u32::try_from(value.bits().div_ceil(8)).unwrap().max(1);
-                    Type::Literal(LiteralKind::DecimalInteger {
-                        bytes,
-                        signed: false,
-                    })
-                }
+            match ConstantValue::from_decimal_number(node) {
+                Some(constant) => Type::Literal(constant.get_literal_kind()),
                 None => Type::Literal(LiteralKind::Rational),
             }
         };

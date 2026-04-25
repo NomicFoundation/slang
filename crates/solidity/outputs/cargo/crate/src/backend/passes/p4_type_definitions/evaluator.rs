@@ -1,12 +1,10 @@
 use std::rc::Rc;
-use std::str::FromStr;
 
 use num_bigint::BigInt;
-use num_integer::Integer;
 use num_traits::cast::ToPrimitive;
-use num_traits::Num;
 
 use crate::backend::ir::ir2_flat_contracts::{self as input_ir};
+use crate::backend::types::ConstantValue;
 use crate::cst::{TerminalKind, TerminalNode};
 
 pub(crate) fn evaluate_compile_time_uint_constant<Scope>(
@@ -28,18 +26,6 @@ fn evaluate_compile_time_constant<Scope>(
         scope_stack: Vec::new(),
     };
     evaluator.evaluate_expression_in_scope(expression, start_scope)
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub(crate) enum ConstantValue {
-    Integer(BigInt),
-}
-
-impl ConstantValue {
-    fn as_usize(&self) -> Option<usize> {
-        let Self::Integer(value) = self;
-        value.to_usize()
-    }
 }
 
 pub(crate) trait ConstantIdentifierResolver<Scope> {
@@ -106,10 +92,10 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
                 self.evaluate_prefix_expression(prefix_expression)
             }
             input_ir::Expression::HexNumberExpression(hex_number_expression) => {
-                evaluate_hex_number_expression(hex_number_expression)
+                ConstantValue::from_hex_number(hex_number_expression)
             }
             input_ir::Expression::DecimalNumberExpression(decimal_number_expression) => {
-                evaluate_decimal_number_expression(decimal_number_expression)
+                ConstantValue::from_decimal_number(decimal_number_expression)
             }
             input_ir::Expression::Identifier(terminal_node) => {
                 self.evaluate_identifier(terminal_node)
@@ -287,70 +273,6 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
             self.evaluate_expression(inner_expression)
         } else {
             None
-        }
-    }
-}
-
-pub(crate) fn evaluate_hex_number_expression(
-    hex_number_expression: &input_ir::HexNumberExpression,
-) -> Option<ConstantValue> {
-    let hex = hex_number_expression.literal.unparse();
-    // skip `0x` prefix, strip digit-grouping underscores, and parse the
-    // hexadecimal number
-    let digits: String = hex[2..]
-        .chars()
-        .filter(|character| *character != '_')
-        .collect();
-    let value = BigInt::from_str_radix(&digits, 16).ok()?;
-    let scaled = match &hex_number_expression.unit {
-        None => value,
-        Some(unit) => value * BigInt::from(unit),
-    };
-    Some(ConstantValue::Integer(scaled))
-}
-
-pub(crate) fn evaluate_decimal_number_expression(
-    decimal_number_expression: &input_ir::DecimalNumberExpression,
-) -> Option<ConstantValue> {
-    let decimal = decimal_number_expression.literal.unparse();
-    let cleaned: String = decimal.chars().filter(|c| *c != '_').collect();
-    let (mantissa, exponent) = match cleaned.split_once(['e', 'E']) {
-        Some((m, e)) => (m, e.parse::<i64>().ok()?),
-        None => (cleaned.as_str(), 0),
-    };
-    let (int_part, fraction) = mantissa.split_once('.').unwrap_or((mantissa, ""));
-    let numerator = BigInt::from_str(&format!("{int_part}{fraction}")).ok()?;
-    let unit = decimal_number_expression
-        .unit
-        .as_ref()
-        .map_or(BigInt::from(1u32), BigInt::from);
-    let scaled = numerator * unit;
-    let net_exp = exponent - i64::try_from(fraction.len()).ok()?;
-    let shift = BigInt::from(10u32).pow(u32::try_from(net_exp.unsigned_abs()).ok()?);
-    if net_exp >= 0 {
-        Some(ConstantValue::Integer(scaled * shift))
-    } else {
-        scaled
-            .is_multiple_of(&shift)
-            .then(|| ConstantValue::Integer(scaled / shift))
-    }
-}
-
-impl From<&input_ir::NumberUnit> for BigInt {
-    fn from(value: &input_ir::NumberUnit) -> Self {
-        match value {
-            input_ir::NumberUnit::WeiKeyword | input_ir::NumberUnit::SecondsKeyword => {
-                Self::from(1u32)
-            }
-            input_ir::NumberUnit::GweiKeyword => Self::from(10u64.pow(9)),
-            input_ir::NumberUnit::SzaboKeyword => Self::from(10u64.pow(12)),
-            input_ir::NumberUnit::FinneyKeyword => Self::from(10u64.pow(15)),
-            input_ir::NumberUnit::EtherKeyword => Self::from(10u64.pow(18)),
-            input_ir::NumberUnit::MinutesKeyword => Self::from(60u32),
-            input_ir::NumberUnit::HoursKeyword => Self::from(60u32 * 60),
-            input_ir::NumberUnit::DaysKeyword => Self::from(60u32 * 60 * 24),
-            input_ir::NumberUnit::WeeksKeyword => Self::from(60u32 * 60 * 24 * 7),
-            input_ir::NumberUnit::YearsKeyword => Self::from(60u64 * 60 * 24 * 365),
         }
     }
 }

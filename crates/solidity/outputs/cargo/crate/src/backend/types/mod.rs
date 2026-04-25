@@ -1,8 +1,10 @@
 use crate::cst::NodeId;
 
+mod constants;
 mod parsing;
 mod registry;
 
+pub(crate) use constants::ConstantValue;
 pub use registry::TypeRegistry;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
