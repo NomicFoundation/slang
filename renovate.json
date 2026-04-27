@@ -95,6 +95,12 @@
       "labels": ["ci:perf"]
     },
     {
+      "description": "node: keep engines.node (package.json) and Hermit-pinned Node in lockstep — group across npm + hermit so a Node bump always lands in one PR. Must come after per-manager grouping rules so this groupName takes precedence.",
+      "matchManagers": ["hermit", "npm"],
+      "matchPackageNames": ["node"],
+      "groupName": "node"
+    },
+    {
       "description": "strum: used in CST hot path via derive macros; flag for perf review",
       "matchPackageNames": ["strum"],
       "labels": ["ci:perf"]
