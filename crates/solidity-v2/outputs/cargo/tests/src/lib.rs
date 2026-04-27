@@ -1,5 +1,6 @@
 #![cfg(test)]
 
-mod cst;
-mod semantic;
+mod binder_output;
+mod cst_output;
+mod diagnostics_output;
 mod utils;

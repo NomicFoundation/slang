@@ -6,7 +6,11 @@ use infra_utils::codegen::CodegenFileSystem;
 
 use crate::common::{collect_snapshot_tests, generate_mod_file, generate_unit_test_file};
 
-pub fn generate_cst_output_tests(data_dir: &Path, output_dir: &Path) -> Result<()> {
+pub fn generate_cst_output_tests(
+    data_dir: &Path,
+    output_dir: &Path,
+    runner_module: &str,
+) -> Result<()> {
     let parser_tests = collect_snapshot_tests(data_dir)?;
 
     let mut fs = CodegenFileSystem::default();
@@ -15,7 +19,7 @@ pub fn generate_cst_output_tests(data_dir: &Path, output_dir: &Path) -> Result<(
 
     for (parser_name, test_names) in &parser_tests {
         generate_unit_test_file(
-            "crate::cst::cst_output::runner",
+            runner_module,
             &mut fs,
             parser_name,
             test_names,

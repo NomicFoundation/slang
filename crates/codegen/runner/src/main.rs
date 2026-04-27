@@ -114,6 +114,7 @@ fn generate_solidity_tests() -> Result<()> {
     lang_def.generate_cst_output_tests(
         &snapshots_crate.join("cst_output"),
         &tests_crate.join("src/cst/cst_output/generated"),
+        "crate::cst::cst_output::runner",
     )?;
 
     lang_def.generate_binder_tests(
@@ -131,12 +132,18 @@ fn generate_solidity_v2_tests() -> Result<()> {
 
     lang_def.generate_cst_output_tests(
         &v2_snapshots.join("cst_output"),
-        &tests_crate.join("src/cst/cst_output/generated"),
+        &tests_crate.join("src/cst_output/generated"),
+        "crate::cst_output::runner",
     )?;
 
-    lang_def.generate_semantic_output_tests(
-        &v2_snapshots.join("semantic_output"),
-        &tests_crate.join("src/semantic/semantic_output/generated"),
+    lang_def.generate_binder_output_tests(
+        &v2_snapshots.join("binder_output"),
+        &tests_crate.join("src/binder_output/generated"),
+    )?;
+
+    lang_def.generate_diagnostics_output_tests(
+        &v2_snapshots.join("diagnostics_output"),
+        &tests_crate.join("src/diagnostics_output/generated"),
     )?;
 
     Ok(())
