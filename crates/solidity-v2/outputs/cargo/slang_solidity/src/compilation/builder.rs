@@ -1,27 +1,25 @@
-use std::collections::HashSet;
+use std::collections::{BTreeMap, HashSet};
+use std::rc::Rc;
 
+use slang_solidity_v2_common::diagnostics::kinds::compilation::{MissingFile, UnresolvedImport};
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_parser::ParserError;
+use slang_solidity_v2_ir::ir;
+use slang_solidity_v2_parser::{ParseOutput, Parser};
+use slang_solidity_v2_semantic::context::{
+    extract_import_paths_from_source_unit, SemanticContext, SemanticFile,
+};
 
-use super::internal_builder::{AddFileResponse, InternalCompilationBuilder};
+use super::file::File;
 use super::unit::CompilationUnit;
-
-pub enum CompilationBuilderError<E> {
-    ParserError(Vec<ParserError>),
-    UserError(E),
-}
 
 /// User-provided callbacks necessary for the `CompilationBuilder` to perform its job.
 pub trait CompilationBuilderConfig {
-    /// User-configurable error type.
-    type Error;
-
     /// Callback used by this builder to load the contents of a file.
     ///
-    /// The user is responsible for fetching the file from the filesystem. If
-    /// the file is not found, the callback should return `None`. Any errors
-    /// returned by the callback will be propagated to the caller.
-    fn read_file(&mut self, file_id: &str) -> Result<Option<String>, Self::Error>;
+    /// The user is responsible for fetching the file from the filesystem. Any
+    /// error returned is surfaced as a compilation diagnostic on the [`CompilationUnit`].
+    fn read_file(&mut self, file_id: &str) -> Result<String, String>;
 
     /// Callback used by this builder to resolve an import path.
     /// For example, if a source file contains the following statement:
@@ -34,33 +32,35 @@ pub trait CompilationBuilderConfig {
     /// string literal, including the surrounding quotes.
     ///
     /// The user is responsible for resolving it to a file in the compilation,
-    /// and return its ID. If the callback returns `None`, the import will stay
-    /// unresolved. Any errors returned by the callback will be propagated to
-    /// the caller.
-    fn resolve_import(
-        &mut self,
-        source_file_id: &str,
-        import_path: &str,
-    ) -> Result<Option<String>, Self::Error>;
+    /// and returning its ID. Any error returned is surfaced as a compilation
+    /// diagnostic on the [`CompilationUnit`].
+    fn resolve_import(&mut self, source_file_id: &str, import_path: &str)
+        -> Result<String, String>;
 }
 
 /// A builder for creating compilation units.
 /// Allows incrementally building a list of all files and their imports.
-pub struct CompilationBuilder<E, C: CompilationBuilderConfig<Error = E>> {
+pub struct CompilationBuilder<C: CompilationBuilderConfig> {
     /// The user-supplied configuration.
     pub config: C,
 
-    internal: InternalCompilationBuilder,
+    language_version: LanguageVersion,
+    diagnostics: DiagnosticCollection,
+
+    files: BTreeMap<String, File>,
     seen_files: HashSet<String>,
 }
 
-impl<E, C: CompilationBuilderConfig<Error = E>> CompilationBuilder<E, C> {
+impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
     /// Creates a new compilation builder for the specified language version and callbacks.
-    pub fn create(version: LanguageVersion, config: C) -> CompilationBuilder<E, C> {
-        let internal = InternalCompilationBuilder::create(version);
+    pub fn create(language_version: LanguageVersion, config: C) -> CompilationBuilder<C> {
         CompilationBuilder {
             config,
-            internal,
+
+            language_version,
+            diagnostics: DiagnosticCollection::default(),
+
+            files: BTreeMap::new(),
             seen_files: HashSet::new(),
         }
     }
@@ -75,42 +75,63 @@ impl<E, C: CompilationBuilderConfig<Error = E>> CompilationBuilder<E, C> {
     /// imported or not, to be able to query the definitions there.
     ///
     /// Adding a file that has already been added is a no-op.
-    pub fn add_file(&mut self, file_id: &str) -> Result<(), CompilationBuilderError<E>> {
-        if !self.seen_files.insert(file_id.into()) {
-            return Ok(());
+    ///
+    /// Parse errors, unresolvable imports, and missing files are collected as
+    /// diagnostics on the resulting [`CompilationUnit`] — see
+    /// [`CompilationUnit::diagnostics`].
+    pub fn add_file(&mut self, file_id: String) {
+        if !self.seen_files.insert(file_id.clone()) {
+            return;
         }
 
-        let source = self
-            .config
-            .read_file(file_id)
-            .map_err(|err| CompilationBuilderError::UserError(err))?;
+        let source = match self.config.read_file(&file_id) {
+            Ok(source) => source,
+            Err(reason) => {
+                self.diagnostics.push(file_id, 0..0, MissingFile { reason });
+                return;
+            }
+        };
 
-        if let Some(source) = source {
-            // TODO(v2): move to a proper diagnostics API (reporter)
-            let AddFileResponse { import_paths } = self
-                .internal
-                .add_file(file_id.into(), &source)
-                .map_err(|err| CompilationBuilderError::ParserError(err))?;
+        let ParseOutput {
+            source_unit,
+            diagnostics,
+        } = Parser::parse(&file_id, &source, self.language_version);
+        self.diagnostics.extend(diagnostics);
 
-            for (node_id, import_path) in import_paths {
-                let import_id = self
-                    .config
-                    .resolve_import(file_id, &import_path)
-                    .map_err(|err| CompilationBuilderError::UserError(err))?;
+        let ir_root = ir::build(&source_unit, &source);
 
-                if let Some(import_id) = &import_id {
-                    self.internal
-                        .resolve_import(file_id, node_id, import_id.clone())
-                        .unwrap_or_else(|_| panic!("{file_id} should have been added"));
-                    self.add_file(import_id)?;
+        let mut file = File::new(file_id.clone(), ir_root);
+        let import_paths = extract_import_paths_from_source_unit(file.ir_root());
+        for (node_id, import_path) in import_paths {
+            match self.config.resolve_import(&file_id, &import_path) {
+                Ok(resolved_id) => {
+                    file.add_resolved_import(node_id, resolved_id.clone());
+                    self.add_file(resolved_id);
+                }
+                Err(reason) => {
+                    self.diagnostics.push(
+                        file_id.clone(),
+                        // TODO(v2): surface import path range
+                        0..0,
+                        UnresolvedImport { reason },
+                    );
                 }
             }
         }
-        Ok(())
+
+        self.files.insert(file_id, file);
     }
 
     /// Builds and returns the final compilation unit.
     pub fn build(self) -> CompilationUnit {
-        self.internal.build()
+        let files: Vec<File> = self.files.into_values().collect();
+        let semantic = SemanticContext::build_from(self.language_version, &files);
+
+        CompilationUnit::create(
+            self.language_version,
+            files,
+            Rc::new(semantic),
+            self.diagnostics,
+        )
     }
 }

@@ -326,10 +326,13 @@ mod tests {
 
         let ParseOutput {
             source_unit,
-            errors,
-        } = Parser::parse(&source, version);
+            diagnostics,
+        } = Parser::parse("test.sol", &source, version);
 
-        assert!(errors.is_empty(), "Parser errors: {errors:?}");
+        assert!(
+            diagnostics.is_empty(),
+            "Parser diagnostics: {diagnostics:?}"
+        );
 
         let source_unit = ir::build(&source_unit, &source);
         let member = source_unit.members.first().expect("no source unit members");

@@ -3,7 +3,7 @@ mod language_versions;
 
 pub use language_versions::{FromSemverError, LanguageVersion};
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum LanguageVersionSpecifier {
     From {
         from: LanguageVersion,

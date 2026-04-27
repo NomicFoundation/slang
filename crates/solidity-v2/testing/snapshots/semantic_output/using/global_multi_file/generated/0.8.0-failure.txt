@@ -26,18 +26,18 @@ Definitions (11):
 ------------------------------------------------------------------------
 
 References (13):
-- Ref: ["foo" @ main.sol:1:9] -> unresolved
+- Ref: ["foo" @ main.sol:1:9] -> #10
 - Ref: ["Lib" @ main.sol:7:7] -> #2
 - Ref: ["a" @ main.sol:11:9] -> #7
 - Ref: ["nop" @ main.sol:11:11] -> #3
 - Ref: ["foo" @ main.sol:12:9] -> #1
 - Ref: ["a" @ main.sol:12:13] -> #7
-- Ref: ["nop" @ main.sol:12:16] -> unresolved
+- Ref: ["nop" @ main.sol:12:16] -> #3
 - Ref: ["a" @ main.sol:17:5] -> #9
 - Ref: ["nop" @ main.sol:17:7] -> #3
 - Ref: ["foo" @ main.sol:18:5] -> #1
 - Ref: ["a" @ main.sol:18:9] -> #9
-- Ref: ["nop" @ main.sol:18:12] -> unresolved
+- Ref: ["nop" @ main.sol:18:12] -> #3
 - Ref: ["a" @ other.sol:2:12] -> #11
 
 ------------------------------------------------------------------------
@@ -53,7 +53,7 @@ Bindings:
     │         ─┬─  
     │          ╰─── name: 1
     │          │   
-    │          ╰─── unresolved
+    │          ╰─── ref: 10
     │ 
   3 │ library Lib {
     │         ─┬─  
@@ -87,7 +87,7 @@ Bindings:
     │             │   │   
     │             ╰─────── ref: 7
     │                 │   
-    │                 ╰─── unresolved
+    │                 ╰─── ref: 3
     │ 
  16 │ function bar(uint a) {
     │          ─┬─      ┬  
@@ -105,7 +105,7 @@ Bindings:
     │         │   │   
     │         ╰─────── ref: 9
     │             │   
-    │             ╰─── unresolved
+    │             ╰─── ref: 3
 ────╯
 
 ------------------------------------------------------------------------

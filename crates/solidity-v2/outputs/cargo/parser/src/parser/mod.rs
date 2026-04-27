@@ -1,11 +1,17 @@
+use std::collections::BTreeSet;
+
 use lalrpop_util::lalrpop_mod;
+use slang_solidity_v2_common::diagnostics::kinds::syntax::{
+    ExtraTerminal, UnexpectedEof, UnexpectedTerminal,
+};
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
+use slang_solidity_v2_common::terminals::TerminalKind;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes::{
     new_source_unit, new_source_unit_members, SourceUnit,
 };
 
 use crate::lexer::{LexemeKind, Lexer};
-use crate::parser::parser_error::ParserError;
 use crate::parser::validation::validate_syntax_version;
 
 mod parser_helpers;
@@ -27,13 +33,11 @@ lalrpop_mod!(
     #[allow(clippy::wildcard_imports)]
     pub(crate) grammar, "/parser/grammar.generated.rs"); // synthesized by LALRPOP
 
-pub mod parser_error;
-
-/// The output of a parse operation, containing both the source unit and any errors.
+/// The output of a parse operation, containing both the source unit and any diagnostics.
 #[derive(Debug, PartialEq)]
 pub struct ParseOutput {
     pub source_unit: SourceUnit,
-    pub errors: Vec<ParserError>,
+    pub diagnostics: DiagnosticCollection,
 }
 
 /// A Parser for Solidity Source Units
@@ -44,22 +48,86 @@ pub struct ParseOutput {
 pub struct Parser;
 
 impl Parser {
-    pub fn parse(input: &str, version: LanguageVersion) -> ParseOutput {
-        let lexer = Lexer::new(input, version);
+    pub fn parse(file_id: &str, source: &str, language_version: LanguageVersion) -> ParseOutput {
+        let lexer = Lexer::new(source, language_version);
         let parser = grammar::SourceUnitParser::new();
-        match parser.parse(input, lexer) {
+
+        let mut diagnostics = DiagnosticCollection::default();
+        match parser.parse(source, lexer) {
             Ok(source_unit) => {
-                let errors = validate_syntax_version(&source_unit, version);
+                validate_syntax_version(&source_unit, language_version, file_id, &mut diagnostics);
                 ParseOutput {
                     source_unit,
-                    errors,
+                    diagnostics,
                 }
             }
-            Err(e) => ParseOutput {
-                source_unit: new_source_unit(new_source_unit_members(vec![])),
-                errors: vec![e.into()],
-            },
+            Err(e) => {
+                convert_parse_error(file_id, &mut diagnostics, e);
+                ParseOutput {
+                    source_unit: new_source_unit(new_source_unit_members(vec![])),
+                    diagnostics,
+                }
+            }
         }
+    }
+}
+
+/// Convert a LALRPOP parse error into a `DiagnosticCollection`.
+fn convert_parse_error(
+    file_id: &str,
+    diagnostics: &mut DiagnosticCollection,
+    value: lalrpop_util::ParseError<usize, LexemeKind, ()>,
+) {
+    /// This function transforms the `String` representation returned by LALRPOP into an instance of `LexemeKind`
+    ///
+    /// TODO(v2): We may be able to improve on this if there's room for returning a discriminant instead of a string representation.
+    /// [Ongoing discussion](https://github.com/lalrpop/lalrpop/issues/1089#issuecomment-4011323139)
+    fn convert_expectations(expected: &[String]) -> BTreeSet<TerminalKind> {
+        expected
+            .iter()
+            .map(|str| str.strip_prefix("L_").unwrap())
+            .map(|str| str.parse::<LexemeKind>().unwrap())
+            .map(|lexeme| TerminalKind::from(&lexeme))
+            .collect()
+    }
+
+    match value {
+        lalrpop_util::ParseError::UnrecognizedEof { location, expected } => {
+            diagnostics.push(
+                file_id.to_owned(),
+                location..location,
+                UnexpectedEof {
+                    found: TerminalKind::UNRECOGNIZED,
+                    expected: convert_expectations(&expected),
+                },
+            );
+        }
+        lalrpop_util::ParseError::UnrecognizedToken {
+            token: (left, lexeme, right),
+            expected,
+        } => {
+            diagnostics.push(
+                file_id.to_owned(),
+                left..right,
+                UnexpectedTerminal {
+                    found: TerminalKind::from(&lexeme),
+                    expected: convert_expectations(&expected),
+                },
+            );
+        }
+        lalrpop_util::ParseError::ExtraToken {
+            token: (left, lexeme, right),
+        } => {
+            diagnostics.push(
+                file_id.to_owned(),
+                left..right,
+                ExtraTerminal {
+                    found: TerminalKind::from(&lexeme),
+                },
+            );
+        }
+        lalrpop_util::ParseError::User { .. } => panic!("The parser should never return a user error, since we're not using any custom error types in our grammar"),
+        lalrpop_util::ParseError::InvalidToken { .. } => panic!("The parser should never return an invalid token error, since it's not using the default lexer"),
     }
 }
 

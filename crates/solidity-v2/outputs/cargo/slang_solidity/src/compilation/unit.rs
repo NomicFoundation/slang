@@ -2,6 +2,7 @@ use std::collections::BTreeMap;
 use std::rc::Rc;
 
 use slang_solidity_v2_ast::{abi, ast};
+use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_semantic::context::{SemanticContext, SemanticFile};
 
@@ -11,6 +12,7 @@ pub struct CompilationUnit {
     language_version: LanguageVersion,
     files: BTreeMap<String, Rc<File>>,
     semantic: Rc<SemanticContext>,
+    diagnostics: DiagnosticCollection,
 }
 
 impl CompilationUnit {
@@ -18,6 +20,7 @@ impl CompilationUnit {
         language_version: LanguageVersion,
         files: Vec<File>,
         semantic: Rc<SemanticContext>,
+        diagnostics: DiagnosticCollection,
     ) -> Self {
         let files: BTreeMap<String, Rc<File>> = files
             .into_iter()
@@ -27,7 +30,13 @@ impl CompilationUnit {
             language_version,
             files,
             semantic,
+            diagnostics,
         }
+    }
+
+    /// Returns the diagnostics collected during the compilation.
+    pub fn diagnostics(&self) -> &DiagnosticCollection {
+        &self.diagnostics
     }
 
     /// Returns the language version this compilation unit is configured for.
