@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: Only a single mutability keyword can be provided. Found `ViewKeyword` after `PureKeyword`.
+   ╭─[input.sol:2:23]
+   │
+ 2 │   function foo() pure view returns (uint) {
+   │                       ──┬─  
+   │                         ╰─── Error occurred here.
+───╯

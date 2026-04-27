@@ -19,10 +19,10 @@ keywords = ["utilities"]
 categories = ["compilers", "utilities"]
 
 [dependencies]
+slang_solidity_v2_common = { workspace = true }
 slang_solidity_v2_cst = { workspace = true }
 
 [dev-dependencies]
-slang_solidity_v2_common = { workspace = true }
 slang_solidity_v2_parser = { workspace = true }
 
 [lints]

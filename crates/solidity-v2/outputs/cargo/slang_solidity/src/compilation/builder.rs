@@ -4,7 +4,7 @@ use std::rc::Rc;
 use slang_solidity_v2_common::diagnostics::kinds::compilation::{MissingFile, UnresolvedImport};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_ir::ir;
+use slang_solidity_v2_ir::ir::{self, BuildOutput};
 use slang_solidity_v2_parser::{ParseOutput, Parser};
 use slang_solidity_v2_semantic::context::{
     extract_import_paths_from_source_unit, SemanticContext, SemanticFile,
@@ -98,7 +98,11 @@ impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
         } = Parser::parse(&file_id, &source, self.language_version);
         self.diagnostics.extend(diagnostics);
 
-        let ir_root = ir::build(&source_unit, &source);
+        let BuildOutput {
+            ir_root,
+            diagnostics,
+        } = ir::build(&file_id, &source_unit, &source);
+        self.diagnostics.extend(diagnostics);
 
         let mut file = File::new(file_id.clone(), ir_root);
         let import_paths = extract_import_paths_from_source_unit(file.ir_root());

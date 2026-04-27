@@ -17,3 +17,21 @@ mod compilation {
         run("compilation", "unresolved_import")
     }
 }
+
+mod semantic {
+    use super::*;
+
+    mod duplicate_mutability_keyword {
+        use super::*;
+
+        #[test]
+        fn function_types() -> Result<()> {
+            run("semantic/duplicate_mutability_keyword", "function_types")
+        }
+
+        #[test]
+        fn functions() -> Result<()> {
+            run("semantic/duplicate_mutability_keyword", "functions")
+        }
+    }
+}
