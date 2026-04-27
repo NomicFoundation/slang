@@ -1,0 +1,38 @@
+
+{%- macro render_snapshot_tests(crate_name, path, runner) -%}
+    use anyhow::Result;
+
+    use {{ runner }}::run;
+
+    {% set entries = collect_snapshot_tests(crate_name=crate_name, path=path) -%}
+    {% for entry in entries %}
+        {{ self::render_entry(entry=entry, path="") }}
+    {% endfor %}
+{%- endmacro render_snapshot_tests -%}
+
+{%- macro render_entry(entry, path) -%}
+    {%- if entry.type == "Test" -%}
+        #[test]
+        fn {{ entry.name }}() -> Result<()> {
+            run("{{ path }}", "{{ entry.name }}")
+        }
+
+    {%- elif entry.type == "Group" -%}
+        {%- if path == "" %}
+            {% set sub_path = entry.name %}
+        {% else %}
+            {% set sub_path = path ~ "/" ~ entry.name %}
+        {% endif -%}
+
+        mod {{ entry.name | snake_case }} {
+            use super::*;
+
+            {% for child in entry.children %}
+                {{ self::render_entry(entry=child, path=sub_path) }}
+            {% endfor %}
+        }
+
+    {%- else -%}
+        {{ throw(message = "Unrecognized entry type: " ~ entry.type) }}
+    {%- endif -%}
+{%- endmacro render_entry -%}

@@ -743,7 +743,6 @@ dependencies = [
  "anyhow",
  "codegen_generator",
  "codegen_spec",
- "codegen_testing",
  "infra_utils",
  "language_definition",
  "language_v2_definition",
@@ -764,17 +763,6 @@ dependencies = [
  "language_definition",
  "serde",
  "serde_json",
-]
-
-[[package]]
-name = "codegen_testing"
-version = "1.3.4"
-dependencies = [
- "Inflector",
- "anyhow",
- "infra_utils",
- "language_definition",
- "semver 1.0.28",
 ]
 
 [[package]]
