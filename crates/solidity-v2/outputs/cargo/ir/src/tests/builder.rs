@@ -30,19 +30,28 @@ contract MyContract {
         "Parser diagnostics: {diagnostics:?}"
     );
 
-    let source_unit = ir::build(&source_unit, &CONTENTS);
-    assert_eq!(2, source_unit.members.len());
+    let ir::BuildOutput {
+        ir_root,
+        diagnostics,
+    } = ir::build("test.sol", &source_unit, &CONTENTS);
+
+    assert!(
+        diagnostics.is_empty(),
+        "IR builder diagnostics: {diagnostics:?}"
+    );
+
+    assert_eq!(2, ir_root.members.len());
     assert!(matches!(
-        source_unit.members[0],
+        ir_root.members[0],
         ir::SourceUnitMember::PragmaDirective(_)
     ));
     assert!(matches!(
-        source_unit.members[1],
+        ir_root.members[1],
         ir::SourceUnitMember::ContractDefinition(_)
     ));
 
     // MyContract contract
-    let ir::SourceUnitMember::ContractDefinition(ref contract) = source_unit.members[1] else {
+    let ir::SourceUnitMember::ContractDefinition(ref contract) = ir_root.members[1] else {
         panic!("Expected ContractDefinition");
     };
     assert_eq!("MyContract", contract.name.unparse());
@@ -97,17 +106,26 @@ contract Test is Base layout at 0 {}
         "Parser diagnostics: {diagnostics:?}"
     );
 
-    let source_unit = ir::build(&source_unit, &CONTENTS);
-    assert_eq!(2, source_unit.members.len());
+    let ir::BuildOutput {
+        ir_root,
+        diagnostics,
+    } = ir::build("test.sol", &source_unit, &CONTENTS);
 
-    let ir::SourceUnitMember::ContractDefinition(base_contract) = &source_unit.members[0] else {
+    assert!(
+        diagnostics.is_empty(),
+        "IR builder diagnostics: {diagnostics:?}"
+    );
+
+    assert_eq!(2, ir_root.members.len());
+
+    let ir::SourceUnitMember::ContractDefinition(base_contract) = &ir_root.members[0] else {
         panic!("Expected ContractDefinition");
     };
     assert_eq!("Base", base_contract.name.unparse());
     assert!(base_contract.inheritance_types.is_empty());
     assert!(base_contract.storage_layout.is_none());
 
-    let ir::SourceUnitMember::ContractDefinition(test_contract) = &source_unit.members[1] else {
+    let ir::SourceUnitMember::ContractDefinition(test_contract) = &ir_root.members[1] else {
         panic!("Expected ContractDefinition");
     };
     assert_eq!("Test", test_contract.name.unparse());

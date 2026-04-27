@@ -22,13 +22,16 @@ pub fn test(
 ) -> Vec<SourceUnit> {
     let mut ir_source_units = Vec::new();
     for (name, source) in sources {
-        ir_source_units.push(ir::build(
-            &source,
-            project
-                .sources
-                .get(&name)
-                .expect("Source not found in project"),
-        ));
+        let contents = project
+            .sources
+            .get(&name)
+            .expect("Source not found in project");
+        let ir::BuildOutput {
+            ir_root,
+            diagnostics,
+        } = ir::build(&name, &source, contents);
+        assert!(diagnostics.is_empty());
+        ir_source_units.push(ir_root);
     }
     ir_source_units
 }

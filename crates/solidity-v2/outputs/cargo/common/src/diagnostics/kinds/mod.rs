@@ -1,7 +1,9 @@
 pub mod compilation;
+pub mod semantic;
 pub mod syntax;
 
 use compilation::CompilationDiagnosticKind;
+use semantic::SemanticDiagnosticKind;
 use syntax::SyntaxDiagnosticKind;
 
 use crate::diagnostics::extensions::DiagnosticExtensions;
@@ -16,6 +18,8 @@ pub enum DiagnosticKind {
     Compilation(CompilationDiagnosticKind),
     /// A diagnostic produced while parsing source text.
     Syntax(SyntaxDiagnosticKind),
+    /// A diagnostic produced by semantic analysis of the source.
+    Semantic(SemanticDiagnosticKind),
 }
 
 impl DiagnosticExtensions for DiagnosticKind {
@@ -23,6 +27,7 @@ impl DiagnosticExtensions for DiagnosticKind {
         match self {
             Self::Compilation(d) => d.severity(),
             Self::Syntax(d) => d.severity(),
+            Self::Semantic(d) => d.severity(),
         }
     }
 
@@ -30,6 +35,7 @@ impl DiagnosticExtensions for DiagnosticKind {
         match self {
             Self::Compilation(d) => d.code(),
             Self::Syntax(d) => d.code(),
+            Self::Semantic(d) => d.code(),
         }
     }
 
@@ -37,6 +43,7 @@ impl DiagnosticExtensions for DiagnosticKind {
         match self {
             Self::Compilation(d) => d.message(),
             Self::Syntax(d) => d.message(),
+            Self::Semantic(d) => d.message(),
         }
     }
 }
