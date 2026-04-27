@@ -1,0 +1,9 @@
+{%- import "src/utils/_render_snapshot_tests.rs.jinja2" as common -%}
+
+{{
+    common::render_snapshot_tests(
+        crate_name="solidity_v2_testing_snapshots",
+        path="diagnostics_output",
+        runner="crate::diagnostics_output::runner",
+    )
+}}

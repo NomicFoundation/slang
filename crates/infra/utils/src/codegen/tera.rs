@@ -9,6 +9,8 @@ use regex::Regex;
 use serde_json::{Map, Value};
 use tera::Tera;
 
+use crate::cargo::CargoWorkspace;
+use crate::codegen::testing::collect_snapshot_tests;
 use crate::paths::{FileWalker, PathExtensions};
 
 const JINJA_GLOB: &str = "**/*.jinja2";
@@ -41,6 +43,8 @@ impl TeraWrapper {
         instance.register_filter("default_object", default_object_filter);
 
         instance.register_function("panic", panic_function);
+
+        instance.register_function("collect_snapshot_tests", collect_snapshot_tests_function);
 
         instance.autoescape_on(vec![]); // disable autoescaping
 
@@ -221,4 +225,28 @@ fn panic_function(args: &HashMap<String, Value>) -> tera::Result<Value> {
         .expect("Expected a string message");
 
     panic!("{message}");
+}
+
+fn collect_snapshot_tests_function(args: &HashMap<String, Value>) -> tera::Result<Value> {
+    assert_eq!(args.len(), 2, "Expected two arguments");
+
+    let crate_name = args
+        .get("crate_name")
+        .expect("Expected a 'crate_name' argument")
+        .as_str()
+        .expect("Expected a string crate_name");
+
+    let path = args
+        .get("path")
+        .expect("Expected a 'path' argument")
+        .as_str()
+        .expect("Expected a string path");
+
+    let data_dir = CargoWorkspace::locate_source_crate(crate_name)
+        .unwrap()
+        .join(path);
+
+    let entries = collect_snapshot_tests(&data_dir);
+
+    Ok(serde_json::to_value(entries).unwrap())
 }

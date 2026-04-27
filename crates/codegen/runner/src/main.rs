@@ -1,7 +1,6 @@
 use anyhow::Result;
 use codegen_generator::RuntimeGenerator;
 use codegen_spec::Spec;
-use codegen_testing::TestingGeneratorExtensions;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use language_definition::model::Language;
@@ -18,8 +17,20 @@ fn main() {
 
     [
         || generate_solidity_spec(),
-        || generate_solidity_tests(),
-        || generate_solidity_v2_tests(),
+        || {
+            generate_in_place(
+                &mut CodegenFileSystem::default(),
+                &SolidityDefinition::create(),
+                "solidity_cargo_tests",
+            )
+        },
+        || {
+            generate_in_place_v2(
+                &mut CodegenFileSystem::default(),
+                &SolidityDefinitionV2::create(),
+                "solidity_v2_cargo_tests",
+            )
+        },
         || {
             let mut fs = CodegenFileSystem::default();
             let language = SolidityDefinition::create();
@@ -97,56 +108,6 @@ fn generate_solidity_spec() -> Result<()> {
     let output_dir = CargoWorkspace::locate_source_crate("solidity_spec")?.join("generated");
 
     Spec::generate(language, &output_dir)
-}
-
-fn generate_solidity_tests() -> Result<()> {
-    let lang_def = SolidityDefinition::create();
-    let snapshots_crate = CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?;
-    let tests_crate = CargoWorkspace::locate_source_crate("solidity_cargo_tests")?;
-
-    lang_def.generate_version_breaks(&tests_crate.join("src/cst/generated"))?;
-
-    lang_def.generate_bindings_output_tests(
-        &snapshots_crate.join("bindings_output"),
-        &tests_crate.join("src/bindings/bindings_output/generated"),
-    )?;
-
-    lang_def.generate_cst_output_tests(
-        &snapshots_crate.join("cst_output"),
-        &tests_crate.join("src/cst/cst_output/generated"),
-        "crate::cst::cst_output::runner",
-    )?;
-
-    lang_def.generate_binder_tests(
-        &snapshots_crate.join("bindings_output"),
-        &tests_crate.join("src/binder/generated"),
-    )?;
-
-    Ok(())
-}
-
-fn generate_solidity_v2_tests() -> Result<()> {
-    let lang_def = SolidityDefinition::create();
-    let v2_snapshots = CargoWorkspace::locate_source_crate("solidity_v2_testing_snapshots")?;
-    let tests_crate = CargoWorkspace::locate_source_crate("solidity_v2_cargo_tests")?;
-
-    lang_def.generate_cst_output_tests(
-        &v2_snapshots.join("cst_output"),
-        &tests_crate.join("src/cst_output/generated"),
-        "crate::cst_output::runner",
-    )?;
-
-    lang_def.generate_binder_output_tests(
-        &v2_snapshots.join("binder_output"),
-        &tests_crate.join("src/binder_output/generated"),
-    )?;
-
-    lang_def.generate_diagnostics_output_tests(
-        &v2_snapshots.join("diagnostics_output"),
-        &tests_crate.join("src/diagnostics_output/generated"),
-    )?;
-
-    Ok(())
 }
 
 fn generate_in_place(
