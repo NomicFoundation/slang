@@ -42,6 +42,12 @@
       "enabled": false
     },
     {
+      "description": "pnpm overrides exist to patch CVEs on transitive deps that pin old majors. Block major bumps on the override target — going past the consuming dep's compatibility window forces it onto an incompatible API and breaks at runtime.",
+      "matchDepTypes": ["pnpm-workspace.overrides"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
       "description": "iai-callgrind: disabled pending migration to gungraun (issue #1690); crate was renamed upstream",
       "matchPackageNames": ["iai-callgrind", "iai-callgrind-runner"],
       "enabled": false
