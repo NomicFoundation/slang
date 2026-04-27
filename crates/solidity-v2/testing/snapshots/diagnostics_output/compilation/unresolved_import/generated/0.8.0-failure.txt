@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: Unresolved import: unresolved import: "../../oops.sol" (from input.sol)
+   ╭─[input.sol:1:1]
+   │
+ 1 │ // Our test resolver only resolves files in the same directory:
+   │ │ 
+   │ ╰─ Error occurred here.
+───╯
