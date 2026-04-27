@@ -202,7 +202,7 @@ tree-sitter = { version = "0.26.0" }
 trybuild = { version = "1.0.104" }
 url = { version = "2.5.4", features = ["serde"] }
 wasm-tools = { version = "1.216.0" }
-wit-bindgen = { version = "0.55.0" }
+wit-bindgen = { version = "0.57.0" }
 
 [workspace.lints.rust]
 unused_crate_dependencies = "warn"
