@@ -19,6 +19,7 @@ keywords = ["utilities"]
 categories = ["compilers", "utilities"]
 
 [dependencies]
+num-bigint = { workspace = true }
 paste = { workspace = true }
 sha3 = { workspace = true }
 slang_solidity_v2_common = { workspace = true }

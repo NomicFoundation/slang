@@ -12,7 +12,7 @@ mod references;
 pub use references::Reference;
 
 mod types;
-pub use types::Type;
+pub use types::{LiteralKind, Type};
 
 #[path = "visitor.generated.rs"]
 pub mod visitor;
