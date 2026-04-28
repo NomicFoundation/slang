@@ -1,5 +1,6 @@
 #![allow(clippy::needless_pass_by_value)]
 
+pub mod config;
 pub mod dataset;
 pub mod tests;
 
