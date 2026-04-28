@@ -144,13 +144,11 @@ impl TypeRegistry {
             (
                 Type::Literal(
                     LiteralKind::Zero
-                    | LiteralKind::DecimalInteger
                     // TODO: rationals cannot be always converted to integers,
                     // unless their fractional part is zero. But for now and
                     // without further information about the literal number
                     // itself, assume it can.
-                    | LiteralKind::Rational
-                    | LiteralKind::HexInteger { .. },
+                    | LiteralKind::Rational,
                 ),
                 Type::Integer { .. },
             ) => {
@@ -158,30 +156,68 @@ impl TypeRegistry {
                 true
             }
 
+            // TODO: verify against solc's RationalNumberType::isImplicitlyConvertibleTo.
+            (
+                Type::Literal(
+                    LiteralKind::DecimalInteger {
+                        bytes,
+                        signed: false,
+                    }
+                    | LiteralKind::HexInteger { bytes },
+                ),
+                Type::Integer { bits: to_bits, .. },
+            ) => bytes * 8 <= *to_bits,
+
+            // A signed decimal literal (produced by `-literal`) may only
+            // implicitly convert to a signed integer type.
+            (
+                Type::Literal(LiteralKind::DecimalInteger {
+                    bytes,
+                    signed: true,
+                }),
+                Type::Integer {
+                    signed: true,
+                    bits: to_bits,
+                },
+            ) => bytes * 8 <= *to_bits,
+
             (
                 Type::Literal(
                     LiteralKind::Zero
-                    | LiteralKind::DecimalInteger
+                    | LiteralKind::DecimalInteger { .. }
                     | LiteralKind::Rational
                     | LiteralKind::HexInteger { .. },
                 ),
                 Type::Literal(LiteralKind::Rational),
-            ) |
-            (
-                Type::Literal(
-                    LiteralKind::Zero
-                    | LiteralKind::DecimalInteger
-                    | LiteralKind::HexInteger { .. },
-                ),
-                Type::Literal(LiteralKind::DecimalInteger),
-            ) |
-            (
-                Type::Literal(
-                    LiteralKind::Zero
-                    | LiteralKind::HexInteger { .. },
-                ),
-                Type::Literal(LiteralKind::HexInteger { .. }),
             ) => true,
+
+            (
+                Type::Literal(LiteralKind::Zero),
+                Type::Literal(
+                    LiteralKind::DecimalInteger { .. } | LiteralKind::HexInteger { .. },
+                ),
+            ) => true,
+
+            (
+                Type::Literal(LiteralKind::HexInteger { bytes: from_bytes }),
+                Type::Literal(
+                    LiteralKind::HexInteger { bytes: to_bytes }
+                    | LiteralKind::DecimalInteger { bytes: to_bytes, .. },
+                ),
+            ) => from_bytes <= to_bytes,
+
+            // A signed decimal literal (produced by `-literal`) only
+            // implicitly converts to a signed `DecimalInteger` target.
+            (
+                Type::Literal(LiteralKind::DecimalInteger {
+                    bytes: from_bytes,
+                    signed: from_signed,
+                }),
+                Type::Literal(LiteralKind::DecimalInteger {
+                    bytes: to_bytes,
+                    signed: to_signed,
+                }),
+            ) if !*from_signed || *to_signed => from_bytes <= to_bytes,
 
             (Type::Integer { .. }, Type::Literal(_)) => false,
 
@@ -505,7 +541,7 @@ impl TypeRegistry {
             // will convert 1, 2, 3, etc into uint8 and 1.2 into ufixed8x1
             LiteralKind::Zero
             | LiteralKind::Rational
-            | LiteralKind::DecimalInteger
+            | LiteralKind::DecimalInteger { .. }
             | LiteralKind::HexInteger { .. } => self.uint256(),
             LiteralKind::HexString { .. } | LiteralKind::String { .. } => self.string(),
             LiteralKind::Address => self.address(),

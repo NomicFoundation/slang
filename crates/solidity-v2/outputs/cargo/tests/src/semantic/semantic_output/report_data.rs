@@ -379,7 +379,14 @@ impl CollectedDefinitionDisplay<'_> {
             Type::Literal(kind) => match kind {
                 LiteralKind::Zero => "lit-zero".to_string(),
                 LiteralKind::Rational => "rational".to_string(),
-                LiteralKind::DecimalInteger => "lit-integer".to_string(),
+                LiteralKind::DecimalInteger {
+                    bytes,
+                    signed: false,
+                } => format!("lit-integer({bytes})"),
+                LiteralKind::DecimalInteger {
+                    bytes,
+                    signed: true,
+                } => format!("lit-integer({bytes}, signed)"),
                 LiteralKind::HexInteger { bytes } => format!("lit-hex({bytes})"),
                 LiteralKind::HexString { bytes } => format!("lit-hexstring({bytes})"),
                 LiteralKind::String { bytes } => format!("lit-string({bytes})"),

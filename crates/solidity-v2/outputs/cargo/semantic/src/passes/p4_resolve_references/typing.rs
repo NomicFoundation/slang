@@ -4,7 +4,7 @@ use slang_solidity_v2_ir::ir;
 use super::Pass;
 use crate::binder::{Definition, Resolution, Typing};
 use crate::built_ins::BuiltIn;
-use crate::types::{DataLocation, FunctionType, LiteralKind, Type, TypeId};
+use crate::types::{ConstantValue, DataLocation, FunctionType, LiteralKind, Type, TypeId};
 
 impl Pass<'_> {
     pub(super) fn typing_of_expression(&self, node: &ir::Expression) -> Typing {
@@ -169,6 +169,54 @@ impl Pass<'_> {
             }
         } else {
             None
+        }
+    }
+
+    pub(super) fn type_of_prefix_expression(
+        &mut self,
+        node: &ir::PrefixExpression,
+    ) -> Option<TypeId> {
+        match node.expression_prefix_expression_operator {
+            ir::Expression_PrefixExpression_Operator::Minus => {
+                // `-literal` folds into a signed literal kind carrying the
+                // two's-complement width of the negated value, matching
+                // solc's `RationalNumberType::integerType()` behaviour for
+                // negated rational-number literals.
+                // TODO: this covers some edge cases but not all of them. We
+                // need full constant folding at the semantic level and that
+                // means keeping the actual value of literals in their type,
+                // similar to what `solc` does.
+                let folded = match &node.operand {
+                    ir::Expression::DecimalNumberExpression(decimal_number) => {
+                        ConstantValue::from_decimal_number_expression(decimal_number)
+                    }
+                    ir::Expression::HexNumberExpression(hex_number) => {
+                        ConstantValue::from_hex_number_expression(hex_number)
+                    }
+                    _ => None,
+                };
+                if let Some(constant) = &folded {
+                    let ConstantValue::Integer(magnitude) = constant;
+                    if magnitude.sign() != num_bigint::Sign::NoSign {
+                        return Some(
+                            self.types
+                                .register_type(Type::Literal(constant.get_signed_literal_kind())),
+                        );
+                    }
+                }
+                self.typing_of_expression(&node.operand).as_type_id()
+            }
+            ir::Expression_PrefixExpression_Operator::PlusPlus
+            | ir::Expression_PrefixExpression_Operator::MinusMinus
+            | ir::Expression_PrefixExpression_Operator::Tilde => {
+                // TODO(validation): check that the operand is integer
+                self.typing_of_expression(&node.operand).as_type_id()
+            }
+            ir::Expression_PrefixExpression_Operator::Bang => {
+                // TODO(validation): check that the operand is boolean
+                Some(self.types.boolean())
+            }
+            ir::Expression_PrefixExpression_Operator::DeleteKeyword => Some(self.types.void()),
         }
     }
 
@@ -580,7 +628,8 @@ impl Pass<'_> {
     pub(super) fn hex_number_literal_kind(
         hex_number_expression: &ir::HexNumberExpression,
     ) -> LiteralKind {
-        let hex_number = hex_number_expression.literal.unparse();
+        let mut hex_number = hex_number_expression.literal.unparse().to_owned();
+        hex_number.retain(|character| character != '_');
         if hex_number.len() == 42 {
             // TODO(validation): verify the address is valid (ie. has a valid checksum)
             // We need at least an implementation of SHA3 to compute the checksum

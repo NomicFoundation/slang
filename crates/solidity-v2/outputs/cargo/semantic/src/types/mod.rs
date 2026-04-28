@@ -1,9 +1,14 @@
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir::{self, FunctionMutability, FunctionVisibility};
 
+mod constants;
 mod parsing;
 mod registry;
 
+pub(crate) use constants::ConstantValue;
+pub use constants::{
+    integer_value_of_decimal_number_expression, integer_value_of_hex_number_expression,
+};
 pub use registry::TypeRegistry;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
@@ -76,9 +81,10 @@ pub enum Type {
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum LiteralKind {
     Zero,
-    // TODO: collect and store more information about literal numbers
+    // TODO: model rational values as part of compile-time constant folding,
+    // so that expressions like `1.5 * 2` can reduce to an integer literal.
     Rational,
-    DecimalInteger,
+    DecimalInteger { bytes: u32, signed: bool },
     HexInteger { bytes: u32 },
     HexString { bytes: u32 },
     String { bytes: u32 },
@@ -248,7 +254,7 @@ impl Type {
             self,
             Type::Literal(
                 LiteralKind::Zero
-                    | LiteralKind::DecimalInteger
+                    | LiteralKind::DecimalInteger { .. }
                     | LiteralKind::HexInteger { .. }
                     | LiteralKind::Rational
             )

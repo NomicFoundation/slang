@@ -1,7 +1,14 @@
+use num_bigint::BigInt;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::binder::Typing;
+use slang_solidity_v2_semantic::types::{
+    integer_value_of_decimal_number_expression, integer_value_of_hex_number_expression,
+};
 
-use super::super::{FunctionCallExpressionStruct, StringExpression};
+use super::super::{
+    DecimalNumberExpressionStruct, FunctionCallExpressionStruct, HexNumberExpressionStruct,
+    StringExpression,
+};
 
 impl StringExpression {
     /// Returns the concatenated decoded string value as bytes.
@@ -131,6 +138,22 @@ fn decode_escape_sequences(content: &str) -> Vec<u8> {
         }
     }
     out
+}
+
+impl DecimalNumberExpressionStruct {
+    /// Returns the integer value of this literal, or `None` for rationals
+    /// that do not reduce to an integer after unit multiplication.
+    pub fn integer_value(&self) -> Option<BigInt> {
+        integer_value_of_decimal_number_expression(&self.ir_node)
+    }
+}
+
+impl HexNumberExpressionStruct {
+    /// Returns the integer value of this literal, or `None` if the literal
+    /// cannot be evaluated (e.g. a malformed hex digit sequence).
+    pub fn integer_value(&self) -> Option<BigInt> {
+        integer_value_of_hex_number_expression(&self.ir_node)
+    }
 }
 
 impl FunctionCallExpressionStruct {

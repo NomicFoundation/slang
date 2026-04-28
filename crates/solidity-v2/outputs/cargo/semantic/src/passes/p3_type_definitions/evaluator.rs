@@ -1,9 +1,8 @@
-use std::str::FromStr;
-
 use num_bigint::BigInt;
 use num_traits::cast::ToPrimitive;
-use num_traits::Num;
 use slang_solidity_v2_ir::ir;
+
+use crate::types::ConstantValue;
 
 pub(crate) fn evaluate_compile_time_uint_constant<Scope>(
     expression: &ir::Expression,
@@ -24,18 +23,6 @@ fn evaluate_compile_time_constant<Scope>(
         scope_stack: Vec::new(),
     };
     evaluator.evaluate_expression_in_scope(expression, start_scope)
-}
-
-#[derive(Clone, Debug, PartialEq)]
-enum ConstantValue {
-    Integer(BigInt),
-}
-
-impl ConstantValue {
-    fn as_usize(&self) -> Option<usize> {
-        let Self::Integer(value) = self;
-        value.to_usize()
-    }
 }
 
 pub(crate) trait ConstantIdentifierResolver<Scope> {
@@ -102,10 +89,10 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
                 self.evaluate_prefix_expression(prefix_expression)
             }
             ir::Expression::HexNumberExpression(hex_number_expression) => {
-                Self::evaluate_hex_number_expression(hex_number_expression)
+                ConstantValue::from_hex_number_expression(hex_number_expression)
             }
             ir::Expression::DecimalNumberExpression(decimal_number_expression) => {
-                Self::evaluate_decimal_number_expression(decimal_number_expression)
+                ConstantValue::from_decimal_number_expression(decimal_number_expression)
             }
             ir::Expression::Identifier(identifier) => self.evaluate_identifier(identifier),
             ir::Expression::TupleExpression(tuple_expression) => {
@@ -253,25 +240,6 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
         }
     }
 
-    fn evaluate_hex_number_expression(
-        hex_number_expression: &ir::HexNumberExpression,
-    ) -> Option<ConstantValue> {
-        let hex = hex_number_expression.literal.unparse();
-        // skip `0x` prefix and parse the hexadecimal number
-        BigInt::from_str_radix(&hex[2..], 16)
-            .ok()
-            .map(ConstantValue::Integer)
-    }
-
-    fn evaluate_decimal_number_expression(
-        decimal_number_expression: &ir::DecimalNumberExpression,
-    ) -> Option<ConstantValue> {
-        // TODO: this only handles integers but not rational numbers
-        // TODO: handle number units
-        let decimal = decimal_number_expression.literal.unparse();
-        BigInt::from_str(decimal).ok().map(ConstantValue::Integer)
-    }
-
     fn evaluate_identifier(&mut self, identifier: &ir::Identifier) -> Option<ConstantValue> {
         let current_scope = self.scope_stack.last().expect("scope stack is empty");
         let (target_expression, target_scope) = self
@@ -381,6 +349,74 @@ mod tests {
             .is_some_and(|value| value == ConstantValue::Integer(1.to_bigint().unwrap())));
         assert!(eval_string("0xa0")
             .is_some_and(|value| value == ConstantValue::Integer(160.to_bigint().unwrap())));
+    }
+
+    #[test]
+    fn test_literals_with_digit_separators() {
+        assert!(eval_string("1_000")
+            .is_some_and(|value| value == ConstantValue::Integer(1_000.to_bigint().unwrap())));
+        assert!(eval_string("1_000_000")
+            .is_some_and(|value| value == ConstantValue::Integer(1_000_000.to_bigint().unwrap())));
+        assert!(eval_string("0xdead_beef").is_some_and(
+            |value| value == ConstantValue::Integer(0xdead_beef_u64.to_bigint().unwrap())
+        ));
+        assert!(eval_string("0x1234_5678").is_some_and(
+            |value| value == ConstantValue::Integer(0x1234_5678_u64.to_bigint().unwrap())
+        ));
+    }
+
+    #[test]
+    fn test_literals_with_number_units() {
+        assert!(eval_string("1 wei")
+            .is_some_and(|value| value == ConstantValue::Integer(1.to_bigint().unwrap())));
+        assert!(eval_string("1 gwei").is_some_and(
+            |value| value == ConstantValue::Integer(1_000_000_000u64.to_bigint().unwrap())
+        ));
+        assert!(eval_string("1 ether").is_some_and(|value| value
+            == ConstantValue::Integer(1_000_000_000_000_000_000u64.to_bigint().unwrap())));
+        assert!(eval_string("2 ether").is_some_and(|value| value
+            == ConstantValue::Integer(2_000_000_000_000_000_000u64.to_bigint().unwrap())));
+        assert!(eval_string("1 seconds")
+            .is_some_and(|value| value == ConstantValue::Integer(1.to_bigint().unwrap())));
+        assert!(eval_string("1 minutes")
+            .is_some_and(|value| value == ConstantValue::Integer(60.to_bigint().unwrap())));
+        assert!(eval_string("1 hours")
+            .is_some_and(|value| value == ConstantValue::Integer(3_600.to_bigint().unwrap())));
+        assert!(eval_string("1 days")
+            .is_some_and(|value| value == ConstantValue::Integer(86_400.to_bigint().unwrap())));
+        assert!(eval_string("1 weeks")
+            .is_some_and(|value| value == ConstantValue::Integer(604_800.to_bigint().unwrap())));
+    }
+
+    #[test]
+    fn test_literals_with_scientific_notation() {
+        assert!(eval_string("1e3")
+            .is_some_and(|value| value == ConstantValue::Integer(1_000.to_bigint().unwrap())));
+        assert!(eval_string("2e10").is_some_and(
+            |value| value == ConstantValue::Integer(20_000_000_000u64.to_bigint().unwrap())
+        ));
+        assert!(eval_string("1e18").is_some_and(|value| value
+            == ConstantValue::Integer(1_000_000_000_000_000_000u64.to_bigint().unwrap())));
+        assert!(eval_string("1.5e3")
+            .is_some_and(|value| value == ConstantValue::Integer(1_500.to_bigint().unwrap())));
+    }
+
+    #[test]
+    fn test_reducible_rational_literals() {
+        assert!(eval_string("1.5 ether").is_some_and(|value| value
+            == ConstantValue::Integer(1_500_000_000_000_000_000u64.to_bigint().unwrap())));
+        assert!(eval_string("0.5 ether").is_some_and(|value| value
+            == ConstantValue::Integer(500_000_000_000_000_000u64.to_bigint().unwrap())));
+        assert!(eval_string("0.5 gwei").is_some_and(
+            |value| value == ConstantValue::Integer(500_000_000u64.to_bigint().unwrap())
+        ));
+    }
+
+    #[test]
+    fn test_non_reducible_rational_literals() {
+        assert!(eval_string("0.5").is_none());
+        assert!(eval_string("3.14").is_none());
+        assert!(eval_string("1e-1").is_none());
     }
 
     #[test]

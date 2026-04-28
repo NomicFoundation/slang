@@ -2,12 +2,11 @@ use std::rc::Rc;
 
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
-use slang_solidity_v2_ir::ir::Expression_PrefixExpression_Operator;
 
 use super::Pass;
 use crate::binder::{Reference, Resolution, Typing};
 use crate::built_ins::BuiltIn;
-use crate::types::{DataLocation, LiteralKind, Type};
+use crate::types::{ConstantValue, DataLocation, LiteralKind, Type};
 
 impl Visitor for Pass<'_> {
     fn enter_source_unit(&mut self, node: &ir::SourceUnit) -> bool {
@@ -138,7 +137,10 @@ impl Visitor for Pass<'_> {
         let type_ = if node.unit.is_none() && node.literal.unparse() == "0" {
             Type::Literal(LiteralKind::Zero)
         } else {
-            Type::Literal(LiteralKind::DecimalInteger)
+            match ConstantValue::from_decimal_number_expression(node) {
+                Some(constant) => Type::Literal(constant.get_literal_kind()),
+                None => Type::Literal(LiteralKind::Rational),
+            }
         };
         let type_id = self.types.register_type(type_);
         self.binder.set_node_type(node.id(), Some(type_id));
@@ -269,20 +271,7 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_prefix_expression(&mut self, node: &ir::PrefixExpression) {
-        let type_id = match node.expression_prefix_expression_operator {
-            Expression_PrefixExpression_Operator::PlusPlus
-            | Expression_PrefixExpression_Operator::MinusMinus
-            | Expression_PrefixExpression_Operator::Minus
-            | Expression_PrefixExpression_Operator::Tilde => {
-                // TODO(validation): check that the operand is integer
-                self.typing_of_expression(&node.operand).as_type_id()
-            }
-            Expression_PrefixExpression_Operator::Bang => {
-                // TODO(validation): check that the operand is boolean
-                Some(self.types.boolean())
-            }
-            Expression_PrefixExpression_Operator::DeleteKeyword => Some(self.types.void()),
-        };
+        let type_id = self.type_of_prefix_expression(node);
         self.binder.set_node_type(node.id(), type_id);
     }
 
