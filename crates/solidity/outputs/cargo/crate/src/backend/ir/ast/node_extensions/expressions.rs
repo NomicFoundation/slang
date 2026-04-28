@@ -1,6 +1,12 @@
-use super::super::{FunctionCallExpressionStruct, StringExpression};
+use num_bigint::BigInt;
+
+use super::super::{
+    DecimalNumberExpressionStruct, FunctionCallExpressionStruct, HexNumberExpressionStruct,
+    StringExpression,
+};
 use crate::backend::binder::Typing;
 use crate::backend::ir::ir2_flat_contracts as input_ir;
+use crate::backend::types::ConstantValue;
 
 impl StringExpression {
     /// Returns the concatenated decoded string value as bytes.
@@ -52,6 +58,26 @@ impl StringExpression {
                     })
             })
             .unwrap_or(text)
+    }
+}
+
+impl DecimalNumberExpressionStruct {
+    /// Returns the integer value of this literal, or `None` for rationals
+    /// that do not reduce to an integer after unit multiplication.
+    // TODO: support returning rational values (numerator/denominator) once
+    // the evaluator exposes them.
+    pub fn integer_value(&self) -> Option<BigInt> {
+        ConstantValue::from_decimal_number(&self.ir_node)
+            .map(|ConstantValue::Integer(integer)| integer)
+    }
+}
+
+impl HexNumberExpressionStruct {
+    /// Returns the integer value of this literal, or `None` if the literal
+    /// cannot be evaluated (e.g. a malformed hex digit sequence).
+    // TODO: support returning rational values once the evaluator exposes them.
+    pub fn integer_value(&self) -> Option<BigInt> {
+        ConstantValue::from_hex_number(&self.ir_node).map(|ConstantValue::Integer(integer)| integer)
     }
 }
 
