@@ -152,7 +152,10 @@ impl TypeRegistry {
                     | LiteralKind::Rational,
                 ),
                 Type::Integer { .. },
-            ) => true,
+            ) => {
+                // TODO(validation): check that the rational can fit in the given integer type
+                true
+            }
 
             // TODO: verify against solc's RationalNumberType::isImplicitlyConvertibleTo.
             (
