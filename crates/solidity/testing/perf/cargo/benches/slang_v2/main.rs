@@ -7,9 +7,9 @@ use paste::paste;
 use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::context::SemanticContext;
+use solidity_testing_perf_cargo::config::default_benchmark_config;
 use solidity_testing_perf_cargo::dataset::SolidityProject;
 use solidity_testing_perf_cargo::tests;
-use solidity_testing_perf_cargo::utils::default_benchmark_config;
 
 mod __dependencies_used_in_lib__ {
     use anyhow as _;

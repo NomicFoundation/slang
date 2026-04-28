@@ -1,8 +1,8 @@
 #![allow(clippy::needless_pass_by_value)]
 
+pub mod config;
 pub mod dataset;
 pub mod tests;
-pub mod utils;
 
 mod __dependencies_used_in_benches__ {
     use iai_callgrind as _;
