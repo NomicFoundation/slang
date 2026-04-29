@@ -1,0 +1,55 @@
+// Zed equivalents of `.vscode/settings.json`.
+// Some VSCode settings have no direct Zed counterpart and are intentionally omitted:
+// - `editor.unicodeHighlight.allowedCharacters` (Zed has no unicode highlight feature)
+// - `json.schemaDownload.trustedDomains` (Zed allows all schema downloads)
+// - `triggerTaskOnSave` (no auto-task-on-save; run `infra check codegen` manually)
+// - `js/ts.tsdk.path` (vtsls auto-detects `node_modules/typescript/lib`)
+{
+  "format_on_save": "on",
+  "ensure_final_newline_on_save": true,
+  "line_ending": "prefer_lf",
+  "preferred_line_length": 120,
+  "wrap_guides": [120],
+  "file_types": {
+    // Zed's extension matcher only looks at the final suffix, so compound
+    // extensions like `.ts.jinja2` need full globs to match.
+    // Until Zed has a Jinja/Tera grammar, fall back to the underlying language.
+    "TypeScript": ["**/*.ts.jinja2", "**/*.mts.jinja2"],
+    // No built-in WIT grammar; this is a no-op unless a WIT extension is installed.
+    "WIT": ["**/*.wit.jinja2"]
+  },
+  "read_only_files": ["**/generated/**", "**/*.generated.*"],
+  "lsp": {
+    "rust-analyzer": {
+      "binary": {
+        // Mirrors `rust-analyzer.server.path` in `.vscode/settings.json`.
+        "path": "scripts/bin/rust-analyzer"
+      },
+      "initialization_options": {
+        "check": {
+          "command": "clippy",
+          "allTargets": true,
+          "features": "all"
+        },
+        "imports": {
+          "granularity": {
+            "enforce": true,
+            "group": "module"
+          },
+          "prefix": "crate"
+        },
+        "rustfmt": {
+          "extraArgs": [
+            "+nightly-2026-03-17" // __RUST_NIGHTLY_VERSION_MARKER__ (keep in sync)
+          ]
+        }
+      }
+    }
+  },
+  "languages": {
+    "YAML": {
+      // Disable LSP validation for YAML files, as it is handled by our own cargo tasks.
+      "language_servers": ["!yaml-language-server"]
+    }
+  }
+}
