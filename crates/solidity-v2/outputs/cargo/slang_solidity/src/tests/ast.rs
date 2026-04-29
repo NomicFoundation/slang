@@ -465,15 +465,13 @@ impl ast::visitor::Visitor for BuiltInCollector {
 }
 
 #[test]
-fn test_get_location() -> Result<()> {
+fn test_get_file_id_and_text_range() -> Result<()> {
     let unit = fixtures::Counter::build_compilation_unit()?;
 
     let ownable = unit
         .find_contract_by_name("Ownable")
         .expect("contract is found");
-
-    let ownable_location = ownable.get_location();
-    assert_eq!(ownable_location.file_id(), "ownable.sol");
+    assert_eq!(ownable.get_file_id(), "ownable.sol");
 
     let owner = ownable
         .members()
@@ -487,25 +485,21 @@ fn test_get_location() -> Result<()> {
         })
         .expect("_owner state variable is found");
     assert_eq!(owner.name().name(), "_owner");
-
-    let owner_location = owner.get_location();
-    assert_eq!(owner_location.file_id(), "ownable.sol");
+    assert_eq!(owner.get_file_id(), "ownable.sol");
 
     // The state variable's range must sit within the enclosing contract's range.
-    assert!(ownable_location.text_range().start <= owner_location.text_range().start);
-    assert!(ownable_location.text_range().end >= owner_location.text_range().end);
+    assert!(ownable.get_text_range().start <= owner.get_text_range().start);
+    assert!(ownable.get_text_range().end >= owner.get_text_range().end);
 
     let activatable = unit
         .find_contract_by_name("Activatable")
         .expect("contract is found");
-    let activatable_location = activatable.get_location();
-    assert_eq!(activatable_location.file_id(), "activatable.sol");
+    assert_eq!(activatable.get_file_id(), "activatable.sol");
 
     let counter = unit
         .find_contract_by_name("Counter")
         .expect("contract is found");
-    let counter_location = counter.get_location();
-    assert_eq!(counter_location.file_id(), "main.sol");
+    assert_eq!(counter.get_file_id(), "main.sol");
 
     Ok(())
 }

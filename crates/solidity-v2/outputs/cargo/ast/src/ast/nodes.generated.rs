@@ -11,21 +11,6 @@ use slang_solidity_v2_semantic::context::SemanticContext;
 
 use super::types::Type;
 
-pub struct NodeLocation {
-    file_id: String,
-    text_range: Range<usize>,
-}
-
-impl NodeLocation {
-    pub fn file_id(&self) -> &str {
-        &self.file_id
-    }
-
-    pub fn text_range(&self) -> &Range<usize> {
-        &self.text_range
-    }
-}
-
 //
 // Sequences
 //
@@ -60,11 +45,12 @@ impl AbicoderPragmaStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -111,11 +97,12 @@ impl AdditiveExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -149,11 +136,12 @@ impl AddressTypeStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -191,11 +179,12 @@ impl AndExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -229,11 +218,12 @@ impl ArrayExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -274,11 +264,12 @@ impl ArrayTypeNameStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -320,11 +311,12 @@ impl AssemblyStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -371,11 +363,12 @@ impl AssignmentExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -413,11 +406,12 @@ impl BitwiseAndExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -455,11 +449,12 @@ impl BitwiseOrExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -497,11 +492,12 @@ impl BitwiseXorExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -532,11 +528,12 @@ impl BlockStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -566,11 +563,12 @@ impl BreakStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -608,11 +606,12 @@ impl CallOptionsExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -653,11 +652,12 @@ impl CatchClauseStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -698,11 +698,12 @@ impl CatchClauseErrorStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -744,11 +745,12 @@ impl ConditionalExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -800,11 +802,12 @@ impl ConstantDefinitionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -834,11 +837,12 @@ impl ContinueStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -891,11 +895,12 @@ impl ContractDefinitionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -936,11 +941,12 @@ impl DecimalNumberExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -978,11 +984,12 @@ impl DoWhileStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -1020,11 +1027,12 @@ impl EmitStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -1062,11 +1070,12 @@ impl EnumDefinitionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -1113,11 +1122,12 @@ impl EqualityExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -1155,11 +1165,12 @@ impl ErrorDefinitionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -1201,11 +1212,12 @@ impl EventDefinitionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -1239,11 +1251,12 @@ impl ExperimentalPragmaStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -1281,11 +1294,12 @@ impl ExponentiationExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -1319,11 +1333,12 @@ impl ExpressionStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -1372,11 +1387,12 @@ impl ForStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -1414,11 +1430,12 @@ impl FunctionCallExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -1500,11 +1517,12 @@ impl FunctionDefinitionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -1553,11 +1571,12 @@ impl FunctionTypeStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -1591,11 +1610,12 @@ impl HexNumberExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -1640,11 +1660,12 @@ impl IfStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -1682,11 +1703,12 @@ impl ImportDeconstructionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -1727,11 +1749,12 @@ impl ImportDeconstructionSymbolStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -1779,11 +1802,12 @@ impl IndexAccessExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -1830,11 +1854,12 @@ impl InequalityExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -1875,11 +1900,12 @@ impl InheritanceTypeStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -1924,11 +1950,12 @@ impl InterfaceDefinitionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -1966,11 +1993,12 @@ impl LibraryDefinitionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -2008,11 +2036,12 @@ impl MappingTypeStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -2050,11 +2079,12 @@ impl MemberAccessExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -2095,11 +2125,12 @@ impl ModifierInvocationStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -2137,11 +2168,12 @@ impl MultiTypedDeclarationStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -2178,11 +2210,12 @@ impl MultiTypedDeclarationElementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -2229,11 +2262,12 @@ impl MultiplicativeExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -2271,11 +2305,12 @@ impl NamedArgumentStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -2309,11 +2344,12 @@ impl NewExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -2351,11 +2387,12 @@ impl OrExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -2404,11 +2441,12 @@ impl ParameterStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -2446,11 +2484,12 @@ impl PathImportStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -2491,11 +2530,12 @@ impl PostfixExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -2529,11 +2569,12 @@ impl PragmaDirectiveStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -2574,11 +2615,12 @@ impl PrefixExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -2615,11 +2657,12 @@ impl ReturnStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -2657,11 +2700,12 @@ impl RevertStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -2706,11 +2750,12 @@ impl ShiftExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -2751,11 +2796,12 @@ impl SingleTypedDeclarationStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -2786,11 +2832,12 @@ impl SourceUnitStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -2850,11 +2897,12 @@ impl StateVariableDefinitionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -2892,11 +2940,12 @@ impl StructDefinitionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -2934,11 +2983,12 @@ impl StructMemberStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -2987,11 +3037,12 @@ impl TryStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -3025,11 +3076,12 @@ impl TupleExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -3063,11 +3115,12 @@ impl TupleValueStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -3101,11 +3154,12 @@ impl TypeExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -3139,11 +3193,12 @@ impl UncheckedBlockStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -3181,11 +3236,12 @@ impl UserDefinedValueTypeDefinitionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -3219,11 +3275,12 @@ impl UsingDeconstructionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -3264,11 +3321,12 @@ impl UsingDeconstructionSymbolStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -3310,11 +3368,12 @@ impl UsingDirectiveStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -3359,11 +3418,12 @@ impl VariableDeclarationStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -3397,11 +3457,12 @@ impl VariableDeclarationStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -3435,11 +3496,12 @@ impl VersionPragmaStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -3477,11 +3539,12 @@ impl VersionRangeStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -3522,11 +3585,12 @@ impl VersionTermStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -3564,11 +3628,12 @@ impl WhileStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -3599,11 +3664,12 @@ impl YulBlockStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -3633,11 +3699,12 @@ impl YulBreakStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -3667,11 +3734,12 @@ impl YulContinueStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -3705,11 +3773,12 @@ impl YulDefaultCaseStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -3755,11 +3824,12 @@ impl YulForStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -3797,11 +3867,12 @@ impl YulFunctionCallExpressionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -3850,11 +3921,12 @@ impl YulFunctionDefinitionStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -3892,11 +3964,12 @@ impl YulIfStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -3926,11 +3999,12 @@ impl YulLeaveStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -3968,11 +4042,12 @@ impl YulSwitchStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -4010,11 +4085,12 @@ impl YulValueCaseStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -4052,11 +4128,12 @@ impl YulVariableAssignmentStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -4097,11 +4174,12 @@ impl YulVariableDeclarationStatementStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -4135,11 +4213,12 @@ impl YulVariableDeclarationValueStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }
 
@@ -6390,10 +6469,11 @@ impl IdentifierStruct {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-            file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-            text_range: self.ir_node.range.clone(),
-        }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
 }

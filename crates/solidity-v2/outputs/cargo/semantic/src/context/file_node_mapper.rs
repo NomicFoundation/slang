@@ -36,7 +36,7 @@ impl FileNodeMapper {
         Self { files }
     }
 
-    pub(super) fn file_id_from_node_id(&self, node_id: NodeId) -> String {
+    pub(super) fn file_id_from_node_id(&self, node_id: NodeId) -> &str {
         let index = match self
             .files
             .binary_search_by_key(&node_id, |file| file.first_node_id)
@@ -48,6 +48,6 @@ impl FileNodeMapper {
                 index - 1
             }
         };
-        self.files[index].file_id.clone()
+        &self.files[index].file_id
     }
 }

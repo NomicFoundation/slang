@@ -9,21 +9,6 @@ use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::context::SemanticContext;
 use super::types::Type;
 
-pub struct NodeLocation {
-    file_id: String,
-    text_range: Range<usize>,
-}
-
-impl NodeLocation {
-    pub fn file_id(&self) -> &str {
-        &self.file_id
-    }
-
-    pub fn text_range(&self) -> &Range<usize> {
-        &self.text_range
-    }
-}
-
 //
 // Sequences
 //
@@ -120,11 +105,12 @@ impl NodeLocation {
       Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
 
-    pub fn get_location(&self) -> NodeLocation {
-      NodeLocation {
-        file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-        text_range: self.ir_node.range.clone(),
-      }
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
   }
 
@@ -277,11 +263,12 @@ impl NodeLocation {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
       }
 
-      pub fn get_location(&self) -> NodeLocation {
-        NodeLocation {
-          file_id: self.semantic.file_id_from_node_id(self.ir_node.id()),
-          text_range: self.ir_node.range.clone(),
-        }
+      pub fn get_file_id(&self) -> &str {
+          self.semantic.file_id_from_node_id(self.ir_node.id())
+      }
+
+      pub fn get_text_range(&self) -> &Range<usize> {
+          &self.ir_node.range
       }
     }
   {% endif %}

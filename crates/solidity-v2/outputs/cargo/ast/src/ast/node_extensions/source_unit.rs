@@ -1,7 +1,7 @@
 use super::super::{ContractDefinition, SourceUnitMember, SourceUnitStruct};
 
 impl SourceUnitStruct {
-    pub fn file_id(&self) -> String {
+    pub fn file_id(&self) -> &str {
         self.semantic.file_id_from_node_id(self.ir_node.id())
     }
 

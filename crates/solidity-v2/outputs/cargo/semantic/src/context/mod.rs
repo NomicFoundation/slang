@@ -107,7 +107,7 @@ impl SemanticContext {
 }
 
 impl SemanticContext {
-    pub fn file_id_from_node_id(&self, node_id: NodeId) -> String {
+    pub fn file_id_from_node_id(&self, node_id: NodeId) -> &str {
         self.file_node_mapper.file_id_from_node_id(node_id)
     }
 
