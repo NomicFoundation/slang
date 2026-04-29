@@ -98,16 +98,20 @@ pub(crate) fn run_bench(
             max_sample_size,
         } in thresholds
         {
+            // Since we have to use the same arguments for every threshold, we always
+            // show them and default to "_" if not set.
+            // Bencher will ignore options specified with "_".
+            fn optional_threshold(arg: Option<&str>) -> &str {
+                arg.unwrap_or("_")
+            }
+
             command = command
                 .property("--threshold-measure", measure)
                 .property("--threshold-test", "percentage")
                 .property("--threshold-upper-boundary", upper_boundary)
-                // Since we have to show it for all or for none of the thresholds, we always
-                // show it and default to "_" if not set.
-                // Bencher will ignore options specified with "_".
                 .property(
                     "--threshold-max-sample-size",
-                    max_sample_size.as_ref().map_or("_", String::as_str),
+                    optional_threshold(max_sample_size.as_deref()),
                 );
         }
 
