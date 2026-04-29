@@ -4,7 +4,6 @@
 
 use std::rc::Rc;
 
-use slang_solidity_v2_cst::separated::SeparatedList;
 use slang_solidity_v2_cst::structured_cst::nodes::{
     new_array_type_name, new_expression_elementary_type, new_expression_identifier,
     new_expression_index_access_expression, new_expression_member_access_expression,
@@ -129,9 +128,10 @@ pub(crate) fn new_expression_index_access_path(index_access_path: IndexAccessPat
 }
 
 pub(crate) fn new_expression_identifier_path(identifier_path: IdentifierPath) -> Expression {
-    let SeparatedList::NonEmpty { first, rest } = identifier_path.0 else {
-        panic!("IdentifierPath should have at least one element");
-    };
+    let (first, rest) = identifier_path
+        .0
+        .into_split_first()
+        .expect("IdentifierPath should have at least one element");
     let mut expr = match first {
         IdentifierPathElement::AddressKeyword(_) => {
             // TODO(v2) we should validate that this is not the case and fail gracefully

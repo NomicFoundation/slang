@@ -8099,11 +8099,9 @@ pub fn render_yul_switch_case(source: &str, node: &YulSwitchCase, depth: usize) 
 //
 
 pub fn render_array_values(source: &str, node: &ArrayValues, depth: usize) -> RenderedOutput {
-    match &**node {
-        slang_solidity_v2_cst::separated::SeparatedList::Empty => {
-            (None, vec![": []\n".to_string()])
-        }
-        slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
             let mut acc = ChildrenAccumulator::new(source, depth + 1);
             {
                 let rendered = render_expression(source, first, depth + 1);
@@ -8126,11 +8124,9 @@ pub fn render_array_values(source: &str, node: &ArrayValues, depth: usize) -> Re
 }
 
 pub fn render_call_options(source: &str, node: &CallOptions, depth: usize) -> RenderedOutput {
-    match &**node {
-        slang_solidity_v2_cst::separated::SeparatedList::Empty => {
-            (None, vec![": []\n".to_string()])
-        }
-        slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
             let mut acc = ChildrenAccumulator::new(source, depth + 1);
             {
                 let rendered = render_named_argument(source, first, depth + 1);
@@ -8217,11 +8213,9 @@ pub fn render_contract_specifiers(
 }
 
 pub fn render_enum_members(source: &str, node: &EnumMembers, depth: usize) -> RenderedOutput {
-    match &**node {
-        slang_solidity_v2_cst::separated::SeparatedList::Empty => {
-            (None, vec![": []\n".to_string()])
-        }
-        slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
             let mut acc = ChildrenAccumulator::new(source, depth + 1);
             {
                 let rendered = render_terminal(source, &first.range);
@@ -8248,11 +8242,9 @@ pub fn render_error_parameters(
     node: &ErrorParameters,
     depth: usize,
 ) -> RenderedOutput {
-    match &**node {
-        slang_solidity_v2_cst::separated::SeparatedList::Empty => {
-            (None, vec![": []\n".to_string()])
-        }
-        slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
             let mut acc = ChildrenAccumulator::new(source, depth + 1);
             {
                 let rendered = render_error_parameter(source, first, depth + 1);
@@ -8279,11 +8271,9 @@ pub fn render_event_parameters(
     node: &EventParameters,
     depth: usize,
 ) -> RenderedOutput {
-    match &**node {
-        slang_solidity_v2_cst::separated::SeparatedList::Empty => {
-            (None, vec![": []\n".to_string()])
-        }
-        slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
             let mut acc = ChildrenAccumulator::new(source, depth + 1);
             {
                 let rendered = render_event_parameter(source, first, depth + 1);
@@ -8374,11 +8364,9 @@ pub fn render_hex_string_literals(
 }
 
 pub fn render_identifier_path(source: &str, node: &IdentifierPath, depth: usize) -> RenderedOutput {
-    match &**node {
-        slang_solidity_v2_cst::separated::SeparatedList::Empty => {
-            (None, vec![": []\n".to_string()])
-        }
-        slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
             let mut acc = ChildrenAccumulator::new(source, depth + 1);
             {
                 let rendered = render_identifier_path_element(source, first, depth + 1);
@@ -8405,11 +8393,9 @@ pub fn render_import_deconstruction_symbols(
     node: &ImportDeconstructionSymbols,
     depth: usize,
 ) -> RenderedOutput {
-    match &**node {
-        slang_solidity_v2_cst::separated::SeparatedList::Empty => {
-            (None, vec![": []\n".to_string()])
-        }
-        slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
             let mut acc = ChildrenAccumulator::new(source, depth + 1);
             {
                 let rendered = render_import_deconstruction_symbol(source, first, depth + 1);
@@ -8436,11 +8422,9 @@ pub fn render_inheritance_types(
     node: &InheritanceTypes,
     depth: usize,
 ) -> RenderedOutput {
-    match &**node {
-        slang_solidity_v2_cst::separated::SeparatedList::Empty => {
-            (None, vec![": []\n".to_string()])
-        }
-        slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
             let mut acc = ChildrenAccumulator::new(source, depth + 1);
             {
                 let rendered = render_inheritance_type(source, first, depth + 1);
@@ -8514,11 +8498,9 @@ pub fn render_multi_typed_declaration_elements(
     node: &MultiTypedDeclarationElements,
     depth: usize,
 ) -> RenderedOutput {
-    match &**node {
-        slang_solidity_v2_cst::separated::SeparatedList::Empty => {
-            (None, vec![": []\n".to_string()])
-        }
-        slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
             let mut acc = ChildrenAccumulator::new(source, depth + 1);
             {
                 let rendered = render_multi_typed_declaration_element(source, first, depth + 1);
@@ -8541,11 +8523,9 @@ pub fn render_multi_typed_declaration_elements(
 }
 
 pub fn render_named_arguments(source: &str, node: &NamedArguments, depth: usize) -> RenderedOutput {
-    match &**node {
-        slang_solidity_v2_cst::separated::SeparatedList::Empty => {
-            (None, vec![": []\n".to_string()])
-        }
-        slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
             let mut acc = ChildrenAccumulator::new(source, depth + 1);
             {
                 let rendered = render_named_argument(source, first, depth + 1);
@@ -8568,11 +8548,9 @@ pub fn render_named_arguments(source: &str, node: &NamedArguments, depth: usize)
 }
 
 pub fn render_override_paths(source: &str, node: &OverridePaths, depth: usize) -> RenderedOutput {
-    match &**node {
-        slang_solidity_v2_cst::separated::SeparatedList::Empty => {
-            (None, vec![": []\n".to_string()])
-        }
-        slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
             let mut acc = ChildrenAccumulator::new(source, depth + 1);
             {
                 let rendered = render_identifier_path(source, first, depth + 1);
@@ -8595,11 +8573,9 @@ pub fn render_override_paths(source: &str, node: &OverridePaths, depth: usize) -
 }
 
 pub fn render_parameters(source: &str, node: &Parameters, depth: usize) -> RenderedOutput {
-    match &**node {
-        slang_solidity_v2_cst::separated::SeparatedList::Empty => {
-            (None, vec![": []\n".to_string()])
-        }
-        slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
             let mut acc = ChildrenAccumulator::new(source, depth + 1);
             {
                 let rendered = render_parameter(source, first, depth + 1);
@@ -8626,11 +8602,9 @@ pub fn render_positional_arguments(
     node: &PositionalArguments,
     depth: usize,
 ) -> RenderedOutput {
-    match &**node {
-        slang_solidity_v2_cst::separated::SeparatedList::Empty => {
-            (None, vec![": []\n".to_string()])
-        }
-        slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
             let mut acc = ChildrenAccumulator::new(source, depth + 1);
             {
                 let rendered = render_expression(source, first, depth + 1);
@@ -8674,11 +8648,9 @@ pub fn render_simple_version_literal(
     node: &SimpleVersionLiteral,
     depth: usize,
 ) -> RenderedOutput {
-    match &**node {
-        slang_solidity_v2_cst::separated::SeparatedList::Empty => {
-            (None, vec![": []\n".to_string()])
-        }
-        slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
             let mut acc = ChildrenAccumulator::new(source, depth + 1);
             {
                 let rendered = render_terminal(source, &first.range);
@@ -8774,11 +8746,9 @@ pub fn render_struct_members(source: &str, node: &StructMembers, depth: usize) -
 }
 
 pub fn render_tuple_values(source: &str, node: &TupleValues, depth: usize) -> RenderedOutput {
-    match &**node {
-        slang_solidity_v2_cst::separated::SeparatedList::Empty => {
-            (None, vec![": []\n".to_string()])
-        }
-        slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
             let mut acc = ChildrenAccumulator::new(source, depth + 1);
             {
                 let rendered = render_tuple_value(source, first, depth + 1);
@@ -8822,11 +8792,9 @@ pub fn render_using_deconstruction_symbols(
     node: &UsingDeconstructionSymbols,
     depth: usize,
 ) -> RenderedOutput {
-    match &**node {
-        slang_solidity_v2_cst::separated::SeparatedList::Empty => {
-            (None, vec![": []\n".to_string()])
-        }
-        slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
             let mut acc = ChildrenAccumulator::new(source, depth + 1);
             {
                 let rendered = render_using_deconstruction_symbol(source, first, depth + 1);
@@ -8870,11 +8838,9 @@ pub fn render_version_expression_sets(
     node: &VersionExpressionSets,
     depth: usize,
 ) -> RenderedOutput {
-    match &**node {
-        slang_solidity_v2_cst::separated::SeparatedList::Empty => {
-            (None, vec![": []\n".to_string()])
-        }
-        slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
             let mut acc = ChildrenAccumulator::new(source, depth + 1);
             {
                 let rendered = render_version_expression_set(source, first, depth + 1);
@@ -8897,11 +8863,9 @@ pub fn render_version_expression_sets(
 }
 
 pub fn render_yul_arguments(source: &str, node: &YulArguments, depth: usize) -> RenderedOutput {
-    match &**node {
-        slang_solidity_v2_cst::separated::SeparatedList::Empty => {
-            (None, vec![": []\n".to_string()])
-        }
-        slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
             let mut acc = ChildrenAccumulator::new(source, depth + 1);
             {
                 let rendered = render_yul_expression(source, first, depth + 1);
@@ -8924,11 +8888,9 @@ pub fn render_yul_arguments(source: &str, node: &YulArguments, depth: usize) -> 
 }
 
 pub fn render_yul_flags(source: &str, node: &YulFlags, depth: usize) -> RenderedOutput {
-    match &**node {
-        slang_solidity_v2_cst::separated::SeparatedList::Empty => {
-            (None, vec![": []\n".to_string()])
-        }
-        slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
             let mut acc = ChildrenAccumulator::new(source, depth + 1);
             {
                 let rendered = render_terminal(source, &first.range);
@@ -8951,11 +8913,9 @@ pub fn render_yul_flags(source: &str, node: &YulFlags, depth: usize) -> Rendered
 }
 
 pub fn render_yul_parameters(source: &str, node: &YulParameters, depth: usize) -> RenderedOutput {
-    match &**node {
-        slang_solidity_v2_cst::separated::SeparatedList::Empty => {
-            (None, vec![": []\n".to_string()])
-        }
-        slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
             let mut acc = ChildrenAccumulator::new(source, depth + 1);
             {
                 let rendered = render_terminal(source, &first.range);
@@ -8978,11 +8938,9 @@ pub fn render_yul_parameters(source: &str, node: &YulParameters, depth: usize) -
 }
 
 pub fn render_yul_path(source: &str, node: &YulPath, depth: usize) -> RenderedOutput {
-    match &**node {
-        slang_solidity_v2_cst::separated::SeparatedList::Empty => {
-            (None, vec![": []\n".to_string()])
-        }
-        slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
             let mut acc = ChildrenAccumulator::new(source, depth + 1);
             {
                 let rendered = render_terminal(source, &first.range);
@@ -9005,11 +8963,9 @@ pub fn render_yul_path(source: &str, node: &YulPath, depth: usize) -> RenderedOu
 }
 
 pub fn render_yul_paths(source: &str, node: &YulPaths, depth: usize) -> RenderedOutput {
-    match &**node {
-        slang_solidity_v2_cst::separated::SeparatedList::Empty => {
-            (None, vec![": []\n".to_string()])
-        }
-        slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
             let mut acc = ChildrenAccumulator::new(source, depth + 1);
             {
                 let rendered = render_yul_path(source, first, depth + 1);
@@ -9066,11 +9022,9 @@ pub fn render_yul_variable_names(
     node: &YulVariableNames,
     depth: usize,
 ) -> RenderedOutput {
-    match &**node {
-        slang_solidity_v2_cst::separated::SeparatedList::Empty => {
-            (None, vec![": []\n".to_string()])
-        }
-        slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
             let mut acc = ChildrenAccumulator::new(source, depth + 1);
             {
                 let rendered = render_terminal(source, &first.range);
