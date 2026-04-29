@@ -1,4 +1,9 @@
-pub mod builder;
-pub mod file;
+mod builder;
+mod file;
 mod internal_builder;
-pub mod unit;
+mod unit;
+
+pub use builder::{CompilationBuilder, CompilationBuilderConfig, CompilationBuilderError};
+pub use file::File;
+pub use slang_solidity_v2_parser::ParserError;
+pub use unit::CompilationUnit;

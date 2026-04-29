@@ -1,4 +1,4 @@
 pub mod ir;
 
 #[cfg(test)]
-pub mod tests;
+mod tests;
