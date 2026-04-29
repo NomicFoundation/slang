@@ -10,7 +10,7 @@ impl SourceUnitStruct {
                 if contract.abstract_keyword() {
                     None
                 } else {
-                    contract.compute_abi_with_file_id(file_id.clone())
+                    contract.compute_abi_with_file_id(file_id.to_string())
                 }
             })
             .collect()

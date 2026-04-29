@@ -1,6 +1,7 @@
 {%- set target = model.ir_language_model.target -%}
 #![allow(unused)]
 #![allow(non_camel_case_types)]
+use std::ops::Range;
 use std::rc::Rc;
 
 use slang_solidity_v2_common::nodes::NodeId;
@@ -102,6 +103,14 @@ use super::types::Type;
 
     pub fn get_type(&self) -> Option<Type> {
       Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
     }
   }
 
@@ -252,6 +261,14 @@ use super::types::Type;
 
       pub fn get_type(&self) -> Option<Type> {
         Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+      }
+
+      pub fn get_file_id(&self) -> &str {
+          self.semantic.file_id_from_node_id(self.ir_node.id())
+      }
+
+      pub fn get_text_range(&self) -> &Range<usize> {
+          &self.ir_node.range
       }
     }
   {% endif %}
