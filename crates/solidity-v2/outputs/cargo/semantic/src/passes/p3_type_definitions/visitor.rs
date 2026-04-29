@@ -278,6 +278,7 @@ impl Visitor for Pass<'_> {
     fn leave_struct_member(&mut self, node: &ir::StructMember) {
         let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Inherited));
         self.binder.set_node_type(node.id(), type_id);
+        // TODO(validation): check that the struct definition is not recursive
     }
 
     fn leave_enum_definition(&mut self, node: &ir::EnumDefinition) {

@@ -1,4 +1,5 @@
 use slang_solidity_v2_ir::ir;
+use slang_solidity_v2_semantic::types::TypeId;
 
 use crate::abi::{
     selector_from_signature, type_as_abi_parameter, AbiConstructor, AbiEntry, AbiFallback,
@@ -58,17 +59,33 @@ impl FunctionDefinitionStruct {
         }
     }
 
+    /// Returns the external signature for this function, suitable for ABI encoding.
+    ///
+    /// This is only guaranteed for external functions in valid Solidity, as
+    /// internal functions may contain parameter types that cannot be
+    /// ABI-encoded.
+    pub fn compute_canonical_signature(&self) -> Option<String> {
+        let name = self.ir_node.name.as_ref()?.unparse();
+        let parameters = self.parameters().compute_canonical_signature()?;
+        Some(format!("{name}({parameters})"))
+    }
+
+    /// Returns the signature for this function using internal type names for
+    /// parameters. Unlike [`Self::compute_canonical_signature`], this form is
+    /// well-defined for any function, including internal ones with parameter
+    /// types that cannot be ABI-encoded.
+    pub fn compute_internal_signature(&self) -> Option<String> {
+        let name = self.ir_node.name.as_ref()?.unparse();
+        let parameters = self.parameters().compute_internal_signature()?;
+        Some(format!("{name}({parameters})"))
+    }
+
     pub fn compute_selector(&self) -> Option<u32> {
         if !self.is_externally_visible() {
             return None;
         }
-        let name = self.ir_node.name.as_ref()?.unparse();
-        let signature = format!(
-            "{name}({parameters})",
-            parameters = self.parameters().compute_canonical_signature()?,
-        );
-
-        Some(selector_from_signature(&signature))
+        self.compute_canonical_signature()
+            .map(|sig| selector_from_signature(&sig))
     }
 }
 
@@ -96,13 +113,27 @@ impl ParametersStruct {
         Some(result)
     }
 
+    fn parameter_types_iter(&self) -> impl Iterator<Item = Option<TypeId>> + '_ {
+        self.ir_nodes.iter().map(|parameter| {
+            self.semantic
+                .binder()
+                .node_typing(parameter.id())
+                .as_type_id()
+        })
+    }
+
     pub(crate) fn compute_canonical_signature(&self) -> Option<String> {
         let mut result = Vec::new();
-        for parameter in &self.ir_nodes {
-            let node_id = parameter.id();
-            // Bail out with `None` if any of the parameters fails typing
-            let type_id = self.semantic.binder().node_typing(node_id).as_type_id()?;
-            result.push(self.semantic.type_canonical_name(type_id)?);
+        for type_id in self.parameter_types_iter() {
+            result.push(self.semantic.type_canonical_name(type_id?)?);
+        }
+        Some(result.join(","))
+    }
+
+    pub(crate) fn compute_internal_signature(&self) -> Option<String> {
+        let mut result = Vec::new();
+        for type_id in self.parameter_types_iter() {
+            result.push(self.semantic.type_internal_name(type_id?));
         }
         Some(result.join(","))
     }

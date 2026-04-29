@@ -1,6 +1,7 @@
 mod node_extensions;
 
 use std::cmp::Ordering;
+use std::collections::HashSet;
 use std::rc::Rc;
 
 use sha3::{Digest, Keccak256};
@@ -382,13 +383,28 @@ pub(crate) fn type_as_abi_parameter(
     semantic: &Rc<SemanticContext>,
     type_id: TypeId,
 ) -> Option<(String, Vec<ParameterComponent>)> {
+    type_as_abi_parameter_impl(semantic, type_id, &mut HashSet::new())
+}
+
+fn type_as_abi_parameter_impl(
+    semantic: &Rc<SemanticContext>,
+    type_id: TypeId,
+    visited_structs: &mut HashSet<NodeId>,
+) -> Option<(String, Vec<ParameterComponent>)> {
     match semantic.types().get_type_by_id(type_id) {
         Type::Array { element_type, .. } => {
             let (element_type_name, element_components) =
-                type_as_abi_parameter(semantic, *element_type)?;
+                type_as_abi_parameter_impl(semantic, *element_type, visited_structs)?;
             Some((format!("{element_type_name}[]"), element_components))
         }
         Type::Struct { definition_id, .. } => {
+            // Recursive structs are not valid Solidity, but guard against cycles
+            // to avoid unbounded recursion if malformed types reach this point.
+            // TODO(validation): The recursion should be detected in the
+            // `type_definition` pass.
+            if !visited_structs.insert(*definition_id) {
+                return None;
+            }
             // We need to recursively expand the struct fields as components
             let Definition::Struct(definition) = semantic
                 .binder()
@@ -401,13 +417,15 @@ pub(crate) fn type_as_abi_parameter(
             for member in &definition.ir_node.members {
                 let name = member.name.unparse().to_string();
                 let member_type_id = semantic.binder().node_typing(member.id()).as_type_id()?;
-                let (type_name, subcomponents) = type_as_abi_parameter(semantic, member_type_id)?;
+                let (type_name, subcomponents) =
+                    type_as_abi_parameter_impl(semantic, member_type_id, visited_structs)?;
                 components.push(ParameterComponent {
                     name,
                     type_name,
                     components: subcomponents,
                 });
             }
+            visited_structs.remove(definition_id);
             Some(("tuple".to_string(), components))
         }
         _ => Some((semantic.type_canonical_name(type_id)?, Vec::new())),
