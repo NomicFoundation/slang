@@ -6,28 +6,20 @@
 use std::ops::Range;
 
 use slang_solidity_v2_common::versions::{LanguageVersion, LanguageVersionSpecifier};
+use slang_solidity_v2_cst::structured_cst::nodes::*;
+use slang_solidity_v2_cst::structured_cst::TextRange;
 
-use crate::structured_cst::nodes::*;
-use crate::structured_cst::text_range::TextRange;
-
-/// An error produced when a CST node is not valid for the given language version.
-#[derive(Clone, Debug, PartialEq)]
-pub struct SyntaxVersionError {
-    /// The text range of the invalid node.
-    pub range: Range<usize>,
-    /// The version specifier that this syntax is enabled in.
-    pub enabled: LanguageVersionSpecifier,
-}
+use crate::parser::parser_error::ParserError;
 
 /// Validate that all nodes in the given `SourceUnit` are valid for the given language version.
-pub fn validate_syntax_version(root: &SourceUnit, version: LanguageVersion) -> Vec<SyntaxVersionError> {
+pub fn validate_syntax_version(root: &SourceUnit, version: LanguageVersion) -> Vec<ParserError> {
     let mut errors = Vec::new();
     check_source_unit(root, version, &mut errors);
     errors
 }
 
 fn expect_range(range: &impl TextRange) -> Range<usize> {
-    range.text_range().expect("Structured CST node should have a range")
+    range.calculate_text_range().expect("Structured CST node should have a range")
 }
 
 //
@@ -35,7 +27,7 @@ fn expect_range(range: &impl TextRange) -> Range<usize> {
 //
 {% for parent_type, sequence in model.sequences %}
     {%- if model.has_versioned_descendant[parent_type] %}
-        fn check_{{ parent_type | snake_case }}(node: &{{ parent_type }}, version: LanguageVersion, errors: &mut Vec<SyntaxVersionError>) {
+        fn check_{{ parent_type | snake_case }}(node: &{{ parent_type }}, version: LanguageVersion, errors: &mut Vec<ParserError>) {
             let node = node.as_ref();
 
             {# Check struct-level enabled #}
@@ -44,7 +36,7 @@ fn expect_range(range: &impl TextRange) -> Range<usize> {
             {%- elif sequence.enabled.type == "From" %}
                 {%- set v = sequence.enabled.from | split(pat=".") | join(sep="_") %}
                 if version < LanguageVersion::V{{ v }} {
-                    errors.push(SyntaxVersionError {
+                    errors.push(ParserError::SyntaxVersion {
                         range: expect_range(node),
                         enabled: LanguageVersionSpecifier::From { from: LanguageVersion::V{{ v }} },
                     });
@@ -53,7 +45,7 @@ fn expect_range(range: &impl TextRange) -> Range<usize> {
             {%- elif sequence.enabled.type == "Till" %}
                 {%- set v = sequence.enabled.till | split(pat=".") | join(sep="_") %}
                 if version >= LanguageVersion::V{{ v }} {
-                    errors.push(SyntaxVersionError {
+                    errors.push(ParserError::SyntaxVersion {
                         range: expect_range(node),
                         enabled: LanguageVersionSpecifier::Till { till: LanguageVersion::V{{ v }} },
                     });
@@ -63,7 +55,7 @@ fn expect_range(range: &impl TextRange) -> Range<usize> {
                 {%- set vf = sequence.enabled.from | split(pat=".") | join(sep="_") %}
                 {%- set vt = sequence.enabled.till | split(pat=".") | join(sep="_") %}
                 if version < LanguageVersion::V{{ vf }} || version >= LanguageVersion::V{{ vt }} {
-                    errors.push(SyntaxVersionError {
+                    errors.push(ParserError::SyntaxVersion {
                         range: expect_range(node),
                         enabled: LanguageVersionSpecifier::Range {
                             from: LanguageVersion::V{{ vf }},
@@ -90,7 +82,7 @@ fn expect_range(range: &impl TextRange) -> Range<usize> {
                         {%- set v = field.enabled.from | split(pat=".") | join(sep="_") %}
                         if let Some(ref child) = node.{{ field.label | snake_case }} {
                             if version < LanguageVersion::V{{ v }} {
-                                errors.push(SyntaxVersionError {
+                                errors.push(ParserError::SyntaxVersion {
                                     range: expect_range(child),
                                     enabled: LanguageVersionSpecifier::From { from: LanguageVersion::V{{ v }} },
                                 });
@@ -105,7 +97,7 @@ fn expect_range(range: &impl TextRange) -> Range<usize> {
                         {%- set v = field.enabled.till | split(pat=".") | join(sep="_") %}
                         if let Some(ref child) = node.{{ field.label | snake_case }} {
                             if version >= LanguageVersion::V{{ v }} {
-                                errors.push(SyntaxVersionError {
+                                errors.push(ParserError::SyntaxVersion {
                                     range: expect_range(child),
                                     enabled: LanguageVersionSpecifier::Till { till: LanguageVersion::V{{ v }} },
                                 });
@@ -121,7 +113,7 @@ fn expect_range(range: &impl TextRange) -> Range<usize> {
                         {%- set vt = field.enabled.till | split(pat=".") | join(sep="_") %}
                         if let Some(ref child) = node.{{ field.label | snake_case }} {
                             if version < LanguageVersion::V{{ vf }} || version >= LanguageVersion::V{{ vt }} {
-                                errors.push(SyntaxVersionError {
+                                errors.push(ParserError::SyntaxVersion {
                                     range: expect_range(child),
                                     enabled: LanguageVersionSpecifier::Range {
                                         from: LanguageVersion::V{{ vf }},
@@ -154,14 +146,14 @@ fn expect_range(range: &impl TextRange) -> Range<usize> {
 //
 {% for parent_type, choice in model.choices %}
     {%- if model.has_versioned_descendant[parent_type] %}
-        fn check_{{ parent_type | snake_case }}(node: &{{ parent_type }}, version: LanguageVersion, errors: &mut Vec<SyntaxVersionError>) {
+        fn check_{{ parent_type | snake_case }}(node: &{{ parent_type }}, version: LanguageVersion, errors: &mut Vec<ParserError>) {
             {# Check choice-level enabled #}
             {%- if choice.enabled.type == "Always" %}
                 {# No version constraint on the node itself. #}
             {%- elif choice.enabled.type == "From" %}
                 {%- set v = choice.enabled.from | split(pat=".") | join(sep="_") %}
                 if version < LanguageVersion::V{{ v }} {
-                    errors.push(SyntaxVersionError {
+                    errors.push(ParserError::SyntaxVersion {
                         range: expect_range(node),
                         enabled: LanguageVersionSpecifier::From { from: LanguageVersion::V{{ v }} },
                     });
@@ -170,7 +162,7 @@ fn expect_range(range: &impl TextRange) -> Range<usize> {
             {%- elif choice.enabled.type == "Till" %}
                 {%- set v = choice.enabled.till | split(pat=".") | join(sep="_") %}
                 if version >= LanguageVersion::V{{ v }} {
-                    errors.push(SyntaxVersionError {
+                    errors.push(ParserError::SyntaxVersion {
                         range: expect_range(node),
                         enabled: LanguageVersionSpecifier::Till { till: LanguageVersion::V{{ v }} },
                     });
@@ -180,7 +172,7 @@ fn expect_range(range: &impl TextRange) -> Range<usize> {
                 {%- set vf = choice.enabled.from | split(pat=".") | join(sep="_") %}
                 {%- set vt = choice.enabled.till | split(pat=".") | join(sep="_") %}
                 if version < LanguageVersion::V{{ vf }} || version >= LanguageVersion::V{{ vt }} {
-                    errors.push(SyntaxVersionError {
+                    errors.push(ParserError::SyntaxVersion {
                         range: expect_range(node),
                         enabled: LanguageVersionSpecifier::Range {
                             from: LanguageVersion::V{{ vf }},
@@ -205,7 +197,7 @@ fn expect_range(range: &impl TextRange) -> Range<usize> {
                         {%- elif variant.enabled.type == "From" %}
                             {%- set v = variant.enabled.from | split(pat=".") | join(sep="_") %}
                             if version < LanguageVersion::V{{ v }} {
-                                errors.push(SyntaxVersionError {
+                                errors.push(ParserError::SyntaxVersion {
                                     range: expect_range(child),
                                     enabled: LanguageVersionSpecifier::From { from: LanguageVersion::V{{ v }} },
                                 });
@@ -214,7 +206,7 @@ fn expect_range(range: &impl TextRange) -> Range<usize> {
                         {%- elif variant.enabled.type == "Till" %}
                             {%- set v = variant.enabled.till | split(pat=".") | join(sep="_") %}
                             if version >= LanguageVersion::V{{ v }} {
-                                errors.push(SyntaxVersionError {
+                                errors.push(ParserError::SyntaxVersion {
                                     range: expect_range(child),
                                     enabled: LanguageVersionSpecifier::Till { till: LanguageVersion::V{{ v }} },
                                 });
@@ -224,7 +216,7 @@ fn expect_range(range: &impl TextRange) -> Range<usize> {
                             {%- set vf = variant.enabled.from | split(pat=".") | join(sep="_") %}
                             {%- set vt = variant.enabled.till | split(pat=".") | join(sep="_") %}
                             if version < LanguageVersion::V{{ vf }} || version >= LanguageVersion::V{{ vt }} {
-                                errors.push(SyntaxVersionError {
+                                errors.push(ParserError::SyntaxVersion {
                                     range: expect_range(child),
                                     enabled: LanguageVersionSpecifier::Range {
                                         from: LanguageVersion::V{{ vf }},
@@ -252,14 +244,14 @@ fn expect_range(range: &impl TextRange) -> Range<usize> {
 //
 {% for parent_type, collection in model.collections %}
     {%- if model.has_versioned_descendant[parent_type] %}
-        fn check_{{ parent_type | snake_case }}(node: &{{ parent_type }}, version: LanguageVersion, errors: &mut Vec<SyntaxVersionError>) {
+        fn check_{{ parent_type | snake_case }}(node: &{{ parent_type }}, version: LanguageVersion, errors: &mut Vec<ParserError>) {
             {# Check collection-level enabled #}
             {%- if collection.enabled.type == "Always" %}
                 {# No version constraint on the node itself. #}
             {%- elif collection.enabled.type == "From" %}
                 {%- set v = collection.enabled.from | split(pat=".") | join(sep="_") %}
                 if version < LanguageVersion::V{{ v }} {
-                    errors.push(SyntaxVersionError {
+                    errors.push(ParserError::SyntaxVersion {
                         range: expect_range(node),
                         enabled: LanguageVersionSpecifier::From { from: LanguageVersion::V{{ v }} },
                     });
@@ -268,7 +260,7 @@ fn expect_range(range: &impl TextRange) -> Range<usize> {
             {%- elif collection.enabled.type == "Till" %}
                 {%- set v = collection.enabled.till | split(pat=".") | join(sep="_") %}
                 if version >= LanguageVersion::V{{ v }} {
-                    errors.push(SyntaxVersionError {
+                    errors.push(ParserError::SyntaxVersion {
                         range: expect_range(node),
                         enabled: LanguageVersionSpecifier::Till { till: LanguageVersion::V{{ v }} },
                     });
@@ -278,7 +270,7 @@ fn expect_range(range: &impl TextRange) -> Range<usize> {
                 {%- set vf = collection.enabled.from | split(pat=".") | join(sep="_") %}
                 {%- set vt = collection.enabled.till | split(pat=".") | join(sep="_") %}
                 if version < LanguageVersion::V{{ vf }} || version >= LanguageVersion::V{{ vt }} {
-                    errors.push(SyntaxVersionError {
+                    errors.push(ParserError::SyntaxVersion {
                         range: expect_range(node),
                         enabled: LanguageVersionSpecifier::Range {
                             from: LanguageVersion::V{{ vf }},

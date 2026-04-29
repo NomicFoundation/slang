@@ -20,7 +20,6 @@ categories = ["compilers", "CST"]
 
 
 [dependencies]
-slang_solidity_v2_common = { workspace = true }
 strum = { workspace = true }
 
 [lints]
