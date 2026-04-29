@@ -9,22 +9,6 @@ use slang_solidity_v2_ir::ir;
 
 use super::LiteralKind;
 
-/// Returns the integer value of a decimal number literal, or `None` for
-/// rationals that do not reduce to an integer after unit multiplication.
-pub fn integer_value_of_decimal_number_expression(
-    decimal_number_expression: &ir::DecimalNumberExpression,
-) -> Option<BigInt> {
-    ConstantValue::from_decimal_number_expression(decimal_number_expression)?.into_integer()
-}
-
-/// Returns the integer value of a hex number literal, or `None` if the
-/// literal cannot be parsed.
-pub fn integer_value_of_hex_number_expression(
-    hex_number_expression: &ir::HexNumberExpression,
-) -> Option<BigInt> {
-    ConstantValue::from_hex_number_expression(hex_number_expression)?.into_integer()
-}
-
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) enum ConstantValue {
     Integer(BigInt),
