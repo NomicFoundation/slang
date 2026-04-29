@@ -58,7 +58,7 @@ fn strip_prefix_and_quotes<'a>(text: &'a str, prefix: &str) -> &'a str {
                         .and_then(|s| s.strip_suffix('\''))
                 })
         })
-        .unwrap_or(text)
+        .expect("string prefix mismatch or not quoted")
 }
 
 fn decode_hex_string(content: &str) -> Vec<u8> {
@@ -87,7 +87,7 @@ fn decode_escape_sequences(content: &str) -> Vec<u8> {
         }
         // Grammar guarantees at least one char after backslash; if input
         // is malformed we just stop.
-        let Some(next) = chars.next() else { break };
+        let next = chars.next().expect("unterminated escape sequence");
         match next {
             'n' => out.push(b'\n'),
             'r' => out.push(b'\r'),
@@ -309,8 +309,14 @@ mod tests {
     }
 
     #[test]
-    fn strip_falls_back_when_no_match() {
-        // Malformed / unexpected input is returned unchanged.
-        assert_eq!(strip_prefix_and_quotes("unquoted", ""), "unquoted");
+    #[should_panic(expected = "string prefix mismatch or not quoted")]
+    fn strip_panics_when_not_quoted() {
+        strip_prefix_and_quotes("unquoted", "");
+    }
+
+    #[test]
+    #[should_panic(expected = "string prefix mismatch or not quoted")]
+    fn strip_panics_on_prefix_mismatch() {
+        strip_prefix_and_quotes("hex'1234'", "unicode");
     }
 }
