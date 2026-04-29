@@ -4118,6 +4118,7 @@ dependencies = [
  "indexmap",
  "num-bigint",
  "num-integer",
+ "num-rational",
  "num-traits",
  "slang_solidity_v2_common",
  "slang_solidity_v2_ir",
