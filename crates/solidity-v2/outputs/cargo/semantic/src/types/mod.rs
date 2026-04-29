@@ -8,9 +8,6 @@ mod parsing;
 mod registry;
 
 pub(crate) use constants::ConstantValue;
-pub use constants::{
-    integer_value_of_decimal_number_expression, integer_value_of_hex_number_expression,
-};
 pub use registry::TypeRegistry;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
