@@ -1,25 +1,41 @@
 use std::collections::VecDeque;
 
-/// A list of elements separated by separator tokens.
+/// A list of elements separated by separator tokens, stored as two parallel
+/// `VecDeque`s.
 ///
-/// - `Empty` means the list has no elements (used by `allow_empty` grammar rules).
-/// - `NonEmpty` guarantees at least one element (`first`), followed by zero or more
-///   `(separator, element)` pairs in `rest`.
+/// Invariant: `separators.len() == elements.len().saturating_sub(1)`.
+/// In particular, `elements` is empty iff the list is empty, and otherwise
+/// the i-th separator (i ≥ 0) sits between `elements[i]` and `elements[i + 1]`.
 ///
-/// The reason for this separation is to make the invariant of
-/// having either one element and a possible list
-/// of separators and elements, or no elements at all.
+/// The fields are private so the invariant can only be broken via the API.
+/// Callers that need to walk separators alongside elements should use
+/// [`SeparatedList::split_first`] or [`SeparatedList::into_split_first`]
+/// rather than reaching for the inner collections.
 #[derive(Clone, Debug, PartialEq)]
-pub enum SeparatedList<E, S> {
-    Empty,
-    NonEmpty { first: E, rest: VecDeque<(S, E)> },
+pub struct SeparatedList<E, S> {
+    elements: VecDeque<E>,
+    separators: VecDeque<S>,
+}
+
+// Manual `Default` impl: the derived one would add `E: Default, S: Default`
+// bounds we don't want — the empty list doesn't need them.
+impl<E, S> Default for SeparatedList<E, S> {
+    fn default() -> Self {
+        Self {
+            elements: VecDeque::new(),
+            separators: VecDeque::new(),
+        }
+    }
 }
 
 impl<E, S> SeparatedList<E, S> {
+    /// Creates a list with a single element and no separators.
     pub fn single(first: E) -> Self {
-        Self::NonEmpty {
-            first,
-            rest: VecDeque::new(),
+        let mut elements = VecDeque::new();
+        elements.push_back(first);
+        Self {
+            elements,
+            separators: VecDeque::new(),
         }
     }
 
@@ -27,69 +43,76 @@ impl<E, S> SeparatedList<E, S> {
     ///
     /// `self` must not be empty.
     pub fn push(&mut self, separator: S, element: E) {
-        match self {
-            Self::NonEmpty { rest, .. } => rest.push_back((separator, element)),
-            Self::Empty => panic!("push called on empty SeparatedList"),
-        }
+        debug_assert!(
+            !self.elements.is_empty(),
+            "push called on empty SeparatedList"
+        );
+        self.separators.push_back(separator);
+        self.elements.push_back(element);
     }
 
     /// Add an element and separator to the front of the list.
     /// The separator sits between the new element and the old first element.
     ///
-    /// `self` must be not empty.
+    /// `self` must not be empty.
     pub fn push_front(&mut self, element: E, separator: S) {
-        match self {
-            Self::NonEmpty { first, rest } => {
-                let old_first = std::mem::replace(first, element);
-                rest.push_front((separator, old_first));
-            }
-            Self::Empty => panic!("push_front called on empty SeparatedList"),
-        }
+        debug_assert!(
+            !self.elements.is_empty(),
+            "push_front called on empty SeparatedList"
+        );
+        self.separators.push_front(separator);
+        self.elements.push_front(element);
     }
 
     /// Concatenate another separated list to this one, using the provided separator.
     ///
     /// Neither of the lists can be empty, since we have a separator.
     pub fn extend(&mut self, separator: S, other: Self) {
-        match (&mut *self, other) {
-            (
-                Self::NonEmpty { rest, .. },
-                Self::NonEmpty {
-                    first: other_first,
-                    rest: other_rest,
-                },
-            ) => {
-                rest.push_back((separator, other_first));
-                rest.extend(other_rest);
-            }
-            (_, Self::Empty) | (Self::Empty, _) => {
-                panic!("extend called on empty SeparatedList")
-            }
-        }
+        debug_assert!(
+            !self.elements.is_empty() && !other.elements.is_empty(),
+            "extend called on empty SeparatedList"
+        );
+        let Self {
+            elements: other_elements,
+            separators: other_separators,
+        } = other;
+        self.separators.push_back(separator);
+        self.elements.extend(other_elements);
+        self.separators.extend(other_separators);
     }
 
     /// Iterate over all elements (skipping separators).
-    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &E> + '_ {
-        let (first, rest) = match self {
-            Self::Empty => (None, None),
-            Self::NonEmpty { first, rest } => (Some(first), Some(rest)),
-        };
-        first.into_iter().chain(
-            rest.into_iter()
-                .flat_map(|rest| rest.iter().map(|(_, element)| element)),
-        )
+    pub fn elements(
+        &self,
+    ) -> impl DoubleEndedIterator<Item = &E> + ExactSizeIterator<Item = &E> + '_ {
+        self.elements.iter()
+    }
+
+    /// Returns the first element together with an iterator over the trailing
+    /// `(separator, element)` pairs, or `None` if the list is empty.
+    ///
+    /// Use this when you need to walk both elements and separators without
+    /// touching the parallel-collection layout directly.
+    pub fn split_first(&self) -> Option<(&E, impl Iterator<Item = (&S, &E)> + '_)> {
+        let mut elements = self.elements.iter();
+        let first = elements.next()?;
+        Some((first, self.separators.iter().zip(elements)))
+    }
+
+    /// Owning version of [`Self::split_first`], for code that consumes the list.
+    pub fn into_split_first(self) -> Option<(E, impl Iterator<Item = (S, E)>)> {
+        let mut elements = self.elements.into_iter();
+        let first = elements.next()?;
+        Some((first, self.separators.into_iter().zip(elements)))
     }
 
     /// Number of elements in the list.
     pub fn len(&self) -> usize {
-        match self {
-            Self::Empty => 0,
-            Self::NonEmpty { rest, .. } => 1 + rest.len(),
-        }
+        self.elements.len()
     }
 
     /// Whether the list has no elements.
     pub fn is_empty(&self) -> bool {
-        matches!(self, Self::Empty)
+        self.elements.is_empty()
     }
 }

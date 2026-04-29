@@ -8,7 +8,7 @@ use crate::parser::parser_helpers;
 grammar<'source>(source: &'source str);
 
 SeparatedAllowEmpty<S, T>: SeparatedList<T, S> = {
-    => SeparatedList::Empty,
+    => SeparatedList::default(),
     <inner: Separated<S, T>> => inner,
 };
 

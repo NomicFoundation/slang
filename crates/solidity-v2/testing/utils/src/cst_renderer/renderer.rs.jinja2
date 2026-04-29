@@ -66,11 +66,11 @@ pub fn render_{{ parent_type | snake_case }}(source: &str, node: &{{ parent_type
 {% for parent_type, collection in target.collections %}
 pub fn render_{{ parent_type | snake_case }}(source: &str, node: &{{ parent_type }}, depth: usize) -> RenderedOutput {
   {% if collection.separator_type %}
-  match &**node {
-    slang_solidity_v2_cst::separated::SeparatedList::Empty => {
+  match node.split_first() {
+    None => {
       (None, vec![": []\n".to_string()])
     }
-    slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+    Some((first, rest)) => {
       let mut acc = ChildrenAccumulator::new(source, depth + 1);
       {
       {% if collection.item_type.is_terminal %}

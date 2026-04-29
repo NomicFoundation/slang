@@ -122,43 +122,39 @@ fn check_tuple_values_as_deconstruction_elements(
     let mut v1_iter = v1_children.iter();
     let mut errors = vec![];
 
-    match &**tuple_values {
-        slang_solidity_v2_cst::separated::SeparatedList::Empty => {}
-        slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+    if let Some((first, pairs)) = tuple_values.split_first() {
+        if let Some((child, child_offset)) = v1_iter.next() {
+            errors.extend(check_tuple_value_as_deconstruction_element(
+                first,
+                &child.node,
+                *child_offset,
+            ));
+        } else {
+            errors.push(NodeCheckerError::new(
+                "Expected first element in TupleDeconstructionElements".to_string(),
+                node_range.clone(),
+            ));
+        }
+        for (v2_sep, v2_elem) in pairs {
+            if let Some((child, child_offset)) = v1_iter.next() {
+                errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected separator in TupleDeconstructionElements".to_string(),
+                    node_range.clone(),
+                ));
+            }
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(check_tuple_value_as_deconstruction_element(
-                    first,
+                    v2_elem,
                     &child.node,
                     *child_offset,
                 ));
             } else {
                 errors.push(NodeCheckerError::new(
-                    "Expected first element in TupleDeconstructionElements".to_string(),
+                    "Expected element after separator in TupleDeconstructionElements".to_string(),
                     node_range.clone(),
                 ));
-            }
-            for (v2_sep, v2_elem) in rest {
-                if let Some((child, child_offset)) = v1_iter.next() {
-                    errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
-                } else {
-                    errors.push(NodeCheckerError::new(
-                        "Expected separator in TupleDeconstructionElements".to_string(),
-                        node_range.clone(),
-                    ));
-                }
-                if let Some((child, child_offset)) = v1_iter.next() {
-                    errors.extend(check_tuple_value_as_deconstruction_element(
-                        v2_elem,
-                        &child.node,
-                        *child_offset,
-                    ));
-                } else {
-                    errors.push(NodeCheckerError::new(
-                        "Expected element after separator in TupleDeconstructionElements"
-                            .to_string(),
-                        node_range.clone(),
-                    ));
-                }
             }
         }
     }
@@ -15279,35 +15275,32 @@ impl NodeChecker for ArrayValues {
         let mut v1_iter = v1_children.iter();
         let mut errors = vec![];
 
-        // Separated collection: destructure V2 SeparatedList, match against V1 children
-        match &**self {
-            slang_solidity_v2_cst::separated::SeparatedList::Empty => {}
-            slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+        // Separated collection: walk V2 list pairs, match against V1 children
+        if let Some((first, pairs)) = self.split_first() {
+            if let Some((child, child_offset)) = v1_iter.next() {
+                errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected first element in separated collection".to_string(),
+                    node_range.clone(),
+                ));
+            }
+            for (v2_sep, v2_elem) in pairs {
                 if let Some((child, child_offset)) = v1_iter.next() {
-                    errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+                    errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
                 } else {
                     errors.push(NodeCheckerError::new(
-                        "Expected first element in separated collection".to_string(),
+                        "Expected separator in separated collection".to_string(),
                         node_range.clone(),
                     ));
                 }
-                for (v2_sep, v2_elem) in rest {
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected element after separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
+                if let Some((child, child_offset)) = v1_iter.next() {
+                    errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        "Expected element after separator in separated collection".to_string(),
+                        node_range.clone(),
+                    ));
                 }
             }
         }
@@ -15344,35 +15337,32 @@ impl NodeChecker for CallOptions {
         let mut v1_iter = v1_children.iter();
         let mut errors = vec![];
 
-        // Separated collection: destructure V2 SeparatedList, match against V1 children
-        match &**self {
-            slang_solidity_v2_cst::separated::SeparatedList::Empty => {}
-            slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+        // Separated collection: walk V2 list pairs, match against V1 children
+        if let Some((first, pairs)) = self.split_first() {
+            if let Some((child, child_offset)) = v1_iter.next() {
+                errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected first element in separated collection".to_string(),
+                    node_range.clone(),
+                ));
+            }
+            for (v2_sep, v2_elem) in pairs {
                 if let Some((child, child_offset)) = v1_iter.next() {
-                    errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+                    errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
                 } else {
                     errors.push(NodeCheckerError::new(
-                        "Expected first element in separated collection".to_string(),
+                        "Expected separator in separated collection".to_string(),
                         node_range.clone(),
                     ));
                 }
-                for (v2_sep, v2_elem) in rest {
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected element after separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
+                if let Some((child, child_offset)) = v1_iter.next() {
+                    errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        "Expected element after separator in separated collection".to_string(),
+                        node_range.clone(),
+                    ));
                 }
             }
         }
@@ -15585,35 +15575,32 @@ impl NodeChecker for EnumMembers {
         let mut v1_iter = v1_children.iter();
         let mut errors = vec![];
 
-        // Separated collection: destructure V2 SeparatedList, match against V1 children
-        match &**self {
-            slang_solidity_v2_cst::separated::SeparatedList::Empty => {}
-            slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+        // Separated collection: walk V2 list pairs, match against V1 children
+        if let Some((first, pairs)) = self.split_first() {
+            if let Some((child, child_offset)) = v1_iter.next() {
+                errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected first element in separated collection".to_string(),
+                    node_range.clone(),
+                ));
+            }
+            for (v2_sep, v2_elem) in pairs {
                 if let Some((child, child_offset)) = v1_iter.next() {
-                    errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+                    errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
                 } else {
                     errors.push(NodeCheckerError::new(
-                        "Expected first element in separated collection".to_string(),
+                        "Expected separator in separated collection".to_string(),
                         node_range.clone(),
                     ));
                 }
-                for (v2_sep, v2_elem) in rest {
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected element after separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
+                if let Some((child, child_offset)) = v1_iter.next() {
+                    errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        "Expected element after separator in separated collection".to_string(),
+                        node_range.clone(),
+                    ));
                 }
             }
         }
@@ -15650,35 +15637,32 @@ impl NodeChecker for ErrorParameters {
         let mut v1_iter = v1_children.iter();
         let mut errors = vec![];
 
-        // Separated collection: destructure V2 SeparatedList, match against V1 children
-        match &**self {
-            slang_solidity_v2_cst::separated::SeparatedList::Empty => {}
-            slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+        // Separated collection: walk V2 list pairs, match against V1 children
+        if let Some((first, pairs)) = self.split_first() {
+            if let Some((child, child_offset)) = v1_iter.next() {
+                errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected first element in separated collection".to_string(),
+                    node_range.clone(),
+                ));
+            }
+            for (v2_sep, v2_elem) in pairs {
                 if let Some((child, child_offset)) = v1_iter.next() {
-                    errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+                    errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
                 } else {
                     errors.push(NodeCheckerError::new(
-                        "Expected first element in separated collection".to_string(),
+                        "Expected separator in separated collection".to_string(),
                         node_range.clone(),
                     ));
                 }
-                for (v2_sep, v2_elem) in rest {
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected element after separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
+                if let Some((child, child_offset)) = v1_iter.next() {
+                    errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        "Expected element after separator in separated collection".to_string(),
+                        node_range.clone(),
+                    ));
                 }
             }
         }
@@ -15715,35 +15699,32 @@ impl NodeChecker for EventParameters {
         let mut v1_iter = v1_children.iter();
         let mut errors = vec![];
 
-        // Separated collection: destructure V2 SeparatedList, match against V1 children
-        match &**self {
-            slang_solidity_v2_cst::separated::SeparatedList::Empty => {}
-            slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+        // Separated collection: walk V2 list pairs, match against V1 children
+        if let Some((first, pairs)) = self.split_first() {
+            if let Some((child, child_offset)) = v1_iter.next() {
+                errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected first element in separated collection".to_string(),
+                    node_range.clone(),
+                ));
+            }
+            for (v2_sep, v2_elem) in pairs {
                 if let Some((child, child_offset)) = v1_iter.next() {
-                    errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+                    errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
                 } else {
                     errors.push(NodeCheckerError::new(
-                        "Expected first element in separated collection".to_string(),
+                        "Expected separator in separated collection".to_string(),
                         node_range.clone(),
                     ));
                 }
-                for (v2_sep, v2_elem) in rest {
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected element after separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
+                if let Some((child, child_offset)) = v1_iter.next() {
+                    errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        "Expected element after separator in separated collection".to_string(),
+                        node_range.clone(),
+                    ));
                 }
             }
         }
@@ -15956,35 +15937,32 @@ impl NodeChecker for IdentifierPath {
         let mut v1_iter = v1_children.iter();
         let mut errors = vec![];
 
-        // Separated collection: destructure V2 SeparatedList, match against V1 children
-        match &**self {
-            slang_solidity_v2_cst::separated::SeparatedList::Empty => {}
-            slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+        // Separated collection: walk V2 list pairs, match against V1 children
+        if let Some((first, pairs)) = self.split_first() {
+            if let Some((child, child_offset)) = v1_iter.next() {
+                errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected first element in separated collection".to_string(),
+                    node_range.clone(),
+                ));
+            }
+            for (v2_sep, v2_elem) in pairs {
                 if let Some((child, child_offset)) = v1_iter.next() {
-                    errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+                    errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
                 } else {
                     errors.push(NodeCheckerError::new(
-                        "Expected first element in separated collection".to_string(),
+                        "Expected separator in separated collection".to_string(),
                         node_range.clone(),
                     ));
                 }
-                for (v2_sep, v2_elem) in rest {
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected element after separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
+                if let Some((child, child_offset)) = v1_iter.next() {
+                    errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        "Expected element after separator in separated collection".to_string(),
+                        node_range.clone(),
+                    ));
                 }
             }
         }
@@ -16021,35 +15999,32 @@ impl NodeChecker for ImportDeconstructionSymbols {
         let mut v1_iter = v1_children.iter();
         let mut errors = vec![];
 
-        // Separated collection: destructure V2 SeparatedList, match against V1 children
-        match &**self {
-            slang_solidity_v2_cst::separated::SeparatedList::Empty => {}
-            slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+        // Separated collection: walk V2 list pairs, match against V1 children
+        if let Some((first, pairs)) = self.split_first() {
+            if let Some((child, child_offset)) = v1_iter.next() {
+                errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected first element in separated collection".to_string(),
+                    node_range.clone(),
+                ));
+            }
+            for (v2_sep, v2_elem) in pairs {
                 if let Some((child, child_offset)) = v1_iter.next() {
-                    errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+                    errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
                 } else {
                     errors.push(NodeCheckerError::new(
-                        "Expected first element in separated collection".to_string(),
+                        "Expected separator in separated collection".to_string(),
                         node_range.clone(),
                     ));
                 }
-                for (v2_sep, v2_elem) in rest {
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected element after separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
+                if let Some((child, child_offset)) = v1_iter.next() {
+                    errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        "Expected element after separator in separated collection".to_string(),
+                        node_range.clone(),
+                    ));
                 }
             }
         }
@@ -16086,35 +16061,32 @@ impl NodeChecker for InheritanceTypes {
         let mut v1_iter = v1_children.iter();
         let mut errors = vec![];
 
-        // Separated collection: destructure V2 SeparatedList, match against V1 children
-        match &**self {
-            slang_solidity_v2_cst::separated::SeparatedList::Empty => {}
-            slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+        // Separated collection: walk V2 list pairs, match against V1 children
+        if let Some((first, pairs)) = self.split_first() {
+            if let Some((child, child_offset)) = v1_iter.next() {
+                errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected first element in separated collection".to_string(),
+                    node_range.clone(),
+                ));
+            }
+            for (v2_sep, v2_elem) in pairs {
                 if let Some((child, child_offset)) = v1_iter.next() {
-                    errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+                    errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
                 } else {
                     errors.push(NodeCheckerError::new(
-                        "Expected first element in separated collection".to_string(),
+                        "Expected separator in separated collection".to_string(),
                         node_range.clone(),
                     ));
                 }
-                for (v2_sep, v2_elem) in rest {
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected element after separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
+                if let Some((child, child_offset)) = v1_iter.next() {
+                    errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        "Expected element after separator in separated collection".to_string(),
+                        node_range.clone(),
+                    ));
                 }
             }
         }
@@ -16281,35 +16253,32 @@ impl NodeChecker for MultiTypedDeclarationElements {
         let mut v1_iter = v1_children.iter();
         let mut errors = vec![];
 
-        match &**self {
-            slang_solidity_v2_cst::separated::SeparatedList::Empty => {}
-            slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+        if let Some((first, pairs)) = self.split_first() {
+            if let Some((child, child_offset)) = v1_iter.next() {
+                errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected first element in MultiTypedDeclarationElements".to_string(),
+                    node_range.clone(),
+                ));
+            }
+            for (v2_sep, v2_elem) in pairs {
                 if let Some((child, child_offset)) = v1_iter.next() {
-                    errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+                    errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
                 } else {
                     errors.push(NodeCheckerError::new(
-                        "Expected first element in MultiTypedDeclarationElements".to_string(),
+                        "Expected separator in MultiTypedDeclarationElements".to_string(),
                         node_range.clone(),
                     ));
                 }
-                for (v2_sep, v2_elem) in rest {
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected separator in MultiTypedDeclarationElements".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected element after separator in MultiTypedDeclarationElements"
-                                .to_string(),
-                            node_range.clone(),
-                        ));
-                    }
+                if let Some((child, child_offset)) = v1_iter.next() {
+                    errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        "Expected element after separator in MultiTypedDeclarationElements"
+                            .to_string(),
+                        node_range.clone(),
+                    ));
                 }
             }
         }
@@ -16346,35 +16315,32 @@ impl NodeChecker for NamedArguments {
         let mut v1_iter = v1_children.iter();
         let mut errors = vec![];
 
-        // Separated collection: destructure V2 SeparatedList, match against V1 children
-        match &**self {
-            slang_solidity_v2_cst::separated::SeparatedList::Empty => {}
-            slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+        // Separated collection: walk V2 list pairs, match against V1 children
+        if let Some((first, pairs)) = self.split_first() {
+            if let Some((child, child_offset)) = v1_iter.next() {
+                errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected first element in separated collection".to_string(),
+                    node_range.clone(),
+                ));
+            }
+            for (v2_sep, v2_elem) in pairs {
                 if let Some((child, child_offset)) = v1_iter.next() {
-                    errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+                    errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
                 } else {
                     errors.push(NodeCheckerError::new(
-                        "Expected first element in separated collection".to_string(),
+                        "Expected separator in separated collection".to_string(),
                         node_range.clone(),
                     ));
                 }
-                for (v2_sep, v2_elem) in rest {
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected element after separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
+                if let Some((child, child_offset)) = v1_iter.next() {
+                    errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        "Expected element after separator in separated collection".to_string(),
+                        node_range.clone(),
+                    ));
                 }
             }
         }
@@ -16411,35 +16377,32 @@ impl NodeChecker for OverridePaths {
         let mut v1_iter = v1_children.iter();
         let mut errors = vec![];
 
-        // Separated collection: destructure V2 SeparatedList, match against V1 children
-        match &**self {
-            slang_solidity_v2_cst::separated::SeparatedList::Empty => {}
-            slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+        // Separated collection: walk V2 list pairs, match against V1 children
+        if let Some((first, pairs)) = self.split_first() {
+            if let Some((child, child_offset)) = v1_iter.next() {
+                errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected first element in separated collection".to_string(),
+                    node_range.clone(),
+                ));
+            }
+            for (v2_sep, v2_elem) in pairs {
                 if let Some((child, child_offset)) = v1_iter.next() {
-                    errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+                    errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
                 } else {
                     errors.push(NodeCheckerError::new(
-                        "Expected first element in separated collection".to_string(),
+                        "Expected separator in separated collection".to_string(),
                         node_range.clone(),
                     ));
                 }
-                for (v2_sep, v2_elem) in rest {
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected element after separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
+                if let Some((child, child_offset)) = v1_iter.next() {
+                    errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        "Expected element after separator in separated collection".to_string(),
+                        node_range.clone(),
+                    ));
                 }
             }
         }
@@ -16476,35 +16439,32 @@ impl NodeChecker for Parameters {
         let mut v1_iter = v1_children.iter();
         let mut errors = vec![];
 
-        // Separated collection: destructure V2 SeparatedList, match against V1 children
-        match &**self {
-            slang_solidity_v2_cst::separated::SeparatedList::Empty => {}
-            slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+        // Separated collection: walk V2 list pairs, match against V1 children
+        if let Some((first, pairs)) = self.split_first() {
+            if let Some((child, child_offset)) = v1_iter.next() {
+                errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected first element in separated collection".to_string(),
+                    node_range.clone(),
+                ));
+            }
+            for (v2_sep, v2_elem) in pairs {
                 if let Some((child, child_offset)) = v1_iter.next() {
-                    errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+                    errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
                 } else {
                     errors.push(NodeCheckerError::new(
-                        "Expected first element in separated collection".to_string(),
+                        "Expected separator in separated collection".to_string(),
                         node_range.clone(),
                     ));
                 }
-                for (v2_sep, v2_elem) in rest {
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected element after separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
+                if let Some((child, child_offset)) = v1_iter.next() {
+                    errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        "Expected element after separator in separated collection".to_string(),
+                        node_range.clone(),
+                    ));
                 }
             }
         }
@@ -16541,35 +16501,32 @@ impl NodeChecker for PositionalArguments {
         let mut v1_iter = v1_children.iter();
         let mut errors = vec![];
 
-        // Separated collection: destructure V2 SeparatedList, match against V1 children
-        match &**self {
-            slang_solidity_v2_cst::separated::SeparatedList::Empty => {}
-            slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+        // Separated collection: walk V2 list pairs, match against V1 children
+        if let Some((first, pairs)) = self.split_first() {
+            if let Some((child, child_offset)) = v1_iter.next() {
+                errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected first element in separated collection".to_string(),
+                    node_range.clone(),
+                ));
+            }
+            for (v2_sep, v2_elem) in pairs {
                 if let Some((child, child_offset)) = v1_iter.next() {
-                    errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+                    errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
                 } else {
                     errors.push(NodeCheckerError::new(
-                        "Expected first element in separated collection".to_string(),
+                        "Expected separator in separated collection".to_string(),
                         node_range.clone(),
                     ));
                 }
-                for (v2_sep, v2_elem) in rest {
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected element after separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
+                if let Some((child, child_offset)) = v1_iter.next() {
+                    errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        "Expected element after separator in separated collection".to_string(),
+                        node_range.clone(),
+                    ));
                 }
             }
         }
@@ -16650,35 +16607,32 @@ impl NodeChecker for SimpleVersionLiteral {
         let mut v1_iter = v1_children.iter();
         let mut errors = vec![];
 
-        // Separated collection: destructure V2 SeparatedList, match against V1 children
-        match &**self {
-            slang_solidity_v2_cst::separated::SeparatedList::Empty => {}
-            slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+        // Separated collection: walk V2 list pairs, match against V1 children
+        if let Some((first, pairs)) = self.split_first() {
+            if let Some((child, child_offset)) = v1_iter.next() {
+                errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected first element in separated collection".to_string(),
+                    node_range.clone(),
+                ));
+            }
+            for (v2_sep, v2_elem) in pairs {
                 if let Some((child, child_offset)) = v1_iter.next() {
-                    errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+                    errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
                 } else {
                     errors.push(NodeCheckerError::new(
-                        "Expected first element in separated collection".to_string(),
+                        "Expected separator in separated collection".to_string(),
                         node_range.clone(),
                     ));
                 }
-                for (v2_sep, v2_elem) in rest {
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected element after separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
+                if let Some((child, child_offset)) = v1_iter.next() {
+                    errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        "Expected element after separator in separated collection".to_string(),
+                        node_range.clone(),
+                    ));
                 }
             }
         }
@@ -16935,35 +16889,32 @@ impl NodeChecker for TupleValues {
         let mut v1_iter = v1_children.iter();
         let mut errors = vec![];
 
-        // Separated collection: destructure V2 SeparatedList, match against V1 children
-        match &**self {
-            slang_solidity_v2_cst::separated::SeparatedList::Empty => {}
-            slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+        // Separated collection: walk V2 list pairs, match against V1 children
+        if let Some((first, pairs)) = self.split_first() {
+            if let Some((child, child_offset)) = v1_iter.next() {
+                errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected first element in separated collection".to_string(),
+                    node_range.clone(),
+                ));
+            }
+            for (v2_sep, v2_elem) in pairs {
                 if let Some((child, child_offset)) = v1_iter.next() {
-                    errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+                    errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
                 } else {
                     errors.push(NodeCheckerError::new(
-                        "Expected first element in separated collection".to_string(),
+                        "Expected separator in separated collection".to_string(),
                         node_range.clone(),
                     ));
                 }
-                for (v2_sep, v2_elem) in rest {
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected element after separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
+                if let Some((child, child_offset)) = v1_iter.next() {
+                    errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        "Expected element after separator in separated collection".to_string(),
+                        node_range.clone(),
+                    ));
                 }
             }
         }
@@ -17044,35 +16995,32 @@ impl NodeChecker for UsingDeconstructionSymbols {
         let mut v1_iter = v1_children.iter();
         let mut errors = vec![];
 
-        // Separated collection: destructure V2 SeparatedList, match against V1 children
-        match &**self {
-            slang_solidity_v2_cst::separated::SeparatedList::Empty => {}
-            slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+        // Separated collection: walk V2 list pairs, match against V1 children
+        if let Some((first, pairs)) = self.split_first() {
+            if let Some((child, child_offset)) = v1_iter.next() {
+                errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected first element in separated collection".to_string(),
+                    node_range.clone(),
+                ));
+            }
+            for (v2_sep, v2_elem) in pairs {
                 if let Some((child, child_offset)) = v1_iter.next() {
-                    errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+                    errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
                 } else {
                     errors.push(NodeCheckerError::new(
-                        "Expected first element in separated collection".to_string(),
+                        "Expected separator in separated collection".to_string(),
                         node_range.clone(),
                     ));
                 }
-                for (v2_sep, v2_elem) in rest {
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected element after separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
+                if let Some((child, child_offset)) = v1_iter.next() {
+                    errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        "Expected element after separator in separated collection".to_string(),
+                        node_range.clone(),
+                    ));
                 }
             }
         }
@@ -17153,35 +17101,32 @@ impl NodeChecker for VersionExpressionSets {
         let mut v1_iter = v1_children.iter();
         let mut errors = vec![];
 
-        // Separated collection: destructure V2 SeparatedList, match against V1 children
-        match &**self {
-            slang_solidity_v2_cst::separated::SeparatedList::Empty => {}
-            slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+        // Separated collection: walk V2 list pairs, match against V1 children
+        if let Some((first, pairs)) = self.split_first() {
+            if let Some((child, child_offset)) = v1_iter.next() {
+                errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected first element in separated collection".to_string(),
+                    node_range.clone(),
+                ));
+            }
+            for (v2_sep, v2_elem) in pairs {
                 if let Some((child, child_offset)) = v1_iter.next() {
-                    errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+                    errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
                 } else {
                     errors.push(NodeCheckerError::new(
-                        "Expected first element in separated collection".to_string(),
+                        "Expected separator in separated collection".to_string(),
                         node_range.clone(),
                     ));
                 }
-                for (v2_sep, v2_elem) in rest {
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected element after separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
+                if let Some((child, child_offset)) = v1_iter.next() {
+                    errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        "Expected element after separator in separated collection".to_string(),
+                        node_range.clone(),
+                    ));
                 }
             }
         }
@@ -17218,35 +17163,32 @@ impl NodeChecker for YulArguments {
         let mut v1_iter = v1_children.iter();
         let mut errors = vec![];
 
-        // Separated collection: destructure V2 SeparatedList, match against V1 children
-        match &**self {
-            slang_solidity_v2_cst::separated::SeparatedList::Empty => {}
-            slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+        // Separated collection: walk V2 list pairs, match against V1 children
+        if let Some((first, pairs)) = self.split_first() {
+            if let Some((child, child_offset)) = v1_iter.next() {
+                errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected first element in separated collection".to_string(),
+                    node_range.clone(),
+                ));
+            }
+            for (v2_sep, v2_elem) in pairs {
                 if let Some((child, child_offset)) = v1_iter.next() {
-                    errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+                    errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
                 } else {
                     errors.push(NodeCheckerError::new(
-                        "Expected first element in separated collection".to_string(),
+                        "Expected separator in separated collection".to_string(),
                         node_range.clone(),
                     ));
                 }
-                for (v2_sep, v2_elem) in rest {
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected element after separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
+                if let Some((child, child_offset)) = v1_iter.next() {
+                    errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        "Expected element after separator in separated collection".to_string(),
+                        node_range.clone(),
+                    ));
                 }
             }
         }
@@ -17283,35 +17225,32 @@ impl NodeChecker for YulFlags {
         let mut v1_iter = v1_children.iter();
         let mut errors = vec![];
 
-        // Separated collection: destructure V2 SeparatedList, match against V1 children
-        match &**self {
-            slang_solidity_v2_cst::separated::SeparatedList::Empty => {}
-            slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+        // Separated collection: walk V2 list pairs, match against V1 children
+        if let Some((first, pairs)) = self.split_first() {
+            if let Some((child, child_offset)) = v1_iter.next() {
+                errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected first element in separated collection".to_string(),
+                    node_range.clone(),
+                ));
+            }
+            for (v2_sep, v2_elem) in pairs {
                 if let Some((child, child_offset)) = v1_iter.next() {
-                    errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+                    errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
                 } else {
                     errors.push(NodeCheckerError::new(
-                        "Expected first element in separated collection".to_string(),
+                        "Expected separator in separated collection".to_string(),
                         node_range.clone(),
                     ));
                 }
-                for (v2_sep, v2_elem) in rest {
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected element after separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
+                if let Some((child, child_offset)) = v1_iter.next() {
+                    errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        "Expected element after separator in separated collection".to_string(),
+                        node_range.clone(),
+                    ));
                 }
             }
         }
@@ -17348,35 +17287,32 @@ impl NodeChecker for YulParameters {
         let mut v1_iter = v1_children.iter();
         let mut errors = vec![];
 
-        // Separated collection: destructure V2 SeparatedList, match against V1 children
-        match &**self {
-            slang_solidity_v2_cst::separated::SeparatedList::Empty => {}
-            slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+        // Separated collection: walk V2 list pairs, match against V1 children
+        if let Some((first, pairs)) = self.split_first() {
+            if let Some((child, child_offset)) = v1_iter.next() {
+                errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected first element in separated collection".to_string(),
+                    node_range.clone(),
+                ));
+            }
+            for (v2_sep, v2_elem) in pairs {
                 if let Some((child, child_offset)) = v1_iter.next() {
-                    errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+                    errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
                 } else {
                     errors.push(NodeCheckerError::new(
-                        "Expected first element in separated collection".to_string(),
+                        "Expected separator in separated collection".to_string(),
                         node_range.clone(),
                     ));
                 }
-                for (v2_sep, v2_elem) in rest {
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected element after separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
+                if let Some((child, child_offset)) = v1_iter.next() {
+                    errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        "Expected element after separator in separated collection".to_string(),
+                        node_range.clone(),
+                    ));
                 }
             }
         }
@@ -17413,35 +17349,32 @@ impl NodeChecker for YulPath {
         let mut v1_iter = v1_children.iter();
         let mut errors = vec![];
 
-        // Separated collection: destructure V2 SeparatedList, match against V1 children
-        match &**self {
-            slang_solidity_v2_cst::separated::SeparatedList::Empty => {}
-            slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+        // Separated collection: walk V2 list pairs, match against V1 children
+        if let Some((first, pairs)) = self.split_first() {
+            if let Some((child, child_offset)) = v1_iter.next() {
+                errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected first element in separated collection".to_string(),
+                    node_range.clone(),
+                ));
+            }
+            for (v2_sep, v2_elem) in pairs {
                 if let Some((child, child_offset)) = v1_iter.next() {
-                    errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+                    errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
                 } else {
                     errors.push(NodeCheckerError::new(
-                        "Expected first element in separated collection".to_string(),
+                        "Expected separator in separated collection".to_string(),
                         node_range.clone(),
                     ));
                 }
-                for (v2_sep, v2_elem) in rest {
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected element after separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
+                if let Some((child, child_offset)) = v1_iter.next() {
+                    errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        "Expected element after separator in separated collection".to_string(),
+                        node_range.clone(),
+                    ));
                 }
             }
         }
@@ -17478,35 +17411,32 @@ impl NodeChecker for YulPaths {
         let mut v1_iter = v1_children.iter();
         let mut errors = vec![];
 
-        // Separated collection: destructure V2 SeparatedList, match against V1 children
-        match &**self {
-            slang_solidity_v2_cst::separated::SeparatedList::Empty => {}
-            slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+        // Separated collection: walk V2 list pairs, match against V1 children
+        if let Some((first, pairs)) = self.split_first() {
+            if let Some((child, child_offset)) = v1_iter.next() {
+                errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected first element in separated collection".to_string(),
+                    node_range.clone(),
+                ));
+            }
+            for (v2_sep, v2_elem) in pairs {
                 if let Some((child, child_offset)) = v1_iter.next() {
-                    errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+                    errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
                 } else {
                     errors.push(NodeCheckerError::new(
-                        "Expected first element in separated collection".to_string(),
+                        "Expected separator in separated collection".to_string(),
                         node_range.clone(),
                     ));
                 }
-                for (v2_sep, v2_elem) in rest {
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected element after separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
+                if let Some((child, child_offset)) = v1_iter.next() {
+                    errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        "Expected element after separator in separated collection".to_string(),
+                        node_range.clone(),
+                    ));
                 }
             }
         }
@@ -17631,35 +17561,32 @@ impl NodeChecker for YulVariableNames {
         let mut v1_iter = v1_children.iter();
         let mut errors = vec![];
 
-        // Separated collection: destructure V2 SeparatedList, match against V1 children
-        match &**self {
-            slang_solidity_v2_cst::separated::SeparatedList::Empty => {}
-            slang_solidity_v2_cst::separated::SeparatedList::NonEmpty { first, rest } => {
+        // Separated collection: walk V2 list pairs, match against V1 children
+        if let Some((first, pairs)) = self.split_first() {
+            if let Some((child, child_offset)) = v1_iter.next() {
+                errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+            } else {
+                errors.push(NodeCheckerError::new(
+                    "Expected first element in separated collection".to_string(),
+                    node_range.clone(),
+                ));
+            }
+            for (v2_sep, v2_elem) in pairs {
                 if let Some((child, child_offset)) = v1_iter.next() {
-                    errors.extend(first.check_node_with_offset(&child.node, *child_offset));
+                    errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
                 } else {
                     errors.push(NodeCheckerError::new(
-                        "Expected first element in separated collection".to_string(),
+                        "Expected separator in separated collection".to_string(),
                         node_range.clone(),
                     ));
                 }
-                for (v2_sep, v2_elem) in rest {
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_sep.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
-                    if let Some((child, child_offset)) = v1_iter.next() {
-                        errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
-                    } else {
-                        errors.push(NodeCheckerError::new(
-                            "Expected element after separator in separated collection".to_string(),
-                            node_range.clone(),
-                        ));
-                    }
+                if let Some((child, child_offset)) = v1_iter.next() {
+                    errors.extend(v2_elem.check_node_with_offset(&child.node, *child_offset));
+                } else {
+                    errors.push(NodeCheckerError::new(
+                        "Expected element after separator in separated collection".to_string(),
+                        node_range.clone(),
+                    ));
                 }
             }
         }
