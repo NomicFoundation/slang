@@ -1,3 +1,5 @@
+use num_bigint::BigInt;
+use num_rational::BigRational;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir::{self, FunctionMutability, FunctionVisibility};
 
@@ -80,14 +82,23 @@ pub enum Type {
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum LiteralKind {
-    Zero,
-    // TODO: model rational values as part of compile-time constant folding,
-    // so that expressions like `1.5 * 2` can reduce to an integer literal.
-    Rational,
-    DecimalInteger { bytes: u32, signed: bool },
-    HexInteger { bytes: u32 },
-    HexString { bytes: u32 },
-    String { bytes: u32 },
+    Integer(BigInt),
+    /// A hex-source integer literal. Carries the parsed value plus the
+    /// source-text byte width (number of hex digits / 2, rounded up). The
+    /// width is what determines convertability with `bytesN` and is preserved
+    /// distinctly from the value because `0x0012` and `0x12` share value `18`
+    /// but convert to `bytes2` and `bytes1` respectively.
+    HexInteger {
+        value: BigInt,
+        bytes: u32,
+    },
+    Rational(BigRational),
+    HexString {
+        bytes: u32,
+    },
+    String {
+        bytes: u32,
+    },
     Address,
 }
 
@@ -253,10 +264,7 @@ impl Type {
         matches!(
             self,
             Type::Literal(
-                LiteralKind::Zero
-                    | LiteralKind::DecimalInteger { .. }
-                    | LiteralKind::HexInteger { .. }
-                    | LiteralKind::Rational
+                LiteralKind::Integer(_) | LiteralKind::HexInteger { .. } | LiteralKind::Rational(_)
             )
         )
     }

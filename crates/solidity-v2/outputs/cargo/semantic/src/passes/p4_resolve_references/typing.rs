@@ -178,33 +178,18 @@ impl Pass<'_> {
     ) -> Option<TypeId> {
         match node.expression_prefix_expression_operator {
             ir::Expression_PrefixExpression_Operator::Minus => {
-                // `-literal` folds into a signed literal kind carrying the
-                // two's-complement width of the negated value, matching
-                // solc's `RationalNumberType::integerType()` behaviour for
-                // negated rational-number literals.
-                // TODO: this covers some edge cases but not all of them. We
-                // need full constant folding at the semantic level and that
-                // means keeping the actual value of literals in their type,
-                // similar to what `solc` does.
-                let folded = match &node.operand {
-                    ir::Expression::DecimalNumberExpression(decimal_number) => {
-                        ConstantValue::from_decimal_number_expression(decimal_number)
-                    }
-                    ir::Expression::HexNumberExpression(hex_number) => {
-                        ConstantValue::from_hex_number_expression(hex_number)
-                    }
-                    _ => None,
-                };
-                if let Some(constant) = &folded {
-                    let ConstantValue::Integer(magnitude) = constant;
-                    if magnitude.sign() != num_bigint::Sign::NoSign {
-                        return Some(
-                            self.types
-                                .register_type(Type::Literal(constant.get_signed_literal_kind())),
-                        );
-                    }
+                // Fold `-literal` (and more generally `-<constant>`) by
+                // negating the operand's known constant value.
+                if let Some(value) = self.constant_value_of_expression(&node.operand) {
+                    Some(
+                        self.types
+                            .register_type(Type::Literal(value.negate().to_literal_kind())),
+                    )
+                } else {
+                    // TODO(validation): check that the operand type supports
+                    // negation (ie. uint does not)
+                    self.typing_of_expression(&node.operand).as_type_id()
                 }
-                self.typing_of_expression(&node.operand).as_type_id()
             }
             ir::Expression_PrefixExpression_Operator::PlusPlus
             | ir::Expression_PrefixExpression_Operator::MinusMinus
@@ -218,6 +203,79 @@ impl Pass<'_> {
             }
             ir::Expression_PrefixExpression_Operator::DeleteKeyword => Some(self.types.void()),
         }
+    }
+
+    /// Returns a type that both branches can flow into, used by the
+    /// conditional expression typing. Falls back to lifting two distinct
+    /// integer literal arms to the smallest holding integer type — matching
+    /// solc's "common type" rule for two `RationalNumberType` operands.
+    pub(super) fn common_type_for_conditional_branches(
+        &mut self,
+        true_type_id: TypeId,
+        false_type_id: TypeId,
+    ) -> Option<TypeId> {
+        if self
+            .types
+            .implicitly_convertible_to(false_type_id, true_type_id)
+        {
+            return Some(true_type_id);
+        }
+        if self
+            .types
+            .implicitly_convertible_to(true_type_id, false_type_id)
+        {
+            return Some(false_type_id);
+        }
+        // TODO: handle rational numbers with conversion to fixed/ufixed
+        let true_value = match self.types.get_type_by_id(true_type_id) {
+            Type::Literal(LiteralKind::Integer(value) | LiteralKind::HexInteger { value, .. }) => {
+                Some(value.clone())
+            }
+            _ => None,
+        }?;
+        let false_value = match self.types.get_type_by_id(false_type_id) {
+            Type::Literal(LiteralKind::Integer(value) | LiteralKind::HexInteger { value, .. }) => {
+                Some(value.clone())
+            }
+            _ => None,
+        }?;
+        self.types
+            .common_integer_literal_type(&true_value, &false_value)
+    }
+
+    /// Returns the compile-time constant value of an expression, when its type
+    /// is a value-bearing literal (integer or rational). Used by the constant
+    /// folding logic in the binary/prefix expression visitors.
+    pub(super) fn constant_value_of_expression(
+        &self,
+        expression: &ir::Expression,
+    ) -> Option<ConstantValue> {
+        let type_id = self.typing_of_expression(expression).as_type_id()?;
+        match self.types.get_type_by_id(type_id) {
+            Type::Literal(kind) => ConstantValue::from_literal_kind(kind),
+            _ => None,
+        }
+    }
+
+    /// If both operands are constant literals, applies `op` to their values
+    /// and returns the resulting narrowed literal type. Returns `None` to let
+    /// the caller fall back to its non-folding type rule.
+    pub(super) fn fold_binary_literal_expression<F>(
+        &mut self,
+        left: &ir::Expression,
+        right: &ir::Expression,
+        op: F,
+    ) -> Option<TypeId>
+    where
+        F: FnOnce(&ConstantValue, &ConstantValue) -> Option<ConstantValue>,
+    {
+        let left_value = self.constant_value_of_expression(left)?;
+        let right_value = self.constant_value_of_expression(right)?;
+        let result = op(&left_value, &right_value)?;
+        Some(
+            self.types
+                .register_type(Type::Literal(result.to_literal_kind())),
+        )
     }
 
     pub(super) fn typing_of_resolution(&self, resolution: &Resolution) -> Typing {
@@ -627,19 +685,21 @@ impl Pass<'_> {
 
     pub(super) fn hex_number_literal_kind(
         hex_number_expression: &ir::HexNumberExpression,
-    ) -> LiteralKind {
+    ) -> Option<LiteralKind> {
         let mut hex_number = hex_number_expression.literal.unparse().to_owned();
         hex_number.retain(|character| character != '_');
-        if hex_number.len() == 42 {
+        // Source-text byte width: `0x` prefix is stripped
+        let digits = u32::try_from(hex_number.len().saturating_sub(2)).ok()?;
+        if digits == 40 {
             // TODO(validation): verify the address is valid (ie. has a valid checksum)
             // We need at least an implementation of SHA3 to compute the checksum
-            LiteralKind::Address
-        } else if hex_number == "0x0" {
-            LiteralKind::Zero
-        } else {
-            LiteralKind::HexInteger {
-                bytes: u32::try_from((hex_number.len() - 3) / 2 + 1).unwrap(),
-            }
+            return Some(LiteralKind::Address);
         }
+        let value = ConstantValue::from_hex_number_expression(hex_number_expression)?
+            .into_integer()
+            .expect("hex literal must parse to an integer");
+        // Each pair of hex digits is one byte (with odd digit counts rounded up).
+        let bytes = digits.div_ceil(2).max(1);
+        Some(LiteralKind::HexInteger { value, bytes })
     }
 }

@@ -1,10 +1,39 @@
 use std::collections::HashMap;
 
 use indexmap::IndexSet;
+use num_bigint::BigInt;
+use num_traits::{Signed, Zero};
 use slang_solidity_v2_ir::ir;
 
 use super::{DataLocation, FunctionType, LiteralKind, Type, TypeId};
 use crate::types::ImplicitlyConvertible;
+
+/// Number of bits required to hold `value` as a Solidity integer of the given
+/// signedness:
+/// - unsigned: exactly `value.bits()` (with at least 1, so zero still has a
+///   positive width).
+/// - signed positive: `value.bits() + 1` (one extra bit for the sign).
+/// - signed negative: `(-value - 1).bits() + 1` (two's-complement width).
+fn integer_bits_required(value: &BigInt, signed: bool) -> u32 {
+    if !signed {
+        u32::try_from(value.bits()).unwrap().max(1)
+    } else if value.is_negative() {
+        let magnitude_minus_one = -value - 1u32;
+        u32::try_from(magnitude_minus_one.bits()).unwrap() + 1
+    } else {
+        u32::try_from(value.bits()).unwrap() + 1
+    }
+}
+
+/// Returns true if `value` fits in the integer type described by `signed` and
+/// `bits`. Range is `[-2^(bits-1), 2^(bits-1) - 1]` for signed and
+/// `[0, 2^bits - 1]` for unsigned.
+fn integer_literal_fits(value: &BigInt, signed: bool, bits: u32) -> bool {
+    if !signed && value.is_negative() {
+        return false;
+    }
+    integer_bits_required(value, signed) <= bits
+}
 
 /// The `TypeRegistry` stores an index of registered types, both elementary
 /// types and user defined types. Each type is given a `TypeId` for efficient
@@ -142,83 +171,17 @@ impl TypeRegistry {
             }
 
             (
-                Type::Literal(
-                    LiteralKind::Zero
-                    // TODO: rationals cannot be always converted to integers,
-                    // unless their fractional part is zero. But for now and
-                    // without further information about the literal number
-                    // itself, assume it can.
-                    | LiteralKind::Rational,
-                ),
-                Type::Integer { .. },
-            ) => {
-                // TODO(validation): check that the literal can fit in the given integer type
-                true
-            }
+                Type::Literal(LiteralKind::Integer(value) | LiteralKind::HexInteger { value, .. }),
+                Type::Integer { signed, bits },
+            ) => integer_literal_fits(value, *signed, *bits),
 
-            // TODO: verify against solc's RationalNumberType::isImplicitlyConvertibleTo.
-            (
-                Type::Literal(
-                    LiteralKind::DecimalInteger {
-                        bytes,
-                        signed: false,
-                    }
-                    | LiteralKind::HexInteger { bytes },
-                ),
-                Type::Integer { bits: to_bits, .. },
-            ) => bytes * 8 <= *to_bits,
+            // Non-integer rational literals never implicitly convert to an
+            // integer type — if a rational reduced to an integer it would have
+            // been normalised to `LiteralKind::Integer` at construction time.
+            (Type::Literal(LiteralKind::Rational(_)), Type::Integer { .. }) => false,
 
-            // A signed decimal literal (produced by `-literal`) may only
-            // implicitly convert to a signed integer type.
-            (
-                Type::Literal(LiteralKind::DecimalInteger {
-                    bytes,
-                    signed: true,
-                }),
-                Type::Integer {
-                    signed: true,
-                    bits: to_bits,
-                },
-            ) => bytes * 8 <= *to_bits,
-
-            (
-                Type::Literal(
-                    LiteralKind::Zero
-                    | LiteralKind::DecimalInteger { .. }
-                    | LiteralKind::Rational
-                    | LiteralKind::HexInteger { .. },
-                ),
-                Type::Literal(LiteralKind::Rational),
-            ) => true,
-
-            (
-                Type::Literal(LiteralKind::Zero),
-                Type::Literal(
-                    LiteralKind::DecimalInteger { .. } | LiteralKind::HexInteger { .. },
-                ),
-            ) => true,
-
-            (
-                Type::Literal(LiteralKind::HexInteger { bytes: from_bytes }),
-                Type::Literal(
-                    LiteralKind::HexInteger { bytes: to_bytes }
-                    | LiteralKind::DecimalInteger { bytes: to_bytes, .. },
-                ),
-            ) => from_bytes <= to_bytes,
-
-            // A signed decimal literal (produced by `-literal`) only
-            // implicitly converts to a signed `DecimalInteger` target.
-            (
-                Type::Literal(LiteralKind::DecimalInteger {
-                    bytes: from_bytes,
-                    signed: from_signed,
-                }),
-                Type::Literal(LiteralKind::DecimalInteger {
-                    bytes: to_bytes,
-                    signed: to_signed,
-                }),
-            ) if !*from_signed || *to_signed => from_bytes <= to_bytes,
-
+            // TODO: Rational -> FixedPointNumber once v2 models implicit
+            // conversion of rational literals to fixed-point types.
             (Type::Integer { .. }, Type::Literal(_)) => false,
 
             (
@@ -226,13 +189,25 @@ impl TypeRegistry {
                 Type::String { location } | Type::Bytes { location },
             ) if *location == DataLocation::Memory || *location == DataLocation::Calldata => true,
 
-            (Type::Literal(LiteralKind::Zero), Type::ByteArray { .. }) => true,
+            // Zero (any source — decimal, hex, or folded) is always
+            // implicitly convertible to any byte-array type.
             (
-                Type::Literal(
-                    LiteralKind::HexInteger { bytes }
-                    | LiteralKind::HexString { bytes }
-                    | LiteralKind::String { bytes },
-                ),
+                Type::Literal(LiteralKind::Integer(value) | LiteralKind::HexInteger { value, .. }),
+                Type::ByteArray { .. },
+            ) if value.is_zero() => true,
+
+            // Non-zero hex-source literals convert to `bytesN` of exactly
+            // matching source byte width. Plain `Integer` literals (decimal
+            // source or any folded result) do NOT — folding any operation
+            // erases the hex provenance and disables this conversion.
+            (Type::Literal(LiteralKind::HexInteger { bytes, .. }), Type::ByteArray { width })
+                if *bytes == *width =>
+            {
+                true
+            }
+
+            (
+                Type::Literal(LiteralKind::HexString { bytes } | LiteralKind::String { bytes }),
                 Type::ByteArray { width },
             ) if *bytes == *width => true,
 
@@ -303,7 +278,9 @@ impl TypeRegistry {
             (Type::Function(from_function_type), Type::Function(to_function_type)) => {
                 // This is full equality except for visibility and mutability
                 // which can be converted to, and definition_id which can differ
-                from_function_type.visibility.implicitly_convertible_to(to_function_type.visibility)
+                from_function_type
+                    .visibility
+                    .implicitly_convertible_to(to_function_type.visibility)
                     && from_function_type
                         .mutability
                         .implicitly_convertible_to(to_function_type.mutability)
@@ -529,6 +506,20 @@ impl TypeRegistry {
         self.register_type(type_with_location)
     }
 
+    /// Returns the smallest `Type::Integer { signed, bits }` that holds both
+    /// `a` and `b` (with `bits` rounded up to a multiple of 8, in the range
+    /// 8..=256). Used to unify two distinct integer literal values when one
+    /// is not implicitly convertible to the other (e.g. in `cond ? 0 : 1`).
+    pub fn common_integer_literal_type(&mut self, a: &BigInt, b: &BigInt) -> Option<TypeId> {
+        let signed = a.is_negative() || b.is_negative();
+        let bits = integer_bits_required(a, signed).max(integer_bits_required(b, signed));
+        if bits > 256 {
+            return None;
+        }
+        let bits = bits.next_multiple_of(8).max(8);
+        Some(self.register_type(Type::Integer { signed, bits }))
+    }
+
     // Return a type that can be stored in the EVM. In short, convert literal
     // types into the appropriate "real" type
     pub fn reified_type(&mut self, type_id: TypeId) -> TypeId {
@@ -536,13 +527,12 @@ impl TypeRegistry {
             return type_id;
         };
         match kind {
-            // TODO: implementing these cases requires access to the value
-            // itself, to fit the number in the smallest possible type. Eg. solc
-            // will convert 1, 2, 3, etc into uint8 and 1.2 into ufixed8x1
-            LiteralKind::Zero
-            | LiteralKind::Rational
-            | LiteralKind::DecimalInteger { .. }
-            | LiteralKind::HexInteger { .. } => self.uint256(),
+            // TODO: narrow these to the smallest holding type, matching solc
+            // (eg. literal 1 -> uint8, 1.2 -> ufixed8x1). For now, default to
+            // uint256 to preserve current behaviour.
+            LiteralKind::Integer(_) | LiteralKind::HexInteger { .. } | LiteralKind::Rational(_) => {
+                self.uint256()
+            }
             LiteralKind::HexString { .. } | LiteralKind::String { .. } => self.string(),
             LiteralKind::Address => self.address(),
         }

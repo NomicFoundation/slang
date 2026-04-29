@@ -1,5 +1,3 @@
-use num_bigint::BigInt;
-use num_traits::cast::ToPrimitive;
 use slang_solidity_v2_ir::ir;
 
 use crate::types::ConstantValue;
@@ -113,11 +111,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
     ) -> Option<ConstantValue> {
         let lhs = self.evaluate_expression(&bitwise_or_expression.left_operand)?;
         let rhs = self.evaluate_expression(&bitwise_or_expression.right_operand)?;
-        match (lhs, rhs) {
-            (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
-                Some(ConstantValue::Integer(lhs | rhs))
-            }
-        }
+        lhs.bit_or(&rhs)
     }
 
     fn evaluate_bitwise_xor_expression(
@@ -126,11 +120,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
     ) -> Option<ConstantValue> {
         let lhs = self.evaluate_expression(&bitwise_xor_expression.left_operand)?;
         let rhs = self.evaluate_expression(&bitwise_xor_expression.right_operand)?;
-        match (lhs, rhs) {
-            (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
-                Some(ConstantValue::Integer(lhs ^ rhs))
-            }
-        }
+        lhs.bit_xor(&rhs)
     }
 
     fn evaluate_bitwise_and_expression(
@@ -139,11 +129,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
     ) -> Option<ConstantValue> {
         let lhs = self.evaluate_expression(&bitwise_and_expression.left_operand)?;
         let rhs = self.evaluate_expression(&bitwise_and_expression.right_operand)?;
-        match (lhs, rhs) {
-            (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
-                Some(ConstantValue::Integer(lhs & rhs))
-            }
-        }
+        lhs.bit_and(&rhs)
     }
 
     fn evaluate_shift_expression(
@@ -153,16 +139,8 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
         let lhs = self.evaluate_expression(&shift_expression.left_operand)?;
         let rhs = self.evaluate_expression(&shift_expression.right_operand)?;
         match &shift_expression.expression_shift_expression_operator {
-            ir::Expression_ShiftExpression_Operator::LessThanLessThan => match (lhs, rhs) {
-                (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
-                    Some(ConstantValue::Integer(lhs << rhs.to_u32()?))
-                }
-            },
-            ir::Expression_ShiftExpression_Operator::GreaterThanGreaterThan => match (lhs, rhs) {
-                (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
-                    Some(ConstantValue::Integer(lhs >> rhs.to_u32()?))
-                }
-            },
+            ir::Expression_ShiftExpression_Operator::LessThanLessThan => lhs.shl(&rhs),
+            ir::Expression_ShiftExpression_Operator::GreaterThanGreaterThan => lhs.shr(&rhs),
             ir::Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan => None,
         }
     }
@@ -174,16 +152,8 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
         let lhs = self.evaluate_expression(&additive_expression.left_operand)?;
         let rhs = self.evaluate_expression(&additive_expression.right_operand)?;
         match &additive_expression.expression_additive_expression_operator {
-            ir::Expression_AdditiveExpression_Operator::Plus => match (lhs, rhs) {
-                (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
-                    Some(ConstantValue::Integer(lhs + rhs))
-                }
-            },
-            ir::Expression_AdditiveExpression_Operator::Minus => match (lhs, rhs) {
-                (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
-                    Some(ConstantValue::Integer(lhs - rhs))
-                }
-            },
+            ir::Expression_AdditiveExpression_Operator::Plus => Some(lhs.add(&rhs)),
+            ir::Expression_AdditiveExpression_Operator::Minus => Some(lhs.sub(&rhs)),
         }
     }
 
@@ -194,21 +164,9 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
         let lhs = self.evaluate_expression(&multiplicative_expression.left_operand)?;
         let rhs = self.evaluate_expression(&multiplicative_expression.right_operand)?;
         match &multiplicative_expression.expression_multiplicative_expression_operator {
-            ir::Expression_MultiplicativeExpression_Operator::Asterisk => match (lhs, rhs) {
-                (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
-                    Some(ConstantValue::Integer(lhs * rhs))
-                }
-            },
-            ir::Expression_MultiplicativeExpression_Operator::Slash => match (lhs, rhs) {
-                (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
-                    Some(ConstantValue::Integer(lhs / rhs))
-                }
-            },
-            ir::Expression_MultiplicativeExpression_Operator::Percent => match (lhs, rhs) {
-                (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
-                    Some(ConstantValue::Integer(lhs % rhs))
-                }
-            },
+            ir::Expression_MultiplicativeExpression_Operator::Asterisk => Some(lhs.mul(&rhs)),
+            ir::Expression_MultiplicativeExpression_Operator::Slash => lhs.div(&rhs),
+            ir::Expression_MultiplicativeExpression_Operator::Percent => lhs.rem(&rhs),
         }
     }
 
@@ -219,11 +177,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
         let lhs = self.evaluate_expression(&exponentiation_expression.left_operand)?;
         let rhs = self.evaluate_expression(&exponentiation_expression.right_operand)?;
         // v2 ExponentiationExpression has no explicit operator field (only `**` exists)
-        match (lhs, rhs) {
-            (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
-                Some(ConstantValue::Integer(lhs.pow(rhs.to_u32()?)))
-            }
-        }
+        lhs.pow(&rhs)
     }
 
     fn evaluate_prefix_expression(
@@ -232,9 +186,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
     ) -> Option<ConstantValue> {
         let operand = self.evaluate_expression(&prefix_expression.operand)?;
         match &prefix_expression.expression_prefix_expression_operator {
-            ir::Expression_PrefixExpression_Operator::Minus => match operand {
-                ConstantValue::Integer(value) => Some(ConstantValue::Integer(BigInt::ZERO - value)),
-            },
+            ir::Expression_PrefixExpression_Operator::Minus => Some(operand.negate()),
             // No unary plus in Solidity >= 0.5.0 (v2 only supports >= 0.8.0)
             _ => None,
         }
@@ -265,7 +217,8 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
 mod tests {
     use std::collections::HashMap;
 
-    use num_bigint::ToBigInt;
+    use num_bigint::{BigInt, ToBigInt};
+    use num_rational::BigRational;
     use slang_solidity_v2_common::versions::LanguageVersion;
     use slang_solidity_v2_parser::{ParseOutput, Parser};
 
@@ -414,9 +367,25 @@ mod tests {
 
     #[test]
     fn test_non_reducible_rational_literals() {
-        assert!(eval_string("0.5").is_none());
-        assert!(eval_string("3.14").is_none());
-        assert!(eval_string("1e-1").is_none());
+        assert!(eval_string("0.5").is_some_and(|value| value
+            == ConstantValue::Rational(BigRational::new(BigInt::from(1), BigInt::from(2)))));
+        assert!(eval_string("3.14").is_some_and(|value| value
+            == ConstantValue::Rational(BigRational::new(BigInt::from(157), BigInt::from(50)))));
+        assert!(eval_string("1e-1").is_some_and(|value| value
+            == ConstantValue::Rational(BigRational::new(BigInt::from(1), BigInt::from(10)))));
+    }
+
+    #[test]
+    fn test_rational_arithmetic_folds() {
+        // Reducible rational result normalises back to an Integer.
+        assert!(eval_string("1.5 * 2")
+            .is_some_and(|value| value == ConstantValue::Integer(BigInt::from(3))));
+        // Integer division that does not divide evenly yields a Rational.
+        assert!(eval_string("5 / 2").is_some_and(|value| value
+            == ConstantValue::Rational(BigRational::new(BigInt::from(5), BigInt::from(2)))));
+        // Negation of a non-reducing rational stays Rational.
+        assert!(eval_string("-0.5").is_some_and(|value| value
+            == ConstantValue::Rational(BigRational::new(BigInt::from(-1), BigInt::from(2)))));
     }
 
     #[test]

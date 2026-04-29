@@ -6,7 +6,7 @@ use slang_solidity_v2_ir::ir::visitor::Visitor;
 use super::Pass;
 use crate::binder::{Reference, Resolution, Typing};
 use crate::built_ins::BuiltIn;
-use crate::types::{ConstantValue, DataLocation, LiteralKind, Type};
+use crate::types::{ConstantValue, DataLocation, Type};
 
 impl Visitor for Pass<'_> {
     fn enter_source_unit(&mut self, node: &ir::SourceUnit) -> bool {
@@ -128,22 +128,17 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_hex_number_expression(&mut self, node: &ir::HexNumberExpression) {
-        let kind = Self::hex_number_literal_kind(node);
-        let type_id = self.types.register_type(Type::Literal(kind));
-        self.binder.set_node_type(node.id(), Some(type_id));
+        let type_id = Self::hex_number_literal_kind(node)
+            .map(|kind| self.types.register_type(Type::Literal(kind)));
+        self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_decimal_number_expression(&mut self, node: &ir::DecimalNumberExpression) {
-        let type_ = if node.unit.is_none() && node.literal.unparse() == "0" {
-            Type::Literal(LiteralKind::Zero)
-        } else {
-            match ConstantValue::from_decimal_number_expression(node) {
-                Some(constant) => Type::Literal(constant.get_literal_kind()),
-                None => Type::Literal(LiteralKind::Rational),
-            }
-        };
-        let type_id = self.types.register_type(type_);
-        self.binder.set_node_type(node.id(), Some(type_id));
+        let type_id = ConstantValue::from_decimal_number_expression(node).map(|constant| {
+            self.types
+                .register_type(Type::Literal(constant.to_literal_kind()))
+        });
+        self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_string_expression(&mut self, node: &ir::StringExpression) {
@@ -173,19 +168,7 @@ impl Visitor for Pass<'_> {
         // have the compatible types
         let type_id = match (true_type_id, false_type_id) {
             (Some(true_type_id), Some(false_type_id)) => {
-                if self
-                    .types
-                    .implicitly_convertible_to(false_type_id, true_type_id)
-                {
-                    Some(true_type_id)
-                } else if self
-                    .types
-                    .implicitly_convertible_to(true_type_id, false_type_id)
-                {
-                    Some(false_type_id)
-                } else {
-                    None
-                }
+                self.common_type_for_conditional_branches(true_type_id, false_type_id)
             }
             _ => None,
         };
@@ -209,46 +192,102 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_bitwise_or_expression(&mut self, node: &ir::BitwiseOrExpression) {
-        let type_id =
-            self.type_of_integer_binary_expression(&node.left_operand, &node.right_operand);
+        let type_id = self
+            .fold_binary_literal_expression(&node.left_operand, &node.right_operand, |l, r| {
+                l.bit_or(r)
+            })
+            .or_else(|| {
+                self.type_of_integer_binary_expression(&node.left_operand, &node.right_operand)
+            });
         self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_bitwise_xor_expression(&mut self, node: &ir::BitwiseXorExpression) {
-        let type_id =
-            self.type_of_integer_binary_expression(&node.left_operand, &node.right_operand);
+        let type_id = self
+            .fold_binary_literal_expression(&node.left_operand, &node.right_operand, |l, r| {
+                l.bit_xor(r)
+            })
+            .or_else(|| {
+                self.type_of_integer_binary_expression(&node.left_operand, &node.right_operand)
+            });
         self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_bitwise_and_expression(&mut self, node: &ir::BitwiseAndExpression) {
-        let type_id =
-            self.type_of_integer_binary_expression(&node.left_operand, &node.right_operand);
+        let type_id = self
+            .fold_binary_literal_expression(&node.left_operand, &node.right_operand, |l, r| {
+                l.bit_and(r)
+            })
+            .or_else(|| {
+                self.type_of_integer_binary_expression(&node.left_operand, &node.right_operand)
+            });
         self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_shift_expression(&mut self, node: &ir::ShiftExpression) {
-        let type_id = self.typing_of_expression(&node.left_operand).as_type_id();
         // TODO(validation): check that the left operand is an integer and the
         // right operand is an _unsigned_ integer
+        let folded =
+            self.fold_binary_literal_expression(&node.left_operand, &node.right_operand, |l, r| {
+                match &node.expression_shift_expression_operator {
+                    ir::Expression_ShiftExpression_Operator::LessThanLessThan => l.shl(r),
+                    ir::Expression_ShiftExpression_Operator::GreaterThanGreaterThan => l.shr(r),
+                    ir::Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan => {
+                        None
+                    }
+                }
+            });
+        // TODO: if the left operand is a literal integer but the right operand
+        // is not, `folded` will be `None` and the operand needs to be converted
+        // into uint256/int256 depending on the sign of left.
+        let type_id = folded.or_else(|| self.typing_of_expression(&node.left_operand).as_type_id());
         self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_additive_expression(&mut self, node: &ir::AdditiveExpression) {
-        let type_id =
-            self.type_of_integer_binary_expression(&node.left_operand, &node.right_operand);
+        let folded =
+            self.fold_binary_literal_expression(&node.left_operand, &node.right_operand, |l, r| {
+                match &node.expression_additive_expression_operator {
+                    ir::Expression_AdditiveExpression_Operator::Plus => Some(l.add(r)),
+                    ir::Expression_AdditiveExpression_Operator::Minus => Some(l.sub(r)),
+                }
+            });
+        let type_id = folded.or_else(|| {
+            self.type_of_integer_binary_expression(&node.left_operand, &node.right_operand)
+        });
         self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_multiplicative_expression(&mut self, node: &ir::MultiplicativeExpression) {
-        let type_id =
-            self.type_of_integer_binary_expression(&node.left_operand, &node.right_operand);
+        let folded =
+            self.fold_binary_literal_expression(&node.left_operand, &node.right_operand, |l, r| {
+                match &node.expression_multiplicative_expression_operator {
+                    ir::Expression_MultiplicativeExpression_Operator::Asterisk => Some(l.mul(r)),
+                    ir::Expression_MultiplicativeExpression_Operator::Slash => l.div(r),
+                    ir::Expression_MultiplicativeExpression_Operator::Percent => l.rem(r),
+                }
+            });
+        let type_id = folded.or_else(|| {
+            self.type_of_integer_binary_expression(&node.left_operand, &node.right_operand)
+        });
         self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_exponentiation_expression(&mut self, node: &ir::ExponentiationExpression) {
-        let mut type_id = self.typing_of_expression(&node.left_operand).as_type_id();
         // TODO(validation): check that the left operand is an integer and the
         // right operand is an _unsigned_ integer
+        if let Some(type_id) =
+            self.fold_binary_literal_expression(&node.left_operand, &node.right_operand, |l, r| {
+                l.pow(r)
+            })
+        {
+            self.binder.set_node_type(node.id(), Some(type_id));
+            return;
+        }
+        // TODO: if the left operand is a literal integer but the right operand
+        // is not, the operand needs to be converted into uint256/int256
+        // depending on the sign of left (refactor with shift operations).
+        let mut type_id = self.typing_of_expression(&node.left_operand).as_type_id();
         if type_id.is_some_and(|type_id| self.types.get_type_by_id(type_id).is_literal_number()) {
             // if the base is a rational but the exponent is not, then the result is uint256
             if self
@@ -258,6 +297,7 @@ impl Visitor for Pass<'_> {
                     !self.types.get_type_by_id(exponent_type).is_literal_number()
                 })
             {
+                // TODO: this needs to look at the sign of the left constant.
                 type_id = Some(self.types.uint256());
             }
         }
