@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 use std::rc::Rc;
 
-use node_mapper::NodeMapper;
+use file_node_mapper::FileNodeMapper;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
@@ -12,7 +12,7 @@ use crate::passes::{
 };
 use crate::types::{Type, TypeId, TypeRegistry};
 
-mod node_mapper;
+mod file_node_mapper;
 
 /// Trait for files that can be used as input to the semantic analysis passes.
 pub trait SemanticFile {
@@ -52,7 +52,7 @@ pub fn extract_import_paths_from_source_unit(
 pub struct SemanticContext {
     binder: Binder,
     types: TypeRegistry,
-    node_mapper: NodeMapper,
+    file_node_mapper: FileNodeMapper,
 }
 
 impl SemanticContext {
@@ -65,12 +65,12 @@ impl SemanticContext {
         p3_type_definitions::run(files, &mut binder, &mut types);
         p4_resolve_references::run(files, &mut binder, &mut types, language_version);
 
-        let node_mapper = NodeMapper::build_from(files);
+        let file_node_mapper = FileNodeMapper::build_from(files);
 
         Self {
             binder,
             types,
-            node_mapper,
+            file_node_mapper,
         }
     }
 
@@ -108,7 +108,7 @@ impl SemanticContext {
 
 impl SemanticContext {
     pub fn file_id_from_node_id(&self, node_id: NodeId) -> String {
-        self.node_mapper.file_id_from_node_id(node_id)
+        self.file_node_mapper.file_id_from_node_id(node_id)
     }
 
     pub fn resolve_reference_identifier_to_definition_id(&self, node_id: NodeId) -> Option<NodeId> {

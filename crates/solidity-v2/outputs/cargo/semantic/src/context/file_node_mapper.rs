@@ -15,11 +15,11 @@ struct FileNodeInfo {
 /// which allows us to efficiently determine which file a node belongs to. This
 /// is by construction of the IR trees and the use of a monotonic
 /// `NodeIdGenerator`.
-pub(super) struct NodeMapper {
+pub(super) struct FileNodeMapper {
     files: Vec<FileNodeInfo>,
 }
 
-impl NodeMapper {
+impl FileNodeMapper {
     pub(super) fn build_from(files: &[impl SemanticFile]) -> Self {
         let mut files: Vec<FileNodeInfo> = files
             .iter()
