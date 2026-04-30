@@ -226,7 +226,7 @@ impl TypeRegistry {
             (
                 Type::Literal(LiteralKind::HexString { bytes } | LiteralKind::String { bytes }),
                 Type::ByteArray { width },
-            ) if *bytes == *width => true,
+            ) if *bytes == *width as usize => true,
 
             (
                 Type::Array {

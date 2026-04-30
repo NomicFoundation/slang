@@ -145,7 +145,7 @@ impl Visitor for Pass<'_> {
         let type_id = self
             .types
             .register_type(Self::type_of_string_expression(node));
-        let node_id = Self::string_expression_node_id(node);
+        let node_id = Self::node_id_for_string_expression(node);
         self.binder.set_node_type(node_id, Some(type_id));
     }
 

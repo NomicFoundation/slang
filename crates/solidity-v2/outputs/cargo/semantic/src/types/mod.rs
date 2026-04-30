@@ -3,7 +3,7 @@ use num_rational::BigRational;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir::{self, FunctionMutability, FunctionVisibility};
 
-mod literals;
+pub mod literals;
 mod parsing;
 mod registry;
 
@@ -90,10 +90,10 @@ pub enum LiteralKind {
     },
     Rational(BigRational),
     HexString {
-        bytes: u32,
+        bytes: usize,
     },
     String {
-        bytes: u32,
+        bytes: usize,
     },
     Address,
 }

@@ -4,7 +4,7 @@ use slang_solidity_v2_ir::ir;
 use super::Pass;
 use crate::binder::{Definition, Resolution, Typing};
 use crate::built_ins::BuiltIn;
-use crate::types::{DataLocation, FunctionType, LiteralKind, Number, Type, TypeId};
+use crate::types::{literals, DataLocation, FunctionType, LiteralKind, Number, Type, TypeId};
 
 impl Pass<'_> {
     pub(super) fn typing_of_expression(&self, node: &ir::Expression) -> Typing {
@@ -80,7 +80,7 @@ impl Pass<'_> {
             }
             ir::Expression::StringExpression(string_expression) => self
                 .binder
-                .node_typing(Self::string_expression_node_id(string_expression)),
+                .node_typing(Self::node_id_for_string_expression(string_expression)),
             ir::Expression::ElementaryType(elementary_type) => {
                 Typing::MetaType(Self::type_of_elementary_type(elementary_type))
             }
@@ -638,7 +638,10 @@ fn reference_node_id_for_expression(node: &ir::Expression) -> Option<NodeId> {
 
 /// Typing functions for literals
 impl Pass<'_> {
-    pub(super) fn string_expression_node_id(node: &ir::StringExpression) -> NodeId {
+    // Since `StringExpression` nodes are plain enums and each variant is in
+    // turn a collection of terminals, they don't have a `NodeId`. So we pick
+    // the `NodeId` of the first terminal of the collection.
+    pub(super) fn node_id_for_string_expression(node: &ir::StringExpression) -> NodeId {
         match node {
             ir::StringExpression::StringLiterals(strings) => strings[0].id(),
             ir::StringExpression::HexStringLiterals(hex_strings) => hex_strings[0].id(),
@@ -647,34 +650,21 @@ impl Pass<'_> {
     }
 
     pub(super) fn type_of_string_expression(node: &ir::StringExpression) -> Type {
+        // Hex string literals carry distinct provenance (mirroring `HexInteger`
+        // vs `Integer`); regular and unicode strings share `String` since they
+        // are indistinguishable once decoded.
         let kind = match node {
-            ir::StringExpression::StringLiterals(strings) => {
-                let size = strings.iter().fold(0usize, |acc, string| {
-                    // TODO: consider escaped characters
-                    acc + string.unparse().len() - 2
-                });
-                LiteralKind::String {
-                    bytes: u32::try_from(size).unwrap(),
-                }
+            ir::StringExpression::StringLiterals(literals) => {
+                let value = literals::value_of_string_literals(literals);
+                LiteralKind::String { bytes: value.len() }
             }
-            ir::StringExpression::HexStringLiterals(hex_strings) => {
-                let size = hex_strings.iter().fold(0usize, |acc, hex_string| {
-                    // 5 is the length of the `hex` prefix plus the quotes
-                    acc + (hex_string.unparse().len() - 5) / 2
-                });
-                LiteralKind::String {
-                    bytes: u32::try_from(size).unwrap(),
-                }
+            ir::StringExpression::HexStringLiterals(literals) => {
+                let value = literals::value_of_hex_string_literals(literals);
+                LiteralKind::HexString { bytes: value.len() }
             }
-            ir::StringExpression::UnicodeStringLiterals(unicode_strings) => {
-                let size = unicode_strings.iter().fold(0usize, |acc, unicode_string| {
-                    // TODO: actually parse the string
-                    // 9 is the length of the `unicode` prefix plus quotes
-                    acc + unicode_string.unparse().len() - 9
-                });
-                LiteralKind::String {
-                    bytes: u32::try_from(size).unwrap(),
-                }
+            ir::StringExpression::UnicodeStringLiterals(literals) => {
+                let value = literals::value_of_unicode_string_literals(literals);
+                LiteralKind::String { bytes: value.len() }
             }
         };
         Type::Literal(kind)
