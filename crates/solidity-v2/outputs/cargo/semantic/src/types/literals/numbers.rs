@@ -31,19 +31,27 @@ impl Number {
     ) -> Option<Self> {
         let mut decimal = decimal_number_expression.literal.unparse().to_owned();
         decimal.retain(|c| c != '_');
-        let (mantissa, exponent) = match decimal.split_once(['e', 'E']) {
-            Some((m, e)) => (m, e.parse::<i64>().ok()?),
-            None => (decimal.as_str(), 0),
+        // Split off the exponent in-place, leaving `decimal` as the mantissa.
+        let exponent = match decimal.find(['e', 'E']) {
+            Some(idx) => {
+                let exp = decimal[idx + 1..].parse::<i64>().ok()?;
+                decimal.truncate(idx);
+                exp
+            }
+            None => 0,
         };
-        let (int_part, fraction) = mantissa.split_once('.').unwrap_or((mantissa, ""));
-        let numerator = BigInt::from_str(&format!("{int_part}{fraction}")).ok()?;
+        // Record the fraction width and then strip the `.` so the buffer is
+        // pure digits ready to be parsed as the numerator.
+        let fraction_len = decimal.find('.').map_or(0, |idx| decimal.len() - idx - 1);
+        decimal.retain(|c| c != '.');
+        let numerator = BigInt::from_str(&decimal).ok()?;
         let unit = decimal_number_expression
             .unit
             .as_ref()
             .copied()
             .map_or_else(|| BigInt::from(1u32), number_unit_multiplier);
         let scaled_numerator = numerator * unit;
-        let decimal_shift = exponent - i64::try_from(fraction.len()).ok()?;
+        let decimal_shift = exponent - i64::try_from(fraction_len).ok()?;
         let denominator =
             BigInt::from(10u32).pow(u32::try_from(decimal_shift.unsigned_abs()).ok()?);
         if decimal_shift >= 0 {
