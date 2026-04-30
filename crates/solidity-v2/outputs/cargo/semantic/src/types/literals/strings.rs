@@ -93,18 +93,16 @@ fn decode_escape_sequences(content: &str) -> Vec<u8> {
             }
             '\n' => {}
             'x' => {
-                let h1 = chars.next().unwrap();
-                let h2 = chars.next().unwrap();
-                let hex: String = [h1, h2].iter().collect();
-                out.push(u8::from_str_radix(&hex, 16).unwrap());
+                let h1 = u8::try_from(chars.next().unwrap().to_digit(16).unwrap()).unwrap();
+                let h2 = u8::try_from(chars.next().unwrap().to_digit(16).unwrap()).unwrap();
+                out.push((h1 << 4) | h2);
             }
             'u' => {
-                let h1 = chars.next().unwrap();
-                let h2 = chars.next().unwrap();
-                let h3 = chars.next().unwrap();
-                let h4 = chars.next().unwrap();
-                let hex: String = [h1, h2, h3, h4].iter().collect();
-                let code_point = u32::from_str_radix(&hex, 16).unwrap();
+                let h1 = chars.next().unwrap().to_digit(16).unwrap();
+                let h2 = chars.next().unwrap().to_digit(16).unwrap();
+                let h3 = chars.next().unwrap().to_digit(16).unwrap();
+                let h4 = chars.next().unwrap().to_digit(16).unwrap();
+                let code_point = (h1 << 12) | (h2 << 8) | (h3 << 4) | h4;
                 // `\uNNNN` code points in the surrogate range (0xD800..=0xDFFF)
                 // are not valid Unicode scalars; skip them silently.
                 if let Some(ch) = char::from_u32(code_point) {
