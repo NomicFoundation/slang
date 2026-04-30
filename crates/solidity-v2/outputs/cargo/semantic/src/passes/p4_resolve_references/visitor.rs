@@ -6,7 +6,7 @@ use slang_solidity_v2_ir::ir::visitor::Visitor;
 use super::Pass;
 use crate::binder::{Reference, Resolution, Typing};
 use crate::built_ins::BuiltIn;
-use crate::types::{ConstantValue, DataLocation, Type};
+use crate::types::{DataLocation, Number, Type};
 
 impl Visitor for Pass<'_> {
     fn enter_source_unit(&mut self, node: &ir::SourceUnit) -> bool {
@@ -134,9 +134,9 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_decimal_number_expression(&mut self, node: &ir::DecimalNumberExpression) {
-        let type_id = ConstantValue::from_decimal_number_expression(node).map(|constant| {
+        let type_id = Number::from_decimal_number_expression(node).map(|number| {
             self.types
-                .register_type(Type::Literal(constant.to_literal_kind()))
+                .register_type(Type::Literal(number.to_literal_kind()))
         });
         self.binder.set_node_type(node.id(), type_id);
     }
@@ -297,7 +297,7 @@ impl Visitor for Pass<'_> {
                     !self.types.get_type_by_id(exponent_type).is_literal_number()
                 })
             {
-                // TODO: this needs to look at the sign of the left constant.
+                // TODO: this needs to look at the sign of the left operand.
                 type_id = Some(self.types.uint256());
             }
         }

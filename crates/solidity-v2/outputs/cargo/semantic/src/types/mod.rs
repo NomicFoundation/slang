@@ -3,11 +3,11 @@ use num_rational::BigRational;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir::{self, FunctionMutability, FunctionVisibility};
 
-mod constants;
+mod literals;
 mod parsing;
 mod registry;
 
-pub(crate) use constants::ConstantValue;
+pub(crate) use literals::numbers::Number;
 pub use registry::TypeRegistry;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]

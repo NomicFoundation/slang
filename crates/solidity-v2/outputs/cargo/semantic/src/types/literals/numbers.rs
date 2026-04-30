@@ -7,15 +7,15 @@ use num_traits::cast::ToPrimitive;
 use num_traits::{Num, One, Signed, Zero};
 use slang_solidity_v2_ir::ir;
 
-use super::LiteralKind;
+use crate::types::LiteralKind;
 
 #[derive(Clone, Debug, PartialEq)]
-pub(crate) enum ConstantValue {
+pub(crate) enum Number {
     Integer(BigInt),
     Rational(BigRational),
 }
 
-impl ConstantValue {
+impl Number {
     pub(crate) fn from_hex_number_expression(
         hex_number_expression: &ir::HexNumberExpression,
     ) -> Option<Self> {

@@ -4,7 +4,7 @@ use slang_solidity_v2_ir::ir;
 use super::Pass;
 use crate::binder::{Definition, Resolution, Typing};
 use crate::built_ins::BuiltIn;
-use crate::types::{ConstantValue, DataLocation, FunctionType, LiteralKind, Type, TypeId};
+use crate::types::{DataLocation, FunctionType, LiteralKind, Number, Type, TypeId};
 
 impl Pass<'_> {
     pub(super) fn typing_of_expression(&self, node: &ir::Expression) -> Typing {
@@ -179,8 +179,8 @@ impl Pass<'_> {
         match node.expression_prefix_expression_operator {
             ir::Expression_PrefixExpression_Operator::Minus => {
                 // Fold `-literal` (and more generally `-<constant>`) by
-                // negating the operand's known constant value.
-                if let Some(value) = self.constant_value_of_expression(&node.operand) {
+                // negating the operand's known number value.
+                if let Some(value) = self.number_value_of_expression(&node.operand) {
                     Some(
                         self.types
                             .register_type(Type::Literal(value.negate().to_literal_kind())),
@@ -243,21 +243,18 @@ impl Pass<'_> {
             .common_integer_literal_type(&true_value, &false_value)
     }
 
-    /// Returns the compile-time constant value of an expression, when its type
+    /// Returns the compile-time number value of an expression, when its type
     /// is a value-bearing literal (integer or rational). Used by the constant
     /// folding logic in the binary/prefix expression visitors.
-    pub(super) fn constant_value_of_expression(
-        &self,
-        expression: &ir::Expression,
-    ) -> Option<ConstantValue> {
+    pub(super) fn number_value_of_expression(&self, expression: &ir::Expression) -> Option<Number> {
         let type_id = self.typing_of_expression(expression).as_type_id()?;
         match self.types.get_type_by_id(type_id) {
-            Type::Literal(kind) => ConstantValue::from_literal_kind(kind),
+            Type::Literal(kind) => Number::from_literal_kind(kind),
             _ => None,
         }
     }
 
-    /// If both operands are constant literals, applies `op` to their values
+    /// If both operands are numbers literals, applies `op` to their values
     /// and returns the resulting narrowed literal type. Returns `None` to let
     /// the caller fall back to its non-folding type rule.
     pub(super) fn fold_binary_literal_expression<F>(
@@ -267,10 +264,10 @@ impl Pass<'_> {
         op: F,
     ) -> Option<TypeId>
     where
-        F: FnOnce(&ConstantValue, &ConstantValue) -> Option<ConstantValue>,
+        F: FnOnce(&Number, &Number) -> Option<Number>,
     {
-        let left_value = self.constant_value_of_expression(left)?;
-        let right_value = self.constant_value_of_expression(right)?;
+        let left_value = self.number_value_of_expression(left)?;
+        let right_value = self.number_value_of_expression(right)?;
         let result = op(&left_value, &right_value)?;
         Some(
             self.types
@@ -695,7 +692,7 @@ impl Pass<'_> {
             // We need at least an implementation of SHA3 to compute the checksum
             return Some(LiteralKind::Address);
         }
-        let value = ConstantValue::from_hex_number_expression(hex_number_expression)?
+        let value = Number::from_hex_number_expression(hex_number_expression)?
             .into_integer()
             .expect("hex literal must parse to an integer");
         // Each pair of hex digits is one byte (with odd digit counts rounded up).
