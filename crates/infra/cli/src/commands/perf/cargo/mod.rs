@@ -151,8 +151,8 @@ impl CargoController {
 
         // 1% threshold: iai-callgrind uses deterministic hardware counters (not wall clock),
         // so any change reflects a real code change, not noise.
-        // We also keep the window small (only 2 measurements), for the same reason.
-        let threshold = |measure| BencherThreshold::new(measure, "0.01").with_max_sample_size("2");
+        // We also keep the window small (only 1 measurement), for the same reason.
+        let threshold = |measure| BencherThreshold::new(measure, "0.01").with_max_sample_size("1");
 
         // We don't add thresholds for l1-hits, l2-hits, and ram-hits, since there's not a simple
         // rule that could catch all cases (ie more l1-hits is better if total bytes read remains the same,
