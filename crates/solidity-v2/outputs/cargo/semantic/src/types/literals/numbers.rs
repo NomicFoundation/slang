@@ -10,7 +10,7 @@ use slang_solidity_v2_ir::ir;
 use crate::types::LiteralKind;
 
 #[derive(Clone, Debug, PartialEq)]
-pub(crate) enum Number {
+pub enum Number {
     Integer(BigInt),
     Rational(BigRational),
 }
@@ -58,7 +58,7 @@ impl Number {
         }
     }
 
-    pub(crate) fn from_literal_kind(kind: &LiteralKind) -> Option<Self> {
+    pub fn from_literal_kind(kind: &LiteralKind) -> Option<Self> {
         match kind {
             LiteralKind::Integer(value) | LiteralKind::HexInteger { value, .. } => {
                 Some(Self::Integer(value.clone()))

@@ -7,7 +7,7 @@ pub mod literals;
 mod parsing;
 mod registry;
 
-pub(crate) use literals::numbers::Number;
+pub use literals::numbers::Number;
 pub use registry::TypeRegistry;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
