@@ -256,7 +256,7 @@ impl Pass<'_> {
 
     pub(super) fn register_super_types(&mut self, type_id: TypeId, bases: &[NodeId]) {
         // register super types in the type registry
-        let super_types = bases
+        let super_types: Vec<_> = bases
             .iter()
             .filter_map(|base_id| {
                 let Some(base) = self.binder.find_definition_by_id(*base_id) else {
@@ -274,6 +274,6 @@ impl Pass<'_> {
                 Some(self.types.register_type(base_type))
             })
             .collect();
-        self.types.register_super_types(type_id, super_types);
+        self.types.register_super_types(type_id, &super_types);
     }
 }

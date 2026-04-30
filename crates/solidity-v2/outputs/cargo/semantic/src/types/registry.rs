@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use indexmap::IndexSet;
 use num_bigint::BigInt;
 use num_traits::{Signed, Zero};
+use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
 use super::{DataLocation, FunctionType, LiteralKind, Type, TypeId};
@@ -59,7 +60,10 @@ fn smallest_integer_type_to_fit(values: &[&BigInt]) -> Option<Type> {
 /// some kinds of expressions (eg. the boolean type).
 pub struct TypeRegistry {
     types: IndexSet<Type>,
-    super_types: HashMap<TypeId, Vec<TypeId>>,
+    // This is used to register the _is-subclass_ and _implements_ relationships
+    // between contract/interface types. The `NodeId`s correspond to the
+    // `definition_id` in the respective `Type` variants.
+    super_types: HashMap<NodeId, Vec<NodeId>>,
 
     // Pre-defined core types
     address_type_id: TypeId,
@@ -139,20 +143,36 @@ impl TypeRegistry {
         self.types.get_index_of(type_).map(TypeId)
     }
 
-    pub fn register_type(&mut self, type_: Type) -> TypeId {
+    pub(crate) fn register_type(&mut self, type_: Type) -> TypeId {
         let (index, _) = self.types.insert_full(type_);
         TypeId(index)
     }
 
-    pub fn register_super_types(&mut self, type_id: TypeId, super_types: Vec<TypeId>) {
-        self.super_types.insert(type_id, super_types);
+    pub(crate) fn register_super_types(&mut self, type_id: TypeId, super_types: &[TypeId]) {
+        let type_ = self.get_type_by_id(type_id);
+        assert!(
+            type_.is_contract_or_interface(),
+            "can only register super types of contracts and interfaces",
+        );
+        let type_node_id = type_.get_definition_id().unwrap();
+        let super_type_node_ids = super_types
+            .iter()
+            .map(|super_type_id| {
+                let super_type = self.get_type_by_id(*super_type_id);
+                assert!(
+                    super_type.is_contract_or_interface(),
+                    "super types can only be contracts or interfaces",
+                );
+                super_type.get_definition_id().unwrap()
+            })
+            .collect();
+        self.super_types.insert(type_node_id, super_type_node_ids);
     }
 
     pub fn get_type_by_id(&self, type_id: TypeId) -> &Type {
         self.types.get_index(type_id.0).unwrap()
     }
 
-    #[allow(clippy::too_many_lines)]
     pub fn implicitly_convertible_to(&self, from_type_id: TypeId, to_type_id: TypeId) -> bool {
         if from_type_id == to_type_id {
             return true;
@@ -160,6 +180,11 @@ impl TypeRegistry {
         let from_type = self.get_type_by_id(from_type_id);
         let to_type = self.get_type_by_id(to_type_id);
 
+        self.internal_implicitly_convertible_to(from_type, to_type)
+    }
+
+    #[allow(clippy::too_many_lines)]
+    fn internal_implicitly_convertible_to(&self, from_type: &Type, to_type: &Type) -> bool {
         match (from_type, to_type) {
             (
                 Type::Address {
@@ -305,11 +330,34 @@ impl TypeRegistry {
                     && from_function_type.return_type == to_function_type.return_type
             }
 
-            (Type::Contract { .. }, Type::Contract { .. } | Type::Interface { .. })
-            | (Type::Interface { .. }, Type::Interface { .. }) => self
+            // Contracts and interfaces are implicitly converted to their super types
+            (
+                Type::Contract {
+                    definition_id: from_node_id,
+                    ..
+                },
+                Type::Contract {
+                    definition_id: to_node_id,
+                    ..
+                }
+                | Type::Interface {
+                    definition_id: to_node_id,
+                    ..
+                },
+            )
+            | (
+                Type::Interface {
+                    definition_id: from_node_id,
+                    ..
+                },
+                Type::Interface {
+                    definition_id: to_node_id,
+                    ..
+                },
+            ) => self
                 .super_types
-                .get(&from_type_id)
-                .is_some_and(|super_types| super_types.contains(&to_type_id)),
+                .get(from_node_id)
+                .is_some_and(|super_types| super_types.contains(to_node_id)),
 
             // TODO: add more implicit conversion rules
             _ => false,

@@ -264,4 +264,19 @@ impl Type {
             )
         )
     }
+
+    pub fn is_contract_or_interface(&self) -> bool {
+        matches!(self, Type::Contract { .. } | Type::Interface { .. })
+    }
+
+    pub(crate) fn get_definition_id(&self) -> Option<NodeId> {
+        match self {
+            Type::Contract { definition_id }
+            | Type::Enum { definition_id }
+            | Type::Interface { definition_id }
+            | Type::Struct { definition_id, .. }
+            | Type::UserDefinedValue { definition_id } => Some(*definition_id),
+            _ => None,
+        }
+    }
 }
