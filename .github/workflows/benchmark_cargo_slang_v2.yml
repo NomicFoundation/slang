@@ -20,13 +20,12 @@ on:
     branches:
       - "main"
 
-  # Run on pull requests (smoke test always, full benchmark with 'ci:perf' label):
+  # Run on every pull request (full benchmark, non-blocking):
   pull_request:
     types:
       - "opened"
       - "synchronize"
       - "reopened"
-      - "labeled"
 
 permissions: {}
 
@@ -78,12 +77,7 @@ jobs:
           echo "SLANG_BENCHER_PROJECT=${{ inputs.bencherProject }}" >> $GITHUB_ENV
         if: "${{ inputs.bencherProject }}"
 
-      - name: "Smoke Test > infra perf cargo --smoke slang-v2"
-        if: "${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
-        run: "./scripts/bin/infra perf cargo --smoke slang-v2"
-
       - name: "Benchmark > infra perf cargo slang-v2"
-        if: "${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
         run: "./scripts/bin/infra perf cargo ${{ github.event_name == 'pull_request' && '--pr-benchmark' || (inputs.dryRun == true && '--dry-run' || '') }} slang-v2"
         env:
           BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
@@ -92,7 +86,6 @@ jobs:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: "Benchmark > Upload Benchmarking Data"
-        if: "${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
         uses: "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a" # v7.0.1
         with:
           name: "benchmarking-data"
