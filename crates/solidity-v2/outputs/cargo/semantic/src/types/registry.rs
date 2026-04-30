@@ -35,6 +35,23 @@ fn integer_literal_fits(value: &BigInt, signed: bool, bits: u32) -> bool {
     integer_bits_required(value, signed) <= bits
 }
 
+fn smallest_integer_type_to_fit(values: &[&BigInt]) -> Option<Type> {
+    if values.is_empty() {
+        return None;
+    }
+    let signed = values.iter().all(|value| value.is_negative());
+    let bits = values.iter().fold(0u32, |acc, value| {
+        acc.max(integer_bits_required(value, signed))
+    });
+
+    if bits > 256 {
+        // TODO(validation): the integers don't fit in the EVM
+        return None;
+    }
+    let bits = bits.next_multiple_of(8).max(8);
+    Some(Type::Integer { signed, bits })
+}
+
 /// The `TypeRegistry` stores an index of registered types, both elementary
 /// types and user defined types. Each type is given a `TypeId` for efficient
 /// storage, lookup and comparison. The registry also provides direct access to
@@ -511,30 +528,27 @@ impl TypeRegistry {
     /// 8..=256). Used to unify two distinct integer literal values when one
     /// is not implicitly convertible to the other (e.g. in `cond ? 0 : 1`).
     pub fn common_integer_literal_type(&mut self, a: &BigInt, b: &BigInt) -> Option<TypeId> {
-        let signed = a.is_negative() || b.is_negative();
-        let bits = integer_bits_required(a, signed).max(integer_bits_required(b, signed));
-        if bits > 256 {
-            return None;
-        }
-        let bits = bits.next_multiple_of(8).max(8);
-        Some(self.register_type(Type::Integer { signed, bits }))
+        smallest_integer_type_to_fit(&[a, b]).map(|type_| self.register_type(type_))
     }
 
     // Return a type that can be stored in the EVM. In short, convert literal
     // types into the appropriate "real" type
-    pub fn reified_type(&mut self, type_id: TypeId) -> TypeId {
+    pub fn reified_type(&mut self, type_id: TypeId) -> Option<TypeId> {
         let Type::Literal(kind) = self.get_type_by_id(type_id) else {
-            return type_id;
+            return Some(type_id);
         };
         match kind {
-            // TODO: narrow these to the smallest holding type, matching solc
-            // (eg. literal 1 -> uint8, 1.2 -> ufixed8x1). For now, default to
-            // uint256 to preserve current behaviour.
-            LiteralKind::Integer(_) | LiteralKind::HexInteger { .. } | LiteralKind::Rational(_) => {
-                self.uint256()
+            LiteralKind::Integer(value) | LiteralKind::HexInteger { value, .. } => {
+                smallest_integer_type_to_fit(&[value]).map(|type_| self.register_type(type_))
             }
-            LiteralKind::HexString { .. } | LiteralKind::String { .. } => self.string(),
-            LiteralKind::Address => self.address(),
+            LiteralKind::Rational(_) => {
+                // TODO: narrow the rational type to the smallest fixed/ufixed
+                // available (eg. 1.2 -> ufixed8x1). For now, default to uint256
+                // to preserve current behaviour.
+                Some(self.uint256())
+            }
+            LiteralKind::HexString { .. } | LiteralKind::String { .. } => Some(self.string()),
+            LiteralKind::Address => Some(self.address()),
         }
     }
 

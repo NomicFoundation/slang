@@ -463,21 +463,12 @@ impl Visitor for Pass<'_> {
             .typing_of_expression(node.items.first().unwrap())
             .as_type_id()
         {
-            let element_type = self.types.reified_type(element_type);
-            let type_id = self.types.register_type(Type::FixedSizeArray {
-                element_type,
-                size: node.items.len(),
-                location: DataLocation::Memory,
-            });
-            Typing::Resolved(type_id)
-        } else {
             // TODO(validation): all expressions in the array should have the
             // same (or implicitly convertible) types
-            if let Some(element_type) = self
-                .typing_of_expression(node.items.first().unwrap())
-                .as_type_id()
-            {
-                let element_type = self.types.reified_type(element_type);
+            // TODO: the type class is determined by the first element, but then
+            // its size can grow to accommodate the other elements (eg. `[1,
+            // 1024]` should type to `uint16[2]`, but `[1, 1.1]` is invalid)
+            if let Some(element_type) = self.types.reified_type(element_type) {
                 let type_id = self.types.register_type(Type::FixedSizeArray {
                     element_type,
                     size: node.items.len(),
@@ -485,8 +476,11 @@ impl Visitor for Pass<'_> {
                 });
                 Typing::Resolved(type_id)
             } else {
+                // Literals cannot be reified (eg. integer exceeds 256 bits)
                 Typing::Unresolved
             }
+        } else {
+            Typing::Unresolved
         };
         self.binder.set_node_typing(node.id(), typing);
     }
