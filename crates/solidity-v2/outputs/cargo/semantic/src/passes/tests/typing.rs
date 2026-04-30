@@ -10,12 +10,21 @@ use crate::context::SemanticFile;
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_resolve_references,
 };
-use crate::types::{LiteralKind, Type, TypeRegistry};
+use crate::types::{DataLocation, LiteralKind, Type, TypeId, TypeRegistry};
 
 /// Parses a Solidity expression as the value of a top-level `uint constant`,
 /// runs all semantic passes, and returns a clone of the inferred type assigned
 /// to that value expression along with the populated `TypeRegistry`.
 fn type_of_value_expression(input: &str) -> (Type, TypeRegistry) {
+    let (expr_type, types) = try_type_of_value_expression(input);
+    let expr_type = expr_type.expect("expected resolved type for value expression");
+    (expr_type, types)
+}
+
+/// Like `type_of_value_expression`, but returns `None` if the expression
+/// did not resolve to a `Typing::Resolved`. Lets tests assert on the
+/// "unresolved" outcome without panicking.
+fn try_type_of_value_expression(input: &str) -> (Option<Type>, TypeRegistry) {
     let source = format!("uint constant x = {input};");
     let mut id_generator = NodeIdGenerator::default();
     let file = build_file("test.sol", &source, &mut id_generator);
@@ -35,17 +44,18 @@ fn type_of_value_expression(input: &str) -> (Type, TypeRegistry) {
         other => panic!("expected ConstantDefinition, got {other:?}"),
     };
 
-    let type_id = match binder.node_typing(expression_node_id(value_expr)) {
-        Typing::Resolved(type_id) => type_id,
-        other => panic!("expected resolved type for value expression, got {other:?}"),
+    let expr_type = match binder.node_typing(expression_node_id(value_expr)) {
+        Typing::Resolved(type_id) => Some(types.get_type_by_id(type_id).clone()),
+        _ => None,
     };
 
-    (types.get_type_by_id(type_id).clone(), types)
+    (expr_type, types)
 }
 
 /// Returns the `NodeId` of an `ir::Expression`, dispatching across the
 /// variants that can appear as the value of a top-level constant in our
-/// typing tests.
+/// typing tests. `StringExpression` does not have its own `NodeId`, so its
+/// typing is recorded against the first terminal of the literal collection.
 fn expression_node_id(expr: &ir::Expression) -> NodeId {
     match expr {
         ir::Expression::AdditiveExpression(e) => e.id(),
@@ -57,11 +67,24 @@ fn expression_node_id(expr: &ir::Expression) -> NodeId {
         ir::Expression::HexNumberExpression(e) => e.id(),
         ir::Expression::TupleExpression(e) => e.id(),
         ir::Expression::ConditionalExpression(e) => e.id(),
+        ir::Expression::ArrayExpression(e) => e.id(),
         ir::Expression::BitwiseOrExpression(e) => e.id(),
         ir::Expression::BitwiseXorExpression(e) => e.id(),
         ir::Expression::BitwiseAndExpression(e) => e.id(),
+        ir::Expression::StringExpression(s) => match s {
+            ir::StringExpression::StringLiterals(strings) => strings[0].id(),
+            ir::StringExpression::HexStringLiterals(hex_strings) => hex_strings[0].id(),
+            ir::StringExpression::UnicodeStringLiterals(unicode_strings) => unicode_strings[0].id(),
+        },
         other => panic!("expression variant {other:?} not supported by typing tests"),
     }
+}
+
+fn register_uint_type(types: &mut TypeRegistry, bits: u32) -> TypeId {
+    types.register_type(Type::Integer {
+        signed: false,
+        bits,
+    })
 }
 
 #[test]
@@ -155,14 +178,8 @@ fn test_implicit_conversion_uses_literal_value() {
         signed: true,
         bits: 8,
     });
-    let uint8 = types.register_type(Type::Integer {
-        signed: false,
-        bits: 8,
-    });
-    let uint256 = types.register_type(Type::Integer {
-        signed: false,
-        bits: 256,
-    });
+    let uint8 = types.uint8();
+    let uint256 = types.uint256();
 
     let lit_127 = types.register_type(Type::Literal(LiteralKind::Integer(BigInt::from(127))));
     let lit_128 = types.register_type(Type::Literal(LiteralKind::Integer(BigInt::from(128))));
@@ -257,4 +274,178 @@ fn test_hex_literal_to_byte_array_conversion() {
     assert!(types.implicitly_convertible_to(dec_0, bytes4));
     assert!(types.implicitly_convertible_to(hex_0x0, bytes2));
     assert!(types.implicitly_convertible_to(hex_0x0000, bytes4));
+}
+
+#[test]
+fn test_conditional_expression_unifies_branch_types() {
+    // Both branches reify to uint8 — common type is uint8.
+    let (type_, _) = type_of_value_expression("true ? 1 : 2");
+    assert_eq!(
+        type_,
+        Type::Integer {
+            signed: false,
+            bits: 8,
+        }
+    );
+
+    // uint8 (1) widens to uint16 (256).
+    let (type_, _) = type_of_value_expression("true ? 1 : 256");
+    assert_eq!(
+        type_,
+        Type::Integer {
+            signed: false,
+            bits: 16,
+        }
+    );
+
+    // int8 (-1) and int8 (1) — common type is int8.
+    let (type_, _) = type_of_value_expression("true ? -1 : -128");
+    assert_eq!(
+        type_,
+        Type::Integer {
+            signed: true,
+            bits: 8,
+        }
+    );
+
+    // Both branches are string literals — both reify to `string memory`.
+    let (type_, _) = type_of_value_expression(r#"true ? "abc" : "x""#);
+    assert_eq!(
+        type_,
+        Type::String {
+            location: DataLocation::Memory,
+        }
+    );
+}
+
+#[test]
+fn test_conditional_expression_unresolved_when_branches_incompatible() {
+    // uint8 (1) and int8 (-1): neither converts to the other at the same
+    // bit width, so unification fails and the conditional is unresolved.
+    let (type_, _) = try_type_of_value_expression("true ? 1 : -1");
+    assert_eq!(type_, None);
+
+    // A non-reducing rational has no `reified` type yet, so any conditional
+    // involving one is unresolved.
+    let (type_, _) = try_type_of_value_expression("true ? 0.5 : 1");
+    assert_eq!(type_, None);
+}
+
+#[test]
+fn test_array_literal_unifies_element_types() {
+    // Homogeneous uint8 elements.
+    let (expr_type, types) = type_of_value_expression("[1, 2, 3]");
+    let Type::FixedSizeArray {
+        element_type,
+        size,
+        location,
+    } = expr_type
+    else {
+        panic!("expected FixedSizeArray, got {expr_type:?}");
+    };
+    assert_eq!(size, 3);
+    assert_eq!(location, DataLocation::Memory);
+    assert_eq!(element_type, types.uint8());
+
+    // Mixed widths widen to the largest required.
+    let (expr_type, mut types) = type_of_value_expression("[1, 256, 3]");
+    let Type::FixedSizeArray {
+        element_type, size, ..
+    } = expr_type
+    else {
+        panic!("expected FixedSizeArray, got {expr_type:?}");
+    };
+    assert_eq!(size, 3);
+    assert_eq!(element_type, register_uint_type(&mut types, 16));
+
+    // Negative values force the result to a signed type.
+    let (expr_type, mut types) = type_of_value_expression("[-1, -2]");
+    let Type::FixedSizeArray { element_type, .. } = expr_type else {
+        panic!("expected FixedSizeArray, got {expr_type:?}");
+    };
+    assert_eq!(
+        element_type,
+        types.register_type(Type::Integer {
+            signed: true,
+            bits: 8,
+        })
+    );
+
+    // String literal arrays reify each element to `string memory`.
+    let (expr_type, types) = type_of_value_expression(r#"["abc", "x"]"#);
+    let Type::FixedSizeArray {
+        element_type, size, ..
+    } = expr_type
+    else {
+        panic!("expected FixedSizeArray, got {expr_type:?}");
+    };
+    assert_eq!(size, 2);
+    assert_eq!(element_type, types.string());
+}
+
+#[test]
+fn test_array_literal_unresolved_when_elements_incompatible() {
+    // uint8 (1) and int8 (-1) cannot be unified (same bit width, opposite sign).
+    let (type_, _) = try_type_of_value_expression("[1, -1]");
+    assert_eq!(type_, None);
+
+    // Non-reducing rationals don't reify yet — array unification fails.
+    let (type_, _) = try_type_of_value_expression("[0.5, 1]");
+    assert_eq!(type_, None);
+}
+
+#[test]
+fn test_string_literal_byte_count_with_escapes() {
+    // Plain ASCII: one byte per char.
+    let (type_, _) = type_of_value_expression(r#""abc""#);
+    assert_eq!(type_, Type::Literal(LiteralKind::String { bytes: 3 }));
+
+    // Each `\n`, `\t`, etc. decodes to a single byte.
+    let (type_, _) = type_of_value_expression(r#""\n\t\\""#);
+    assert_eq!(type_, Type::Literal(LiteralKind::String { bytes: 3 }));
+
+    // `\xNN` escapes decode to one byte each, regardless of the 4-char source
+    // length per escape.
+    let (type_, _) = type_of_value_expression(r#""\x41\x42""#);
+    assert_eq!(type_, Type::Literal(LiteralKind::String { bytes: 2 }));
+
+    // Line continuations (`\<newline>`) decode to nothing.
+    let (type_, _) = type_of_value_expression("\"a\\\nb\"");
+    assert_eq!(type_, Type::Literal(LiteralKind::String { bytes: 2 }));
+
+    // Concatenated string literals: byte counts add up across pieces.
+    let (type_, _) = type_of_value_expression(r#""abc" "de""#);
+    assert_eq!(type_, Type::Literal(LiteralKind::String { bytes: 5 }));
+}
+
+#[test]
+fn test_unicode_string_literal_byte_count() {
+    // ASCII unicode-string literal: one byte per char.
+    let (type_, _) = type_of_value_expression(r#"unicode"abc""#);
+    assert_eq!(type_, Type::Literal(LiteralKind::String { bytes: 3 }));
+
+    // Multi-byte UTF-8 passes through with its full byte length:
+    // `€` is 3 bytes in UTF-8.
+    let (type_, _) = type_of_value_expression(r#"unicode"€""#);
+    assert_eq!(type_, Type::Literal(LiteralKind::String { bytes: 3 }));
+
+    // `\uNNNN` escapes decode to their UTF-8 byte length:
+    // `\u20AC` (€) → 3 bytes, `\u00A2` (¢) → 2 bytes, `\u0024` ($) → 1 byte.
+    let (type_, _) = type_of_value_expression(r#"unicode"\u20AC\u00A2\u0024""#);
+    assert_eq!(type_, Type::Literal(LiteralKind::String { bytes: 6 }));
+}
+
+#[test]
+fn test_hex_string_literal_byte_count() {
+    // Pairs of hex digits, no separators: one byte per pair.
+    let (type_, _) = type_of_value_expression(r#"hex"414243""#);
+    assert_eq!(type_, Type::Literal(LiteralKind::HexString { bytes: 3 }));
+
+    // Underscore separators don't contribute to the decoded length.
+    let (type_, _) = type_of_value_expression(r#"hex"41_42""#);
+    assert_eq!(type_, Type::Literal(LiteralKind::HexString { bytes: 2 }));
+
+    // Concatenated hex string literals: byte counts add up across pieces.
+    let (type_, _) = type_of_value_expression(r#"hex"4142" hex"43""#);
+    assert_eq!(type_, Type::Literal(LiteralKind::HexString { bytes: 3 }));
 }
