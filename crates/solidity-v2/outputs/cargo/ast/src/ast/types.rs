@@ -3,10 +3,10 @@ use std::rc::Rc;
 use paste::paste;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::context::SemanticContext;
-pub use slang_solidity_v2_semantic::types::LiteralKind;
 use slang_solidity_v2_semantic::types::{
     self, DataLocation, FunctionMutability, FunctionVisibility, TypeId,
 };
+pub use slang_solidity_v2_semantic::types::{LiteralKind, Number};
 
 use super::Definition;
 

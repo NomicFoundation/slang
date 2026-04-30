@@ -1,8 +1,9 @@
 use num_bigint::BigInt;
 use num_rational::BigRational;
+use slang_solidity_v2_semantic::types::Number;
 
 use super::super::DecimalNumberExpressionStruct;
-use super::common::{integer_value_of_node, rational_value_of_node};
+use super::common::{integer_value_of_node, number_value_of_node, rational_value_of_node};
 
 impl DecimalNumberExpressionStruct {
     /// Returns the integer value of this literal, or `None` for rationals
@@ -16,5 +17,11 @@ impl DecimalNumberExpressionStruct {
     /// denominator one.
     pub fn rational_value(&self) -> Option<BigRational> {
         rational_value_of_node(&self.semantic, self.ir_node.id())
+    }
+
+    /// Returns the literal number carried by this node's type, preserving the
+    /// integer-vs-rational distinction.
+    pub fn number_value(&self) -> Option<Number> {
+        number_value_of_node(&self.semantic, self.ir_node.id())
     }
 }
