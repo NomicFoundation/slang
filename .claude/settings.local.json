@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:docs.rs)",
+      "WebSearch",
+      "WebFetch(domain:iai-callgrind.github.io)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:codspeed.io)"
+    ]
+  }
+}
