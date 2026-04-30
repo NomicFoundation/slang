@@ -44,8 +44,7 @@ pub enum Type {
     FixedSizeArray {
         element_type: TypeId,
         location: DataLocation,
-        // TODO: this probably should be a u256, although in practice usize or
-        // even u32 should suffice
+        // TODO: this should be u256, although in practice usize should suffice
         size: usize,
     },
     Function(FunctionType),
