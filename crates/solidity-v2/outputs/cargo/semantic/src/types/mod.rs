@@ -1,3 +1,4 @@
+use literals::numbers;
 use num_bigint::BigInt;
 use num_rational::BigRational;
 use slang_solidity_v2_common::nodes::NodeId;
@@ -277,6 +278,33 @@ impl Type {
             | Type::Struct { definition_id, .. }
             | Type::UserDefinedValue { definition_id } => Some(*definition_id),
             _ => None,
+        }
+    }
+
+    /// Returns a new non-literal `Type` this can flow into. For use when
+    /// computing the type of literal arrays or conditional branches.
+    pub(crate) fn reified(&self) -> Option<Self> {
+        match self {
+            Type::Literal(LiteralKind::Integer(value) | LiteralKind::HexInteger { value, .. }) => {
+                numbers::smallest_integer_type_to_fit(value)
+            }
+            Type::Literal(LiteralKind::Rational(_)) => {
+                // TODO: not supported yet, but narrow the rational type to the
+                // smallest fixed/ufixed available (eg. 1.2 -> ufixed8x1).
+                None
+            }
+            Type::Literal(LiteralKind::HexString { .. } | LiteralKind::String { .. }) => {
+                Some(Type::String {
+                    location: DataLocation::Memory,
+                })
+            }
+            Type::Literal(LiteralKind::Address) => Some(Type::Address { payable: false }),
+
+            // Some values cannot be elements of arrays
+            Type::Mapping { .. } | Type::Tuple { .. } | Type::Void => None,
+
+            // Return self for all other cases
+            _ => Some(self.clone()),
         }
     }
 }

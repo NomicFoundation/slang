@@ -1,57 +1,13 @@
 use std::collections::HashMap;
 
 use indexmap::IndexSet;
-use num_bigint::BigInt;
-use num_traits::{Signed, Zero};
+use num_traits::Zero;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
+use super::literals::numbers;
 use super::{DataLocation, FunctionType, LiteralKind, Type, TypeId};
 use crate::types::ImplicitlyConvertible;
-
-/// Number of bits required to hold `value` as a Solidity integer of the given
-/// signedness:
-/// - unsigned: exactly `value.bits()` (with at least 1, so zero still has a
-///   positive width).
-/// - signed positive: `value.bits() + 1` (one extra bit for the sign).
-/// - signed negative: `(-value - 1).bits() + 1` (two's-complement width).
-fn integer_bits_required(value: &BigInt, signed: bool) -> u32 {
-    if !signed {
-        u32::try_from(value.bits()).unwrap().max(1)
-    } else if value.is_negative() {
-        let magnitude_minus_one = -value - 1u32;
-        u32::try_from(magnitude_minus_one.bits()).unwrap() + 1
-    } else {
-        u32::try_from(value.bits()).unwrap() + 1
-    }
-}
-
-/// Returns true if `value` fits in the integer type described by `signed` and
-/// `bits`. Range is `[-2^(bits-1), 2^(bits-1) - 1]` for signed and
-/// `[0, 2^bits - 1]` for unsigned.
-fn integer_literal_fits(value: &BigInt, signed: bool, bits: u32) -> bool {
-    if !signed && value.is_negative() {
-        return false;
-    }
-    integer_bits_required(value, signed) <= bits
-}
-
-fn smallest_integer_type_to_fit(values: &[&BigInt]) -> Option<Type> {
-    if values.is_empty() {
-        return None;
-    }
-    let signed = values.iter().all(|value| value.is_negative());
-    let bits = values.iter().fold(0u32, |acc, value| {
-        acc.max(integer_bits_required(value, signed))
-    });
-
-    if bits > 256 {
-        // TODO(validation): the integers don't fit in the EVM
-        return None;
-    }
-    let bits = bits.next_multiple_of(8).max(8);
-    Some(Type::Integer { signed, bits })
-}
 
 /// The `TypeRegistry` stores an index of registered types, both elementary
 /// types and user defined types. Each type is given a `TypeId` for efficient
@@ -215,7 +171,7 @@ impl TypeRegistry {
             (
                 Type::Literal(LiteralKind::Integer(value) | LiteralKind::HexInteger { value, .. }),
                 Type::Integer { signed, bits },
-            ) => integer_literal_fits(value, *signed, *bits),
+            ) => numbers::integer_literal_fits(value, *signed, *bits),
 
             // Non-integer rational literals never implicitly convert to an
             // integer type — if a rational reduced to an integer it would have
@@ -571,33 +527,30 @@ impl TypeRegistry {
         self.register_type(type_with_location)
     }
 
-    /// Returns the smallest `Type::Integer { signed, bits }` that holds both
-    /// `a` and `b` (with `bits` rounded up to a multiple of 8, in the range
-    /// 8..=256). Used to unify two distinct integer literal values when one
-    /// is not implicitly convertible to the other (e.g. in `cond ? 0 : 1`).
-    pub fn common_integer_literal_type(&mut self, a: &BigInt, b: &BigInt) -> Option<TypeId> {
-        smallest_integer_type_to_fit(&[a, b]).map(|type_| self.register_type(type_))
-    }
-
-    // Return a type that can be stored in the EVM. In short, convert literal
-    // types into the appropriate "real" type
-    pub fn reified_type(&mut self, type_id: TypeId) -> Option<TypeId> {
-        let Type::Literal(kind) = self.get_type_by_id(type_id) else {
-            return Some(type_id);
-        };
-        match kind {
-            LiteralKind::Integer(value) | LiteralKind::HexInteger { value, .. } => {
-                smallest_integer_type_to_fit(&[value]).map(|type_| self.register_type(type_))
-            }
-            LiteralKind::Rational(_) => {
-                // TODO: narrow the rational type to the smallest fixed/ufixed
-                // available (eg. 1.2 -> ufixed8x1). For now, default to uint256
-                // to preserve current behaviour.
-                Some(self.uint256())
-            }
-            LiteralKind::HexString { .. } | LiteralKind::String { .. } => Some(self.string()),
-            LiteralKind::Address => Some(self.address()),
+    /// Return a type that can be stored in the EVM and can hold values of all
+    /// the given types. The first element dictates the type class. Returns
+    /// `None` if the types cannot be reified or they are not compatible. This
+    /// is used to unify types of literal arrays and conditional branches.
+    pub(crate) fn reified_common_type(&mut self, type_ids: &[TypeId]) -> Option<TypeId> {
+        if type_ids.is_empty() {
+            return None;
         }
+        let initial_type = self.get_type_by_id(type_ids[0]);
+        let mut element_type = initial_type.reified()?;
+
+        for item_type_id in &type_ids[1..] {
+            let item_type = self.get_type_by_id(*item_type_id).reified()?;
+            if self.internal_implicitly_convertible_to(&item_type, &element_type) {
+                // ok, `element_type` can already hold `item_type`
+            } else if self.internal_implicitly_convertible_to(&element_type, &item_type) {
+                // `item_type` is "bigger"
+                element_type = item_type;
+            } else {
+                // TODO(validation): types are not compatible
+                return None;
+            }
+        }
+        Some(self.register_type(element_type))
     }
 
     // Returns true if a function type overrides another

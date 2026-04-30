@@ -7,7 +7,7 @@ use num_traits::cast::ToPrimitive;
 use num_traits::{Num, One, Signed, Zero};
 use slang_solidity_v2_ir::ir;
 
-use crate::types::LiteralKind;
+use crate::types::{LiteralKind, Type};
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Number {
@@ -241,4 +241,43 @@ fn number_unit_multiplier(unit: ir::NumberUnit) -> BigInt {
         ir::NumberUnit::DaysKeyword => BigInt::from(60u32 * 60 * 24),
         ir::NumberUnit::WeeksKeyword => BigInt::from(60u32 * 60 * 24 * 7),
     }
+}
+
+/// Number of bits required to hold `value` as a Solidity integer of the given
+/// signedness:
+/// - unsigned: exactly `value.bits()` (with at least 1, so zero still has a
+///   positive width).
+/// - signed positive: `value.bits() + 1` (one extra bit for the sign).
+/// - signed negative: `(-value - 1).bits() + 1` (two's-complement width).
+fn integer_bits_required(value: &BigInt, signed: bool) -> u32 {
+    if !signed {
+        u32::try_from(value.bits()).unwrap().max(1)
+    } else if value.is_negative() {
+        let magnitude_minus_one = -value - 1u32;
+        u32::try_from(magnitude_minus_one.bits()).unwrap() + 1
+    } else {
+        u32::try_from(value.bits()).unwrap() + 1
+    }
+}
+
+/// Returns true if `value` fits in the integer type described by `signed` and
+/// `bits`. Range is `[-2^(bits-1), 2^(bits-1) - 1]` for signed and
+/// `[0, 2^bits - 1]` for unsigned.
+pub(crate) fn integer_literal_fits(value: &BigInt, signed: bool, bits: u32) -> bool {
+    if !signed && value.is_negative() {
+        return false;
+    }
+    integer_bits_required(value, signed) <= bits
+}
+
+pub(crate) fn smallest_integer_type_to_fit(value: &BigInt) -> Option<Type> {
+    let signed = value.is_negative();
+    let bits = integer_bits_required(value, signed);
+
+    if bits > 256 {
+        // TODO(validation): the integers don't fit in the EVM
+        return None;
+    }
+    let bits = bits.next_multiple_of(8).max(8);
+    Some(Type::Integer { signed, bits })
 }

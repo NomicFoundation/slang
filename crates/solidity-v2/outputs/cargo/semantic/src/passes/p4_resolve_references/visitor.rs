@@ -167,9 +167,9 @@ impl Visitor for Pass<'_> {
         // TODO(validation): both true_expression and false_expression should
         // have the compatible types
         let type_id = match (true_type_id, false_type_id) {
-            (Some(true_type_id), Some(false_type_id)) => {
-                self.common_type_for_conditional_branches(true_type_id, false_type_id)
-            }
+            (Some(true_type_id), Some(false_type_id)) => self
+                .types
+                .reified_common_type(&[true_type_id, false_type_id]),
             _ => None,
         };
         self.binder.set_node_type(node.id(), type_id);
@@ -289,7 +289,7 @@ impl Visitor for Pass<'_> {
         // depending on the sign of left (refactor with shift operations).
         let mut type_id = self.typing_of_expression(&node.left_operand).as_type_id();
         if type_id.is_some_and(|type_id| self.types.get_type_by_id(type_id).is_literal_number()) {
-            // if the base is a rational but the exponent is not, then the result is uint256
+            // if the base is a literal but the exponent is not, then the result is uint256
             if self
                 .typing_of_expression(&node.right_operand)
                 .as_type_id()
@@ -458,28 +458,13 @@ impl Visitor for Pass<'_> {
 
     fn leave_array_expression(&mut self, node: &ir::ArrayExpression) {
         let typing = if node.items.is_empty() {
+            // TODO(validation): an empty array literal cannot be typed
             Typing::Unresolved
-        } else if let Some(element_type) = self
-            .typing_of_expression(node.items.first().unwrap())
-            .as_type_id()
-        {
-            // TODO(validation): all expressions in the array should have the
-            // same (or implicitly convertible) types
-            // TODO: the type class is determined by the first element, but then
-            // its size can grow to accommodate the other elements (eg. `[1,
-            // 1024]` should type to `uint16[2]`, but `[1, 1.1]` is invalid)
-            if let Some(element_type) = self.types.reified_type(element_type) {
-                let type_id = self.types.register_type(Type::FixedSizeArray {
-                    element_type,
-                    size: node.items.len(),
-                    location: DataLocation::Memory,
-                });
-                Typing::Resolved(type_id)
-            } else {
-                // Literals cannot be reified (eg. integer exceeds 256 bits)
-                Typing::Unresolved
-            }
+        } else if let Some(type_id) = self.type_of_array_expression(node) {
+            Typing::Resolved(type_id)
         } else {
+            // TODO(validation): all expressions in the array should have a type
+            // and fit in the type dictated by the first element
             Typing::Unresolved
         };
         self.binder.set_node_typing(node.id(), typing);

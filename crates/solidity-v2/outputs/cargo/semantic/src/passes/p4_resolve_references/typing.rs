@@ -205,48 +205,26 @@ impl Pass<'_> {
         }
     }
 
-    /// Returns a type that both branches can flow into, used by the
-    /// conditional expression typing. Falls back to lifting two distinct
-    /// integer literal arms to the smallest holding integer type — matching
-    /// solc's "common type" rule for two `RationalNumberType` operands.
-    pub(super) fn common_type_for_conditional_branches(
+    pub(super) fn type_of_array_expression(
         &mut self,
-        true_type_id: TypeId,
-        false_type_id: TypeId,
+        array: &ir::ArrayExpression,
     ) -> Option<TypeId> {
-        if self
-            .types
-            .implicitly_convertible_to(false_type_id, true_type_id)
-        {
-            return Some(true_type_id);
+        let mut item_type_ids: Vec<TypeId> = Vec::with_capacity(array.items.len());
+        for item in &array.items {
+            item_type_ids.push(self.typing_of_expression(item).as_type_id()?);
         }
-        if self
-            .types
-            .implicitly_convertible_to(true_type_id, false_type_id)
-        {
-            return Some(false_type_id);
-        }
-        // TODO: handle rational numbers with conversion to fixed/ufixed
-        let true_value = match self.types.get_type_by_id(true_type_id) {
-            Type::Literal(LiteralKind::Integer(value) | LiteralKind::HexInteger { value, .. }) => {
-                Some(value.clone())
-            }
-            _ => None,
-        }?;
-        let false_value = match self.types.get_type_by_id(false_type_id) {
-            Type::Literal(LiteralKind::Integer(value) | LiteralKind::HexInteger { value, .. }) => {
-                Some(value.clone())
-            }
-            _ => None,
-        }?;
-        self.types
-            .common_integer_literal_type(&true_value, &false_value)
+        let element_type = self.types.reified_common_type(&item_type_ids)?;
+        Some(self.types.register_type(Type::FixedSizeArray {
+            element_type,
+            size: array.items.len(),
+            location: DataLocation::Memory,
+        }))
     }
 
     /// Returns the compile-time number value of an expression, when its type
     /// is a value-bearing literal (integer or rational). Used by the constant
     /// folding logic in the binary/prefix expression visitors.
-    pub(super) fn number_value_of_expression(&self, expression: &ir::Expression) -> Option<Number> {
+    fn number_value_of_expression(&self, expression: &ir::Expression) -> Option<Number> {
         let type_id = self.typing_of_expression(expression).as_type_id()?;
         match self.types.get_type_by_id(type_id) {
             Type::Literal(kind) => Number::from_literal_kind(kind),
