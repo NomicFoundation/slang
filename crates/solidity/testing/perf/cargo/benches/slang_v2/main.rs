@@ -3,7 +3,6 @@
 use std::hint::black_box;
 
 use gungraun::{library_benchmark, library_benchmark_group, main};
-use paste::paste;
 use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::context::SemanticContext;
@@ -29,75 +28,81 @@ mod __dependencies_used_in_lib__ {
     use tree_sitter_solidity as _;
 }
 
-macro_rules! slang_v2_define_tests {
-    ($prj:ident) => {
-        /*
-         * WARNING:
-         * The reported `gungraun` benchmark ID is constructed from: `{file_name}::{group_name}::{function_name}`
-         * Changing any of the above would change the resulting benchmark ID, and disconnect it from previous results.
-         *
-         * __SLANG_V2_INFRA_BENCHMARKS_LIST__ (keep in sync)
-         */
+/*
+ * WARNING:
+ * The reported `gungraun` benchmark ID is constructed from
+ * `{file_name}::{group_name}::{function_name} <project>:"<project>"`.
+ * Changing any of the above would change the resulting benchmark ID, and
+ * disconnect it from previous results.
+ *
+ * __SLANG_V2_INFRA_BENCHMARKS_LIST__ (keep in sync)
+ */
 
-        paste! {
-            #[library_benchmark(setup = tests::slang_v2::parser::setup)]
-            #[bench::test(stringify!($prj))]
-            pub fn [< $prj _parser >](project: &SolidityProject) -> Vec<(String, SourceUnit)> {
-                black_box(tests::slang_v2::parser::run(black_box(project)))
-            }
-
-            #[library_benchmark(setup = tests::slang_v2::ir_builder::setup)]
-            #[bench::test(stringify!($prj))]
-            // Note: the input CST source units are consumed (dropped) during IR building.
-            // This is the intended use case: the CST is replaced by the IR representation.
-            pub fn [< $prj _ir_builder >]((project, source_units): (&'static SolidityProject, Vec<(String, SourceUnit)>)) -> Vec<ir::SourceUnit> {
-                black_box(tests::slang_v2::ir_builder::run(black_box(project), black_box(source_units)))
-            }
-
-            #[library_benchmark(setup = tests::slang_v2::semantic::setup)]
-            #[bench::test(stringify!($prj))]
-            pub fn [< $prj _semantic >](
-                (project, input_files): (&'static SolidityProject, Vec<tests::slang_v2::semantic::File>),
-            ) -> SemanticContext {
-                black_box(tests::slang_v2::semantic::run(black_box(project), black_box(input_files)))
-            }
-
-            library_benchmark_group!(
-                name = [< $prj _full_v2 >];
-
-                // __SLANG_V2_INFRA_BENCHMARKS_LIST__ (keep in sync)
-                benchmarks =
-                [< $prj _parser >],
-                [< $prj _ir_builder >],
-                [< $prj _semantic >],
-            );
-        }
+// Single source for the project list used by every stage benchmark below.
+// Only 0.8.x-compatible projects belong here.
+// Edit this macro (and only this macro) to add or remove a project.
+// __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
+macro_rules! projects {
+    (
+        #[$lb:meta]
+        $($rest:tt)*
+    ) => {
+        #[$lb]
+        #[bench::uniswap("uniswap")]
+        #[bench::multicall3("multicall3")]
+        #[bench::create_x("create_x")]
+        #[bench::ui_pool_data_provider_v3("ui_pool_data_provider_v3")]
+        #[bench::cooldogs("cooldogs")]
+        #[bench::one_step_leverage_f("one_step_leverage_f")]
+        #[bench::pointer_libraries("pointer_libraries")]
+        #[bench::merkle_proof("merkle_proof")]
+        $($rest)*
     };
 }
 
-// Only 0.8.x-compatible projects can be used here.
-// __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
-slang_v2_define_tests!(uniswap);
-slang_v2_define_tests!(multicall3);
-slang_v2_define_tests!(create_x);
-slang_v2_define_tests!(ui_pool_data_provider_v3);
-slang_v2_define_tests!(cooldogs);
-slang_v2_define_tests!(one_step_leverage_f);
-slang_v2_define_tests!(pointer_libraries);
-slang_v2_define_tests!(merkle_proof);
+projects! {
+    #[library_benchmark(setup = tests::slang_v2::parser::setup)]
+    fn parser(project: &SolidityProject) -> Vec<(String, SourceUnit)> {
+        black_box(tests::slang_v2::parser::run(black_box(project)))
+    }
+}
+
+// Note: the input CST source units are consumed (dropped) during IR building.
+// This is the intended use case: the CST is replaced by the IR representation.
+projects! {
+    #[library_benchmark(setup = tests::slang_v2::ir_builder::setup)]
+    fn ir_builder(
+        (project, source_units): (&'static SolidityProject, Vec<(String, SourceUnit)>),
+    ) -> Vec<ir::SourceUnit> {
+        black_box(tests::slang_v2::ir_builder::run(
+            black_box(project),
+            black_box(source_units),
+        ))
+    }
+}
+
+projects! {
+    #[library_benchmark(setup = tests::slang_v2::semantic::setup)]
+    fn semantic(
+        (project, input_files): (
+            &'static SolidityProject,
+            Vec<tests::slang_v2::semantic::File>,
+        ),
+    ) -> SemanticContext {
+        black_box(tests::slang_v2::semantic::run(
+            black_box(project),
+            black_box(input_files),
+        ))
+    }
+}
+
+library_benchmark_group!(
+    name = pipeline;
+    // __SLANG_V2_INFRA_BENCHMARKS_LIST__ (keep in sync)
+    benchmarks = parser, ir_builder, semantic,
+);
 
 main!(
     config = default_benchmark_config();
-
-    // NOTE: the trailing comma is required: without it, it won't test the last one
-    // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
-    library_benchmark_groups =
-        uniswap_full_v2,
-        multicall3_full_v2,
-        create_x_full_v2,
-        ui_pool_data_provider_v3_full_v2,
-        cooldogs_full_v2,
-        one_step_leverage_f_full_v2,
-        pointer_libraries_full_v2,
-        merkle_proof_full_v2,
+    library_benchmark_groups = pipeline,
 );

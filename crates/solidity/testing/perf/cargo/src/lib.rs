@@ -7,7 +7,6 @@ pub mod tests;
 mod __dependencies_used_in_benches__ {
     use gungraun as _;
     use infra_utils as _;
-    use paste as _;
 }
 
 #[cfg(test)]

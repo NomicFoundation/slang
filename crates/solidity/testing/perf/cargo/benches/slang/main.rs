@@ -4,7 +4,6 @@ use std::hint::black_box;
 use std::rc::Rc;
 
 use gungraun::{library_benchmark, library_benchmark_group, main};
-use paste::paste;
 use slang_solidity::compilation::CompilationUnit;
 use solidity_testing_perf_cargo::config::default_benchmark_config;
 use solidity_testing_perf_cargo::dataset::SolidityProject;
@@ -31,93 +30,102 @@ mod __dependencies_used_in_lib__ {
     use tree_sitter_solidity as _;
 }
 
-macro_rules! slang_define_full_tests {
-    ($prj:ident) => {
-        /*
-         * WARNING:
-         * The reported `gungraun` benchmark ID is constructed from: `{file_name}::{group_name}::{function_name}`
-         * Changing any of the above would change the resulting benchmark ID, and disconnect it from previous results.
-         *
-         * __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
-         */
+/*
+ * WARNING:
+ * The reported `gungraun` benchmark ID is constructed from
+ * `{file_name}::{group_name}::{function_name} <project>:"<project>"`.
+ * Changing any of the above would change the resulting benchmark ID, and
+ * disconnect it from previous results.
+ *
+ * __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
+ */
 
-        paste! {
-            #[library_benchmark(setup = tests::slang::parser::setup)]
-            #[bench::test(stringify!($prj))]
-            pub fn [< $prj _parser >](project: &SolidityProject) -> Rc<CompilationUnit> {
-                black_box(tests::slang::parser::run(black_box(project)))
-            }
-
-            #[library_benchmark(setup = tests::slang::cursor::setup)]
-            #[bench::test(stringify!($prj))]
-            pub fn [< $prj _cursor >](unit: Rc<CompilationUnit>) -> Rc<CompilationUnit> {
-                black_box(tests::slang::cursor::run(black_box(unit)))
-            }
-
-            #[library_benchmark(setup = tests::slang::query::setup)]
-            #[bench::test(stringify!($prj))]
-            pub fn [< $prj _query >](unit: Rc<CompilationUnit>) -> Rc<CompilationUnit> {
-                black_box(tests::slang::query::run(black_box(unit)))
-            }
-
-            #[library_benchmark(setup = tests::slang::bindings_build::setup)]
-            #[bench::test(stringify!($prj))]
-            pub fn [< $prj _bindings_build >](unit: Rc<CompilationUnit>) -> BuiltBindingGraph {
-                black_box(tests::slang::bindings_build::run(black_box(unit)))
-            }
-
-            #[library_benchmark(setup = tests::slang::bindings_resolve::setup)]
-            #[bench::test(stringify!($prj))]
-            pub fn [< $prj _bindings_resolve >](unit: BuiltBindingGraph) -> BuiltBindingGraph {
-                black_box(tests::slang::bindings_resolve::run(black_box(unit)))
-            }
-
-            // We add a cleanup phase to measure the destruction of the AST and the binding structures
-            #[library_benchmark(setup = tests::slang::bindings_resolve::setup)]
-            #[bench::test(stringify!($prj))]
-            pub fn [< $prj _cleanup >](unit: BuiltBindingGraph) {
-                black_box(unit);
-            }
-
-            #[library_benchmark(setup = tests::slang::binder_v2_run::setup)]
-            #[bench::test(stringify!($prj))]
-            fn [< $prj _binder_v2_run >](unit: Rc<CompilationUnit>) -> BuiltSemanticAnalysis {
-                black_box(tests::slang::binder_v2_run::run(black_box(unit)))
-            }
-
-            #[library_benchmark(setup = tests::slang::binder_v2_cleanup::setup)]
-            #[bench::test(stringify!($prj))]
-            fn [< $prj _binder_v2_cleanup >](unit: BuiltSemanticAnalysis) {
-                black_box(unit);
-            }
-
-            library_benchmark_group!(
-                name = [< $prj _full >];
-
-                // __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
-                benchmarks =
-                    [< $prj _parser >],
-                    [< $prj _cursor >],
-                    [< $prj _query >],
-                    [< $prj _bindings_build >],
-                    [< $prj _bindings_resolve >],
-                    [< $prj _cleanup >],
-                    [< $prj _binder_v2_run >],
-                    [< $prj _binder_v2_cleanup >],
-            );
-        }
+// Single source for the project list used by every stage benchmark below.
+// Edit this macro (and only this macro) to add or remove a project.
+// __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
+macro_rules! projects {
+    (
+        #[$lb:meta]
+        $($rest:tt)*
+    ) => {
+        #[$lb]
+        #[bench::weighted_pool("weighted_pool")]
+        #[bench::merkle_proof("merkle_proof")]
+        $($rest)*
     };
 }
 
-// We test a few projects in full for slang-only benchmarks
-// __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
-slang_define_full_tests!(weighted_pool);
-slang_define_full_tests!(merkle_proof);
+projects! {
+    #[library_benchmark(setup = tests::slang::parser::setup)]
+    fn parser(project: &SolidityProject) -> Rc<CompilationUnit> {
+        black_box(tests::slang::parser::run(black_box(project)))
+    }
+}
+
+projects! {
+    #[library_benchmark(setup = tests::slang::cursor::setup)]
+    fn cursor(unit: Rc<CompilationUnit>) -> Rc<CompilationUnit> {
+        black_box(tests::slang::cursor::run(black_box(unit)))
+    }
+}
+
+projects! {
+    #[library_benchmark(setup = tests::slang::query::setup)]
+    fn query(unit: Rc<CompilationUnit>) -> Rc<CompilationUnit> {
+        black_box(tests::slang::query::run(black_box(unit)))
+    }
+}
+
+projects! {
+    #[library_benchmark(setup = tests::slang::bindings_build::setup)]
+    fn bindings_build(unit: Rc<CompilationUnit>) -> BuiltBindingGraph {
+        black_box(tests::slang::bindings_build::run(black_box(unit)))
+    }
+}
+
+projects! {
+    #[library_benchmark(setup = tests::slang::bindings_resolve::setup)]
+    fn bindings_resolve(unit: BuiltBindingGraph) -> BuiltBindingGraph {
+        black_box(tests::slang::bindings_resolve::run(black_box(unit)))
+    }
+}
+
+projects! {
+    #[library_benchmark(setup = tests::slang::bindings_resolve::setup)]
+    fn cleanup(unit: BuiltBindingGraph) {
+        black_box(unit);
+    }
+}
+
+projects! {
+    #[library_benchmark(setup = tests::slang::binder_v2_run::setup)]
+    fn binder_v2_run(unit: Rc<CompilationUnit>) -> BuiltSemanticAnalysis {
+        black_box(tests::slang::binder_v2_run::run(black_box(unit)))
+    }
+}
+
+projects! {
+    #[library_benchmark(setup = tests::slang::binder_v2_cleanup::setup)]
+    fn binder_v2_cleanup(unit: BuiltSemanticAnalysis) {
+        black_box(unit);
+    }
+}
+
+library_benchmark_group!(
+    name = pipeline;
+    // __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
+    benchmarks =
+        parser,
+        cursor,
+        query,
+        bindings_build,
+        bindings_resolve,
+        cleanup,
+        binder_v2_run,
+        binder_v2_cleanup,
+);
 
 main!(
     config = default_benchmark_config();
-
-    // NOTE: the trailing comma is required: without it, it won't test the last one
-    // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
-    library_benchmark_groups = weighted_pool_full,merkle_proof_full,
+    library_benchmark_groups = pipeline,
 );

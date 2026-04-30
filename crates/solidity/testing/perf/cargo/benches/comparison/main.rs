@@ -3,8 +3,10 @@
 use std::hint::black_box;
 use std::rc::Rc;
 
+// Renamed to avoid shadowing by gungraun's `pub mod tree_sitter` that wraps
+// the `tree_sitter` benchmark fn below.
+use ::tree_sitter::Tree as TreeSitterTree;
 use gungraun::{library_benchmark, library_benchmark_group, main};
-use paste::paste;
 use slang_solidity::compilation::CompilationUnit;
 use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit;
 use solidity_testing_perf_cargo::config::default_benchmark_config;
@@ -30,146 +32,82 @@ mod __dependencies_used_in_lib__ {
     use tree_sitter_solidity as _;
 }
 
-macro_rules! slang_test {
-    ($prj:ident) => {
-        paste! {
-            #[library_benchmark(setup = tests::setup::setup)]
-            #[bench::test(stringify!($prj))]
-            pub fn [<slang_ $prj>](project: &SolidityProject) -> Rc<CompilationUnit> {
-                black_box(tests::slang::parser::run(black_box(project)))
-            }
-        }
-    };
-}
-
-macro_rules! solar_test {
-    ($prj:ident) => {
-        paste! {
-            #[library_benchmark(setup = tests::setup::setup)]
-            #[bench::test(stringify!($prj))]
-            pub fn [<solar_ $prj>](project: &SolidityProject) {
-                black_box(tests::solar::parser::run(black_box(project)));
-            }
-        }
-    };
-}
-
-macro_rules! tree_sitter_test {
-    ($prj:ident) => {
-        paste! {
-            #[library_benchmark(setup = tests::setup::setup)]
-            #[bench::test(stringify!($prj))]
-            pub fn [<tree_sitter_ $prj>](project: &SolidityProject) -> Vec<tree_sitter::Tree> {
-                black_box(tests::tree_sitter::parser::run(black_box(project)))
-            }
-        }
-    };
-}
-
-macro_rules! slang_v2_test {
-    ($prj:ident) => {
-        paste! {
-            #[library_benchmark(setup = tests::setup::setup)]
-            #[bench::test(stringify!($prj))]
-            pub fn [<slang_v2_ $prj>](project: &SolidityProject) -> Vec<(String, SourceUnit)> {
-                black_box(tests::slang_v2::parser::run(black_box(project)))
-            }
-        }
-    };
-}
-
-// Some projects can't be parsed by tree-sitter, so we test them only in slang and solar.
-// This macro abstracts that logic.
-macro_rules! slang_and_solar_tests {
-    ($prj:ident) => {
-        slang_test!($prj);
-        slang_v2_test!($prj);
-        solar_test!($prj);
-        paste! {
-            library_benchmark_group!(
-              name = [< $prj _group >];
-              benchmarks = [< slang_ $prj >],[< slang_v2_ $prj >],[< solar_ $prj >],
-          );
-        }
-    };
-}
-
 /*
  * WARNING:
- * The reported `gungraun` benchmark ID is constructed from: `{file_name}::{group_name}::{function_name}`
- * Changing any of the above would change the resulting benchmark ID, and disconnect it from previous results.
+ * The reported `gungraun` benchmark ID is constructed from
+ * `{file_name}::{group_name}::{function_name} <project>:"<project>"`.
+ * Changing any of the above would change the resulting benchmark ID, and
+ * disconnect it from previous results.
+ *
+ * Each parser fn lists only the projects it supports via `#[bench::PROJECT]`.
+ * The `slang` fn enumerates the full project list (the master copy of
+ * __SLANG_INFRA_PROJECT_LIST__); other parsers omit projects they cannot parse.
  */
-macro_rules! comparison_tests {
-    (mooniswap) => {
-        // Incompatible with solar or slang v2
-        slang_test!(mooniswap);
-        tree_sitter_test!(mooniswap);
-        library_benchmark_group!(
-            name = mooniswap_group;
-            benchmarks = slang_mooniswap,tree_sitter_mooniswap,
-        );
-    };
-    (weighted_pool) => {
-        // Incompatible with slang v2 (Solidity 0.7.1)
-        slang_test!(weighted_pool);
-        solar_test!(weighted_pool);
-        tree_sitter_test!(weighted_pool);
-        paste! {
-          library_benchmark_group!(
-              name = weighted_pool_group;
-              benchmarks = slang_weighted_pool,solar_weighted_pool,tree_sitter_weighted_pool,
-          );
-        }
-    };
-    (uniswap) => {
-        slang_and_solar_tests!(uniswap);
-    };
-    (create_x) => {
-        slang_and_solar_tests!(create_x);
-    };
-    (pointer_libraries) => {
-        slang_and_solar_tests!(pointer_libraries);
-    };
-    ($prj:ident) => {
-        slang_test!($prj);
-        slang_v2_test!($prj);
-        solar_test!($prj);
-        tree_sitter_test!($prj);
-        paste! {
-          library_benchmark_group!(
-              name = [< $prj _group >];
-              benchmarks = [< slang_ $prj >],[< slang_v2_ $prj >],[< solar_ $prj >],[< tree_sitter_ $prj >],
-          );
-        }
-    };
-}
 
 // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
-comparison_tests!(mooniswap);
-comparison_tests!(weighted_pool);
-comparison_tests!(uniswap);
-comparison_tests!(multicall3);
-comparison_tests!(create_x);
-comparison_tests!(ui_pool_data_provider_v3);
-comparison_tests!(cooldogs);
-comparison_tests!(one_step_leverage_f);
-comparison_tests!(pointer_libraries);
-comparison_tests!(merkle_proof);
+#[library_benchmark(setup = tests::setup::setup)]
+#[bench::mooniswap("mooniswap")]
+#[bench::weighted_pool("weighted_pool")]
+#[bench::uniswap("uniswap")]
+#[bench::multicall3("multicall3")]
+#[bench::create_x("create_x")]
+#[bench::ui_pool_data_provider_v3("ui_pool_data_provider_v3")]
+#[bench::cooldogs("cooldogs")]
+#[bench::one_step_leverage_f("one_step_leverage_f")]
+#[bench::pointer_libraries("pointer_libraries")]
+#[bench::merkle_proof("merkle_proof")]
+fn slang(project: &SolidityProject) -> Rc<CompilationUnit> {
+    black_box(tests::slang::parser::run(black_box(project)))
+}
+
+// slang_v2 cannot parse mooniswap or weighted_pool (Solidity 0.7.1).
+#[library_benchmark(setup = tests::setup::setup)]
+#[bench::uniswap("uniswap")]
+#[bench::multicall3("multicall3")]
+#[bench::create_x("create_x")]
+#[bench::ui_pool_data_provider_v3("ui_pool_data_provider_v3")]
+#[bench::cooldogs("cooldogs")]
+#[bench::one_step_leverage_f("one_step_leverage_f")]
+#[bench::pointer_libraries("pointer_libraries")]
+#[bench::merkle_proof("merkle_proof")]
+fn slang_v2(project: &SolidityProject) -> Vec<(String, SourceUnit)> {
+    black_box(tests::slang_v2::parser::run(black_box(project)))
+}
+
+// solar cannot parse mooniswap.
+#[library_benchmark(setup = tests::setup::setup)]
+#[bench::weighted_pool("weighted_pool")]
+#[bench::uniswap("uniswap")]
+#[bench::multicall3("multicall3")]
+#[bench::create_x("create_x")]
+#[bench::ui_pool_data_provider_v3("ui_pool_data_provider_v3")]
+#[bench::cooldogs("cooldogs")]
+#[bench::one_step_leverage_f("one_step_leverage_f")]
+#[bench::pointer_libraries("pointer_libraries")]
+#[bench::merkle_proof("merkle_proof")]
+fn solar(project: &SolidityProject) {
+    black_box(tests::solar::parser::run(black_box(project)));
+}
+
+// tree_sitter cannot parse uniswap, create_x, or pointer_libraries.
+#[library_benchmark(setup = tests::setup::setup)]
+#[bench::mooniswap("mooniswap")]
+#[bench::weighted_pool("weighted_pool")]
+#[bench::multicall3("multicall3")]
+#[bench::ui_pool_data_provider_v3("ui_pool_data_provider_v3")]
+#[bench::cooldogs("cooldogs")]
+#[bench::one_step_leverage_f("one_step_leverage_f")]
+#[bench::merkle_proof("merkle_proof")]
+fn tree_sitter(project: &SolidityProject) -> Vec<TreeSitterTree> {
+    black_box(tests::tree_sitter::parser::run(black_box(project)))
+}
+
+library_benchmark_group!(
+    name = parsers;
+    benchmarks = slang, slang_v2, solar, tree_sitter,
+);
 
 main!(
     config = default_benchmark_config();
-
-    // NOTE: the trailing comma is required: without it, it won't test the last one
-    // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
-    library_benchmark_groups =
-        mooniswap_group,
-        weighted_pool_group,
-        uniswap_group,
-        multicall3_group,
-        create_x_group,
-        ui_pool_data_provider_v3_group,
-        cooldogs_group,
-        one_step_leverage_f_group,
-        pointer_libraries_group,
-        merkle_proof_group,
+    library_benchmark_groups = parsers,
 );

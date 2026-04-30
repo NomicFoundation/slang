@@ -10,9 +10,27 @@ The cargo crate contains three different entry points, each serving its purpose:
 
 - [`benches/comparison`](./cargo/benches/comparison/main.rs): Runs the parsing process in different libraries for a number of [projects], and track the number of cycles/instructions and memory consumption with callgrind.
 - [`benches/slang`](./cargo/benches/slang/main.rs): Runs different processes, like parsing, binding, cursor, etc. for just a couple of [projects]. It also uses callgrind.
+- [`benches/slang_v2`](./cargo/benches/slang_v2/main.rs): Runs different processes, like parsing, ir_building, semantic, etc. for just a couple of [projects]. It also uses callgrind.
 - [`src/lib.rs`](./cargo/src/lib.rs): This library contains the code that is tested in the benches, and it adds smoke tests to ensure that the libraries being tested (including Slang) are working as expected.
 
 [projects]: #projects
+
+### Benchmark naming
+
+Each cargo benchmark identifier has the shape:
+
+```
+{file}::{group}::{function} <project>:(<arguments>)
+```
+
+- `{file}` is the bench binary: `slang`, `slang_v2`, or `comparison`.
+- `{group}` is `pipeline` for `slang` and `slang_v2`, or `parsers` for `comparison`.
+- `{function}` is the pipeline stage (`parser`, `cursor`, `query`, `bindings_build`, …) for `slang` / `slang_v2`, or the parser implementation (`slang`, `slang_v2`, `solar`, `tree_sitter`) for `comparison`.
+- `<project>` is one of the entries in [`projects.json`](./projects.json), attached as a `#[bench::<project>("<project>")]` attribute on the function. Functions only list the projects they actually support; in `comparison`, that's how per-parser exclusions (e.g., tree-sitter cannot parse `uniswap`) are expressed.
+
+For example, the name of the Slang V2, IR builder benchmark over the `merkle_proof` project would be `slang_v2::pipeline::ir_builder merkle_proof:(tests :: slang_v2 :: ir_builder :: setup("merkle_...`.
+
+**Note:** Since `bencher` uses the text output of `gungraun` names are truncated (as shown above).
 
 ## [`npm`](./npm/)
 
