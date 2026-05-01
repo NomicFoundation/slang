@@ -79,7 +79,9 @@ pub enum Type {
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum LiteralKind {
-    Integer(BigInt),
+    Integer {
+        value: BigInt,
+    },
     /// A hex-source integer literal. Carries the parsed value plus the
     /// source-text byte width (number of hex digits / 2, rounded up). The
     /// width is what determines convertability with `bytesN` and is preserved
@@ -89,7 +91,9 @@ pub enum LiteralKind {
         value: BigInt,
         bytes: u32,
     },
-    Rational(BigRational),
+    Rational {
+        value: BigRational,
+    },
     HexString {
         bytes: usize,
     },
@@ -261,7 +265,9 @@ impl Type {
         matches!(
             self,
             Type::Literal(
-                LiteralKind::Integer(_) | LiteralKind::HexInteger { .. } | LiteralKind::Rational(_)
+                LiteralKind::Integer { .. }
+                    | LiteralKind::HexInteger { .. }
+                    | LiteralKind::Rational { .. }
             )
         )
     }
@@ -293,10 +299,10 @@ impl Type {
     /// computing the type of literal arrays or conditional branches.
     pub(crate) fn mobile_type(&self) -> Option<Self> {
         match self {
-            Type::Literal(LiteralKind::Integer(value) | LiteralKind::HexInteger { value, .. }) => {
-                numbers::smallest_integer_type_to_fit(value)
-            }
-            Type::Literal(LiteralKind::Rational(_)) => {
+            Type::Literal(
+                LiteralKind::Integer { value } | LiteralKind::HexInteger { value, .. },
+            ) => numbers::smallest_integer_type_to_fit(value),
+            Type::Literal(LiteralKind::Rational { .. }) => {
                 // TODO: not supported yet, but narrow the rational type to the
                 // smallest fixed/ufixed available (eg. 1.2 -> ufixed8x1).
                 None

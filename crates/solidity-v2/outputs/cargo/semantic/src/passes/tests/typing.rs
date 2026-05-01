@@ -67,13 +67,17 @@ fn test_value_bearing_integer_literal_types() {
     let (type_, _) = type_of_value_expression("127");
     assert_eq!(
         type_,
-        Type::Literal(LiteralKind::Integer(BigInt::from(127)))
+        Type::Literal(LiteralKind::Integer {
+            value: BigInt::from(127)
+        })
     );
 
     let (type_, _) = type_of_value_expression("-128");
     assert_eq!(
         type_,
-        Type::Literal(LiteralKind::Integer(BigInt::from(-128)))
+        Type::Literal(LiteralKind::Integer {
+            value: BigInt::from(-128)
+        })
     );
 
     // Hex literals carry source byte width as `HexInteger`, distinct from
@@ -99,50 +103,78 @@ fn test_value_bearing_integer_literal_types() {
 
     // Folding a hex literal demotes it to a plain `Integer` (provenance lost).
     let (type_, _) = type_of_value_expression("0x10 + 0");
-    assert_eq!(type_, Type::Literal(LiteralKind::Integer(BigInt::from(16))));
+    assert_eq!(
+        type_,
+        Type::Literal(LiteralKind::Integer {
+            value: BigInt::from(16)
+        })
+    );
 }
 
 #[test]
 fn test_binary_arithmetic_folds_to_narrowed_literal() {
     // Addition.
     let (type_, _) = type_of_value_expression("1 + 1");
-    assert_eq!(type_, Type::Literal(LiteralKind::Integer(BigInt::from(2))));
+    assert_eq!(
+        type_,
+        Type::Literal(LiteralKind::Integer {
+            value: BigInt::from(2)
+        })
+    );
 
     // Multiplication.
     let (type_, _) = type_of_value_expression("3 * 4");
-    assert_eq!(type_, Type::Literal(LiteralKind::Integer(BigInt::from(12))));
+    assert_eq!(
+        type_,
+        Type::Literal(LiteralKind::Integer {
+            value: BigInt::from(12)
+        })
+    );
 
     // Power.
     let (type_, _) = type_of_value_expression("2 ** 10");
     assert_eq!(
         type_,
-        Type::Literal(LiteralKind::Integer(BigInt::from(1024)))
+        Type::Literal(LiteralKind::Integer {
+            value: BigInt::from(1024)
+        })
     );
 
     // Shift.
     let (type_, _) = type_of_value_expression("1 << 32");
     assert_eq!(
         type_,
-        Type::Literal(LiteralKind::Integer(BigInt::from(1u64 << 32)))
+        Type::Literal(LiteralKind::Integer {
+            value: BigInt::from(1u64 << 32)
+        })
     );
 
     // Reducible rational arithmetic normalises back to an integer.
     let (type_, _) = type_of_value_expression("1.5 * 2");
-    assert_eq!(type_, Type::Literal(LiteralKind::Integer(BigInt::from(3))));
+    assert_eq!(
+        type_,
+        Type::Literal(LiteralKind::Integer {
+            value: BigInt::from(3)
+        })
+    );
 
     // Non-reducing rational division stays rational.
     let (type_, _) = type_of_value_expression("5 / 2");
     assert_eq!(
         type_,
-        Type::Literal(LiteralKind::Rational(BigRational::new(
-            BigInt::from(5),
-            BigInt::from(2)
-        )))
+        Type::Literal(LiteralKind::Rational {
+            value: BigRational::new(BigInt::from(5), BigInt::from(2))
+        })
     );
 
     // Negation of a folded constant.
     let (type_, _) = type_of_value_expression("-(1 + 1)");
-    assert_eq!(type_, Type::Literal(LiteralKind::Integer(BigInt::from(-2))));
+    assert_eq!(
+        type_,
+        Type::Literal(LiteralKind::Integer {
+            value: BigInt::from(-2)
+        })
+    );
 }
 
 #[test]
@@ -156,21 +188,36 @@ fn test_implicit_conversion_uses_literal_value() {
     let uint8 = types.uint8();
     let uint256 = types.uint256();
 
-    let lit_127 = types.register_type(Type::Literal(LiteralKind::Integer(BigInt::from(127))));
-    let lit_128 = types.register_type(Type::Literal(LiteralKind::Integer(BigInt::from(128))));
-    let lit_neg_128 = types.register_type(Type::Literal(LiteralKind::Integer(BigInt::from(-128))));
-    let lit_neg_129 = types.register_type(Type::Literal(LiteralKind::Integer(BigInt::from(-129))));
-    let lit_neg_1 = types.register_type(Type::Literal(LiteralKind::Integer(BigInt::from(-1))));
-    let lit_0 = types.register_type(Type::Literal(LiteralKind::Integer(BigInt::from(0))));
-    let lit_255 = types.register_type(Type::Literal(LiteralKind::Integer(BigInt::from(255))));
-    let lit_256 = types.register_type(Type::Literal(LiteralKind::Integer(BigInt::from(256))));
-    let lit_big = types.register_type(Type::Literal(LiteralKind::Integer(BigInt::from(
-        12_345_678,
-    ))));
-    let lit_half = types.register_type(Type::Literal(LiteralKind::Rational(BigRational::new(
-        BigInt::from(1),
-        BigInt::from(2),
-    ))));
+    let lit_127 = types.register_type(Type::Literal(LiteralKind::Integer {
+        value: BigInt::from(127),
+    }));
+    let lit_128 = types.register_type(Type::Literal(LiteralKind::Integer {
+        value: BigInt::from(128),
+    }));
+    let lit_neg_128 = types.register_type(Type::Literal(LiteralKind::Integer {
+        value: BigInt::from(-128),
+    }));
+    let lit_neg_129 = types.register_type(Type::Literal(LiteralKind::Integer {
+        value: BigInt::from(-129),
+    }));
+    let lit_neg_1 = types.register_type(Type::Literal(LiteralKind::Integer {
+        value: BigInt::from(-1),
+    }));
+    let lit_0 = types.register_type(Type::Literal(LiteralKind::Integer {
+        value: BigInt::from(0),
+    }));
+    let lit_255 = types.register_type(Type::Literal(LiteralKind::Integer {
+        value: BigInt::from(255),
+    }));
+    let lit_256 = types.register_type(Type::Literal(LiteralKind::Integer {
+        value: BigInt::from(256),
+    }));
+    let lit_big = types.register_type(Type::Literal(LiteralKind::Integer {
+        value: BigInt::from(12_345_678),
+    }));
+    let lit_half = types.register_type(Type::Literal(LiteralKind::Rational {
+        value: BigRational::new(BigInt::from(1), BigInt::from(2)),
+    }));
 
     // Within int8 range (signed):
     assert!(types.implicitly_convertible_to(lit_127, int8));
@@ -230,13 +277,17 @@ fn test_hex_literal_to_byte_array_conversion() {
 
     // Decimal-source integer of the same value does NOT convert to a byte
     // array (provenance matters).
-    let dec_18 = types.register_type(Type::Literal(LiteralKind::Integer(BigInt::from(18))));
+    let dec_18 = types.register_type(Type::Literal(LiteralKind::Integer {
+        value: BigInt::from(18),
+    }));
     assert!(!types.implicitly_convertible_to(dec_18, bytes1));
     assert!(!types.implicitly_convertible_to(dec_18, bytes2));
 
     // Zero in any source — decimal, hex of any width, or folded — converts
     // to a byte array of any width.
-    let dec_0 = types.register_type(Type::Literal(LiteralKind::Integer(BigInt::from(0))));
+    let dec_0 = types.register_type(Type::Literal(LiteralKind::Integer {
+        value: BigInt::from(0),
+    }));
     let hex_0x0 = types.register_type(Type::Literal(LiteralKind::HexInteger {
         value: BigInt::from(0),
         bytes: 1,

@@ -68,10 +68,10 @@ impl Number {
 
     pub fn from_literal_kind(kind: &LiteralKind) -> Option<Self> {
         match kind {
-            LiteralKind::Integer(value) | LiteralKind::HexInteger { value, .. } => {
+            LiteralKind::Integer { value } | LiteralKind::HexInteger { value, .. } => {
                 Some(Self::Integer(value.clone()))
             }
-            LiteralKind::Rational(value) => Some(Self::Rational(value.clone())),
+            LiteralKind::Rational { value } => Some(Self::Rational(value.clone())),
             LiteralKind::HexString { .. } | LiteralKind::String { .. } | LiteralKind::Address => {
                 None
             }
@@ -98,8 +98,12 @@ impl Number {
 
     pub(crate) fn to_literal_kind(&self) -> LiteralKind {
         match self {
-            Self::Integer(value) => LiteralKind::Integer(value.clone()),
-            Self::Rational(value) => LiteralKind::Rational(value.clone()),
+            Self::Integer(value) => LiteralKind::Integer {
+                value: value.clone(),
+            },
+            Self::Rational(value) => LiteralKind::Rational {
+                value: value.clone(),
+            },
         }
     }
 

@@ -169,14 +169,16 @@ impl TypeRegistry {
             }
 
             (
-                Type::Literal(LiteralKind::Integer(value) | LiteralKind::HexInteger { value, .. }),
+                Type::Literal(
+                    LiteralKind::Integer { value } | LiteralKind::HexInteger { value, .. },
+                ),
                 Type::Integer { signed, bits },
             ) => numbers::integer_literal_fits(value, *signed, *bits),
 
             // Non-integer rational literals never implicitly convert to an
             // integer type — if a rational reduced to an integer it would have
             // been normalised to `LiteralKind::Integer` at construction time.
-            (Type::Literal(LiteralKind::Rational(_)), Type::Integer { .. }) => false,
+            (Type::Literal(LiteralKind::Rational { .. }), Type::Integer { .. }) => false,
 
             // TODO: Rational -> FixedPointNumber once v2 models implicit
             // conversion of rational literals to fixed-point types.
@@ -190,7 +192,9 @@ impl TypeRegistry {
             // Zero (any source — decimal, hex, or folded) is always
             // implicitly convertible to any byte-array type.
             (
-                Type::Literal(LiteralKind::Integer(value) | LiteralKind::HexInteger { value, .. }),
+                Type::Literal(
+                    LiteralKind::Integer { value } | LiteralKind::HexInteger { value, .. },
+                ),
                 Type::ByteArray { .. },
             ) if value.is_zero() => true,
 
