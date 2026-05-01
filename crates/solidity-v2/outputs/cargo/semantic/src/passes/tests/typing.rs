@@ -1,12 +1,12 @@
 use num_bigint::BigInt;
 use num_rational::BigRational;
-use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir::{self, NodeIdGenerator};
 
 use super::build_file;
 use crate::binder::{Binder, Typing};
 use crate::context::SemanticFile;
+use crate::passes::common::node_id_for_expression_typing;
 use crate::passes::{
     p1_collect_definitions, p2_linearise_contracts, p3_type_definitions, p4_resolve_references,
 };
@@ -44,40 +44,15 @@ fn try_type_of_value_expression(input: &str) -> (Option<Type>, TypeRegistry) {
         other => panic!("expected ConstantDefinition, got {other:?}"),
     };
 
-    let expr_type = match binder.node_typing(expression_node_id(value_expr)) {
+    let expr_type = match binder.node_typing(
+        node_id_for_expression_typing(value_expr)
+            .expect("expression registers its typing in the binder"),
+    ) {
         Typing::Resolved(type_id) => Some(types.get_type_by_id(type_id).clone()),
         _ => None,
     };
 
     (expr_type, types)
-}
-
-/// Returns the `NodeId` of an `ir::Expression`, dispatching across the
-/// variants that can appear as the value of a top-level constant in our
-/// typing tests. `StringExpression` does not have its own `NodeId`, so its
-/// typing is recorded against the first terminal of the literal collection.
-fn expression_node_id(expr: &ir::Expression) -> NodeId {
-    match expr {
-        ir::Expression::AdditiveExpression(e) => e.id(),
-        ir::Expression::MultiplicativeExpression(e) => e.id(),
-        ir::Expression::ShiftExpression(e) => e.id(),
-        ir::Expression::ExponentiationExpression(e) => e.id(),
-        ir::Expression::PrefixExpression(e) => e.id(),
-        ir::Expression::DecimalNumberExpression(e) => e.id(),
-        ir::Expression::HexNumberExpression(e) => e.id(),
-        ir::Expression::TupleExpression(e) => e.id(),
-        ir::Expression::ConditionalExpression(e) => e.id(),
-        ir::Expression::ArrayExpression(e) => e.id(),
-        ir::Expression::BitwiseOrExpression(e) => e.id(),
-        ir::Expression::BitwiseXorExpression(e) => e.id(),
-        ir::Expression::BitwiseAndExpression(e) => e.id(),
-        ir::Expression::StringExpression(s) => match s {
-            ir::StringExpression::StringLiterals(strings) => strings[0].id(),
-            ir::StringExpression::HexStringLiterals(hex_strings) => hex_strings[0].id(),
-            ir::StringExpression::UnicodeStringLiterals(unicode_strings) => unicode_strings[0].id(),
-        },
-        other => panic!("expression variant {other:?} not supported by typing tests"),
-    }
 }
 
 fn register_uint_type(types: &mut TypeRegistry, bits: u32) -> TypeId {

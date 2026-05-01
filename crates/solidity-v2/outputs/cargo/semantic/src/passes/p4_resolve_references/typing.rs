@@ -4,90 +4,37 @@ use slang_solidity_v2_ir::ir;
 use super::Pass;
 use crate::binder::{Definition, Resolution, Typing};
 use crate::built_ins::BuiltIn;
+use crate::passes::common::node_id_for_expression_typing;
 use crate::types::{literals, DataLocation, FunctionType, LiteralKind, Number, Type, TypeId};
 
 impl Pass<'_> {
     pub(super) fn typing_of_expression(&self, node: &ir::Expression) -> Typing {
         match node {
-            ir::Expression::AssignmentExpression(assignment_expression) => {
-                self.binder.node_typing(assignment_expression.id())
-            }
-            ir::Expression::ConditionalExpression(conditional_expression) => {
-                self.binder.node_typing(conditional_expression.id())
-            }
+            // These are always typed as boolean
             ir::Expression::OrExpression(_)
             | ir::Expression::AndExpression(_)
             | ir::Expression::EqualityExpression(_)
             | ir::Expression::InequalityExpression(_)
             | ir::Expression::TrueKeyword
             | ir::Expression::FalseKeyword => Typing::Resolved(self.types.boolean()),
-            ir::Expression::BitwiseOrExpression(bitwise_or_expression) => {
-                self.binder.node_typing(bitwise_or_expression.id())
-            }
-            ir::Expression::BitwiseXorExpression(bitwise_xor_expression) => {
-                self.binder.node_typing(bitwise_xor_expression.id())
-            }
-            ir::Expression::BitwiseAndExpression(bitwise_and_expression) => {
-                self.binder.node_typing(bitwise_and_expression.id())
-            }
-            ir::Expression::ShiftExpression(shift_expression) => {
-                self.binder.node_typing(shift_expression.id())
-            }
-            ir::Expression::AdditiveExpression(additive_expression) => {
-                self.binder.node_typing(additive_expression.id())
-            }
-            ir::Expression::MultiplicativeExpression(multiplicative_expression) => {
-                self.binder.node_typing(multiplicative_expression.id())
-            }
-            ir::Expression::ExponentiationExpression(exponentiation_expression) => {
-                self.binder.node_typing(exponentiation_expression.id())
-            }
-            ir::Expression::PostfixExpression(postfix_expression) => {
-                self.binder.node_typing(postfix_expression.id())
-            }
-            ir::Expression::PrefixExpression(prefix_expression) => {
-                self.binder.node_typing(prefix_expression.id())
-            }
-            ir::Expression::FunctionCallExpression(function_call_expression) => {
-                self.binder.node_typing(function_call_expression.id())
-            }
-            ir::Expression::CallOptionsExpression(call_options_expression) => {
-                self.binder.node_typing(call_options_expression.id())
-            }
-            ir::Expression::MemberAccessExpression(member_access_expression) => {
-                self.binder.node_typing(member_access_expression.id())
-            }
-            ir::Expression::IndexAccessExpression(index_access_expression) => {
-                self.binder.node_typing(index_access_expression.id())
-            }
-            ir::Expression::NewExpression(new_expression) => {
-                self.binder.node_typing(new_expression.id())
-            }
-            ir::Expression::TupleExpression(tuple_expression) => {
-                self.binder.node_typing(tuple_expression.id())
-            }
-            ir::Expression::TypeExpression(type_expression) => {
-                self.binder.node_typing(type_expression.id())
-            }
-            ir::Expression::ArrayExpression(array_expression) => {
-                self.binder.node_typing(array_expression.id())
-            }
-            ir::Expression::HexNumberExpression(hex_number_expression) => {
-                self.binder.node_typing(hex_number_expression.id())
-            }
-            ir::Expression::DecimalNumberExpression(decimal_number_expression) => {
-                self.binder.node_typing(decimal_number_expression.id())
-            }
-            ir::Expression::StringExpression(string_expression) => self
-                .binder
-                .node_typing(Self::node_id_for_string_expression(string_expression)),
+
+            // Special case for elementary types: it's always a meta-type
             ir::Expression::ElementaryType(elementary_type) => {
                 Typing::MetaType(Self::type_of_elementary_type(elementary_type))
             }
-            ir::Expression::Identifier(identifier) => self.typing_of_identifier(identifier),
+
+            // Other special cases
             ir::Expression::PayableKeyword => Typing::MetaType(Type::Address { payable: true }),
             ir::Expression::ThisKeyword => Typing::This,
             ir::Expression::SuperKeyword => Typing::Super,
+
+            // By default, query the binder for registered typing information
+            _ => {
+                let node_id = node_id_for_expression_typing(node).expect(
+                    "typing of expression variant not handled and it doesn't have a NodeId",
+                );
+                self.binder.node_typing(node_id)
+            }
         }
     }
 
@@ -129,18 +76,6 @@ impl Pass<'_> {
             Definition::UserDefinedValueType(_) => Some(Type::UserDefinedValue { definition_id }),
             _ => None,
         }
-    }
-
-    fn typing_of_identifier(&self, identifier: &ir::Identifier) -> Typing {
-        let resolution = &self
-            .binder
-            .find_reference_by_identifier_node_id(identifier.id())
-            .unwrap()
-            .resolution;
-        // The resolution may point to an imported symbol, so we need to follow
-        // through in order to get to the actual typing
-        let resolution = self.binder.follow_symbol_aliases(resolution);
-        self.typing_of_resolution(&resolution)
     }
 
     /// Returns the type of an binary operator expression. If both operands are
@@ -642,17 +577,6 @@ fn reference_node_id_for_expression(node: &ir::Expression) -> Option<NodeId> {
 
 /// Typing functions for literals
 impl Pass<'_> {
-    // Since `StringExpression` nodes are plain enums and each variant is in
-    // turn a collection of terminals, they don't have a `NodeId`. So we pick
-    // the `NodeId` of the first terminal of the collection.
-    pub(super) fn node_id_for_string_expression(node: &ir::StringExpression) -> NodeId {
-        match node {
-            ir::StringExpression::StringLiterals(strings) => strings[0].id(),
-            ir::StringExpression::HexStringLiterals(hex_strings) => hex_strings[0].id(),
-            ir::StringExpression::UnicodeStringLiterals(unicode_strings) => unicode_strings[0].id(),
-        }
-    }
-
     pub(super) fn type_of_string_expression(node: &ir::StringExpression) -> Type {
         // Hex string literals carry distinct provenance (mirroring `HexInteger`
         // vs `Integer`); regular and unicode strings share `String` since they
