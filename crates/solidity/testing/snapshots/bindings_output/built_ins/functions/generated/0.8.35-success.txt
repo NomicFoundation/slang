@@ -11,7 +11,7 @@ References and definitions:
     │                   ╰─────── name: 2
   3 │         require(true, "should always succeed");
     │         ───┬───  
-    │            ╰───── refs: built-in, built-in
+    │            ╰───── refs: built-in, built-in, built-in
     │ 
   6 │     function testRevert() public {
     │              ─────┬────  
@@ -48,7 +48,7 @@ References and definitions:
     │                 ─┬   ────┬───  
     │                  ╰───────────── name: 9
     │                          │     
-    │                          ╰───── unresolved
+    │                          ╰───── ref: built-in
  20 │         address v4 = ecrecover(v2, 1, v2, v2);
     │                 ─┬   ────┬──── ─┬     ─┬  ─┬  
     │                  ╰──────────────────────────── name: 10
@@ -64,7 +64,7 @@ References and definitions:
     │                 ─┬─   ───┬───  
     │                  ╰───────────── name: 11
     │                          │     
-    │                          ╰───── unresolved
+    │                          ╰───── ref: built-in
  22 │         uint256 v5 = gasleft();
     │                 ─┬   ───┬───  
     │                  ╰──────────── name: 12
@@ -116,7 +116,7 @@ References and definitions:
     │                    │     │    │  
     │                    ╰───────────── ref: built-in
     │                          │    │  
-    │                          ╰─────── unresolved
+    │                          ╰─────── ref: built-in
     │                               │  
     │                               ╰── ref: 19
  36 │         bytes memory v2 = abi.encode(v1);
@@ -134,7 +134,7 @@ References and definitions:
     │                            │       │              │     
     │                            ╰──────────────────────────── ref: built-in
     │                                    │              │     
-    │                                    ╰──────────────────── unresolved
+    │                                    ╰──────────────────── ref: built-in
     │                                                   │     
     │                                                   ╰───── ref: 5
  38 │         bytes memory v4 = abi.encodePacked(10, 20);

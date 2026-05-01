@@ -20,6 +20,7 @@ pub enum BuiltIn {
     Block,
     Blockhash,
     Ecrecover,
+    Erc7201,
     Gasleft,
     Keccak256,
     Msg,
@@ -193,6 +194,7 @@ impl BuiltIn {
             Self::Block => PublicBuiltIn::Block,
             Self::Blockhash => PublicBuiltIn::Blockhash,
             Self::Ecrecover => PublicBuiltIn::Ecrecover,
+            Self::Erc7201 => PublicBuiltIn::Erc7201,
             Self::Gasleft => PublicBuiltIn::Gasleft,
             Self::Keccak256 => PublicBuiltIn::Keccak256,
             Self::Msg => PublicBuiltIn::Msg,
@@ -358,6 +360,9 @@ impl BuiltIn {
 
     pub(super) const BLOBHASH_VERSIONS: LanguageVersionSpecifier = LanguageVersionSpecifier::From {
         from: LanguageVersion::V0_8_24,
+    };
+    pub(super) const ERC_7201_VERSIONS: LanguageVersionSpecifier = LanguageVersionSpecifier::From {
+        from: LanguageVersion::V0_8_35,
     };
     pub(super) const ABI_ENCODE_CALL_VERSIONS: LanguageVersionSpecifier =
         LanguageVersionSpecifier::From {

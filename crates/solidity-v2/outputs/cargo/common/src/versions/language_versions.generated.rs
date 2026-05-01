@@ -44,6 +44,7 @@ pub enum LanguageVersion {
     V0_8_32,
     V0_8_33,
     V0_8_34,
+    V0_8_35,
 }
 
 #[derive(Debug, Error, PartialEq)]
@@ -107,6 +108,7 @@ impl TryFrom<Version> for LanguageVersion {
             (0, 8, 32) => LanguageVersion::V0_8_32,
             (0, 8, 33) => LanguageVersion::V0_8_33,
             (0, 8, 34) => LanguageVersion::V0_8_34,
+            (0, 8, 35) => LanguageVersion::V0_8_35,
             _ => return Err(FromSemverError::UnsupportedVersion),
         })
     }
@@ -150,6 +152,7 @@ impl From<LanguageVersion> for Version {
             LanguageVersion::V0_8_32 => Version::new(0, 8, 32),
             LanguageVersion::V0_8_33 => Version::new(0, 8, 33),
             LanguageVersion::V0_8_34 => Version::new(0, 8, 34),
+            LanguageVersion::V0_8_35 => Version::new(0, 8, 35),
         }
     }
 }
@@ -192,6 +195,7 @@ impl Display for LanguageVersion {
             LanguageVersion::V0_8_32 => write!(f, "0.8.32"),
             LanguageVersion::V0_8_33 => write!(f, "0.8.33"),
             LanguageVersion::V0_8_34 => write!(f, "0.8.34"),
+            LanguageVersion::V0_8_35 => write!(f, "0.8.35"),
         }
     }
 }

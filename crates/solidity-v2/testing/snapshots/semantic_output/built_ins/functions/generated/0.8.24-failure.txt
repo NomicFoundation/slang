@@ -36,7 +36,7 @@ References (38):
 - Ref: ["assert" @ input.sol:11:9] -> built-in
 - Ref: ["addmod" @ input.sol:17:19] -> built-in
 - Ref: ["blockhash" @ input.sol:18:22] -> built-in
-- Ref: ["blobhash" @ input.sol:19:22] -> unresolved
+- Ref: ["blobhash" @ input.sol:19:22] -> built-in
 - Ref: ["ecrecover" @ input.sol:20:22] -> built-in
 - Ref: ["v2" @ input.sol:20:32] -> #8
 - Ref: ["v2" @ input.sol:20:39] -> #8
@@ -58,7 +58,7 @@ References (38):
 - Ref: ["encode" @ input.sol:36:31] -> built-in
 - Ref: ["v1" @ input.sol:36:38] -> #20
 - Ref: ["abi" @ input.sol:37:27] -> built-in
-- Ref: ["encodeCall" @ input.sol:37:31] -> unresolved
+- Ref: ["encodeCall" @ input.sol:37:31] -> built-in
 - Ref: ["testMath" @ input.sol:37:47] -> #5
 - Ref: ["abi" @ input.sol:38:27] -> built-in
 - Ref: ["encodePacked" @ input.sol:38:31] -> built-in
@@ -124,7 +124,7 @@ Bindings:
     │                 ─┬   ────┬───  
     │                  ╰───────────── name: 9
     │                          │     
-    │                          ╰───── unresolved
+    │                          ╰───── built-in
  20 │         address v4 = ecrecover(v2, 1, v2, v2);
     │                 ─┬   ────┬──── ─┬     ─┬  ─┬  
     │                  ╰──────────────────────────── name: 10
@@ -210,7 +210,7 @@ Bindings:
     │                            │       │              │     
     │                            ╰──────────────────────────── built-in
     │                                    │              │     
-    │                                    ╰──────────────────── unresolved
+    │                                    ╰──────────────────── built-in
     │                                                   │     
     │                                                   ╰───── ref: 5
  38 │         bytes memory v4 = abi.encodePacked(10, 20);

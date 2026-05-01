@@ -18,6 +18,7 @@ contract BuiltInsTest {
         bytes32 v2 = blockhash(1);
         bytes32 v3 = blobhash(2);
         address v4 = ecrecover(v2, 1, v2, v2);
+        uint256 v4b = erc7201("openzeppelin.storage.SomeNamespace");
         uint256 v5 = gasleft();
         bytes32 v6 = keccak256(x1);
         uint v7 = mulmod(1, 2, 3);

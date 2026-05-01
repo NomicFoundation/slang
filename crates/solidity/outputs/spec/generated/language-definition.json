@@ -116,7 +116,8 @@
     "0.8.31",
     "0.8.32",
     "0.8.33",
-    "0.8.34"
+    "0.8.34",
+    "0.8.35"
   ],
   "sections": [
     {
@@ -8665,6 +8666,16 @@
               "name": "ecrecover",
               "parameters": ["bytes32 hash", "uint8 v", "bytes32 r", "bytes32 s"],
               "return_type": "address"
+            }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "erc7201",
+              "parameters": ["string memory"],
+              "return_type": "uint256",
+              "enabled": { "From": { "from": "0.8.35" } }
             }
           }
         },

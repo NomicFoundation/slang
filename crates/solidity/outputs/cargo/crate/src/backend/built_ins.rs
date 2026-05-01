@@ -7,7 +7,7 @@ use crate::utils::versions::{
     VERSION_0_4_12, VERSION_0_4_17, VERSION_0_4_21, VERSION_0_4_22, VERSION_0_5_0, VERSION_0_5_3,
     VERSION_0_6_0, VERSION_0_6_2, VERSION_0_6_7, VERSION_0_6_8, VERSION_0_7_0, VERSION_0_8_0,
     VERSION_0_8_11, VERSION_0_8_15, VERSION_0_8_18, VERSION_0_8_2, VERSION_0_8_24, VERSION_0_8_31,
-    VERSION_0_8_4, VERSION_0_8_7, VERSION_0_8_8,
+    VERSION_0_8_35, VERSION_0_8_4, VERSION_0_8_7, VERSION_0_8_8,
 };
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -50,6 +50,7 @@ pub enum BuiltIn {
     CallOptionSalt,
     CallOptionValue,
     Ecrecover,
+    Erc7201,
     ErrorOrPanic,
     Gasleft,
     Keccak256,
@@ -216,6 +217,7 @@ impl<'a> BuiltInsResolver<'a> {
             "block" => Some(BuiltIn::Block),
             "blockhash" if self.language_version >= VERSION_0_4_22 => Some(BuiltIn::Blockhash),
             "ecrecover" => Some(BuiltIn::Ecrecover),
+            "erc7201" if self.language_version >= VERSION_0_8_35 => Some(BuiltIn::Erc7201),
             "gasleft" if self.language_version >= VERSION_0_4_21 => Some(BuiltIn::Gasleft),
             "keccak256" => Some(BuiltIn::Keccak256),
             "log0" | "log1" | "log2" | "log3" | "log4" if self.language_version < VERSION_0_8_0 => {
@@ -720,6 +722,7 @@ impl<'a> BuiltInsResolver<'a> {
             | BuiltIn::LegacyCallOptionValue(_)
             | BuiltIn::LegacyCallOptionValueNew(_)
             | BuiltIn::Ecrecover
+            | BuiltIn::Erc7201
             | BuiltIn::Gasleft
             | BuiltIn::Keccak256
             | BuiltIn::Log(_)
@@ -806,6 +809,7 @@ impl<'a> BuiltInsResolver<'a> {
             BuiltIn::Blockhash => Typing::Resolved(self.types.bytes32()),
             BuiltIn::BytesConcat => Typing::Resolved(self.types.bytes_memory()),
             BuiltIn::Ecrecover => Typing::Resolved(self.types.address()),
+            BuiltIn::Erc7201 => Typing::Resolved(self.types.uint256()),
             BuiltIn::Gasleft => Typing::Resolved(self.types.uint256()),
             BuiltIn::Keccak256 => Typing::Resolved(self.types.bytes32()),
             BuiltIn::LegacyCallOptionGas(call_type) | BuiltIn::LegacyCallOptionValue(call_type) => {
