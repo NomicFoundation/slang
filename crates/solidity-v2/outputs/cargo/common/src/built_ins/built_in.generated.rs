@@ -10,6 +10,7 @@ pub enum BuiltIn {
     Block,
     Blockhash,
     Ecrecover,
+    Erc7201,
     Gasleft,
     Keccak256,
     Msg,

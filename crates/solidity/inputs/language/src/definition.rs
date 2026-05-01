@@ -27,7 +27,7 @@ language_macros::compile!(Language(
         "0.8.2", "0.8.3", "0.8.4", "0.8.5", "0.8.6", "0.8.7", "0.8.8", "0.8.9", "0.8.10", "0.8.11",
         "0.8.12", "0.8.13", "0.8.14", "0.8.15", "0.8.16", "0.8.17", "0.8.18", "0.8.19", "0.8.20",
         "0.8.21", "0.8.22", "0.8.23", "0.8.24", "0.8.25", "0.8.26", "0.8.27", "0.8.28", "0.8.29",
-        "0.8.30", "0.8.31", "0.8.32", "0.8.33", "0.8.34"
+        "0.8.30", "0.8.31", "0.8.32", "0.8.33", "0.8.34", "0.8.35"
     ],
     sections = [
         Section(
@@ -6157,6 +6157,12 @@ language_macros::compile!(Language(
                     name = "ecrecover",
                     parameters = ["bytes32 hash", "uint8 v", "bytes32 r", "bytes32 s"],
                     return_type = "address"
+                ),
+                BuiltInFunction(
+                    name = "erc7201",
+                    parameters = ["string memory"],
+                    return_type = "uint256",
+                    enabled = From("0.8.35")
                 ),
                 BuiltInFunction(
                     name = "gasleft",
