@@ -1,6 +1,6 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Definitions (25):
+Definitions (26):
 - Def: #1 ["BuiltInsTest" @ input.sol:1:10] (contract)
 - Def: #2 ["testRequire" @ input.sol:2:14] (function, type: function () returns void)
 - Def: #3 ["testRevert" @ input.sol:6:14] (function, type: function () returns void)
@@ -11,25 +11,26 @@ Definitions (25):
 - Def: #8 ["v2" @ input.sol:18:17] (variable, type: bytes32)
 - Def: #9 ["v3" @ input.sol:19:17] (variable, type: bytes32)
 - Def: #10 ["v4" @ input.sol:20:17] (variable, type: address)
-- Def: #11 ["v5" @ input.sol:21:17] (variable, type: uint256)
-- Def: #12 ["v6" @ input.sol:22:17] (variable, type: bytes32)
-- Def: #13 ["v7" @ input.sol:23:14] (variable, type: uint256)
-- Def: #14 ["v8" @ input.sol:24:17] (variable, type: bytes20)
-- Def: #15 ["v9" @ input.sol:25:17] (variable, type: bytes32)
-- Def: #16 ["testSelfDestruct" @ input.sol:28:14] (function, type: function () returns void)
-- Def: #17 ["testAbiFunctions" @ input.sol:32:14] (function, type: function () returns void)
-- Def: #18 ["x1" @ input.sol:33:22] (variable, type: bytes memory)
-- Def: #19 ["v1" @ input.sol:34:14] (variable, type: uint256)
-- Def: #20 ["v2" @ input.sol:35:22] (variable, type: bytes memory)
-- Def: #21 ["v3" @ input.sol:36:22] (variable, type: bytes memory)
-- Def: #22 ["v4" @ input.sol:37:22] (variable, type: bytes memory)
-- Def: #23 ["v5" @ input.sol:38:22] (variable, type: bytes memory)
-- Def: #24 ["x2" @ input.sol:39:23] (variable, type: string memory)
-- Def: #25 ["v6" @ input.sol:40:22] (variable, type: bytes memory)
+- Def: #11 ["v4b" @ input.sol:21:17] (variable, type: uint256)
+- Def: #12 ["v5" @ input.sol:22:17] (variable, type: uint256)
+- Def: #13 ["v6" @ input.sol:23:17] (variable, type: bytes32)
+- Def: #14 ["v7" @ input.sol:24:14] (variable, type: uint256)
+- Def: #15 ["v8" @ input.sol:25:17] (variable, type: bytes20)
+- Def: #16 ["v9" @ input.sol:26:17] (variable, type: bytes32)
+- Def: #17 ["testSelfDestruct" @ input.sol:29:14] (function, type: function () returns void)
+- Def: #18 ["testAbiFunctions" @ input.sol:33:14] (function, type: function () returns void)
+- Def: #19 ["x1" @ input.sol:34:22] (variable, type: bytes memory)
+- Def: #20 ["v1" @ input.sol:35:14] (variable, type: uint256)
+- Def: #21 ["v2" @ input.sol:36:22] (variable, type: bytes memory)
+- Def: #22 ["v3" @ input.sol:37:22] (variable, type: bytes memory)
+- Def: #23 ["v4" @ input.sol:38:22] (variable, type: bytes memory)
+- Def: #24 ["v5" @ input.sol:39:22] (variable, type: bytes memory)
+- Def: #25 ["x2" @ input.sol:40:23] (variable, type: string memory)
+- Def: #26 ["v6" @ input.sol:41:22] (variable, type: bytes memory)
 
 ------------------------------------------------------------------------
 
-References (37):
+References (38):
 - Ref: ["require" @ input.sol:3:9] -> built-in
 - Ref: ["revert" @ input.sol:7:9] -> built-in
 - Ref: ["assert" @ input.sol:11:9] -> built-in
@@ -40,33 +41,34 @@ References (37):
 - Ref: ["v2" @ input.sol:20:32] -> #8
 - Ref: ["v2" @ input.sol:20:39] -> #8
 - Ref: ["v2" @ input.sol:20:43] -> #8
-- Ref: ["gasleft" @ input.sol:21:22] -> built-in
-- Ref: ["keccak256" @ input.sol:22:22] -> built-in
-- Ref: ["x1" @ input.sol:22:32] -> #6
-- Ref: ["mulmod" @ input.sol:23:19] -> built-in
-- Ref: ["ripemd160" @ input.sol:24:22] -> built-in
-- Ref: ["x1" @ input.sol:24:32] -> #6
-- Ref: ["sha256" @ input.sol:25:22] -> built-in
-- Ref: ["x1" @ input.sol:25:29] -> #6
-- Ref: ["selfdestruct" @ input.sol:29:9] -> built-in
-- Ref: ["abi" @ input.sol:34:19] -> built-in
-- Ref: ["decode" @ input.sol:34:23] -> built-in
-- Ref: ["x1" @ input.sol:34:30] -> #18
-- Ref: ["abi" @ input.sol:35:27] -> built-in
-- Ref: ["encode" @ input.sol:35:31] -> built-in
-- Ref: ["v1" @ input.sol:35:38] -> #19
+- Ref: ["erc7201" @ input.sol:21:23] -> unresolved
+- Ref: ["gasleft" @ input.sol:22:22] -> built-in
+- Ref: ["keccak256" @ input.sol:23:22] -> built-in
+- Ref: ["x1" @ input.sol:23:32] -> #6
+- Ref: ["mulmod" @ input.sol:24:19] -> built-in
+- Ref: ["ripemd160" @ input.sol:25:22] -> built-in
+- Ref: ["x1" @ input.sol:25:32] -> #6
+- Ref: ["sha256" @ input.sol:26:22] -> built-in
+- Ref: ["x1" @ input.sol:26:29] -> #6
+- Ref: ["selfdestruct" @ input.sol:30:9] -> built-in
+- Ref: ["abi" @ input.sol:35:19] -> built-in
+- Ref: ["decode" @ input.sol:35:23] -> built-in
+- Ref: ["x1" @ input.sol:35:30] -> #19
 - Ref: ["abi" @ input.sol:36:27] -> built-in
-- Ref: ["encodeCall" @ input.sol:36:31] -> built-in
-- Ref: ["testMath" @ input.sol:36:47] -> #5
+- Ref: ["encode" @ input.sol:36:31] -> built-in
+- Ref: ["v1" @ input.sol:36:38] -> #20
 - Ref: ["abi" @ input.sol:37:27] -> built-in
-- Ref: ["encodePacked" @ input.sol:37:31] -> built-in
+- Ref: ["encodeCall" @ input.sol:37:31] -> built-in
+- Ref: ["testMath" @ input.sol:37:47] -> #5
 - Ref: ["abi" @ input.sol:38:27] -> built-in
-- Ref: ["encodeWithSelector" @ input.sol:38:31] -> built-in
-- Ref: ["testMath" @ input.sol:38:55] -> #5
-- Ref: ["selector" @ input.sol:38:64] -> built-in
-- Ref: ["abi" @ input.sol:40:27] -> built-in
-- Ref: ["encodeWithSignature" @ input.sol:40:31] -> built-in
-- Ref: ["x2" @ input.sol:40:51] -> #24
+- Ref: ["encodePacked" @ input.sol:38:31] -> built-in
+- Ref: ["abi" @ input.sol:39:27] -> built-in
+- Ref: ["encodeWithSelector" @ input.sol:39:31] -> built-in
+- Ref: ["testMath" @ input.sol:39:55] -> #5
+- Ref: ["selector" @ input.sol:39:64] -> built-in
+- Ref: ["abi" @ input.sol:41:27] -> built-in
+- Ref: ["encodeWithSignature" @ input.sol:41:31] -> built-in
+- Ref: ["x2" @ input.sol:41:51] -> #25
 
 ------------------------------------------------------------------------
 
@@ -134,88 +136,93 @@ Bindings:
     │                                        ╰────── ref: 8
     │                                            │  
     │                                            ╰── ref: 8
- 21 │         uint256 v5 = gasleft();
+ 21 │         uint256 v4b = erc7201("openzeppelin.storage.SomeNamespace");
+    │                 ─┬─   ───┬───  
+    │                  ╰───────────── name: 11
+    │                          │     
+    │                          ╰───── unresolved
+ 22 │         uint256 v5 = gasleft();
     │                 ─┬   ───┬───  
-    │                  ╰──────────── name: 11
+    │                  ╰──────────── name: 12
     │                         │     
     │                         ╰───── built-in
- 22 │         bytes32 v6 = keccak256(x1);
+ 23 │         bytes32 v6 = keccak256(x1);
     │                 ─┬   ────┬──── ─┬  
-    │                  ╰───────────────── name: 12
+    │                  ╰───────────────── name: 13
     │                          │      │  
     │                          ╰───────── built-in
     │                                 │  
     │                                 ╰── ref: 6
- 23 │         uint v7 = mulmod(1, 2, 3);
+ 24 │         uint v7 = mulmod(1, 2, 3);
     │              ─┬   ───┬──  
-    │               ╰─────────── name: 13
+    │               ╰─────────── name: 14
     │                      │    
     │                      ╰──── built-in
- 24 │         bytes20 v8 = ripemd160(x1);
+ 25 │         bytes20 v8 = ripemd160(x1);
     │                 ─┬   ────┬──── ─┬  
-    │                  ╰───────────────── name: 14
+    │                  ╰───────────────── name: 15
     │                          │      │  
     │                          ╰───────── built-in
     │                                 │  
     │                                 ╰── ref: 6
- 25 │         bytes32 v9 = sha256(x1);
+ 26 │         bytes32 v9 = sha256(x1);
     │                 ─┬   ───┬── ─┬  
-    │                  ╰────────────── name: 15
+    │                  ╰────────────── name: 16
     │                         │    │  
     │                         ╰─────── built-in
     │                              │  
     │                              ╰── ref: 6
     │ 
- 28 │     function testSelfDestruct() public {
+ 29 │     function testSelfDestruct() public {
     │              ────────┬───────  
-    │                      ╰───────── name: 16
- 29 │         selfdestruct(address(0x0));
+    │                      ╰───────── name: 17
+ 30 │         selfdestruct(address(0x0));
     │         ──────┬─────  
     │               ╰─────── built-in
     │ 
- 32 │     function testAbiFunctions() public {
+ 33 │     function testAbiFunctions() public {
     │              ────────┬───────  
-    │                      ╰───────── name: 17
- 33 │         bytes memory x1;
+    │                      ╰───────── name: 18
+ 34 │         bytes memory x1;
     │                      ─┬  
-    │                       ╰── name: 18
- 34 │         uint v1 = abi.decode(x1, (uint));
+    │                       ╰── name: 19
+ 35 │         uint v1 = abi.decode(x1, (uint));
     │              ─┬   ─┬─ ───┬── ─┬  
-    │               ╰────────────────── name: 19
+    │               ╰────────────────── name: 20
     │                    │     │    │  
     │                    ╰───────────── built-in
     │                          │    │  
     │                          ╰─────── built-in
     │                               │  
-    │                               ╰── ref: 18
- 35 │         bytes memory v2 = abi.encode(v1);
+    │                               ╰── ref: 19
+ 36 │         bytes memory v2 = abi.encode(v1);
     │                      ─┬   ─┬─ ───┬── ─┬  
-    │                       ╰────────────────── name: 20
+    │                       ╰────────────────── name: 21
     │                            │     │    │  
     │                            ╰───────────── built-in
     │                                  │    │  
     │                                  ╰─────── built-in
     │                                       │  
-    │                                       ╰── ref: 19
- 36 │         bytes memory v3 = abi.encodeCall(this.testMath, (1, 2, 3));
+    │                                       ╰── ref: 20
+ 37 │         bytes memory v3 = abi.encodeCall(this.testMath, (1, 2, 3));
     │                      ─┬   ─┬─ ─────┬────      ────┬───  
-    │                       ╰───────────────────────────────── name: 21
+    │                       ╰───────────────────────────────── name: 22
     │                            │       │              │     
     │                            ╰──────────────────────────── built-in
     │                                    │              │     
     │                                    ╰──────────────────── built-in
     │                                                   │     
     │                                                   ╰───── ref: 5
- 37 │         bytes memory v4 = abi.encodePacked(10, 20);
+ 38 │         bytes memory v4 = abi.encodePacked(10, 20);
     │                      ─┬   ─┬─ ──────┬─────  
-    │                       ╰───────────────────── name: 22
+    │                       ╰───────────────────── name: 23
     │                            │        │       
     │                            ╰──────────────── built-in
     │                                     │       
     │                                     ╰─────── built-in
- 38 │         bytes memory v5 = abi.encodeWithSelector(this.testMath.selector, (1, 2, 3));
+ 39 │         bytes memory v5 = abi.encodeWithSelector(this.testMath.selector, (1, 2, 3));
     │                      ─┬   ─┬─ ─────────┬────────      ────┬─── ────┬───  
-    │                       ╰────────────────────────────────────────────────── name: 23
+    │                       ╰────────────────────────────────────────────────── name: 24
     │                            │           │                  │        │     
     │                            ╰───────────────────────────────────────────── built-in
     │                                        │                  │        │     
@@ -224,16 +231,16 @@ Bindings:
     │                                                           ╰────────────── ref: 5
     │                                                                    │     
     │                                                                    ╰───── built-in
- 39 │         string memory x2;
+ 40 │         string memory x2;
     │                       ─┬  
-    │                        ╰── name: 24
- 40 │         bytes memory v6 = abi.encodeWithSignature(x2, (1, 2, 3));
+    │                        ╰── name: 25
+ 41 │         bytes memory v6 = abi.encodeWithSignature(x2, (1, 2, 3));
     │                      ─┬   ─┬─ ─────────┬───────── ─┬  
-    │                       ╰─────────────────────────────── name: 25
+    │                       ╰─────────────────────────────── name: 26
     │                            │           │           │  
     │                            ╰────────────────────────── built-in
     │                                        │           │  
     │                                        ╰────────────── built-in
     │                                                    │  
-    │                                                    ╰── ref: 24
+    │                                                    ╰── ref: 25
 ────╯

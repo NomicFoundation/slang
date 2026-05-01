@@ -38,6 +38,9 @@ impl<'a> BuiltInsResolver<'a> {
             "block" => Some(BuiltIn::Block),
             "blockhash" => Some(BuiltIn::Blockhash),
             "ecrecover" => Some(BuiltIn::Ecrecover),
+            "erc7201" if BuiltIn::ERC_7201_VERSIONS.contains(self.language_version) => {
+                Some(BuiltIn::Erc7201)
+            }
             "gasleft" => Some(BuiltIn::Gasleft),
             "keccak256" => Some(BuiltIn::Keccak256),
             "msg" => Some(BuiltIn::Msg),
@@ -462,6 +465,7 @@ impl<'a> BuiltInsResolver<'a> {
             | BuiltIn::Blockhash
             | BuiltIn::BytesConcat
             | BuiltIn::Ecrecover
+            | BuiltIn::Erc7201
             | BuiltIn::Gasleft
             | BuiltIn::Keccak256
             | BuiltIn::ModifierUnderscore
@@ -517,6 +521,7 @@ impl<'a> BuiltInsResolver<'a> {
             BuiltIn::Blockhash => Typing::Resolved(self.types.bytes32()),
             BuiltIn::BytesConcat => Typing::Resolved(self.types.bytes_memory()),
             BuiltIn::Ecrecover => Typing::Resolved(self.types.address()),
+            BuiltIn::Erc7201 => Typing::Resolved(self.types.uint256()),
             BuiltIn::Gasleft => Typing::Resolved(self.types.uint256()),
             BuiltIn::Keccak256 => Typing::Resolved(self.types.bytes32()),
             BuiltIn::Mulmod => Typing::Resolved(self.types.uint256()),
