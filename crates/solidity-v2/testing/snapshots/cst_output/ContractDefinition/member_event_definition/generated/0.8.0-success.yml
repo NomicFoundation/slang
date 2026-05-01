@@ -26,6 +26,7 @@ Tree:
                                   - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (147..154)
                                   - (indexed_keyword꞉ IndexedKeyword): "indexed" # (155..162)
                                   - (name꞉ Identifier): "a" # (163..164)
+                              - (separator꞉ Comma): "," # (164..165)
                               - (item꞉ EventParameter): # "uint256 indexed b" (166..183)
                                   - (type_name꞉ TypeName) ► (elementary_type꞉ ElementaryType) ► (uint_keyword꞉ UintKeyword): "uint256" # (166..173)
                                   - (indexed_keyword꞉ IndexedKeyword): "indexed" # (174..181)

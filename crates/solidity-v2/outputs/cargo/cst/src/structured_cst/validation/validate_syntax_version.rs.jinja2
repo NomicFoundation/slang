@@ -292,7 +292,7 @@ fn expect_range(range: &impl TextRange) -> Range<usize> {
             {%- endif %}
 
             {%- if model.has_versioned_descendant[collection.item_type.name] %}
-                for child in &node.elements {
+                for child in node.elements() {
                     check_{{ collection.item_type.name | snake_case }}(child, version, errors);
                 }
             {%- endif %}

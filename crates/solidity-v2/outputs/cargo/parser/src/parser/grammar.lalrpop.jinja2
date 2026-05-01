@@ -1,21 +1,20 @@
 use crate::lexer::LexemeKind;
+use slang_solidity_v2_cst::separated::SeparatedList;
 use slang_solidity_v2_cst::structured_cst::nodes::*;
 use crate::parser::parser_helpers;
 
 grammar<'source>(source: &'source str);
 
-SeparatedAllowEmpty<S, T>: Vec<T> = {
-    => vec![],
-    Separated<S, T> => <>,
+SeparatedAllowEmpty<S, T>: SeparatedList<T, S> = {
+    => SeparatedList::default(),
+    <inner: Separated<S, T>> => inner,
 };
 
-Separated<S, T>: Vec<T> = {
-    <e:T> => {
-        vec![e]
-    },
-    <mut v: Separated<S, T>> S <e: T> => {
-        v.push(e);
-        v
+Separated<S, T>: SeparatedList<T, S> = {
+    <e:T> => SeparatedList::single(e),
+    <mut list: Separated<S, T>> <s:S> <e:T> => {
+        list.push(s, e);
+        list
     },
 };
 

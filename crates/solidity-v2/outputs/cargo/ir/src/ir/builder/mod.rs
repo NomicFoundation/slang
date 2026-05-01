@@ -93,8 +93,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let members = self.build_contract_members(&source.members);
         let inheritance_types = source
             .specifiers
-            .elements
-            .iter()
+            .elements()
             .find_map(|specifier| {
                 if let input::ContractSpecifier::InheritanceSpecifier(inheritance) = specifier {
                     Some(self.build_inheritance_specifier(inheritance))
@@ -103,7 +102,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
                 }
             })
             .unwrap_or_default();
-        let storage_layout = source.specifiers.elements.iter().find_map(|specifier| {
+        let storage_layout = source.specifiers.elements().find_map(|specifier| {
             if let input::ContractSpecifier::StorageLayoutSpecifier(storage_layout) = specifier {
                 Some(self.build_storage_layout_specifier(storage_layout))
             } else {
@@ -132,8 +131,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let parameters = source
             .members
             .parameters
-            .elements
-            .iter()
+            .elements()
             .map(|parameter| self.build_error_parameter(parameter))
             .collect();
 
@@ -156,8 +154,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let parameters = source
             .parameters
             .parameters
-            .elements
-            .iter()
+            .elements()
             .map(|parameter| self.build_event_parameter(parameter))
             .collect();
 
@@ -189,8 +186,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let mutability = Self::function_mutability(&source.attributes);
         let virtual_keyword = source
             .attributes
-            .elements
-            .iter()
+            .elements()
             .any(|attribute| matches!(attribute, input::FunctionAttribute::VirtualKeyword(_)));
         // TODO(validation): function definitions can have only a single override specifier
         let override_specifier = self.function_override_specifier(&source.attributes);
@@ -411,7 +407,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         // TODO(validation): only a single visibility keyword can be provided
         // TODO(validation): free functions are always internal, but
         // otherwise a visibility *must* be set explicitly (>= 0.8.0)
-        attributes.elements.iter().fold(
+        attributes.elements().fold(
             // For >= 0.8.0, default for free functions is internal
             output::FunctionVisibility::Internal,
             |visibility, attribute| match attribute {
@@ -430,7 +426,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
     fn function_mutability(attributes: &input::FunctionAttributes) -> output::FunctionMutability {
         // TODO(validation): only a single mutability keyword can be provided
-        attributes.elements.iter().fold(
+        attributes.elements().fold(
             output::FunctionMutability::NonPayable,
             |mutability, attribute| match attribute {
                 input::FunctionAttribute::PayableKeyword(_) => output::FunctionMutability::Payable,
@@ -445,7 +441,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         attributes: &input::FunctionAttributes,
     ) -> Option<output::OverridePaths> {
-        attributes.elements.iter().find_map(|attribute| {
+        attributes.elements().find_map(|attribute| {
             if let input::FunctionAttribute::OverrideSpecifier(specifier) = attribute {
                 Some(self.build_override_specifier_as_paths(specifier))
             } else {
@@ -475,7 +471,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         attributes: &input::FunctionTypeAttributes,
     ) -> output::FunctionVisibility {
         // TODO(validation): only a single visibility keyword can be provided
-        attributes.elements.iter().fold(
+        attributes.elements().fold(
             output::FunctionVisibility::Internal,
             |visibility, attribute| match attribute {
                 input::FunctionTypeAttribute::ExternalKeyword(_) => {
@@ -499,7 +495,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         attributes: &input::FunctionTypeAttributes,
     ) -> output::FunctionMutability {
         // TODO(validation): only a single mutability keyword can be provided
-        attributes.elements.iter().fold(
+        attributes.elements().fold(
             output::FunctionMutability::NonPayable,
             |mutability, attribute| match attribute {
                 input::FunctionTypeAttribute::PayableKeyword(_) => {
@@ -554,7 +550,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     fn constructor_visibility(
         attributes: &input::ConstructorAttributes,
     ) -> output::FunctionVisibility {
-        attributes.elements.iter().fold(
+        attributes.elements().fold(
             output::FunctionVisibility::Public,
             |visibility, attribute| match attribute {
                 input::ConstructorAttribute::InternalKeyword(_) => {
@@ -569,7 +565,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     fn constructor_mutability(
         attributes: &input::ConstructorAttributes,
     ) -> output::FunctionMutability {
-        attributes.elements.iter().fold(
+        attributes.elements().fold(
             output::FunctionMutability::NonPayable,
             |mutability, attribute| match attribute {
                 input::ConstructorAttribute::PayableKeyword(_) => {
@@ -609,7 +605,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         // TODO(validation): fallback functions *must* have external visibility
         let visibility = output::FunctionVisibility::External;
         let mutability = Self::fallback_function_mutability(&source.attributes);
-        let virtual_keyword = source.attributes.elements.iter().any(|attribute| {
+        let virtual_keyword = source.attributes.elements().any(|attribute| {
             matches!(
                 attribute,
                 input::FallbackFunctionAttribute::VirtualKeyword(_)
@@ -642,7 +638,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     fn fallback_function_mutability(
         attributes: &input::FallbackFunctionAttributes,
     ) -> output::FunctionMutability {
-        attributes.elements.iter().fold(
+        attributes.elements().fold(
             output::FunctionMutability::NonPayable,
             |mutability, attribute| match attribute {
                 input::FallbackFunctionAttribute::PayableKeyword(_) => {
@@ -663,7 +659,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         attributes: &input::FallbackFunctionAttributes,
     ) -> Option<output::OverridePaths> {
-        attributes.elements.iter().find_map(|attribute| {
+        attributes.elements().find_map(|attribute| {
             if let input::FallbackFunctionAttribute::OverrideSpecifier(specifier) = attribute {
                 Some(self.build_override_specifier_as_paths(specifier))
             } else {
@@ -702,7 +698,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let visibility = output::FunctionVisibility::External;
         // TODO(validation): receive functions *must* be payable
         let mutability = output::FunctionMutability::Payable;
-        let virtual_keyword = source.attributes.elements.iter().any(|attribute| {
+        let virtual_keyword = source.attributes.elements().any(|attribute| {
             matches!(
                 attribute,
                 input::ReceiveFunctionAttribute::VirtualKeyword(_)
@@ -733,7 +729,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         attributes: &input::ReceiveFunctionAttributes,
     ) -> Option<output::OverridePaths> {
-        attributes.elements.iter().find_map(|attribute| {
+        attributes.elements().find_map(|attribute| {
             if let input::ReceiveFunctionAttribute::OverrideSpecifier(specifier) = attribute {
                 Some(self.build_override_specifier_as_paths(specifier))
             } else {
@@ -803,7 +799,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         attributes: &input::ModifierAttributes,
     ) -> Option<output::OverridePaths> {
-        attributes.elements.iter().find_map(|attribute| {
+        attributes.elements().find_map(|attribute| {
             if let input::ModifierAttribute::OverrideSpecifier(specifier) = attribute {
                 Some(self.build_override_specifier_as_paths(specifier))
             } else {
@@ -820,7 +816,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         attributes: &input::StateVariableAttributes,
     ) -> output::StateVariableVisibility {
         // TODO(validation): only one visibility keyword is allowed
-        attributes.elements.iter().fold(
+        attributes.elements().fold(
             output::StateVariableVisibility::Internal,
             |visibility, attribute| match attribute {
                 input::StateVariableAttribute::InternalKeyword(_) => {
@@ -841,7 +837,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         attributes: &input::StateVariableAttributes,
     ) -> output::StateVariableMutability {
         // TODO(validation): only one mutability keyword is allowed
-        attributes.elements.iter().fold(
+        attributes.elements().fold(
             output::StateVariableMutability::Mutable,
             |mutability, attribute| match attribute {
                 input::StateVariableAttribute::ConstantKeyword(_) => {
@@ -863,7 +859,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         attributes: &input::StateVariableAttributes,
     ) -> Option<output::OverridePaths> {
         // TODO(validation): only one override specifier is allowed
-        attributes.elements.iter().find_map(|attribute| {
+        attributes.elements().find_map(|attribute| {
             if let input::StateVariableAttribute::OverrideSpecifier(specifier) = attribute {
                 Some(self.build_override_specifier_as_paths(specifier))
             } else {

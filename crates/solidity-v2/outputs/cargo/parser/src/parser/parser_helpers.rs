@@ -11,7 +11,7 @@ use slang_solidity_v2_cst::structured_cst::nodes::{
     new_member_access_expression, new_type_name_array_type_name, new_type_name_elementary_type,
     new_type_name_identifier_path, CloseBracket, ElementaryType, Expression, FunctionType,
     FunctionTypeAttribute, FunctionTypeStruct, Identifier, IdentifierPath, IdentifierPathElement,
-    IndexAccessEnd, OpenBracket, Period, StateVariableAttribute, TypeName,
+    IndexAccessEnd, OpenBracket, StateVariableAttribute, TypeName,
 };
 
 /// An `IndexAccessPath` represents a path or elementary type followed by
@@ -128,30 +128,26 @@ pub(crate) fn new_expression_index_access_path(index_access_path: IndexAccessPat
 }
 
 pub(crate) fn new_expression_identifier_path(identifier_path: IdentifierPath) -> Expression {
-    identifier_path
-        .elements
-        .into_iter()
-        .fold(None, |acc, id| {
-            match acc {
-                None => Some(match id {
-                    IdentifierPathElement::AddressKeyword(_) => {
-                        // TODO(v2) we should validate that this is not the case and fail gracefully
-                        // instead of returning a wrong identifier
-                        new_expression_identifier(Identifier { range: 0..0 })
-                    }
-                    IdentifierPathElement::Identifier(id) => new_expression_identifier(id),
-                }),
-                Some(acc) => Some(new_expression_member_access_expression(
-                    new_member_access_expression(
-                        acc,
-                        // TODO(v2) use real range
-                        Period { range: 0..0 },
-                        id,
-                    ),
-                )),
-            }
-        })
-        .expect("IdentifierPath should have at least one element!")
+    let (first, rest) = identifier_path
+        .0
+        .into_split_first()
+        .expect("IdentifierPath should have at least one element");
+    let mut expr = match first {
+        IdentifierPathElement::AddressKeyword(_) => {
+            // TODO(v2) we should validate that this is not the case and fail gracefully
+            // instead of returning a wrong identifier
+            new_expression_identifier(Identifier { range: 0..0 })
+        }
+        IdentifierPathElement::Identifier(id) => new_expression_identifier(id),
+    };
+
+    for (period, element) in rest {
+        expr = new_expression_member_access_expression(new_member_access_expression(
+            expr, period, element,
+        ));
+    }
+
+    expr
 }
 
 /// We use this function to share attributes between a state variable that has a function type.

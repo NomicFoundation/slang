@@ -2375,265 +2375,265 @@ impl TextEnd for YulSwitchCase {
 
 impl TextEnd for ArrayValues {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for CallOptions {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for CatchClauses {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for ConstructorAttributes {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for ContractMembers {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for ContractSpecifiers {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for EnumMembers {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for ErrorParameters {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for EventParameters {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for FallbackFunctionAttributes {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for FunctionAttributes {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for FunctionTypeAttributes {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for HexStringLiterals {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for IdentifierPath {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for ImportDeconstructionSymbols {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for InheritanceTypes {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for InterfaceMembers {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for LibraryMembers {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for ModifierAttributes {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for MultiTypedDeclarationElements {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for NamedArguments {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for OverridePaths {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for Parameters {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for PositionalArguments {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for ReceiveFunctionAttributes {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for SimpleVersionLiteral {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for SourceUnitMembers {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for StateVariableAttributes {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for Statements {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for StringLiterals {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for StructMembers {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for TupleValues {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for UnicodeStringLiterals {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for UsingDeconstructionSymbols {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for VersionExpressionSet {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for VersionExpressionSets {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for YulArguments {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for YulFlags {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for YulParameters {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for YulPath {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for YulPaths {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for YulStatements {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for YulSwitchCases {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 
 impl TextEnd for YulVariableNames {
     fn text_end(&self) -> Option<usize> {
-        self.elements.iter().rev().find_map(TextEnd::text_end)
+        self.elements().rev().find_map(TextEnd::text_end)
     }
 }
 

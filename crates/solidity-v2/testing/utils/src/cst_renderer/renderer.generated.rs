@@ -8099,29 +8099,53 @@ pub fn render_yul_switch_case(source: &str, node: &YulSwitchCase, depth: usize) 
 //
 
 pub fn render_array_values(source: &str, node: &ArrayValues, depth: usize) -> RenderedOutput {
-    if node.elements.is_empty() {
-        return (None, vec![": []\n".to_string()]);
-    }
-    let mut acc = ChildrenAccumulator::new(source, depth + 1);
-    for element in &node.elements {
-        let rendered = render_expression(source, element, depth + 1);
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
+            let mut acc = ChildrenAccumulator::new(source, depth + 1);
+            {
+                let rendered = render_expression(source, first, depth + 1);
 
-        acc.add("item", "Expression", rendered);
+                acc.add("item", "Expression", rendered);
+            }
+            for (separator, element) in rest {
+                {
+                    let rendered = render_terminal(source, &separator.range);
+                    acc.add("separator", "Comma", rendered);
+                }
+
+                let rendered = render_expression(source, element, depth + 1);
+
+                acc.add("item", "Expression", rendered);
+            }
+            acc.finish()
+        }
     }
-    acc.finish()
 }
 
 pub fn render_call_options(source: &str, node: &CallOptions, depth: usize) -> RenderedOutput {
-    if node.elements.is_empty() {
-        return (None, vec![": []\n".to_string()]);
-    }
-    let mut acc = ChildrenAccumulator::new(source, depth + 1);
-    for element in &node.elements {
-        let rendered = render_named_argument(source, element, depth + 1);
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
+            let mut acc = ChildrenAccumulator::new(source, depth + 1);
+            {
+                let rendered = render_named_argument(source, first, depth + 1);
 
-        acc.add("item", "NamedArgument", rendered);
+                acc.add("item", "NamedArgument", rendered);
+            }
+            for (separator, element) in rest {
+                {
+                    let rendered = render_terminal(source, &separator.range);
+                    acc.add("separator", "Comma", rendered);
+                }
+
+                let rendered = render_named_argument(source, element, depth + 1);
+
+                acc.add("item", "NamedArgument", rendered);
+            }
+            acc.finish()
+        }
     }
-    acc.finish()
 }
 
 pub fn render_catch_clauses(source: &str, node: &CatchClauses, depth: usize) -> RenderedOutput {
@@ -8189,16 +8213,28 @@ pub fn render_contract_specifiers(
 }
 
 pub fn render_enum_members(source: &str, node: &EnumMembers, depth: usize) -> RenderedOutput {
-    if node.elements.is_empty() {
-        return (None, vec![": []\n".to_string()]);
-    }
-    let mut acc = ChildrenAccumulator::new(source, depth + 1);
-    for element in &node.elements {
-        let rendered = render_terminal(source, &element.range);
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
+            let mut acc = ChildrenAccumulator::new(source, depth + 1);
+            {
+                let rendered = render_terminal(source, &first.range);
 
-        acc.add("item", "Identifier", rendered);
+                acc.add("item", "Identifier", rendered);
+            }
+            for (separator, element) in rest {
+                {
+                    let rendered = render_terminal(source, &separator.range);
+                    acc.add("separator", "Comma", rendered);
+                }
+
+                let rendered = render_terminal(source, &element.range);
+
+                acc.add("item", "Identifier", rendered);
+            }
+            acc.finish()
+        }
     }
-    acc.finish()
 }
 
 pub fn render_error_parameters(
@@ -8206,16 +8242,28 @@ pub fn render_error_parameters(
     node: &ErrorParameters,
     depth: usize,
 ) -> RenderedOutput {
-    if node.elements.is_empty() {
-        return (None, vec![": []\n".to_string()]);
-    }
-    let mut acc = ChildrenAccumulator::new(source, depth + 1);
-    for element in &node.elements {
-        let rendered = render_error_parameter(source, element, depth + 1);
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
+            let mut acc = ChildrenAccumulator::new(source, depth + 1);
+            {
+                let rendered = render_error_parameter(source, first, depth + 1);
 
-        acc.add("item", "ErrorParameter", rendered);
+                acc.add("item", "ErrorParameter", rendered);
+            }
+            for (separator, element) in rest {
+                {
+                    let rendered = render_terminal(source, &separator.range);
+                    acc.add("separator", "Comma", rendered);
+                }
+
+                let rendered = render_error_parameter(source, element, depth + 1);
+
+                acc.add("item", "ErrorParameter", rendered);
+            }
+            acc.finish()
+        }
     }
-    acc.finish()
 }
 
 pub fn render_event_parameters(
@@ -8223,16 +8271,28 @@ pub fn render_event_parameters(
     node: &EventParameters,
     depth: usize,
 ) -> RenderedOutput {
-    if node.elements.is_empty() {
-        return (None, vec![": []\n".to_string()]);
-    }
-    let mut acc = ChildrenAccumulator::new(source, depth + 1);
-    for element in &node.elements {
-        let rendered = render_event_parameter(source, element, depth + 1);
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
+            let mut acc = ChildrenAccumulator::new(source, depth + 1);
+            {
+                let rendered = render_event_parameter(source, first, depth + 1);
 
-        acc.add("item", "EventParameter", rendered);
+                acc.add("item", "EventParameter", rendered);
+            }
+            for (separator, element) in rest {
+                {
+                    let rendered = render_terminal(source, &separator.range);
+                    acc.add("separator", "Comma", rendered);
+                }
+
+                let rendered = render_event_parameter(source, element, depth + 1);
+
+                acc.add("item", "EventParameter", rendered);
+            }
+            acc.finish()
+        }
     }
-    acc.finish()
 }
 
 pub fn render_fallback_function_attributes(
@@ -8304,16 +8364,28 @@ pub fn render_hex_string_literals(
 }
 
 pub fn render_identifier_path(source: &str, node: &IdentifierPath, depth: usize) -> RenderedOutput {
-    if node.elements.is_empty() {
-        return (None, vec![": []\n".to_string()]);
-    }
-    let mut acc = ChildrenAccumulator::new(source, depth + 1);
-    for element in &node.elements {
-        let rendered = render_identifier_path_element(source, element, depth + 1);
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
+            let mut acc = ChildrenAccumulator::new(source, depth + 1);
+            {
+                let rendered = render_identifier_path_element(source, first, depth + 1);
 
-        acc.add("item", "IdentifierPathElement", rendered);
+                acc.add("item", "IdentifierPathElement", rendered);
+            }
+            for (separator, element) in rest {
+                {
+                    let rendered = render_terminal(source, &separator.range);
+                    acc.add("separator", "Period", rendered);
+                }
+
+                let rendered = render_identifier_path_element(source, element, depth + 1);
+
+                acc.add("item", "IdentifierPathElement", rendered);
+            }
+            acc.finish()
+        }
     }
-    acc.finish()
 }
 
 pub fn render_import_deconstruction_symbols(
@@ -8321,16 +8393,28 @@ pub fn render_import_deconstruction_symbols(
     node: &ImportDeconstructionSymbols,
     depth: usize,
 ) -> RenderedOutput {
-    if node.elements.is_empty() {
-        return (None, vec![": []\n".to_string()]);
-    }
-    let mut acc = ChildrenAccumulator::new(source, depth + 1);
-    for element in &node.elements {
-        let rendered = render_import_deconstruction_symbol(source, element, depth + 1);
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
+            let mut acc = ChildrenAccumulator::new(source, depth + 1);
+            {
+                let rendered = render_import_deconstruction_symbol(source, first, depth + 1);
 
-        acc.add("item", "ImportDeconstructionSymbol", rendered);
+                acc.add("item", "ImportDeconstructionSymbol", rendered);
+            }
+            for (separator, element) in rest {
+                {
+                    let rendered = render_terminal(source, &separator.range);
+                    acc.add("separator", "Comma", rendered);
+                }
+
+                let rendered = render_import_deconstruction_symbol(source, element, depth + 1);
+
+                acc.add("item", "ImportDeconstructionSymbol", rendered);
+            }
+            acc.finish()
+        }
     }
-    acc.finish()
 }
 
 pub fn render_inheritance_types(
@@ -8338,16 +8422,28 @@ pub fn render_inheritance_types(
     node: &InheritanceTypes,
     depth: usize,
 ) -> RenderedOutput {
-    if node.elements.is_empty() {
-        return (None, vec![": []\n".to_string()]);
-    }
-    let mut acc = ChildrenAccumulator::new(source, depth + 1);
-    for element in &node.elements {
-        let rendered = render_inheritance_type(source, element, depth + 1);
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
+            let mut acc = ChildrenAccumulator::new(source, depth + 1);
+            {
+                let rendered = render_inheritance_type(source, first, depth + 1);
 
-        acc.add("item", "InheritanceType", rendered);
+                acc.add("item", "InheritanceType", rendered);
+            }
+            for (separator, element) in rest {
+                {
+                    let rendered = render_terminal(source, &separator.range);
+                    acc.add("separator", "Comma", rendered);
+                }
+
+                let rendered = render_inheritance_type(source, element, depth + 1);
+
+                acc.add("item", "InheritanceType", rendered);
+            }
+            acc.finish()
+        }
     }
-    acc.finish()
 }
 
 pub fn render_interface_members(
@@ -8402,55 +8498,103 @@ pub fn render_multi_typed_declaration_elements(
     node: &MultiTypedDeclarationElements,
     depth: usize,
 ) -> RenderedOutput {
-    if node.elements.is_empty() {
-        return (None, vec![": []\n".to_string()]);
-    }
-    let mut acc = ChildrenAccumulator::new(source, depth + 1);
-    for element in &node.elements {
-        let rendered = render_multi_typed_declaration_element(source, element, depth + 1);
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
+            let mut acc = ChildrenAccumulator::new(source, depth + 1);
+            {
+                let rendered = render_multi_typed_declaration_element(source, first, depth + 1);
 
-        acc.add("item", "MultiTypedDeclarationElement", rendered);
+                acc.add("item", "MultiTypedDeclarationElement", rendered);
+            }
+            for (separator, element) in rest {
+                {
+                    let rendered = render_terminal(source, &separator.range);
+                    acc.add("separator", "Comma", rendered);
+                }
+
+                let rendered = render_multi_typed_declaration_element(source, element, depth + 1);
+
+                acc.add("item", "MultiTypedDeclarationElement", rendered);
+            }
+            acc.finish()
+        }
     }
-    acc.finish()
 }
 
 pub fn render_named_arguments(source: &str, node: &NamedArguments, depth: usize) -> RenderedOutput {
-    if node.elements.is_empty() {
-        return (None, vec![": []\n".to_string()]);
-    }
-    let mut acc = ChildrenAccumulator::new(source, depth + 1);
-    for element in &node.elements {
-        let rendered = render_named_argument(source, element, depth + 1);
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
+            let mut acc = ChildrenAccumulator::new(source, depth + 1);
+            {
+                let rendered = render_named_argument(source, first, depth + 1);
 
-        acc.add("item", "NamedArgument", rendered);
+                acc.add("item", "NamedArgument", rendered);
+            }
+            for (separator, element) in rest {
+                {
+                    let rendered = render_terminal(source, &separator.range);
+                    acc.add("separator", "Comma", rendered);
+                }
+
+                let rendered = render_named_argument(source, element, depth + 1);
+
+                acc.add("item", "NamedArgument", rendered);
+            }
+            acc.finish()
+        }
     }
-    acc.finish()
 }
 
 pub fn render_override_paths(source: &str, node: &OverridePaths, depth: usize) -> RenderedOutput {
-    if node.elements.is_empty() {
-        return (None, vec![": []\n".to_string()]);
-    }
-    let mut acc = ChildrenAccumulator::new(source, depth + 1);
-    for element in &node.elements {
-        let rendered = render_identifier_path(source, element, depth + 1);
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
+            let mut acc = ChildrenAccumulator::new(source, depth + 1);
+            {
+                let rendered = render_identifier_path(source, first, depth + 1);
 
-        acc.add("item", "IdentifierPath", rendered);
+                acc.add("item", "IdentifierPath", rendered);
+            }
+            for (separator, element) in rest {
+                {
+                    let rendered = render_terminal(source, &separator.range);
+                    acc.add("separator", "Comma", rendered);
+                }
+
+                let rendered = render_identifier_path(source, element, depth + 1);
+
+                acc.add("item", "IdentifierPath", rendered);
+            }
+            acc.finish()
+        }
     }
-    acc.finish()
 }
 
 pub fn render_parameters(source: &str, node: &Parameters, depth: usize) -> RenderedOutput {
-    if node.elements.is_empty() {
-        return (None, vec![": []\n".to_string()]);
-    }
-    let mut acc = ChildrenAccumulator::new(source, depth + 1);
-    for element in &node.elements {
-        let rendered = render_parameter(source, element, depth + 1);
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
+            let mut acc = ChildrenAccumulator::new(source, depth + 1);
+            {
+                let rendered = render_parameter(source, first, depth + 1);
 
-        acc.add("item", "Parameter", rendered);
+                acc.add("item", "Parameter", rendered);
+            }
+            for (separator, element) in rest {
+                {
+                    let rendered = render_terminal(source, &separator.range);
+                    acc.add("separator", "Comma", rendered);
+                }
+
+                let rendered = render_parameter(source, element, depth + 1);
+
+                acc.add("item", "Parameter", rendered);
+            }
+            acc.finish()
+        }
     }
-    acc.finish()
 }
 
 pub fn render_positional_arguments(
@@ -8458,16 +8602,28 @@ pub fn render_positional_arguments(
     node: &PositionalArguments,
     depth: usize,
 ) -> RenderedOutput {
-    if node.elements.is_empty() {
-        return (None, vec![": []\n".to_string()]);
-    }
-    let mut acc = ChildrenAccumulator::new(source, depth + 1);
-    for element in &node.elements {
-        let rendered = render_expression(source, element, depth + 1);
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
+            let mut acc = ChildrenAccumulator::new(source, depth + 1);
+            {
+                let rendered = render_expression(source, first, depth + 1);
 
-        acc.add("item", "Expression", rendered);
+                acc.add("item", "Expression", rendered);
+            }
+            for (separator, element) in rest {
+                {
+                    let rendered = render_terminal(source, &separator.range);
+                    acc.add("separator", "Comma", rendered);
+                }
+
+                let rendered = render_expression(source, element, depth + 1);
+
+                acc.add("item", "Expression", rendered);
+            }
+            acc.finish()
+        }
     }
-    acc.finish()
 }
 
 pub fn render_receive_function_attributes(
@@ -8492,16 +8648,28 @@ pub fn render_simple_version_literal(
     node: &SimpleVersionLiteral,
     depth: usize,
 ) -> RenderedOutput {
-    if node.elements.is_empty() {
-        return (None, vec![": []\n".to_string()]);
-    }
-    let mut acc = ChildrenAccumulator::new(source, depth + 1);
-    for element in &node.elements {
-        let rendered = render_terminal(source, &element.range);
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
+            let mut acc = ChildrenAccumulator::new(source, depth + 1);
+            {
+                let rendered = render_terminal(source, &first.range);
 
-        acc.add("item", "VersionSpecifier", rendered);
+                acc.add("item", "VersionSpecifier", rendered);
+            }
+            for (separator, element) in rest {
+                {
+                    let rendered = render_terminal(source, &separator.range);
+                    acc.add("separator", "PragmaPeriod", rendered);
+                }
+
+                let rendered = render_terminal(source, &element.range);
+
+                acc.add("item", "VersionSpecifier", rendered);
+            }
+            acc.finish()
+        }
     }
-    acc.finish()
 }
 
 pub fn render_source_unit_members(
@@ -8578,16 +8746,28 @@ pub fn render_struct_members(source: &str, node: &StructMembers, depth: usize) -
 }
 
 pub fn render_tuple_values(source: &str, node: &TupleValues, depth: usize) -> RenderedOutput {
-    if node.elements.is_empty() {
-        return (None, vec![": []\n".to_string()]);
-    }
-    let mut acc = ChildrenAccumulator::new(source, depth + 1);
-    for element in &node.elements {
-        let rendered = render_tuple_value(source, element, depth + 1);
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
+            let mut acc = ChildrenAccumulator::new(source, depth + 1);
+            {
+                let rendered = render_tuple_value(source, first, depth + 1);
 
-        acc.add("item", "TupleValue", rendered);
+                acc.add("item", "TupleValue", rendered);
+            }
+            for (separator, element) in rest {
+                {
+                    let rendered = render_terminal(source, &separator.range);
+                    acc.add("separator", "Comma", rendered);
+                }
+
+                let rendered = render_tuple_value(source, element, depth + 1);
+
+                acc.add("item", "TupleValue", rendered);
+            }
+            acc.finish()
+        }
     }
-    acc.finish()
 }
 
 pub fn render_unicode_string_literals(
@@ -8612,16 +8792,28 @@ pub fn render_using_deconstruction_symbols(
     node: &UsingDeconstructionSymbols,
     depth: usize,
 ) -> RenderedOutput {
-    if node.elements.is_empty() {
-        return (None, vec![": []\n".to_string()]);
-    }
-    let mut acc = ChildrenAccumulator::new(source, depth + 1);
-    for element in &node.elements {
-        let rendered = render_using_deconstruction_symbol(source, element, depth + 1);
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
+            let mut acc = ChildrenAccumulator::new(source, depth + 1);
+            {
+                let rendered = render_using_deconstruction_symbol(source, first, depth + 1);
 
-        acc.add("item", "UsingDeconstructionSymbol", rendered);
+                acc.add("item", "UsingDeconstructionSymbol", rendered);
+            }
+            for (separator, element) in rest {
+                {
+                    let rendered = render_terminal(source, &separator.range);
+                    acc.add("separator", "Comma", rendered);
+                }
+
+                let rendered = render_using_deconstruction_symbol(source, element, depth + 1);
+
+                acc.add("item", "UsingDeconstructionSymbol", rendered);
+            }
+            acc.finish()
+        }
     }
-    acc.finish()
 }
 
 pub fn render_version_expression_set(
@@ -8646,81 +8838,153 @@ pub fn render_version_expression_sets(
     node: &VersionExpressionSets,
     depth: usize,
 ) -> RenderedOutput {
-    if node.elements.is_empty() {
-        return (None, vec![": []\n".to_string()]);
-    }
-    let mut acc = ChildrenAccumulator::new(source, depth + 1);
-    for element in &node.elements {
-        let rendered = render_version_expression_set(source, element, depth + 1);
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
+            let mut acc = ChildrenAccumulator::new(source, depth + 1);
+            {
+                let rendered = render_version_expression_set(source, first, depth + 1);
 
-        acc.add("item", "VersionExpressionSet", rendered);
+                acc.add("item", "VersionExpressionSet", rendered);
+            }
+            for (separator, element) in rest {
+                {
+                    let rendered = render_terminal(source, &separator.range);
+                    acc.add("separator", "PragmaBarBar", rendered);
+                }
+
+                let rendered = render_version_expression_set(source, element, depth + 1);
+
+                acc.add("item", "VersionExpressionSet", rendered);
+            }
+            acc.finish()
+        }
     }
-    acc.finish()
 }
 
 pub fn render_yul_arguments(source: &str, node: &YulArguments, depth: usize) -> RenderedOutput {
-    if node.elements.is_empty() {
-        return (None, vec![": []\n".to_string()]);
-    }
-    let mut acc = ChildrenAccumulator::new(source, depth + 1);
-    for element in &node.elements {
-        let rendered = render_yul_expression(source, element, depth + 1);
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
+            let mut acc = ChildrenAccumulator::new(source, depth + 1);
+            {
+                let rendered = render_yul_expression(source, first, depth + 1);
 
-        acc.add("item", "YulExpression", rendered);
+                acc.add("item", "YulExpression", rendered);
+            }
+            for (separator, element) in rest {
+                {
+                    let rendered = render_terminal(source, &separator.range);
+                    acc.add("separator", "YulComma", rendered);
+                }
+
+                let rendered = render_yul_expression(source, element, depth + 1);
+
+                acc.add("item", "YulExpression", rendered);
+            }
+            acc.finish()
+        }
     }
-    acc.finish()
 }
 
 pub fn render_yul_flags(source: &str, node: &YulFlags, depth: usize) -> RenderedOutput {
-    if node.elements.is_empty() {
-        return (None, vec![": []\n".to_string()]);
-    }
-    let mut acc = ChildrenAccumulator::new(source, depth + 1);
-    for element in &node.elements {
-        let rendered = render_terminal(source, &element.range);
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
+            let mut acc = ChildrenAccumulator::new(source, depth + 1);
+            {
+                let rendered = render_terminal(source, &first.range);
 
-        acc.add("item", "YulStringLiteral", rendered);
+                acc.add("item", "YulStringLiteral", rendered);
+            }
+            for (separator, element) in rest {
+                {
+                    let rendered = render_terminal(source, &separator.range);
+                    acc.add("separator", "YulComma", rendered);
+                }
+
+                let rendered = render_terminal(source, &element.range);
+
+                acc.add("item", "YulStringLiteral", rendered);
+            }
+            acc.finish()
+        }
     }
-    acc.finish()
 }
 
 pub fn render_yul_parameters(source: &str, node: &YulParameters, depth: usize) -> RenderedOutput {
-    if node.elements.is_empty() {
-        return (None, vec![": []\n".to_string()]);
-    }
-    let mut acc = ChildrenAccumulator::new(source, depth + 1);
-    for element in &node.elements {
-        let rendered = render_terminal(source, &element.range);
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
+            let mut acc = ChildrenAccumulator::new(source, depth + 1);
+            {
+                let rendered = render_terminal(source, &first.range);
 
-        acc.add("item", "YulIdentifier", rendered);
+                acc.add("item", "YulIdentifier", rendered);
+            }
+            for (separator, element) in rest {
+                {
+                    let rendered = render_terminal(source, &separator.range);
+                    acc.add("separator", "YulComma", rendered);
+                }
+
+                let rendered = render_terminal(source, &element.range);
+
+                acc.add("item", "YulIdentifier", rendered);
+            }
+            acc.finish()
+        }
     }
-    acc.finish()
 }
 
 pub fn render_yul_path(source: &str, node: &YulPath, depth: usize) -> RenderedOutput {
-    if node.elements.is_empty() {
-        return (None, vec![": []\n".to_string()]);
-    }
-    let mut acc = ChildrenAccumulator::new(source, depth + 1);
-    for element in &node.elements {
-        let rendered = render_terminal(source, &element.range);
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
+            let mut acc = ChildrenAccumulator::new(source, depth + 1);
+            {
+                let rendered = render_terminal(source, &first.range);
 
-        acc.add("item", "YulIdentifier", rendered);
+                acc.add("item", "YulIdentifier", rendered);
+            }
+            for (separator, element) in rest {
+                {
+                    let rendered = render_terminal(source, &separator.range);
+                    acc.add("separator", "YulPeriod", rendered);
+                }
+
+                let rendered = render_terminal(source, &element.range);
+
+                acc.add("item", "YulIdentifier", rendered);
+            }
+            acc.finish()
+        }
     }
-    acc.finish()
 }
 
 pub fn render_yul_paths(source: &str, node: &YulPaths, depth: usize) -> RenderedOutput {
-    if node.elements.is_empty() {
-        return (None, vec![": []\n".to_string()]);
-    }
-    let mut acc = ChildrenAccumulator::new(source, depth + 1);
-    for element in &node.elements {
-        let rendered = render_yul_path(source, element, depth + 1);
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
+            let mut acc = ChildrenAccumulator::new(source, depth + 1);
+            {
+                let rendered = render_yul_path(source, first, depth + 1);
 
-        acc.add("item", "YulPath", rendered);
+                acc.add("item", "YulPath", rendered);
+            }
+            for (separator, element) in rest {
+                {
+                    let rendered = render_terminal(source, &separator.range);
+                    acc.add("separator", "YulComma", rendered);
+                }
+
+                let rendered = render_yul_path(source, element, depth + 1);
+
+                acc.add("item", "YulPath", rendered);
+            }
+            acc.finish()
+        }
     }
-    acc.finish()
 }
 
 pub fn render_yul_statements(source: &str, node: &YulStatements, depth: usize) -> RenderedOutput {
@@ -8758,14 +9022,26 @@ pub fn render_yul_variable_names(
     node: &YulVariableNames,
     depth: usize,
 ) -> RenderedOutput {
-    if node.elements.is_empty() {
-        return (None, vec![": []\n".to_string()]);
-    }
-    let mut acc = ChildrenAccumulator::new(source, depth + 1);
-    for element in &node.elements {
-        let rendered = render_terminal(source, &element.range);
+    match node.split_first() {
+        None => (None, vec![": []\n".to_string()]),
+        Some((first, rest)) => {
+            let mut acc = ChildrenAccumulator::new(source, depth + 1);
+            {
+                let rendered = render_terminal(source, &first.range);
 
-        acc.add("item", "YulIdentifier", rendered);
+                acc.add("item", "YulIdentifier", rendered);
+            }
+            for (separator, element) in rest {
+                {
+                    let rendered = render_terminal(source, &separator.range);
+                    acc.add("separator", "YulComma", rendered);
+                }
+
+                let rendered = render_terminal(source, &element.range);
+
+                acc.add("item", "YulIdentifier", rendered);
+            }
+            acc.finish()
+        }
     }
-    acc.finish()
 }

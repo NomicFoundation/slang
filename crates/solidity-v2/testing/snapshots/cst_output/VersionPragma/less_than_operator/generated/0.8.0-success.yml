@@ -20,6 +20,8 @@ Tree:
                               - (operator꞉ VersionOperator) ► (pragma_less_than꞉ PragmaLessThan): "<" # (123..124)
                               - (literal꞉ VersionLiteral) ► (simple_version_literal꞉ SimpleVersionLiteral): # "1.0.0" (124..129)
                                   - (item꞉ VersionSpecifier): "1" # (124..125)
+                                  - (separator꞉ PragmaPeriod): "." # (125..126)
                                   - (item꞉ VersionSpecifier): "0" # (126..127)
+                                  - (separator꞉ PragmaPeriod): "." # (127..128)
                                   - (item꞉ VersionSpecifier): "0" # (128..129)
               - (semicolon꞉ PragmaSemicolon): ";" # (137..138)
