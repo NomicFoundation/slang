@@ -72,6 +72,13 @@
       "groupName": "npm minor/patch"
     },
     {
+      "description": "npm: pre-1.0 packages treat 0.x→0.y as major (npm semver convention); ungroup from minor/patch so they land as individual PRs",
+      "matchManagers": ["npm"],
+      "matchCurrentVersion": "<1.0.0",
+      "matchUpdateTypes": ["minor"],
+      "groupName": null
+    },
+    {
       "description": "pip (Pipenv): group minor/patch; majors stay individual",
       "matchManagers": ["pipenv"],
       "matchUpdateTypes": ["minor", "patch"],
@@ -133,6 +140,7 @@
   ],
   "labels": ["dependencies"],
   "configMigration": true,
+  "dependencyDashboard": false,
   "osvVulnerabilityAlerts": true,
   "vulnerabilityAlerts": {
     "enabled": true,
