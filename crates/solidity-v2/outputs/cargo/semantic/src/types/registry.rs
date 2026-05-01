@@ -1,9 +1,12 @@
 use std::collections::HashMap;
 
 use indexmap::IndexSet;
+use num_traits::Zero;
+use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
-use super::{DataLocation, FunctionType, LiteralKind, Type, TypeId};
+use super::literals::numbers;
+use super::{DataLocation, FunctionType, LiteralKind, Number, Type, TypeId};
 use crate::types::ImplicitlyConvertible;
 
 /// The `TypeRegistry` stores an index of registered types, both elementary
@@ -13,7 +16,10 @@ use crate::types::ImplicitlyConvertible;
 /// some kinds of expressions (eg. the boolean type).
 pub struct TypeRegistry {
     types: IndexSet<Type>,
-    super_types: HashMap<TypeId, Vec<TypeId>>,
+    // This is used to register the _is-subclass_ and _implements_ relationships
+    // between contract/interface types. The `NodeId`s correspond to the
+    // `definition_id` in the respective `Type` variants.
+    super_types: HashMap<NodeId, Vec<NodeId>>,
 
     // Pre-defined core types
     address_type_id: TypeId,
@@ -93,20 +99,36 @@ impl TypeRegistry {
         self.types.get_index_of(type_).map(TypeId)
     }
 
-    pub fn register_type(&mut self, type_: Type) -> TypeId {
+    pub(crate) fn register_type(&mut self, type_: Type) -> TypeId {
         let (index, _) = self.types.insert_full(type_);
         TypeId(index)
     }
 
-    pub fn register_super_types(&mut self, type_id: TypeId, super_types: Vec<TypeId>) {
-        self.super_types.insert(type_id, super_types);
+    pub(crate) fn register_super_types(&mut self, type_id: TypeId, super_types: &[TypeId]) {
+        let type_ = self.get_type_by_id(type_id);
+        assert!(
+            type_.is_contract_or_interface(),
+            "can only register super types of contracts and interfaces",
+        );
+        let type_node_id = type_.get_definition_id().unwrap();
+        let super_type_node_ids = super_types
+            .iter()
+            .map(|super_type_id| {
+                let super_type = self.get_type_by_id(*super_type_id);
+                assert!(
+                    super_type.is_contract_or_interface(),
+                    "super types can only be contracts or interfaces",
+                );
+                super_type.get_definition_id().unwrap()
+            })
+            .collect();
+        self.super_types.insert(type_node_id, super_type_node_ids);
     }
 
     pub fn get_type_by_id(&self, type_id: TypeId) -> &Type {
         self.types.get_index(type_id.0).unwrap()
     }
 
-    #[allow(clippy::too_many_lines)]
     pub fn implicitly_convertible_to(&self, from_type_id: TypeId, to_type_id: TypeId) -> bool {
         if from_type_id == to_type_id {
             return true;
@@ -114,6 +136,11 @@ impl TypeRegistry {
         let from_type = self.get_type_by_id(from_type_id);
         let to_type = self.get_type_by_id(to_type_id);
 
+        self.internal_implicitly_convertible_to(from_type, to_type)
+    }
+
+    #[allow(clippy::too_many_lines)]
+    fn internal_implicitly_convertible_to(&self, from_type: &Type, to_type: &Type) -> bool {
         match (from_type, to_type) {
             (
                 Type::Address {
@@ -143,46 +170,18 @@ impl TypeRegistry {
 
             (
                 Type::Literal(
-                    LiteralKind::Zero
-                    | LiteralKind::DecimalInteger
-                    // TODO: rationals cannot be always converted to integers,
-                    // unless their fractional part is zero. But for now and
-                    // without further information about the literal number
-                    // itself, assume it can.
-                    | LiteralKind::Rational
-                    | LiteralKind::HexInteger { .. },
+                    LiteralKind::Integer { value } | LiteralKind::HexInteger { value, .. },
                 ),
-                Type::Integer { .. },
-            ) => {
-                // TODO(validation): check that the literal can fit in the given integer type
-                true
-            }
+                Type::Integer { signed, bits },
+            ) => numbers::integer_literal_fits(value, *signed, *bits),
 
-            (
-                Type::Literal(
-                    LiteralKind::Zero
-                    | LiteralKind::DecimalInteger
-                    | LiteralKind::Rational
-                    | LiteralKind::HexInteger { .. },
-                ),
-                Type::Literal(LiteralKind::Rational),
-            ) |
-            (
-                Type::Literal(
-                    LiteralKind::Zero
-                    | LiteralKind::DecimalInteger
-                    | LiteralKind::HexInteger { .. },
-                ),
-                Type::Literal(LiteralKind::DecimalInteger),
-            ) |
-            (
-                Type::Literal(
-                    LiteralKind::Zero
-                    | LiteralKind::HexInteger { .. },
-                ),
-                Type::Literal(LiteralKind::HexInteger { .. }),
-            ) => true,
+            // Non-integer rational literals never implicitly convert to an
+            // integer type — if a rational reduced to an integer it would have
+            // been normalised to `LiteralKind::Integer` at construction time.
+            (Type::Literal(LiteralKind::Rational { .. }), Type::Integer { .. }) => false,
 
+            // TODO: Rational -> FixedPointNumber once v2 models implicit
+            // conversion of rational literals to fixed-point types.
             (Type::Integer { .. }, Type::Literal(_)) => false,
 
             (
@@ -190,15 +189,29 @@ impl TypeRegistry {
                 Type::String { location } | Type::Bytes { location },
             ) if *location == DataLocation::Memory || *location == DataLocation::Calldata => true,
 
-            (Type::Literal(LiteralKind::Zero), Type::ByteArray { .. }) => true,
+            // Zero (any source — decimal, hex, or folded) is always
+            // implicitly convertible to any byte-array type.
             (
                 Type::Literal(
-                    LiteralKind::HexInteger { bytes }
-                    | LiteralKind::HexString { bytes }
-                    | LiteralKind::String { bytes },
+                    LiteralKind::Integer { value } | LiteralKind::HexInteger { value, .. },
                 ),
+                Type::ByteArray { .. },
+            ) if value.is_zero() => true,
+
+            // Non-zero hex-source literals convert to `bytesN` of exactly
+            // matching source byte width. Plain `Integer` literals (decimal
+            // source or any folded result) do NOT — folding any operation
+            // erases the hex provenance and disables this conversion.
+            (Type::Literal(LiteralKind::HexInteger { bytes, .. }), Type::ByteArray { width })
+                if *bytes == *width =>
+            {
+                true
+            }
+
+            (
+                Type::Literal(LiteralKind::HexString { bytes } | LiteralKind::String { bytes }),
                 Type::ByteArray { width },
-            ) if *bytes == *width => true,
+            ) if *bytes == *width as usize => true,
 
             (
                 Type::Array {
@@ -267,7 +280,9 @@ impl TypeRegistry {
             (Type::Function(from_function_type), Type::Function(to_function_type)) => {
                 // This is full equality except for visibility and mutability
                 // which can be converted to, and definition_id which can differ
-                from_function_type.visibility.implicitly_convertible_to(to_function_type.visibility)
+                from_function_type
+                    .visibility
+                    .implicitly_convertible_to(to_function_type.visibility)
                     && from_function_type
                         .mutability
                         .implicitly_convertible_to(to_function_type.mutability)
@@ -275,11 +290,34 @@ impl TypeRegistry {
                     && from_function_type.return_type == to_function_type.return_type
             }
 
-            (Type::Contract { .. }, Type::Contract { .. } | Type::Interface { .. })
-            | (Type::Interface { .. }, Type::Interface { .. }) => self
+            // Contracts and interfaces are implicitly converted to their super types
+            (
+                Type::Contract {
+                    definition_id: from_node_id,
+                    ..
+                },
+                Type::Contract {
+                    definition_id: to_node_id,
+                    ..
+                }
+                | Type::Interface {
+                    definition_id: to_node_id,
+                    ..
+                },
+            )
+            | (
+                Type::Interface {
+                    definition_id: from_node_id,
+                    ..
+                },
+                Type::Interface {
+                    definition_id: to_node_id,
+                    ..
+                },
+            ) => self
                 .super_types
-                .get(&from_type_id)
-                .is_some_and(|super_types| super_types.contains(&to_type_id)),
+                .get(from_node_id)
+                .is_some_and(|super_types| super_types.contains(to_node_id)),
 
             // TODO: add more implicit conversion rules
             _ => false,
@@ -493,23 +531,30 @@ impl TypeRegistry {
         self.register_type(type_with_location)
     }
 
-    // Return a type that can be stored in the EVM. In short, convert literal
-    // types into the appropriate "real" type
-    pub fn reified_type(&mut self, type_id: TypeId) -> TypeId {
-        let Type::Literal(kind) = self.get_type_by_id(type_id) else {
-            return type_id;
-        };
-        match kind {
-            // TODO: implementing these cases requires access to the value
-            // itself, to fit the number in the smallest possible type. Eg. solc
-            // will convert 1, 2, 3, etc into uint8 and 1.2 into ufixed8x1
-            LiteralKind::Zero
-            | LiteralKind::Rational
-            | LiteralKind::DecimalInteger
-            | LiteralKind::HexInteger { .. } => self.uint256(),
-            LiteralKind::HexString { .. } | LiteralKind::String { .. } => self.string(),
-            LiteralKind::Address => self.address(),
+    /// Return a type that can be stored in the EVM and can hold values of all
+    /// the given types. The first element dictates the type class. Returns
+    /// `None` if the types cannot be reified or they are not compatible. This
+    /// is used to unify types of literal arrays and conditional branches.
+    pub(crate) fn common_mobile_type(&mut self, type_ids: &[TypeId]) -> Option<TypeId> {
+        if type_ids.is_empty() {
+            return None;
         }
+        let initial_type = self.get_type_by_id(type_ids[0]);
+        let mut element_type = initial_type.mobile_type()?;
+
+        for item_type_id in &type_ids[1..] {
+            let item_type = self.get_type_by_id(*item_type_id).mobile_type()?;
+            if self.internal_implicitly_convertible_to(&item_type, &element_type) {
+                // ok, `element_type` can already hold `item_type`
+            } else if self.internal_implicitly_convertible_to(&element_type, &item_type) {
+                // `item_type` is "bigger"
+                element_type = item_type;
+            } else {
+                // TODO(validation): types are not compatible
+                return None;
+            }
+        }
+        Some(self.register_type(element_type))
     }
 
     // Returns true if a function type overrides another
@@ -648,6 +693,15 @@ impl TypeRegistry {
                 self.function_type_overrides(ftype, other)
             }
             _ => false,
+        }
+    }
+
+    /// Returns the compile-time number value of a type, when it is a
+    /// value-bearing literal (integer or rational).
+    pub fn number_value_of_type_id(&self, type_id: TypeId) -> Option<Number> {
+        match self.get_type_by_id(type_id) {
+            Type::Literal(kind) => Number::from_literal_kind(kind),
+            _ => None,
         }
     }
 }

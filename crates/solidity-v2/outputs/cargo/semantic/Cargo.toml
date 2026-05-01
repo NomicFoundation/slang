@@ -21,6 +21,8 @@ categories = ["compilers", "utilities"]
 [dependencies]
 indexmap = { workspace = true }
 num-bigint = { workspace = true }
+num-integer = { workspace = true }
+num-rational = { workspace = true }
 num-traits = { workspace = true }
 slang_solidity_v2_common = { workspace = true }
 slang_solidity_v2_ir = { workspace = true }

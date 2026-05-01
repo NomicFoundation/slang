@@ -1,41 +1,26 @@
-use std::str::FromStr;
-
-use num_bigint::BigInt;
-use num_traits::cast::ToPrimitive;
-use num_traits::Num;
 use slang_solidity_v2_ir::ir;
+
+use crate::types::Number;
 
 pub(crate) fn evaluate_compile_time_uint_constant<Scope>(
     expression: &ir::Expression,
     start_scope: Scope,
     identifier_resolver: &dyn ConstantIdentifierResolver<Scope>,
 ) -> Option<usize> {
-    evaluate_compile_time_constant(expression, start_scope, identifier_resolver)
+    evaluate_compile_time_number_constant(expression, start_scope, identifier_resolver)
         .and_then(|value| value.as_usize())
 }
 
-fn evaluate_compile_time_constant<Scope>(
+fn evaluate_compile_time_number_constant<Scope>(
     expression: &ir::Expression,
     start_scope: Scope,
     identifier_resolver: &dyn ConstantIdentifierResolver<Scope>,
-) -> Option<ConstantValue> {
+) -> Option<Number> {
     let mut evaluator = CompileConstantEvaluator {
         identifier_resolver,
         scope_stack: Vec::new(),
     };
     evaluator.evaluate_expression_in_scope(expression, start_scope)
-}
-
-#[derive(Clone, Debug, PartialEq)]
-enum ConstantValue {
-    Integer(BigInt),
-}
-
-impl ConstantValue {
-    fn as_usize(&self) -> Option<usize> {
-        let Self::Integer(value) = self;
-        value.to_usize()
-    }
 }
 
 pub(crate) trait ConstantIdentifierResolver<Scope> {
@@ -62,7 +47,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
         &mut self,
         expression: &ir::Expression,
         scope: Scope,
-    ) -> Option<ConstantValue> {
+    ) -> Option<Number> {
         if self.scope_stack.len() >= Self::MAX_SCOPE_DEPTH {
             // TODO(validation): cyclic dependency in constant resolution or max depth reached
             return None;
@@ -75,7 +60,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
         result
     }
 
-    fn evaluate_expression(&mut self, expression: &ir::Expression) -> Option<ConstantValue> {
+    fn evaluate_expression(&mut self, expression: &ir::Expression) -> Option<Number> {
         match expression {
             ir::Expression::BitwiseOrExpression(bitwise_or_expression) => {
                 self.evaluate_bitwise_or_expression(bitwise_or_expression)
@@ -102,10 +87,10 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
                 self.evaluate_prefix_expression(prefix_expression)
             }
             ir::Expression::HexNumberExpression(hex_number_expression) => {
-                Self::evaluate_hex_number_expression(hex_number_expression)
+                Number::from_hex_number_expression(hex_number_expression)
             }
             ir::Expression::DecimalNumberExpression(decimal_number_expression) => {
-                Self::evaluate_decimal_number_expression(decimal_number_expression)
+                Number::from_decimal_number_expression(decimal_number_expression)
             }
             ir::Expression::Identifier(identifier) => self.evaluate_identifier(identifier),
             ir::Expression::TupleExpression(tuple_expression) => {
@@ -123,59 +108,39 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
     fn evaluate_bitwise_or_expression(
         &mut self,
         bitwise_or_expression: &ir::BitwiseOrExpression,
-    ) -> Option<ConstantValue> {
+    ) -> Option<Number> {
         let lhs = self.evaluate_expression(&bitwise_or_expression.left_operand)?;
         let rhs = self.evaluate_expression(&bitwise_or_expression.right_operand)?;
-        match (lhs, rhs) {
-            (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
-                Some(ConstantValue::Integer(lhs | rhs))
-            }
-        }
+        lhs.bit_or(&rhs)
     }
 
     fn evaluate_bitwise_xor_expression(
         &mut self,
         bitwise_xor_expression: &ir::BitwiseXorExpression,
-    ) -> Option<ConstantValue> {
+    ) -> Option<Number> {
         let lhs = self.evaluate_expression(&bitwise_xor_expression.left_operand)?;
         let rhs = self.evaluate_expression(&bitwise_xor_expression.right_operand)?;
-        match (lhs, rhs) {
-            (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
-                Some(ConstantValue::Integer(lhs ^ rhs))
-            }
-        }
+        lhs.bit_xor(&rhs)
     }
 
     fn evaluate_bitwise_and_expression(
         &mut self,
         bitwise_and_expression: &ir::BitwiseAndExpression,
-    ) -> Option<ConstantValue> {
+    ) -> Option<Number> {
         let lhs = self.evaluate_expression(&bitwise_and_expression.left_operand)?;
         let rhs = self.evaluate_expression(&bitwise_and_expression.right_operand)?;
-        match (lhs, rhs) {
-            (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
-                Some(ConstantValue::Integer(lhs & rhs))
-            }
-        }
+        lhs.bit_and(&rhs)
     }
 
     fn evaluate_shift_expression(
         &mut self,
         shift_expression: &ir::ShiftExpression,
-    ) -> Option<ConstantValue> {
+    ) -> Option<Number> {
         let lhs = self.evaluate_expression(&shift_expression.left_operand)?;
         let rhs = self.evaluate_expression(&shift_expression.right_operand)?;
         match &shift_expression.expression_shift_expression_operator {
-            ir::Expression_ShiftExpression_Operator::LessThanLessThan => match (lhs, rhs) {
-                (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
-                    Some(ConstantValue::Integer(lhs << rhs.to_u32()?))
-                }
-            },
-            ir::Expression_ShiftExpression_Operator::GreaterThanGreaterThan => match (lhs, rhs) {
-                (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
-                    Some(ConstantValue::Integer(lhs >> rhs.to_u32()?))
-                }
-            },
+            ir::Expression_ShiftExpression_Operator::LessThanLessThan => lhs.shl(&rhs),
+            ir::Expression_ShiftExpression_Operator::GreaterThanGreaterThan => lhs.shr(&rhs),
             ir::Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan => None,
         }
     }
@@ -183,96 +148,51 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
     fn evaluate_additive_expression(
         &mut self,
         additive_expression: &ir::AdditiveExpression,
-    ) -> Option<ConstantValue> {
+    ) -> Option<Number> {
         let lhs = self.evaluate_expression(&additive_expression.left_operand)?;
         let rhs = self.evaluate_expression(&additive_expression.right_operand)?;
         match &additive_expression.expression_additive_expression_operator {
-            ir::Expression_AdditiveExpression_Operator::Plus => match (lhs, rhs) {
-                (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
-                    Some(ConstantValue::Integer(lhs + rhs))
-                }
-            },
-            ir::Expression_AdditiveExpression_Operator::Minus => match (lhs, rhs) {
-                (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
-                    Some(ConstantValue::Integer(lhs - rhs))
-                }
-            },
+            ir::Expression_AdditiveExpression_Operator::Plus => Some(lhs.add(&rhs)),
+            ir::Expression_AdditiveExpression_Operator::Minus => Some(lhs.sub(&rhs)),
         }
     }
 
     fn evaluate_multiplicative_expression(
         &mut self,
         multiplicative_expression: &ir::MultiplicativeExpression,
-    ) -> Option<ConstantValue> {
+    ) -> Option<Number> {
         let lhs = self.evaluate_expression(&multiplicative_expression.left_operand)?;
         let rhs = self.evaluate_expression(&multiplicative_expression.right_operand)?;
         match &multiplicative_expression.expression_multiplicative_expression_operator {
-            ir::Expression_MultiplicativeExpression_Operator::Asterisk => match (lhs, rhs) {
-                (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
-                    Some(ConstantValue::Integer(lhs * rhs))
-                }
-            },
-            ir::Expression_MultiplicativeExpression_Operator::Slash => match (lhs, rhs) {
-                (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
-                    Some(ConstantValue::Integer(lhs / rhs))
-                }
-            },
-            ir::Expression_MultiplicativeExpression_Operator::Percent => match (lhs, rhs) {
-                (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
-                    Some(ConstantValue::Integer(lhs % rhs))
-                }
-            },
+            ir::Expression_MultiplicativeExpression_Operator::Asterisk => Some(lhs.mul(&rhs)),
+            ir::Expression_MultiplicativeExpression_Operator::Slash => lhs.div(&rhs),
+            ir::Expression_MultiplicativeExpression_Operator::Percent => lhs.rem(&rhs),
         }
     }
 
     fn evaluate_exponentiation_expression(
         &mut self,
         exponentiation_expression: &ir::ExponentiationExpression,
-    ) -> Option<ConstantValue> {
+    ) -> Option<Number> {
         let lhs = self.evaluate_expression(&exponentiation_expression.left_operand)?;
         let rhs = self.evaluate_expression(&exponentiation_expression.right_operand)?;
         // v2 ExponentiationExpression has no explicit operator field (only `**` exists)
-        match (lhs, rhs) {
-            (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
-                Some(ConstantValue::Integer(lhs.pow(rhs.to_u32()?)))
-            }
-        }
+        lhs.pow(&rhs)
     }
 
     fn evaluate_prefix_expression(
         &mut self,
         prefix_expression: &ir::PrefixExpression,
-    ) -> Option<ConstantValue> {
+    ) -> Option<Number> {
         let operand = self.evaluate_expression(&prefix_expression.operand)?;
         match &prefix_expression.expression_prefix_expression_operator {
-            ir::Expression_PrefixExpression_Operator::Minus => match operand {
-                ConstantValue::Integer(value) => Some(ConstantValue::Integer(BigInt::ZERO - value)),
-            },
+            ir::Expression_PrefixExpression_Operator::Minus => Some(operand.negate()),
             // No unary plus in Solidity >= 0.5.0 (v2 only supports >= 0.8.0)
             _ => None,
         }
     }
 
-    fn evaluate_hex_number_expression(
-        hex_number_expression: &ir::HexNumberExpression,
-    ) -> Option<ConstantValue> {
-        let hex = hex_number_expression.literal.unparse();
-        // skip `0x` prefix and parse the hexadecimal number
-        BigInt::from_str_radix(&hex[2..], 16)
-            .ok()
-            .map(ConstantValue::Integer)
-    }
-
-    fn evaluate_decimal_number_expression(
-        decimal_number_expression: &ir::DecimalNumberExpression,
-    ) -> Option<ConstantValue> {
-        // TODO: this only handles integers but not rational numbers
-        // TODO: handle number units
-        let decimal = decimal_number_expression.literal.unparse();
-        BigInt::from_str(decimal).ok().map(ConstantValue::Integer)
-    }
-
-    fn evaluate_identifier(&mut self, identifier: &ir::Identifier) -> Option<ConstantValue> {
+    fn evaluate_identifier(&mut self, identifier: &ir::Identifier) -> Option<Number> {
         let current_scope = self.scope_stack.last().expect("scope stack is empty");
         let (target_expression, target_scope) = self
             .identifier_resolver
@@ -283,7 +203,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
     fn evaluate_tuple_expression(
         &mut self,
         tuple_expression: &ir::TupleExpression,
-    ) -> Option<ConstantValue> {
+    ) -> Option<Number> {
         if tuple_expression.items.len() == 1 {
             let inner_expression = tuple_expression.items[0].expression.as_ref()?;
             self.evaluate_expression(inner_expression)
@@ -297,7 +217,8 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
 mod tests {
     use std::collections::HashMap;
 
-    use num_bigint::ToBigInt;
+    use num_bigint::{BigInt, ToBigInt};
+    use num_rational::BigRational;
     use slang_solidity_v2_common::versions::LanguageVersion;
     use slang_solidity_v2_parser::{ParseOutput, Parser};
 
@@ -343,9 +264,9 @@ mod tests {
         }
     }
 
-    fn eval_string(input: &str) -> Option<ConstantValue> {
+    fn eval_string(input: &str) -> Option<Number> {
         let expression = parse_expression(input);
-        evaluate_compile_time_constant(&expression, String::new(), &MapResolver::default())
+        evaluate_compile_time_number_constant(&expression, String::new(), &MapResolver::default())
     }
 
     // `context` is given as a list of constants defined as:
@@ -353,10 +274,7 @@ mod tests {
     // - the target expression (to be parsed)
     // - the target scope
     // Resolution always starts at the empty string scope in these tests.
-    fn eval_string_with_context(
-        input: &str,
-        context: &[(&str, &str, &str)],
-    ) -> Option<ConstantValue> {
+    fn eval_string_with_context(input: &str, context: &[(&str, &str, &str)]) -> Option<Number> {
         let context: HashMap<String, (ir::Expression, String)> = context
             .iter()
             .map(|(name, input, target_scope)| {
@@ -368,70 +286,160 @@ mod tests {
             .collect();
         let expression = parse_expression(input);
 
-        evaluate_compile_time_constant(&expression, String::new(), &MapResolver { context })
+        evaluate_compile_time_number_constant(&expression, String::new(), &MapResolver { context })
     }
 
     #[test]
     fn test_literals() {
-        assert!(eval_string("1")
-            .is_some_and(|value| value == ConstantValue::Integer(1.to_bigint().unwrap())));
+        assert!(
+            eval_string("1").is_some_and(|value| value == Number::Integer(1.to_bigint().unwrap()))
+        );
         assert!(eval_string("42")
-            .is_some_and(|value| value == ConstantValue::Integer(42.to_bigint().unwrap())));
+            .is_some_and(|value| value == Number::Integer(42.to_bigint().unwrap())));
         assert!(eval_string("0x01")
-            .is_some_and(|value| value == ConstantValue::Integer(1.to_bigint().unwrap())));
+            .is_some_and(|value| value == Number::Integer(1.to_bigint().unwrap())));
         assert!(eval_string("0xa0")
-            .is_some_and(|value| value == ConstantValue::Integer(160.to_bigint().unwrap())));
+            .is_some_and(|value| value == Number::Integer(160.to_bigint().unwrap())));
+    }
+
+    #[test]
+    fn test_literals_with_digit_separators() {
+        assert!(eval_string("1_000")
+            .is_some_and(|value| value == Number::Integer(1_000.to_bigint().unwrap())));
+        assert!(eval_string("1_000_000")
+            .is_some_and(|value| value == Number::Integer(1_000_000.to_bigint().unwrap())));
+        assert!(eval_string("0xdead_beef")
+            .is_some_and(|value| value == Number::Integer(0xdead_beef_u64.to_bigint().unwrap())));
+        assert!(eval_string("0x1234_5678")
+            .is_some_and(|value| value == Number::Integer(0x1234_5678_u64.to_bigint().unwrap())));
+    }
+
+    #[test]
+    fn test_literals_with_number_units() {
+        assert!(eval_string("1 wei")
+            .is_some_and(|value| value == Number::Integer(1.to_bigint().unwrap())));
+        assert!(eval_string("1 gwei")
+            .is_some_and(|value| value == Number::Integer(1_000_000_000u64.to_bigint().unwrap())));
+        assert!(eval_string("1 ether").is_some_and(
+            |value| value == Number::Integer(1_000_000_000_000_000_000u64.to_bigint().unwrap())
+        ));
+        assert!(eval_string("2 ether").is_some_and(
+            |value| value == Number::Integer(2_000_000_000_000_000_000u64.to_bigint().unwrap())
+        ));
+        assert!(eval_string("1 seconds")
+            .is_some_and(|value| value == Number::Integer(1.to_bigint().unwrap())));
+        assert!(eval_string("1 minutes")
+            .is_some_and(|value| value == Number::Integer(60.to_bigint().unwrap())));
+        assert!(eval_string("1 hours")
+            .is_some_and(|value| value == Number::Integer(3_600.to_bigint().unwrap())));
+        assert!(eval_string("1 days")
+            .is_some_and(|value| value == Number::Integer(86_400.to_bigint().unwrap())));
+        assert!(eval_string("1 weeks")
+            .is_some_and(|value| value == Number::Integer(604_800.to_bigint().unwrap())));
+    }
+
+    #[test]
+    fn test_literals_with_scientific_notation() {
+        assert!(eval_string("1e3")
+            .is_some_and(|value| value == Number::Integer(1_000.to_bigint().unwrap())));
+        assert!(eval_string("2e10")
+            .is_some_and(|value| value == Number::Integer(20_000_000_000u64.to_bigint().unwrap())));
+        assert!(eval_string("1e18").is_some_and(
+            |value| value == Number::Integer(1_000_000_000_000_000_000u64.to_bigint().unwrap())
+        ));
+        assert!(eval_string("1.5e3")
+            .is_some_and(|value| value == Number::Integer(1_500.to_bigint().unwrap())));
+    }
+
+    #[test]
+    fn test_reducible_rational_literals() {
+        assert!(eval_string("1.5 ether").is_some_and(
+            |value| value == Number::Integer(1_500_000_000_000_000_000u64.to_bigint().unwrap())
+        ));
+        assert!(eval_string("0.5 ether").is_some_and(
+            |value| value == Number::Integer(500_000_000_000_000_000u64.to_bigint().unwrap())
+        ));
+        assert!(eval_string("0.5 gwei")
+            .is_some_and(|value| value == Number::Integer(500_000_000u64.to_bigint().unwrap())));
+    }
+
+    #[test]
+    fn test_non_reducible_rational_literals() {
+        assert!(eval_string("0.5")
+            .is_some_and(|value| value
+                == Number::Rational(BigRational::new(BigInt::from(1), BigInt::from(2)))));
+        assert!(eval_string("3.14").is_some_and(|value| value
+            == Number::Rational(BigRational::new(BigInt::from(157), BigInt::from(50)))));
+        assert!(eval_string("1e-1")
+            .is_some_and(|value| value
+                == Number::Rational(BigRational::new(BigInt::from(1), BigInt::from(10)))));
+    }
+
+    #[test]
+    fn test_rational_arithmetic_folds() {
+        // Reducible rational result normalises back to an Integer.
+        assert!(
+            eval_string("1.5 * 2").is_some_and(|value| value == Number::Integer(BigInt::from(3)))
+        );
+        // Integer division that does not divide evenly yields a Rational.
+        assert!(eval_string("5 / 2")
+            .is_some_and(|value| value
+                == Number::Rational(BigRational::new(BigInt::from(5), BigInt::from(2)))));
+        // Negation of a non-reducing rational stays Rational.
+        assert!(eval_string("-0.5")
+            .is_some_and(|value| value
+                == Number::Rational(BigRational::new(BigInt::from(-1), BigInt::from(2)))));
     }
 
     #[test]
     fn test_prefix_expression() {
         assert!(eval_string("-42")
-            .is_some_and(|value| value == ConstantValue::Integer((-42).to_bigint().unwrap())));
+            .is_some_and(|value| value == Number::Integer((-42).to_bigint().unwrap())));
     }
 
     #[test]
     fn test_binary_expression() {
         assert!(eval_string("1 + 2")
-            .is_some_and(|value| value == ConstantValue::Integer(3.to_bigint().unwrap())));
+            .is_some_and(|value| value == Number::Integer(3.to_bigint().unwrap())));
         assert!(eval_string("2 - 2")
-            .is_some_and(|value| value == ConstantValue::Integer(0.to_bigint().unwrap())));
+            .is_some_and(|value| value == Number::Integer(0.to_bigint().unwrap())));
         assert!(eval_string("1 - 2")
-            .is_some_and(|value| value == ConstantValue::Integer((-1).to_bigint().unwrap())));
+            .is_some_and(|value| value == Number::Integer((-1).to_bigint().unwrap())));
         assert!(eval_string("1 * 2")
-            .is_some_and(|value| value == ConstantValue::Integer(2.to_bigint().unwrap())));
+            .is_some_and(|value| value == Number::Integer(2.to_bigint().unwrap())));
         assert!(eval_string("4 / 2")
-            .is_some_and(|value| value == ConstantValue::Integer(2.to_bigint().unwrap())));
+            .is_some_and(|value| value == Number::Integer(2.to_bigint().unwrap())));
         assert!(eval_string("5 % 2")
-            .is_some_and(|value| value == ConstantValue::Integer(1.to_bigint().unwrap())));
+            .is_some_and(|value| value == Number::Integer(1.to_bigint().unwrap())));
         assert!(eval_string("2 ** 5")
-            .is_some_and(|value| value == ConstantValue::Integer(32.to_bigint().unwrap())));
+            .is_some_and(|value| value == Number::Integer(32.to_bigint().unwrap())));
         assert!(eval_string("32 << 2")
-            .is_some_and(|value| value == ConstantValue::Integer(128.to_bigint().unwrap())));
+            .is_some_and(|value| value == Number::Integer(128.to_bigint().unwrap())));
         assert!(eval_string("32 >> 2")
-            .is_some_and(|value| value == ConstantValue::Integer(8.to_bigint().unwrap())));
+            .is_some_and(|value| value == Number::Integer(8.to_bigint().unwrap())));
         assert!(eval_string("32 | 16")
-            .is_some_and(|value| value == ConstantValue::Integer(48.to_bigint().unwrap())));
+            .is_some_and(|value| value == Number::Integer(48.to_bigint().unwrap())));
         assert!(eval_string("15 ^ 31")
-            .is_some_and(|value| value == ConstantValue::Integer(16.to_bigint().unwrap())));
+            .is_some_and(|value| value == Number::Integer(16.to_bigint().unwrap())));
         assert!(eval_string("15 & 31")
-            .is_some_and(|value| value == ConstantValue::Integer(15.to_bigint().unwrap())));
+            .is_some_and(|value| value == Number::Integer(15.to_bigint().unwrap())));
     }
 
     #[test]
     fn test_nesting_expressions() {
         assert!(eval_string("1 + (2 + 3)")
-            .is_some_and(|value| value == ConstantValue::Integer(6.to_bigint().unwrap())));
+            .is_some_and(|value| value == Number::Integer(6.to_bigint().unwrap())));
         assert!(eval_string("3 * (2 + 1)")
-            .is_some_and(|value| value == ConstantValue::Integer(9.to_bigint().unwrap())));
+            .is_some_and(|value| value == Number::Integer(9.to_bigint().unwrap())));
     }
 
     #[test]
     fn test_identifier_lookup() {
         assert!(eval_string_with_context("FOO", &[("FOO", "1", "")])
-            .is_some_and(|value| value == ConstantValue::Integer(1.to_bigint().unwrap())));
+            .is_some_and(|value| value == Number::Integer(1.to_bigint().unwrap())));
         assert!(
             eval_string_with_context("FOO + 2*BAR", &[("FOO", "1", ""), ("BAR", "5", "")])
-                .is_some_and(|value| value == ConstantValue::Integer(11.to_bigint().unwrap()))
+                .is_some_and(|value| value == Number::Integer(11.to_bigint().unwrap()))
         );
         // undefined symbols
         assert!(eval_string_with_context("FOO", &[]).is_none());
@@ -445,6 +453,6 @@ mod tests {
             "FOO",
             &[("FOO", "BAR", "CTX."), ("CTX.BAR", "42", "CTX.")]
         )
-        .is_some_and(|value| value == ConstantValue::Integer(42.to_bigint().unwrap())));
+        .is_some_and(|value| value == Number::Integer(42.to_bigint().unwrap())));
     }
 }

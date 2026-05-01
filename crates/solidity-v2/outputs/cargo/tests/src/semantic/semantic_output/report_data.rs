@@ -377,10 +377,11 @@ impl CollectedDefinitionDisplay<'_> {
                 )
             }
             Type::Literal(kind) => match kind {
-                LiteralKind::Zero => "lit-zero".to_string(),
-                LiteralKind::Rational => "rational".to_string(),
-                LiteralKind::DecimalInteger => "lit-integer".to_string(),
-                LiteralKind::HexInteger { bytes } => format!("lit-hex({bytes})"),
+                LiteralKind::Integer { value } => format!("lit-integer({value})"),
+                LiteralKind::HexInteger { value, bytes } => {
+                    format!("lit-hex({value}, {bytes})")
+                }
+                LiteralKind::Rational { value } => format!("lit-rational({value})"),
                 LiteralKind::HexString { bytes } => format!("lit-hexstring({bytes})"),
                 LiteralKind::String { bytes } => format!("lit-string({bytes})"),
                 LiteralKind::Address => "lit-address".to_string(),

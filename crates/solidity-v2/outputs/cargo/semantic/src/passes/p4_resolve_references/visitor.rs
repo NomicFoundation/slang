@@ -2,12 +2,12 @@ use std::rc::Rc;
 
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
-use slang_solidity_v2_ir::ir::Expression_PrefixExpression_Operator;
 
 use super::Pass;
 use crate::binder::{Reference, Resolution, Typing};
 use crate::built_ins::BuiltIn;
-use crate::types::{DataLocation, LiteralKind, Type};
+use crate::passes::common::node_id_for_string_expression_typing;
+use crate::types::{DataLocation, Number, Type};
 
 impl Visitor for Pass<'_> {
     fn enter_source_unit(&mut self, node: &ir::SourceUnit) -> bool {
@@ -122,6 +122,15 @@ impl Visitor for Pass<'_> {
                 let scope_id = self.current_scope_id();
                 self.filter_overriden_definitions(self.resolve_symbol_in_scope(scope_id, symbol))
             };
+
+            // Set the typing for the `Identifier` node.
+            // The resolution may point to an imported symbol, so we need to
+            // follow through in order to get to the actual typing.
+            let followed_resolution = self.binder.follow_symbol_aliases(&resolution);
+            let typing = self.typing_of_resolution(&followed_resolution);
+            self.binder.set_node_typing(identifier.id(), typing);
+
+            // Finally, create the reference for the identifier.
             let reference = Reference::new(Rc::clone(identifier), resolution);
             self.binder.insert_reference(reference);
         }
@@ -129,26 +138,24 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_hex_number_expression(&mut self, node: &ir::HexNumberExpression) {
-        let kind = Self::hex_number_literal_kind(node);
-        let type_id = self.types.register_type(Type::Literal(kind));
-        self.binder.set_node_type(node.id(), Some(type_id));
+        let type_id = Self::hex_number_literal_kind(node)
+            .map(|kind| self.types.register_type(Type::Literal(kind)));
+        self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_decimal_number_expression(&mut self, node: &ir::DecimalNumberExpression) {
-        let type_ = if node.unit.is_none() && node.literal.unparse() == "0" {
-            Type::Literal(LiteralKind::Zero)
-        } else {
-            Type::Literal(LiteralKind::DecimalInteger)
-        };
-        let type_id = self.types.register_type(type_);
-        self.binder.set_node_type(node.id(), Some(type_id));
+        let type_id = Number::from_decimal_number_expression(node).map(|number| {
+            self.types
+                .register_type(Type::Literal(number.to_literal_kind()))
+        });
+        self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_string_expression(&mut self, node: &ir::StringExpression) {
         let type_id = self
             .types
             .register_type(Self::type_of_string_expression(node));
-        let node_id = Self::string_expression_node_id(node);
+        let node_id = node_id_for_string_expression_typing(node);
         self.binder.set_node_type(node_id, Some(type_id));
     }
 
@@ -170,95 +177,109 @@ impl Visitor for Pass<'_> {
         // TODO(validation): both true_expression and false_expression should
         // have the compatible types
         let type_id = match (true_type_id, false_type_id) {
-            (Some(true_type_id), Some(false_type_id)) => {
-                if self
-                    .types
-                    .implicitly_convertible_to(false_type_id, true_type_id)
-                {
-                    Some(true_type_id)
-                } else if self
-                    .types
-                    .implicitly_convertible_to(true_type_id, false_type_id)
-                {
-                    Some(false_type_id)
-                } else {
-                    None
-                }
-            }
+            (Some(true_type_id), Some(false_type_id)) => self
+                .types
+                .common_mobile_type(&[true_type_id, false_type_id]),
             _ => None,
         };
         self.binder.set_node_type(node.id(), type_id);
     }
 
-    fn leave_or_expression(&mut self, _node: &ir::OrExpression) {
+    fn leave_or_expression(&mut self, node: &ir::OrExpression) {
         // TODO(validation): check that both operands are boolean
+        self.binder
+            .set_node_type(node.id(), Some(self.types.boolean()));
     }
 
-    fn leave_and_expression(&mut self, _node: &ir::AndExpression) {
+    fn leave_and_expression(&mut self, node: &ir::AndExpression) {
         // TODO(validation): check that both operands are boolean
+        self.binder
+            .set_node_type(node.id(), Some(self.types.boolean()));
     }
 
-    fn leave_equality_expression(&mut self, _node: &ir::EqualityExpression) {
+    fn leave_equality_expression(&mut self, node: &ir::EqualityExpression) {
         // TODO(validation): check that both operands have a compatible type
+        self.binder
+            .set_node_type(node.id(), Some(self.types.boolean()));
     }
 
-    fn leave_inequality_expression(&mut self, _node: &ir::InequalityExpression) {
+    fn leave_inequality_expression(&mut self, node: &ir::InequalityExpression) {
         // TODO(validation): check that both operands have a compatible type
+        self.binder
+            .set_node_type(node.id(), Some(self.types.boolean()));
     }
 
     fn leave_bitwise_or_expression(&mut self, node: &ir::BitwiseOrExpression) {
-        let type_id =
-            self.type_of_integer_binary_expression(&node.left_operand, &node.right_operand);
+        let type_id = self.type_of_binary_operator_expression(
+            &node.left_operand,
+            &node.right_operand,
+            |l, r| l.bit_or(r),
+        );
         self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_bitwise_xor_expression(&mut self, node: &ir::BitwiseXorExpression) {
-        let type_id =
-            self.type_of_integer_binary_expression(&node.left_operand, &node.right_operand);
+        let type_id = self.type_of_binary_operator_expression(
+            &node.left_operand,
+            &node.right_operand,
+            |l, r| l.bit_xor(r),
+        );
         self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_bitwise_and_expression(&mut self, node: &ir::BitwiseAndExpression) {
-        let type_id =
-            self.type_of_integer_binary_expression(&node.left_operand, &node.right_operand);
+        let type_id = self.type_of_binary_operator_expression(
+            &node.left_operand,
+            &node.right_operand,
+            |l, r| l.bit_and(r),
+        );
         self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_shift_expression(&mut self, node: &ir::ShiftExpression) {
-        let type_id = self.typing_of_expression(&node.left_operand).as_type_id();
-        // TODO(validation): check that the left operand is an integer and the
-        // right operand is an _unsigned_ integer
+        let type_id = self.type_of_left_typed_binary_operator_expression(
+            &node.left_operand,
+            &node.right_operand,
+            |l, r| match &node.expression_shift_expression_operator {
+                ir::Expression_ShiftExpression_Operator::LessThanLessThan => l.shl(r),
+                ir::Expression_ShiftExpression_Operator::GreaterThanGreaterThan => l.shr(r),
+                ir::Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan => None,
+            },
+        );
         self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_additive_expression(&mut self, node: &ir::AdditiveExpression) {
-        let type_id =
-            self.type_of_integer_binary_expression(&node.left_operand, &node.right_operand);
+        let type_id = self.type_of_binary_operator_expression(
+            &node.left_operand,
+            &node.right_operand,
+            |l, r| match &node.expression_additive_expression_operator {
+                ir::Expression_AdditiveExpression_Operator::Plus => Some(l.add(r)),
+                ir::Expression_AdditiveExpression_Operator::Minus => Some(l.sub(r)),
+            },
+        );
         self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_multiplicative_expression(&mut self, node: &ir::MultiplicativeExpression) {
-        let type_id =
-            self.type_of_integer_binary_expression(&node.left_operand, &node.right_operand);
+        let type_id = self.type_of_binary_operator_expression(
+            &node.left_operand,
+            &node.right_operand,
+            |l, r| match &node.expression_multiplicative_expression_operator {
+                ir::Expression_MultiplicativeExpression_Operator::Asterisk => Some(l.mul(r)),
+                ir::Expression_MultiplicativeExpression_Operator::Slash => l.div(r),
+                ir::Expression_MultiplicativeExpression_Operator::Percent => l.rem(r),
+            },
+        );
         self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_exponentiation_expression(&mut self, node: &ir::ExponentiationExpression) {
-        let mut type_id = self.typing_of_expression(&node.left_operand).as_type_id();
-        // TODO(validation): check that the left operand is an integer and the
-        // right operand is an _unsigned_ integer
-        if type_id.is_some_and(|type_id| self.types.get_type_by_id(type_id).is_literal_number()) {
-            // if the base is a rational but the exponent is not, then the result is uint256
-            if self
-                .typing_of_expression(&node.right_operand)
-                .as_type_id()
-                .is_none_or(|exponent_type| {
-                    !self.types.get_type_by_id(exponent_type).is_literal_number()
-                })
-            {
-                type_id = Some(self.types.uint256());
-            }
-        }
+        let type_id = self.type_of_left_typed_binary_operator_expression(
+            &node.left_operand,
+            &node.right_operand,
+            |l, r| l.pow(r),
+        );
         self.binder.set_node_type(node.id(), type_id);
     }
 
@@ -269,20 +290,7 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_prefix_expression(&mut self, node: &ir::PrefixExpression) {
-        let type_id = match node.expression_prefix_expression_operator {
-            Expression_PrefixExpression_Operator::PlusPlus
-            | Expression_PrefixExpression_Operator::MinusMinus
-            | Expression_PrefixExpression_Operator::Minus
-            | Expression_PrefixExpression_Operator::Tilde => {
-                // TODO(validation): check that the operand is integer
-                self.typing_of_expression(&node.operand).as_type_id()
-            }
-            Expression_PrefixExpression_Operator::Bang => {
-                // TODO(validation): check that the operand is boolean
-                Some(self.types.boolean())
-            }
-            Expression_PrefixExpression_Operator::DeleteKeyword => Some(self.types.void()),
-        };
+        let type_id = self.type_of_prefix_expression(node);
         self.binder.set_node_type(node.id(), type_id);
     }
 
@@ -347,9 +355,10 @@ impl Visitor for Pass<'_> {
             }
         }
 
-        // store the typing
+        // Store the typing
         self.binder.set_node_typing(node.id(), typing);
 
+        // And create the reference for the member identifier.
         let reference = Reference::new(Rc::clone(&node.member), resolution);
         self.binder.insert_reference(reference);
     }
@@ -429,35 +438,14 @@ impl Visitor for Pass<'_> {
 
     fn leave_array_expression(&mut self, node: &ir::ArrayExpression) {
         let typing = if node.items.is_empty() {
+            // TODO(validation): an empty array literal cannot be typed
             Typing::Unresolved
-        } else if let Some(element_type) = self
-            .typing_of_expression(node.items.first().unwrap())
-            .as_type_id()
-        {
-            let element_type = self.types.reified_type(element_type);
-            let type_id = self.types.register_type(Type::FixedSizeArray {
-                element_type,
-                size: node.items.len(),
-                location: DataLocation::Memory,
-            });
+        } else if let Some(type_id) = self.type_of_array_expression(node) {
             Typing::Resolved(type_id)
         } else {
-            // TODO(validation): all expressions in the array should have the
-            // same (or implicitly convertible) types
-            if let Some(element_type) = self
-                .typing_of_expression(node.items.first().unwrap())
-                .as_type_id()
-            {
-                let element_type = self.types.reified_type(element_type);
-                let type_id = self.types.register_type(Type::FixedSizeArray {
-                    element_type,
-                    size: node.items.len(),
-                    location: DataLocation::Memory,
-                });
-                Typing::Resolved(type_id)
-            } else {
-                Typing::Unresolved
-            }
+            // TODO(validation): all expressions in the array should have a type
+            // and fit in the type dictated by the first element
+            Typing::Unresolved
         };
         self.binder.set_node_typing(node.id(), typing);
     }

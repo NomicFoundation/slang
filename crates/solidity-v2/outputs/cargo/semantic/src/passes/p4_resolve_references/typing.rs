@@ -4,90 +4,37 @@ use slang_solidity_v2_ir::ir;
 use super::Pass;
 use crate::binder::{Definition, Resolution, Typing};
 use crate::built_ins::BuiltIn;
-use crate::types::{DataLocation, FunctionType, LiteralKind, Type, TypeId};
+use crate::passes::common::node_id_for_expression_typing;
+use crate::types::{literals, DataLocation, FunctionType, LiteralKind, Number, Type, TypeId};
 
 impl Pass<'_> {
     pub(super) fn typing_of_expression(&self, node: &ir::Expression) -> Typing {
         match node {
-            ir::Expression::AssignmentExpression(assignment_expression) => {
-                self.binder.node_typing(assignment_expression.id())
-            }
-            ir::Expression::ConditionalExpression(conditional_expression) => {
-                self.binder.node_typing(conditional_expression.id())
-            }
+            // These are always typed as boolean
             ir::Expression::OrExpression(_)
             | ir::Expression::AndExpression(_)
             | ir::Expression::EqualityExpression(_)
             | ir::Expression::InequalityExpression(_)
             | ir::Expression::TrueKeyword
             | ir::Expression::FalseKeyword => Typing::Resolved(self.types.boolean()),
-            ir::Expression::BitwiseOrExpression(bitwise_or_expression) => {
-                self.binder.node_typing(bitwise_or_expression.id())
-            }
-            ir::Expression::BitwiseXorExpression(bitwise_xor_expression) => {
-                self.binder.node_typing(bitwise_xor_expression.id())
-            }
-            ir::Expression::BitwiseAndExpression(bitwise_and_expression) => {
-                self.binder.node_typing(bitwise_and_expression.id())
-            }
-            ir::Expression::ShiftExpression(shift_expression) => {
-                self.binder.node_typing(shift_expression.id())
-            }
-            ir::Expression::AdditiveExpression(additive_expression) => {
-                self.binder.node_typing(additive_expression.id())
-            }
-            ir::Expression::MultiplicativeExpression(multiplicative_expression) => {
-                self.binder.node_typing(multiplicative_expression.id())
-            }
-            ir::Expression::ExponentiationExpression(exponentiation_expression) => {
-                self.binder.node_typing(exponentiation_expression.id())
-            }
-            ir::Expression::PostfixExpression(postfix_expression) => {
-                self.binder.node_typing(postfix_expression.id())
-            }
-            ir::Expression::PrefixExpression(prefix_expression) => {
-                self.binder.node_typing(prefix_expression.id())
-            }
-            ir::Expression::FunctionCallExpression(function_call_expression) => {
-                self.binder.node_typing(function_call_expression.id())
-            }
-            ir::Expression::CallOptionsExpression(call_options_expression) => {
-                self.binder.node_typing(call_options_expression.id())
-            }
-            ir::Expression::MemberAccessExpression(member_access_expression) => {
-                self.binder.node_typing(member_access_expression.id())
-            }
-            ir::Expression::IndexAccessExpression(index_access_expression) => {
-                self.binder.node_typing(index_access_expression.id())
-            }
-            ir::Expression::NewExpression(new_expression) => {
-                self.binder.node_typing(new_expression.id())
-            }
-            ir::Expression::TupleExpression(tuple_expression) => {
-                self.binder.node_typing(tuple_expression.id())
-            }
-            ir::Expression::TypeExpression(type_expression) => {
-                self.binder.node_typing(type_expression.id())
-            }
-            ir::Expression::ArrayExpression(array_expression) => {
-                self.binder.node_typing(array_expression.id())
-            }
-            ir::Expression::HexNumberExpression(hex_number_expression) => {
-                self.binder.node_typing(hex_number_expression.id())
-            }
-            ir::Expression::DecimalNumberExpression(decimal_number_expression) => {
-                self.binder.node_typing(decimal_number_expression.id())
-            }
-            ir::Expression::StringExpression(string_expression) => self
-                .binder
-                .node_typing(Self::string_expression_node_id(string_expression)),
+
+            // Special case for elementary types: it's always a meta-type
             ir::Expression::ElementaryType(elementary_type) => {
                 Typing::MetaType(Self::type_of_elementary_type(elementary_type))
             }
-            ir::Expression::Identifier(identifier) => self.typing_of_identifier(identifier),
+
+            // Other special cases
             ir::Expression::PayableKeyword => Typing::MetaType(Type::Address { payable: true }),
             ir::Expression::ThisKeyword => Typing::This,
             ir::Expression::SuperKeyword => Typing::Super,
+
+            // By default, query the binder for registered typing information
+            _ => {
+                let node_id = node_id_for_expression_typing(node).expect(
+                    "typing of expression variant not handled and it doesn't have a NodeId",
+                );
+                self.binder.node_typing(node_id)
+            }
         }
     }
 
@@ -131,44 +78,139 @@ impl Pass<'_> {
         }
     }
 
-    fn typing_of_identifier(&self, identifier: &ir::Identifier) -> Typing {
-        let resolution = &self
-            .binder
-            .find_reference_by_identifier_node_id(identifier.id())
-            .unwrap()
-            .resolution;
-        // The resolution may point to an imported symbol, so we need to follow
-        // through in order to get to the actual typing
-        let resolution = self.binder.follow_symbol_aliases(resolution);
-        self.typing_of_resolution(&resolution)
-    }
-
-    pub(super) fn type_of_integer_binary_expression(
-        &self,
+    /// Returns the type of an binary operator expression. If both operands are
+    /// number literals, applies `op` to fold them into a narrowed literal type;
+    /// otherwise falls back to the implicit-convertibility rule between the
+    /// operand types.
+    pub(super) fn type_of_binary_operator_expression<F>(
+        &mut self,
         left_operand: &ir::Expression,
         right_operand: &ir::Expression,
+        op: F,
+    ) -> Option<TypeId>
+    where
+        F: FnOnce(&Number, &Number) -> Option<Number>,
+    {
+        let left_type_id = self.typing_of_expression(left_operand).as_type_id()?;
+        let right_type_id = self.typing_of_expression(right_operand).as_type_id()?;
+
+        // If both operands are number constants, fold them using the given operator.
+        if let (Some(left_value), Some(right_value)) = (
+            self.types.number_value_of_type_id(left_type_id),
+            self.types.number_value_of_type_id(right_type_id),
+        ) {
+            return op(&left_value, &right_value).map(|result| {
+                self.types
+                    .register_type(Type::Literal(result.to_literal_kind()))
+            });
+        }
+
+        // TODO(validation): check that both operands are valid for the operator
+        // (needs additional parameter or check at the call site)
+        if self
+            .types
+            .implicitly_convertible_to(right_type_id, left_type_id)
+        {
+            Some(left_type_id)
+        } else if self
+            .types
+            .implicitly_convertible_to(left_type_id, right_type_id)
+        {
+            Some(right_type_id)
+        } else {
+            // TODO(validation): the types are not compatible, we should
+            // emit an error, or signal our caller
+            None
+        }
+    }
+
+    pub(super) fn type_of_prefix_expression(
+        &mut self,
+        node: &ir::PrefixExpression,
     ) -> Option<TypeId> {
-        let left_type_id = self.typing_of_expression(left_operand).as_type_id();
-        let right_type_id = self.typing_of_expression(right_operand).as_type_id();
-        // TODO(validation): check that both operands are indeed integers
-        if let (Some(left_type_id), Some(right_type_id)) = (left_type_id, right_type_id) {
-            if self
-                .types
-                .implicitly_convertible_to(right_type_id, left_type_id)
-            {
-                Some(left_type_id)
-            } else if self
-                .types
-                .implicitly_convertible_to(left_type_id, right_type_id)
-            {
-                Some(right_type_id)
+        match node.expression_prefix_expression_operator {
+            ir::Expression_PrefixExpression_Operator::Minus => {
+                let operand_type_id = self.typing_of_expression(&node.operand).as_type_id()?;
+                // Fold `-literal` (and more generally `-<constant>`) by
+                // negating the operand's known number value.
+                if let Some(value) = self.types.number_value_of_type_id(operand_type_id) {
+                    Some(
+                        self.types
+                            .register_type(Type::Literal(value.negate().to_literal_kind())),
+                    )
+                } else {
+                    // TODO(validation): check that the operand type supports
+                    // negation (ie. uint does not)
+                    Some(operand_type_id)
+                }
+            }
+            ir::Expression_PrefixExpression_Operator::PlusPlus
+            | ir::Expression_PrefixExpression_Operator::MinusMinus
+            | ir::Expression_PrefixExpression_Operator::Tilde => {
+                // TODO(validation): check that the operand is integer
+                self.typing_of_expression(&node.operand).as_type_id()
+            }
+            ir::Expression_PrefixExpression_Operator::Bang => {
+                // TODO(validation): check that the operand is boolean
+                Some(self.types.boolean())
+            }
+            ir::Expression_PrefixExpression_Operator::DeleteKeyword => Some(self.types.void()),
+        }
+    }
+
+    pub(super) fn type_of_array_expression(
+        &mut self,
+        array: &ir::ArrayExpression,
+    ) -> Option<TypeId> {
+        let mut item_type_ids: Vec<TypeId> = Vec::with_capacity(array.items.len());
+        for item in &array.items {
+            item_type_ids.push(self.typing_of_expression(item).as_type_id()?);
+        }
+        let element_type = self.types.common_mobile_type(&item_type_ids)?;
+        Some(self.types.register_type(Type::FixedSizeArray {
+            element_type,
+            size: array.items.len(),
+            location: DataLocation::Memory,
+        }))
+    }
+
+    pub(super) fn type_of_left_typed_binary_operator_expression<F>(
+        &mut self,
+        left_operand: &ir::Expression,
+        right_operand: &ir::Expression,
+        op: F,
+    ) -> Option<TypeId>
+    where
+        F: FnOnce(&Number, &Number) -> Option<Number>,
+    {
+        let left_type_id = self.typing_of_expression(left_operand).as_type_id()?;
+        let right_type_id = self.typing_of_expression(right_operand).as_type_id()?;
+
+        let left_value = self.types.number_value_of_type_id(left_type_id);
+        let right_value = self.types.number_value_of_type_id(right_type_id);
+
+        if let (Some(left_value), Some(right_value)) = (&left_value, &right_value) {
+            // Both constants, so fold them
+            op(left_value, right_value).map(|result| {
+                self.types
+                    .register_type(Type::Literal(result.to_literal_kind()))
+            })
+        } else if let Some(left_value) = &left_value {
+            // For shifts or exponentiations, if the left operand is a literal,
+            // the result is either a `uint256` or an `int256` depending on the
+            // sign of `left_operand`.
+            if left_value.is_negative() {
+                Some(self.types.register_type(Type::Integer {
+                    signed: true,
+                    bits: 256,
+                }))
             } else {
-                // TODO(validation): the types are not compatible, we should
-                // emit an error, or signal our caller
-                None
+                Some(self.types.uint256())
             }
         } else {
-            None
+            // TODO(validation): check that the operand types are valid (needs
+            // additional parameter or validation at call site)
+            Some(left_type_id)
         }
     }
 
@@ -535,43 +577,22 @@ fn reference_node_id_for_expression(node: &ir::Expression) -> Option<NodeId> {
 
 /// Typing functions for literals
 impl Pass<'_> {
-    pub(super) fn string_expression_node_id(node: &ir::StringExpression) -> NodeId {
-        match node {
-            ir::StringExpression::StringLiterals(strings) => strings[0].id(),
-            ir::StringExpression::HexStringLiterals(hex_strings) => hex_strings[0].id(),
-            ir::StringExpression::UnicodeStringLiterals(unicode_strings) => unicode_strings[0].id(),
-        }
-    }
-
     pub(super) fn type_of_string_expression(node: &ir::StringExpression) -> Type {
+        // Hex string literals carry distinct provenance (mirroring `HexInteger`
+        // vs `Integer`); regular and unicode strings share `String` since they
+        // are indistinguishable once decoded.
         let kind = match node {
-            ir::StringExpression::StringLiterals(strings) => {
-                let size = strings.iter().fold(0usize, |acc, string| {
-                    // TODO: consider escaped characters
-                    acc + string.unparse().len() - 2
-                });
-                LiteralKind::String {
-                    bytes: u32::try_from(size).unwrap(),
-                }
+            ir::StringExpression::StringLiterals(literals) => {
+                let value = literals::value_of_string_literals(literals);
+                LiteralKind::String { bytes: value.len() }
             }
-            ir::StringExpression::HexStringLiterals(hex_strings) => {
-                let size = hex_strings.iter().fold(0usize, |acc, hex_string| {
-                    // 5 is the length of the `hex` prefix plus the quotes
-                    acc + (hex_string.unparse().len() - 5) / 2
-                });
-                LiteralKind::String {
-                    bytes: u32::try_from(size).unwrap(),
-                }
+            ir::StringExpression::HexStringLiterals(literals) => {
+                let value = literals::value_of_hex_string_literals(literals);
+                LiteralKind::HexString { bytes: value.len() }
             }
-            ir::StringExpression::UnicodeStringLiterals(unicode_strings) => {
-                let size = unicode_strings.iter().fold(0usize, |acc, unicode_string| {
-                    // TODO: actually parse the string
-                    // 9 is the length of the `unicode` prefix plus quotes
-                    acc + unicode_string.unparse().len() - 9
-                });
-                LiteralKind::String {
-                    bytes: u32::try_from(size).unwrap(),
-                }
+            ir::StringExpression::UnicodeStringLiterals(literals) => {
+                let value = literals::value_of_unicode_string_literals(literals);
+                LiteralKind::String { bytes: value.len() }
             }
         };
         Type::Literal(kind)
@@ -579,18 +600,21 @@ impl Pass<'_> {
 
     pub(super) fn hex_number_literal_kind(
         hex_number_expression: &ir::HexNumberExpression,
-    ) -> LiteralKind {
-        let hex_number = hex_number_expression.literal.unparse();
-        if hex_number.len() == 42 {
+    ) -> Option<LiteralKind> {
+        let mut hex_number = hex_number_expression.literal.unparse().to_owned();
+        hex_number.retain(|character| character != '_');
+        // Source-text byte width: `0x` prefix is stripped
+        let digits = u32::try_from(hex_number.len().saturating_sub(2)).ok()?;
+        if digits == 40 {
             // TODO(validation): verify the address is valid (ie. has a valid checksum)
             // We need at least an implementation of SHA3 to compute the checksum
-            LiteralKind::Address
-        } else if hex_number == "0x0" {
-            LiteralKind::Zero
-        } else {
-            LiteralKind::HexInteger {
-                bytes: u32::try_from((hex_number.len() - 3) / 2 + 1).unwrap(),
-            }
+            return Some(LiteralKind::Address);
         }
+        let value = Number::from_hex_number_expression(hex_number_expression)?
+            .into_integer()
+            .expect("hex literal must parse to an integer");
+        // Each pair of hex digits is one byte (with odd digit counts rounded up).
+        let bytes = digits.div_ceil(2).max(1);
+        Some(LiteralKind::HexInteger { value, bytes })
     }
 }

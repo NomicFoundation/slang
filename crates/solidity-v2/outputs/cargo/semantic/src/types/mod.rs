@@ -1,9 +1,14 @@
+use literals::numbers;
+use num_bigint::BigInt;
+use num_rational::BigRational;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir::{self, FunctionMutability, FunctionVisibility};
 
+pub mod literals;
 mod parsing;
 mod registry;
 
+pub use literals::numbers::Number;
 pub use registry::TypeRegistry;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
@@ -40,8 +45,7 @@ pub enum Type {
     FixedSizeArray {
         element_type: TypeId,
         location: DataLocation,
-        // TODO: this probably should be a u256, although in practice usize or
-        // even u32 should suffice
+        // TODO: this should be u256, although in practice usize should suffice
         size: usize,
     },
     Function(FunctionType),
@@ -75,13 +79,27 @@ pub enum Type {
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum LiteralKind {
-    Zero,
-    // TODO: collect and store more information about literal numbers
-    Rational,
-    DecimalInteger,
-    HexInteger { bytes: u32 },
-    HexString { bytes: u32 },
-    String { bytes: u32 },
+    Integer {
+        value: BigInt,
+    },
+    /// A hex-source integer literal. Carries the parsed value plus the
+    /// source-text byte width (number of hex digits / 2, rounded up). The
+    /// width is what determines convertibility with `bytesN` and is preserved
+    /// distinctly from the value because `0x0012` and `0x12` share value `18`
+    /// but convert to `bytes2` and `bytes1` respectively.
+    HexInteger {
+        value: BigInt,
+        bytes: u32,
+    },
+    Rational {
+        value: BigRational,
+    },
+    HexString {
+        bytes: usize,
+    },
+    String {
+        bytes: usize,
+    },
     Address,
 }
 
@@ -247,11 +265,60 @@ impl Type {
         matches!(
             self,
             Type::Literal(
-                LiteralKind::Zero
-                    | LiteralKind::DecimalInteger
+                LiteralKind::Integer { .. }
                     | LiteralKind::HexInteger { .. }
-                    | LiteralKind::Rational
+                    | LiteralKind::Rational { .. }
             )
         )
+    }
+
+    /// For literal numeric types, return their value.
+    pub fn number_value(&self) -> Option<Number> {
+        match self {
+            Type::Literal(kind) => Number::from_literal_kind(kind),
+            _ => None,
+        }
+    }
+
+    pub fn is_contract_or_interface(&self) -> bool {
+        matches!(self, Type::Contract { .. } | Type::Interface { .. })
+    }
+
+    pub(crate) fn get_definition_id(&self) -> Option<NodeId> {
+        match self {
+            Type::Contract { definition_id }
+            | Type::Enum { definition_id }
+            | Type::Interface { definition_id }
+            | Type::Struct { definition_id, .. }
+            | Type::UserDefinedValue { definition_id } => Some(*definition_id),
+            _ => None,
+        }
+    }
+
+    /// Returns a new non-literal `Type` this can flow into. For use when
+    /// computing the type of literal arrays or conditional branches.
+    pub(crate) fn mobile_type(&self) -> Option<Self> {
+        match self {
+            Type::Literal(
+                LiteralKind::Integer { value } | LiteralKind::HexInteger { value, .. },
+            ) => numbers::smallest_integer_type_to_fit(value),
+            Type::Literal(LiteralKind::Rational { .. }) => {
+                // TODO: not supported yet, but narrow the rational type to the
+                // smallest fixed/ufixed available (eg. 1.2 -> ufixed8x1).
+                None
+            }
+            Type::Literal(LiteralKind::HexString { .. } | LiteralKind::String { .. }) => {
+                Some(Type::String {
+                    location: DataLocation::Memory,
+                })
+            }
+            Type::Literal(LiteralKind::Address) => Some(Type::Address { payable: false }),
+
+            // Some values cannot be elements of arrays
+            Type::Mapping { .. } | Type::Tuple { .. } | Type::Void => None,
+
+            // Return self for all other cases
+            _ => Some(self.clone()),
+        }
     }
 }
