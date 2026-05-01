@@ -24,7 +24,8 @@ pub fn value_of_hex_string_literals(literals: &[ir::HexStringLiteral]) -> Vec<u8
     result
 }
 
-/// Decodes the concatenated value of a collection of `StringLiteral` to its raw bytes.
+/// Decodes the concatenated value of a collection of `UnicodeStringLiteral` to
+/// its raw bytes.
 ///
 /// Strips prefix and quotes, and decodes escape sequences.
 pub fn value_of_unicode_string_literals(literals: &[ir::UnicodeStringLiteral]) -> Vec<u8> {
@@ -75,8 +76,8 @@ fn decode_escape_sequences(content: &str) -> Vec<u8> {
             out.extend_from_slice(c.encode_utf8(&mut buf).as_bytes());
             continue;
         }
-        // Grammar guarantees at least one char after backslash; if input
-        // is malformed we just stop.
+        // Parser guarantees at least one char after backslash according to
+        // grammar definition.
         let next = chars.next().expect("unterminated escape sequence");
         match next {
             'n' => out.push(b'\n'),
