@@ -266,6 +266,14 @@ impl Type {
         )
     }
 
+    /// For literal numeric types, return their value.
+    pub fn number_value(&self) -> Option<Number> {
+        match self {
+            Type::Literal(kind) => Number::from_literal_kind(kind),
+            _ => None,
+        }
+    }
+
     pub fn is_contract_or_interface(&self) -> bool {
         matches!(self, Type::Contract { .. } | Type::Interface { .. })
     }
@@ -283,7 +291,7 @@ impl Type {
 
     /// Returns a new non-literal `Type` this can flow into. For use when
     /// computing the type of literal arrays or conditional branches.
-    pub(crate) fn reified(&self) -> Option<Self> {
+    pub(crate) fn mobile_type(&self) -> Option<Self> {
         match self {
             Type::Literal(LiteralKind::Integer(value) | LiteralKind::HexInteger { value, .. }) => {
                 numbers::smallest_integer_type_to_fit(value)

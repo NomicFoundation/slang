@@ -169,7 +169,7 @@ impl Visitor for Pass<'_> {
         let type_id = match (true_type_id, false_type_id) {
             (Some(true_type_id), Some(false_type_id)) => self
                 .types
-                .reified_common_type(&[true_type_id, false_type_id]),
+                .common_mobile_type(&[true_type_id, false_type_id]),
             _ => None,
         };
         self.binder.set_node_type(node.id(), type_id);
@@ -192,115 +192,76 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_bitwise_or_expression(&mut self, node: &ir::BitwiseOrExpression) {
-        let type_id = self
-            .fold_binary_literal_expression(&node.left_operand, &node.right_operand, |l, r| {
-                l.bit_or(r)
-            })
-            .or_else(|| {
-                self.type_of_integer_binary_expression(&node.left_operand, &node.right_operand)
-            });
+        let type_id = self.type_of_binary_operator_expression(
+            &node.left_operand,
+            &node.right_operand,
+            |l, r| l.bit_or(r),
+        );
         self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_bitwise_xor_expression(&mut self, node: &ir::BitwiseXorExpression) {
-        let type_id = self
-            .fold_binary_literal_expression(&node.left_operand, &node.right_operand, |l, r| {
-                l.bit_xor(r)
-            })
-            .or_else(|| {
-                self.type_of_integer_binary_expression(&node.left_operand, &node.right_operand)
-            });
+        let type_id = self.type_of_binary_operator_expression(
+            &node.left_operand,
+            &node.right_operand,
+            |l, r| l.bit_xor(r),
+        );
         self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_bitwise_and_expression(&mut self, node: &ir::BitwiseAndExpression) {
-        let type_id = self
-            .fold_binary_literal_expression(&node.left_operand, &node.right_operand, |l, r| {
-                l.bit_and(r)
-            })
-            .or_else(|| {
-                self.type_of_integer_binary_expression(&node.left_operand, &node.right_operand)
-            });
+        let type_id = self.type_of_binary_operator_expression(
+            &node.left_operand,
+            &node.right_operand,
+            |l, r| l.bit_and(r),
+        );
         self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_shift_expression(&mut self, node: &ir::ShiftExpression) {
-        // TODO(validation): check that the left operand is an integer and the
-        // right operand is an _unsigned_ integer
-        let folded =
-            self.fold_binary_literal_expression(&node.left_operand, &node.right_operand, |l, r| {
-                match &node.expression_shift_expression_operator {
-                    ir::Expression_ShiftExpression_Operator::LessThanLessThan => l.shl(r),
-                    ir::Expression_ShiftExpression_Operator::GreaterThanGreaterThan => l.shr(r),
-                    ir::Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan => {
-                        None
-                    }
-                }
-            });
-        // TODO: if the left operand is a literal integer but the right operand
-        // is not, `folded` will be `None` and the operand needs to be converted
-        // into uint256/int256 depending on the sign of left.
-        let type_id = folded.or_else(|| self.typing_of_expression(&node.left_operand).as_type_id());
+        let type_id = self.type_of_left_typed_binary_operator_expression(
+            &node.left_operand,
+            &node.right_operand,
+            |l, r| match &node.expression_shift_expression_operator {
+                ir::Expression_ShiftExpression_Operator::LessThanLessThan => l.shl(r),
+                ir::Expression_ShiftExpression_Operator::GreaterThanGreaterThan => l.shr(r),
+                ir::Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan => None,
+            },
+        );
         self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_additive_expression(&mut self, node: &ir::AdditiveExpression) {
-        let folded =
-            self.fold_binary_literal_expression(&node.left_operand, &node.right_operand, |l, r| {
-                match &node.expression_additive_expression_operator {
-                    ir::Expression_AdditiveExpression_Operator::Plus => Some(l.add(r)),
-                    ir::Expression_AdditiveExpression_Operator::Minus => Some(l.sub(r)),
-                }
-            });
-        let type_id = folded.or_else(|| {
-            self.type_of_integer_binary_expression(&node.left_operand, &node.right_operand)
-        });
+        let type_id = self.type_of_binary_operator_expression(
+            &node.left_operand,
+            &node.right_operand,
+            |l, r| match &node.expression_additive_expression_operator {
+                ir::Expression_AdditiveExpression_Operator::Plus => Some(l.add(r)),
+                ir::Expression_AdditiveExpression_Operator::Minus => Some(l.sub(r)),
+            },
+        );
         self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_multiplicative_expression(&mut self, node: &ir::MultiplicativeExpression) {
-        let folded =
-            self.fold_binary_literal_expression(&node.left_operand, &node.right_operand, |l, r| {
-                match &node.expression_multiplicative_expression_operator {
-                    ir::Expression_MultiplicativeExpression_Operator::Asterisk => Some(l.mul(r)),
-                    ir::Expression_MultiplicativeExpression_Operator::Slash => l.div(r),
-                    ir::Expression_MultiplicativeExpression_Operator::Percent => l.rem(r),
-                }
-            });
-        let type_id = folded.or_else(|| {
-            self.type_of_integer_binary_expression(&node.left_operand, &node.right_operand)
-        });
+        let type_id = self.type_of_binary_operator_expression(
+            &node.left_operand,
+            &node.right_operand,
+            |l, r| match &node.expression_multiplicative_expression_operator {
+                ir::Expression_MultiplicativeExpression_Operator::Asterisk => Some(l.mul(r)),
+                ir::Expression_MultiplicativeExpression_Operator::Slash => l.div(r),
+                ir::Expression_MultiplicativeExpression_Operator::Percent => l.rem(r),
+            },
+        );
         self.binder.set_node_type(node.id(), type_id);
     }
 
     fn leave_exponentiation_expression(&mut self, node: &ir::ExponentiationExpression) {
-        // TODO(validation): check that the left operand is an integer and the
-        // right operand is an _unsigned_ integer
-        if let Some(type_id) =
-            self.fold_binary_literal_expression(&node.left_operand, &node.right_operand, |l, r| {
-                l.pow(r)
-            })
-        {
-            self.binder.set_node_type(node.id(), Some(type_id));
-            return;
-        }
-        // TODO: if the left operand is a literal integer but the right operand
-        // is not, the operand needs to be converted into uint256/int256
-        // depending on the sign of left (refactor with shift operations).
-        let mut type_id = self.typing_of_expression(&node.left_operand).as_type_id();
-        if type_id.is_some_and(|type_id| self.types.get_type_by_id(type_id).is_literal_number()) {
-            // if the base is a literal but the exponent is not, then the result is uint256
-            if self
-                .typing_of_expression(&node.right_operand)
-                .as_type_id()
-                .is_none_or(|exponent_type| {
-                    !self.types.get_type_by_id(exponent_type).is_literal_number()
-                })
-            {
-                // TODO: this needs to look at the sign of the left operand.
-                type_id = Some(self.types.uint256());
-            }
-        }
+        let type_id = self.type_of_left_typed_binary_operator_expression(
+            &node.left_operand,
+            &node.right_operand,
+            |l, r| l.pow(r),
+        );
         self.binder.set_node_type(node.id(), type_id);
     }
 

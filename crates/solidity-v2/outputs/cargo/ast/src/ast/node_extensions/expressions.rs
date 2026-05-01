@@ -6,7 +6,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::binder::Typing;
 use slang_solidity_v2_semantic::context::SemanticContext;
-use slang_solidity_v2_semantic::types::{literals, Number, Type};
+use slang_solidity_v2_semantic::types::{literals, Number};
 
 use super::super::{
     DecimalNumberExpressionStruct, Expression, FunctionCallExpressionStruct,
@@ -101,10 +101,7 @@ impl HexNumberExpressionStruct {
 /// number-shaped literal kind (integer, hex-integer, or rational).
 fn number_value_of_node(semantic: &SemanticContext, node_id: NodeId) -> Option<Number> {
     let type_id = semantic.binder().node_typing(node_id).as_type_id()?;
-    match semantic.types().get_type_by_id(type_id) {
-        Type::Literal(kind) => Number::from_literal_kind(kind),
-        _ => None,
-    }
+    semantic.types().number_value_of_type_id(type_id)
 }
 
 fn integer_value_of_node(semantic: &SemanticContext, node_id: NodeId) -> Option<BigInt> {

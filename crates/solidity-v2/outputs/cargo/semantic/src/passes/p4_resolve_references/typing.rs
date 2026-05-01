@@ -143,31 +143,48 @@ impl Pass<'_> {
         self.typing_of_resolution(&resolution)
     }
 
-    pub(super) fn type_of_integer_binary_expression(
-        &self,
+    /// Returns the type of an binary operator expression. If both operands are
+    /// number literals, applies `op` to fold them into a narrowed literal type;
+    /// otherwise falls back to the implicit-convertibility rule between the
+    /// operand types.
+    pub(super) fn type_of_binary_operator_expression<F>(
+        &mut self,
         left_operand: &ir::Expression,
         right_operand: &ir::Expression,
-    ) -> Option<TypeId> {
-        let left_type_id = self.typing_of_expression(left_operand).as_type_id();
-        let right_type_id = self.typing_of_expression(right_operand).as_type_id();
-        // TODO(validation): check that both operands are indeed integers
-        if let (Some(left_type_id), Some(right_type_id)) = (left_type_id, right_type_id) {
-            if self
-                .types
-                .implicitly_convertible_to(right_type_id, left_type_id)
-            {
-                Some(left_type_id)
-            } else if self
-                .types
-                .implicitly_convertible_to(left_type_id, right_type_id)
-            {
-                Some(right_type_id)
-            } else {
-                // TODO(validation): the types are not compatible, we should
-                // emit an error, or signal our caller
-                None
-            }
+        op: F,
+    ) -> Option<TypeId>
+    where
+        F: FnOnce(&Number, &Number) -> Option<Number>,
+    {
+        let left_type_id = self.typing_of_expression(left_operand).as_type_id()?;
+        let right_type_id = self.typing_of_expression(right_operand).as_type_id()?;
+
+        // If both operands are number constants, fold them using the given operator.
+        if let (Some(left_value), Some(right_value)) = (
+            self.types.number_value_of_type_id(left_type_id),
+            self.types.number_value_of_type_id(right_type_id),
+        ) {
+            return op(&left_value, &right_value).map(|result| {
+                self.types
+                    .register_type(Type::Literal(result.to_literal_kind()))
+            });
+        }
+
+        // TODO(validation): check that both operands are valid for the operator
+        // (needs additional parameter or check at the call site)
+        if self
+            .types
+            .implicitly_convertible_to(right_type_id, left_type_id)
+        {
+            Some(left_type_id)
+        } else if self
+            .types
+            .implicitly_convertible_to(left_type_id, right_type_id)
+        {
+            Some(right_type_id)
         } else {
+            // TODO(validation): the types are not compatible, we should
+            // emit an error, or signal our caller
             None
         }
     }
@@ -178,9 +195,10 @@ impl Pass<'_> {
     ) -> Option<TypeId> {
         match node.expression_prefix_expression_operator {
             ir::Expression_PrefixExpression_Operator::Minus => {
+                let operand_type_id = self.typing_of_expression(&node.operand).as_type_id()?;
                 // Fold `-literal` (and more generally `-<constant>`) by
                 // negating the operand's known number value.
-                if let Some(value) = self.number_value_of_expression(&node.operand) {
+                if let Some(value) = self.types.number_value_of_type_id(operand_type_id) {
                     Some(
                         self.types
                             .register_type(Type::Literal(value.negate().to_literal_kind())),
@@ -188,7 +206,7 @@ impl Pass<'_> {
                 } else {
                     // TODO(validation): check that the operand type supports
                     // negation (ie. uint does not)
-                    self.typing_of_expression(&node.operand).as_type_id()
+                    Some(operand_type_id)
                 }
             }
             ir::Expression_PrefixExpression_Operator::PlusPlus
@@ -213,7 +231,7 @@ impl Pass<'_> {
         for item in &array.items {
             item_type_ids.push(self.typing_of_expression(item).as_type_id()?);
         }
-        let element_type = self.types.reified_common_type(&item_type_ids)?;
+        let element_type = self.types.common_mobile_type(&item_type_ids)?;
         Some(self.types.register_type(Type::FixedSizeArray {
             element_type,
             size: array.items.len(),
@@ -221,36 +239,44 @@ impl Pass<'_> {
         }))
     }
 
-    /// Returns the compile-time number value of an expression, when its type
-    /// is a value-bearing literal (integer or rational). Used by the constant
-    /// folding logic in the binary/prefix expression visitors.
-    fn number_value_of_expression(&self, expression: &ir::Expression) -> Option<Number> {
-        let type_id = self.typing_of_expression(expression).as_type_id()?;
-        match self.types.get_type_by_id(type_id) {
-            Type::Literal(kind) => Number::from_literal_kind(kind),
-            _ => None,
-        }
-    }
-
-    /// If both operands are numbers literals, applies `op` to their values
-    /// and returns the resulting narrowed literal type. Returns `None` to let
-    /// the caller fall back to its non-folding type rule.
-    pub(super) fn fold_binary_literal_expression<F>(
+    pub(super) fn type_of_left_typed_binary_operator_expression<F>(
         &mut self,
-        left: &ir::Expression,
-        right: &ir::Expression,
+        left_operand: &ir::Expression,
+        right_operand: &ir::Expression,
         op: F,
     ) -> Option<TypeId>
     where
         F: FnOnce(&Number, &Number) -> Option<Number>,
     {
-        let left_value = self.number_value_of_expression(left)?;
-        let right_value = self.number_value_of_expression(right)?;
-        let result = op(&left_value, &right_value)?;
-        Some(
-            self.types
-                .register_type(Type::Literal(result.to_literal_kind())),
-        )
+        let left_type_id = self.typing_of_expression(left_operand).as_type_id()?;
+        let right_type_id = self.typing_of_expression(right_operand).as_type_id()?;
+
+        let left_value = self.types.number_value_of_type_id(left_type_id);
+        let right_value = self.types.number_value_of_type_id(right_type_id);
+
+        if let (Some(left_value), Some(right_value)) = (&left_value, &right_value) {
+            // Both constants, so fold them
+            op(left_value, right_value).map(|result| {
+                self.types
+                    .register_type(Type::Literal(result.to_literal_kind()))
+            })
+        } else if let Some(left_value) = &left_value {
+            // For shifts or exponentiations, if the left operand is a literal,
+            // the result is either a `uint256` or an `int256` depending on the
+            // sign of `left_operand`.
+            if left_value.is_negative() {
+                Some(self.types.register_type(Type::Integer {
+                    signed: true,
+                    bits: 256,
+                }))
+            } else {
+                Some(self.types.uint256())
+            }
+        } else {
+            // TODO(validation): check that the operand types are valid (needs
+            // additional parameter or validation at call site)
+            Some(left_type_id)
+        }
     }
 
     pub(super) fn typing_of_resolution(&self, resolution: &Resolution) -> Typing {

@@ -103,10 +103,17 @@ impl Number {
         }
     }
 
-    pub(crate) fn is_zero(&self) -> bool {
+    pub fn is_zero(&self) -> bool {
         match self {
             Self::Integer(value) => value.is_zero(),
             Self::Rational(value) => value.is_zero(),
+        }
+    }
+
+    pub fn is_negative(&self) -> bool {
+        match self {
+            Self::Integer(value) => value.is_negative(),
+            Self::Rational(value) => value.is_negative(),
         }
     }
 

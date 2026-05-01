@@ -6,7 +6,7 @@ use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
 use super::literals::numbers;
-use super::{DataLocation, FunctionType, LiteralKind, Type, TypeId};
+use super::{DataLocation, FunctionType, LiteralKind, Number, Type, TypeId};
 use crate::types::ImplicitlyConvertible;
 
 /// The `TypeRegistry` stores an index of registered types, both elementary
@@ -531,15 +531,15 @@ impl TypeRegistry {
     /// the given types. The first element dictates the type class. Returns
     /// `None` if the types cannot be reified or they are not compatible. This
     /// is used to unify types of literal arrays and conditional branches.
-    pub(crate) fn reified_common_type(&mut self, type_ids: &[TypeId]) -> Option<TypeId> {
+    pub(crate) fn common_mobile_type(&mut self, type_ids: &[TypeId]) -> Option<TypeId> {
         if type_ids.is_empty() {
             return None;
         }
         let initial_type = self.get_type_by_id(type_ids[0]);
-        let mut element_type = initial_type.reified()?;
+        let mut element_type = initial_type.mobile_type()?;
 
         for item_type_id in &type_ids[1..] {
-            let item_type = self.get_type_by_id(*item_type_id).reified()?;
+            let item_type = self.get_type_by_id(*item_type_id).mobile_type()?;
             if self.internal_implicitly_convertible_to(&item_type, &element_type) {
                 // ok, `element_type` can already hold `item_type`
             } else if self.internal_implicitly_convertible_to(&element_type, &item_type) {
@@ -689,6 +689,15 @@ impl TypeRegistry {
                 self.function_type_overrides(ftype, other)
             }
             _ => false,
+        }
+    }
+
+    /// Returns the compile-time number value of a type, when it is a
+    /// value-bearing literal (integer or rational).
+    pub fn number_value_of_type_id(&self, type_id: TypeId) -> Option<Number> {
+        match self.get_type_by_id(type_id) {
+            Type::Literal(kind) => Number::from_literal_kind(kind),
+            _ => None,
         }
     }
 }
