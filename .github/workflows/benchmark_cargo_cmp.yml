@@ -87,7 +87,6 @@ jobs:
         run: "./scripts/bin/infra perf cargo ${{ github.event_name == 'pull_request' && '--pr-benchmark' || (inputs.dryRun == true && '--dry-run' || '') }} comparison"
         env:
           BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
-          BENCHER_PR_START_POINT_HASH: "${{ github.event.pull_request.base.sha }}"
           BENCHER_PR_HEAD_HASH: "${{ github.event.pull_request.head.sha }}"
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
