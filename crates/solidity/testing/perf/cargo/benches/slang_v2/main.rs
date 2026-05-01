@@ -2,7 +2,7 @@
 
 use std::hint::black_box;
 
-use iai_callgrind::{library_benchmark, library_benchmark_group, main};
+use gungraun::{library_benchmark, library_benchmark_group, main};
 use paste::paste;
 use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit;
 use slang_solidity_v2_ir::ir;
@@ -33,7 +33,7 @@ macro_rules! slang_v2_define_tests {
     ($prj:ident) => {
         /*
          * WARNING:
-         * The reported `iai` benchmark ID is constructed from: `{file_name}::{group_name}::{function_name}`
+         * The reported `gungraun` benchmark ID is constructed from: `{file_name}::{group_name}::{function_name}`
          * Changing any of the above would change the resulting benchmark ID, and disconnect it from previous results.
          *
          * __SLANG_V2_INFRA_BENCHMARKS_LIST__ (keep in sync)

@@ -7,7 +7,7 @@ publish = false
 
 [dependencies]
 anyhow = { workspace = true }
-iai-callgrind = { workspace = true }
+gungraun = { workspace = true }
 infra_utils = { workspace = true }
 paste = { workspace = true }
 semver = { workspace = true }

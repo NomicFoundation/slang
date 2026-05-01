@@ -144,8 +144,8 @@ enumset = { version = "1.1.10" }
 env_logger = { version = "0.11.9" }
 fxhash = { version = "0.2.0" }
 httpdate = { version = "1.0.3" }
-iai-callgrind = { version = "0.12.3" }
-iai-callgrind-runner = { version = "0.12.3" }
+gungraun = { version = "0.18.1" }
+gungraun-runner = { version = "0.18.1" }
 ignore = { version = "0.4.25" }
 indexmap = { version = "2.10.0", features = ["serde"] }
 indicatif = { version = "0.18.0", features = ["in_memory"] }
