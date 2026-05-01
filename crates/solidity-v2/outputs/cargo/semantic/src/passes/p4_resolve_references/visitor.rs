@@ -6,6 +6,7 @@ use slang_solidity_v2_ir::ir::visitor::Visitor;
 use super::Pass;
 use crate::binder::{Reference, Resolution, Typing};
 use crate::built_ins::BuiltIn;
+use crate::passes::common::node_id_for_string_expression_typing;
 use crate::types::{DataLocation, Number, Type};
 
 impl Visitor for Pass<'_> {
@@ -121,6 +122,15 @@ impl Visitor for Pass<'_> {
                 let scope_id = self.current_scope_id();
                 self.filter_overriden_definitions(self.resolve_symbol_in_scope(scope_id, symbol))
             };
+
+            // Set the typing for the `Identifier` node.
+            // The resolution may point to an imported symbol, so we need to
+            // follow through in order to get to the actual typing.
+            let followed_resolution = self.binder.follow_symbol_aliases(&resolution);
+            let typing = self.typing_of_resolution(&followed_resolution);
+            self.binder.set_node_typing(identifier.id(), typing);
+
+            // Finally, create the reference for the identifier.
             let reference = Reference::new(Rc::clone(identifier), resolution);
             self.binder.insert_reference(reference);
         }
@@ -145,7 +155,7 @@ impl Visitor for Pass<'_> {
         let type_id = self
             .types
             .register_type(Self::type_of_string_expression(node));
-        let node_id = Self::node_id_for_string_expression(node);
+        let node_id = node_id_for_string_expression_typing(node);
         self.binder.set_node_type(node_id, Some(type_id));
     }
 
@@ -175,20 +185,28 @@ impl Visitor for Pass<'_> {
         self.binder.set_node_type(node.id(), type_id);
     }
 
-    fn leave_or_expression(&mut self, _node: &ir::OrExpression) {
+    fn leave_or_expression(&mut self, node: &ir::OrExpression) {
         // TODO(validation): check that both operands are boolean
+        self.binder
+            .set_node_type(node.id(), Some(self.types.boolean()));
     }
 
-    fn leave_and_expression(&mut self, _node: &ir::AndExpression) {
+    fn leave_and_expression(&mut self, node: &ir::AndExpression) {
         // TODO(validation): check that both operands are boolean
+        self.binder
+            .set_node_type(node.id(), Some(self.types.boolean()));
     }
 
-    fn leave_equality_expression(&mut self, _node: &ir::EqualityExpression) {
+    fn leave_equality_expression(&mut self, node: &ir::EqualityExpression) {
         // TODO(validation): check that both operands have a compatible type
+        self.binder
+            .set_node_type(node.id(), Some(self.types.boolean()));
     }
 
-    fn leave_inequality_expression(&mut self, _node: &ir::InequalityExpression) {
+    fn leave_inequality_expression(&mut self, node: &ir::InequalityExpression) {
         // TODO(validation): check that both operands have a compatible type
+        self.binder
+            .set_node_type(node.id(), Some(self.types.boolean()));
     }
 
     fn leave_bitwise_or_expression(&mut self, node: &ir::BitwiseOrExpression) {
@@ -337,9 +355,10 @@ impl Visitor for Pass<'_> {
             }
         }
 
-        // store the typing
+        // Store the typing
         self.binder.set_node_typing(node.id(), typing);
 
+        // And create the reference for the member identifier.
         let reference = Reference::new(Rc::clone(&node.member), resolution);
         self.binder.insert_reference(reference);
     }
