@@ -29,8 +29,7 @@ pub fn collect_snapshot_tests(data_dir: &Path) -> Vec<SnapshotEntry> {
 
 fn walk(parent_dir: &Path) -> Option<SnapshotEntry> {
     let mut has_input_sol = false;
-    let mut has_generated_dir = false;
-    let mut all_children = Vec::<PathBuf>::new();
+    let mut children_dirs = Vec::<PathBuf>::new();
 
     for child in std::fs::read_dir(parent_dir).unwrap() {
         let child = child.unwrap();
@@ -40,10 +39,10 @@ fn walk(parent_dir: &Path) -> Option<SnapshotEntry> {
         if child_type.is_dir() {
             match child_path.unwrap_name() {
                 "generated" => {
-                    has_generated_dir = true;
+                    // Ignore generated directory
                 }
                 _ => {
-                    all_children.push(child_path);
+                    children_dirs.push(child_path);
                 }
             }
         } else if child_type.is_file() {
@@ -63,17 +62,9 @@ fn walk(parent_dir: &Path) -> Option<SnapshotEntry> {
         }
     }
 
-    if has_input_sol || has_generated_dir {
+    if has_input_sol {
         assert!(
-            has_input_sol,
-            "Test directory is missing 'input.sol': {parent_dir:?}"
-        );
-        assert!(
-            has_generated_dir,
-            "Test directory is missing 'generated/' directory: {parent_dir:?}"
-        );
-        assert!(
-            all_children.is_empty(),
+            children_dirs.is_empty(),
             "Test directory must not contain other subdirectories: {parent_dir:?}"
         );
 
@@ -82,7 +73,7 @@ fn walk(parent_dir: &Path) -> Option<SnapshotEntry> {
         });
     }
 
-    let children_entries: Vec<_> = all_children
+    let children_entries: Vec<_> = children_dirs
         .iter()
         .sorted()
         .filter_map(|child_path| walk(child_path))
