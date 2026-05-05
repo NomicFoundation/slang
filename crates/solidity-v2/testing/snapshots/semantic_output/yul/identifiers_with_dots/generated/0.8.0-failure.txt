@@ -8,6 +8,7 @@ Error: Unexpected YulPeriod. One of YulBreakKeyword, YulCloseBrace, YulColonEqua
    │                  ┬  
    │                  ╰── Error occurred here.
 ───╯
+
 ------------------------------------------------------------------------
 
 Definitions (0):

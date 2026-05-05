@@ -8,6 +8,7 @@ Error: Unexpected CloseBrace. One of AddressKeyword, AtKeyword, ErrorKeyword, Fr
     │     ┬  
     │     ╰── Error occurred here.
 ────╯
+
 ------------------------------------------------------------------------
 
 Definitions (0):

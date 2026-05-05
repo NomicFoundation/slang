@@ -136,7 +136,7 @@ fn report_parse_errors(
     for (file_id, error) in parse_errors {
         let source = file_contents.get(file_id).cloned().unwrap_or_default();
         let rendered = diagnostic::render(error, file_id, &source, false);
-        write!(report, "{rendered}")?;
+        writeln!(report, "{rendered}")?;
     }
     Ok(())
 }
