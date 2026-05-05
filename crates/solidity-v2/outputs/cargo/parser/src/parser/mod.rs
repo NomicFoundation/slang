@@ -49,6 +49,9 @@ impl Parser {
         let parser = grammar::SourceUnitParser::new();
         match parser.parse(input, lexer) {
             Ok(source_unit) => {
+                // TODO(v2): these tests should really go through 'CompilationUnit' once it is ready.
+                // This way, we won't have to call individual validation APIs.
+                // All errors should be collected during the compilation unit construction.
                 let errors = validate_syntax_version(&source_unit, version);
                 ParseOutput {
                     source_unit,
