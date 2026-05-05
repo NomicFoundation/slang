@@ -64,6 +64,8 @@ impl NpmController {
     pub fn execute(&self) -> Result<()> {
         Self::install_deps()?;
 
+        // TODO: surface a bench-list diff comment on PRs the way the cargo
+        // workflows do.
         if self.smoke {
             Command::new("cargo")
                 .args(["build", "--package", "solidity_testing_perf_npm"])
