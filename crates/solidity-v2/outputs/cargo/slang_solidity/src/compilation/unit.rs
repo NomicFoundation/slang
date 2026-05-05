@@ -35,14 +35,9 @@ impl CompilationUnit {
         self.language_version
     }
 
-    /// Returns a list of all files in the compilation unit.
-    pub fn files(&self) -> Vec<Rc<File>> {
-        self.files.values().cloned().collect()
-    }
-
-    /// Returns the file with the specified ID, if it exists.
-    pub fn file(&self, id: &str) -> Option<Rc<File>> {
-        self.files.get(id).cloned()
+    /// Returns a list of all file IDs in the compilation unit.
+    pub fn file_ids(&self) -> Vec<String> {
+        self.files.keys().cloned().collect()
     }
 
     #[cfg(feature = "__private_testing_utils")]
@@ -55,6 +50,14 @@ impl CompilationUnit {
         self.files
             .get(file_id)
             .map(|file| ast::create_source_unit(file.ir_root(), &self.semantic))
+    }
+
+    #[cfg(feature = "__private_testing_utils")]
+    #[doc(hidden)]
+    pub fn get_file_ir_root(&self, file_id: &str) -> Option<slang_solidity_v2_ir::ir::SourceUnit> {
+        self.files
+            .get(file_id)
+            .map(|file| Rc::clone(file.ir_root()))
     }
 
     pub fn all_definitions(&self) -> impl Iterator<Item = ast::Definition> + use<'_> {

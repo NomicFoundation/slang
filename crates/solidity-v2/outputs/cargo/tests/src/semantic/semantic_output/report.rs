@@ -48,10 +48,9 @@ pub(crate) fn binder_report(report_data: &'_ ReportData<'_>) -> Result<String> {
 
     report_unbound_identifiers(&mut report, unbound_identifiers)?;
 
-    for file in &compilation.files() {
+    for file_id in &compilation.file_ids() {
         writeln!(report, "{SEPARATOR}")?;
 
-        let file_id = file.id();
         if let Some(contents) = files.get(file_id) {
             render_bindings_for_file(
                 &mut report,

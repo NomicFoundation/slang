@@ -105,41 +105,41 @@ pub(super) fn build_compilation_unit_from_fixture(
 #[test]
 fn test_build_abi_with_tuples_fixture() -> Result<()> {
     let unit = AbiWithTuples::build_compilation_unit()?;
-    assert_eq!(1, unit.files().len());
+    assert_eq!(1, unit.file_ids().len());
     Ok(())
 }
 
 #[test]
 fn test_build_chained_imports_fixture() -> Result<()> {
     let unit = ChainedImports::build_compilation_unit()?;
-    assert_eq!(3, unit.files().len());
+    assert_eq!(3, unit.file_ids().len());
     Ok(())
 }
 
 #[test]
 fn test_build_counter_fixture() -> Result<()> {
     let unit = Counter::build_compilation_unit()?;
-    assert_eq!(3, unit.files().len());
+    assert_eq!(3, unit.file_ids().len());
     Ok(())
 }
 
 #[test]
 fn test_build_full_abi_fixture() -> Result<()> {
     let unit = FullAbi::build_compilation_unit()?;
-    assert_eq!(1, unit.files().len());
+    assert_eq!(1, unit.file_ids().len());
     Ok(())
 }
 
 #[test]
 fn test_build_overrides_fixture() -> Result<()> {
     let unit = Overrides::build_compilation_unit()?;
-    assert_eq!(1, unit.files().len());
+    assert_eq!(1, unit.file_ids().len());
     Ok(())
 }
 
 #[test]
 fn test_build_storage_layout_fixture() -> Result<()> {
     let unit = StorageLayout::build_compilation_unit()?;
-    assert_eq!(1, unit.files().len());
+    assert_eq!(1, unit.file_ids().len());
     Ok(())
 }
