@@ -8,6 +8,9 @@
     "composite": true,
     "incremental": true,
     "rootDir": "./",
-    "tsBuildInfoFile": "target/tsc/.tsbuildinfo"
+    "tsBuildInfoFile": "target/tsc/.tsbuildinfo",
+
+    /* Type acquisition (TS 6 no longer auto-includes @types/*) */
+    "types": ["jest", "node"]
   }
 }
