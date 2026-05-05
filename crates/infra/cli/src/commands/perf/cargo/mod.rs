@@ -7,6 +7,7 @@ use infra_utils::commands::Command;
 use infra_utils::github::GitHub;
 use infra_utils::paths::{FileWalker, PathExtensions};
 
+use crate::commands::perf::bench_list;
 use crate::toolchains::bencher::{run_bench, BencherThreshold};
 use crate::toolchains::pipenv::PipEnv;
 use crate::utils::DryRun;
@@ -27,7 +28,7 @@ pub struct CargoController {
     #[arg(long)]
     no_deps: bool,
     /// Install deps and build bench binaries, but skip running benchmarks.
-    #[arg(long, conflicts_with = "pr_benchmark")]
+    #[arg(long)]
     smoke: bool,
 }
 
@@ -51,12 +52,29 @@ impl CargoController {
             Self::install_graphviz();
         }
 
+        let (package, bench_name, bencher_project) = match self.bench {
+            Benches::Slang => (
+                "solidity_testing_perf_cargo",
+                "slang",
+                DEFAULT_BENCHER_PROJECT_SLANG,
+            ),
+            Benches::Comparison => (
+                "solidity_testing_perf_cargo",
+                "comparison",
+                DEFAULT_BENCHER_PROJECT_CMP,
+            ),
+            Benches::SlangV2 => (
+                "solidity_testing_perf_cargo",
+                "slang_v2",
+                DEFAULT_BENCHER_PROJECT_SLANG_V2,
+            ),
+        };
+
+        if self.pr_benchmark {
+            Self::verify_bench_list(package, bench_name, bencher_project)?;
+        }
+
         if self.smoke {
-            let (package, bench_name) = match self.bench {
-                Benches::Slang => ("solidity_testing_perf_cargo", "slang"),
-                Benches::Comparison => ("solidity_testing_perf_cargo", "comparison"),
-                Benches::SlangV2 => ("solidity_testing_perf_cargo", "slang_v2"),
-            };
             Command::new("cargo")
                 .args(["build", "--package", package, "--bench", bench_name])
                 .run();
@@ -67,23 +85,7 @@ impl CargoController {
 
         // Bencher supports multiple languages/frameworks: https://bencher.dev/docs/explanation/adapters/
         // We currently only have one benchmark suite (Rust/iai), but we can add more here in the future.
-        match self.bench {
-            Benches::Slang => self.run_iai_bench(
-                "solidity_testing_perf_cargo",
-                "slang",
-                DEFAULT_BENCHER_PROJECT_SLANG,
-            ),
-            Benches::Comparison => self.run_iai_bench(
-                "solidity_testing_perf_cargo",
-                "comparison",
-                DEFAULT_BENCHER_PROJECT_CMP,
-            ),
-            Benches::SlangV2 => self.run_iai_bench(
-                "solidity_testing_perf_cargo",
-                "slang_v2",
-                DEFAULT_BENCHER_PROJECT_SLANG_V2,
-            ),
-        }
+        self.run_iai_bench(package, bench_name, bencher_project);
         Ok(())
     }
 
@@ -191,6 +193,17 @@ Reports/Logs: {reports_dir:?}
 - DHAT traces (dhat.*.out) can be viewed using the [dhat/dh_view.html] tool from the Valgrind release [https://valgrind.org/downloads/].
 
 ");
+    }
+
+    /// Compare the bench binary's `--list` output against the project's recorded
+    /// benchmarks on bencher.dev, deferring to the shared `bench_list` helper to
+    /// write the markdown summary the CI workflow surfaces as a sticky PR
+    /// comment.
+    fn verify_bench_list(package: &str, bench_name: &str, bencher_project: &str) -> Result<()> {
+        let (local, remote) =
+            bench_list::iai_callgrind::collect_names(package, bench_name, bencher_project)?;
+
+        bench_list::verify_bench_list(bench_name, bencher_project, local, remote)
     }
 
     fn generate_callgraph(reports_dir: std::path::PathBuf) {

@@ -1,3 +1,4 @@
+use anyhow::{Context, Result};
 use infra_utils::commands::Command;
 use infra_utils::github::GitHub;
 
@@ -151,4 +152,52 @@ fn bencher_archive_command(action: &str, project: &str, branch: &str) {
         .property("--branch", branch)
         .secret("BENCHER_API_TOKEN", token)
         .run();
+}
+
+/// List every benchmark name recorded in the most recent report on `branch`
+/// (scoped to the `ci` testbed).
+///
+/// Honours `SLANG_BENCHER_PROJECT` for parity with `run_bench`.
+/// Unauthenticated: slang's bencher projects allow public read-only listing.
+pub(crate) fn list_benchmarks_latest_report(project: &str, branch: &str) -> Result<Vec<String>> {
+    let project = std::env::var("SLANG_BENCHER_PROJECT").unwrap_or_else(|_| project.to_owned());
+
+    // Newest-first + per-page 1 → just the latest report on the branch.
+    let output = Command::new("bencher")
+        .args([
+            "report",
+            "list",
+            &project,
+            "--branch",
+            branch,
+            "--testbed",
+            "ci",
+            "--per-page",
+            "1",
+            "--direction",
+            "desc",
+            "--sort",
+            "date_time",
+        ])
+        .evaluate()?;
+
+    let reports: Vec<serde_json::Value> = serde_json::from_str(&output)
+        .with_context(|| format!("failed to parse bencher report list for {project}"))?;
+
+    let Some(latest) = reports.first() else {
+        return Ok(Vec::new());
+    };
+
+    // `results` is `Vec<Iteration>` where each `Iteration` is `Vec<Result>`;
+    // each `Result` has `benchmark.name`. Flatten both levels.
+    Ok(latest
+        .get("results")
+        .and_then(serde_json::Value::as_array)
+        .into_iter()
+        .flatten()
+        .filter_map(serde_json::Value::as_array)
+        .flatten()
+        .filter_map(|result| result.get("benchmark")?.get("name")?.as_str())
+        .map(str::to_owned)
+        .collect())
 }
