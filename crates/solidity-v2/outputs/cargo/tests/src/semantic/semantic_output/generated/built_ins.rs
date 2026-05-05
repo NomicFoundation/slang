@@ -37,6 +37,11 @@ fn bytes() -> Result<()> {
 }
 
 #[test]
+fn erc7201() -> Result<()> {
+    run(T, "erc7201")
+}
+
+#[test]
 fn function_type() -> Result<()> {
     run(T, "function_type")
 }
