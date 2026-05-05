@@ -30,8 +30,15 @@ impl CargoController {
             return Ok(());
         }
 
-        for crate_name in &changed_crates {
-            run_cargo_publish(crate_name, self.dry_run);
+        if self.dry_run.get() {
+            // Dry-run all changed crates in a single invocation so cargo can
+            // resolve inter-crate path deps locally. Per-crate dry-runs fail
+            // because the new versions of internal deps aren't on crates.io yet.
+            run_cargo_publish_dry_run(&changed_crates);
+        } else {
+            for crate_name in &changed_crates {
+                run_cargo_publish(crate_name);
+            }
         }
 
         Ok(())
@@ -56,14 +63,22 @@ fn prepare_for_publish(crate_name: &str) -> Result<bool> {
     Ok(true)
 }
 
-fn run_cargo_publish(crate_name: &str, dry_run: DryRun) {
-    let mut command = Command::new("cargo")
+fn run_cargo_publish(crate_name: &str) {
+    Command::new("cargo")
         .arg("publish")
         .property("--package", crate_name)
-        .flag("--all-features");
+        .flag("--all-features")
+        .run();
+}
 
-    if dry_run.get() {
-        command = command.flag("--dry-run");
+fn run_cargo_publish_dry_run(crate_names: &[String]) {
+    let mut command = Command::new("cargo")
+        .arg("publish")
+        .flag("--all-features")
+        .flag("--dry-run");
+
+    for crate_name in crate_names {
+        command = command.property("--package", crate_name);
     }
 
     command.run();
