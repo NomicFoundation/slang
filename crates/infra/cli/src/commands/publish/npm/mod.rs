@@ -35,7 +35,11 @@ impl NpmController {
 
         let mut command = Command::new("pnpm")
             .args(["publish", package_dir.unwrap_str()])
-            .property("--access", "public");
+            .property("--access", "public")
+            // CI checkout is detached HEAD, which fails pnpm's branch check.
+            // The workflow's `branches:` filter and the slang-release environment
+            // gate are what actually authorize a release.
+            .flag("--no-git-checks");
 
         if self.dry_run.get() {
             command = command.flag("--dry-run");
