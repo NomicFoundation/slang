@@ -22,6 +22,10 @@ impl File {
     pub(crate) fn add_resolved_import(&mut self, node_id: NodeId, target_file_id: String) {
         self.resolved_imports.insert(node_id, target_file_id);
     }
+
+    pub fn id(&self) -> &str {
+        &self.id
+    }
 }
 
 impl SemanticFile for File {
