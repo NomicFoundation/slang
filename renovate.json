@@ -36,6 +36,12 @@
       "allowedVersions": "<0.3.0 || >0.6.0"
     },
     {
+      "description": "markdown: 1.0 rewrote the API and dropped the `generate_markdown` serializer that infra_cli's release-notes extraction depends on. Stay on 0.3.0 until that code is rewritten or the crate is dropped.",
+      "matchPackageNames": ["markdown"],
+      "matchManagers": ["cargo"],
+      "allowedVersions": "<1.0.0"
+    },
+    {
       "description": "@types/node: no automatic major bumps — Node majors are upgraded manually and only to even LTS releases (e.g. 24 → 26). Minor/patch within the current major flow through normally.",
       "matchPackageNames": ["@types/node"],
       "matchUpdateTypes": ["major"],
