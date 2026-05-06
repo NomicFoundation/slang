@@ -1,7 +1,5 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use slang_solidity_v2_ir::ir;
-
 #[allow(clippy::wildcard_imports)]
 use super::nodes::*;
 
@@ -780,10 +778,10 @@ pub trait Visitor {
     }
     fn leave_enum_members(&mut self, _items: &EnumMembers) {}
 
-    fn enter_hex_string_literals(&mut self, _items: &[ir::HexStringLiteral]) -> bool {
+    fn enter_hex_string_literals(&mut self, _items: &HexStringLiterals) -> bool {
         true
     }
-    fn leave_hex_string_literals(&mut self, _items: &[ir::HexStringLiteral]) {}
+    fn leave_hex_string_literals(&mut self, _items: &HexStringLiterals) {}
 
     fn enter_identifier_path(&mut self, _items: &IdentifierPath) -> bool {
         true
@@ -846,10 +844,10 @@ pub trait Visitor {
     }
     fn leave_positional_arguments(&mut self, _items: &PositionalArguments) {}
 
-    fn enter_simple_version_literal(&mut self, _items: &[ir::VersionSpecifier]) -> bool {
+    fn enter_simple_version_literal(&mut self, _items: &SimpleVersionLiteral) -> bool {
         true
     }
-    fn leave_simple_version_literal(&mut self, _items: &[ir::VersionSpecifier]) {}
+    fn leave_simple_version_literal(&mut self, _items: &SimpleVersionLiteral) {}
 
     fn enter_source_unit_members(&mut self, _items: &SourceUnitMembers) -> bool {
         true
@@ -861,10 +859,10 @@ pub trait Visitor {
     }
     fn leave_statements(&mut self, _items: &Statements) {}
 
-    fn enter_string_literals(&mut self, _items: &[ir::StringLiteral]) -> bool {
+    fn enter_string_literals(&mut self, _items: &StringLiterals) -> bool {
         true
     }
-    fn leave_string_literals(&mut self, _items: &[ir::StringLiteral]) {}
+    fn leave_string_literals(&mut self, _items: &StringLiterals) {}
 
     fn enter_struct_members(&mut self, _items: &StructMembers) -> bool {
         true
@@ -876,10 +874,10 @@ pub trait Visitor {
     }
     fn leave_tuple_values(&mut self, _items: &TupleValues) {}
 
-    fn enter_unicode_string_literals(&mut self, _items: &[ir::UnicodeStringLiteral]) -> bool {
+    fn enter_unicode_string_literals(&mut self, _items: &UnicodeStringLiterals) -> bool {
         true
     }
-    fn leave_unicode_string_literals(&mut self, _items: &[ir::UnicodeStringLiteral]) {}
+    fn leave_unicode_string_literals(&mut self, _items: &UnicodeStringLiterals) {}
 
     fn enter_using_deconstruction_symbols(&mut self, _items: &UsingDeconstructionSymbols) -> bool {
         true
@@ -901,10 +899,10 @@ pub trait Visitor {
     }
     fn leave_yul_arguments(&mut self, _items: &YulArguments) {}
 
-    fn enter_yul_flags(&mut self, _items: &[ir::StringLiteral]) -> bool {
+    fn enter_yul_flags(&mut self, _items: &YulFlags) -> bool {
         true
     }
-    fn leave_yul_flags(&mut self, _items: &[ir::StringLiteral]) {}
+    fn leave_yul_flags(&mut self, _items: &YulFlags) {}
 
     fn enter_yul_parameters(&mut self, _items: &YulParameters) -> bool {
         true
@@ -936,7 +934,29 @@ pub trait Visitor {
     }
     fn leave_yul_variable_names(&mut self, _items: &YulVariableNames) {}
 
+    fn visit_bytes_keyword(&mut self, _node: &BytesKeyword) {}
+
+    fn visit_decimal_literal(&mut self, _node: &DecimalLiteral) {}
+
+    fn visit_fixed_keyword(&mut self, _node: &FixedKeyword) {}
+
+    fn visit_hex_literal(&mut self, _node: &HexLiteral) {}
+
+    fn visit_hex_string_literal(&mut self, _node: &HexStringLiteral) {}
+
     fn visit_identifier(&mut self, _node: &Identifier) {}
+
+    fn visit_int_keyword(&mut self, _node: &IntKeyword) {}
+
+    fn visit_string_literal(&mut self, _node: &StringLiteral) {}
+
+    fn visit_ufixed_keyword(&mut self, _node: &UfixedKeyword) {}
+
+    fn visit_uint_keyword(&mut self, _node: &UintKeyword) {}
+
+    fn visit_unicode_string_literal(&mut self, _node: &UnicodeStringLiteral) {}
+
+    fn visit_version_specifier(&mut self, _node: &VersionSpecifier) {}
 }
 
 //
@@ -1002,6 +1022,9 @@ pub fn accept_array_type_name(node: &ArrayTypeName, visitor: &mut impl Visitor) 
 pub fn accept_assembly_statement(node: &AssemblyStatement, visitor: &mut impl Visitor) {
     if !visitor.enter_assembly_statement(node) {
         return;
+    }
+    if let Some(ref label) = node.label() {
+        visitor.visit_string_literal(label);
     }
     if let Some(ref flags) = node.flags() {
         accept_yul_flags(flags, visitor);
@@ -1148,6 +1171,7 @@ pub fn accept_decimal_number_expression(
     if !visitor.enter_decimal_number_expression(node) {
         return;
     }
+    visitor.visit_decimal_literal(&node.literal());
     if let Some(ref unit) = node.unit() {
         accept_number_unit(unit, visitor);
     }
@@ -1303,6 +1327,7 @@ pub fn accept_hex_number_expression(node: &HexNumberExpression, visitor: &mut im
     if !visitor.enter_hex_number_expression(node) {
         return;
     }
+    visitor.visit_hex_literal(&node.literal());
     visitor.leave_hex_number_expression(node);
 }
 
@@ -1323,6 +1348,7 @@ pub fn accept_import_deconstruction(node: &ImportDeconstruction, visitor: &mut i
         return;
     }
     accept_import_deconstruction_symbols(&node.symbols(), visitor);
+    visitor.visit_string_literal(&node.path());
     visitor.leave_import_deconstruction(node);
 }
 
@@ -1510,6 +1536,7 @@ pub fn accept_path_import(node: &PathImport, visitor: &mut impl Visitor) {
     if !visitor.enter_path_import(node) {
         return;
     }
+    visitor.visit_string_literal(&node.path());
     if let Some(ref alias) = node.alias() {
         visitor.visit_identifier(alias);
     }
@@ -1989,17 +2016,38 @@ pub fn accept_elementary_type(node: &ElementaryType, visitor: &mut impl Visitor)
         ElementaryType::AddressType(ref address_type) => {
             accept_address_type(address_type, visitor);
         }
-        ElementaryType::BytesKeyword(_) => {}
-        ElementaryType::IntKeyword(_) => {}
-        ElementaryType::UintKeyword(_) => {}
-        ElementaryType::FixedKeyword(_) => {}
-        ElementaryType::UfixedKeyword(_) => {}
+        ElementaryType::BytesKeyword(ref bytes_keyword) => {
+            visitor.visit_bytes_keyword(bytes_keyword);
+        }
+        ElementaryType::IntKeyword(ref int_keyword) => {
+            visitor.visit_int_keyword(int_keyword);
+        }
+        ElementaryType::UintKeyword(ref uint_keyword) => {
+            visitor.visit_uint_keyword(uint_keyword);
+        }
+        ElementaryType::FixedKeyword(ref fixed_keyword) => {
+            visitor.visit_fixed_keyword(fixed_keyword);
+        }
+        ElementaryType::UfixedKeyword(ref ufixed_keyword) => {
+            visitor.visit_ufixed_keyword(ufixed_keyword);
+        }
         ElementaryType::BoolKeyword | ElementaryType::StringKeyword => {}
     }
     visitor.leave_elementary_type(node);
 }
 
-pub fn accept_experimental_feature(_node: &ExperimentalFeature, _visitor: &mut impl Visitor) {}
+pub fn accept_experimental_feature(node: &ExperimentalFeature, visitor: &mut impl Visitor) {
+    if !visitor.enter_experimental_feature(node) {
+        return;
+    }
+    match node {
+        ExperimentalFeature::StringLiteral(ref string_literal) => {
+            visitor.visit_string_literal(string_literal);
+        }
+        ExperimentalFeature::ABIEncoderV2Keyword | ExperimentalFeature::SMTCheckerKeyword => {}
+    }
+    visitor.leave_experimental_feature(node);
+}
 
 pub fn accept_expression(node: &Expression, visitor: &mut impl Visitor) {
     if !visitor.enter_expression(node) {
@@ -2453,7 +2501,9 @@ pub fn accept_version_literal(node: &VersionLiteral, visitor: &mut impl Visitor)
         VersionLiteral::SimpleVersionLiteral(ref simple_version_literal) => {
             accept_simple_version_literal(simple_version_literal, visitor);
         }
-        VersionLiteral::StringLiteral(_) => {}
+        VersionLiteral::StringLiteral(ref string_literal) => {
+            visitor.visit_string_literal(string_literal);
+        }
     }
     visitor.leave_version_literal(node);
 }
@@ -2478,7 +2528,27 @@ pub fn accept_yul_expression(node: &YulExpression, visitor: &mut impl Visitor) {
     visitor.leave_yul_expression(node);
 }
 
-pub fn accept_yul_literal(_node: &YulLiteral, _visitor: &mut impl Visitor) {}
+pub fn accept_yul_literal(node: &YulLiteral, visitor: &mut impl Visitor) {
+    if !visitor.enter_yul_literal(node) {
+        return;
+    }
+    match node {
+        YulLiteral::DecimalLiteral(ref decimal_literal) => {
+            visitor.visit_decimal_literal(decimal_literal);
+        }
+        YulLiteral::HexLiteral(ref hex_literal) => {
+            visitor.visit_hex_literal(hex_literal);
+        }
+        YulLiteral::HexStringLiteral(ref hex_string_literal) => {
+            visitor.visit_hex_string_literal(hex_string_literal);
+        }
+        YulLiteral::StringLiteral(ref string_literal) => {
+            visitor.visit_string_literal(string_literal);
+        }
+        YulLiteral::TrueKeyword | YulLiteral::FalseKeyword => {}
+    }
+    visitor.leave_yul_literal(node);
+}
 
 pub fn accept_yul_statement(node: &YulStatement, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_statement(node) {
@@ -2597,9 +2667,12 @@ fn accept_enum_members(items: &EnumMembers, visitor: &mut impl Visitor) {
 }
 
 #[inline]
-fn accept_hex_string_literals(items: &[ir::HexStringLiteral], visitor: &mut impl Visitor) {
+fn accept_hex_string_literals(items: &HexStringLiterals, visitor: &mut impl Visitor) {
     if !visitor.enter_hex_string_literals(items) {
         return;
+    }
+    for item in items.iter() {
+        visitor.visit_hex_string_literal(&item);
     }
     visitor.leave_hex_string_literals(items);
 }
@@ -2732,9 +2805,12 @@ fn accept_positional_arguments(items: &PositionalArguments, visitor: &mut impl V
 }
 
 #[inline]
-fn accept_simple_version_literal(items: &[ir::VersionSpecifier], visitor: &mut impl Visitor) {
+fn accept_simple_version_literal(items: &SimpleVersionLiteral, visitor: &mut impl Visitor) {
     if !visitor.enter_simple_version_literal(items) {
         return;
+    }
+    for item in items.iter() {
+        visitor.visit_version_specifier(&item);
     }
     visitor.leave_simple_version_literal(items);
 }
@@ -2762,9 +2838,12 @@ fn accept_statements(items: &Statements, visitor: &mut impl Visitor) {
 }
 
 #[inline]
-fn accept_string_literals(items: &[ir::StringLiteral], visitor: &mut impl Visitor) {
+fn accept_string_literals(items: &StringLiterals, visitor: &mut impl Visitor) {
     if !visitor.enter_string_literals(items) {
         return;
+    }
+    for item in items.iter() {
+        visitor.visit_string_literal(&item);
     }
     visitor.leave_string_literals(items);
 }
@@ -2792,9 +2871,12 @@ fn accept_tuple_values(items: &TupleValues, visitor: &mut impl Visitor) {
 }
 
 #[inline]
-fn accept_unicode_string_literals(items: &[ir::UnicodeStringLiteral], visitor: &mut impl Visitor) {
+fn accept_unicode_string_literals(items: &UnicodeStringLiterals, visitor: &mut impl Visitor) {
     if !visitor.enter_unicode_string_literals(items) {
         return;
+    }
+    for item in items.iter() {
+        visitor.visit_unicode_string_literal(&item);
     }
     visitor.leave_unicode_string_literals(items);
 }
@@ -2847,9 +2929,12 @@ fn accept_yul_arguments(items: &YulArguments, visitor: &mut impl Visitor) {
 }
 
 #[inline]
-fn accept_yul_flags(items: &[ir::StringLiteral], visitor: &mut impl Visitor) {
+fn accept_yul_flags(items: &YulFlags, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_flags(items) {
         return;
+    }
+    for item in items.iter() {
+        visitor.visit_string_literal(&item);
     }
     visitor.leave_yul_flags(items);
 }

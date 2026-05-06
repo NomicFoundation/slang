@@ -41,63 +41,17 @@ use super::types::Type;
           pub fn {{ field.label }}(&self) -> bool {
             self.ir_node.{{ field.label }}
           }
-        {% elif target.sequences is containing(field.type.name) or
-                target.choices is containing(field.type.name) or
-                (field.type.is_terminal and target.terminals[field.type.name].is_identifier) %}
+        {% else %}
           pub fn {{ field.label }}(&self) -> Option<{{ field.type.name }}> {
             self.ir_node.{{ field.label }}.as_ref().map(|ir_node| {
               create_{{ field.type.name | snake_case }}(ir_node, &self.semantic)
             })
           }
-        {% elif field.type.is_terminal %}
-          {# non-identifier terminals #}
-          pub fn {{ field.label }}(&self) -> Option<ir::{{ field.type.name }}> {
-            self.ir_node.{{ field.label }}.as_ref().map(Rc::clone)
-          }
-        {% elif target.collections is containing(field.type.name) %}
-          {% set item_type = target.collections[field.type.name].item_type %}
-          {% if not item_type.is_terminal or
-                target.terminals[item_type.name].is_identifier %}
-            pub fn {{ field.label }}(&self) -> Option<{{ field.type.name }}> {
-              self.ir_node.{{ field.label }}.as_ref().map(|ir_node| {
-                create_{{ field.type.name | snake_case }}(ir_node, &self.semantic)
-              })
-            }
-          {% elif item_type.is_terminal %}
-            {# non-identifier terminals #}
-            pub fn {{ field.label }}(&self) -> Option<Vec<ir::{{ item_type.name }}>> {
-              self.ir_node.{{ field.label }}.clone()
-            }
-          {% endif -%}
         {% endif %}
       {% else %} {# not field.is_optional #}
-        {% if target.sequences is containing(field.type.name) or
-              target.choices is containing(field.type.name) or
-              (field.type.is_terminal and target.terminals[field.type.name].is_identifier) %}
-          pub fn {{ field.label }}(&self) -> {{ field.type.name }} {
-            create_{{ field.type.name | snake_case }}(&self.ir_node.{{ field.label }}, &self.semantic)
-          }
-        {% elif field.type.is_terminal %}
-          {# non-identifier terminals #}
-          pub fn {{ field.label }}(&self) -> ir::{{ field.type.name }} {
-            Rc::clone(&self.ir_node.{{ field.label }})
-          }
-        {% elif target.collections is containing(field.type.name) %}
-          {% set item_type = target.collections[field.type.name].item_type %}
-          {% if not item_type.is_terminal or
-                target.terminals[item_type.name].is_identifier %}
-            pub fn {{ field.label }}(&self) -> {{ field.type.name }} {
-              create_{{ field.type.name | snake_case }}(
-                &self.ir_node.{{ field.label }}, &self.semantic
-              )
-            }
-          {% else %}
-            {# non-identifier terminals #}
-            pub fn {{ field.label }}(&self) -> Vec<ir::{{ item_type.name }}> {
-              self.ir_node.{{ field.label }}.clone()
-            }
-          {% endif %}
-        {% endif %}
+        pub fn {{ field.label }}(&self) -> {{ field.type.name }} {
+          create_{{ field.type.name | snake_case }}(&self.ir_node.{{ field.label }}, &self.semantic)
+        }
       {% endif %}
     {% endfor %}
 
@@ -124,25 +78,8 @@ use super::types::Type;
   pub enum {{ parent_type }} {
     {% for variant in choice.variants -%}
       {{ variant.name }}
-      {%- if target.sequences is containing(variant.name) or
-             target.choices is containing(variant.name) or
-             (variant.kind == "Terminal" and target.terminals[variant.name].is_identifier) -%}
+      {%- if variant.kind != "UniqueTerminal" -%}
         ({{ variant.name }})
-      {%- elif target.collections is containing(variant.name) -%}
-        {% set item_type = target.collections[variant.name].item_type %}
-        {% if not item_type.is_terminal or
-              target.terminals[item_type.name].is_identifier %}
-          {# collection of non-terminals or identifier terminals #}
-          ({{ variant.name }})
-        {% elif item_type.kind == "Terminal" %}
-          {# collection of non-identifier terminals #}
-          (Vec<ir::{{ item_type.name }}>)
-        {% else %}
-          {{ throw(message="Cannot generate choice of collection of unique terminals") }}
-        {% endif %}
-      {% elif variant.kind == "Terminal" %}
-        {# non-identifier terminals #}
-        (ir::{{ variant.name }})
       {%- endif -%}
       ,
     {%- endfor -%}
@@ -157,26 +94,14 @@ use super::types::Type;
     match ir_node {
       {% for variant in choice.variants -%}
         ir::{{ parent_type }}::{{ variant.name }}
-        {%- if target.sequences is containing(variant.name) or
-               target.choices is containing(variant.name) or
-               (variant.kind == "Terminal" and target.terminals[variant.name].is_identifier) -%}
+        {%- if target.collections is containing(variant.name) -%}
+          (nodes) => {{ parent_type }}::{{ variant.name }}(
+            create_{{ variant.name | snake_case }}(nodes, semantic)
+          ),
+        {%- elif variant.kind != "UniqueTerminal" -%}
           (variant) => {{ parent_type }}::{{ variant.name }}(
             create_{{ variant.name | snake_case }}(variant, semantic)
           ),
-        {%- elif target.collections is containing(variant.name) -%}
-          {% set item_type = target.collections[variant.name].item_type %}
-          {% if not item_type.is_terminal or target.terminals[item_type.name].is_identifier %}
-            {# collection of non-terminals or identifier terminals #}
-            (nodes) => {{ parent_type }}::{{ variant.name }}(
-              create_{{ variant.name | snake_case }}(nodes, semantic)
-            ),
-          {% elif item_type.kind == "Terminal" %}
-            {# collection of non-identifier non-unique terminals #}
-            (nodes) => {{ parent_type }}::{{ variant.name }}(nodes.clone()),
-          {% endif %}
-        {% elif variant.kind == "Terminal" %}
-          {# non-identifier non-unique terminals #}
-          (variant) => {{ parent_type }}::{{ variant.name }}(Rc::clone(variant)),
         {%- else -%}
           => {{ parent_type }}::{{ variant.name }},
         {%- endif -%}
@@ -192,7 +117,7 @@ use super::types::Type;
 
 {% for parent_type, collection in target.collections -%}
   {%- if not collection.item_type.is_terminal or
-         target.terminals[collection.item_type.name].is_identifier %}
+         not target.terminals[collection.item_type.name].is_unique %}
     pub type {{ parent_type }} = Rc<{{ parent_type }}Struct>;
 
     pub(crate) fn create_{{ parent_type | snake_case }}(
@@ -216,23 +141,24 @@ use super::types::Type;
             .iter()
             .map(|ir_node| create_{{ collection.item_type.name | snake_case }}(ir_node, &self.semantic))
       }
+
       pub fn len(&self) -> usize {
         self.ir_nodes.len()
       }
+
       pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
       }
     }
-  {% endif -%}
-
+  {% endif %}
 {% endfor %}
 
 //
-// Identifiers
+// Terminals
 //
 
 {% for terminal_type, terminal in target.terminals %}
-  {% if terminal.is_identifier %}
+  {% if not terminal.is_unique %}
     pub type {{ terminal_type }} = Rc<{{ terminal_type }}Struct>;
 
     pub struct {{ terminal_type }}Struct {

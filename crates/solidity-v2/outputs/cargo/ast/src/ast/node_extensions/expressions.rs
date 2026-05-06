@@ -24,20 +24,20 @@ impl StringExpression {
         let mut result = Vec::new();
         match self {
             StringExpression::StringLiterals(terminals) => {
-                for terminal in terminals {
-                    let content = strip_prefix_and_quotes(&terminal.text, "");
+                for terminal in terminals.iter() {
+                    let content = strip_prefix_and_quotes(terminal.unparse(), "");
                     result.extend(decode_escape_sequences(content));
                 }
             }
             StringExpression::HexStringLiterals(terminals) => {
-                for terminal in terminals {
-                    let content = strip_prefix_and_quotes(&terminal.text, "hex");
+                for terminal in terminals.iter() {
+                    let content = strip_prefix_and_quotes(terminal.unparse(), "hex");
                     result.extend(decode_hex_string(content));
                 }
             }
             StringExpression::UnicodeStringLiterals(terminals) => {
-                for terminal in terminals {
-                    let content = strip_prefix_and_quotes(&terminal.text, "unicode");
+                for terminal in terminals.iter() {
+                    let content = strip_prefix_and_quotes(terminal.unparse(), "unicode");
                     result.extend(decode_escape_sequences(content));
                 }
             }

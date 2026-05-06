@@ -295,12 +295,18 @@ impl AssemblyStatementStruct {
         self.ir_node.id()
     }
 
-    pub fn label(&self) -> Option<ir::StringLiteral> {
-        self.ir_node.label.as_ref().map(Rc::clone)
+    pub fn label(&self) -> Option<StringLiteral> {
+        self.ir_node
+            .label
+            .as_ref()
+            .map(|ir_node| create_string_literal(ir_node, &self.semantic))
     }
 
-    pub fn flags(&self) -> Option<Vec<ir::StringLiteral>> {
-        self.ir_node.flags.clone()
+    pub fn flags(&self) -> Option<YulFlags> {
+        self.ir_node
+            .flags
+            .as_ref()
+            .map(|ir_node| create_yul_flags(ir_node, &self.semantic))
     }
 
     pub fn body(&self) -> YulBlock {
@@ -926,8 +932,8 @@ impl DecimalNumberExpressionStruct {
         self.ir_node.id()
     }
 
-    pub fn literal(&self) -> ir::DecimalLiteral {
-        Rc::clone(&self.ir_node.literal)
+    pub fn literal(&self) -> DecimalLiteral {
+        create_decimal_literal(&self.ir_node.literal, &self.semantic)
     }
 
     pub fn unit(&self) -> Option<NumberUnit> {
@@ -1602,8 +1608,8 @@ impl HexNumberExpressionStruct {
         self.ir_node.id()
     }
 
-    pub fn literal(&self) -> ir::HexLiteral {
-        Rc::clone(&self.ir_node.literal)
+    pub fn literal(&self) -> HexLiteral {
+        create_hex_literal(&self.ir_node.literal, &self.semantic)
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -1695,8 +1701,8 @@ impl ImportDeconstructionStruct {
         create_import_deconstruction_symbols(&self.ir_node.symbols, &self.semantic)
     }
 
-    pub fn path(&self) -> ir::StringLiteral {
-        Rc::clone(&self.ir_node.path)
+    pub fn path(&self) -> StringLiteral {
+        create_string_literal(&self.ir_node.path, &self.semantic)
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -2469,8 +2475,8 @@ impl PathImportStruct {
         self.ir_node.id()
     }
 
-    pub fn path(&self) -> ir::StringLiteral {
-        Rc::clone(&self.ir_node.path)
+    pub fn path(&self) -> StringLiteral {
+        create_string_literal(&self.ir_node.path, &self.semantic)
     }
 
     pub fn alias(&self) -> Option<Identifier> {
@@ -4258,7 +4264,6 @@ pub(crate) fn create_arguments_declaration(
         ir::ArgumentsDeclaration::PositionalArguments(nodes) => {
             ArgumentsDeclaration::PositionalArguments(create_positional_arguments(nodes, semantic))
         }
-
         ir::ArgumentsDeclaration::NamedArguments(nodes) => {
             ArgumentsDeclaration::NamedArguments(create_named_arguments(nodes, semantic))
         }
@@ -4322,11 +4327,11 @@ pub enum ElementaryType {
     BoolKeyword,
     StringKeyword,
     AddressType(AddressType),
-    BytesKeyword(ir::BytesKeyword),
-    IntKeyword(ir::IntKeyword),
-    UintKeyword(ir::UintKeyword),
-    FixedKeyword(ir::FixedKeyword),
-    UfixedKeyword(ir::UfixedKeyword),
+    BytesKeyword(BytesKeyword),
+    IntKeyword(IntKeyword),
+    UintKeyword(UintKeyword),
+    FixedKeyword(FixedKeyword),
+    UfixedKeyword(UfixedKeyword),
 }
 
 #[allow(clippy::too_many_lines)]
@@ -4342,15 +4347,19 @@ pub(crate) fn create_elementary_type(
             ElementaryType::AddressType(create_address_type(variant, semantic))
         }
         ir::ElementaryType::BytesKeyword(variant) => {
-            ElementaryType::BytesKeyword(Rc::clone(variant))
+            ElementaryType::BytesKeyword(create_bytes_keyword(variant, semantic))
         }
-        ir::ElementaryType::IntKeyword(variant) => ElementaryType::IntKeyword(Rc::clone(variant)),
-        ir::ElementaryType::UintKeyword(variant) => ElementaryType::UintKeyword(Rc::clone(variant)),
+        ir::ElementaryType::IntKeyword(variant) => {
+            ElementaryType::IntKeyword(create_int_keyword(variant, semantic))
+        }
+        ir::ElementaryType::UintKeyword(variant) => {
+            ElementaryType::UintKeyword(create_uint_keyword(variant, semantic))
+        }
         ir::ElementaryType::FixedKeyword(variant) => {
-            ElementaryType::FixedKeyword(Rc::clone(variant))
+            ElementaryType::FixedKeyword(create_fixed_keyword(variant, semantic))
         }
         ir::ElementaryType::UfixedKeyword(variant) => {
-            ElementaryType::UfixedKeyword(Rc::clone(variant))
+            ElementaryType::UfixedKeyword(create_ufixed_keyword(variant, semantic))
         }
     }
 }
@@ -4358,7 +4367,7 @@ pub(crate) fn create_elementary_type(
 pub enum ExperimentalFeature {
     ABIEncoderV2Keyword,
     SMTCheckerKeyword,
-    StringLiteral(ir::StringLiteral),
+    StringLiteral(StringLiteral),
 }
 
 #[allow(clippy::too_many_lines)]
@@ -4371,7 +4380,7 @@ pub(crate) fn create_experimental_feature(
         ir::ExperimentalFeature::ABIEncoderV2Keyword => ExperimentalFeature::ABIEncoderV2Keyword,
         ir::ExperimentalFeature::SMTCheckerKeyword => ExperimentalFeature::SMTCheckerKeyword,
         ir::ExperimentalFeature::StringLiteral(variant) => {
-            ExperimentalFeature::StringLiteral(Rc::clone(variant))
+            ExperimentalFeature::StringLiteral(create_string_literal(variant, semantic))
         }
     }
 }
@@ -5136,9 +5145,9 @@ pub(crate) fn create_storage_location(
 }
 
 pub enum StringExpression {
-    StringLiterals(Vec<ir::StringLiteral>),
-    HexStringLiterals(Vec<ir::HexStringLiteral>),
-    UnicodeStringLiterals(Vec<ir::UnicodeStringLiteral>),
+    StringLiterals(StringLiterals),
+    HexStringLiterals(HexStringLiterals),
+    UnicodeStringLiterals(UnicodeStringLiterals),
 }
 
 #[allow(clippy::too_many_lines)]
@@ -5149,15 +5158,13 @@ pub(crate) fn create_string_expression(
 ) -> StringExpression {
     match ir_node {
         ir::StringExpression::StringLiterals(nodes) => {
-            StringExpression::StringLiterals(nodes.clone())
+            StringExpression::StringLiterals(create_string_literals(nodes, semantic))
         }
-
         ir::StringExpression::HexStringLiterals(nodes) => {
-            StringExpression::HexStringLiterals(nodes.clone())
+            StringExpression::HexStringLiterals(create_hex_string_literals(nodes, semantic))
         }
-
         ir::StringExpression::UnicodeStringLiterals(nodes) => {
-            StringExpression::UnicodeStringLiterals(nodes.clone())
+            StringExpression::UnicodeStringLiterals(create_unicode_string_literals(nodes, semantic))
         }
     }
 }
@@ -5207,7 +5214,6 @@ pub(crate) fn create_using_clause(
         ir::UsingClause::IdentifierPath(nodes) => {
             UsingClause::IdentifierPath(create_identifier_path(nodes, semantic))
         }
-
         ir::UsingClause::UsingDeconstruction(variant) => {
             UsingClause::UsingDeconstruction(create_using_deconstruction(variant, semantic))
         }
@@ -5323,8 +5329,8 @@ pub(crate) fn create_version_expression(
 }
 
 pub enum VersionLiteral {
-    SimpleVersionLiteral(Vec<ir::VersionSpecifier>),
-    StringLiteral(ir::StringLiteral),
+    SimpleVersionLiteral(SimpleVersionLiteral),
+    StringLiteral(StringLiteral),
 }
 
 #[allow(clippy::too_many_lines)]
@@ -5335,11 +5341,10 @@ pub(crate) fn create_version_literal(
 ) -> VersionLiteral {
     match ir_node {
         ir::VersionLiteral::SimpleVersionLiteral(nodes) => {
-            VersionLiteral::SimpleVersionLiteral(nodes.clone())
+            VersionLiteral::SimpleVersionLiteral(create_simple_version_literal(nodes, semantic))
         }
-
         ir::VersionLiteral::StringLiteral(variant) => {
-            VersionLiteral::StringLiteral(Rc::clone(variant))
+            VersionLiteral::StringLiteral(create_string_literal(variant, semantic))
         }
     }
 }
@@ -5401,10 +5406,10 @@ pub(crate) fn create_yul_expression(
 pub enum YulLiteral {
     TrueKeyword,
     FalseKeyword,
-    DecimalLiteral(ir::DecimalLiteral),
-    HexLiteral(ir::HexLiteral),
-    HexStringLiteral(ir::HexStringLiteral),
-    StringLiteral(ir::StringLiteral),
+    DecimalLiteral(DecimalLiteral),
+    HexLiteral(HexLiteral),
+    HexStringLiteral(HexStringLiteral),
+    StringLiteral(StringLiteral),
 }
 
 #[allow(clippy::too_many_lines)]
@@ -5416,12 +5421,18 @@ pub(crate) fn create_yul_literal(
     match ir_node {
         ir::YulLiteral::TrueKeyword => YulLiteral::TrueKeyword,
         ir::YulLiteral::FalseKeyword => YulLiteral::FalseKeyword,
-        ir::YulLiteral::DecimalLiteral(variant) => YulLiteral::DecimalLiteral(Rc::clone(variant)),
-        ir::YulLiteral::HexLiteral(variant) => YulLiteral::HexLiteral(Rc::clone(variant)),
-        ir::YulLiteral::HexStringLiteral(variant) => {
-            YulLiteral::HexStringLiteral(Rc::clone(variant))
+        ir::YulLiteral::DecimalLiteral(variant) => {
+            YulLiteral::DecimalLiteral(create_decimal_literal(variant, semantic))
         }
-        ir::YulLiteral::StringLiteral(variant) => YulLiteral::StringLiteral(Rc::clone(variant)),
+        ir::YulLiteral::HexLiteral(variant) => {
+            YulLiteral::HexLiteral(create_hex_literal(variant, semantic))
+        }
+        ir::YulLiteral::HexStringLiteral(variant) => {
+            YulLiteral::HexStringLiteral(create_hex_string_literal(variant, semantic))
+        }
+        ir::YulLiteral::StringLiteral(variant) => {
+            YulLiteral::StringLiteral(create_string_literal(variant, semantic))
+        }
     }
 }
 
@@ -5534,9 +5545,11 @@ impl ArrayValuesStruct {
             .iter()
             .map(|ir_node| create_expression(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -5565,9 +5578,11 @@ impl CallOptionsStruct {
             .iter()
             .map(|ir_node| create_named_argument(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -5596,9 +5611,11 @@ impl CatchClausesStruct {
             .iter()
             .map(|ir_node| create_catch_clause(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -5627,9 +5644,11 @@ impl ContractMembersStruct {
             .iter()
             .map(|ir_node| create_contract_member(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -5658,9 +5677,44 @@ impl EnumMembersStruct {
             .iter()
             .map(|ir_node| create_identifier(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
+    pub fn is_empty(&self) -> bool {
+        self.ir_nodes.is_empty()
+    }
+}
+
+pub type HexStringLiterals = Rc<HexStringLiteralsStruct>;
+
+pub(crate) fn create_hex_string_literals(
+    nodes: &[ir::HexStringLiteral],
+    semantic: &Rc<SemanticContext>,
+) -> HexStringLiterals {
+    Rc::new(HexStringLiteralsStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+pub struct HexStringLiteralsStruct {
+    pub(crate) ir_nodes: Vec<ir::HexStringLiteral>,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+impl HexStringLiteralsStruct {
+    pub fn iter(&self) -> impl Iterator<Item = HexStringLiteral> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| create_hex_string_literal(ir_node, &self.semantic))
+    }
+
+    pub fn len(&self) -> usize {
+        self.ir_nodes.len()
+    }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -5689,9 +5743,11 @@ impl IdentifierPathStruct {
             .iter()
             .map(|ir_node| create_identifier(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -5720,9 +5776,11 @@ impl ImportDeconstructionSymbolsStruct {
             .iter()
             .map(|ir_node| create_import_deconstruction_symbol(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -5751,9 +5809,11 @@ impl InheritanceTypesStruct {
             .iter()
             .map(|ir_node| create_inheritance_type(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -5782,9 +5842,11 @@ impl InterfaceMembersStruct {
             .iter()
             .map(|ir_node| create_contract_member(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -5813,9 +5875,11 @@ impl LibraryMembersStruct {
             .iter()
             .map(|ir_node| create_contract_member(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -5844,9 +5908,11 @@ impl ModifierInvocationsStruct {
             .iter()
             .map(|ir_node| create_modifier_invocation(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -5875,9 +5941,11 @@ impl MultiTypedDeclarationElementsStruct {
             .iter()
             .map(|ir_node| create_multi_typed_declaration_element(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -5906,9 +5974,11 @@ impl NamedArgumentsStruct {
             .iter()
             .map(|ir_node| create_named_argument(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -5937,9 +6007,11 @@ impl OverridePathsStruct {
             .iter()
             .map(|ir_node| create_identifier_path(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -5968,9 +6040,11 @@ impl ParametersStruct {
             .iter()
             .map(|ir_node| create_parameter(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -5999,9 +6073,44 @@ impl PositionalArgumentsStruct {
             .iter()
             .map(|ir_node| create_expression(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
+    pub fn is_empty(&self) -> bool {
+        self.ir_nodes.is_empty()
+    }
+}
+
+pub type SimpleVersionLiteral = Rc<SimpleVersionLiteralStruct>;
+
+pub(crate) fn create_simple_version_literal(
+    nodes: &[ir::VersionSpecifier],
+    semantic: &Rc<SemanticContext>,
+) -> SimpleVersionLiteral {
+    Rc::new(SimpleVersionLiteralStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+pub struct SimpleVersionLiteralStruct {
+    pub(crate) ir_nodes: Vec<ir::VersionSpecifier>,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+impl SimpleVersionLiteralStruct {
+    pub fn iter(&self) -> impl Iterator<Item = VersionSpecifier> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| create_version_specifier(ir_node, &self.semantic))
+    }
+
+    pub fn len(&self) -> usize {
+        self.ir_nodes.len()
+    }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -6030,9 +6139,11 @@ impl SourceUnitMembersStruct {
             .iter()
             .map(|ir_node| create_source_unit_member(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -6061,9 +6172,44 @@ impl StatementsStruct {
             .iter()
             .map(|ir_node| create_statement(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
+    pub fn is_empty(&self) -> bool {
+        self.ir_nodes.is_empty()
+    }
+}
+
+pub type StringLiterals = Rc<StringLiteralsStruct>;
+
+pub(crate) fn create_string_literals(
+    nodes: &[ir::StringLiteral],
+    semantic: &Rc<SemanticContext>,
+) -> StringLiterals {
+    Rc::new(StringLiteralsStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+pub struct StringLiteralsStruct {
+    pub(crate) ir_nodes: Vec<ir::StringLiteral>,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+impl StringLiteralsStruct {
+    pub fn iter(&self) -> impl Iterator<Item = StringLiteral> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| create_string_literal(ir_node, &self.semantic))
+    }
+
+    pub fn len(&self) -> usize {
+        self.ir_nodes.len()
+    }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -6092,9 +6238,11 @@ impl StructMembersStruct {
             .iter()
             .map(|ir_node| create_struct_member(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -6123,9 +6271,44 @@ impl TupleValuesStruct {
             .iter()
             .map(|ir_node| create_tuple_value(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
+    pub fn is_empty(&self) -> bool {
+        self.ir_nodes.is_empty()
+    }
+}
+
+pub type UnicodeStringLiterals = Rc<UnicodeStringLiteralsStruct>;
+
+pub(crate) fn create_unicode_string_literals(
+    nodes: &[ir::UnicodeStringLiteral],
+    semantic: &Rc<SemanticContext>,
+) -> UnicodeStringLiterals {
+    Rc::new(UnicodeStringLiteralsStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+pub struct UnicodeStringLiteralsStruct {
+    pub(crate) ir_nodes: Vec<ir::UnicodeStringLiteral>,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+impl UnicodeStringLiteralsStruct {
+    pub fn iter(&self) -> impl Iterator<Item = UnicodeStringLiteral> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| create_unicode_string_literal(ir_node, &self.semantic))
+    }
+
+    pub fn len(&self) -> usize {
+        self.ir_nodes.len()
+    }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -6154,9 +6337,11 @@ impl UsingDeconstructionSymbolsStruct {
             .iter()
             .map(|ir_node| create_using_deconstruction_symbol(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -6185,9 +6370,11 @@ impl VersionExpressionSetStruct {
             .iter()
             .map(|ir_node| create_version_expression(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -6216,9 +6403,11 @@ impl VersionExpressionSetsStruct {
             .iter()
             .map(|ir_node| create_version_expression_set(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -6247,9 +6436,44 @@ impl YulArgumentsStruct {
             .iter()
             .map(|ir_node| create_yul_expression(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
+    pub fn is_empty(&self) -> bool {
+        self.ir_nodes.is_empty()
+    }
+}
+
+pub type YulFlags = Rc<YulFlagsStruct>;
+
+pub(crate) fn create_yul_flags(
+    nodes: &[ir::StringLiteral],
+    semantic: &Rc<SemanticContext>,
+) -> YulFlags {
+    Rc::new(YulFlagsStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+pub struct YulFlagsStruct {
+    pub(crate) ir_nodes: Vec<ir::StringLiteral>,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+impl YulFlagsStruct {
+    pub fn iter(&self) -> impl Iterator<Item = StringLiteral> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| create_string_literal(ir_node, &self.semantic))
+    }
+
+    pub fn len(&self) -> usize {
+        self.ir_nodes.len()
+    }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -6278,9 +6502,11 @@ impl YulParametersStruct {
             .iter()
             .map(|ir_node| create_identifier(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -6306,9 +6532,11 @@ impl YulPathStruct {
             .iter()
             .map(|ir_node| create_identifier(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -6334,9 +6562,11 @@ impl YulPathsStruct {
             .iter()
             .map(|ir_node| create_yul_path(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -6365,9 +6595,11 @@ impl YulStatementsStruct {
             .iter()
             .map(|ir_node| create_yul_statement(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -6396,9 +6628,11 @@ impl YulSwitchCasesStruct {
             .iter()
             .map(|ir_node| create_yul_switch_case(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
@@ -6427,17 +6661,214 @@ impl YulVariableNamesStruct {
             .iter()
             .map(|ir_node| create_identifier(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
 
 //
-// Identifiers
+// Terminals
 //
+
+pub type BytesKeyword = Rc<BytesKeywordStruct>;
+
+pub struct BytesKeywordStruct {
+    pub(crate) ir_node: ir::BytesKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_bytes_keyword(
+    ir_node: &ir::BytesKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> BytesKeyword {
+    Rc::new(BytesKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl BytesKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type DecimalLiteral = Rc<DecimalLiteralStruct>;
+
+pub struct DecimalLiteralStruct {
+    pub(crate) ir_node: ir::DecimalLiteral,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_decimal_literal(
+    ir_node: &ir::DecimalLiteral,
+    semantic: &Rc<SemanticContext>,
+) -> DecimalLiteral {
+    Rc::new(DecimalLiteralStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl DecimalLiteralStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type FixedKeyword = Rc<FixedKeywordStruct>;
+
+pub struct FixedKeywordStruct {
+    pub(crate) ir_node: ir::FixedKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_fixed_keyword(
+    ir_node: &ir::FixedKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> FixedKeyword {
+    Rc::new(FixedKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl FixedKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type HexLiteral = Rc<HexLiteralStruct>;
+
+pub struct HexLiteralStruct {
+    pub(crate) ir_node: ir::HexLiteral,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_hex_literal(
+    ir_node: &ir::HexLiteral,
+    semantic: &Rc<SemanticContext>,
+) -> HexLiteral {
+    Rc::new(HexLiteralStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl HexLiteralStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type HexStringLiteral = Rc<HexStringLiteralStruct>;
+
+pub struct HexStringLiteralStruct {
+    pub(crate) ir_node: ir::HexStringLiteral,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_hex_string_literal(
+    ir_node: &ir::HexStringLiteral,
+    semantic: &Rc<SemanticContext>,
+) -> HexStringLiteral {
+    Rc::new(HexStringLiteralStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl HexStringLiteralStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
 
 pub type Identifier = Rc<IdentifierStruct>;
 
@@ -6457,6 +6888,240 @@ pub(crate) fn create_identifier(
 }
 
 impl IdentifierStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type IntKeyword = Rc<IntKeywordStruct>;
+
+pub struct IntKeywordStruct {
+    pub(crate) ir_node: ir::IntKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_int_keyword(
+    ir_node: &ir::IntKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> IntKeyword {
+    Rc::new(IntKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl IntKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type StringLiteral = Rc<StringLiteralStruct>;
+
+pub struct StringLiteralStruct {
+    pub(crate) ir_node: ir::StringLiteral,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_string_literal(
+    ir_node: &ir::StringLiteral,
+    semantic: &Rc<SemanticContext>,
+) -> StringLiteral {
+    Rc::new(StringLiteralStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl StringLiteralStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type UfixedKeyword = Rc<UfixedKeywordStruct>;
+
+pub struct UfixedKeywordStruct {
+    pub(crate) ir_node: ir::UfixedKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_ufixed_keyword(
+    ir_node: &ir::UfixedKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> UfixedKeyword {
+    Rc::new(UfixedKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl UfixedKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type UintKeyword = Rc<UintKeywordStruct>;
+
+pub struct UintKeywordStruct {
+    pub(crate) ir_node: ir::UintKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_uint_keyword(
+    ir_node: &ir::UintKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> UintKeyword {
+    Rc::new(UintKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl UintKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type UnicodeStringLiteral = Rc<UnicodeStringLiteralStruct>;
+
+pub struct UnicodeStringLiteralStruct {
+    pub(crate) ir_node: ir::UnicodeStringLiteral,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_unicode_string_literal(
+    ir_node: &ir::UnicodeStringLiteral,
+    semantic: &Rc<SemanticContext>,
+) -> UnicodeStringLiteral {
+    Rc::new(UnicodeStringLiteralStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl UnicodeStringLiteralStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type VersionSpecifier = Rc<VersionSpecifierStruct>;
+
+pub struct VersionSpecifierStruct {
+    pub(crate) ir_node: ir::VersionSpecifier,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_version_specifier(
+    ir_node: &ir::VersionSpecifier,
+    semantic: &Rc<SemanticContext>,
+) -> VersionSpecifier {
+    Rc::new(VersionSpecifierStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl VersionSpecifierStruct {
     pub fn id(self: &Rc<Self>) -> NodeId {
         self.ir_node.id()
     }
