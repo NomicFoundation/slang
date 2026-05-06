@@ -7,8 +7,9 @@
 //! per-suite submodules below — currently only [`gungraun`].
 
 use std::collections::BTreeSet;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
+use anyhow::{Context, Result};
 use infra_utils::paths::PathExtensions;
 
 /// Diff `local_names` against `remote_names` and write any new (locally
@@ -16,27 +17,22 @@ use infra_utils::paths::PathExtensions;
 /// `target/perf-new-benches-<bench_name>.md`. The CI workflow conditionally
 /// surfaces this file as a sticky PR comment.
 ///
-/// The output file is always written (empty when there is no diff); that lets
-/// the workflow distinguish "no diff" (delete the sticky comment) from "step
-/// did not run".
+/// The output file is always written when verification succeeds: an empty body
+/// means "no diff" (the workflow deletes the sticky), and a non-empty body is
+/// the markdown the workflow stickies.
 pub fn verify_bench_list(
     bench_name: &str,
     bencher_project: &str,
     local_names: Vec<String>,
     remote_names: Vec<String>,
-) {
-    let output_path = Path::repo_path("target").join(format!("perf-new-benches-{bench_name}.md"));
-
+) -> Result<()> {
     let local_set: BTreeSet<String> = local_names.into_iter().collect();
     let remote_set: BTreeSet<String> = remote_names.into_iter().collect();
     let new: Vec<&String> = local_set.difference(&remote_set).collect();
     let orphan: Vec<&String> = remote_set.difference(&local_set).collect();
 
     let body = render_bench_diff_markdown(bench_name, bencher_project, &new, &orphan);
-    if let Err(err) = std::fs::write(&output_path, &body) {
-        eprintln!("Failed to write {}: {err:#}", output_path.display());
-        return;
-    }
+    let output_path = write_output(bench_name, &body)?;
 
     if body.is_empty() {
         println!("Bench list matches bencher project '{bencher_project}'.");
@@ -48,6 +44,17 @@ pub fn verify_bench_list(
             orphan.len(),
         );
     }
+    Ok(())
+}
+
+fn write_output(bench_name: &str, body: &str) -> Result<PathBuf> {
+    let target_dir = Path::repo_path("target");
+    std::fs::create_dir_all(&target_dir)
+        .with_context(|| format!("failed to create {}", target_dir.display()))?;
+    let output_path = target_dir.join(format!("perf-new-benches-{bench_name}.md"));
+    std::fs::write(&output_path, body)
+        .with_context(|| format!("failed to write {}", output_path.display()))?;
+    Ok(output_path)
 }
 
 fn render_bench_diff_markdown(
@@ -86,7 +93,8 @@ fn render_bench_diff_markdown(
     body
 }
 
-/// Append a `<details>` block
+/// Append a `<details>` block; renders as a collapsible disclosure in
+/// GitHub markdown.
 fn push_collapsible_list(
     body: &mut String,
     title_html: &str,
@@ -113,9 +121,7 @@ pub mod gungraun {
     use anyhow::{Context, Result};
     use infra_utils::commands::Command;
 
-    /// Collect the local and remote name sets for the given bench. The two
-    /// fetches share the same fail-soft fallback at the call site, so they're
-    /// bundled into one fallible step.
+    /// Collect the local and remote name sets for the given bench.
     pub fn collect_names(
         package: &str,
         bench_name: &str,
@@ -124,6 +130,8 @@ pub mod gungraun {
         let output = Command::new("cargo")
             .args([
                 "bench",
+                "--profile",
+                "dev",
                 "--package",
                 package,
                 "--bench",
@@ -131,8 +139,7 @@ pub mod gungraun {
                 "--",
                 "--list",
             ])
-            .evaluate()
-            .with_context(|| format!("failed to list local benchmarks for {bench_name}"))?;
+            .evaluate()?;
 
         let local = parse_local_names(&output);
         let remote = list_remote_names(bencher_project)?;
@@ -155,6 +162,7 @@ pub mod gungraun {
     /// The slang bencher projects allow read-only public listing, so no token
     /// is required.
     fn list_remote_names(project: &str) -> Result<Vec<String>> {
+        // 255 is the bencher API's per-page cap; using it minimizes round trips.
         const PER_PAGE: usize = 255;
         let mut names = Vec::new();
         let mut page = 1usize;
@@ -170,8 +178,7 @@ pub mod gungraun {
                     "--page",
                     &page.to_string(),
                 ])
-                .evaluate()
-                .with_context(|| format!("failed to query bencher project {project}"))?;
+                .evaluate()?;
 
             let entries: Vec<serde_json::Value> = serde_json::from_str(&output)
                 .with_context(|| format!("failed to parse bencher response for {project}"))?;
@@ -208,6 +215,39 @@ pub mod gungraun {
             format!("{module_path}::{bench_id}")
         } else {
             name.to_owned()
+        }
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use super::{canonicalize_label, parse_local_names};
+
+        #[test]
+        fn parse_local_names_strips_libtest_suffix() {
+            let output = "\
+                slang::pipeline::parser::merkle_proof: benchmark\n\
+                slang::pipeline::parser::weighted_pool: benchmark\n\
+                \n2 benchmarks\n";
+            assert_eq!(
+                parse_local_names(output),
+                vec![
+                    "slang::pipeline::parser::merkle_proof".to_string(),
+                    "slang::pipeline::parser::weighted_pool".to_string(),
+                ],
+            );
+        }
+
+        #[test]
+        fn canonicalize_label_strips_quoted_description_tail() {
+            assert_eq!(
+                canonicalize_label("slang::pipeline::parser weighted_pool:\"weighted_pool\""),
+                "slang::pipeline::parser::weighted_pool",
+            );
+        }
+
+        #[test]
+        fn canonicalize_label_passes_through_unsplittable_input() {
+            assert_eq!(canonicalize_label("free_form_name"), "free_form_name");
         }
     }
 }

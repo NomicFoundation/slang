@@ -71,7 +71,7 @@ impl CargoController {
         };
 
         if self.pr_benchmark {
-            Self::verify_bench_list(package, bench_name, bencher_project);
+            Self::verify_bench_list(package, bench_name, bencher_project)?;
         }
 
         if self.smoke {
@@ -197,18 +197,11 @@ Reports/Logs: {reports_dir:?}
     /// benchmarks on bencher.dev, deferring to the shared `bench_list` helper to
     /// write the markdown summary the CI workflow surfaces as a sticky PR
     /// comment.
-    fn verify_bench_list(package: &str, bench_name: &str, bencher_project: &str) {
-        match bench_list::gungraun::collect_names(package, bench_name, bencher_project) {
-            Ok((local, remote)) => {
-                bench_list::verify_bench_list(bench_name, bencher_project, local, remote);
-            }
-            Err(err) => {
-                eprintln!("Skipping bench-list verification: {err:#}");
-                let output_path =
-                    Path::repo_path("target").join(format!("perf-new-benches-{bench_name}.md"));
-                let _ = std::fs::write(output_path, "");
-            }
-        }
+    fn verify_bench_list(package: &str, bench_name: &str, bencher_project: &str) -> Result<()> {
+        let (local, remote) =
+            bench_list::gungraun::collect_names(package, bench_name, bencher_project)?;
+
+        bench_list::verify_bench_list(bench_name, bencher_project, local, remote)
     }
 
     fn generate_callgraph(reports_dir: std::path::PathBuf) {
