@@ -1531,7 +1531,7 @@ impl YulVariableDeclarationValueStruct {
 // Choices
 //
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug)]
 pub enum AbicoderVersion {
     AbicoderV1Keyword,
     AbicoderV2Keyword,
@@ -1612,13 +1612,13 @@ pub enum Expression {
     Identifier(Identifier),
 }
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug)]
 pub enum Expression_AdditiveExpression_Operator {
     Minus,
     Plus,
 }
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug)]
 pub enum Expression_AssignmentExpression_Operator {
     AmpersandEqual,
     AsteriskEqual,
@@ -1634,13 +1634,13 @@ pub enum Expression_AssignmentExpression_Operator {
     SlashEqual,
 }
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug)]
 pub enum Expression_EqualityExpression_Operator {
     BangEqual,
     EqualEqual,
 }
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug)]
 pub enum Expression_InequalityExpression_Operator {
     GreaterThan,
     GreaterThanEqual,
@@ -1648,20 +1648,20 @@ pub enum Expression_InequalityExpression_Operator {
     LessThanEqual,
 }
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug)]
 pub enum Expression_MultiplicativeExpression_Operator {
     Asterisk,
     Percent,
     Slash,
 }
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug)]
 pub enum Expression_PostfixExpression_Operator {
     MinusMinus,
     PlusPlus,
 }
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug)]
 pub enum Expression_PrefixExpression_Operator {
     Bang,
     DeleteKeyword,
@@ -1671,7 +1671,7 @@ pub enum Expression_PrefixExpression_Operator {
     Tilde,
 }
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug)]
 pub enum Expression_ShiftExpression_Operator {
     GreaterThanGreaterThan,
     GreaterThanGreaterThanGreaterThan,
@@ -1691,7 +1691,7 @@ pub enum ForStatementInitialization {
     Semicolon,
 }
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug)]
 pub enum FunctionKind {
     Regular,
     Constructor,
@@ -1700,7 +1700,7 @@ pub enum FunctionKind {
     Modifier,
 }
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug)]
 pub enum FunctionMutability {
     Pure,
     View,
@@ -1708,7 +1708,7 @@ pub enum FunctionMutability {
     Payable,
 }
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug)]
 pub enum FunctionVisibility {
     Public,
     Private,
@@ -1722,7 +1722,7 @@ pub enum ImportClause {
     ImportDeconstruction(ImportDeconstruction),
 }
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug)]
 pub enum NumberUnit {
     WeiKeyword,
     GweiKeyword,
@@ -1758,7 +1758,7 @@ pub enum SourceUnitMember {
     ConstantDefinition(ConstantDefinition),
 }
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug)]
 pub enum StateVariableMutability {
     Mutable,
     Constant,
@@ -1766,7 +1766,7 @@ pub enum StateVariableMutability {
     Transient,
 }
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug)]
 pub enum StateVariableVisibility {
     Public,
     Private,
@@ -1792,7 +1792,7 @@ pub enum Statement {
     ExpressionStatement(ExpressionStatement),
 }
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug)]
 pub enum StorageLocation {
     MemoryKeyword,
     StorageKeyword,
@@ -1821,7 +1821,7 @@ pub enum UsingClause {
     UsingDeconstruction(UsingDeconstruction),
 }
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug)]
 pub enum UsingOperator {
     Ampersand,
     Asterisk,
@@ -1864,7 +1864,7 @@ pub enum VersionLiteral {
     StringLiteral(StringLiteral),
 }
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug)]
 pub enum VersionOperator {
     PragmaCaret,
     PragmaTilde,
