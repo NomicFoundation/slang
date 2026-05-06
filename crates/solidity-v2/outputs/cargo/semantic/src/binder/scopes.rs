@@ -402,9 +402,51 @@ pub(crate) enum UsingDirective {
     },
     SingleTypeOperator {
         scope_id: ScopeId,
-        operator_mapping: HashMap<ir::UsingOperator, String>,
+        operator_mapping: HashMap<UsingOperator, String>,
         type_id: TypeId,
     },
+}
+
+// Mirrors `ir::UsingOperator`
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+pub(crate) enum UsingOperator {
+    Ampersand,
+    Asterisk,
+    BangEqual,
+    Bar,
+    Caret,
+    EqualEqual,
+    GreaterThan,
+    GreaterThanEqual,
+    LessThan,
+    LessThanEqual,
+    Minus,
+    Percent,
+    Plus,
+    Slash,
+    Tilde,
+}
+
+impl From<&ir::UsingOperator> for UsingOperator {
+    fn from(value: &ir::UsingOperator) -> Self {
+        match value {
+            ir::UsingOperator::Ampersand => Self::Ampersand,
+            ir::UsingOperator::Asterisk => Self::Asterisk,
+            ir::UsingOperator::BangEqual => Self::BangEqual,
+            ir::UsingOperator::Bar => Self::Bar,
+            ir::UsingOperator::Caret => Self::Caret,
+            ir::UsingOperator::EqualEqual => Self::EqualEqual,
+            ir::UsingOperator::GreaterThan => Self::GreaterThan,
+            ir::UsingOperator::GreaterThanEqual => Self::GreaterThanEqual,
+            ir::UsingOperator::LessThan => Self::LessThan,
+            ir::UsingOperator::LessThanEqual => Self::LessThanEqual,
+            ir::UsingOperator::Minus => Self::Minus,
+            ir::UsingOperator::Percent => Self::Percent,
+            ir::UsingOperator::Plus => Self::Plus,
+            ir::UsingOperator::Slash => Self::Slash,
+            ir::UsingOperator::Tilde => Self::Tilde,
+        }
+    }
 }
 
 impl UsingDirective {
@@ -419,7 +461,7 @@ impl UsingDirective {
     pub(crate) fn new_single_type_with_operators(
         scope_id: ScopeId,
         type_id: TypeId,
-        operator_mapping: HashMap<ir::UsingOperator, String>,
+        operator_mapping: HashMap<UsingOperator, String>,
     ) -> Self {
         Self::SingleTypeOperator {
             scope_id,

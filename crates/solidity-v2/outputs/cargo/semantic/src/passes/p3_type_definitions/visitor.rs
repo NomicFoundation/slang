@@ -358,7 +358,8 @@ impl Visitor for Pass<'_> {
                             symbols.insert(symbol_name.unparse().to_string(), definition_ids);
 
                             if let Some(operator) = &symbol.alias {
-                                operators.insert(*operator, symbol_name.unparse().to_string());
+                                operators
+                                    .insert(operator.into(), symbol_name.unparse().to_string());
                             }
                         }
 
