@@ -37,20 +37,20 @@ use super::types::Type;
     }
     {% for field in sequence.fields -%}
       {% if field.is_optional %}
-        {% if field.type.kind == "UniqueTerminal" %}
+        {% if field.field_type.kind == "UniqueTerminal" %}
           pub fn {{ field.label }}(&self) -> bool {
             self.ir_node.{{ field.label }}
           }
         {% else %}
-          pub fn {{ field.label }}(&self) -> Option<{{ field.type.name }}> {
+          pub fn {{ field.label }}(&self) -> Option<{{ field.field_type.name }}> {
             self.ir_node.{{ field.label }}.as_ref().map(|ir_node| {
-              create_{{ field.type.name | snake_case }}(ir_node, &self.semantic)
+              create_{{ field.field_type.name | snake_case }}(ir_node, &self.semantic)
             })
           }
         {% endif %}
       {% else %} {# not field.is_optional #}
-        pub fn {{ field.label }}(&self) -> {{ field.type.name }} {
-          create_{{ field.type.name | snake_case }}(&self.ir_node.{{ field.label }}, &self.semantic)
+        pub fn {{ field.label }}(&self) -> {{ field.field_type.name }} {
+          create_{{ field.field_type.name | snake_case }}(&self.ir_node.{{ field.label }}, &self.semantic)
         }
       {% endif %}
     {% endfor %}

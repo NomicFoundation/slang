@@ -30,15 +30,18 @@ pub struct Sequence {
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd)]
 pub enum NodeType {
-    Nonterminal(model::Identifier),
+    Sequence(model::Identifier),
+    Choice(model::Identifier),
+    Collection(model::Identifier),
     Terminal(model::Identifier),
     UniqueTerminal(model::Identifier),
 }
 
+#[allow(clippy::struct_field_names)]
 #[derive(Clone, Serialize)]
 pub struct Field {
     pub label: model::Identifier,
-    pub r#type: NodeType,
+    pub field_type: NodeType,
     pub is_optional: bool,
 }
 
@@ -56,7 +59,9 @@ pub struct Collection {
 impl NodeType {
     pub fn as_identifier(&self) -> &model::Identifier {
         match self {
-            NodeType::Nonterminal(identifier)
+            NodeType::Sequence(identifier)
+            | NodeType::Choice(identifier)
+            | NodeType::Collection(identifier)
             | NodeType::Terminal(identifier)
             | NodeType::UniqueTerminal(identifier) => identifier,
         }
@@ -69,11 +74,7 @@ impl NodeType {
 
 impl PartialEq<model::Identifier> for NodeType {
     fn eq(&self, other: &model::Identifier) -> bool {
-        match self {
-            NodeType::Nonterminal(identifier)
-            | NodeType::Terminal(identifier)
-            | NodeType::UniqueTerminal(identifier) => identifier == other,
-        }
+        self.as_identifier() == other
     }
 }
 
@@ -84,7 +85,9 @@ impl Serialize for NodeType {
     {
         let mut map = serializer.serialize_map(Some(4))?;
         let (identifier, kind, is_terminal, is_unique) = match self {
-            NodeType::Nonterminal(identifier) => (identifier, "Nonterminal", false, false),
+            NodeType::Sequence(identifier) => (identifier, "Sequence", false, false),
+            NodeType::Choice(identifier) => (identifier, "Choice", false, false),
+            NodeType::Collection(identifier) => (identifier, "Collection", false, false),
             NodeType::Terminal(identifier) => (identifier, "Terminal", true, false),
             NodeType::UniqueTerminal(identifier) => (identifier, "UniqueTerminal", true, true),
         };
@@ -120,6 +123,7 @@ impl IrModel {
 }
 
 struct IrModelBuilder {
+    pub node_types: BTreeMap<model::Identifier, NodeType>,
     pub terminals: BTreeMap<model::Identifier, Terminal>,
     pub sequences: BTreeMap<model::Identifier, Sequence>,
     pub choices: BTreeMap<model::Identifier, Choice>,
@@ -129,22 +133,78 @@ struct IrModelBuilder {
 impl IrModelBuilder {
     fn create(language: &model::Language) -> Self {
         let mut builder = Self {
+            node_types: BTreeMap::new(),
             terminals: BTreeMap::new(),
             sequences: BTreeMap::new(),
             choices: BTreeMap::new(),
             collections: BTreeMap::new(),
         };
 
-        // First pass: collect all terminals:
-        builder.collect_terminals(language);
+        // First pass: collect types
+        builder.collect_types(language);
 
-        // Second pass: use them to build nonterminals:
-        builder.collect_nonterminals(language);
+        // Second pass: use them to define the nodes
+        builder.collect_nodes(language);
 
         builder
     }
 
-    fn collect_terminals(&mut self, language: &model::Language) {
+    fn collect_types(&mut self, language: &model::Language) {
+        for item in language.items() {
+            match item {
+                model::Item::Struct { item } => {
+                    self.node_types
+                        .insert(item.name.clone(), NodeType::Sequence(item.name.clone()));
+                }
+                model::Item::Enum { item } => {
+                    self.node_types
+                        .insert(item.name.clone(), NodeType::Choice(item.name.clone()));
+                }
+                model::Item::Repeated { item } => {
+                    self.node_types
+                        .insert(item.name.clone(), NodeType::Collection(item.name.clone()));
+                }
+                model::Item::Separated { item } => {
+                    self.node_types
+                        .insert(item.name.clone(), NodeType::Collection(item.name.clone()));
+                }
+                model::Item::Precedence { item } => {
+                    self.node_types
+                        .insert(item.name.clone(), NodeType::Choice(item.name.clone()));
+                    for expression in &item.precedence_expressions {
+                        self.node_types.insert(
+                            expression.name.clone(),
+                            NodeType::Sequence(expression.name.clone()),
+                        );
+                    }
+                }
+                model::Item::Trivia { .. } => {
+                    // These items are skipped by the parser.
+                }
+                model::Item::Keyword { item } => {
+                    let node_type = if item.is_unique() {
+                        NodeType::UniqueTerminal(item.name.clone())
+                    } else {
+                        NodeType::Terminal(item.name.clone())
+                    };
+                    self.node_types.insert(item.name.clone(), node_type);
+                }
+                model::Item::Token { item } => {
+                    let node_type = if item.is_unique() {
+                        NodeType::UniqueTerminal(item.name.clone())
+                    } else {
+                        NodeType::Terminal(item.name.clone())
+                    };
+                    self.node_types.insert(item.name.clone(), node_type);
+                }
+                model::Item::Fragment { .. } => {
+                    // These items are inlined.
+                }
+            }
+        }
+    }
+
+    fn collect_nodes(&mut self, language: &model::Language) {
         let identifier_tokens = language
             .contexts
             .iter()
@@ -153,12 +213,24 @@ impl IrModelBuilder {
 
         for item in language.items() {
             match item {
-                model::Item::Struct { .. }
-                | model::Item::Enum { .. }
-                | model::Item::Repeated { .. }
-                | model::Item::Separated { .. }
-                | model::Item::Precedence { .. } => {
-                    // These items are nonterminals.
+                model::Item::Struct { item } => {
+                    self.add_struct_item(item);
+                }
+                model::Item::Enum { item } => {
+                    self.add_enum_item(item);
+                }
+                model::Item::Repeated { item } => {
+                    self.add_repeated_item(item);
+                }
+                model::Item::Separated { item } => {
+                    self.add_separated_item(item);
+                }
+                model::Item::Precedence { item } => {
+                    self.add_precedence_item(item);
+
+                    for expr in &item.precedence_expressions {
+                        self.add_precedence_expression(&item.name, expr);
+                    }
                 }
                 model::Item::Trivia { .. } => {
                     // These items are skipped by the parser.
@@ -188,51 +260,11 @@ impl IrModelBuilder {
         }
     }
 
-    fn collect_nonterminals(&mut self, language: &model::Language) {
-        for item in language.items() {
-            match item {
-                model::Item::Struct { item } => {
-                    self.add_struct_item(item);
-                }
-                model::Item::Enum { item } => {
-                    self.add_enum_item(item);
-                }
-                model::Item::Repeated { item } => {
-                    self.add_repeated_item(item);
-                }
-                model::Item::Separated { item } => {
-                    self.add_separated_item(item);
-                }
-                model::Item::Precedence { item } => {
-                    self.add_precedence_item(item);
-
-                    for expr in &item.precedence_expressions {
-                        self.add_precedence_expression(&item.name, expr);
-                    }
-                }
-                model::Item::Trivia { .. }
-                | model::Item::Keyword { .. }
-                | model::Item::Token { .. } => {
-                    // These items are terminals.
-                }
-                model::Item::Fragment { .. } => {
-                    // These items are inlined.
-                }
-            }
-        }
-    }
-
     fn find_node_type(&self, identifier: &model::Identifier) -> NodeType {
-        match self.terminals.get(identifier) {
-            None => NodeType::Nonterminal(identifier.clone()),
-            Some(terminal) => {
-                if terminal.is_unique {
-                    NodeType::UniqueTerminal(identifier.clone())
-                } else {
-                    NodeType::Terminal(identifier.clone())
-                }
-            }
-        }
+        self.node_types
+            .get(identifier)
+            .cloned()
+            .expect("can't determine NodeType for {identifier}")
     }
 
     fn add_struct_item(&mut self, item: &model::StructItem) {
@@ -347,14 +379,14 @@ impl IrModelBuilder {
             // The only field we care about then is a reference to that special operator
             vec![Field {
                 label,
-                r#type: NodeType::Nonterminal(ident),
+                field_type: NodeType::Choice(ident),
                 is_optional: false,
             }]
         };
 
         let operand = |label: model::PredefinedLabel| Field {
             label: label.as_ref().into(),
-            r#type: NodeType::Nonterminal(base_name.clone()),
+            field_type: self.find_node_type(base_name),
             is_optional: false,
         };
 
@@ -391,11 +423,11 @@ impl IrModelBuilder {
                 model::Field::Required { reference } => (reference, false),
                 model::Field::Optional { reference, .. } => (reference, true),
             };
-            let r#type = self.find_node_type(reference);
+            let field_type = self.find_node_type(reference);
 
             Field {
                 label: label.clone(),
-                r#type,
+                field_type,
                 is_optional,
             }
         })

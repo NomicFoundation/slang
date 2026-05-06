@@ -55,7 +55,7 @@ pub struct CollapsedSequence {
     pub label: model::Identifier,
     // Original type of the field of the collapsed sequence, used to generate
     // the transformer function.
-    pub r#type: NodeType,
+    pub source_type: NodeType,
     // Target type of the collapsed sequence. This should usually be `r#type`,
     // unless that it collapsed as well.
     pub target_type: NodeType,
@@ -74,7 +74,7 @@ pub struct CollapsedChoice {
 #[derive(Clone, Serialize)]
 pub struct MutatedField {
     pub label: model::Identifier,
-    pub r#type: NodeType,
+    pub field_type: NodeType,
     pub is_optional: bool,
     pub target_type: NodeType,
 }
@@ -83,9 +83,9 @@ impl From<&Field> for MutatedField {
     fn from(value: &Field) -> Self {
         Self {
             label: value.label.clone(),
-            r#type: value.r#type.clone(),
+            field_type: value.field_type.clone(),
             is_optional: value.is_optional,
-            target_type: value.r#type.clone(),
+            target_type: value.field_type.clone(),
         }
     }
 }
@@ -94,7 +94,7 @@ impl From<&MutatedField> for Field {
     fn from(value: &MutatedField) -> Self {
         Self {
             label: value.label.clone(),
-            r#type: value.target_type.clone(),
+            field_type: value.target_type.clone(),
             is_optional: value.is_optional,
         }
     }
@@ -415,15 +415,20 @@ impl IrModelMutator {
     }
 
     fn find_node_type(&self, identifier: &model::Identifier) -> NodeType {
-        match self.terminals.get(identifier) {
-            None => NodeType::Nonterminal(identifier.clone()),
-            Some(MutatedTerminal { is_unique, .. }) => {
-                if *is_unique {
-                    NodeType::UniqueTerminal(identifier.clone())
-                } else {
-                    NodeType::Terminal(identifier.clone())
-                }
+        if let Some(terminal) = self.terminals.get(identifier) {
+            if terminal.is_unique {
+                NodeType::UniqueTerminal(identifier.clone())
+            } else {
+                NodeType::Terminal(identifier.clone())
             }
+        } else if self.sequences.contains_key(identifier) {
+            NodeType::Sequence(identifier.clone())
+        } else if self.choices.contains_key(identifier) {
+            NodeType::Choice(identifier.clone())
+        } else if self.collections.contains_key(identifier) {
+            NodeType::Collection(identifier.clone())
+        } else {
+            panic!("can't determine NodeType for {identifier}");
         }
     }
 
@@ -441,7 +446,7 @@ impl IrModelMutator {
         };
         sequence.fields.push(MutatedField {
             label: field_label.into(),
-            r#type: target_type.clone(),
+            field_type: target_type.clone(),
             is_optional,
             target_type,
         });
@@ -473,7 +478,7 @@ impl IrModelMutator {
             insertion_index,
             MutatedField {
                 label: field_label.into(),
-                r#type: target_type.clone(),
+                field_type: target_type.clone(),
                 is_optional,
                 target_type,
             },
@@ -485,6 +490,7 @@ impl IrModelMutator {
     // replacing all instances with the contents of such field.
     pub fn collapse_sequence(&mut self, sequence_id: &str) {
         let identifier: model::Identifier = sequence_id.into();
+
         let Some(sequence) = self.sequences.remove(&identifier) else {
             panic!("Sequence {sequence_id} not found in IR model");
         };
@@ -500,19 +506,19 @@ impl IrModelMutator {
             !replace_field.is_optional,
             "Cannot collapse sequence {sequence_id} of an optional field"
         );
-        let replaced_type = self.find_node_type(&sequence_id.into());
 
+        let replaced_type = NodeType::Sequence(identifier.clone());
         self.replace_type_references(&replaced_type, &replace_field.target_type);
 
         // Determine the target type; the type of the single field may be
         // already collapsed, so we need to use it in that case
         let target_type = if let Some(collapsed) = self
             .collapsed_sequences
-            .get(replace_field.r#type.as_identifier())
+            .get(replace_field.field_type.as_identifier())
         {
             collapsed.target_type.clone()
         } else {
-            replace_field.r#type.clone()
+            replace_field.field_type.clone()
         };
 
         // Create the collapsed sequence
@@ -520,7 +526,7 @@ impl IrModelMutator {
             identifier.clone(),
             CollapsedSequence {
                 label: replace_field.label,
-                r#type: replace_field.r#type.clone(),
+                source_type: replace_field.field_type.clone(),
                 target_type,
             },
         );
@@ -544,8 +550,7 @@ impl IrModelMutator {
             );
         }
 
-        // The old type is always Nonterminal (choices are nonterminals)
-        let collapsed_type = NodeType::Nonterminal(identifier.clone());
+        let collapsed_type = NodeType::Choice(identifier.clone());
 
         // Ensure the target exists as a non-unique terminal
         let target_id: model::Identifier = target.into();

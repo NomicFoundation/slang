@@ -1558,21 +1558,21 @@ pub enum ContractMember {
 
 #[derive(Clone, Debug)]
 pub enum ElementaryType {
+    BoolKeyword,
+    StringKeyword,
     AddressType(AddressType),
     BytesKeyword(BytesKeyword),
     IntKeyword(IntKeyword),
     UintKeyword(UintKeyword),
     FixedKeyword(FixedKeyword),
     UfixedKeyword(UfixedKeyword),
-    BoolKeyword,
-    StringKeyword,
 }
 
 #[derive(Clone, Debug)]
 pub enum ExperimentalFeature {
-    StringLiteral(StringLiteral),
     ABIEncoderV2Keyword,
     SMTCheckerKeyword,
+    StringLiteral(StringLiteral),
 }
 
 #[derive(Clone, Debug)]
@@ -1604,12 +1604,12 @@ pub enum Expression {
     DecimalNumberExpression(DecimalNumberExpression),
     StringExpression(StringExpression),
     ElementaryType(ElementaryType),
-    Identifier(Identifier),
     PayableKeyword,
     ThisKeyword,
     SuperKeyword,
     TrueKeyword,
     FalseKeyword,
+    Identifier(Identifier),
 }
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
@@ -1884,12 +1884,12 @@ pub enum YulExpression {
 
 #[derive(Clone, Debug)]
 pub enum YulLiteral {
+    TrueKeyword,
+    FalseKeyword,
     DecimalLiteral(DecimalLiteral),
     HexLiteral(HexLiteral),
     HexStringLiteral(HexStringLiteral),
     StringLiteral(StringLiteral),
-    TrueKeyword,
-    FalseKeyword,
 }
 
 #[derive(Clone, Debug)]

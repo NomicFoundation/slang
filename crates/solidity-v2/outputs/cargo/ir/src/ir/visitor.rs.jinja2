@@ -18,6 +18,7 @@ pub trait Visitor {
     fn leave_{{ parent_type | snake_case }}(&mut self, _items: &{{ parent_type }}) {}
   {% endfor -%}
   {%- for terminal_type, terminal in target.terminals %}
+    {# We only visit terminal identifiers #}
     {%- if terminal.is_identifier -%}
       fn visit_{{ terminal_type | snake_case }}(&mut self, _node: &{{ terminal_type }}) {}
     {%- endif -%}
@@ -34,21 +35,21 @@ pub trait Visitor {
       return;
     }
     {% for field in sequence.fields -%}
-      {%- if not field.type.is_terminal -%}
+      {%- if not field.field_type.is_terminal -%}
         {%- if field.is_optional -%}
           if let Some(ref {{ field.label | snake_case }}) = node.{{ field.label | snake_case }} {
-            accept_{{ field.type.name | snake_case }}({{ field.label | snake_case }}, visitor);
+            accept_{{ field.field_type.name | snake_case }}({{ field.label | snake_case }}, visitor);
           }
         {% else -%}
-          accept_{{ field.type.name | snake_case }}(&node.{{ field.label | snake_case }}, visitor);
+          accept_{{ field.field_type.name | snake_case }}(&node.{{ field.label | snake_case }}, visitor);
         {%- endif -%}
-      {%- elif target.terminals[field.type.name].is_identifier -%}
+      {%- elif target.terminals[field.field_type.name].is_identifier -%}
         {%- if field.is_optional -%}
           if let Some({{ field.label | snake_case }}) = &node.{{ field.label | snake_case }} {
-            visitor.visit_{{ field.type.name | snake_case }}({{ field.label | snake_case }});
+            visitor.visit_{{ field.field_type.name | snake_case }}({{ field.label | snake_case }});
           }
         {% else -%}
-          visitor.visit_{{ field.type.name | snake_case }}(&node.{{ field.label | snake_case }});
+          visitor.visit_{{ field.field_type.name | snake_case }}(&node.{{ field.label | snake_case }});
         {%- endif -%}
       {%- endif -%}
     {%- endfor -%}
@@ -62,44 +63,31 @@ pub trait Visitor {
 //
 
 {% for parent_type, choice in target.choices %}
-  {%- set nonterminals = choice.variants | filter(attribute="kind", value="Nonterminal") -%}
-  {%- set unique_terminals = choice.variants | filter(attribute="kind", value="UniqueTerminal") -%}
-  {%- set non_unique_terminals = choice.variants | filter(attribute="kind", value="Terminal") -%}
-  {% if nonterminals | length == 0 %}
-    pub fn accept_{{ parent_type | snake_case }}(_node: &{{ parent_type }}, _visitor: &mut impl Visitor) {}
-  {% else %}
-    pub fn accept_{{ parent_type | snake_case }}(node: &{{ parent_type }}, visitor: &mut impl Visitor) {
-      if !visitor.enter_{{ parent_type | snake_case }}(node) {
-        return;
-      }
-      match node {
-        {% for nonterminal in nonterminals -%}
-          {{ parent_type }}::{{ nonterminal.name }}(ref {{ nonterminal.name | snake_case }}) => {
-            accept_{{ nonterminal.name | snake_case }}({{ nonterminal.name | snake_case }}, visitor);
-          }
-        {%- endfor %}
-        {%- if non_unique_terminals | length > 0 %}
-          {%- for terminal in non_unique_terminals -%}
-            {%- if target.terminals[terminal.name].is_identifier -%}
-              {{ parent_type }}::{{ terminal.name }}(ref {{ terminal.name | snake_case }}) => {
-                visitor.visit_{{ terminal.name | snake_case }}({{ terminal.name | snake_case }});
-              }
-            {%- else -%}
-              {{ parent_type }}::{{ terminal.name }}(_) => {}
-            {%- endif -%}
-          {%- endfor -%}
-        {% endif -%}
-        {%- if unique_terminals | length > 0 %}
-          {%- for terminal in unique_terminals -%}
-            {%- if not loop.first -%} | {%- endif -%}
-            {{ parent_type }}::{{ terminal.name }}
-          {%- endfor -%}
-          => {}
-        {% endif -%}
-      }
-      visitor.leave_{{ parent_type | snake_case }}(node);
+  pub fn accept_{{ parent_type | snake_case }}(node: &{{ parent_type }}, visitor: &mut impl Visitor) {
+    if !visitor.enter_{{ parent_type | snake_case }}(node) {
+      return;
     }
-  {% endif %}
+    match node {
+      {% for variant in choice.variants -%}
+        {% if variant.kind == "UniqueTerminal" -%}
+          {{ parent_type }}::{{ variant.name }} => {},
+        {% elif variant.kind == "Terminal" -%}
+          {%- if target.terminals[variant.name].is_identifier -%}
+            {{ parent_type }}::{{ variant.name }}(ref {{ variant.name | snake_case }}) => {
+              visitor.visit_{{ variant.name | snake_case }}({{ variant.name | snake_case }});
+            },
+          {%- else -%}
+            {{ parent_type }}::{{ variant.name }}(_) => {},
+          {%- endif -%}
+        {% else -%}
+          {{ parent_type }}::{{ variant.name }}(ref {{ variant.name | snake_case }}) => {
+            accept_{{ variant.name | snake_case }}({{ variant.name | snake_case }}, visitor);
+          }
+        {%- endif %}
+      {%- endfor %}
+    }
+    visitor.leave_{{ parent_type | snake_case }}(node);
+  }
 {% endfor %}
 
 //

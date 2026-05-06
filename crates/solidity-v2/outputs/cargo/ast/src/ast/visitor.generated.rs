@@ -1955,7 +1955,16 @@ pub fn accept_yul_variable_declaration_value(
 // Choices
 //
 
-pub fn accept_abicoder_version(_node: &AbicoderVersion, _visitor: &mut impl Visitor) {}
+pub fn accept_abicoder_version(node: &AbicoderVersion, visitor: &mut impl Visitor) {
+    if !visitor.enter_abicoder_version(node) {
+        return;
+    }
+    match node {
+        AbicoderVersion::AbicoderV1Keyword => {}
+        AbicoderVersion::AbicoderV2Keyword => {}
+    }
+    visitor.leave_abicoder_version(node);
+}
 
 pub fn accept_arguments_declaration(node: &ArgumentsDeclaration, visitor: &mut impl Visitor) {
     if !visitor.enter_arguments_declaration(node) {
@@ -2013,6 +2022,8 @@ pub fn accept_elementary_type(node: &ElementaryType, visitor: &mut impl Visitor)
         return;
     }
     match node {
+        ElementaryType::BoolKeyword => {}
+        ElementaryType::StringKeyword => {}
         ElementaryType::AddressType(ref address_type) => {
             accept_address_type(address_type, visitor);
         }
@@ -2031,7 +2042,6 @@ pub fn accept_elementary_type(node: &ElementaryType, visitor: &mut impl Visitor)
         ElementaryType::UfixedKeyword(ref ufixed_keyword) => {
             visitor.visit_ufixed_keyword(ufixed_keyword);
         }
-        ElementaryType::BoolKeyword | ElementaryType::StringKeyword => {}
     }
     visitor.leave_elementary_type(node);
 }
@@ -2041,10 +2051,11 @@ pub fn accept_experimental_feature(node: &ExperimentalFeature, visitor: &mut imp
         return;
     }
     match node {
+        ExperimentalFeature::ABIEncoderV2Keyword => {}
+        ExperimentalFeature::SMTCheckerKeyword => {}
         ExperimentalFeature::StringLiteral(ref string_literal) => {
             visitor.visit_string_literal(string_literal);
         }
-        ExperimentalFeature::ABIEncoderV2Keyword | ExperimentalFeature::SMTCheckerKeyword => {}
     }
     visitor.leave_experimental_feature(node);
 }
@@ -2135,64 +2146,146 @@ pub fn accept_expression(node: &Expression, visitor: &mut impl Visitor) {
         Expression::ElementaryType(ref elementary_type) => {
             accept_elementary_type(elementary_type, visitor);
         }
+        Expression::PayableKeyword => {}
+        Expression::ThisKeyword => {}
+        Expression::SuperKeyword => {}
+        Expression::TrueKeyword => {}
+        Expression::FalseKeyword => {}
         Expression::Identifier(ref identifier) => {
             visitor.visit_identifier(identifier);
         }
-        Expression::PayableKeyword
-        | Expression::ThisKeyword
-        | Expression::SuperKeyword
-        | Expression::TrueKeyword
-        | Expression::FalseKeyword => {}
     }
     visitor.leave_expression(node);
 }
 
 pub fn accept_expression_additive_expression_operator(
-    _node: &Expression_AdditiveExpression_Operator,
-    _visitor: &mut impl Visitor,
+    node: &Expression_AdditiveExpression_Operator,
+    visitor: &mut impl Visitor,
 ) {
+    if !visitor.enter_expression_additive_expression_operator(node) {
+        return;
+    }
+    match node {
+        Expression_AdditiveExpression_Operator::Minus => {}
+        Expression_AdditiveExpression_Operator::Plus => {}
+    }
+    visitor.leave_expression_additive_expression_operator(node);
 }
 
 pub fn accept_expression_assignment_expression_operator(
-    _node: &Expression_AssignmentExpression_Operator,
-    _visitor: &mut impl Visitor,
+    node: &Expression_AssignmentExpression_Operator,
+    visitor: &mut impl Visitor,
 ) {
+    if !visitor.enter_expression_assignment_expression_operator(node) {
+        return;
+    }
+    match node {
+        Expression_AssignmentExpression_Operator::AmpersandEqual => {}
+        Expression_AssignmentExpression_Operator::AsteriskEqual => {}
+        Expression_AssignmentExpression_Operator::BarEqual => {}
+        Expression_AssignmentExpression_Operator::CaretEqual => {}
+        Expression_AssignmentExpression_Operator::Equal => {}
+        Expression_AssignmentExpression_Operator::GreaterThanGreaterThanEqual => {}
+        Expression_AssignmentExpression_Operator::GreaterThanGreaterThanGreaterThanEqual => {}
+        Expression_AssignmentExpression_Operator::LessThanLessThanEqual => {}
+        Expression_AssignmentExpression_Operator::MinusEqual => {}
+        Expression_AssignmentExpression_Operator::PercentEqual => {}
+        Expression_AssignmentExpression_Operator::PlusEqual => {}
+        Expression_AssignmentExpression_Operator::SlashEqual => {}
+    }
+    visitor.leave_expression_assignment_expression_operator(node);
 }
 
 pub fn accept_expression_equality_expression_operator(
-    _node: &Expression_EqualityExpression_Operator,
-    _visitor: &mut impl Visitor,
+    node: &Expression_EqualityExpression_Operator,
+    visitor: &mut impl Visitor,
 ) {
+    if !visitor.enter_expression_equality_expression_operator(node) {
+        return;
+    }
+    match node {
+        Expression_EqualityExpression_Operator::BangEqual => {}
+        Expression_EqualityExpression_Operator::EqualEqual => {}
+    }
+    visitor.leave_expression_equality_expression_operator(node);
 }
 
 pub fn accept_expression_inequality_expression_operator(
-    _node: &Expression_InequalityExpression_Operator,
-    _visitor: &mut impl Visitor,
+    node: &Expression_InequalityExpression_Operator,
+    visitor: &mut impl Visitor,
 ) {
+    if !visitor.enter_expression_inequality_expression_operator(node) {
+        return;
+    }
+    match node {
+        Expression_InequalityExpression_Operator::GreaterThan => {}
+        Expression_InequalityExpression_Operator::GreaterThanEqual => {}
+        Expression_InequalityExpression_Operator::LessThan => {}
+        Expression_InequalityExpression_Operator::LessThanEqual => {}
+    }
+    visitor.leave_expression_inequality_expression_operator(node);
 }
 
 pub fn accept_expression_multiplicative_expression_operator(
-    _node: &Expression_MultiplicativeExpression_Operator,
-    _visitor: &mut impl Visitor,
+    node: &Expression_MultiplicativeExpression_Operator,
+    visitor: &mut impl Visitor,
 ) {
+    if !visitor.enter_expression_multiplicative_expression_operator(node) {
+        return;
+    }
+    match node {
+        Expression_MultiplicativeExpression_Operator::Asterisk => {}
+        Expression_MultiplicativeExpression_Operator::Percent => {}
+        Expression_MultiplicativeExpression_Operator::Slash => {}
+    }
+    visitor.leave_expression_multiplicative_expression_operator(node);
 }
 
 pub fn accept_expression_postfix_expression_operator(
-    _node: &Expression_PostfixExpression_Operator,
-    _visitor: &mut impl Visitor,
+    node: &Expression_PostfixExpression_Operator,
+    visitor: &mut impl Visitor,
 ) {
+    if !visitor.enter_expression_postfix_expression_operator(node) {
+        return;
+    }
+    match node {
+        Expression_PostfixExpression_Operator::MinusMinus => {}
+        Expression_PostfixExpression_Operator::PlusPlus => {}
+    }
+    visitor.leave_expression_postfix_expression_operator(node);
 }
 
 pub fn accept_expression_prefix_expression_operator(
-    _node: &Expression_PrefixExpression_Operator,
-    _visitor: &mut impl Visitor,
+    node: &Expression_PrefixExpression_Operator,
+    visitor: &mut impl Visitor,
 ) {
+    if !visitor.enter_expression_prefix_expression_operator(node) {
+        return;
+    }
+    match node {
+        Expression_PrefixExpression_Operator::Bang => {}
+        Expression_PrefixExpression_Operator::DeleteKeyword => {}
+        Expression_PrefixExpression_Operator::Minus => {}
+        Expression_PrefixExpression_Operator::MinusMinus => {}
+        Expression_PrefixExpression_Operator::PlusPlus => {}
+        Expression_PrefixExpression_Operator::Tilde => {}
+    }
+    visitor.leave_expression_prefix_expression_operator(node);
 }
 
 pub fn accept_expression_shift_expression_operator(
-    _node: &Expression_ShiftExpression_Operator,
-    _visitor: &mut impl Visitor,
+    node: &Expression_ShiftExpression_Operator,
+    visitor: &mut impl Visitor,
 ) {
+    if !visitor.enter_expression_shift_expression_operator(node) {
+        return;
+    }
+    match node {
+        Expression_ShiftExpression_Operator::GreaterThanGreaterThan => {}
+        Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan => {}
+        Expression_ShiftExpression_Operator::LessThanLessThan => {}
+    }
+    visitor.leave_expression_shift_expression_operator(node);
 }
 
 pub fn accept_for_statement_condition(node: &ForStatementCondition, visitor: &mut impl Visitor) {
@@ -2229,11 +2322,45 @@ pub fn accept_for_statement_initialization(
     visitor.leave_for_statement_initialization(node);
 }
 
-pub fn accept_function_kind(_node: &FunctionKind, _visitor: &mut impl Visitor) {}
+pub fn accept_function_kind(node: &FunctionKind, visitor: &mut impl Visitor) {
+    if !visitor.enter_function_kind(node) {
+        return;
+    }
+    match node {
+        FunctionKind::Regular => {}
+        FunctionKind::Constructor => {}
+        FunctionKind::Fallback => {}
+        FunctionKind::Receive => {}
+        FunctionKind::Modifier => {}
+    }
+    visitor.leave_function_kind(node);
+}
 
-pub fn accept_function_mutability(_node: &FunctionMutability, _visitor: &mut impl Visitor) {}
+pub fn accept_function_mutability(node: &FunctionMutability, visitor: &mut impl Visitor) {
+    if !visitor.enter_function_mutability(node) {
+        return;
+    }
+    match node {
+        FunctionMutability::Pure => {}
+        FunctionMutability::View => {}
+        FunctionMutability::NonPayable => {}
+        FunctionMutability::Payable => {}
+    }
+    visitor.leave_function_mutability(node);
+}
 
-pub fn accept_function_visibility(_node: &FunctionVisibility, _visitor: &mut impl Visitor) {}
+pub fn accept_function_visibility(node: &FunctionVisibility, visitor: &mut impl Visitor) {
+    if !visitor.enter_function_visibility(node) {
+        return;
+    }
+    match node {
+        FunctionVisibility::Public => {}
+        FunctionVisibility::Private => {}
+        FunctionVisibility::Internal => {}
+        FunctionVisibility::External => {}
+    }
+    visitor.leave_function_visibility(node);
+}
 
 pub fn accept_import_clause(node: &ImportClause, visitor: &mut impl Visitor) {
     if !visitor.enter_import_clause(node) {
@@ -2250,7 +2377,22 @@ pub fn accept_import_clause(node: &ImportClause, visitor: &mut impl Visitor) {
     visitor.leave_import_clause(node);
 }
 
-pub fn accept_number_unit(_node: &NumberUnit, _visitor: &mut impl Visitor) {}
+pub fn accept_number_unit(node: &NumberUnit, visitor: &mut impl Visitor) {
+    if !visitor.enter_number_unit(node) {
+        return;
+    }
+    match node {
+        NumberUnit::WeiKeyword => {}
+        NumberUnit::GweiKeyword => {}
+        NumberUnit::EtherKeyword => {}
+        NumberUnit::SecondsKeyword => {}
+        NumberUnit::MinutesKeyword => {}
+        NumberUnit::HoursKeyword => {}
+        NumberUnit::DaysKeyword => {}
+        NumberUnit::WeeksKeyword => {}
+    }
+    visitor.leave_number_unit(node);
+}
 
 pub fn accept_pragma(node: &Pragma, visitor: &mut impl Visitor) {
     if !visitor.enter_pragma(node) {
@@ -2321,15 +2463,34 @@ pub fn accept_source_unit_member(node: &SourceUnitMember, visitor: &mut impl Vis
 }
 
 pub fn accept_state_variable_mutability(
-    _node: &StateVariableMutability,
-    _visitor: &mut impl Visitor,
+    node: &StateVariableMutability,
+    visitor: &mut impl Visitor,
 ) {
+    if !visitor.enter_state_variable_mutability(node) {
+        return;
+    }
+    match node {
+        StateVariableMutability::Mutable => {}
+        StateVariableMutability::Constant => {}
+        StateVariableMutability::Immutable => {}
+        StateVariableMutability::Transient => {}
+    }
+    visitor.leave_state_variable_mutability(node);
 }
 
 pub fn accept_state_variable_visibility(
-    _node: &StateVariableVisibility,
-    _visitor: &mut impl Visitor,
+    node: &StateVariableVisibility,
+    visitor: &mut impl Visitor,
 ) {
+    if !visitor.enter_state_variable_visibility(node) {
+        return;
+    }
+    match node {
+        StateVariableVisibility::Public => {}
+        StateVariableVisibility::Private => {}
+        StateVariableVisibility::Internal => {}
+    }
+    visitor.leave_state_variable_visibility(node);
 }
 
 pub fn accept_statement(node: &Statement, visitor: &mut impl Visitor) {
@@ -2386,7 +2547,17 @@ pub fn accept_statement(node: &Statement, visitor: &mut impl Visitor) {
     visitor.leave_statement(node);
 }
 
-pub fn accept_storage_location(_node: &StorageLocation, _visitor: &mut impl Visitor) {}
+pub fn accept_storage_location(node: &StorageLocation, visitor: &mut impl Visitor) {
+    if !visitor.enter_storage_location(node) {
+        return;
+    }
+    match node {
+        StorageLocation::MemoryKeyword => {}
+        StorageLocation::StorageKeyword => {}
+        StorageLocation::CallDataKeyword => {}
+    }
+    visitor.leave_storage_location(node);
+}
 
 pub fn accept_string_expression(node: &StringExpression, visitor: &mut impl Visitor) {
     if !visitor.enter_string_expression(node) {
@@ -2445,7 +2616,29 @@ pub fn accept_using_clause(node: &UsingClause, visitor: &mut impl Visitor) {
     visitor.leave_using_clause(node);
 }
 
-pub fn accept_using_operator(_node: &UsingOperator, _visitor: &mut impl Visitor) {}
+pub fn accept_using_operator(node: &UsingOperator, visitor: &mut impl Visitor) {
+    if !visitor.enter_using_operator(node) {
+        return;
+    }
+    match node {
+        UsingOperator::Ampersand => {}
+        UsingOperator::Asterisk => {}
+        UsingOperator::BangEqual => {}
+        UsingOperator::Bar => {}
+        UsingOperator::Caret => {}
+        UsingOperator::EqualEqual => {}
+        UsingOperator::GreaterThan => {}
+        UsingOperator::GreaterThanEqual => {}
+        UsingOperator::LessThan => {}
+        UsingOperator::LessThanEqual => {}
+        UsingOperator::Minus => {}
+        UsingOperator::Percent => {}
+        UsingOperator::Plus => {}
+        UsingOperator::Slash => {}
+        UsingOperator::Tilde => {}
+    }
+    visitor.leave_using_operator(node);
+}
 
 pub fn accept_using_target(node: &UsingTarget, visitor: &mut impl Visitor) {
     if !visitor.enter_using_target(node) {
@@ -2508,7 +2701,21 @@ pub fn accept_version_literal(node: &VersionLiteral, visitor: &mut impl Visitor)
     visitor.leave_version_literal(node);
 }
 
-pub fn accept_version_operator(_node: &VersionOperator, _visitor: &mut impl Visitor) {}
+pub fn accept_version_operator(node: &VersionOperator, visitor: &mut impl Visitor) {
+    if !visitor.enter_version_operator(node) {
+        return;
+    }
+    match node {
+        VersionOperator::PragmaCaret => {}
+        VersionOperator::PragmaTilde => {}
+        VersionOperator::PragmaEqual => {}
+        VersionOperator::PragmaLessThan => {}
+        VersionOperator::PragmaGreaterThan => {}
+        VersionOperator::PragmaLessThanEqual => {}
+        VersionOperator::PragmaGreaterThanEqual => {}
+    }
+    visitor.leave_version_operator(node);
+}
 
 pub fn accept_yul_expression(node: &YulExpression, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_expression(node) {
@@ -2533,6 +2740,8 @@ pub fn accept_yul_literal(node: &YulLiteral, visitor: &mut impl Visitor) {
         return;
     }
     match node {
+        YulLiteral::TrueKeyword => {}
+        YulLiteral::FalseKeyword => {}
         YulLiteral::DecimalLiteral(ref decimal_literal) => {
             visitor.visit_decimal_literal(decimal_literal);
         }
@@ -2545,7 +2754,6 @@ pub fn accept_yul_literal(node: &YulLiteral, visitor: &mut impl Visitor) {
         YulLiteral::StringLiteral(ref string_literal) => {
             visitor.visit_string_literal(string_literal);
         }
-        YulLiteral::TrueKeyword | YulLiteral::FalseKeyword => {}
     }
     visitor.leave_yul_literal(node);
 }

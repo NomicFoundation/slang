@@ -24,16 +24,16 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         {%- for field in sequence.fields %}
           let {{ field.label | snake_case }} =
           {%- if field.is_optional -%}
-            {%- if field.type.kind == "UniqueTerminal" -%}
+            {%- if field.field_type.kind == "UniqueTerminal" -%}
               source.{{ field.label }}.is_some();
             {%- else -%}
               source.{{ field.label }}.as_ref().map(
-                |value| self.build_{{ field.type.name | snake_case }}(value)
+                |value| self.build_{{ field.field_type.name | snake_case }}(value)
               );
             {%- endif -%}
           {%- else -%}
             {# Non-optional unique terminals should be elided at this point #}
-            self.build_{{ field.type.name | snake_case }}(&source.{{ field.label | snake_case }});
+            self.build_{{ field.field_type.name | snake_case }}(&source.{{ field.label | snake_case }});
           {%- endif -%}
         {%- endfor %}
 
@@ -54,7 +54,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
   {% for parent_type, collapsed in builder.collapsed_sequences %}
     pub(super) fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ collapsed.target_type.name }}
     {
-      self.build_{{ collapsed.type.name | snake_case }}(&source.{{ collapsed.label }})
+      self.build_{{ collapsed.source_type.name | snake_case }}(&source.{{ collapsed.label }})
     }
   {% endfor %}
 

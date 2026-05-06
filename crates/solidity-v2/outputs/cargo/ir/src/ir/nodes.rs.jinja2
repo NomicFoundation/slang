@@ -20,7 +20,7 @@ pub(super) use slang_solidity_v2_common::nodes::NodeId;
     pub range: Range<usize>,
     {%- for field in sequence.fields %}
       pub {{ field.label | snake_case }}:
-      {%- if field.type.kind == "UniqueTerminal" -%}
+      {%- if field.field_type.kind == "UniqueTerminal" -%}
         {%- if field.is_optional -%}
           bool,
         {%- else -%}
@@ -28,9 +28,9 @@ pub(super) use slang_solidity_v2_common::nodes::NodeId;
         {%- endif -%}
       {%- else -%}
         {%- if field.is_optional -%}
-          Option<{{ field.type.name }}>,
+          Option<{{ field.field_type.name }}>,
         {%- else -%}
-          {{ field.type.name }},
+          {{ field.field_type.name }},
         {%- endif -%}
       {%- endif -%}
     {% endfor -%}
@@ -61,14 +61,12 @@ pub(super) use slang_solidity_v2_common::nodes::NodeId;
     #[derive(Clone, Debug)]
   {%- endif %}
   pub enum {{ parent_type }} {
-    {% for nonterminal in choice.variants | filter(attribute="kind", value="Nonterminal") -%}
-      {{ nonterminal.name }}({{ nonterminal.name }}),
-    {%- endfor -%}
-    {% for terminal in choice.variants | filter(attribute="kind", value="Terminal") -%}
-      {{ terminal.name }}({{ terminal.name }}),
-    {%- endfor -%}
-    {% for terminal in choice.variants | filter(attribute="kind", value="UniqueTerminal") -%}
-      {{ terminal.name }},
+    {% for variant in choice.variants -%}
+      {{ variant.name }}
+      {%- if variant.kind != "UniqueTerminal" -%}
+        ({{ variant.name }})
+      {%- endif -%}
+      ,
     {%- endfor -%}
   }
 {% endfor %}
