@@ -1,5 +1,5 @@
 use slang_solidity_v2_common::nodes::NodeId;
-use slang_solidity_v2_ir::ir::{self, FunctionMutability, FunctionVisibility};
+use slang_solidity_v2_ir::ir;
 
 mod parsing;
 mod registry;
@@ -101,6 +101,46 @@ impl FunctionType {
             self.visibility,
             FunctionVisibility::External | FunctionVisibility::Public
         )
+    }
+}
+
+// Mirrors `ir::FunctionVisibility`
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+pub enum FunctionVisibility {
+    Public,
+    Private,
+    Internal,
+    External,
+}
+
+impl From<&ir::FunctionVisibility> for FunctionVisibility {
+    fn from(value: &ir::FunctionVisibility) -> Self {
+        match value {
+            ir::FunctionVisibility::Public => Self::Public,
+            ir::FunctionVisibility::Private => Self::Private,
+            ir::FunctionVisibility::Internal => Self::Internal,
+            ir::FunctionVisibility::External => Self::External,
+        }
+    }
+}
+
+// Mirrors `ir::FunctionMutability`
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+pub enum FunctionMutability {
+    Pure,
+    View,
+    NonPayable,
+    Payable,
+}
+
+impl From<&ir::FunctionMutability> for FunctionMutability {
+    fn from(value: &ir::FunctionMutability) -> Self {
+        match value {
+            ir::FunctionMutability::Pure => Self::Pure,
+            ir::FunctionMutability::View => Self::View,
+            ir::FunctionMutability::NonPayable => Self::NonPayable,
+            ir::FunctionMutability::Payable => Self::Payable,
+        }
     }
 }
 

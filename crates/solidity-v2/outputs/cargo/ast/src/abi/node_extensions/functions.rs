@@ -32,7 +32,7 @@ impl FunctionDefinitionStruct {
             .name
             .as_ref()
             .map(|name| name.unparse().to_string());
-        let state_mutability: AbiMutability = self.ir_node.mutability;
+        let state_mutability: AbiMutability = (&self.ir_node.mutability).into();
 
         match self.ir_node.kind {
             ir::FunctionKind::Regular => Some(AbiEntry::Function(AbiFunction {

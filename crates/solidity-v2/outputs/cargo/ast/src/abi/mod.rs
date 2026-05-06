@@ -6,10 +6,9 @@ use std::rc::Rc;
 
 use sha3::{Digest, Keccak256};
 use slang_solidity_v2_common::nodes::NodeId;
-use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::binder::Definition;
 use slang_solidity_v2_semantic::context::SemanticContext;
-use slang_solidity_v2_semantic::types::{Type, TypeId};
+use slang_solidity_v2_semantic::types::{FunctionMutability, Type, TypeId};
 
 pub struct ContractAbi {
     node_id: NodeId,
@@ -46,7 +45,7 @@ impl ContractAbi {
     }
 }
 
-pub type AbiMutability = ir::FunctionMutability;
+pub type AbiMutability = FunctionMutability;
 
 #[derive(Clone, Debug)]
 pub struct AbiConstructor {

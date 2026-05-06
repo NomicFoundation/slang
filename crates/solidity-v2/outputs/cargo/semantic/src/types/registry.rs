@@ -1,9 +1,8 @@
 use std::collections::HashMap;
 
 use indexmap::IndexSet;
-use slang_solidity_v2_ir::ir;
 
-use super::{DataLocation, FunctionType, LiteralKind, Type, TypeId};
+use super::{DataLocation, FunctionType, FunctionVisibility, LiteralKind, Type, TypeId};
 use crate::types::ImplicitlyConvertible;
 
 /// The `TypeRegistry` stores an index of registered types, both elementary
@@ -358,7 +357,7 @@ impl TypeRegistry {
         function_type: FunctionType,
     ) -> FunctionType {
         FunctionType {
-            visibility: ir::FunctionVisibility::External,
+            visibility: FunctionVisibility::External,
             parameter_types: function_type
                 .parameter_types
                 .into_iter()
@@ -539,10 +538,10 @@ impl TypeRegistry {
         // The exception is if the `other` function is external which allows
         // changing the data location of parameters from `memory` to `calldata`
         // (or viceversa) if the visibility of `ftype` is external or public.
-        } else if matches!(other.visibility, ir::FunctionVisibility::External)
+        } else if matches!(other.visibility, FunctionVisibility::External)
             && matches!(
                 ftype.visibility,
-                ir::FunctionVisibility::External | ir::FunctionVisibility::Public
+                FunctionVisibility::External | FunctionVisibility::Public
             )
         {
             ftype

@@ -3,7 +3,9 @@ use slang_solidity_v2_ir::ir;
 
 use super::Pass;
 use crate::binder::{Definition, Scope};
-use crate::types::{DataLocation, FunctionType, Type, TypeId};
+use crate::types::{
+    DataLocation, FunctionMutability, FunctionType, FunctionVisibility, Type, TypeId,
+};
 
 impl Pass<'_> {
     pub(super) fn type_of_identifier_path(
@@ -146,8 +148,8 @@ impl Pass<'_> {
             implicit_receiver_type,
             parameter_types,
             return_type,
-            visibility: function_definition.visibility,
-            mutability: function_definition.mutability,
+            visibility: (&function_definition.visibility).into(),
+            mutability: (&function_definition.mutability).into(),
         })))
     }
 
@@ -238,8 +240,8 @@ impl Pass<'_> {
             implicit_receiver_type: Some(receiver_type_id),
             parameter_types,
             return_type,
-            visibility: ir::FunctionVisibility::Public,
-            mutability: ir::FunctionMutability::View,
+            visibility: FunctionVisibility::Public,
+            mutability: FunctionMutability::View,
         });
         Some(self.types.register_type(getter_type))
     }

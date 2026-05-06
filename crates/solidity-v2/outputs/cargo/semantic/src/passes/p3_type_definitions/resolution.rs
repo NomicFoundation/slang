@@ -87,8 +87,8 @@ impl Pass<'_> {
                     parameter_types,
                     return_type,
                     // TODO(validation): function types can only be internal or external
-                    visibility: function_type.visibility,
-                    mutability: function_type.mutability,
+                    visibility: (&function_type.visibility).into(),
+                    mutability: (&function_type.mutability).into(),
                 })))
             }
             ir::TypeName::MappingType(mapping_type) => {
