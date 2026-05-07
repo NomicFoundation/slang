@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use language_v2_definition::model;
 use serde::Serialize;
@@ -23,6 +23,11 @@ pub struct IrModelMutator {
 
     // Terminals that have been normalized (renamed) to a canonical equivalent.
     pub normalized_terminals: BTreeMap<model::Identifier, NormalizedTerminal>,
+
+    // Externally-defined types registered in this language. Their type
+    // definitions live outside the codegen and are referenced as
+    // `NodeType::External` in fields and choice variants.
+    pub external_types: BTreeSet<model::Identifier>,
 }
 
 #[derive(Clone, Serialize)]
@@ -240,6 +245,7 @@ impl IrModelMutator {
             collapsed_choices: BTreeMap::new(),
             terminals,
             normalized_terminals: BTreeMap::new(),
+            external_types: source.external_types.clone(),
         }
     }
 
@@ -273,6 +279,7 @@ impl IrModelMutator {
             sequences,
             choices,
             collections,
+            external_types: self.external_types.clone(),
         }
     }
 
@@ -301,27 +308,13 @@ impl IrModelMutator {
     }
 
     // Adds a synthetic (ie. not referencing any CST nodes) choice type by adding
-    // unique terminal types as the variants
+    // external terminal types as the variants
     pub fn add_enum_type(&mut self, name: &str, variants: &[&str]) {
         let mut mutated_variants = Vec::new();
         for variant in variants {
             let identifier: model::Identifier = (*variant).into();
-            if let Some(existing) = self.terminals.get(&identifier) {
-                assert!(
-                    existing.is_unique,
-                    "Attempt to insert an already existing terminal '{variant}' that is non-unique"
-                );
-            } else {
-                self.terminals.insert(
-                    identifier,
-                    MutatedTerminal {
-                        is_unique: true,
-                        is_identifier: false,
-                        is_new: true,
-                    },
-                );
-            }
-            let node_type = NodeType::UniqueTerminal((*variant).into());
+            self.external_types.insert(identifier.clone());
+            let node_type = NodeType::External(identifier);
             mutated_variants.push(MutatedVariant {
                 source: node_type.clone(),
                 target: node_type,
@@ -427,6 +420,8 @@ impl IrModelMutator {
             NodeType::Choice(identifier.clone())
         } else if self.collections.contains_key(identifier) {
             NodeType::Collection(identifier.clone())
+        } else if self.external_types.contains(identifier) {
+            NodeType::External(identifier.clone())
         } else {
             panic!("can't determine NodeType for {identifier}");
         }
@@ -589,6 +584,11 @@ impl IrModelMutator {
 
     pub fn add_collection_type(&mut self, name: &str, item_type: &str) {
         let item_type = self.find_node_type(&item_type.into());
+        assert!(
+            !item_type.is_external(),
+            "Cannot create a collection with external item type {}",
+            item_type.as_identifier()
+        );
         self.collections.insert(
             name.into(),
             MutatedCollection {
@@ -636,6 +636,22 @@ impl IrModelMutator {
                 is_unique,
             },
         );
+    }
+
+    // Register an externally-defined type. The type's Rust definition is
+    // expected to be provided manually outside the generated code; the codegen
+    // only emits references to it.
+    pub fn add_external_type(&mut self, identifier: &str) {
+        let identifier: model::Identifier = identifier.into();
+        assert!(
+            !self.terminals.contains_key(&identifier)
+                && !self.sequences.contains_key(&identifier)
+                && !self.choices.contains_key(&identifier)
+                && !self.collections.contains_key(&identifier),
+            "Cannot register external type {identifier}: name already exists"
+        );
+        let inserted = self.external_types.insert(identifier.clone());
+        assert!(inserted, "External type {identifier} is already registered");
     }
 
     pub fn add_non_unique_terminal(&mut self, identifier: &str) {

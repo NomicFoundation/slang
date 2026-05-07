@@ -37,7 +37,7 @@ use super::types::Type;
     }
     {% for field in sequence.fields -%}
       {% if field.is_optional %}
-        {% if field.field_type.kind == "UniqueTerminal" %}
+        {% if field.field_type.kind == "UniqueTerminal" or field.field_type.kind == "External" %}
           pub fn {{ field.label }}(&self) -> bool {
             self.ir_node.{{ field.label }}
           }
@@ -78,7 +78,7 @@ use super::types::Type;
   pub enum {{ parent_type }} {
     {% for variant in choice.variants -%}
       {{ variant.name }}
-      {%- if variant.kind != "UniqueTerminal" -%}
+      {%- if variant.kind != "UniqueTerminal" and variant.kind != "External" -%}
         ({{ variant.name }})
       {%- endif -%}
       ,
@@ -98,7 +98,7 @@ use super::types::Type;
           (nodes) => {{ parent_type }}::{{ variant.name }}(
             create_{{ variant.name | snake_case }}(nodes, semantic)
           ),
-        {%- elif variant.kind != "UniqueTerminal" -%}
+        {%- elif variant.kind != "UniqueTerminal" and variant.kind != "External" -%}
           (variant) => {{ parent_type }}::{{ variant.name }}(
             create_{{ variant.name | snake_case }}(variant, semantic)
           ),

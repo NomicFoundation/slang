@@ -20,11 +20,11 @@ pub(super) use slang_solidity_v2_common::nodes::NodeId;
     pub range: Range<usize>,
     {%- for field in sequence.fields %}
       pub {{ field.label | snake_case }}:
-      {%- if field.field_type.kind == "UniqueTerminal" -%}
+      {%- if field.field_type.kind == "UniqueTerminal" or field.field_type.kind == "External" -%}
         {%- if field.is_optional -%}
           bool,
         {%- else -%}
-          {{ throw(message="Cannot generate sequence field for non-optional unique terminal") }},
+          {{ throw(message="Cannot generate sequence field for non-optional unique terminal or external type") }},
         {%- endif -%}
       {%- else -%}
         {%- if field.is_optional -%}
@@ -53,7 +53,7 @@ pub(super) use slang_solidity_v2_common::nodes::NodeId;
   pub enum {{ parent_type }} {
     {% for variant in choice.variants -%}
       {{ variant.name }}
-      {%- if variant.kind != "UniqueTerminal" -%}
+      {%- if variant.kind != "UniqueTerminal" and variant.kind != "External" -%}
         ({{ variant.name }})
       {%- endif -%}
       ,

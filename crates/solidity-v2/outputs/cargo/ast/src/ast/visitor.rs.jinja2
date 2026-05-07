@@ -33,19 +33,19 @@ pub trait Visitor {
     }
     {% for field in sequence.fields -%}
       {%- if field.is_optional -%}
-        {%- if not field.field_type.is_terminal -%}
+        {%- if not field.field_type.is_terminal and field.field_type.kind != "External" -%}
           if let Some(ref {{ field.label | snake_case }}) = node.{{ field.label | snake_case }}() {
             accept_{{ field.field_type.name | snake_case }}({{ field.label | snake_case }}, visitor);
           }
-        {%- elif not target.terminals[field.field_type.name].is_unique -%}
+        {%- elif field.field_type.is_terminal and not target.terminals[field.field_type.name].is_unique -%}
           if let Some(ref {{ field.label | snake_case }}) = node.{{ field.label | snake_case }}() {
             visitor.visit_{{ field.field_type.name | snake_case }}({{ field.label | snake_case }});
           }
         {%- endif -%}
       {%- else -%}
-        {%- if not field.field_type.is_terminal -%}
+        {%- if not field.field_type.is_terminal and field.field_type.kind != "External" -%}
           accept_{{ field.field_type.name | snake_case }}(&node.{{ field.label | snake_case }}(), visitor);
-        {%- elif not target.terminals[field.field_type.name].is_unique -%}
+        {%- elif field.field_type.is_terminal and not target.terminals[field.field_type.name].is_unique -%}
           visitor.visit_{{ field.field_type.name | snake_case }}(&node.{{ field.label | snake_case }}());
         {%- endif -%}
       {%- endif -%}
@@ -66,7 +66,7 @@ pub trait Visitor {
     }
     match node {
       {% for variant in choice.variants -%}
-        {% if variant.kind == "UniqueTerminal" -%}
+        {% if variant.kind == "UniqueTerminal" or variant.kind == "External" -%}
           {{ parent_type }}::{{ variant.name }} => {},
         {% elif variant.kind == "Terminal" -%}
           {{ parent_type }}::{{ variant.name }}(ref {{ variant.name | snake_case }}) => {
