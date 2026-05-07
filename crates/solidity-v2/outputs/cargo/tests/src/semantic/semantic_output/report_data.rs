@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::fmt::Display;
 use std::ops::Range;
 
@@ -15,12 +15,12 @@ use slang_solidity_v2_semantic::types::{DataLocation, FunctionType, LiteralKind,
 
 pub(crate) struct ReportData<'a> {
     pub(crate) compilation: &'a CompilationUnit,
-    pub(crate) files: &'a HashMap<String, String>,
+    pub(crate) files: &'a BTreeMap<String, String>,
     pub(crate) parse_errors: Vec<(String, ParserError)>,
     pub(crate) all_definitions: Vec<CollectedDefinition>,
     pub(crate) all_references: Vec<CollectedReference>,
     pub(crate) unbound_identifiers: Vec<CollectedIdentifier>,
-    pub(crate) definitions_by_id: HashMap<NodeId, usize>,
+    pub(crate) definitions_by_id: BTreeMap<NodeId, usize>,
 }
 
 #[derive(Clone)]
@@ -49,7 +49,7 @@ pub(crate) struct CollectedReference {
 impl<'a> ReportData<'a> {
     pub(crate) fn prepare(
         compilation: &'a CompilationUnit,
-        files: &'a HashMap<String, String>,
+        files: &'a BTreeMap<String, String>,
         parse_errors: Vec<(String, ParserError)>,
     ) -> Self {
         let all_identifiers = collect_all_identifiers(compilation, files);
@@ -58,7 +58,7 @@ impl<'a> ReportData<'a> {
         let definitions_by_id = all_definitions
             .iter()
             .map(|definition| (definition.definition_node_id, definition.report_id))
-            .collect::<HashMap<NodeId, usize>>();
+            .collect::<BTreeMap<NodeId, usize>>();
 
         Self {
             compilation,
@@ -137,7 +137,7 @@ impl IdentifierCollector<'_> {
 
 fn collect_all_identifiers(
     compilation: &CompilationUnit,
-    files: &HashMap<String, String>,
+    files: &BTreeMap<String, String>,
 ) -> Vec<CollectedIdentifier> {
     let mut collector = IdentifierCollector {
         identifiers: Vec::new(),
@@ -430,7 +430,7 @@ impl CollectedDefinitionDisplay<'_> {
 impl CollectedReference {
     pub(crate) fn display<'a>(
         &'a self,
-        definitions_by_id: &'a HashMap<NodeId, usize>,
+        definitions_by_id: &'a BTreeMap<NodeId, usize>,
     ) -> CollectedReferenceDisplay<'a> {
         CollectedReferenceDisplay {
             reference: self,
@@ -441,7 +441,7 @@ impl CollectedReference {
 
 pub(crate) struct CollectedReferenceDisplay<'a> {
     reference: &'a CollectedReference,
-    definitions_by_id: &'a HashMap<NodeId, usize>,
+    definitions_by_id: &'a BTreeMap<NodeId, usize>,
 }
 
 impl Display for CollectedReferenceDisplay<'_> {
