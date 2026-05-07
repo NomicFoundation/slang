@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: Unexpected end of file. One of AddressKeyword, AtKeyword, BoolKeyword, BytesKeyword, CloseBrace, ConstructorKeyword, EnumKeyword, ErrorKeyword, EventKeyword, FallbackKeyword, FixedKeyword, FromKeyword, FunctionKeyword, GlobalKeyword, Identifier, IntKeyword, LayoutKeyword, MappingKeyword, ModifierKeyword, ReceiveKeyword, RevertKeyword, StringKeyword, StructKeyword, TransientKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UsingKeyword was expected
+   ╭─[input.sol:1:15]
+   │
+ 1 │ contract Foo {
+   │               │ 
+   │               ╰─ Error occurred here.
+───╯
