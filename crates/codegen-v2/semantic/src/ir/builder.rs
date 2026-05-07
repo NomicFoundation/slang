@@ -1,5 +1,8 @@
-use language_v2_definition::model::Language;
+use std::collections::BTreeSet;
 
+use language_v2_definition::model::{self, Language};
+
+use super::model::NodeType;
 use super::{IrModel, IrModelMutator, ModelWithBuilder};
 
 pub fn build_v2_ir_model(language: &Language) -> ModelWithBuilder {
@@ -26,6 +29,7 @@ pub fn build_v2_ir_model(language: &Language) -> ModelWithBuilder {
     simplify_parameters(&mut mutator);
     simplify_mapping_type_parameters(&mut mutator);
     remove_unused_types(&mut mutator);
+    remove_unreferenced_terminals(&mut mutator);
 
     mutator.into()
 }
@@ -352,4 +356,44 @@ fn remove_unused_types(mutator: &mut IrModelMutator) {
     // `OverrideSpecifier` was used both in function attributes and state
     // variable attributes, but it's no longer needed
     mutator.remove_type("OverrideSpecifier");
+}
+
+// Removes terminals that are no longer referenced by any sequence field,
+// choice variant, or collection item. Useful as a final cleanup after
+// mutations like `remove_redundant_terminal_nodes` strip otherwise-unique
+// terminals from sequence fields.
+fn remove_unreferenced_terminals(mutator: &mut IrModelMutator) {
+    let mut referenced: BTreeSet<model::Identifier> = BTreeSet::new();
+    let mut add_reference = |node_type: &NodeType| {
+        if node_type.is_terminal() {
+            referenced.insert(node_type.as_identifier().clone());
+        }
+    };
+
+    for sequence in mutator.sequences.values() {
+        for field in &sequence.fields {
+            add_reference(&field.target_type);
+        }
+    }
+    for choice in mutator.choices.values() {
+        for variant in &choice.variants {
+            add_reference(&variant.target);
+        }
+    }
+    for collection in mutator.collections.values() {
+        add_reference(&collection.target_item_type);
+    }
+    // Targets of collapsed/normalized constructs are referenced by the
+    // builder even when no live field/variant points at them directly.
+    for collapsed in mutator.collapsed_sequences.values() {
+        add_reference(&collapsed.target_type);
+    }
+    for collapsed in mutator.collapsed_choices.values() {
+        add_reference(&collapsed.target);
+    }
+    for normalized in mutator.normalized_terminals.values() {
+        referenced.insert(normalized.target.clone());
+    }
+
+    mutator.terminals.retain(|id, _| referenced.contains(id));
 }
