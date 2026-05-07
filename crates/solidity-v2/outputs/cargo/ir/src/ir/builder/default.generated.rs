@@ -35,17 +35,16 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let id = self.next_id();
         let range = source.calculate_text_range().unwrap_or_default();
         let left_operand = self.build_expression(&source.left_operand);
-        let expression_additive_expression_operator = self
-            .build_expression_additive_expression_operator(
-                &source.expression_additive_expression_operator,
-            );
+        let operator = self.build_expression_additive_expression_operator(
+            &source.expression_additive_expression_operator,
+        );
         let right_operand = self.build_expression(&source.right_operand);
 
         Rc::new(output::AdditiveExpressionStruct {
             id,
             range,
             left_operand,
-            expression_additive_expression_operator,
+            operator,
             right_operand,
         })
     }
@@ -148,17 +147,16 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let id = self.next_id();
         let range = source.calculate_text_range().unwrap_or_default();
         let left_operand = self.build_expression(&source.left_operand);
-        let expression_assignment_expression_operator = self
-            .build_expression_assignment_expression_operator(
-                &source.expression_assignment_expression_operator,
-            );
+        let operator = self.build_expression_assignment_expression_operator(
+            &source.expression_assignment_expression_operator,
+        );
         let right_operand = self.build_expression(&source.right_operand);
 
         Rc::new(output::AssignmentExpressionStruct {
             id,
             range,
             left_operand,
-            expression_assignment_expression_operator,
+            operator,
             right_operand,
         })
     }
@@ -400,17 +398,16 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let id = self.next_id();
         let range = source.calculate_text_range().unwrap_or_default();
         let left_operand = self.build_expression(&source.left_operand);
-        let expression_equality_expression_operator = self
-            .build_expression_equality_expression_operator(
-                &source.expression_equality_expression_operator,
-            );
+        let operator = self.build_expression_equality_expression_operator(
+            &source.expression_equality_expression_operator,
+        );
         let right_operand = self.build_expression(&source.right_operand);
 
         Rc::new(output::EqualityExpressionStruct {
             id,
             range,
             left_operand,
-            expression_equality_expression_operator,
+            operator,
             right_operand,
         })
     }
@@ -576,17 +573,16 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let id = self.next_id();
         let range = source.calculate_text_range().unwrap_or_default();
         let left_operand = self.build_expression(&source.left_operand);
-        let expression_inequality_expression_operator = self
-            .build_expression_inequality_expression_operator(
-                &source.expression_inequality_expression_operator,
-            );
+        let operator = self.build_expression_inequality_expression_operator(
+            &source.expression_inequality_expression_operator,
+        );
         let right_operand = self.build_expression(&source.right_operand);
 
         Rc::new(output::InequalityExpressionStruct {
             id,
             range,
             left_operand,
-            expression_inequality_expression_operator,
+            operator,
             right_operand,
         })
     }
@@ -725,17 +721,16 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let id = self.next_id();
         let range = source.calculate_text_range().unwrap_or_default();
         let left_operand = self.build_expression(&source.left_operand);
-        let expression_multiplicative_expression_operator = self
-            .build_expression_multiplicative_expression_operator(
-                &source.expression_multiplicative_expression_operator,
-            );
+        let operator = self.build_expression_multiplicative_expression_operator(
+            &source.expression_multiplicative_expression_operator,
+        );
         let right_operand = self.build_expression(&source.right_operand);
 
         Rc::new(output::MultiplicativeExpressionStruct {
             id,
             range,
             left_operand,
-            expression_multiplicative_expression_operator,
+            operator,
             right_operand,
         })
     }
@@ -813,16 +808,15 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let id = self.next_id();
         let range = source.calculate_text_range().unwrap_or_default();
         let operand = self.build_expression(&source.operand);
-        let expression_postfix_expression_operator = self
-            .build_expression_postfix_expression_operator(
-                &source.expression_postfix_expression_operator,
-            );
+        let operator = self.build_expression_postfix_expression_operator(
+            &source.expression_postfix_expression_operator,
+        );
 
         Rc::new(output::PostfixExpressionStruct {
             id,
             range,
             operand,
-            expression_postfix_expression_operator,
+            operator,
         })
     }
 
@@ -843,16 +837,15 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     ) -> output::PrefixExpression {
         let id = self.next_id();
         let range = source.calculate_text_range().unwrap_or_default();
-        let expression_prefix_expression_operator = self
-            .build_expression_prefix_expression_operator(
-                &source.expression_prefix_expression_operator,
-            );
+        let operator = self.build_expression_prefix_expression_operator(
+            &source.expression_prefix_expression_operator,
+        );
         let operand = self.build_expression(&source.operand);
 
         Rc::new(output::PrefixExpressionStruct {
             id,
             range,
-            expression_prefix_expression_operator,
+            operator,
             operand,
         })
     }
@@ -899,7 +892,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let id = self.next_id();
         let range = source.calculate_text_range().unwrap_or_default();
         let left_operand = self.build_expression(&source.left_operand);
-        let expression_shift_expression_operator = self.build_expression_shift_expression_operator(
+        let operator = self.build_expression_shift_expression_operator(
             &source.expression_shift_expression_operator,
         );
         let right_operand = self.build_expression(&source.right_operand);
@@ -908,7 +901,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             id,
             range,
             left_operand,
-            expression_shift_expression_operator,
+            operator,
             right_operand,
         })
     }

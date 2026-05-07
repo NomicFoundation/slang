@@ -80,13 +80,8 @@ impl AdditiveExpressionStruct {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
-    pub fn expression_additive_expression_operator(
-        &self,
-    ) -> Expression_AdditiveExpression_Operator {
-        create_expression_additive_expression_operator(
-            &self.ir_node.expression_additive_expression_operator,
-            &self.semantic,
-        )
+    pub fn operator(&self) -> Expression_AdditiveExpression_Operator {
+        create_expression_additive_expression_operator(&self.ir_node.operator, &self.semantic)
     }
 
     pub fn right_operand(&self) -> Expression {
@@ -355,13 +350,8 @@ impl AssignmentExpressionStruct {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
-    pub fn expression_assignment_expression_operator(
-        &self,
-    ) -> Expression_AssignmentExpression_Operator {
-        create_expression_assignment_expression_operator(
-            &self.ir_node.expression_assignment_expression_operator,
-            &self.semantic,
-        )
+    pub fn operator(&self) -> Expression_AssignmentExpression_Operator {
+        create_expression_assignment_expression_operator(&self.ir_node.operator, &self.semantic)
     }
 
     pub fn right_operand(&self) -> Expression {
@@ -1117,13 +1107,8 @@ impl EqualityExpressionStruct {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
-    pub fn expression_equality_expression_operator(
-        &self,
-    ) -> Expression_EqualityExpression_Operator {
-        create_expression_equality_expression_operator(
-            &self.ir_node.expression_equality_expression_operator,
-            &self.semantic,
-        )
+    pub fn operator(&self) -> Expression_EqualityExpression_Operator {
+        create_expression_equality_expression_operator(&self.ir_node.operator, &self.semantic)
     }
 
     pub fn right_operand(&self) -> Expression {
@@ -1855,13 +1840,8 @@ impl InequalityExpressionStruct {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
-    pub fn expression_inequality_expression_operator(
-        &self,
-    ) -> Expression_InequalityExpression_Operator {
-        create_expression_inequality_expression_operator(
-            &self.ir_node.expression_inequality_expression_operator,
-            &self.semantic,
-        )
+    pub fn operator(&self) -> Expression_InequalityExpression_Operator {
+        create_expression_inequality_expression_operator(&self.ir_node.operator, &self.semantic)
     }
 
     pub fn right_operand(&self) -> Expression {
@@ -2263,13 +2243,8 @@ impl MultiplicativeExpressionStruct {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
-    pub fn expression_multiplicative_expression_operator(
-        &self,
-    ) -> Expression_MultiplicativeExpression_Operator {
-        create_expression_multiplicative_expression_operator(
-            &self.ir_node.expression_multiplicative_expression_operator,
-            &self.semantic,
-        )
+    pub fn operator(&self) -> Expression_MultiplicativeExpression_Operator {
+        create_expression_multiplicative_expression_operator(&self.ir_node.operator, &self.semantic)
     }
 
     pub fn right_operand(&self) -> Expression {
@@ -2540,11 +2515,8 @@ impl PostfixExpressionStruct {
         create_expression(&self.ir_node.operand, &self.semantic)
     }
 
-    pub fn expression_postfix_expression_operator(&self) -> Expression_PostfixExpression_Operator {
-        create_expression_postfix_expression_operator(
-            &self.ir_node.expression_postfix_expression_operator,
-            &self.semantic,
-        )
+    pub fn operator(&self) -> Expression_PostfixExpression_Operator {
+        create_expression_postfix_expression_operator(&self.ir_node.operator, &self.semantic)
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -2621,11 +2593,8 @@ impl PrefixExpressionStruct {
         self.ir_node.id()
     }
 
-    pub fn expression_prefix_expression_operator(&self) -> Expression_PrefixExpression_Operator {
-        create_expression_prefix_expression_operator(
-            &self.ir_node.expression_prefix_expression_operator,
-            &self.semantic,
-        )
+    pub fn operator(&self) -> Expression_PrefixExpression_Operator {
+        create_expression_prefix_expression_operator(&self.ir_node.operator, &self.semantic)
     }
 
     pub fn operand(&self) -> Expression {
@@ -2756,11 +2725,8 @@ impl ShiftExpressionStruct {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
-    pub fn expression_shift_expression_operator(&self) -> Expression_ShiftExpression_Operator {
-        create_expression_shift_expression_operator(
-            &self.ir_node.expression_shift_expression_operator,
-            &self.semantic,
-        )
+    pub fn operator(&self) -> Expression_ShiftExpression_Operator {
+        create_expression_shift_expression_operator(&self.ir_node.operator, &self.semantic)
     }
 
     pub fn right_operand(&self) -> Expression {

@@ -956,10 +956,7 @@ pub fn accept_additive_expression(node: &AdditiveExpression, visitor: &mut impl 
         return;
     }
     accept_expression(&node.left_operand, visitor);
-    accept_expression_additive_expression_operator(
-        &node.expression_additive_expression_operator,
-        visitor,
-    );
+    accept_expression_additive_expression_operator(&node.operator, visitor);
     accept_expression(&node.right_operand, visitor);
     visitor.leave_additive_expression(node);
 }
@@ -1015,10 +1012,7 @@ pub fn accept_assignment_expression(node: &AssignmentExpression, visitor: &mut i
         return;
     }
     accept_expression(&node.left_operand, visitor);
-    accept_expression_assignment_expression_operator(
-        &node.expression_assignment_expression_operator,
-        visitor,
-    );
+    accept_expression_assignment_expression_operator(&node.operator, visitor);
     accept_expression(&node.right_operand, visitor);
     visitor.leave_assignment_expression(node);
 }
@@ -1186,10 +1180,7 @@ pub fn accept_equality_expression(node: &EqualityExpression, visitor: &mut impl 
         return;
     }
     accept_expression(&node.left_operand, visitor);
-    accept_expression_equality_expression_operator(
-        &node.expression_equality_expression_operator,
-        visitor,
-    );
+    accept_expression_equality_expression_operator(&node.operator, visitor);
     accept_expression(&node.right_operand, visitor);
     visitor.leave_equality_expression(node);
 }
@@ -1359,10 +1350,7 @@ pub fn accept_inequality_expression(node: &InequalityExpression, visitor: &mut i
         return;
     }
     accept_expression(&node.left_operand, visitor);
-    accept_expression_inequality_expression_operator(
-        &node.expression_inequality_expression_operator,
-        visitor,
-    );
+    accept_expression_inequality_expression_operator(&node.operator, visitor);
     accept_expression(&node.right_operand, visitor);
     visitor.leave_inequality_expression(node);
 }
@@ -1458,10 +1446,7 @@ pub fn accept_multiplicative_expression(
         return;
     }
     accept_expression(&node.left_operand, visitor);
-    accept_expression_multiplicative_expression_operator(
-        &node.expression_multiplicative_expression_operator,
-        visitor,
-    );
+    accept_expression_multiplicative_expression_operator(&node.operator, visitor);
     accept_expression(&node.right_operand, visitor);
     visitor.leave_multiplicative_expression(node);
 }
@@ -1521,10 +1506,7 @@ pub fn accept_postfix_expression(node: &PostfixExpression, visitor: &mut impl Vi
         return;
     }
     accept_expression(&node.operand, visitor);
-    accept_expression_postfix_expression_operator(
-        &node.expression_postfix_expression_operator,
-        visitor,
-    );
+    accept_expression_postfix_expression_operator(&node.operator, visitor);
     visitor.leave_postfix_expression(node);
 }
 
@@ -1540,10 +1522,7 @@ pub fn accept_prefix_expression(node: &PrefixExpression, visitor: &mut impl Visi
     if !visitor.enter_prefix_expression(node) {
         return;
     }
-    accept_expression_prefix_expression_operator(
-        &node.expression_prefix_expression_operator,
-        visitor,
-    );
+    accept_expression_prefix_expression_operator(&node.operator, visitor);
     accept_expression(&node.operand, visitor);
     visitor.leave_prefix_expression(node);
 }
@@ -1572,10 +1551,7 @@ pub fn accept_shift_expression(node: &ShiftExpression, visitor: &mut impl Visito
         return;
     }
     accept_expression(&node.left_operand, visitor);
-    accept_expression_shift_expression_operator(
-        &node.expression_shift_expression_operator,
-        visitor,
-    );
+    accept_expression_shift_expression_operator(&node.operator, visitor);
     accept_expression(&node.right_operand, visitor);
     visitor.leave_shift_expression(node);
 }

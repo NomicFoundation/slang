@@ -28,6 +28,7 @@ pub fn build_v2_ir_model(language: &Language) -> ModelWithBuilder {
     simplify_imports(&mut mutator);
     simplify_parameters(&mut mutator);
     simplify_mapping_type_parameters(&mut mutator);
+    rename_operator_fields(&mut mutator);
     remove_unused_types(&mut mutator);
     remove_unreferenced_terminals(&mut mutator);
 
@@ -356,6 +357,31 @@ fn remove_unused_types(mutator: &mut IrModelMutator) {
     // `OverrideSpecifier` was used both in function attributes and state
     // variable attributes, but it's no longer needed
     mutator.remove_type("OverrideSpecifier");
+}
+
+// Rename auto-generated operator fields like `expression_prefix_expression_operator`
+// down to a uniform `operator` so consumers don't have to spell out the long
+// generated name. The long names come from `add_precedence_expression`'s
+// multi-operator branch, which formats `<base>_<expression>_Operator`.
+fn rename_operator_fields(mutator: &mut IrModelMutator) {
+    let renames: Vec<(model::Identifier, model::Identifier)> = mutator
+        .sequences
+        .iter()
+        .flat_map(|(sequence_id, sequence)| {
+            sequence
+                .fields
+                .iter()
+                .filter(|field| {
+                    let label = field.label.as_str();
+                    label != "operator" && label.ends_with("_operator")
+                })
+                .map(move |field| (sequence_id.clone(), field.label.clone()))
+        })
+        .collect();
+
+    for (sequence_id, old_label) in renames {
+        mutator.rename_sequence_field(sequence_id.as_str(), old_label.as_str(), "operator");
+    }
 }
 
 // Removes terminals that are no longer referenced by any sequence field,

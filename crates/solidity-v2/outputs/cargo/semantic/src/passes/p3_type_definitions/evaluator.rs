@@ -165,7 +165,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
     ) -> Option<ConstantValue> {
         let lhs = self.evaluate_expression(&shift_expression.left_operand)?;
         let rhs = self.evaluate_expression(&shift_expression.right_operand)?;
-        match &shift_expression.expression_shift_expression_operator {
+        match &shift_expression.operator {
             ir::Expression_ShiftExpression_Operator::LessThanLessThan(_) => match (lhs, rhs) {
                 (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
                     Some(ConstantValue::Integer(lhs << rhs.to_u32()?))
@@ -188,7 +188,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
     ) -> Option<ConstantValue> {
         let lhs = self.evaluate_expression(&additive_expression.left_operand)?;
         let rhs = self.evaluate_expression(&additive_expression.right_operand)?;
-        match &additive_expression.expression_additive_expression_operator {
+        match &additive_expression.operator {
             ir::Expression_AdditiveExpression_Operator::Plus(_) => match (lhs, rhs) {
                 (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
                     Some(ConstantValue::Integer(lhs + rhs))
@@ -208,7 +208,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
     ) -> Option<ConstantValue> {
         let lhs = self.evaluate_expression(&multiplicative_expression.left_operand)?;
         let rhs = self.evaluate_expression(&multiplicative_expression.right_operand)?;
-        match &multiplicative_expression.expression_multiplicative_expression_operator {
+        match &multiplicative_expression.operator {
             ir::Expression_MultiplicativeExpression_Operator::Asterisk(_) => match (lhs, rhs) {
                 (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
                     Some(ConstantValue::Integer(lhs * rhs))
@@ -246,7 +246,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
         prefix_expression: &ir::PrefixExpression,
     ) -> Option<ConstantValue> {
         let operand = self.evaluate_expression(&prefix_expression.operand)?;
-        match &prefix_expression.expression_prefix_expression_operator {
+        match &prefix_expression.operator {
             ir::Expression_PrefixExpression_Operator::Minus(_) => match operand {
                 ConstantValue::Integer(value) => Some(ConstantValue::Integer(BigInt::ZERO - value)),
             },

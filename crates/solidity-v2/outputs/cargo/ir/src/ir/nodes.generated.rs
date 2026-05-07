@@ -34,7 +34,7 @@ pub struct AdditiveExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub left_operand: Expression,
-    pub expression_additive_expression_operator: Expression_AdditiveExpression_Operator,
+    pub operator: Expression_AdditiveExpression_Operator,
     pub right_operand: Expression,
 }
 
@@ -130,7 +130,7 @@ pub struct AssignmentExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub left_operand: Expression,
-    pub expression_assignment_expression_operator: Expression_AssignmentExpression_Operator,
+    pub operator: Expression_AssignmentExpression_Operator,
     pub right_operand: Expression,
 }
 
@@ -404,7 +404,7 @@ pub struct EqualityExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub left_operand: Expression,
-    pub expression_equality_expression_operator: Expression_EqualityExpression_Operator,
+    pub operator: Expression_EqualityExpression_Operator,
     pub right_operand: Expression,
 }
 
@@ -657,7 +657,7 @@ pub struct InequalityExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub left_operand: Expression,
-    pub expression_inequality_expression_operator: Expression_InequalityExpression_Operator,
+    pub operator: Expression_InequalityExpression_Operator,
     pub right_operand: Expression,
 }
 
@@ -802,7 +802,7 @@ pub struct MultiplicativeExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub left_operand: Expression,
-    pub expression_multiplicative_expression_operator: Expression_MultiplicativeExpression_Operator,
+    pub operator: Expression_MultiplicativeExpression_Operator,
     pub right_operand: Expression,
 }
 
@@ -900,7 +900,7 @@ pub struct PostfixExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub operand: Expression,
-    pub expression_postfix_expression_operator: Expression_PostfixExpression_Operator,
+    pub operator: Expression_PostfixExpression_Operator,
 }
 
 impl PostfixExpressionStruct {
@@ -930,7 +930,7 @@ pub type PrefixExpression = Rc<PrefixExpressionStruct>;
 pub struct PrefixExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
-    pub expression_prefix_expression_operator: Expression_PrefixExpression_Operator,
+    pub operator: Expression_PrefixExpression_Operator,
     pub operand: Expression,
 }
 
@@ -978,7 +978,7 @@ pub struct ShiftExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub left_operand: Expression,
-    pub expression_shift_expression_operator: Expression_ShiftExpression_Operator,
+    pub operator: Expression_ShiftExpression_Operator,
     pub right_operand: Expression,
 }
 

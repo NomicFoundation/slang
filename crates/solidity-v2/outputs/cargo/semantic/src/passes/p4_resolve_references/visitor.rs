@@ -269,7 +269,7 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_prefix_expression(&mut self, node: &ir::PrefixExpression) {
-        let type_id = match node.expression_prefix_expression_operator {
+        let type_id = match node.operator {
             Expression_PrefixExpression_Operator::PlusPlus(_)
             | Expression_PrefixExpression_Operator::MinusMinus(_)
             | Expression_PrefixExpression_Operator::Minus(_)
