@@ -288,17 +288,6 @@ impl IrModelMutator {
         }
     }
 
-    pub fn add_choice_type(&mut self, name: &str) {
-        self.choices.insert(
-            name.into(),
-            MutatedChoice {
-                variants: Vec::new(),
-                is_new: true,
-                has_removed_variants: false,
-            },
-        );
-    }
-
     pub fn add_choice_variant(&mut self, choice_id: &str, variant: &str) {
         let variant_type = self.find_node_type(&variant.into());
         let identifier: model::Identifier = choice_id.into();
@@ -647,22 +636,6 @@ impl IrModelMutator {
         );
     }
 
-    // Register an externally-defined type. The type's Rust definition is
-    // expected to be provided manually outside the generated code; the codegen
-    // only emits references to it.
-    pub fn add_external_type(&mut self, identifier: &str) {
-        let identifier: model::Identifier = identifier.into();
-        assert!(
-            !self.terminals.contains_key(&identifier)
-                && !self.sequences.contains_key(&identifier)
-                && !self.choices.contains_key(&identifier)
-                && !self.collections.contains_key(&identifier),
-            "Cannot register external type {identifier}: name already exists"
-        );
-        let inserted = self.external_types.insert(identifier.clone());
-        assert!(inserted, "External type {identifier} is already registered");
-    }
-
     // Renames a field within a sequence without altering the type it
     // references. The original (CST input) field name is preserved in
     // `source_label` so the auto-builder still reads from the right source.
@@ -679,24 +652,5 @@ impl IrModelMutator {
             .find(|field| field.label == old_label_id)
             .unwrap_or_else(|| panic!("Field {old_label} not found in sequence {sequence_id}"));
         field.label = new_label_id;
-    }
-
-    pub fn add_non_unique_terminal(&mut self, identifier: &str) {
-        let identifier: model::Identifier = (*identifier).into();
-        if let Some(existing) = self.terminals.get(&identifier) {
-            assert!(
-                !existing.is_unique,
-                "Existing terminal {identifier} is unique",
-            );
-        } else {
-            self.terminals.insert(
-                identifier,
-                MutatedTerminal {
-                    is_unique: false,
-                    is_identifier: false,
-                    is_new: true,
-                },
-            );
-        }
     }
 }
