@@ -1,9 +1,10 @@
+use serde::Serialize;
+
 use crate::diagnostics::extensions::DiagnosticExtensions;
 use crate::diagnostics::kinds::syntax::SyntaxDiagnosticKind;
 use crate::diagnostics::kinds::DiagnosticKind;
 use crate::diagnostics::severity::DiagnosticSeverity;
 use crate::versions::LanguageVersionSpecifier;
-use serde::Serialize;
 
 /// Diagnostic emitted when a piece of syntax is not available for the
 /// currently selected language version (either introduced later or

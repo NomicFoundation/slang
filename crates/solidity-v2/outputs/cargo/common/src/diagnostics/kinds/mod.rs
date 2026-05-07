@@ -11,7 +11,7 @@ use crate::diagnostics::kinds::utils::define_diagnostic_kind;
 define_diagnostic_kind! {
     /// Top-level classification of a diagnostic by the subsystem that produced
     /// it. Callers that only care about rendering should rely on
-    /// [`DiagnosticExtensions`] instead of matching on this enum directly.
+    /// [`crate::diagnostics::extensions::DiagnosticExtensions`] instead of matching on this enum directly.
     #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
     pub enum DiagnosticKind {
         /// A diagnostic produced while driving the compilation pipeline.
