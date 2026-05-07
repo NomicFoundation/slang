@@ -18,13 +18,13 @@ impl CodegenRuntime {
     ) -> Result<()> {
         let tera = TeraWrapper::new(dir)?;
 
-        let all_templates = tera.find_all_templates()?
-        .filter(|path| 
+        let all_templates = tera
+            .find_all_templates()?
+            .filter(|path|
             // Templates starting with underscore are meant to contain common macros.
             // They are not rendered directly, but imported by other templates.
-            !path.unwrap_name().starts_with('_')
-        )
-        .collect::<Vec<_>>();
+            !path.unwrap_name().starts_with('_'))
+            .collect::<Vec<_>>();
 
         assert!(
             !all_templates.is_empty(),
