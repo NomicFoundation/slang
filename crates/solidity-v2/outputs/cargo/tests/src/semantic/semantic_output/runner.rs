@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::convert::Infallible;
 
 use anyhow::Result;
@@ -18,7 +18,7 @@ use crate::utils::multi_part_file::split_multi_file;
 use crate::utils::path_resolver;
 
 struct TestConfig {
-    files: HashMap<String, String>,
+    files: BTreeMap<String, String>,
 }
 
 impl CompilationBuilderConfig for TestConfig {
@@ -49,7 +49,7 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
 
     let multi_part = split_multi_file(&contents);
 
-    let files: HashMap<String, String> = multi_part
+    let files: BTreeMap<String, String> = multi_part
         .parts
         .iter()
         .map(|part| (part.name.to_string(), part.contents.to_string()))

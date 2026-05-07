@@ -2,43 +2,45 @@
 
 #![allow(clippy::wildcard_imports)]
 
+use std::rc::Rc;
+
 use crate::structured_cst::nodes::*;
 
 /// A trait for CST nodes that can report the start offset of their text range.
 pub(super) trait TextStart {
     /// Returns the start offset of this node's text, or `None` if the node is empty.
-    fn text_start(&self) -> Option<usize>;
+    fn calculate_text_start(&self) -> Option<usize>;
 }
 
 impl<T: TextStart> TextStart for Option<T> {
-    fn text_start(&self) -> Option<usize> {
-        self.as_ref().and_then(TextStart::text_start)
+    fn calculate_text_start(&self) -> Option<usize> {
+        self.as_ref().and_then(TextStart::calculate_text_start)
+    }
+}
+
+impl<T: TextStart> TextStart for Rc<T> {
+    fn calculate_text_start(&self) -> Option<usize> {
+        (**self).calculate_text_start()
     }
 }
 
 {% for parent_type, sequence in target.sequences %}
     impl TextStart for {{ parent_type }}Struct {
-        fn text_start(&self) -> Option<usize> {
+        fn calculate_text_start(&self) -> Option<usize> {
             None
             {%- for field in sequence.fields %}
-                .or_else(|| self.{{ field.label | snake_case }}.text_start())
+                .or_else(|| self.{{ field.label | snake_case }}.calculate_text_start())
             {%- endfor %}
-        }
-    }
-
-    impl TextStart for {{ parent_type }} {
-        fn text_start(&self) -> Option<usize> {
-            self.as_ref().text_start()
         }
     }
 {% endfor %}
 
 {% for parent_type, choice in target.choices %}
     impl TextStart for {{ parent_type }} {
-        fn text_start(&self) -> Option<usize> {
+        fn calculate_text_start(&self) -> Option<usize> {
             match self {
                 {%- for variant in choice.variants %}
-                    {{ parent_type }}::{{ variant.variant_type.name }}(child) => child.text_start(),
+                    {{ parent_type }}::{{ variant.variant_type.name }}(child) => child.calculate_text_start(),
                 {%- endfor %}
             }
         }
@@ -47,15 +49,15 @@ impl<T: TextStart> TextStart for Option<T> {
 
 {% for parent_type, collection in target.collections %}
     impl TextStart for {{ parent_type }} {
-        fn text_start(&self) -> Option<usize> {
-            self.elements.iter().find_map(TextStart::text_start)
+        fn calculate_text_start(&self) -> Option<usize> {
+            self.elements.iter().find_map(TextStart::calculate_text_start)
         }
     }
 {% endfor %}
 
 {% for parent_type in target.terminals %}
     impl TextStart for {{ parent_type }} {
-        fn text_start(&self) -> Option<usize> {
+        fn calculate_text_start(&self) -> Option<usize> {
             Some(self.range.start)
         }
     }

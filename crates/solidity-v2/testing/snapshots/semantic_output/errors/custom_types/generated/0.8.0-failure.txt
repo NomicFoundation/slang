@@ -1,0 +1,85 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: This syntax was introduced in version '0.8.4'.
+    ╭─[input.sol:7:5]
+    │
+  7 │ ╭─▶     error Failure(
+    ┆ ┆   
+ 10 │ ├─▶     );
+    │ │            
+    │ ╰──────────── Error occurred here.
+────╯
+Error: This syntax was introduced in version '0.8.4'.
+    ╭─[input.sol:13:9]
+    │
+ 13 │         revert Failure(Severity.ERROR, "Testing");
+    │         ─────────────────────┬────────────────────  
+    │                              ╰────────────────────── Error occurred here.
+────╯
+
+------------------------------------------------------------------------
+
+Definitions (8):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["Severity" @ input.sol:2:10] (enum)
+- Def: #3 ["INFO" @ input.sol:3:9] (enum member of Severity)
+- Def: #4 ["ERROR" @ input.sol:4:9] (enum member of Severity)
+- Def: #5 ["Failure" @ input.sol:7:11] (error)
+- Def: #6 ["severity" @ input.sol:8:18] (parameter, type: Severity)
+- Def: #7 ["cause" @ input.sol:9:16] (parameter, type: string memory)
+- Def: #8 ["test" @ input.sol:12:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["Severity" @ input.sol:8:9] -> #2
+- Ref: ["Failure" @ input.sol:13:16] -> #5
+- Ref: ["Severity" @ input.sol:13:24] -> #2
+- Ref: ["ERROR" @ input.sol:13:33] -> #4
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     enum Severity {
+    │          ────┬───  
+    │              ╰───── name: 2
+  3 │         INFO,
+    │         ──┬─  
+    │           ╰─── name: 3
+  4 │         ERROR
+    │         ──┬──  
+    │           ╰──── name: 4
+    │ 
+  7 │     error Failure(
+    │           ───┬───  
+    │              ╰───── name: 5
+  8 │         Severity severity,
+    │         ────┬─── ────┬───  
+    │             ╰────────────── ref: 2
+    │                      │     
+    │                      ╰───── name: 6
+  9 │         string cause
+    │                ──┬──  
+    │                  ╰──── name: 7
+    │ 
+ 12 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 8
+ 13 │         revert Failure(Severity.ERROR, "Testing");
+    │                ───┬─── ────┬─── ──┬──  
+    │                   ╰──────────────────── ref: 5
+    │                            │      │    
+    │                            ╰─────────── ref: 2
+    │                                   │    
+    │                                   ╰──── ref: 4
+────╯

@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::fmt::Write;
 use std::ops::Range;
 
@@ -91,7 +91,7 @@ fn report_all_definitions(
 fn report_all_references(
     report: &mut String,
     all_references: &[CollectedReference],
-    definitions_by_id: &HashMap<NodeId, usize>,
+    definitions_by_id: &BTreeMap<NodeId, usize>,
 ) -> Result<()> {
     writeln!(
         report,
@@ -130,7 +130,7 @@ fn report_unbound_identifiers(
 fn report_parse_errors(
     report: &mut String,
     parse_errors: &[(String, ParserError)],
-    file_contents: &HashMap<String, String>,
+    file_contents: &BTreeMap<String, String>,
 ) -> Result<()> {
     writeln!(report, "Parse errors:")?;
     for (file_id, error) in parse_errors {
@@ -148,7 +148,7 @@ fn render_bindings_for_file(
     all_definitions: &[CollectedDefinition],
     all_references: &[CollectedReference],
     unbound_identifiers: &[CollectedIdentifier],
-    definitions_by_id: &HashMap<NodeId, usize>,
+    definitions_by_id: &BTreeMap<NodeId, usize>,
 ) -> Result<()> {
     let mut builder: BuilderType<'_> =
         Report::build(ReportKind::Custom("Bindings", Color::Unset), file_id, 0)

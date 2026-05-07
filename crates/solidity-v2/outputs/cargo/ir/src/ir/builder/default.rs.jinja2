@@ -20,7 +20,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
       pub(super) fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }}
       {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         {%- for field in sequence.fields %}
           let {{ field.label | snake_case }} =
           {%- if field.is_optional -%}
