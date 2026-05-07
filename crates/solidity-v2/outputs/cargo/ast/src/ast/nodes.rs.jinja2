@@ -94,7 +94,7 @@ use super::types::Type;
     match ir_node {
       {% for variant in choice.variants -%}
         ir::{{ parent_type }}::{{ variant.name }}
-        {%- if target.collections is containing(variant.name) -%}
+        {%- if variant.kind == "Collection" -%}
           (nodes) => {{ parent_type }}::{{ variant.name }}(
             create_{{ variant.name | snake_case }}(nodes, semantic)
           ),
