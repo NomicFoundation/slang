@@ -1,3 +1,5 @@
+use serde::Serialize;
+
 use crate::diagnostics::extensions::DiagnosticExtensions;
 use crate::diagnostics::kinds::compilation::CompilationDiagnosticKind;
 use crate::diagnostics::kinds::DiagnosticKind;
@@ -5,7 +7,7 @@ use crate::diagnostics::severity::DiagnosticSeverity;
 
 /// Diagnostic emitted when the compilation pipeline cannot resolve an
 /// `import` directive to a concrete file identifier.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 pub struct UnresolvedImport {
     /// A human-readable description of why resolution failed, typically the
     /// eagerly-formatted error produced by the configured resolver.

@@ -65,7 +65,7 @@ impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
             config,
 
             language_version,
-            diagnostics: DiagnosticCollection::new(),
+            diagnostics: DiagnosticCollection::default(),
 
             files: BTreeMap::new(),
             seen_files: HashSet::new(),

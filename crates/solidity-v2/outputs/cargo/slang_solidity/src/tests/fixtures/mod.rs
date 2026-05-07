@@ -87,7 +87,15 @@ pub(super) fn build_compilation_unit_from_fixture(
         builder.add_file(file.id.to_owned());
     }
 
-    Rc::new(builder.build())
+    let unit = builder.build();
+
+    assert!(
+        unit.diagnostics().is_empty(),
+        "expected no diagnostics, but found: {:#?}",
+        unit.diagnostics()
+    );
+
+    Rc::new(unit)
 }
 
 // Fixture build tests

@@ -1,5 +1,7 @@
 use std::ops::Range;
 
+use serde::Serialize;
+
 use crate::diagnostics::extensions::DiagnosticExtensions;
 use crate::diagnostics::kinds::DiagnosticKind;
 use crate::diagnostics::severity::DiagnosticSeverity;
@@ -12,7 +14,7 @@ use crate::diagnostics::severity::DiagnosticSeverity;
 /// Build one by passing any leaf diagnostic (or group enum) as the `kind`
 /// argument; the `impl Into<DiagnosticKind>` bound takes care of the
 /// conversion via the `From` chain in [`crate::diagnostics::kinds`].
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 pub struct Diagnostic {
     file_id: String,
     text_range: Range<usize>,

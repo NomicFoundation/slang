@@ -1,6 +1,7 @@
 use std::collections::BTreeSet;
 
 use itertools::Itertools;
+use serde::Serialize;
 
 use crate::diagnostics::extensions::DiagnosticExtensions;
 use crate::diagnostics::kinds::syntax::SyntaxDiagnosticKind;
@@ -10,10 +11,8 @@ use crate::terminals::TerminalKind;
 
 /// Diagnostic emitted when the parser encounters the end of the input while
 /// one or more terminals were still expected.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 pub struct UnexpectedEof {
-    /// The end-of-file terminal that was actually found at the failure site.
-    pub found: TerminalKind,
     /// The set of terminals that could have legally appeared at this position.
     pub expected: BTreeSet<TerminalKind>,
 }

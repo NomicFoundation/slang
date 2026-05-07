@@ -1,3 +1,5 @@
+use serde::Serialize;
+
 use crate::diagnostics::extensions::DiagnosticExtensions;
 use crate::diagnostics::kinds::compilation::CompilationDiagnosticKind;
 use crate::diagnostics::kinds::DiagnosticKind;
@@ -5,7 +7,7 @@ use crate::diagnostics::severity::DiagnosticSeverity;
 
 /// Diagnostic emitted when the compilation pipeline is asked to read a file
 /// that cannot be provided by the configured `read_file` callback.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 pub struct MissingFile {
     /// A human-readable description of why the file could not be read.
     pub reason: String,

@@ -1,3 +1,5 @@
+use serde::Serialize;
+
 use crate::diagnostics::extensions::DiagnosticExtensions;
 use crate::diagnostics::kinds::syntax::SyntaxDiagnosticKind;
 use crate::diagnostics::kinds::DiagnosticKind;
@@ -6,7 +8,7 @@ use crate::terminals::TerminalKind;
 
 /// Diagnostic emitted when additional input is found after the parser has
 /// already consumed a complete source unit and expected end-of-file.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 pub struct ExtraTerminal {
     /// The extra terminal kind that was encountered past the end of the unit.
     pub found: TerminalKind,
