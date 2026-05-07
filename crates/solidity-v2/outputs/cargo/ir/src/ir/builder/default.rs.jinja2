@@ -26,12 +26,12 @@ impl<S: Source> CstToIrBuilder<'_, S> {
           {%- if field.field_type.kind == "External" -%}
             {{ throw(message="Cannot auto-build external sequence field") }};
           {%- elif field.is_optional -%}
-            source.{{ field.label }}.as_ref().map(
+            source.{{ field.source_label | snake_case }}.as_ref().map(
               |value| self.build_{{ field.field_type.name | snake_case }}(value)
             );
           {%- else -%}
             {# Non-optional unique terminals should be elided at this point #}
-            self.build_{{ field.field_type.name | snake_case }}(&source.{{ field.label | snake_case }});
+            self.build_{{ field.field_type.name | snake_case }}(&source.{{ field.source_label | snake_case }});
           {%- endif -%}
         {%- endfor %}
 

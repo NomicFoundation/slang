@@ -78,7 +78,11 @@ pub struct CollapsedChoice {
 
 #[derive(Clone, Serialize)]
 pub struct MutatedField {
+    // Output (IR struct) field name. Updated by `rename_sequence_field`.
     pub label: model::Identifier,
+    // Original (CST input struct) field name. Used by the auto-builder to
+    // access the source. Stays stable across renames.
+    pub source_label: model::Identifier,
     pub field_type: NodeType,
     pub is_optional: bool,
     pub target_type: NodeType,
@@ -88,6 +92,7 @@ impl From<&Field> for MutatedField {
     fn from(value: &Field) -> Self {
         Self {
             label: value.label.clone(),
+            source_label: value.label.clone(),
             field_type: value.field_type.clone(),
             is_optional: value.is_optional,
             target_type: value.field_type.clone(),
@@ -439,8 +444,10 @@ impl IrModelMutator {
         let Some(sequence) = self.sequences.get_mut(&identifier) else {
             panic!("Sequence {sequence_id} not found in IR model");
         };
+        let field_label: model::Identifier = field_label.into();
         sequence.fields.push(MutatedField {
-            label: field_label.into(),
+            label: field_label.clone(),
+            source_label: field_label,
             field_type: target_type.clone(),
             is_optional,
             target_type,
@@ -469,10 +476,12 @@ impl IrModelMutator {
         else {
             panic!("Could not find {before_label} in sequence {sequence_id}");
         };
+        let field_label: model::Identifier = field_label.into();
         sequence.fields.insert(
             insertion_index,
             MutatedField {
-                label: field_label.into(),
+                label: field_label.clone(),
+                source_label: field_label,
                 field_type: target_type.clone(),
                 is_optional,
                 target_type,
@@ -652,6 +661,24 @@ impl IrModelMutator {
         );
         let inserted = self.external_types.insert(identifier.clone());
         assert!(inserted, "External type {identifier} is already registered");
+    }
+
+    // Renames a field within a sequence without altering the type it
+    // references. The original (CST input) field name is preserved in
+    // `source_label` so the auto-builder still reads from the right source.
+    pub fn rename_sequence_field(&mut self, sequence_id: &str, old_label: &str, new_label: &str) {
+        let identifier: model::Identifier = sequence_id.into();
+        let Some(sequence) = self.sequences.get_mut(&identifier) else {
+            panic!("Sequence {sequence_id} not found in IR model");
+        };
+        let old_label_id: model::Identifier = old_label.into();
+        let new_label_id: model::Identifier = new_label.into();
+        let field = sequence
+            .fields
+            .iter_mut()
+            .find(|field| field.label == old_label_id)
+            .unwrap_or_else(|| panic!("Field {old_label} not found in sequence {sequence_id}"));
+        field.label = new_label_id;
     }
 
     pub fn add_non_unique_terminal(&mut self, identifier: &str) {
