@@ -1,6 +1,7 @@
 use std::collections::BTreeSet;
 
 use itertools::Itertools;
+use serde::Serialize;
 
 use crate::diagnostics::extensions::DiagnosticExtensions;
 use crate::diagnostics::kinds::syntax::SyntaxDiagnosticKind;
@@ -10,7 +11,7 @@ use crate::terminals::TerminalKind;
 
 /// Diagnostic emitted when the parser encounters a terminal that is not valid
 /// at the current position.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 pub struct UnexpectedTerminal {
     /// The terminal kind that was encountered at the failure site.
     pub found: TerminalKind,

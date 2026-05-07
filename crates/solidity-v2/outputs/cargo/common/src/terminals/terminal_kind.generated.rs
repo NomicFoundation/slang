@@ -1,8 +1,9 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+use serde::Serialize;
 use strum::Display;
 
-#[derive(Clone, Copy, Debug, Display, Eq, Hash, PartialEq, PartialOrd, Ord)]
+#[derive(Clone, Copy, Debug, Display, Eq, Hash, PartialEq, PartialOrd, Ord, Serialize)]
 pub enum TerminalKind {
     #[allow(clippy::upper_case_acronyms)]
     UNRECOGNIZED,

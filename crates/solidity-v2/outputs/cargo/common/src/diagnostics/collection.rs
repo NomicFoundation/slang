@@ -11,11 +11,6 @@ pub struct DiagnosticCollection {
 }
 
 impl DiagnosticCollection {
-    /// Creates a new, empty collection.
-    pub fn new() -> Self {
-        Self::default()
-    }
-
     /// Constructs a new diagnostic from its parts and appends it to the collection.
     pub fn push(
         &mut self,

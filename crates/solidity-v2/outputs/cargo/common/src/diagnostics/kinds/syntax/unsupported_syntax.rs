@@ -3,11 +3,12 @@ use crate::diagnostics::kinds::syntax::SyntaxDiagnosticKind;
 use crate::diagnostics::kinds::DiagnosticKind;
 use crate::diagnostics::severity::DiagnosticSeverity;
 use crate::versions::LanguageVersionSpecifier;
+use serde::Serialize;
 
 /// Diagnostic emitted when a piece of syntax is not available for the
 /// currently selected language version (either introduced later or
 /// deprecated earlier).
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 pub struct UnsupportedSyntax {
     /// The range of language versions in which this syntax is valid.
     pub supported_in: LanguageVersionSpecifier,

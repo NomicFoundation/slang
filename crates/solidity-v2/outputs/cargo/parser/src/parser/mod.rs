@@ -51,12 +51,13 @@ impl Parser {
     pub fn parse(file_id: &str, source: &str, language_version: LanguageVersion) -> ParseOutput {
         let lexer = Lexer::new(source, language_version);
         let parser = grammar::SourceUnitParser::new();
+
+        let mut diagnostics = DiagnosticCollection::default();
         match parser.parse(source, lexer) {
             Ok(source_unit) => {
                 // TODO(v2): these tests should really go through 'CompilationUnit' once it is ready.
                 // This way, we won't have to call individual validation APIs.
                 // All errors should be collected during the compilation unit construction.
-                let mut diagnostics = DiagnosticCollection::new();
                 validate_syntax_version(&source_unit, language_version, file_id, &mut diagnostics);
                 ParseOutput {
                     source_unit,
@@ -64,7 +65,7 @@ impl Parser {
                 }
             }
             Err(e) => {
-                let diagnostics = convert_parse_errors(file_id, e);
+                convert_parse_error(file_id, &mut diagnostics, e);
                 ParseOutput {
                     source_unit: new_source_unit(new_source_unit_members(vec![])),
                     diagnostics,
@@ -75,10 +76,11 @@ impl Parser {
 }
 
 /// Convert a LALRPOP parse error into a `DiagnosticCollection`.
-fn convert_parse_errors(
+fn convert_parse_error(
     file_id: &str,
+    diagnostics: &mut DiagnosticCollection,
     value: lalrpop_util::ParseError<usize, LexemeKind, ()>,
-) -> DiagnosticCollection {
+) {
     /// This function transforms the `String` representation returned by LALRPOP into an instance of `LexemeKind`
     ///
     /// TODO(v2): We may be able to improve on this if there's room for returning a discriminant instead of a string representation.
@@ -92,15 +94,12 @@ fn convert_parse_errors(
             .collect()
     }
 
-    let mut diagnostics = DiagnosticCollection::new();
-
     match value {
         lalrpop_util::ParseError::UnrecognizedEof { location, expected } => {
             diagnostics.push(
                 file_id.to_owned(),
                 location..location,
                 UnexpectedEof {
-                    found: TerminalKind::UNRECOGNIZED,
                     expected: convert_expectations(&expected),
                 },
             );
@@ -132,8 +131,6 @@ fn convert_parse_errors(
         lalrpop_util::ParseError::User { .. } => panic!("The parser should never return a user error, since we're not using any custom error types in our grammar"),
         lalrpop_util::ParseError::InvalidToken { .. } => panic!("The parser should never return an invalid token error, since it's not using the default lexer"),
     }
-
-    diagnostics
 }
 
 /// Iterate over the lexemes and their offsets

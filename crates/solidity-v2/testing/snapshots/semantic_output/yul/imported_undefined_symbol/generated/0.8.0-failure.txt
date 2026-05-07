@@ -3,6 +3,7 @@
 Parse errors:
 Error: Missing file: file not found: slots.sol
    ─[slots.sol:0:0]
+
 ------------------------------------------------------------------------
 
 Definitions (6):
