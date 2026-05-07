@@ -23,7 +23,9 @@ pub fn collect_snapshot_tests(data_dir: &Path) -> Vec<SnapshotEntry> {
         Some(SnapshotEntry::Test { .. }) => {
             panic!("Snapshots root must not be a test directory: {data_dir:?}")
         }
-        None => Vec::new(),
+        None => {
+            panic!("Snapshots root must contain at least one test: {data_dir:?}")
+        }
     }
 }
 

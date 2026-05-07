@@ -10,7 +10,7 @@ use serde_json::{Map, Value};
 use tera::Tera;
 
 use crate::cargo::CargoWorkspace;
-use crate::codegen::testing::collect_snapshot_tests;
+use crate::codegen::snapshots::collect_snapshot_tests;
 use crate::paths::{FileWalker, PathExtensions};
 
 const JINJA_GLOB: &str = "**/*.jinja2";

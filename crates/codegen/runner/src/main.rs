@@ -18,20 +18,6 @@ fn main() {
     [
         || generate_solidity_spec(),
         || {
-            generate_in_place(
-                &mut CodegenFileSystem::default(),
-                &SolidityDefinition::create(),
-                "solidity_cargo_tests",
-            )
-        },
-        || {
-            generate_in_place_v2(
-                &mut CodegenFileSystem::default(),
-                &SolidityDefinitionV2::create(),
-                "solidity_v2_cargo_tests",
-            )
-        },
-        || {
             let mut fs = CodegenFileSystem::default();
             let language = SolidityDefinition::create();
 
@@ -53,6 +39,13 @@ fn main() {
                 &mut CodegenFileSystem::default(),
                 &SolidityDefinition::create(),
                 "solidity_npm_package",
+            )
+        },
+        || {
+            generate_in_place(
+                &mut CodegenFileSystem::default(),
+                &SolidityDefinition::create(),
+                "solidity_cargo_tests",
             )
         },
         || {
@@ -102,6 +95,13 @@ fn main() {
                 &mut CodegenFileSystem::default(),
                 &SolidityDefinitionV2::create(),
                 "solidity_v2_testing_utils",
+            )
+        },
+        || {
+            generate_in_place_v2(
+                &mut CodegenFileSystem::default(),
+                &SolidityDefinitionV2::create(),
+                "solidity_v2_cargo_tests",
             )
         },
     ]
