@@ -7,13 +7,15 @@ Error: This syntax was introduced in version '0.8.4'.
  2 │   error IndexOutOfBounds();
    │   ────────────┬────────────  
    │               ╰────────────── Error occurred here.
-───╯Error: This syntax was introduced in version '0.8.4'.
+───╯
+Error: This syntax was introduced in version '0.8.4'.
    ╭─[input.sol:5:5]
    │
  5 │     revert IndexOutOfBounds();
    │     ─────────────┬────────────  
    │                  ╰────────────── Error occurred here.
 ───╯
+
 ------------------------------------------------------------------------
 
 Definitions (3):

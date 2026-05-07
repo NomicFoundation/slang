@@ -22,7 +22,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::AbicoderPragma,
     ) -> output::AbicoderPragma {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let version = self.build_abicoder_version(&source.version);
 
         Rc::new(output::AbicoderPragmaStruct { id, range, version })
@@ -33,7 +33,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::AdditiveExpression,
     ) -> output::AdditiveExpression {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let left_operand = self.build_expression(&source.left_operand);
         let expression_additive_expression_operator = self
             .build_expression_additive_expression_operator(
@@ -55,7 +55,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::AddressType,
     ) -> output::AddressType {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let payable_keyword = source.payable_keyword.is_some();
 
         Rc::new(output::AddressTypeStruct {
@@ -70,7 +70,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::AndExpression,
     ) -> output::AndExpression {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let left_operand = self.build_expression(&source.left_operand);
         let right_operand = self.build_expression(&source.right_operand);
 
@@ -87,7 +87,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::ArrayExpression,
     ) -> output::ArrayExpression {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let items = self.build_array_values(&source.items);
 
         Rc::new(output::ArrayExpressionStruct { id, range, items })
@@ -98,7 +98,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::ArrayTypeName,
     ) -> output::ArrayTypeName {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let operand = self.build_type_name(&source.operand);
         let index = source
             .index
@@ -118,7 +118,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::AssemblyStatement,
     ) -> output::AssemblyStatement {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let label = source
             .label
             .as_ref()
@@ -143,7 +143,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::AssignmentExpression,
     ) -> output::AssignmentExpression {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let left_operand = self.build_expression(&source.left_operand);
         let expression_assignment_expression_operator = self
             .build_expression_assignment_expression_operator(
@@ -165,7 +165,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::BitwiseAndExpression,
     ) -> output::BitwiseAndExpression {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let left_operand = self.build_expression(&source.left_operand);
         let right_operand = self.build_expression(&source.right_operand);
 
@@ -182,7 +182,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::BitwiseOrExpression,
     ) -> output::BitwiseOrExpression {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let left_operand = self.build_expression(&source.left_operand);
         let right_operand = self.build_expression(&source.right_operand);
 
@@ -199,7 +199,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::BitwiseXorExpression,
     ) -> output::BitwiseXorExpression {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let left_operand = self.build_expression(&source.left_operand);
         let right_operand = self.build_expression(&source.right_operand);
 
@@ -213,7 +213,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
     pub(super) fn build_block(&mut self, source: &input::Block) -> output::Block {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let statements = self.build_statements(&source.statements);
 
         Rc::new(output::BlockStruct {
@@ -228,7 +228,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::BreakStatement,
     ) -> output::BreakStatement {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
 
         Rc::new(output::BreakStatementStruct { id, range })
     }
@@ -238,7 +238,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::CallOptionsExpression,
     ) -> output::CallOptionsExpression {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let operand = self.build_expression(&source.operand);
         let options = self.build_call_options(&source.options);
 
@@ -255,7 +255,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::CatchClause,
     ) -> output::CatchClause {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let error = source
             .error
             .as_ref()
@@ -275,7 +275,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::CatchClauseError,
     ) -> output::CatchClauseError {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let name = source
             .name
             .as_ref()
@@ -295,7 +295,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::ConditionalExpression,
     ) -> output::ConditionalExpression {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let operand = self.build_expression(&source.operand);
         let true_expression = self.build_expression(&source.true_expression);
         let false_expression = self.build_expression(&source.false_expression);
@@ -314,7 +314,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::ContinueStatement,
     ) -> output::ContinueStatement {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
 
         Rc::new(output::ContinueStatementStruct { id, range })
     }
@@ -324,7 +324,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::DecimalNumberExpression,
     ) -> output::DecimalNumberExpression {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let literal = self.build_decimal_literal(&source.literal);
         let unit = source
             .unit
@@ -344,7 +344,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::DoWhileStatement,
     ) -> output::DoWhileStatement {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let body = self.build_statement(&source.body);
         let condition = self.build_expression(&source.condition);
 
@@ -361,7 +361,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::EmitStatement,
     ) -> output::EmitStatement {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let event = self.build_identifier_path(&source.event);
         let arguments = self.build_arguments_declaration(&source.arguments);
 
@@ -378,7 +378,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::EnumDefinition,
     ) -> output::EnumDefinition {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let name = self.build_identifier(&source.name);
         let members = self.build_enum_members(&source.members);
 
@@ -395,7 +395,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::EqualityExpression,
     ) -> output::EqualityExpression {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let left_operand = self.build_expression(&source.left_operand);
         let expression_equality_expression_operator = self
             .build_expression_equality_expression_operator(
@@ -417,7 +417,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::ExperimentalPragma,
     ) -> output::ExperimentalPragma {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let feature = self.build_experimental_feature(&source.feature);
 
         Rc::new(output::ExperimentalPragmaStruct { id, range, feature })
@@ -428,7 +428,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::ExponentiationExpression,
     ) -> output::ExponentiationExpression {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let left_operand = self.build_expression(&source.left_operand);
         let right_operand = self.build_expression(&source.right_operand);
 
@@ -445,7 +445,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::ExpressionStatement,
     ) -> output::ExpressionStatement {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let expression = self.build_expression(&source.expression);
 
         Rc::new(output::ExpressionStatementStruct {
@@ -460,7 +460,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::ForStatement,
     ) -> output::ForStatement {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let initialization = self.build_for_statement_initialization(&source.initialization);
         let condition = self.build_for_statement_condition(&source.condition);
         let iterator = source
@@ -484,7 +484,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::FunctionCallExpression,
     ) -> output::FunctionCallExpression {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let operand = self.build_expression(&source.operand);
         let arguments = self.build_arguments_declaration(&source.arguments);
 
@@ -501,7 +501,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::HexNumberExpression,
     ) -> output::HexNumberExpression {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let literal = self.build_hex_literal(&source.literal);
 
         Rc::new(output::HexNumberExpressionStruct { id, range, literal })
@@ -512,7 +512,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::IfStatement,
     ) -> output::IfStatement {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let condition = self.build_expression(&source.condition);
         let body = self.build_statement(&source.body);
         let else_branch = source
@@ -534,7 +534,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::ImportDeconstruction,
     ) -> output::ImportDeconstruction {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let symbols = self.build_import_deconstruction_symbols(&source.symbols);
         let path = self.build_string_literal(&source.path);
 
@@ -551,7 +551,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::ImportDeconstructionSymbol,
     ) -> output::ImportDeconstructionSymbol {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let name = self.build_identifier(&source.name);
         let alias = source
             .alias
@@ -571,7 +571,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::InequalityExpression,
     ) -> output::InequalityExpression {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let left_operand = self.build_expression(&source.left_operand);
         let expression_inequality_expression_operator = self
             .build_expression_inequality_expression_operator(
@@ -593,7 +593,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::InheritanceType,
     ) -> output::InheritanceType {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let type_name = self.build_identifier_path(&source.type_name);
         let arguments = source
             .arguments
@@ -613,7 +613,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::InterfaceDefinition,
     ) -> output::InterfaceDefinition {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let name = self.build_identifier(&source.name);
         let inheritance = source
             .inheritance
@@ -635,7 +635,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::LibraryDefinition,
     ) -> output::LibraryDefinition {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let name = self.build_identifier(&source.name);
         let members = self.build_library_members(&source.members);
 
@@ -652,7 +652,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::MemberAccessExpression,
     ) -> output::MemberAccessExpression {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let operand = self.build_expression(&source.operand);
         let member = self.build_identifier_path_element(&source.member);
 
@@ -669,7 +669,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::ModifierInvocation,
     ) -> output::ModifierInvocation {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let name = self.build_identifier_path(&source.name);
         let arguments = source
             .arguments
@@ -689,7 +689,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::MultiTypedDeclaration,
     ) -> output::MultiTypedDeclaration {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let elements = self.build_multi_typed_declaration_elements(&source.elements);
         let value = self.build_variable_declaration_value(&source.value);
 
@@ -706,7 +706,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::MultiTypedDeclarationElement,
     ) -> output::MultiTypedDeclarationElement {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let member = source
             .member
             .as_ref()
@@ -720,7 +720,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::MultiplicativeExpression,
     ) -> output::MultiplicativeExpression {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let left_operand = self.build_expression(&source.left_operand);
         let expression_multiplicative_expression_operator = self
             .build_expression_multiplicative_expression_operator(
@@ -742,7 +742,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::NamedArgument,
     ) -> output::NamedArgument {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let name = self.build_identifier(&source.name);
         let value = self.build_expression(&source.value);
 
@@ -759,7 +759,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::NewExpression,
     ) -> output::NewExpression {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let type_name = self.build_type_name(&source.type_name);
 
         Rc::new(output::NewExpressionStruct {
@@ -774,7 +774,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::OrExpression,
     ) -> output::OrExpression {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let left_operand = self.build_expression(&source.left_operand);
         let right_operand = self.build_expression(&source.right_operand);
 
@@ -788,7 +788,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
     pub(super) fn build_path_import(&mut self, source: &input::PathImport) -> output::PathImport {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let path = self.build_string_literal(&source.path);
         let alias = source
             .alias
@@ -808,7 +808,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::PostfixExpression,
     ) -> output::PostfixExpression {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let operand = self.build_expression(&source.operand);
         let expression_postfix_expression_operator = self
             .build_expression_postfix_expression_operator(
@@ -828,7 +828,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::PragmaDirective,
     ) -> output::PragmaDirective {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let pragma = self.build_pragma(&source.pragma);
 
         Rc::new(output::PragmaDirectiveStruct { id, range, pragma })
@@ -839,7 +839,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::PrefixExpression,
     ) -> output::PrefixExpression {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let expression_prefix_expression_operator = self
             .build_expression_prefix_expression_operator(
                 &source.expression_prefix_expression_operator,
@@ -859,7 +859,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::ReturnStatement,
     ) -> output::ReturnStatement {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let expression = source
             .expression
             .as_ref()
@@ -877,7 +877,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::RevertStatement,
     ) -> output::RevertStatement {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let error = self.build_identifier_path(&source.error);
         let arguments = self.build_arguments_declaration(&source.arguments);
 
@@ -894,7 +894,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::ShiftExpression,
     ) -> output::ShiftExpression {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let left_operand = self.build_expression(&source.left_operand);
         let expression_shift_expression_operator = self.build_expression_shift_expression_operator(
             &source.expression_shift_expression_operator,
@@ -915,7 +915,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::SingleTypedDeclaration,
     ) -> output::SingleTypedDeclaration {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let declaration = self.build_variable_declaration(&source.declaration);
         let value = source
             .value
@@ -932,7 +932,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
     pub(super) fn build_source_unit(&mut self, source: &input::SourceUnit) -> output::SourceUnit {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let members = self.build_source_unit_members(&source.members);
 
         Rc::new(output::SourceUnitStruct { id, range, members })
@@ -943,7 +943,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::StructDefinition,
     ) -> output::StructDefinition {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let name = self.build_identifier(&source.name);
         let members = self.build_struct_members(&source.members);
 
@@ -960,7 +960,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::StructMember,
     ) -> output::StructMember {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let type_name = self.build_type_name(&source.type_name);
         let name = self.build_identifier(&source.name);
 
@@ -977,7 +977,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::TryStatement,
     ) -> output::TryStatement {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let expression = self.build_expression(&source.expression);
         let returns = source
             .returns
@@ -1001,7 +1001,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::TupleExpression,
     ) -> output::TupleExpression {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let items = self.build_tuple_values(&source.items);
 
         Rc::new(output::TupleExpressionStruct { id, range, items })
@@ -1009,7 +1009,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
     pub(super) fn build_tuple_value(&mut self, source: &input::TupleValue) -> output::TupleValue {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let expression = source
             .expression
             .as_ref()
@@ -1027,7 +1027,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::TypeExpression,
     ) -> output::TypeExpression {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let type_name = self.build_type_name(&source.type_name);
 
         Rc::new(output::TypeExpressionStruct {
@@ -1042,7 +1042,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::UncheckedBlock,
     ) -> output::UncheckedBlock {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let block = self.build_block(&source.block);
 
         Rc::new(output::UncheckedBlockStruct { id, range, block })
@@ -1053,7 +1053,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::UserDefinedValueTypeDefinition,
     ) -> output::UserDefinedValueTypeDefinition {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let name = self.build_identifier(&source.name);
         let value_type = self.build_elementary_type(&source.value_type);
 
@@ -1070,7 +1070,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::UsingDeconstruction,
     ) -> output::UsingDeconstruction {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let symbols = self.build_using_deconstruction_symbols(&source.symbols);
 
         Rc::new(output::UsingDeconstructionStruct { id, range, symbols })
@@ -1081,7 +1081,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::UsingDeconstructionSymbol,
     ) -> output::UsingDeconstructionSymbol {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let name = self.build_identifier_path(&source.name);
         let alias = source
             .alias
@@ -1101,7 +1101,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::UsingDirective,
     ) -> output::UsingDirective {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let clause = self.build_using_clause(&source.clause);
         let target = self.build_using_target(&source.target);
         let global_keyword = source.global_keyword.is_some();
@@ -1120,7 +1120,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::VariableDeclaration,
     ) -> output::VariableDeclaration {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let type_name = self.build_type_name(&source.type_name);
         let storage_location = source
             .storage_location
@@ -1142,7 +1142,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::VariableDeclarationStatement,
     ) -> output::VariableDeclarationStatement {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let target = self.build_variable_declaration_target(&source.target);
 
         Rc::new(output::VariableDeclarationStatementStruct { id, range, target })
@@ -1153,7 +1153,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::VersionPragma,
     ) -> output::VersionPragma {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let sets = self.build_version_expression_sets(&source.sets);
 
         Rc::new(output::VersionPragmaStruct { id, range, sets })
@@ -1164,7 +1164,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::VersionRange,
     ) -> output::VersionRange {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let start = self.build_version_literal(&source.start);
         let end = self.build_version_literal(&source.end);
 
@@ -1181,7 +1181,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::VersionTerm,
     ) -> output::VersionTerm {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let operator = source
             .operator
             .as_ref()
@@ -1201,7 +1201,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::WhileStatement,
     ) -> output::WhileStatement {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let condition = self.build_expression(&source.condition);
         let body = self.build_statement(&source.body);
 
@@ -1215,7 +1215,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
 
     pub(super) fn build_yul_block(&mut self, source: &input::YulBlock) -> output::YulBlock {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let statements = self.build_yul_statements(&source.statements);
 
         Rc::new(output::YulBlockStruct {
@@ -1230,7 +1230,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::YulBreakStatement,
     ) -> output::YulBreakStatement {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
 
         Rc::new(output::YulBreakStatementStruct { id, range })
     }
@@ -1240,7 +1240,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::YulContinueStatement,
     ) -> output::YulContinueStatement {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
 
         Rc::new(output::YulContinueStatementStruct { id, range })
     }
@@ -1250,7 +1250,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::YulDefaultCase,
     ) -> output::YulDefaultCase {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let body = self.build_yul_block(&source.body);
 
         Rc::new(output::YulDefaultCaseStruct { id, range, body })
@@ -1261,7 +1261,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::YulForStatement,
     ) -> output::YulForStatement {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let initialization = self.build_yul_block(&source.initialization);
         let condition = self.build_yul_expression(&source.condition);
         let iterator = self.build_yul_block(&source.iterator);
@@ -1282,7 +1282,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::YulFunctionCallExpression,
     ) -> output::YulFunctionCallExpression {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let operand = self.build_yul_expression(&source.operand);
         let arguments = self.build_yul_arguments(&source.arguments);
 
@@ -1299,7 +1299,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::YulFunctionDefinition,
     ) -> output::YulFunctionDefinition {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let name = self.build_yul_identifier(&source.name);
         let parameters = self.build_yul_parameters_declaration(&source.parameters);
         let returns = source
@@ -1323,7 +1323,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::YulIfStatement,
     ) -> output::YulIfStatement {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let condition = self.build_yul_expression(&source.condition);
         let body = self.build_yul_block(&source.body);
 
@@ -1340,7 +1340,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::YulLeaveStatement,
     ) -> output::YulLeaveStatement {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
 
         Rc::new(output::YulLeaveStatementStruct { id, range })
     }
@@ -1350,7 +1350,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::YulSwitchStatement,
     ) -> output::YulSwitchStatement {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let expression = self.build_yul_expression(&source.expression);
         let cases = self.build_yul_switch_cases(&source.cases);
 
@@ -1367,7 +1367,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::YulValueCase,
     ) -> output::YulValueCase {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let value = self.build_yul_literal(&source.value);
         let body = self.build_yul_block(&source.body);
 
@@ -1384,7 +1384,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::YulVariableAssignmentStatement,
     ) -> output::YulVariableAssignmentStatement {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let variables = self.build_yul_paths(&source.variables);
         let expression = self.build_yul_expression(&source.expression);
 
@@ -1401,7 +1401,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::YulVariableDeclarationStatement,
     ) -> output::YulVariableDeclarationStatement {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let variables = self.build_yul_variable_names(&source.variables);
         let value = source
             .value
@@ -1421,7 +1421,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         source: &input::YulVariableDeclarationValue,
     ) -> output::YulVariableDeclarationValue {
         let id = self.next_id();
-        let range = source.text_range().unwrap_or_default();
+        let range = source.calculate_text_range().unwrap_or_default();
         let expression = self.build_yul_expression(&source.expression);
 
         Rc::new(output::YulVariableDeclarationValueStruct {

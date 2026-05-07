@@ -9,13 +9,15 @@ Error: This syntax was introduced in version '0.8.4'.
  10 │ ├─▶     );
     │ │            
     │ ╰──────────── Error occurred here.
-────╯Error: This syntax was introduced in version '0.8.4'.
+────╯
+Error: This syntax was introduced in version '0.8.4'.
     ╭─[input.sol:13:9]
     │
  13 │         revert Failure(Severity.ERROR, "Testing");
     │         ─────────────────────┬────────────────────  
     │                              ╰────────────────────── Error occurred here.
 ────╯
+
 ------------------------------------------------------------------------
 
 Definitions (8):

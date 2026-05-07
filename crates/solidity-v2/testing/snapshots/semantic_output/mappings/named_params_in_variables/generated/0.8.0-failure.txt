@@ -7,19 +7,22 @@ Error: This syntax was introduced in version '0.8.18'.
  2 │     mapping(address owner => mapping(uint256 index => uint256)) private _ownedTokens;
    │                     ──┬──  
    │                       ╰──── Error occurred here.
-───╯Error: This syntax was introduced in version '0.8.18'.
+───╯
+Error: This syntax was introduced in version '0.8.18'.
    ╭─[input.sol:2:46]
    │
  2 │     mapping(address owner => mapping(uint256 index => uint256)) private _ownedTokens;
    │                                              ──┬──  
    │                                                ╰──── Error occurred here.
-───╯Error: This syntax was introduced in version '0.8.18'.
+───╯
+Error: This syntax was introduced in version '0.8.18'.
    ╭─[input.sol:5:25]
    │
  5 │         mapping(uint256 index => uint256) storage _ownedTokensByOwner = _ownedTokens[from];
    │                         ──┬──  
    │                           ╰──── Error occurred here.
 ───╯
+
 ------------------------------------------------------------------------
 
 Definitions (8):

@@ -7,19 +7,22 @@ Error: This syntax was introduced in version '0.8.18'.
  3 │         mapping(bytes32 value => uint256) positions;
    │                         ──┬──  
    │                           ╰──── Error occurred here.
-───╯Error: This syntax was introduced in version '0.8.18'.
+───╯
+Error: This syntax was introduced in version '0.8.18'.
    ╭─[input.sol:6:21]
    │
  6 │     mapping(address asset0 => mapping(address asset1 => address)) map;
    │                     ───┬──  
    │                        ╰──── Error occurred here.
-───╯Error: This syntax was introduced in version '0.8.18'.
+───╯
+Error: This syntax was introduced in version '0.8.18'.
    ╭─[input.sol:6:47]
    │
  6 │     mapping(address asset0 => mapping(address asset1 => address)) map;
    │                                               ───┬──  
    │                                                  ╰──── Error occurred here.
 ───╯
+
 ------------------------------------------------------------------------
 
 Definitions (7):

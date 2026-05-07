@@ -7,25 +7,29 @@ Error: This syntax was introduced in version '0.8.4'.
  2 │     error InvalidState();
    │     ──────────┬──────────  
    │               ╰──────────── Error occurred here.
-───╯Error: This syntax was introduced in version '0.8.4'.
+───╯
+Error: This syntax was introduced in version '0.8.4'.
    ╭─[input.sol:5:9]
    │
  5 │         revert InvalidState();
    │         ───────────┬──────────  
    │                    ╰──────────── Error occurred here.
-───╯Error: This syntax was introduced in version '0.8.4'.
+───╯
+Error: This syntax was introduced in version '0.8.4'.
     ╭─[input.sol:10:9]
     │
  10 │         revert Utils.GenericError(code);
     │         ────────────────┬───────────────  
     │                         ╰───────────────── Error occurred here.
-────╯Error: This syntax was introduced in version '0.8.4'.
+────╯
+Error: This syntax was introduced in version '0.8.4'.
     ╭─[input.sol:15:5]
     │
  15 │     error GenericError(int code);
     │     ──────────────┬──────────────  
     │                   ╰──────────────── Error occurred here.
 ────╯
+
 ------------------------------------------------------------------------
 
 Definitions (8):

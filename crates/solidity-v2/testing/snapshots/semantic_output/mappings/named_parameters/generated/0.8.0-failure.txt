@@ -7,25 +7,29 @@ Error: This syntax was introduced in version '0.8.18'.
  2 │   mapping(address name => uint256) public justNameInKey;
    │                   ──┬─  
    │                     ╰─── Error occurred here.
-───╯Error: This syntax was introduced in version '0.8.18'.
+───╯
+Error: This syntax was introduced in version '0.8.18'.
    ╭─[input.sol:4:30]
    │
  4 │   mapping(address => uint256 amount) public justNameInValue;
    │                              ───┬──  
    │                                 ╰──── Error occurred here.
-───╯Error: This syntax was introduced in version '0.8.18'.
+───╯
+Error: This syntax was introduced in version '0.8.18'.
    ╭─[input.sol:6:19]
    │
  6 │   mapping(address name => uint256 amount) public nameInBoth;
    │                   ──┬─  
    │                     ╰─── Error occurred here.
-───╯Error: This syntax was introduced in version '0.8.18'.
+───╯
+Error: This syntax was introduced in version '0.8.18'.
    ╭─[input.sol:6:35]
    │
  6 │   mapping(address name => uint256 amount) public nameInBoth;
    │                                   ───┬──  
    │                                      ╰──── Error occurred here.
 ───╯
+
 ------------------------------------------------------------------------
 
 Definitions (8):

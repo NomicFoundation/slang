@@ -9,13 +9,15 @@ Error: This syntax was introduced in version '0.8.4'.
  5 │ ├─▶     );
    │ │            
    │ ╰──────────── Error occurred here.
-───╯Error: This syntax was introduced in version '0.8.4'.
+───╯
+Error: This syntax was introduced in version '0.8.4'.
    ╭─[input.sol:8:9]
    │
  8 │         revert Failure({severity: 100, cause: "Testing"});
    │         ─────────────────────────┬────────────────────────  
    │                                  ╰────────────────────────── Error occurred here.
 ───╯
+
 ------------------------------------------------------------------------
 
 Definitions (5):

@@ -7,13 +7,15 @@ Error: This syntax was introduced in version '0.8.8'.
  4 │ type MemoryPointer is uint256;
    │ ───────────────┬──────────────  
    │                ╰──────────────── Error occurred here.
-───╯Error: This syntax was introduced in version '0.8.13'.
+───╯
+Error: This syntax was introduced in version '0.8.13'.
    ╭─[input.sol:6:1]
    │
  6 │ using MemoryReaders for MemoryPointer;
    │ ───────────────────┬──────────────────  
    │                    ╰──────────────────── Error occurred here.
 ───╯
+
 ------------------------------------------------------------------------
 
 Definitions (8):
