@@ -430,21 +430,21 @@ pub(crate) enum UsingOperator {
 impl From<&ir::UsingOperator> for UsingOperator {
     fn from(value: &ir::UsingOperator) -> Self {
         match value {
-            ir::UsingOperator::Ampersand => Self::Ampersand,
-            ir::UsingOperator::Asterisk => Self::Asterisk,
-            ir::UsingOperator::BangEqual => Self::BangEqual,
-            ir::UsingOperator::Bar => Self::Bar,
-            ir::UsingOperator::Caret => Self::Caret,
-            ir::UsingOperator::EqualEqual => Self::EqualEqual,
-            ir::UsingOperator::GreaterThan => Self::GreaterThan,
-            ir::UsingOperator::GreaterThanEqual => Self::GreaterThanEqual,
-            ir::UsingOperator::LessThan => Self::LessThan,
-            ir::UsingOperator::LessThanEqual => Self::LessThanEqual,
-            ir::UsingOperator::Minus => Self::Minus,
-            ir::UsingOperator::Percent => Self::Percent,
-            ir::UsingOperator::Plus => Self::Plus,
-            ir::UsingOperator::Slash => Self::Slash,
-            ir::UsingOperator::Tilde => Self::Tilde,
+            ir::UsingOperator::Ampersand(_) => Self::Ampersand,
+            ir::UsingOperator::Asterisk(_) => Self::Asterisk,
+            ir::UsingOperator::BangEqual(_) => Self::BangEqual,
+            ir::UsingOperator::Bar(_) => Self::Bar,
+            ir::UsingOperator::Caret(_) => Self::Caret,
+            ir::UsingOperator::EqualEqual(_) => Self::EqualEqual,
+            ir::UsingOperator::GreaterThan(_) => Self::GreaterThan,
+            ir::UsingOperator::GreaterThanEqual(_) => Self::GreaterThanEqual,
+            ir::UsingOperator::LessThan(_) => Self::LessThan,
+            ir::UsingOperator::LessThanEqual(_) => Self::LessThanEqual,
+            ir::UsingOperator::Minus(_) => Self::Minus,
+            ir::UsingOperator::Percent(_) => Self::Percent,
+            ir::UsingOperator::Plus(_) => Self::Plus,
+            ir::UsingOperator::Slash(_) => Self::Slash,
+            ir::UsingOperator::Tilde(_) => Self::Tilde,
         }
     }
 }

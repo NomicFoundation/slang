@@ -19,8 +19,8 @@ impl Pass<'_> {
             | ir::Expression::AndExpression(_)
             | ir::Expression::EqualityExpression(_)
             | ir::Expression::InequalityExpression(_)
-            | ir::Expression::TrueKeyword
-            | ir::Expression::FalseKeyword => Typing::Resolved(self.types.boolean()),
+            | ir::Expression::TrueKeyword(_)
+            | ir::Expression::FalseKeyword(_) => Typing::Resolved(self.types.boolean()),
             ir::Expression::BitwiseOrExpression(bitwise_or_expression) => {
                 self.binder.node_typing(bitwise_or_expression.id())
             }
@@ -85,16 +85,16 @@ impl Pass<'_> {
                 Typing::MetaType(Self::type_of_elementary_type(elementary_type))
             }
             ir::Expression::Identifier(identifier) => self.typing_of_identifier(identifier),
-            ir::Expression::PayableKeyword => Typing::MetaType(Type::Address { payable: true }),
-            ir::Expression::ThisKeyword => Typing::This,
-            ir::Expression::SuperKeyword => Typing::Super,
+            ir::Expression::PayableKeyword(_) => Typing::MetaType(Type::Address { payable: true }),
+            ir::Expression::ThisKeyword(_) => Typing::This,
+            ir::Expression::SuperKeyword(_) => Typing::Super,
         }
     }
 
     fn type_of_elementary_type(elementary_type: &ir::ElementaryType) -> Type {
         match elementary_type {
             ir::ElementaryType::AddressType(address_type) => Type::Address {
-                payable: address_type.payable_keyword,
+                payable: address_type.payable_keyword.is_some(),
             },
             ir::ElementaryType::BytesKeyword(terminal) => {
                 Type::from_bytes_keyword(terminal.unparse(), Some(DataLocation::Memory)).unwrap()
@@ -109,8 +109,8 @@ impl Pass<'_> {
             ir::ElementaryType::UfixedKeyword(terminal) => {
                 Type::from_ufixed_keyword(terminal.unparse())
             }
-            ir::ElementaryType::BoolKeyword => Type::Boolean,
-            ir::ElementaryType::StringKeyword => Type::String {
+            ir::ElementaryType::BoolKeyword(_) => Type::Boolean,
+            ir::ElementaryType::StringKeyword(_) => Type::String {
                 location: DataLocation::Memory,
             },
         }

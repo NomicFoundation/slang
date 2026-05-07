@@ -223,9 +223,9 @@ impl DataLocation {
 impl From<&ir::StorageLocation> for DataLocation {
     fn from(value: &ir::StorageLocation) -> Self {
         match value {
-            ir::StorageLocation::MemoryKeyword => Self::Memory,
-            ir::StorageLocation::StorageKeyword => Self::Storage,
-            ir::StorageLocation::CallDataKeyword => Self::Calldata,
+            ir::StorageLocation::MemoryKeyword(_) => Self::Memory,
+            ir::StorageLocation::StorageKeyword(_) => Self::Storage,
+            ir::StorageLocation::CallDataKeyword(_) => Self::Calldata,
         }
     }
 }

@@ -37,7 +37,7 @@ use super::types::Type;
     }
     {% for field in sequence.fields -%}
       {% if field.is_optional %}
-        {% if field.field_type.kind == "UniqueTerminal" or field.field_type.kind == "External" %}
+        {% if field.field_type.kind == "External" %}
           pub fn {{ field.label }}(&self) -> bool {
             self.ir_node.{{ field.label }}
           }
@@ -78,7 +78,7 @@ use super::types::Type;
   pub enum {{ parent_type }} {
     {% for variant in choice.variants -%}
       {{ variant.name }}
-      {%- if variant.kind != "UniqueTerminal" and variant.kind != "External" -%}
+      {%- if variant.kind != "External" -%}
         ({{ variant.name }})
       {%- endif -%}
       ,
@@ -98,7 +98,7 @@ use super::types::Type;
           (nodes) => {{ parent_type }}::{{ variant.name }}(
             create_{{ variant.name | snake_case }}(nodes, semantic)
           ),
-        {%- elif variant.kind != "UniqueTerminal" and variant.kind != "External" -%}
+        {%- elif variant.kind != "External" -%}
           (variant) => {{ parent_type }}::{{ variant.name }}(
             create_{{ variant.name | snake_case }}(variant, semantic)
           ),
@@ -116,41 +116,38 @@ use super::types::Type;
 //
 
 {% for parent_type, collection in target.collections -%}
-  {%- if not collection.item_type.is_terminal or
-         not target.terminals[collection.item_type.name].is_unique %}
-    pub type {{ parent_type }} = Rc<{{ parent_type }}Struct>;
+  pub type {{ parent_type }} = Rc<{{ parent_type }}Struct>;
 
-    pub(crate) fn create_{{ parent_type | snake_case }}(
-      nodes: &[ir::{{ collection.item_type.name }}],
-      semantic: &Rc<SemanticContext>,
-    ) -> {{ parent_type }} {
-      Rc::new({{ parent_type }}Struct {
-        ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
-      })
+  pub(crate) fn create_{{ parent_type | snake_case }}(
+    nodes: &[ir::{{ collection.item_type.name }}],
+    semantic: &Rc<SemanticContext>,
+  ) -> {{ parent_type }} {
+    Rc::new({{ parent_type }}Struct {
+      ir_nodes: nodes.to_vec(),
+      semantic: Rc::clone(semantic),
+    })
+  }
+
+  pub struct {{ parent_type }}Struct {
+    pub(crate) ir_nodes: Vec<ir::{{ collection.item_type.name }}>,
+    pub(crate) semantic: Rc<SemanticContext>,
+  }
+
+  impl {{ parent_type }}Struct {
+    pub fn iter(&self) -> impl Iterator<Item = {{ collection.item_type.name }}> + use<'_> {
+      self.ir_nodes
+          .iter()
+          .map(|ir_node| create_{{ collection.item_type.name | snake_case }}(ir_node, &self.semantic))
     }
 
-    pub struct {{ parent_type }}Struct {
-      pub(crate) ir_nodes: Vec<ir::{{ collection.item_type.name }}>,
-      pub(crate) semantic: Rc<SemanticContext>,
+    pub fn len(&self) -> usize {
+      self.ir_nodes.len()
     }
 
-    impl {{ parent_type }}Struct {
-      pub fn iter(&self) -> impl Iterator<Item = {{ collection.item_type.name }}> + use<'_> {
-        self.ir_nodes
-            .iter()
-            .map(|ir_node| create_{{ collection.item_type.name | snake_case }}(ir_node, &self.semantic))
-      }
-
-      pub fn len(&self) -> usize {
-        self.ir_nodes.len()
-      }
-
-      pub fn is_empty(&self) -> bool {
-        self.ir_nodes.is_empty()
-      }
+    pub fn is_empty(&self) -> bool {
+      self.ir_nodes.is_empty()
     }
-  {% endif %}
+  }
 {% endfor %}
 
 //
@@ -158,44 +155,44 @@ use super::types::Type;
 //
 
 {% for terminal_type, terminal in target.terminals %}
-  {% if not terminal.is_unique %}
-    pub type {{ terminal_type }} = Rc<{{ terminal_type }}Struct>;
+  pub type {{ terminal_type }} = Rc<{{ terminal_type }}Struct>;
 
-    pub struct {{ terminal_type }}Struct {
-      pub(crate) ir_node: ir::{{ terminal_type }},
-      pub(crate) semantic: Rc<SemanticContext>,
+  pub struct {{ terminal_type }}Struct {
+    pub(crate) ir_node: ir::{{ terminal_type }},
+    pub(crate) semantic: Rc<SemanticContext>,
+  }
+
+  pub(crate) fn create_{{ terminal_type | snake_case }}(
+    ir_node: &ir::{{ terminal_type }},
+    semantic: &Rc<SemanticContext>,
+  ) -> {{ terminal_type }} {
+    Rc::new({{ terminal_type }}Struct {
+      ir_node: Rc::clone(ir_node),
+      semantic: Rc::clone(semantic),
+    })
+  }
+
+  impl {{ terminal_type }}Struct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+      self.ir_node.id()
     }
 
-    pub(crate) fn create_{{ terminal_type | snake_case }}(
-      ir_node: &ir::{{ terminal_type }},
-      semantic: &Rc<SemanticContext>,
-    ) -> {{ terminal_type }} {
-      Rc::new({{ terminal_type }}Struct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
-      })
-    }
-
-    impl {{ terminal_type }}Struct {
-      pub fn id(self: &Rc<Self>) -> NodeId {
-        self.ir_node.id()
-      }
-
+    {%- if not terminal.is_unique %}
       pub fn unparse(&self) -> &str {
         self.ir_node.unparse()
       }
+    {%- endif %}
 
-      pub fn get_type(&self) -> Option<Type> {
-        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
-      }
-
-      pub fn get_file_id(&self) -> &str {
-          self.semantic.file_id_from_node_id(self.ir_node.id())
-      }
-
-      pub fn get_text_range(&self) -> &Range<usize> {
-          &self.ir_node.range
-      }
+    pub fn get_type(&self) -> Option<Type> {
+      Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
     }
-  {% endif %}
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+  }
 {% endfor %}

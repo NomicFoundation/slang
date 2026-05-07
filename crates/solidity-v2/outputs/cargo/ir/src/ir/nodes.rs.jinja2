@@ -20,18 +20,16 @@ pub(super) use slang_solidity_v2_common::nodes::NodeId;
     pub range: Range<usize>,
     {%- for field in sequence.fields %}
       pub {{ field.label | snake_case }}:
-      {%- if field.field_type.kind == "UniqueTerminal" or field.field_type.kind == "External" -%}
+      {%- if field.field_type.kind == "External" -%}
         {%- if field.is_optional -%}
           bool,
         {%- else -%}
-          {{ throw(message="Cannot generate sequence field for non-optional unique terminal or external type") }},
+          {{ throw(message="Cannot generate sequence field for non-optional external type") }},
         {%- endif -%}
+      {%- elif field.is_optional -%}
+        Option<{{ field.field_type.name }}>,
       {%- else -%}
-        {%- if field.is_optional -%}
-          Option<{{ field.field_type.name }}>,
-        {%- else -%}
-          {{ field.field_type.name }},
-        {%- endif -%}
+        {{ field.field_type.name }},
       {%- endif -%}
     {% endfor -%}
   }
@@ -53,7 +51,7 @@ pub(super) use slang_solidity_v2_common::nodes::NodeId;
   pub enum {{ parent_type }} {
     {% for variant in choice.variants -%}
       {{ variant.name }}
-      {%- if variant.kind != "UniqueTerminal" and variant.kind != "External" -%}
+      {%- if variant.kind != "External" -%}
         ({{ variant.name }})
       {%- endif -%}
       ,
@@ -72,28 +70,30 @@ pub(super) use slang_solidity_v2_common::nodes::NodeId;
 {% endfor %}
 
 //
-// Non-unique Terminals
+// Terminals
 //
 
 {% for terminal_type, terminal in target.terminals %}
-  {% if not terminal.is_unique %}
-    pub type {{ terminal_type }} = Rc<{{ terminal_type }}Struct>;
+  pub type {{ terminal_type }} = Rc<{{ terminal_type }}Struct>;
 
-    #[derive(Clone, Debug, Eq, PartialEq)]
-    pub struct {{ terminal_type }}Struct {
-      pub(crate) id: NodeId,
-      pub range: Range<usize>,
+  #[derive(Clone, Debug, Eq, PartialEq)]
+  pub struct {{ terminal_type }}Struct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+    {%- if not terminal.is_unique %}
       pub text: String,
+    {%- endif %}
+  }
+
+  impl {{ terminal_type }}Struct {
+    pub fn id(&self) -> NodeId {
+      self.id
     }
 
-    impl {{ terminal_type }}Struct {
-      pub fn id(&self) -> NodeId {
-        self.id
-      }
-
+    {%- if not terminal.is_unique %}
       pub fn unparse(&self) -> &str {
         &self.text
       }
-    }
-  {% endif %}
+    {%- endif %}
+  }
 {% endfor %}

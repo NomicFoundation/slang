@@ -84,9 +84,9 @@ fn test_find_contract_by_name() -> Result<()> {
 
     assert_eq!(counter.name().name(), "Counter");
     assert_eq!(ownable.name().name(), "Ownable");
-    assert!(ownable.abstract_keyword());
+    assert!(ownable.abstract_keyword().is_some());
     assert_eq!(activatable.name().name(), "Activatable");
-    assert!(activatable.abstract_keyword());
+    assert!(activatable.abstract_keyword().is_some());
 
     Ok(())
 }

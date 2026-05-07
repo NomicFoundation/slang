@@ -376,7 +376,7 @@ impl Visitor for Pass<'_> {
                     }
                 }
             }
-            ir::UsingTarget::Asterisk => {
+            ir::UsingTarget::Asterisk(_) => {
                 let ir::UsingClause::IdentifierPath(identifier_path) = &node.clause else {
                     // only libraries can be attached to all types
                     return;
@@ -391,7 +391,7 @@ impl Visitor for Pass<'_> {
             }
         };
 
-        if node.global_keyword {
+        if node.global_keyword.is_some() {
             self.binder.insert_global_using_directive(directive);
         } else {
             // TODO(validation): `using` directives are not allowed in interfaces since 0.7.1

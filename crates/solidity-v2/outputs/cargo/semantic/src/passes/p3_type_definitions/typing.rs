@@ -88,7 +88,7 @@ impl Pass<'_> {
         match elementary_type {
             ir::ElementaryType::AddressType(address_type) => {
                 Some(self.types.register_type(Type::Address {
-                    payable: address_type.payable_keyword,
+                    payable: address_type.payable_keyword.is_some(),
                 }))
             }
             ir::ElementaryType::BytesKeyword(bytes_keyword) => {
@@ -111,9 +111,9 @@ impl Pass<'_> {
                 self.types
                     .register_type(Type::from_ufixed_keyword(ufixed_keyword.unparse())),
             ),
-            ir::ElementaryType::BoolKeyword => Some(self.types.boolean()),
+            ir::ElementaryType::BoolKeyword(_) => Some(self.types.boolean()),
             // No ByteKeyword in v2 (removed since Solidity >= 0.8.0)
-            ir::ElementaryType::StringKeyword => data_location.map(|data_location| {
+            ir::ElementaryType::StringKeyword(_) => data_location.map(|data_location| {
                 self.types.register_type(Type::String {
                     location: data_location,
                 })

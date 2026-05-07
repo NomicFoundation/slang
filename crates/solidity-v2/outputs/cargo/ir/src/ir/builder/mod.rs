@@ -88,7 +88,10 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     ) -> output::ContractDefinition {
         let id = self.next_id();
         let range = source.calculate_text_range().unwrap_or_default();
-        let abstract_keyword = source.abstract_keyword.is_some();
+        let abstract_keyword = source
+            .abstract_keyword
+            .as_ref()
+            .map(|abstract_keyword| self.build_abstract_keyword(abstract_keyword));
         let name = self.build_identifier(&source.name);
         let members = self.build_contract_members(&source.members);
         let inheritance_types = source
@@ -152,7 +155,10 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let id = self.next_id();
         let range = source.calculate_text_range().unwrap_or_default();
         let name = self.build_identifier(&source.name);
-        let anonymous_keyword = source.anonymous_keyword.is_some();
+        let anonymous_keyword = source
+            .anonymous_keyword
+            .as_ref()
+            .map(|anonymous_keyword| self.build_anonymous_keyword(anonymous_keyword));
         let parameters = source
             .parameters
             .parameters
@@ -187,11 +193,13 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let parameters = self.build_parameters_declaration(&source.parameters);
         let visibility = Self::function_visibility(&source.attributes);
         let mutability = Self::function_mutability(&source.attributes);
-        let virtual_keyword = source
-            .attributes
-            .elements
-            .iter()
-            .any(|attribute| matches!(attribute, input::FunctionAttribute::VirtualKeyword(_)));
+        let virtual_keyword = source.attributes.elements.iter().find_map(|attribute| {
+            if let input::FunctionAttribute::VirtualKeyword(virtual_keyword) = attribute {
+                Some(self.build_virtual_keyword(virtual_keyword))
+            } else {
+                None
+            }
+        });
         // TODO(validation): function definitions can have only a single override specifier
         let override_specifier = self.function_override_specifier(&source.attributes);
         let modifier_invocations = self.function_modifier_invocations(&source.attributes);
@@ -293,7 +301,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             type_name,
             storage_location,
             name,
-            indexed: false,
+            indexed: None,
         })
     }
 
@@ -528,7 +536,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let visibility = Self::constructor_visibility(&source.attributes);
         let mutability = Self::constructor_mutability(&source.attributes);
         // v2 ConstructorAttribute has no VirtualKeyword
-        let virtual_keyword = false;
+        let virtual_keyword = None;
         // v2 ConstructorAttribute has no OverrideSpecifier
         let override_specifier = None;
         let modifier_invocations = self.constructor_modifier_invocations(&source.attributes);
@@ -609,11 +617,12 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         // TODO(validation): fallback functions *must* have external visibility
         let visibility = output::FunctionVisibility::External;
         let mutability = Self::fallback_function_mutability(&source.attributes);
-        let virtual_keyword = source.attributes.elements.iter().any(|attribute| {
-            matches!(
-                attribute,
-                input::FallbackFunctionAttribute::VirtualKeyword(_)
-            )
+        let virtual_keyword = source.attributes.elements.iter().find_map(|attribute| {
+            if let input::FallbackFunctionAttribute::VirtualKeyword(virtual_keyword) = attribute {
+                Some(self.build_virtual_keyword(virtual_keyword))
+            } else {
+                None
+            }
         });
         let override_specifier = self.fallback_function_override_specifier(&source.attributes);
         let modifier_invocations = self.fallback_function_modifier_invocations(&source.attributes);
@@ -702,11 +711,12 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let visibility = output::FunctionVisibility::External;
         // TODO(validation): receive functions *must* be payable
         let mutability = output::FunctionMutability::Payable;
-        let virtual_keyword = source.attributes.elements.iter().any(|attribute| {
-            matches!(
-                attribute,
-                input::ReceiveFunctionAttribute::VirtualKeyword(_)
-            )
+        let virtual_keyword = source.attributes.elements.iter().find_map(|attribute| {
+            if let input::ReceiveFunctionAttribute::VirtualKeyword(virtual_keyword) = attribute {
+                Some(self.build_virtual_keyword(virtual_keyword))
+            } else {
+                None
+            }
         });
         let override_specifier = self.receive_function_override_specifier(&source.attributes);
         let modifier_invocations = self.receive_function_modifier_invocations(&source.attributes);
@@ -773,11 +783,13 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let visibility = output::FunctionVisibility::Internal;
         // mutability is irrelevant for modifiers
         let mutability = output::FunctionMutability::NonPayable;
-        let virtual_keyword = source
-            .attributes
-            .elements
-            .iter()
-            .any(|attribute| matches!(attribute, input::ModifierAttribute::VirtualKeyword(_)));
+        let virtual_keyword = source.attributes.elements.iter().find_map(|attribute| {
+            if let input::ModifierAttribute::VirtualKeyword(virtual_keyword) = attribute {
+                Some(self.build_virtual_keyword(virtual_keyword))
+            } else {
+                None
+            }
+        });
         let override_specifier = self.modifier_override_specifier(&source.attributes);
         let modifier_invocations = Vec::new();
         let returns = None;
@@ -917,7 +929,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             type_name,
             storage_location: None,
             name,
-            indexed: false,
+            indexed: None,
         })
     }
 
@@ -947,7 +959,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             type_name,
             storage_location: None,
             name,
-            indexed: false,
+            indexed: None,
         })
     }
 
@@ -980,7 +992,10 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let id = self.next_id();
         let range = source.calculate_text_range().unwrap_or_default();
         let type_name = self.build_type_name(&source.type_name);
-        let indexed = source.indexed_keyword.is_some();
+        let indexed = source
+            .indexed_keyword
+            .as_ref()
+            .map(|indexed_keyword| self.build_indexed_keyword(indexed_keyword));
         let name = source.name.as_ref().map(|name| self.build_identifier(name));
 
         Rc::new(output::ParameterStruct {
@@ -1005,7 +1020,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             type_name,
             storage_location: None,
             name,
-            indexed: false,
+            indexed: None,
         })
     }
 }

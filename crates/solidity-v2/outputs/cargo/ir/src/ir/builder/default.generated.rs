@@ -56,7 +56,10 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     ) -> output::AddressType {
         let id = self.next_id();
         let range = source.calculate_text_range().unwrap_or_default();
-        let payable_keyword = source.payable_keyword.is_some();
+        let payable_keyword = source
+            .payable_keyword
+            .as_ref()
+            .map(|value| self.build_payable_keyword(value));
 
         Rc::new(output::AddressTypeStruct {
             id,
@@ -1104,7 +1107,10 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let range = source.calculate_text_range().unwrap_or_default();
         let clause = self.build_using_clause(&source.clause);
         let target = self.build_using_target(&source.target);
-        let global_keyword = source.global_keyword.is_some();
+        let global_keyword = source
+            .global_keyword
+            .as_ref()
+            .map(|value| self.build_global_keyword(value));
 
         Rc::new(output::UsingDirectiveStruct {
             id,
@@ -1546,11 +1552,15 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::AbicoderVersion::AbicoderV1Keyword(_) => {
-                output::AbicoderVersion::AbicoderV1Keyword
+            input::AbicoderVersion::AbicoderV1Keyword(ref abicoder_v1_keyword) => {
+                output::AbicoderVersion::AbicoderV1Keyword(
+                    self.build_abicoder_v1_keyword(abicoder_v1_keyword),
+                )
             }
-            input::AbicoderVersion::AbicoderV2Keyword(_) => {
-                output::AbicoderVersion::AbicoderV2Keyword
+            input::AbicoderVersion::AbicoderV2Keyword(ref abicoder_v2_keyword) => {
+                output::AbicoderVersion::AbicoderV2Keyword(
+                    self.build_abicoder_v2_keyword(abicoder_v2_keyword),
+                )
             }
         }
     }
@@ -1625,8 +1635,12 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::ElementaryType::BoolKeyword(_) => output::ElementaryType::BoolKeyword,
-            input::ElementaryType::StringKeyword(_) => output::ElementaryType::StringKeyword,
+            input::ElementaryType::BoolKeyword(ref bool_keyword) => {
+                output::ElementaryType::BoolKeyword(self.build_bool_keyword(bool_keyword))
+            }
+            input::ElementaryType::StringKeyword(ref string_keyword) => {
+                output::ElementaryType::StringKeyword(self.build_string_keyword(string_keyword))
+            }
             input::ElementaryType::AddressType(ref address_type) => {
                 output::ElementaryType::AddressType(self.build_address_type(address_type))
             }
@@ -1656,11 +1670,15 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::ExperimentalFeature::ABIEncoderV2Keyword(_) => {
-                output::ExperimentalFeature::ABIEncoderV2Keyword
+            input::ExperimentalFeature::ABIEncoderV2Keyword(ref abi_encoder_v2_keyword) => {
+                output::ExperimentalFeature::ABIEncoderV2Keyword(
+                    self.build_abi_encoder_v2_keyword(abi_encoder_v2_keyword),
+                )
             }
-            input::ExperimentalFeature::SMTCheckerKeyword(_) => {
-                output::ExperimentalFeature::SMTCheckerKeyword
+            input::ExperimentalFeature::SMTCheckerKeyword(ref smt_checker_keyword) => {
+                output::ExperimentalFeature::SMTCheckerKeyword(
+                    self.build_smt_checker_keyword(smt_checker_keyword),
+                )
             }
             input::ExperimentalFeature::PragmaStringLiteral(ref pragma_string_literal) => {
                 output::ExperimentalFeature::StringLiteral(
@@ -1794,11 +1812,21 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             input::Expression::ElementaryType(ref elementary_type) => {
                 output::Expression::ElementaryType(self.build_elementary_type(elementary_type))
             }
-            input::Expression::PayableKeyword(_) => output::Expression::PayableKeyword,
-            input::Expression::ThisKeyword(_) => output::Expression::ThisKeyword,
-            input::Expression::SuperKeyword(_) => output::Expression::SuperKeyword,
-            input::Expression::TrueKeyword(_) => output::Expression::TrueKeyword,
-            input::Expression::FalseKeyword(_) => output::Expression::FalseKeyword,
+            input::Expression::PayableKeyword(ref payable_keyword) => {
+                output::Expression::PayableKeyword(self.build_payable_keyword(payable_keyword))
+            }
+            input::Expression::ThisKeyword(ref this_keyword) => {
+                output::Expression::ThisKeyword(self.build_this_keyword(this_keyword))
+            }
+            input::Expression::SuperKeyword(ref super_keyword) => {
+                output::Expression::SuperKeyword(self.build_super_keyword(super_keyword))
+            }
+            input::Expression::TrueKeyword(ref true_keyword) => {
+                output::Expression::TrueKeyword(self.build_true_keyword(true_keyword))
+            }
+            input::Expression::FalseKeyword(ref false_keyword) => {
+                output::Expression::FalseKeyword(self.build_false_keyword(false_keyword))
+            }
             input::Expression::Identifier(ref identifier) => {
                 output::Expression::Identifier(self.build_identifier(identifier))
             }
@@ -1813,11 +1841,11 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::Expression_AdditiveExpression_Operator::Minus(_) => {
-                output::Expression_AdditiveExpression_Operator::Minus
+            input::Expression_AdditiveExpression_Operator::Minus(ref minus) => {
+                output::Expression_AdditiveExpression_Operator::Minus(self.build_minus(minus))
             }
-            input::Expression_AdditiveExpression_Operator::Plus(_) => {
-                output::Expression_AdditiveExpression_Operator::Plus
+            input::Expression_AdditiveExpression_Operator::Plus(ref plus) => {
+                output::Expression_AdditiveExpression_Operator::Plus(self.build_plus(plus))
             }
         }
     }
@@ -1830,43 +1858,31 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-          input::Expression_AssignmentExpression_Operator::AmpersandEqual(_) => {
-                  output::Expression_AssignmentExpression_Operator::AmpersandEqual
-                }
-              input::Expression_AssignmentExpression_Operator::AsteriskEqual(_) => {
-                  output::Expression_AssignmentExpression_Operator::AsteriskEqual
-                }
-              input::Expression_AssignmentExpression_Operator::BarEqual(_) => {
-                  output::Expression_AssignmentExpression_Operator::BarEqual
-                }
-              input::Expression_AssignmentExpression_Operator::CaretEqual(_) => {
-                  output::Expression_AssignmentExpression_Operator::CaretEqual
-                }
-              input::Expression_AssignmentExpression_Operator::Equal(_) => {
-                  output::Expression_AssignmentExpression_Operator::Equal
-                }
-              input::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanEqual(_) => {
-                  output::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanEqual
-                }
-              input::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanGreaterThanEqual(_) => {
-                  output::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanGreaterThanEqual
-                }
-              input::Expression_AssignmentExpression_Operator::LessThanLessThanEqual(_) => {
-                  output::Expression_AssignmentExpression_Operator::LessThanLessThanEqual
-                }
-              input::Expression_AssignmentExpression_Operator::MinusEqual(_) => {
-                  output::Expression_AssignmentExpression_Operator::MinusEqual
-                }
-              input::Expression_AssignmentExpression_Operator::PercentEqual(_) => {
-                  output::Expression_AssignmentExpression_Operator::PercentEqual
-                }
-              input::Expression_AssignmentExpression_Operator::PlusEqual(_) => {
-                  output::Expression_AssignmentExpression_Operator::PlusEqual
-                }
-              input::Expression_AssignmentExpression_Operator::SlashEqual(_) => {
-                  output::Expression_AssignmentExpression_Operator::SlashEqual
-                }
-              }
+          input::Expression_AssignmentExpression_Operator::AmpersandEqual(ref ampersand_equal) => {
+                output::Expression_AssignmentExpression_Operator::AmpersandEqual(self.build_ampersand_equal(ampersand_equal))
+              }input::Expression_AssignmentExpression_Operator::AsteriskEqual(ref asterisk_equal) => {
+                output::Expression_AssignmentExpression_Operator::AsteriskEqual(self.build_asterisk_equal(asterisk_equal))
+              }input::Expression_AssignmentExpression_Operator::BarEqual(ref bar_equal) => {
+                output::Expression_AssignmentExpression_Operator::BarEqual(self.build_bar_equal(bar_equal))
+              }input::Expression_AssignmentExpression_Operator::CaretEqual(ref caret_equal) => {
+                output::Expression_AssignmentExpression_Operator::CaretEqual(self.build_caret_equal(caret_equal))
+              }input::Expression_AssignmentExpression_Operator::Equal(ref equal) => {
+                output::Expression_AssignmentExpression_Operator::Equal(self.build_equal(equal))
+              }input::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanEqual(ref greater_than_greater_than_equal) => {
+                output::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanEqual(self.build_greater_than_greater_than_equal(greater_than_greater_than_equal))
+              }input::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanGreaterThanEqual(ref greater_than_greater_than_greater_than_equal) => {
+                output::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanGreaterThanEqual(self.build_greater_than_greater_than_greater_than_equal(greater_than_greater_than_greater_than_equal))
+              }input::Expression_AssignmentExpression_Operator::LessThanLessThanEqual(ref less_than_less_than_equal) => {
+                output::Expression_AssignmentExpression_Operator::LessThanLessThanEqual(self.build_less_than_less_than_equal(less_than_less_than_equal))
+              }input::Expression_AssignmentExpression_Operator::MinusEqual(ref minus_equal) => {
+                output::Expression_AssignmentExpression_Operator::MinusEqual(self.build_minus_equal(minus_equal))
+              }input::Expression_AssignmentExpression_Operator::PercentEqual(ref percent_equal) => {
+                output::Expression_AssignmentExpression_Operator::PercentEqual(self.build_percent_equal(percent_equal))
+              }input::Expression_AssignmentExpression_Operator::PlusEqual(ref plus_equal) => {
+                output::Expression_AssignmentExpression_Operator::PlusEqual(self.build_plus_equal(plus_equal))
+              }input::Expression_AssignmentExpression_Operator::SlashEqual(ref slash_equal) => {
+                output::Expression_AssignmentExpression_Operator::SlashEqual(self.build_slash_equal(slash_equal))
+              }}
     }
 
     #[allow(clippy::unused_self)]
@@ -1877,11 +1893,15 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::Expression_EqualityExpression_Operator::BangEqual(_) => {
-                output::Expression_EqualityExpression_Operator::BangEqual
+            input::Expression_EqualityExpression_Operator::BangEqual(ref bang_equal) => {
+                output::Expression_EqualityExpression_Operator::BangEqual(
+                    self.build_bang_equal(bang_equal),
+                )
             }
-            input::Expression_EqualityExpression_Operator::EqualEqual(_) => {
-                output::Expression_EqualityExpression_Operator::EqualEqual
+            input::Expression_EqualityExpression_Operator::EqualEqual(ref equal_equal) => {
+                output::Expression_EqualityExpression_Operator::EqualEqual(
+                    self.build_equal_equal(equal_equal),
+                )
             }
         }
     }
@@ -1894,17 +1914,25 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::Expression_InequalityExpression_Operator::GreaterThan(_) => {
-                output::Expression_InequalityExpression_Operator::GreaterThan
+            input::Expression_InequalityExpression_Operator::GreaterThan(ref greater_than) => {
+                output::Expression_InequalityExpression_Operator::GreaterThan(
+                    self.build_greater_than(greater_than),
+                )
             }
-            input::Expression_InequalityExpression_Operator::GreaterThanEqual(_) => {
-                output::Expression_InequalityExpression_Operator::GreaterThanEqual
+            input::Expression_InequalityExpression_Operator::GreaterThanEqual(
+                ref greater_than_equal,
+            ) => output::Expression_InequalityExpression_Operator::GreaterThanEqual(
+                self.build_greater_than_equal(greater_than_equal),
+            ),
+            input::Expression_InequalityExpression_Operator::LessThan(ref less_than) => {
+                output::Expression_InequalityExpression_Operator::LessThan(
+                    self.build_less_than(less_than),
+                )
             }
-            input::Expression_InequalityExpression_Operator::LessThan(_) => {
-                output::Expression_InequalityExpression_Operator::LessThan
-            }
-            input::Expression_InequalityExpression_Operator::LessThanEqual(_) => {
-                output::Expression_InequalityExpression_Operator::LessThanEqual
+            input::Expression_InequalityExpression_Operator::LessThanEqual(ref less_than_equal) => {
+                output::Expression_InequalityExpression_Operator::LessThanEqual(
+                    self.build_less_than_equal(less_than_equal),
+                )
             }
         }
     }
@@ -1917,14 +1945,18 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::Expression_MultiplicativeExpression_Operator::Asterisk(_) => {
-                output::Expression_MultiplicativeExpression_Operator::Asterisk
+            input::Expression_MultiplicativeExpression_Operator::Asterisk(ref asterisk) => {
+                output::Expression_MultiplicativeExpression_Operator::Asterisk(
+                    self.build_asterisk(asterisk),
+                )
             }
-            input::Expression_MultiplicativeExpression_Operator::Percent(_) => {
-                output::Expression_MultiplicativeExpression_Operator::Percent
+            input::Expression_MultiplicativeExpression_Operator::Percent(ref percent) => {
+                output::Expression_MultiplicativeExpression_Operator::Percent(
+                    self.build_percent(percent),
+                )
             }
-            input::Expression_MultiplicativeExpression_Operator::Slash(_) => {
-                output::Expression_MultiplicativeExpression_Operator::Slash
+            input::Expression_MultiplicativeExpression_Operator::Slash(ref slash) => {
+                output::Expression_MultiplicativeExpression_Operator::Slash(self.build_slash(slash))
             }
         }
     }
@@ -1937,11 +1969,15 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::Expression_PostfixExpression_Operator::MinusMinus(_) => {
-                output::Expression_PostfixExpression_Operator::MinusMinus
+            input::Expression_PostfixExpression_Operator::MinusMinus(ref minus_minus) => {
+                output::Expression_PostfixExpression_Operator::MinusMinus(
+                    self.build_minus_minus(minus_minus),
+                )
             }
-            input::Expression_PostfixExpression_Operator::PlusPlus(_) => {
-                output::Expression_PostfixExpression_Operator::PlusPlus
+            input::Expression_PostfixExpression_Operator::PlusPlus(ref plus_plus) => {
+                output::Expression_PostfixExpression_Operator::PlusPlus(
+                    self.build_plus_plus(plus_plus),
+                )
             }
         }
     }
@@ -1954,23 +1990,29 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::Expression_PrefixExpression_Operator::Bang(_) => {
-                output::Expression_PrefixExpression_Operator::Bang
+            input::Expression_PrefixExpression_Operator::Bang(ref bang) => {
+                output::Expression_PrefixExpression_Operator::Bang(self.build_bang(bang))
             }
-            input::Expression_PrefixExpression_Operator::DeleteKeyword(_) => {
-                output::Expression_PrefixExpression_Operator::DeleteKeyword
+            input::Expression_PrefixExpression_Operator::DeleteKeyword(ref delete_keyword) => {
+                output::Expression_PrefixExpression_Operator::DeleteKeyword(
+                    self.build_delete_keyword(delete_keyword),
+                )
             }
-            input::Expression_PrefixExpression_Operator::Minus(_) => {
-                output::Expression_PrefixExpression_Operator::Minus
+            input::Expression_PrefixExpression_Operator::Minus(ref minus) => {
+                output::Expression_PrefixExpression_Operator::Minus(self.build_minus(minus))
             }
-            input::Expression_PrefixExpression_Operator::MinusMinus(_) => {
-                output::Expression_PrefixExpression_Operator::MinusMinus
+            input::Expression_PrefixExpression_Operator::MinusMinus(ref minus_minus) => {
+                output::Expression_PrefixExpression_Operator::MinusMinus(
+                    self.build_minus_minus(minus_minus),
+                )
             }
-            input::Expression_PrefixExpression_Operator::PlusPlus(_) => {
-                output::Expression_PrefixExpression_Operator::PlusPlus
+            input::Expression_PrefixExpression_Operator::PlusPlus(ref plus_plus) => {
+                output::Expression_PrefixExpression_Operator::PlusPlus(
+                    self.build_plus_plus(plus_plus),
+                )
             }
-            input::Expression_PrefixExpression_Operator::Tilde(_) => {
-                output::Expression_PrefixExpression_Operator::Tilde
+            input::Expression_PrefixExpression_Operator::Tilde(ref tilde) => {
+                output::Expression_PrefixExpression_Operator::Tilde(self.build_tilde(tilde))
             }
         }
     }
@@ -1983,15 +2025,23 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::Expression_ShiftExpression_Operator::GreaterThanGreaterThan(_) => {
-                output::Expression_ShiftExpression_Operator::GreaterThanGreaterThan
-            }
-            input::Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan(_) => {
-                output::Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan
-            }
-            input::Expression_ShiftExpression_Operator::LessThanLessThan(_) => {
-                output::Expression_ShiftExpression_Operator::LessThanLessThan
-            }
+            input::Expression_ShiftExpression_Operator::GreaterThanGreaterThan(
+                ref greater_than_greater_than,
+            ) => output::Expression_ShiftExpression_Operator::GreaterThanGreaterThan(
+                self.build_greater_than_greater_than(greater_than_greater_than),
+            ),
+            input::Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan(
+                ref greater_than_greater_than_greater_than,
+            ) => output::Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan(
+                self.build_greater_than_greater_than_greater_than(
+                    greater_than_greater_than_greater_than,
+                ),
+            ),
+            input::Expression_ShiftExpression_Operator::LessThanLessThan(
+                ref less_than_less_than,
+            ) => output::Expression_ShiftExpression_Operator::LessThanLessThan(
+                self.build_less_than_less_than(less_than_less_than),
+            ),
         }
     }
 
@@ -2008,7 +2058,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
                     self.build_expression_statement(expression_statement),
                 )
             }
-            input::ForStatementCondition::Semicolon(_) => output::ForStatementCondition::Semicolon,
+            input::ForStatementCondition::Semicolon(ref semicolon) => {
+                output::ForStatementCondition::Semicolon(self.build_semicolon(semicolon))
+            }
         }
     }
 
@@ -2030,8 +2082,8 @@ impl<S: Source> CstToIrBuilder<'_, S> {
                     self.build_expression_statement(expression_statement),
                 )
             }
-            input::ForStatementInitialization::Semicolon(_) => {
-                output::ForStatementInitialization::Semicolon
+            input::ForStatementInitialization::Semicolon(ref semicolon) => {
+                output::ForStatementInitialization::Semicolon(self.build_semicolon(semicolon))
             }
         }
     }
@@ -2062,14 +2114,30 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::NumberUnit::WeiKeyword(_) => output::NumberUnit::WeiKeyword,
-            input::NumberUnit::GweiKeyword(_) => output::NumberUnit::GweiKeyword,
-            input::NumberUnit::EtherKeyword(_) => output::NumberUnit::EtherKeyword,
-            input::NumberUnit::SecondsKeyword(_) => output::NumberUnit::SecondsKeyword,
-            input::NumberUnit::MinutesKeyword(_) => output::NumberUnit::MinutesKeyword,
-            input::NumberUnit::HoursKeyword(_) => output::NumberUnit::HoursKeyword,
-            input::NumberUnit::DaysKeyword(_) => output::NumberUnit::DaysKeyword,
-            input::NumberUnit::WeeksKeyword(_) => output::NumberUnit::WeeksKeyword,
+            input::NumberUnit::WeiKeyword(ref wei_keyword) => {
+                output::NumberUnit::WeiKeyword(self.build_wei_keyword(wei_keyword))
+            }
+            input::NumberUnit::GweiKeyword(ref gwei_keyword) => {
+                output::NumberUnit::GweiKeyword(self.build_gwei_keyword(gwei_keyword))
+            }
+            input::NumberUnit::EtherKeyword(ref ether_keyword) => {
+                output::NumberUnit::EtherKeyword(self.build_ether_keyword(ether_keyword))
+            }
+            input::NumberUnit::SecondsKeyword(ref seconds_keyword) => {
+                output::NumberUnit::SecondsKeyword(self.build_seconds_keyword(seconds_keyword))
+            }
+            input::NumberUnit::MinutesKeyword(ref minutes_keyword) => {
+                output::NumberUnit::MinutesKeyword(self.build_minutes_keyword(minutes_keyword))
+            }
+            input::NumberUnit::HoursKeyword(ref hours_keyword) => {
+                output::NumberUnit::HoursKeyword(self.build_hours_keyword(hours_keyword))
+            }
+            input::NumberUnit::DaysKeyword(ref days_keyword) => {
+                output::NumberUnit::DaysKeyword(self.build_days_keyword(days_keyword))
+            }
+            input::NumberUnit::WeeksKeyword(ref weeks_keyword) => {
+                output::NumberUnit::WeeksKeyword(self.build_weeks_keyword(weeks_keyword))
+            }
         }
     }
 
@@ -2237,9 +2305,17 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::StorageLocation::MemoryKeyword(_) => output::StorageLocation::MemoryKeyword,
-            input::StorageLocation::StorageKeyword(_) => output::StorageLocation::StorageKeyword,
-            input::StorageLocation::CallDataKeyword(_) => output::StorageLocation::CallDataKeyword,
+            input::StorageLocation::MemoryKeyword(ref memory_keyword) => {
+                output::StorageLocation::MemoryKeyword(self.build_memory_keyword(memory_keyword))
+            }
+            input::StorageLocation::StorageKeyword(ref storage_keyword) => {
+                output::StorageLocation::StorageKeyword(self.build_storage_keyword(storage_keyword))
+            }
+            input::StorageLocation::CallDataKeyword(ref call_data_keyword) => {
+                output::StorageLocation::CallDataKeyword(
+                    self.build_call_data_keyword(call_data_keyword),
+                )
+            }
         }
     }
 
@@ -2319,21 +2395,51 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::UsingOperator::Ampersand(_) => output::UsingOperator::Ampersand,
-            input::UsingOperator::Asterisk(_) => output::UsingOperator::Asterisk,
-            input::UsingOperator::BangEqual(_) => output::UsingOperator::BangEqual,
-            input::UsingOperator::Bar(_) => output::UsingOperator::Bar,
-            input::UsingOperator::Caret(_) => output::UsingOperator::Caret,
-            input::UsingOperator::EqualEqual(_) => output::UsingOperator::EqualEqual,
-            input::UsingOperator::GreaterThan(_) => output::UsingOperator::GreaterThan,
-            input::UsingOperator::GreaterThanEqual(_) => output::UsingOperator::GreaterThanEqual,
-            input::UsingOperator::LessThan(_) => output::UsingOperator::LessThan,
-            input::UsingOperator::LessThanEqual(_) => output::UsingOperator::LessThanEqual,
-            input::UsingOperator::Minus(_) => output::UsingOperator::Minus,
-            input::UsingOperator::Percent(_) => output::UsingOperator::Percent,
-            input::UsingOperator::Plus(_) => output::UsingOperator::Plus,
-            input::UsingOperator::Slash(_) => output::UsingOperator::Slash,
-            input::UsingOperator::Tilde(_) => output::UsingOperator::Tilde,
+            input::UsingOperator::Ampersand(ref ampersand) => {
+                output::UsingOperator::Ampersand(self.build_ampersand(ampersand))
+            }
+            input::UsingOperator::Asterisk(ref asterisk) => {
+                output::UsingOperator::Asterisk(self.build_asterisk(asterisk))
+            }
+            input::UsingOperator::BangEqual(ref bang_equal) => {
+                output::UsingOperator::BangEqual(self.build_bang_equal(bang_equal))
+            }
+            input::UsingOperator::Bar(ref bar) => output::UsingOperator::Bar(self.build_bar(bar)),
+            input::UsingOperator::Caret(ref caret) => {
+                output::UsingOperator::Caret(self.build_caret(caret))
+            }
+            input::UsingOperator::EqualEqual(ref equal_equal) => {
+                output::UsingOperator::EqualEqual(self.build_equal_equal(equal_equal))
+            }
+            input::UsingOperator::GreaterThan(ref greater_than) => {
+                output::UsingOperator::GreaterThan(self.build_greater_than(greater_than))
+            }
+            input::UsingOperator::GreaterThanEqual(ref greater_than_equal) => {
+                output::UsingOperator::GreaterThanEqual(
+                    self.build_greater_than_equal(greater_than_equal),
+                )
+            }
+            input::UsingOperator::LessThan(ref less_than) => {
+                output::UsingOperator::LessThan(self.build_less_than(less_than))
+            }
+            input::UsingOperator::LessThanEqual(ref less_than_equal) => {
+                output::UsingOperator::LessThanEqual(self.build_less_than_equal(less_than_equal))
+            }
+            input::UsingOperator::Minus(ref minus) => {
+                output::UsingOperator::Minus(self.build_minus(minus))
+            }
+            input::UsingOperator::Percent(ref percent) => {
+                output::UsingOperator::Percent(self.build_percent(percent))
+            }
+            input::UsingOperator::Plus(ref plus) => {
+                output::UsingOperator::Plus(self.build_plus(plus))
+            }
+            input::UsingOperator::Slash(ref slash) => {
+                output::UsingOperator::Slash(self.build_slash(slash))
+            }
+            input::UsingOperator::Tilde(ref tilde) => {
+                output::UsingOperator::Tilde(self.build_tilde(tilde))
+            }
         }
     }
 
@@ -2348,7 +2454,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             input::UsingTarget::TypeName(ref type_name) => {
                 output::UsingTarget::TypeName(self.build_type_name(type_name))
             }
-            input::UsingTarget::Asterisk(_) => output::UsingTarget::Asterisk,
+            input::UsingTarget::Asterisk(ref asterisk) => {
+                output::UsingTarget::Asterisk(self.build_asterisk(asterisk))
+            }
         }
     }
 
@@ -2419,18 +2527,34 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::VersionOperator::PragmaCaret(_) => output::VersionOperator::PragmaCaret,
-            input::VersionOperator::PragmaTilde(_) => output::VersionOperator::PragmaTilde,
-            input::VersionOperator::PragmaEqual(_) => output::VersionOperator::PragmaEqual,
-            input::VersionOperator::PragmaLessThan(_) => output::VersionOperator::PragmaLessThan,
-            input::VersionOperator::PragmaGreaterThan(_) => {
-                output::VersionOperator::PragmaGreaterThan
+            input::VersionOperator::PragmaCaret(ref pragma_caret) => {
+                output::VersionOperator::PragmaCaret(self.build_pragma_caret(pragma_caret))
             }
-            input::VersionOperator::PragmaLessThanEqual(_) => {
-                output::VersionOperator::PragmaLessThanEqual
+            input::VersionOperator::PragmaTilde(ref pragma_tilde) => {
+                output::VersionOperator::PragmaTilde(self.build_pragma_tilde(pragma_tilde))
             }
-            input::VersionOperator::PragmaGreaterThanEqual(_) => {
-                output::VersionOperator::PragmaGreaterThanEqual
+            input::VersionOperator::PragmaEqual(ref pragma_equal) => {
+                output::VersionOperator::PragmaEqual(self.build_pragma_equal(pragma_equal))
+            }
+            input::VersionOperator::PragmaLessThan(ref pragma_less_than) => {
+                output::VersionOperator::PragmaLessThan(
+                    self.build_pragma_less_than(pragma_less_than),
+                )
+            }
+            input::VersionOperator::PragmaGreaterThan(ref pragma_greater_than) => {
+                output::VersionOperator::PragmaGreaterThan(
+                    self.build_pragma_greater_than(pragma_greater_than),
+                )
+            }
+            input::VersionOperator::PragmaLessThanEqual(ref pragma_less_than_equal) => {
+                output::VersionOperator::PragmaLessThanEqual(
+                    self.build_pragma_less_than_equal(pragma_less_than_equal),
+                )
+            }
+            input::VersionOperator::PragmaGreaterThanEqual(ref pragma_greater_than_equal) => {
+                output::VersionOperator::PragmaGreaterThanEqual(
+                    self.build_pragma_greater_than_equal(pragma_greater_than_equal),
+                )
             }
         }
     }
@@ -2462,8 +2586,12 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
         match source {
-            input::YulLiteral::YulTrueKeyword(_) => output::YulLiteral::TrueKeyword,
-            input::YulLiteral::YulFalseKeyword(_) => output::YulLiteral::FalseKeyword,
+            input::YulLiteral::YulTrueKeyword(ref yul_true_keyword) => {
+                output::YulLiteral::TrueKeyword(self.build_yul_true_keyword(yul_true_keyword))
+            }
+            input::YulLiteral::YulFalseKeyword(ref yul_false_keyword) => {
+                output::YulLiteral::FalseKeyword(self.build_yul_false_keyword(yul_false_keyword))
+            }
             input::YulLiteral::YulDecimalLiteral(ref yul_decimal_literal) => {
                 output::YulLiteral::DecimalLiteral(
                     self.build_yul_decimal_literal(yul_decimal_literal),
@@ -2955,15 +3083,170 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     // Terminals
     //
 
+    pub(super) fn build_abi_encoder_v2_keyword(
+        &mut self,
+        source: &input::ABIEncoderV2Keyword,
+    ) -> output::ABIEncoderV2Keyword {
+        Rc::new(output::ABIEncoderV2KeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_abicoder_v1_keyword(
+        &mut self,
+        source: &input::AbicoderV1Keyword,
+    ) -> output::AbicoderV1Keyword {
+        Rc::new(output::AbicoderV1KeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_abicoder_v2_keyword(
+        &mut self,
+        source: &input::AbicoderV2Keyword,
+    ) -> output::AbicoderV2Keyword {
+        Rc::new(output::AbicoderV2KeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_abstract_keyword(
+        &mut self,
+        source: &input::AbstractKeyword,
+    ) -> output::AbstractKeyword {
+        Rc::new(output::AbstractKeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_ampersand(&mut self, source: &input::Ampersand) -> output::Ampersand {
+        Rc::new(output::AmpersandStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_ampersand_equal(
+        &mut self,
+        source: &input::AmpersandEqual,
+    ) -> output::AmpersandEqual {
+        Rc::new(output::AmpersandEqualStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_anonymous_keyword(
+        &mut self,
+        source: &input::AnonymousKeyword,
+    ) -> output::AnonymousKeyword {
+        Rc::new(output::AnonymousKeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_asterisk(&mut self, source: &input::Asterisk) -> output::Asterisk {
+        Rc::new(output::AsteriskStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_asterisk_equal(
+        &mut self,
+        source: &input::AsteriskEqual,
+    ) -> output::AsteriskEqual {
+        Rc::new(output::AsteriskEqualStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_bang(&mut self, source: &input::Bang) -> output::Bang {
+        Rc::new(output::BangStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_bang_equal(&mut self, source: &input::BangEqual) -> output::BangEqual {
+        Rc::new(output::BangEqualStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_bar(&mut self, source: &input::Bar) -> output::Bar {
+        Rc::new(output::BarStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_bar_equal(&mut self, source: &input::BarEqual) -> output::BarEqual {
+        Rc::new(output::BarEqualStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_bool_keyword(
+        &mut self,
+        source: &input::BoolKeyword,
+    ) -> output::BoolKeyword {
+        Rc::new(output::BoolKeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
     pub(super) fn build_bytes_keyword(
         &mut self,
         source: &input::BytesKeyword,
     ) -> output::BytesKeyword {
-        let text = self.unparse_range(source.range.clone());
         Rc::new(output::BytesKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
-            text,
+            text: self.unparse_range(source.range.clone()),
+        })
+    }
+
+    pub(super) fn build_call_data_keyword(
+        &mut self,
+        source: &input::CallDataKeyword,
+    ) -> output::CallDataKeyword {
+        Rc::new(output::CallDataKeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_caret(&mut self, source: &input::Caret) -> output::Caret {
+        Rc::new(output::CaretStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_caret_equal(&mut self, source: &input::CaretEqual) -> output::CaretEqual {
+        Rc::new(output::CaretEqualStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_days_keyword(
+        &mut self,
+        source: &input::DaysKeyword,
+    ) -> output::DaysKeyword {
+        Rc::new(output::DaysKeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
         })
     }
 
@@ -2971,11 +3254,54 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::DecimalLiteral,
     ) -> output::DecimalLiteral {
-        let text = self.unparse_range(source.range.clone());
         Rc::new(output::DecimalLiteralStruct {
             id: self.next_id(),
             range: source.range.clone(),
-            text,
+            text: self.unparse_range(source.range.clone()),
+        })
+    }
+
+    pub(super) fn build_delete_keyword(
+        &mut self,
+        source: &input::DeleteKeyword,
+    ) -> output::DeleteKeyword {
+        Rc::new(output::DeleteKeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_equal(&mut self, source: &input::Equal) -> output::Equal {
+        Rc::new(output::EqualStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_equal_equal(&mut self, source: &input::EqualEqual) -> output::EqualEqual {
+        Rc::new(output::EqualEqualStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_ether_keyword(
+        &mut self,
+        source: &input::EtherKeyword,
+    ) -> output::EtherKeyword {
+        Rc::new(output::EtherKeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_false_keyword(
+        &mut self,
+        source: &input::FalseKeyword,
+    ) -> output::FalseKeyword {
+        Rc::new(output::FalseKeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
         })
     }
 
@@ -2983,20 +3309,98 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::FixedKeyword,
     ) -> output::FixedKeyword {
-        let text = self.unparse_range(source.range.clone());
         Rc::new(output::FixedKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
-            text,
+            text: self.unparse_range(source.range.clone()),
+        })
+    }
+
+    pub(super) fn build_global_keyword(
+        &mut self,
+        source: &input::GlobalKeyword,
+    ) -> output::GlobalKeyword {
+        Rc::new(output::GlobalKeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_greater_than(
+        &mut self,
+        source: &input::GreaterThan,
+    ) -> output::GreaterThan {
+        Rc::new(output::GreaterThanStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_greater_than_equal(
+        &mut self,
+        source: &input::GreaterThanEqual,
+    ) -> output::GreaterThanEqual {
+        Rc::new(output::GreaterThanEqualStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_greater_than_greater_than(
+        &mut self,
+        source: &input::GreaterThanGreaterThan,
+    ) -> output::GreaterThanGreaterThan {
+        Rc::new(output::GreaterThanGreaterThanStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_greater_than_greater_than_equal(
+        &mut self,
+        source: &input::GreaterThanGreaterThanEqual,
+    ) -> output::GreaterThanGreaterThanEqual {
+        Rc::new(output::GreaterThanGreaterThanEqualStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_greater_than_greater_than_greater_than(
+        &mut self,
+        source: &input::GreaterThanGreaterThanGreaterThan,
+    ) -> output::GreaterThanGreaterThanGreaterThan {
+        Rc::new(output::GreaterThanGreaterThanGreaterThanStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_greater_than_greater_than_greater_than_equal(
+        &mut self,
+        source: &input::GreaterThanGreaterThanGreaterThanEqual,
+    ) -> output::GreaterThanGreaterThanGreaterThanEqual {
+        Rc::new(output::GreaterThanGreaterThanGreaterThanEqualStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_gwei_keyword(
+        &mut self,
+        source: &input::GweiKeyword,
+    ) -> output::GweiKeyword {
+        Rc::new(output::GweiKeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
         })
     }
 
     pub(super) fn build_hex_literal(&mut self, source: &input::HexLiteral) -> output::HexLiteral {
-        let text = self.unparse_range(source.range.clone());
         Rc::new(output::HexLiteralStruct {
             id: self.next_id(),
             range: source.range.clone(),
-            text,
+            text: self.unparse_range(source.range.clone()),
         })
     }
 
@@ -3004,29 +3408,303 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::HexStringLiteral,
     ) -> output::HexStringLiteral {
-        let text = self.unparse_range(source.range.clone());
         Rc::new(output::HexStringLiteralStruct {
             id: self.next_id(),
             range: source.range.clone(),
-            text,
+            text: self.unparse_range(source.range.clone()),
+        })
+    }
+
+    pub(super) fn build_hours_keyword(
+        &mut self,
+        source: &input::HoursKeyword,
+    ) -> output::HoursKeyword {
+        Rc::new(output::HoursKeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
         })
     }
 
     pub(super) fn build_identifier(&mut self, source: &input::Identifier) -> output::Identifier {
-        let text = self.unparse_range(source.range.clone());
         Rc::new(output::IdentifierStruct {
             id: self.next_id(),
             range: source.range.clone(),
-            text,
+            text: self.unparse_range(source.range.clone()),
+        })
+    }
+
+    pub(super) fn build_indexed_keyword(
+        &mut self,
+        source: &input::IndexedKeyword,
+    ) -> output::IndexedKeyword {
+        Rc::new(output::IndexedKeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
         })
     }
 
     pub(super) fn build_int_keyword(&mut self, source: &input::IntKeyword) -> output::IntKeyword {
-        let text = self.unparse_range(source.range.clone());
         Rc::new(output::IntKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
-            text,
+            text: self.unparse_range(source.range.clone()),
+        })
+    }
+
+    pub(super) fn build_less_than(&mut self, source: &input::LessThan) -> output::LessThan {
+        Rc::new(output::LessThanStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_less_than_equal(
+        &mut self,
+        source: &input::LessThanEqual,
+    ) -> output::LessThanEqual {
+        Rc::new(output::LessThanEqualStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_less_than_less_than(
+        &mut self,
+        source: &input::LessThanLessThan,
+    ) -> output::LessThanLessThan {
+        Rc::new(output::LessThanLessThanStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_less_than_less_than_equal(
+        &mut self,
+        source: &input::LessThanLessThanEqual,
+    ) -> output::LessThanLessThanEqual {
+        Rc::new(output::LessThanLessThanEqualStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_memory_keyword(
+        &mut self,
+        source: &input::MemoryKeyword,
+    ) -> output::MemoryKeyword {
+        Rc::new(output::MemoryKeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_minus(&mut self, source: &input::Minus) -> output::Minus {
+        Rc::new(output::MinusStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_minus_equal(&mut self, source: &input::MinusEqual) -> output::MinusEqual {
+        Rc::new(output::MinusEqualStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_minus_minus(&mut self, source: &input::MinusMinus) -> output::MinusMinus {
+        Rc::new(output::MinusMinusStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_minutes_keyword(
+        &mut self,
+        source: &input::MinutesKeyword,
+    ) -> output::MinutesKeyword {
+        Rc::new(output::MinutesKeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_payable_keyword(
+        &mut self,
+        source: &input::PayableKeyword,
+    ) -> output::PayableKeyword {
+        Rc::new(output::PayableKeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_percent(&mut self, source: &input::Percent) -> output::Percent {
+        Rc::new(output::PercentStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_percent_equal(
+        &mut self,
+        source: &input::PercentEqual,
+    ) -> output::PercentEqual {
+        Rc::new(output::PercentEqualStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_plus(&mut self, source: &input::Plus) -> output::Plus {
+        Rc::new(output::PlusStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_plus_equal(&mut self, source: &input::PlusEqual) -> output::PlusEqual {
+        Rc::new(output::PlusEqualStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_plus_plus(&mut self, source: &input::PlusPlus) -> output::PlusPlus {
+        Rc::new(output::PlusPlusStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_pragma_caret(
+        &mut self,
+        source: &input::PragmaCaret,
+    ) -> output::PragmaCaret {
+        Rc::new(output::PragmaCaretStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_pragma_equal(
+        &mut self,
+        source: &input::PragmaEqual,
+    ) -> output::PragmaEqual {
+        Rc::new(output::PragmaEqualStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_pragma_greater_than(
+        &mut self,
+        source: &input::PragmaGreaterThan,
+    ) -> output::PragmaGreaterThan {
+        Rc::new(output::PragmaGreaterThanStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_pragma_greater_than_equal(
+        &mut self,
+        source: &input::PragmaGreaterThanEqual,
+    ) -> output::PragmaGreaterThanEqual {
+        Rc::new(output::PragmaGreaterThanEqualStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_pragma_less_than(
+        &mut self,
+        source: &input::PragmaLessThan,
+    ) -> output::PragmaLessThan {
+        Rc::new(output::PragmaLessThanStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_pragma_less_than_equal(
+        &mut self,
+        source: &input::PragmaLessThanEqual,
+    ) -> output::PragmaLessThanEqual {
+        Rc::new(output::PragmaLessThanEqualStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_pragma_tilde(
+        &mut self,
+        source: &input::PragmaTilde,
+    ) -> output::PragmaTilde {
+        Rc::new(output::PragmaTildeStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_smt_checker_keyword(
+        &mut self,
+        source: &input::SMTCheckerKeyword,
+    ) -> output::SMTCheckerKeyword {
+        Rc::new(output::SMTCheckerKeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_seconds_keyword(
+        &mut self,
+        source: &input::SecondsKeyword,
+    ) -> output::SecondsKeyword {
+        Rc::new(output::SecondsKeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_semicolon(&mut self, source: &input::Semicolon) -> output::Semicolon {
+        Rc::new(output::SemicolonStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_slash(&mut self, source: &input::Slash) -> output::Slash {
+        Rc::new(output::SlashStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_slash_equal(&mut self, source: &input::SlashEqual) -> output::SlashEqual {
+        Rc::new(output::SlashEqualStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_storage_keyword(
+        &mut self,
+        source: &input::StorageKeyword,
+    ) -> output::StorageKeyword {
+        Rc::new(output::StorageKeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_string_keyword(
+        &mut self,
+        source: &input::StringKeyword,
+    ) -> output::StringKeyword {
+        Rc::new(output::StringKeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
         })
     }
 
@@ -3034,11 +3712,47 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::StringLiteral,
     ) -> output::StringLiteral {
-        let text = self.unparse_range(source.range.clone());
         Rc::new(output::StringLiteralStruct {
             id: self.next_id(),
             range: source.range.clone(),
-            text,
+            text: self.unparse_range(source.range.clone()),
+        })
+    }
+
+    pub(super) fn build_super_keyword(
+        &mut self,
+        source: &input::SuperKeyword,
+    ) -> output::SuperKeyword {
+        Rc::new(output::SuperKeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_this_keyword(
+        &mut self,
+        source: &input::ThisKeyword,
+    ) -> output::ThisKeyword {
+        Rc::new(output::ThisKeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_tilde(&mut self, source: &input::Tilde) -> output::Tilde {
+        Rc::new(output::TildeStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_true_keyword(
+        &mut self,
+        source: &input::TrueKeyword,
+    ) -> output::TrueKeyword {
+        Rc::new(output::TrueKeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
         })
     }
 
@@ -3046,11 +3760,10 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::UfixedKeyword,
     ) -> output::UfixedKeyword {
-        let text = self.unparse_range(source.range.clone());
         Rc::new(output::UfixedKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
-            text,
+            text: self.unparse_range(source.range.clone()),
         })
     }
 
@@ -3058,11 +3771,10 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::UintKeyword,
     ) -> output::UintKeyword {
-        let text = self.unparse_range(source.range.clone());
         Rc::new(output::UintKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
-            text,
+            text: self.unparse_range(source.range.clone()),
         })
     }
 
@@ -3070,11 +3782,10 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::UnicodeStringLiteral,
     ) -> output::UnicodeStringLiteral {
-        let text = self.unparse_range(source.range.clone());
         Rc::new(output::UnicodeStringLiteralStruct {
             id: self.next_id(),
             range: source.range.clone(),
-            text,
+            text: self.unparse_range(source.range.clone()),
         })
     }
 
@@ -3082,11 +3793,37 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::VersionSpecifier,
     ) -> output::VersionSpecifier {
-        let text = self.unparse_range(source.range.clone());
         Rc::new(output::VersionSpecifierStruct {
             id: self.next_id(),
             range: source.range.clone(),
-            text,
+            text: self.unparse_range(source.range.clone()),
+        })
+    }
+
+    pub(super) fn build_virtual_keyword(
+        &mut self,
+        source: &input::VirtualKeyword,
+    ) -> output::VirtualKeyword {
+        Rc::new(output::VirtualKeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_weeks_keyword(
+        &mut self,
+        source: &input::WeeksKeyword,
+    ) -> output::WeeksKeyword {
+        Rc::new(output::WeeksKeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
+        })
+    }
+
+    pub(super) fn build_wei_keyword(&mut self, source: &input::WeiKeyword) -> output::WeiKeyword {
+        Rc::new(output::WeiKeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
         })
     }
 
@@ -3098,11 +3835,10 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::PragmaStringLiteral,
     ) -> output::StringLiteral {
-        let text = self.unparse_range(source.range.clone());
         Rc::new(output::StringLiteralStruct {
             id: self.next_id(),
             range: source.range.clone(),
-            text,
+            text: self.unparse_range(source.range.clone()),
         })
     }
 
@@ -3110,11 +3846,20 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::YulDecimalLiteral,
     ) -> output::DecimalLiteral {
-        let text = self.unparse_range(source.range.clone());
         Rc::new(output::DecimalLiteralStruct {
             id: self.next_id(),
             range: source.range.clone(),
-            text,
+            text: self.unparse_range(source.range.clone()),
+        })
+    }
+
+    pub(super) fn build_yul_false_keyword(
+        &mut self,
+        source: &input::YulFalseKeyword,
+    ) -> output::FalseKeyword {
+        Rc::new(output::FalseKeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
         })
     }
 
@@ -3122,11 +3867,10 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::YulHexLiteral,
     ) -> output::HexLiteral {
-        let text = self.unparse_range(source.range.clone());
         Rc::new(output::HexLiteralStruct {
             id: self.next_id(),
             range: source.range.clone(),
-            text,
+            text: self.unparse_range(source.range.clone()),
         })
     }
 
@@ -3134,11 +3878,10 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::YulHexStringLiteral,
     ) -> output::HexStringLiteral {
-        let text = self.unparse_range(source.range.clone());
         Rc::new(output::HexStringLiteralStruct {
             id: self.next_id(),
             range: source.range.clone(),
-            text,
+            text: self.unparse_range(source.range.clone()),
         })
     }
 
@@ -3146,11 +3889,10 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::YulIdentifier,
     ) -> output::Identifier {
-        let text = self.unparse_range(source.range.clone());
         Rc::new(output::IdentifierStruct {
             id: self.next_id(),
             range: source.range.clone(),
-            text,
+            text: self.unparse_range(source.range.clone()),
         })
     }
 
@@ -3158,11 +3900,20 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::YulStringLiteral,
     ) -> output::StringLiteral {
-        let text = self.unparse_range(source.range.clone());
         Rc::new(output::StringLiteralStruct {
             id: self.next_id(),
             range: source.range.clone(),
-            text,
+            text: self.unparse_range(source.range.clone()),
+        })
+    }
+
+    pub(super) fn build_yul_true_keyword(
+        &mut self,
+        source: &input::YulTrueKeyword,
+    ) -> output::TrueKeyword {
+        Rc::new(output::TrueKeywordStruct {
+            id: self.next_id(),
+            range: source.range.clone(),
         })
     }
 }

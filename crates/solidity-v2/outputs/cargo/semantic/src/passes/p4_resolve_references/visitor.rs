@@ -270,18 +270,18 @@ impl Visitor for Pass<'_> {
 
     fn leave_prefix_expression(&mut self, node: &ir::PrefixExpression) {
         let type_id = match node.expression_prefix_expression_operator {
-            Expression_PrefixExpression_Operator::PlusPlus
-            | Expression_PrefixExpression_Operator::MinusMinus
-            | Expression_PrefixExpression_Operator::Minus
-            | Expression_PrefixExpression_Operator::Tilde => {
+            Expression_PrefixExpression_Operator::PlusPlus(_)
+            | Expression_PrefixExpression_Operator::MinusMinus(_)
+            | Expression_PrefixExpression_Operator::Minus(_)
+            | Expression_PrefixExpression_Operator::Tilde(_) => {
                 // TODO(validation): check that the operand is integer
                 self.typing_of_expression(&node.operand).as_type_id()
             }
-            Expression_PrefixExpression_Operator::Bang => {
+            Expression_PrefixExpression_Operator::Bang(_) => {
                 // TODO(validation): check that the operand is boolean
                 Some(self.types.boolean())
             }
-            Expression_PrefixExpression_Operator::DeleteKeyword => Some(self.types.void()),
+            Expression_PrefixExpression_Operator::DeleteKeyword(_) => Some(self.types.void()),
         };
         self.binder.set_node_type(node.id(), type_id);
     }

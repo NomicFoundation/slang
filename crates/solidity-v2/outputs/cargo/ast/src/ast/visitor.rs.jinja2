@@ -66,8 +66,10 @@ pub trait Visitor {
     }
     match node {
       {% for variant in choice.variants -%}
-        {% if variant.kind == "UniqueTerminal" or variant.kind == "External" -%}
+        {% if variant.kind == "External" -%}
           {{ parent_type }}::{{ variant.name }} => {},
+        {% elif variant.kind == "UniqueTerminal" -%}
+          {{ parent_type }}::{{ variant.name }}(_) => {},
         {% elif variant.kind == "Terminal" -%}
           {{ parent_type }}::{{ variant.name }}(ref {{ variant.name | snake_case }}) => {
             visitor.visit_{{ variant.name | snake_case }}({{ variant.name | snake_case }});
@@ -97,7 +99,7 @@ pub trait Visitor {
       for item in items.iter() {
         accept_{{ collection.item_type.name | snake_case }}(&item, visitor);
       }
-    {% else %}
+    {% elif not target.terminals[collection.item_type.name].is_unique %}
       for item in items.iter() {
         visitor.visit_{{ collection.item_type.name | snake_case }}(&item);
       }

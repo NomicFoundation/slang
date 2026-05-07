@@ -138,7 +138,7 @@ impl FunctionCallExpressionStruct {
     /// `address(y)`) rather than a function call.
     pub fn is_type_conversion(&self) -> bool {
         match &self.ir_node.operand {
-            ir::Expression::ElementaryType(_) | ir::Expression::PayableKeyword => true,
+            ir::Expression::ElementaryType(_) | ir::Expression::PayableKeyword(_) => true,
             ir::Expression::Identifier(terminal) => matches!(
                 self.semantic.binder().node_typing(terminal.id()),
                 Typing::MetaType(_) | Typing::UserMetaType(_)

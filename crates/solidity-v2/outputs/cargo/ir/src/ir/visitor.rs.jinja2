@@ -69,8 +69,10 @@ pub trait Visitor {
     }
     match node {
       {% for variant in choice.variants -%}
-        {% if variant.kind == "UniqueTerminal" or variant.kind == "External" -%}
+        {% if variant.kind == "External" -%}
           {{ parent_type }}::{{ variant.name }} => {},
+        {% elif variant.kind == "UniqueTerminal" -%}
+          {{ parent_type }}::{{ variant.name }}(_) => {},
         {% elif variant.kind == "Terminal" -%}
           {%- if target.terminals[variant.name].is_identifier -%}
             {{ parent_type }}::{{ variant.name }}(ref {{ variant.name | snake_case }}) => {

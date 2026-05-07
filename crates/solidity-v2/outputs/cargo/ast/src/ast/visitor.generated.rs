@@ -1960,8 +1960,8 @@ pub fn accept_abicoder_version(node: &AbicoderVersion, visitor: &mut impl Visito
         return;
     }
     match node {
-        AbicoderVersion::AbicoderV1Keyword => {}
-        AbicoderVersion::AbicoderV2Keyword => {}
+        AbicoderVersion::AbicoderV1Keyword(_) => {}
+        AbicoderVersion::AbicoderV2Keyword(_) => {}
     }
     visitor.leave_abicoder_version(node);
 }
@@ -2022,8 +2022,8 @@ pub fn accept_elementary_type(node: &ElementaryType, visitor: &mut impl Visitor)
         return;
     }
     match node {
-        ElementaryType::BoolKeyword => {}
-        ElementaryType::StringKeyword => {}
+        ElementaryType::BoolKeyword(_) => {}
+        ElementaryType::StringKeyword(_) => {}
         ElementaryType::AddressType(ref address_type) => {
             accept_address_type(address_type, visitor);
         }
@@ -2051,8 +2051,8 @@ pub fn accept_experimental_feature(node: &ExperimentalFeature, visitor: &mut imp
         return;
     }
     match node {
-        ExperimentalFeature::ABIEncoderV2Keyword => {}
-        ExperimentalFeature::SMTCheckerKeyword => {}
+        ExperimentalFeature::ABIEncoderV2Keyword(_) => {}
+        ExperimentalFeature::SMTCheckerKeyword(_) => {}
         ExperimentalFeature::StringLiteral(ref string_literal) => {
             visitor.visit_string_literal(string_literal);
         }
@@ -2146,11 +2146,11 @@ pub fn accept_expression(node: &Expression, visitor: &mut impl Visitor) {
         Expression::ElementaryType(ref elementary_type) => {
             accept_elementary_type(elementary_type, visitor);
         }
-        Expression::PayableKeyword => {}
-        Expression::ThisKeyword => {}
-        Expression::SuperKeyword => {}
-        Expression::TrueKeyword => {}
-        Expression::FalseKeyword => {}
+        Expression::PayableKeyword(_) => {}
+        Expression::ThisKeyword(_) => {}
+        Expression::SuperKeyword(_) => {}
+        Expression::TrueKeyword(_) => {}
+        Expression::FalseKeyword(_) => {}
         Expression::Identifier(ref identifier) => {
             visitor.visit_identifier(identifier);
         }
@@ -2166,8 +2166,8 @@ pub fn accept_expression_additive_expression_operator(
         return;
     }
     match node {
-        Expression_AdditiveExpression_Operator::Minus => {}
-        Expression_AdditiveExpression_Operator::Plus => {}
+        Expression_AdditiveExpression_Operator::Minus(_) => {}
+        Expression_AdditiveExpression_Operator::Plus(_) => {}
     }
     visitor.leave_expression_additive_expression_operator(node);
 }
@@ -2180,18 +2180,18 @@ pub fn accept_expression_assignment_expression_operator(
         return;
     }
     match node {
-        Expression_AssignmentExpression_Operator::AmpersandEqual => {}
-        Expression_AssignmentExpression_Operator::AsteriskEqual => {}
-        Expression_AssignmentExpression_Operator::BarEqual => {}
-        Expression_AssignmentExpression_Operator::CaretEqual => {}
-        Expression_AssignmentExpression_Operator::Equal => {}
-        Expression_AssignmentExpression_Operator::GreaterThanGreaterThanEqual => {}
-        Expression_AssignmentExpression_Operator::GreaterThanGreaterThanGreaterThanEqual => {}
-        Expression_AssignmentExpression_Operator::LessThanLessThanEqual => {}
-        Expression_AssignmentExpression_Operator::MinusEqual => {}
-        Expression_AssignmentExpression_Operator::PercentEqual => {}
-        Expression_AssignmentExpression_Operator::PlusEqual => {}
-        Expression_AssignmentExpression_Operator::SlashEqual => {}
+        Expression_AssignmentExpression_Operator::AmpersandEqual(_) => {}
+        Expression_AssignmentExpression_Operator::AsteriskEqual(_) => {}
+        Expression_AssignmentExpression_Operator::BarEqual(_) => {}
+        Expression_AssignmentExpression_Operator::CaretEqual(_) => {}
+        Expression_AssignmentExpression_Operator::Equal(_) => {}
+        Expression_AssignmentExpression_Operator::GreaterThanGreaterThanEqual(_) => {}
+        Expression_AssignmentExpression_Operator::GreaterThanGreaterThanGreaterThanEqual(_) => {}
+        Expression_AssignmentExpression_Operator::LessThanLessThanEqual(_) => {}
+        Expression_AssignmentExpression_Operator::MinusEqual(_) => {}
+        Expression_AssignmentExpression_Operator::PercentEqual(_) => {}
+        Expression_AssignmentExpression_Operator::PlusEqual(_) => {}
+        Expression_AssignmentExpression_Operator::SlashEqual(_) => {}
     }
     visitor.leave_expression_assignment_expression_operator(node);
 }
@@ -2204,8 +2204,8 @@ pub fn accept_expression_equality_expression_operator(
         return;
     }
     match node {
-        Expression_EqualityExpression_Operator::BangEqual => {}
-        Expression_EqualityExpression_Operator::EqualEqual => {}
+        Expression_EqualityExpression_Operator::BangEqual(_) => {}
+        Expression_EqualityExpression_Operator::EqualEqual(_) => {}
     }
     visitor.leave_expression_equality_expression_operator(node);
 }
@@ -2218,10 +2218,10 @@ pub fn accept_expression_inequality_expression_operator(
         return;
     }
     match node {
-        Expression_InequalityExpression_Operator::GreaterThan => {}
-        Expression_InequalityExpression_Operator::GreaterThanEqual => {}
-        Expression_InequalityExpression_Operator::LessThan => {}
-        Expression_InequalityExpression_Operator::LessThanEqual => {}
+        Expression_InequalityExpression_Operator::GreaterThan(_) => {}
+        Expression_InequalityExpression_Operator::GreaterThanEqual(_) => {}
+        Expression_InequalityExpression_Operator::LessThan(_) => {}
+        Expression_InequalityExpression_Operator::LessThanEqual(_) => {}
     }
     visitor.leave_expression_inequality_expression_operator(node);
 }
@@ -2234,9 +2234,9 @@ pub fn accept_expression_multiplicative_expression_operator(
         return;
     }
     match node {
-        Expression_MultiplicativeExpression_Operator::Asterisk => {}
-        Expression_MultiplicativeExpression_Operator::Percent => {}
-        Expression_MultiplicativeExpression_Operator::Slash => {}
+        Expression_MultiplicativeExpression_Operator::Asterisk(_) => {}
+        Expression_MultiplicativeExpression_Operator::Percent(_) => {}
+        Expression_MultiplicativeExpression_Operator::Slash(_) => {}
     }
     visitor.leave_expression_multiplicative_expression_operator(node);
 }
@@ -2249,8 +2249,8 @@ pub fn accept_expression_postfix_expression_operator(
         return;
     }
     match node {
-        Expression_PostfixExpression_Operator::MinusMinus => {}
-        Expression_PostfixExpression_Operator::PlusPlus => {}
+        Expression_PostfixExpression_Operator::MinusMinus(_) => {}
+        Expression_PostfixExpression_Operator::PlusPlus(_) => {}
     }
     visitor.leave_expression_postfix_expression_operator(node);
 }
@@ -2263,12 +2263,12 @@ pub fn accept_expression_prefix_expression_operator(
         return;
     }
     match node {
-        Expression_PrefixExpression_Operator::Bang => {}
-        Expression_PrefixExpression_Operator::DeleteKeyword => {}
-        Expression_PrefixExpression_Operator::Minus => {}
-        Expression_PrefixExpression_Operator::MinusMinus => {}
-        Expression_PrefixExpression_Operator::PlusPlus => {}
-        Expression_PrefixExpression_Operator::Tilde => {}
+        Expression_PrefixExpression_Operator::Bang(_) => {}
+        Expression_PrefixExpression_Operator::DeleteKeyword(_) => {}
+        Expression_PrefixExpression_Operator::Minus(_) => {}
+        Expression_PrefixExpression_Operator::MinusMinus(_) => {}
+        Expression_PrefixExpression_Operator::PlusPlus(_) => {}
+        Expression_PrefixExpression_Operator::Tilde(_) => {}
     }
     visitor.leave_expression_prefix_expression_operator(node);
 }
@@ -2281,9 +2281,9 @@ pub fn accept_expression_shift_expression_operator(
         return;
     }
     match node {
-        Expression_ShiftExpression_Operator::GreaterThanGreaterThan => {}
-        Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan => {}
-        Expression_ShiftExpression_Operator::LessThanLessThan => {}
+        Expression_ShiftExpression_Operator::GreaterThanGreaterThan(_) => {}
+        Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan(_) => {}
+        Expression_ShiftExpression_Operator::LessThanLessThan(_) => {}
     }
     visitor.leave_expression_shift_expression_operator(node);
 }
@@ -2296,7 +2296,7 @@ pub fn accept_for_statement_condition(node: &ForStatementCondition, visitor: &mu
         ForStatementCondition::ExpressionStatement(ref expression_statement) => {
             accept_expression_statement(expression_statement, visitor);
         }
-        ForStatementCondition::Semicolon => {}
+        ForStatementCondition::Semicolon(_) => {}
     }
     visitor.leave_for_statement_condition(node);
 }
@@ -2317,7 +2317,7 @@ pub fn accept_for_statement_initialization(
         ForStatementInitialization::ExpressionStatement(ref expression_statement) => {
             accept_expression_statement(expression_statement, visitor);
         }
-        ForStatementInitialization::Semicolon => {}
+        ForStatementInitialization::Semicolon(_) => {}
     }
     visitor.leave_for_statement_initialization(node);
 }
@@ -2382,14 +2382,14 @@ pub fn accept_number_unit(node: &NumberUnit, visitor: &mut impl Visitor) {
         return;
     }
     match node {
-        NumberUnit::WeiKeyword => {}
-        NumberUnit::GweiKeyword => {}
-        NumberUnit::EtherKeyword => {}
-        NumberUnit::SecondsKeyword => {}
-        NumberUnit::MinutesKeyword => {}
-        NumberUnit::HoursKeyword => {}
-        NumberUnit::DaysKeyword => {}
-        NumberUnit::WeeksKeyword => {}
+        NumberUnit::WeiKeyword(_) => {}
+        NumberUnit::GweiKeyword(_) => {}
+        NumberUnit::EtherKeyword(_) => {}
+        NumberUnit::SecondsKeyword(_) => {}
+        NumberUnit::MinutesKeyword(_) => {}
+        NumberUnit::HoursKeyword(_) => {}
+        NumberUnit::DaysKeyword(_) => {}
+        NumberUnit::WeeksKeyword(_) => {}
     }
     visitor.leave_number_unit(node);
 }
@@ -2552,9 +2552,9 @@ pub fn accept_storage_location(node: &StorageLocation, visitor: &mut impl Visito
         return;
     }
     match node {
-        StorageLocation::MemoryKeyword => {}
-        StorageLocation::StorageKeyword => {}
-        StorageLocation::CallDataKeyword => {}
+        StorageLocation::MemoryKeyword(_) => {}
+        StorageLocation::StorageKeyword(_) => {}
+        StorageLocation::CallDataKeyword(_) => {}
     }
     visitor.leave_storage_location(node);
 }
@@ -2621,21 +2621,21 @@ pub fn accept_using_operator(node: &UsingOperator, visitor: &mut impl Visitor) {
         return;
     }
     match node {
-        UsingOperator::Ampersand => {}
-        UsingOperator::Asterisk => {}
-        UsingOperator::BangEqual => {}
-        UsingOperator::Bar => {}
-        UsingOperator::Caret => {}
-        UsingOperator::EqualEqual => {}
-        UsingOperator::GreaterThan => {}
-        UsingOperator::GreaterThanEqual => {}
-        UsingOperator::LessThan => {}
-        UsingOperator::LessThanEqual => {}
-        UsingOperator::Minus => {}
-        UsingOperator::Percent => {}
-        UsingOperator::Plus => {}
-        UsingOperator::Slash => {}
-        UsingOperator::Tilde => {}
+        UsingOperator::Ampersand(_) => {}
+        UsingOperator::Asterisk(_) => {}
+        UsingOperator::BangEqual(_) => {}
+        UsingOperator::Bar(_) => {}
+        UsingOperator::Caret(_) => {}
+        UsingOperator::EqualEqual(_) => {}
+        UsingOperator::GreaterThan(_) => {}
+        UsingOperator::GreaterThanEqual(_) => {}
+        UsingOperator::LessThan(_) => {}
+        UsingOperator::LessThanEqual(_) => {}
+        UsingOperator::Minus(_) => {}
+        UsingOperator::Percent(_) => {}
+        UsingOperator::Plus(_) => {}
+        UsingOperator::Slash(_) => {}
+        UsingOperator::Tilde(_) => {}
     }
     visitor.leave_using_operator(node);
 }
@@ -2648,7 +2648,7 @@ pub fn accept_using_target(node: &UsingTarget, visitor: &mut impl Visitor) {
         UsingTarget::TypeName(ref type_name) => {
             accept_type_name(type_name, visitor);
         }
-        UsingTarget::Asterisk => {}
+        UsingTarget::Asterisk(_) => {}
     }
     visitor.leave_using_target(node);
 }
@@ -2706,13 +2706,13 @@ pub fn accept_version_operator(node: &VersionOperator, visitor: &mut impl Visito
         return;
     }
     match node {
-        VersionOperator::PragmaCaret => {}
-        VersionOperator::PragmaTilde => {}
-        VersionOperator::PragmaEqual => {}
-        VersionOperator::PragmaLessThan => {}
-        VersionOperator::PragmaGreaterThan => {}
-        VersionOperator::PragmaLessThanEqual => {}
-        VersionOperator::PragmaGreaterThanEqual => {}
+        VersionOperator::PragmaCaret(_) => {}
+        VersionOperator::PragmaTilde(_) => {}
+        VersionOperator::PragmaEqual(_) => {}
+        VersionOperator::PragmaLessThan(_) => {}
+        VersionOperator::PragmaGreaterThan(_) => {}
+        VersionOperator::PragmaLessThanEqual(_) => {}
+        VersionOperator::PragmaGreaterThanEqual(_) => {}
     }
     visitor.leave_version_operator(node);
 }
@@ -2740,8 +2740,8 @@ pub fn accept_yul_literal(node: &YulLiteral, visitor: &mut impl Visitor) {
         return;
     }
     match node {
-        YulLiteral::TrueKeyword => {}
-        YulLiteral::FalseKeyword => {}
+        YulLiteral::TrueKeyword(_) => {}
+        YulLiteral::FalseKeyword(_) => {}
         YulLiteral::DecimalLiteral(ref decimal_literal) => {
             visitor.visit_decimal_literal(decimal_literal);
         }
