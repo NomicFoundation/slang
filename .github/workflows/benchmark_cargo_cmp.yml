@@ -66,12 +66,12 @@ jobs:
       - name: "Restore Dependencies Cache"
         uses: "./.github/actions/cache/dependencies/restore"
         with:
-          cacheKeySuffix: "benchmark-cargo-cmp"
+          cacheKeySuffix: "benchmark-cargo"
 
       - name: "Restore Cargo Target Cache"
         uses: "./.github/actions/cache/cargo-target/restore"
         with:
-          cacheKeySuffix: "benchmark-cargo-cmp"
+          cacheKeySuffix: "benchmark-cargo"
 
       - name: "infra setup cargo pipenv"
         run: "./scripts/bin/infra setup cargo pipenv"
@@ -107,10 +107,10 @@ jobs:
         if: "${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'main' }}"
         uses: "./.github/actions/cache/cargo-target/save"
         with:
-          cacheKeySuffix: "benchmark-cargo-cmp"
+          cacheKeySuffix: "benchmark-cargo"
 
       - name: "Save Dependencies Cache"
         if: "${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'main' }}"
         uses: "./.github/actions/cache/dependencies/save"
         with:
-          cacheKeySuffix: "benchmark-cargo-cmp"
+          cacheKeySuffix: "benchmark-cargo"
