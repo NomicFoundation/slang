@@ -69,7 +69,7 @@ macro_rules! slang_v2_define_tests {
                 (project, files, semantic): (
                     &'static SolidityProject,
                     Vec<tests::slang_v2::semantic::File>,
-                    std::rc::Rc<SemanticContext>,
+                    std::sync::Arc<SemanticContext>,
                 ),
             ) -> Vec<abi::ContractAbi> {
                 black_box(tests::slang_v2::compute_contracts_abi::run(

@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
 use paste::paste;
 use slang_solidity_v2_common::nodes::NodeId;
@@ -53,7 +53,7 @@ pub enum Definition {
 }
 
 impl Definition {
-    pub fn try_create(definition_id: NodeId, semantic: &Rc<SemanticContext>) -> Option<Self> {
+    pub fn try_create(definition_id: NodeId, semantic: &Arc<SemanticContext>) -> Option<Self> {
         let definition = semantic.binder().find_definition_by_id(definition_id)?;
 
         let definition = match definition {
@@ -170,7 +170,7 @@ impl Definition {
             Definition::Constant(constant_definition) => constant_definition.name(),
             Definition::Contract(contract_definition) => contract_definition.name(),
             Definition::Enum(enum_definition) => enum_definition.name(),
-            Definition::EnumMember(identifier) => Rc::clone(identifier),
+            Definition::EnumMember(identifier) => Arc::clone(identifier),
             Definition::Error(error_definition) => error_definition.name(),
             Definition::Event(event_definition) => event_definition.name(),
             Definition::Function(function_definition) => {
@@ -218,8 +218,8 @@ impl Definition {
                 variable_declaration_statement.name()
             }
             Definition::YulFunction(yul_function_definition) => yul_function_definition.name(),
-            Definition::YulParameter(identifier) => Rc::clone(identifier),
-            Definition::YulVariable(identifier) => Rc::clone(identifier),
+            Definition::YulParameter(identifier) => Arc::clone(identifier),
+            Definition::YulVariable(identifier) => Arc::clone(identifier),
         }
     }
 

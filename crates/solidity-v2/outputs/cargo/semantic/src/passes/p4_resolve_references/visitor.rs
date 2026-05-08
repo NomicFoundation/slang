@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
@@ -131,7 +131,7 @@ impl Visitor for Pass<'_> {
             self.binder.set_node_typing(identifier.id(), typing);
 
             // Finally, create the reference for the identifier.
-            let reference = Reference::new(Rc::clone(identifier), resolution);
+            let reference = Reference::new(Arc::clone(identifier), resolution);
             self.binder.insert_reference(reference);
         }
         true
@@ -361,7 +361,7 @@ impl Visitor for Pass<'_> {
         self.binder.set_node_typing(node.id(), typing);
 
         // And create the reference for the member identifier.
-        let reference = Reference::new(Rc::clone(&node.member), resolution);
+        let reference = Reference::new(Arc::clone(&node.member), resolution);
         self.binder.insert_reference(reference);
     }
 
@@ -469,7 +469,7 @@ impl Visitor for Pass<'_> {
             let identifier = &option.name;
             let resolution =
                 crate::built_ins::BuiltInsResolver::lookup_call_option(identifier.unparse()).into();
-            let reference = Reference::new(Rc::clone(identifier), resolution);
+            let reference = Reference::new(Arc::clone(identifier), resolution);
             self.binder.insert_reference(reference);
         }
         true
@@ -488,13 +488,13 @@ impl Visitor for Pass<'_> {
         let scope_id = self.current_scope_id();
         let identifier = &items[0];
         let resolution = self.resolve_symbol_in_yul_scope(scope_id, identifier.unparse());
-        let reference = Reference::new(Rc::clone(identifier), resolution.clone());
+        let reference = Reference::new(Arc::clone(identifier), resolution.clone());
         self.binder.insert_reference(reference);
 
         if items.len() > 1 {
             let suffix = &items[1];
             let resolution = self.resolve_yul_suffix(suffix.unparse(), &resolution);
-            let reference = Reference::new(Rc::clone(suffix), resolution);
+            let reference = Reference::new(Arc::clone(suffix), resolution);
             self.binder.insert_reference(reference);
         }
 
@@ -504,7 +504,7 @@ impl Visitor for Pass<'_> {
         // emit a reference for each of them
         for identifier in items.iter().skip(consumed_identifiers) {
             self.binder.insert_reference(Reference::new(
-                Rc::clone(identifier),
+                Arc::clone(identifier),
                 Resolution::Unresolved,
             ));
         }

@@ -691,7 +691,7 @@ impl slang_solidity_v2_ast::ast::Definition
 pub fn slang_solidity_v2_ast::ast::Definition::identifier(&self) -> slang_solidity_v2_ast::ast::Identifier
 pub fn slang_solidity_v2_ast::ast::Definition::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::ast::Definition::references(&self) -> alloc::vec::Vec<slang_solidity_v2_ast::ast::Reference>
-pub fn slang_solidity_v2_ast::ast::Definition::try_create(definition_id: slang_solidity_v2_common::nodes::NodeId, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> core::option::Option<Self>
+pub fn slang_solidity_v2_ast::ast::Definition::try_create(definition_id: slang_solidity_v2_common::nodes::NodeId, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> core::option::Option<Self>
 impl core::clone::Clone for slang_solidity_v2_ast::ast::Definition
 pub fn slang_solidity_v2_ast::ast::Definition::clone(&self) -> slang_solidity_v2_ast::ast::Definition
 pub enum slang_solidity_v2_ast::ast::ElementaryType
@@ -922,8 +922,8 @@ pub slang_solidity_v2_ast::ast::Type::Tuple(slang_solidity_v2_ast::ast::types::T
 pub slang_solidity_v2_ast::ast::Type::UserDefinedValue(slang_solidity_v2_ast::ast::types::UserDefinedValueType)
 pub slang_solidity_v2_ast::ast::Type::Void(slang_solidity_v2_ast::ast::types::VoidType)
 impl slang_solidity_v2_ast::ast::Type
-pub fn slang_solidity_v2_ast::ast::Type::create(type_id: slang_solidity_v2_semantic::types::TypeId, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> Self
-pub fn slang_solidity_v2_ast::ast::Type::try_create_for_node_id(node_id: slang_solidity_v2_common::nodes::NodeId, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> core::option::Option<Self>
+pub fn slang_solidity_v2_ast::ast::Type::create(type_id: slang_solidity_v2_semantic::types::TypeId, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> Self
+pub fn slang_solidity_v2_ast::ast::Type::try_create_for_node_id(node_id: slang_solidity_v2_common::nodes::NodeId, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> core::option::Option<Self>
 pub fn slang_solidity_v2_ast::ast::Type::type_id(&self) -> slang_solidity_v2_semantic::types::TypeId
 impl core::clone::Clone for slang_solidity_v2_ast::ast::Type
 pub fn slang_solidity_v2_ast::ast::Type::clone(&self) -> slang_solidity_v2_ast::ast::Type
@@ -1027,7 +1027,7 @@ impl slang_solidity_v2_ast::ast::ABIEncoderV2KeywordStruct
 pub fn slang_solidity_v2_ast::ast::ABIEncoderV2KeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::ABIEncoderV2KeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::ABIEncoderV2KeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::ABIEncoderV2KeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::ABIEncoderV2KeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::ABIEncoderV2KeywordStruct
 pub fn slang_solidity_v2_ast::ast::ABIEncoderV2KeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::AbicoderPragmaStruct
@@ -1044,7 +1044,7 @@ impl slang_solidity_v2_ast::ast::AbicoderV1KeywordStruct
 pub fn slang_solidity_v2_ast::ast::AbicoderV1KeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::AbicoderV1KeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::AbicoderV1KeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::AbicoderV1KeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::AbicoderV1KeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::AbicoderV1KeywordStruct
 pub fn slang_solidity_v2_ast::ast::AbicoderV1KeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::AbicoderV2KeywordStruct
@@ -1052,7 +1052,7 @@ impl slang_solidity_v2_ast::ast::AbicoderV2KeywordStruct
 pub fn slang_solidity_v2_ast::ast::AbicoderV2KeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::AbicoderV2KeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::AbicoderV2KeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::AbicoderV2KeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::AbicoderV2KeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::AbicoderV2KeywordStruct
 pub fn slang_solidity_v2_ast::ast::AbicoderV2KeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::AbstractKeywordStruct
@@ -1060,7 +1060,7 @@ impl slang_solidity_v2_ast::ast::AbstractKeywordStruct
 pub fn slang_solidity_v2_ast::ast::AbstractKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::AbstractKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::AbstractKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::AbstractKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::AbstractKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::AbstractKeywordStruct
 pub fn slang_solidity_v2_ast::ast::AbstractKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::AdditiveExpressionStruct
@@ -1088,7 +1088,7 @@ impl slang_solidity_v2_ast::ast::AmpersandEqualStruct
 pub fn slang_solidity_v2_ast::ast::AmpersandEqualStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::AmpersandEqualStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::AmpersandEqualStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::AmpersandEqualStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::AmpersandEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::AmpersandEqualStruct
 pub fn slang_solidity_v2_ast::ast::AmpersandEqualStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::AmpersandStruct
@@ -1096,7 +1096,7 @@ impl slang_solidity_v2_ast::ast::AmpersandStruct
 pub fn slang_solidity_v2_ast::ast::AmpersandStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::AmpersandStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::AmpersandStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::AmpersandStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::AmpersandStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::AmpersandStruct
 pub fn slang_solidity_v2_ast::ast::AmpersandStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::AndExpressionStruct
@@ -1114,7 +1114,7 @@ impl slang_solidity_v2_ast::ast::AnonymousKeywordStruct
 pub fn slang_solidity_v2_ast::ast::AnonymousKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::AnonymousKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::AnonymousKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::AnonymousKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::AnonymousKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::AnonymousKeywordStruct
 pub fn slang_solidity_v2_ast::ast::AnonymousKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::ArrayExpressionStruct
@@ -1170,7 +1170,7 @@ impl slang_solidity_v2_ast::ast::AsteriskEqualStruct
 pub fn slang_solidity_v2_ast::ast::AsteriskEqualStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::AsteriskEqualStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::AsteriskEqualStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::AsteriskEqualStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::AsteriskEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::AsteriskEqualStruct
 pub fn slang_solidity_v2_ast::ast::AsteriskEqualStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::AsteriskStruct
@@ -1178,7 +1178,7 @@ impl slang_solidity_v2_ast::ast::AsteriskStruct
 pub fn slang_solidity_v2_ast::ast::AsteriskStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::AsteriskStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::AsteriskStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::AsteriskStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::AsteriskStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::AsteriskStruct
 pub fn slang_solidity_v2_ast::ast::AsteriskStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::BangEqualStruct
@@ -1186,7 +1186,7 @@ impl slang_solidity_v2_ast::ast::BangEqualStruct
 pub fn slang_solidity_v2_ast::ast::BangEqualStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::BangEqualStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::BangEqualStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::BangEqualStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::BangEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::BangEqualStruct
 pub fn slang_solidity_v2_ast::ast::BangEqualStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::BangStruct
@@ -1194,7 +1194,7 @@ impl slang_solidity_v2_ast::ast::BangStruct
 pub fn slang_solidity_v2_ast::ast::BangStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::BangStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::BangStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::BangStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::BangStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::BangStruct
 pub fn slang_solidity_v2_ast::ast::BangStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::BarEqualStruct
@@ -1202,7 +1202,7 @@ impl slang_solidity_v2_ast::ast::BarEqualStruct
 pub fn slang_solidity_v2_ast::ast::BarEqualStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::BarEqualStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::BarEqualStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::BarEqualStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::BarEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::BarEqualStruct
 pub fn slang_solidity_v2_ast::ast::BarEqualStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::BarStruct
@@ -1210,7 +1210,7 @@ impl slang_solidity_v2_ast::ast::BarStruct
 pub fn slang_solidity_v2_ast::ast::BarStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::BarStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::BarStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::BarStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::BarStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::BarStruct
 pub fn slang_solidity_v2_ast::ast::BarStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::BitwiseAndExpressionStruct
@@ -1257,7 +1257,7 @@ impl slang_solidity_v2_ast::ast::BoolKeywordStruct
 pub fn slang_solidity_v2_ast::ast::BoolKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::BoolKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::BoolKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::BoolKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::BoolKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::BoolKeywordStruct
 pub fn slang_solidity_v2_ast::ast::BoolKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::BreakStatementStruct
@@ -1273,7 +1273,7 @@ impl slang_solidity_v2_ast::ast::BytesKeywordStruct
 pub fn slang_solidity_v2_ast::ast::BytesKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::BytesKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::BytesKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::BytesKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::BytesKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::ast::BytesKeywordStruct::unparse(&self) -> &str
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::BytesKeywordStruct
 pub fn slang_solidity_v2_ast::ast::BytesKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
@@ -1282,7 +1282,7 @@ impl slang_solidity_v2_ast::ast::CallDataKeywordStruct
 pub fn slang_solidity_v2_ast::ast::CallDataKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::CallDataKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::CallDataKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::CallDataKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::CallDataKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::CallDataKeywordStruct
 pub fn slang_solidity_v2_ast::ast::CallDataKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::CallOptionsExpressionStruct
@@ -1307,7 +1307,7 @@ impl slang_solidity_v2_ast::ast::CaretEqualStruct
 pub fn slang_solidity_v2_ast::ast::CaretEqualStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::CaretEqualStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::CaretEqualStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::CaretEqualStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::CaretEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::CaretEqualStruct
 pub fn slang_solidity_v2_ast::ast::CaretEqualStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::CaretStruct
@@ -1315,7 +1315,7 @@ impl slang_solidity_v2_ast::ast::CaretStruct
 pub fn slang_solidity_v2_ast::ast::CaretStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::CaretStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::CaretStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::CaretStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::CaretStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::CaretStruct
 pub fn slang_solidity_v2_ast::ast::CaretStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::CatchClauseErrorStruct
@@ -1422,7 +1422,7 @@ impl slang_solidity_v2_ast::ast::DaysKeywordStruct
 pub fn slang_solidity_v2_ast::ast::DaysKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::DaysKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::DaysKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::DaysKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::DaysKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::DaysKeywordStruct
 pub fn slang_solidity_v2_ast::ast::DaysKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::DecimalLiteralStruct
@@ -1430,7 +1430,7 @@ impl slang_solidity_v2_ast::ast::DecimalLiteralStruct
 pub fn slang_solidity_v2_ast::ast::DecimalLiteralStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::DecimalLiteralStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::DecimalLiteralStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::DecimalLiteralStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::DecimalLiteralStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::ast::DecimalLiteralStruct::unparse(&self) -> &str
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::DecimalLiteralStruct
 pub fn slang_solidity_v2_ast::ast::DecimalLiteralStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
@@ -1453,7 +1453,7 @@ impl slang_solidity_v2_ast::ast::DeleteKeywordStruct
 pub fn slang_solidity_v2_ast::ast::DeleteKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::DeleteKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::DeleteKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::DeleteKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::DeleteKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::DeleteKeywordStruct
 pub fn slang_solidity_v2_ast::ast::DeleteKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::DoWhileStatementStruct
@@ -1501,7 +1501,7 @@ impl slang_solidity_v2_ast::ast::EqualEqualStruct
 pub fn slang_solidity_v2_ast::ast::EqualEqualStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::EqualEqualStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::EqualEqualStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::EqualEqualStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::EqualEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::EqualEqualStruct
 pub fn slang_solidity_v2_ast::ast::EqualEqualStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::EqualStruct
@@ -1509,7 +1509,7 @@ impl slang_solidity_v2_ast::ast::EqualStruct
 pub fn slang_solidity_v2_ast::ast::EqualStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::EqualStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::EqualStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::EqualStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::EqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::EqualStruct
 pub fn slang_solidity_v2_ast::ast::EqualStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::EqualityExpressionStruct
@@ -1546,7 +1546,7 @@ impl slang_solidity_v2_ast::ast::EtherKeywordStruct
 pub fn slang_solidity_v2_ast::ast::EtherKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::EtherKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::EtherKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::EtherKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::EtherKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::EtherKeywordStruct
 pub fn slang_solidity_v2_ast::ast::EtherKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::EventDefinitionStruct
@@ -1601,7 +1601,7 @@ impl slang_solidity_v2_ast::ast::FalseKeywordStruct
 pub fn slang_solidity_v2_ast::ast::FalseKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::FalseKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::FalseKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::FalseKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::FalseKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::FalseKeywordStruct
 pub fn slang_solidity_v2_ast::ast::FalseKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::FixedKeywordStruct
@@ -1609,7 +1609,7 @@ impl slang_solidity_v2_ast::ast::FixedKeywordStruct
 pub fn slang_solidity_v2_ast::ast::FixedKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::FixedKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::FixedKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::FixedKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::FixedKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::ast::FixedKeywordStruct::unparse(&self) -> &str
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::FixedKeywordStruct
 pub fn slang_solidity_v2_ast::ast::FixedKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
@@ -1681,7 +1681,7 @@ impl slang_solidity_v2_ast::ast::GlobalKeywordStruct
 pub fn slang_solidity_v2_ast::ast::GlobalKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::GlobalKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::GlobalKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::GlobalKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::GlobalKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::GlobalKeywordStruct
 pub fn slang_solidity_v2_ast::ast::GlobalKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::GreaterThanEqualStruct
@@ -1689,7 +1689,7 @@ impl slang_solidity_v2_ast::ast::GreaterThanEqualStruct
 pub fn slang_solidity_v2_ast::ast::GreaterThanEqualStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::GreaterThanEqualStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::GreaterThanEqualStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::GreaterThanEqualStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::GreaterThanEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::GreaterThanEqualStruct
 pub fn slang_solidity_v2_ast::ast::GreaterThanEqualStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::GreaterThanGreaterThanEqualStruct
@@ -1697,7 +1697,7 @@ impl slang_solidity_v2_ast::ast::GreaterThanGreaterThanEqualStruct
 pub fn slang_solidity_v2_ast::ast::GreaterThanGreaterThanEqualStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::GreaterThanGreaterThanEqualStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::GreaterThanGreaterThanEqualStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::GreaterThanGreaterThanEqualStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::GreaterThanGreaterThanEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::GreaterThanGreaterThanEqualStruct
 pub fn slang_solidity_v2_ast::ast::GreaterThanGreaterThanEqualStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::GreaterThanGreaterThanGreaterThanEqualStruct
@@ -1705,7 +1705,7 @@ impl slang_solidity_v2_ast::ast::GreaterThanGreaterThanGreaterThanEqualStruct
 pub fn slang_solidity_v2_ast::ast::GreaterThanGreaterThanGreaterThanEqualStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::GreaterThanGreaterThanGreaterThanEqualStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::GreaterThanGreaterThanGreaterThanEqualStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::GreaterThanGreaterThanGreaterThanEqualStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::GreaterThanGreaterThanGreaterThanEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::GreaterThanGreaterThanGreaterThanEqualStruct
 pub fn slang_solidity_v2_ast::ast::GreaterThanGreaterThanGreaterThanEqualStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::GreaterThanGreaterThanGreaterThanStruct
@@ -1713,7 +1713,7 @@ impl slang_solidity_v2_ast::ast::GreaterThanGreaterThanGreaterThanStruct
 pub fn slang_solidity_v2_ast::ast::GreaterThanGreaterThanGreaterThanStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::GreaterThanGreaterThanGreaterThanStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::GreaterThanGreaterThanGreaterThanStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::GreaterThanGreaterThanGreaterThanStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::GreaterThanGreaterThanGreaterThanStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::GreaterThanGreaterThanGreaterThanStruct
 pub fn slang_solidity_v2_ast::ast::GreaterThanGreaterThanGreaterThanStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::GreaterThanGreaterThanStruct
@@ -1721,7 +1721,7 @@ impl slang_solidity_v2_ast::ast::GreaterThanGreaterThanStruct
 pub fn slang_solidity_v2_ast::ast::GreaterThanGreaterThanStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::GreaterThanGreaterThanStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::GreaterThanGreaterThanStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::GreaterThanGreaterThanStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::GreaterThanGreaterThanStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::GreaterThanGreaterThanStruct
 pub fn slang_solidity_v2_ast::ast::GreaterThanGreaterThanStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::GreaterThanStruct
@@ -1729,7 +1729,7 @@ impl slang_solidity_v2_ast::ast::GreaterThanStruct
 pub fn slang_solidity_v2_ast::ast::GreaterThanStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::GreaterThanStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::GreaterThanStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::GreaterThanStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::GreaterThanStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::GreaterThanStruct
 pub fn slang_solidity_v2_ast::ast::GreaterThanStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::GweiKeywordStruct
@@ -1737,7 +1737,7 @@ impl slang_solidity_v2_ast::ast::GweiKeywordStruct
 pub fn slang_solidity_v2_ast::ast::GweiKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::GweiKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::GweiKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::GweiKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::GweiKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::GweiKeywordStruct
 pub fn slang_solidity_v2_ast::ast::GweiKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::HexLiteralStruct
@@ -1745,7 +1745,7 @@ impl slang_solidity_v2_ast::ast::HexLiteralStruct
 pub fn slang_solidity_v2_ast::ast::HexLiteralStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::HexLiteralStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::HexLiteralStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::HexLiteralStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::HexLiteralStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::ast::HexLiteralStruct::unparse(&self) -> &str
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::HexLiteralStruct
 pub fn slang_solidity_v2_ast::ast::HexLiteralStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
@@ -1766,7 +1766,7 @@ impl slang_solidity_v2_ast::ast::HexStringLiteralStruct
 pub fn slang_solidity_v2_ast::ast::HexStringLiteralStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::HexStringLiteralStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::HexStringLiteralStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::HexStringLiteralStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::HexStringLiteralStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::ast::HexStringLiteralStruct::unparse(&self) -> &str
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::HexStringLiteralStruct
 pub fn slang_solidity_v2_ast::ast::HexStringLiteralStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
@@ -1784,7 +1784,7 @@ impl slang_solidity_v2_ast::ast::HoursKeywordStruct
 pub fn slang_solidity_v2_ast::ast::HoursKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::HoursKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::HoursKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::HoursKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::HoursKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::HoursKeywordStruct
 pub fn slang_solidity_v2_ast::ast::HoursKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::IdentifierPathStruct
@@ -1814,7 +1814,7 @@ impl slang_solidity_v2_ast::ast::IdentifierStruct
 pub fn slang_solidity_v2_ast::ast::IdentifierStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::IdentifierStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::IdentifierStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::IdentifierStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::IdentifierStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::ast::IdentifierStruct::unparse(&self) -> &str
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::IdentifierStruct
 pub fn slang_solidity_v2_ast::ast::IdentifierStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
@@ -1875,7 +1875,7 @@ impl slang_solidity_v2_ast::ast::IndexedKeywordStruct
 pub fn slang_solidity_v2_ast::ast::IndexedKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::IndexedKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::IndexedKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::IndexedKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::IndexedKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::IndexedKeywordStruct
 pub fn slang_solidity_v2_ast::ast::IndexedKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::InequalityExpressionStruct
@@ -1911,7 +1911,7 @@ impl slang_solidity_v2_ast::ast::IntKeywordStruct
 pub fn slang_solidity_v2_ast::ast::IntKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::IntKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::IntKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::IntKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::IntKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::ast::IntKeywordStruct::unparse(&self) -> &str
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::IntKeywordStruct
 pub fn slang_solidity_v2_ast::ast::IntKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
@@ -1941,7 +1941,7 @@ impl slang_solidity_v2_ast::ast::LessThanEqualStruct
 pub fn slang_solidity_v2_ast::ast::LessThanEqualStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::LessThanEqualStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::LessThanEqualStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::LessThanEqualStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::LessThanEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::LessThanEqualStruct
 pub fn slang_solidity_v2_ast::ast::LessThanEqualStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::LessThanLessThanEqualStruct
@@ -1949,7 +1949,7 @@ impl slang_solidity_v2_ast::ast::LessThanLessThanEqualStruct
 pub fn slang_solidity_v2_ast::ast::LessThanLessThanEqualStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::LessThanLessThanEqualStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::LessThanLessThanEqualStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::LessThanLessThanEqualStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::LessThanLessThanEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::LessThanLessThanEqualStruct
 pub fn slang_solidity_v2_ast::ast::LessThanLessThanEqualStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::LessThanLessThanStruct
@@ -1957,7 +1957,7 @@ impl slang_solidity_v2_ast::ast::LessThanLessThanStruct
 pub fn slang_solidity_v2_ast::ast::LessThanLessThanStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::LessThanLessThanStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::LessThanLessThanStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::LessThanLessThanStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::LessThanLessThanStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::LessThanLessThanStruct
 pub fn slang_solidity_v2_ast::ast::LessThanLessThanStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::LessThanStruct
@@ -1965,7 +1965,7 @@ impl slang_solidity_v2_ast::ast::LessThanStruct
 pub fn slang_solidity_v2_ast::ast::LessThanStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::LessThanStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::LessThanStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::LessThanStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::LessThanStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::LessThanStruct
 pub fn slang_solidity_v2_ast::ast::LessThanStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::LibraryDefinitionStruct
@@ -2013,7 +2013,7 @@ impl slang_solidity_v2_ast::ast::MemoryKeywordStruct
 pub fn slang_solidity_v2_ast::ast::MemoryKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::MemoryKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::MemoryKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::MemoryKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::MemoryKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::MemoryKeywordStruct
 pub fn slang_solidity_v2_ast::ast::MemoryKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::MinusEqualStruct
@@ -2021,7 +2021,7 @@ impl slang_solidity_v2_ast::ast::MinusEqualStruct
 pub fn slang_solidity_v2_ast::ast::MinusEqualStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::MinusEqualStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::MinusEqualStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::MinusEqualStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::MinusEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::MinusEqualStruct
 pub fn slang_solidity_v2_ast::ast::MinusEqualStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::MinusMinusStruct
@@ -2029,7 +2029,7 @@ impl slang_solidity_v2_ast::ast::MinusMinusStruct
 pub fn slang_solidity_v2_ast::ast::MinusMinusStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::MinusMinusStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::MinusMinusStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::MinusMinusStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::MinusMinusStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::MinusMinusStruct
 pub fn slang_solidity_v2_ast::ast::MinusMinusStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::MinusStruct
@@ -2037,7 +2037,7 @@ impl slang_solidity_v2_ast::ast::MinusStruct
 pub fn slang_solidity_v2_ast::ast::MinusStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::MinusStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::MinusStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::MinusStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::MinusStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::MinusStruct
 pub fn slang_solidity_v2_ast::ast::MinusStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::MinutesKeywordStruct
@@ -2045,7 +2045,7 @@ impl slang_solidity_v2_ast::ast::MinutesKeywordStruct
 pub fn slang_solidity_v2_ast::ast::MinutesKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::MinutesKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::MinutesKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::MinutesKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::MinutesKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::MinutesKeywordStruct
 pub fn slang_solidity_v2_ast::ast::MinutesKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::ModifierInvocationStruct
@@ -2185,7 +2185,7 @@ impl slang_solidity_v2_ast::ast::PayableKeywordStruct
 pub fn slang_solidity_v2_ast::ast::PayableKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::PayableKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::PayableKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::PayableKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::PayableKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::PayableKeywordStruct
 pub fn slang_solidity_v2_ast::ast::PayableKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::PercentEqualStruct
@@ -2193,7 +2193,7 @@ impl slang_solidity_v2_ast::ast::PercentEqualStruct
 pub fn slang_solidity_v2_ast::ast::PercentEqualStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::PercentEqualStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::PercentEqualStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::PercentEqualStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::PercentEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::PercentEqualStruct
 pub fn slang_solidity_v2_ast::ast::PercentEqualStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::PercentStruct
@@ -2201,7 +2201,7 @@ impl slang_solidity_v2_ast::ast::PercentStruct
 pub fn slang_solidity_v2_ast::ast::PercentStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::PercentStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::PercentStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::PercentStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::PercentStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::PercentStruct
 pub fn slang_solidity_v2_ast::ast::PercentStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::PlusEqualStruct
@@ -2209,7 +2209,7 @@ impl slang_solidity_v2_ast::ast::PlusEqualStruct
 pub fn slang_solidity_v2_ast::ast::PlusEqualStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::PlusEqualStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::PlusEqualStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::PlusEqualStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::PlusEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::PlusEqualStruct
 pub fn slang_solidity_v2_ast::ast::PlusEqualStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::PlusPlusStruct
@@ -2217,7 +2217,7 @@ impl slang_solidity_v2_ast::ast::PlusPlusStruct
 pub fn slang_solidity_v2_ast::ast::PlusPlusStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::PlusPlusStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::PlusPlusStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::PlusPlusStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::PlusPlusStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::PlusPlusStruct
 pub fn slang_solidity_v2_ast::ast::PlusPlusStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::PlusStruct
@@ -2225,7 +2225,7 @@ impl slang_solidity_v2_ast::ast::PlusStruct
 pub fn slang_solidity_v2_ast::ast::PlusStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::PlusStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::PlusStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::PlusStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::PlusStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::PlusStruct
 pub fn slang_solidity_v2_ast::ast::PlusStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::PositionalArgumentsStruct
@@ -2250,7 +2250,7 @@ impl slang_solidity_v2_ast::ast::PragmaCaretStruct
 pub fn slang_solidity_v2_ast::ast::PragmaCaretStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::PragmaCaretStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::PragmaCaretStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::PragmaCaretStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::PragmaCaretStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::PragmaCaretStruct
 pub fn slang_solidity_v2_ast::ast::PragmaCaretStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::PragmaDirectiveStruct
@@ -2267,7 +2267,7 @@ impl slang_solidity_v2_ast::ast::PragmaEqualStruct
 pub fn slang_solidity_v2_ast::ast::PragmaEqualStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::PragmaEqualStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::PragmaEqualStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::PragmaEqualStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::PragmaEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::PragmaEqualStruct
 pub fn slang_solidity_v2_ast::ast::PragmaEqualStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::PragmaGreaterThanEqualStruct
@@ -2275,7 +2275,7 @@ impl slang_solidity_v2_ast::ast::PragmaGreaterThanEqualStruct
 pub fn slang_solidity_v2_ast::ast::PragmaGreaterThanEqualStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::PragmaGreaterThanEqualStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::PragmaGreaterThanEqualStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::PragmaGreaterThanEqualStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::PragmaGreaterThanEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::PragmaGreaterThanEqualStruct
 pub fn slang_solidity_v2_ast::ast::PragmaGreaterThanEqualStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::PragmaGreaterThanStruct
@@ -2283,7 +2283,7 @@ impl slang_solidity_v2_ast::ast::PragmaGreaterThanStruct
 pub fn slang_solidity_v2_ast::ast::PragmaGreaterThanStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::PragmaGreaterThanStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::PragmaGreaterThanStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::PragmaGreaterThanStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::PragmaGreaterThanStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::PragmaGreaterThanStruct
 pub fn slang_solidity_v2_ast::ast::PragmaGreaterThanStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::PragmaLessThanEqualStruct
@@ -2291,7 +2291,7 @@ impl slang_solidity_v2_ast::ast::PragmaLessThanEqualStruct
 pub fn slang_solidity_v2_ast::ast::PragmaLessThanEqualStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::PragmaLessThanEqualStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::PragmaLessThanEqualStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::PragmaLessThanEqualStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::PragmaLessThanEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::PragmaLessThanEqualStruct
 pub fn slang_solidity_v2_ast::ast::PragmaLessThanEqualStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::PragmaLessThanStruct
@@ -2299,7 +2299,7 @@ impl slang_solidity_v2_ast::ast::PragmaLessThanStruct
 pub fn slang_solidity_v2_ast::ast::PragmaLessThanStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::PragmaLessThanStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::PragmaLessThanStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::PragmaLessThanStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::PragmaLessThanStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::PragmaLessThanStruct
 pub fn slang_solidity_v2_ast::ast::PragmaLessThanStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::PragmaTildeStruct
@@ -2307,7 +2307,7 @@ impl slang_solidity_v2_ast::ast::PragmaTildeStruct
 pub fn slang_solidity_v2_ast::ast::PragmaTildeStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::PragmaTildeStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::PragmaTildeStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::PragmaTildeStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::PragmaTildeStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::PragmaTildeStruct
 pub fn slang_solidity_v2_ast::ast::PragmaTildeStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::PrefixExpressionStruct
@@ -2326,7 +2326,7 @@ pub fn slang_solidity_v2_ast::ast::Reference::name(&self) -> alloc::string::Stri
 pub fn slang_solidity_v2_ast::ast::Reference::resolve_to_built_in(&self) -> core::option::Option<slang_solidity_v2_common::built_ins::built_in::BuiltIn>
 pub fn slang_solidity_v2_ast::ast::Reference::resolve_to_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
 pub fn slang_solidity_v2_ast::ast::Reference::resolve_to_immediate_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
-pub fn slang_solidity_v2_ast::ast::Reference::try_create(ir_node: &slang_solidity_v2_ir::ir::nodes::Identifier, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> core::option::Option<Self>
+pub fn slang_solidity_v2_ast::ast::Reference::try_create(ir_node: &slang_solidity_v2_ir::ir::nodes::Identifier, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> core::option::Option<Self>
 pub struct slang_solidity_v2_ast::ast::ReturnStatementStruct
 impl slang_solidity_v2_ast::ast::ReturnStatementStruct
 pub fn slang_solidity_v2_ast::ast::ReturnStatementStruct::expression(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Expression>
@@ -2351,7 +2351,7 @@ impl slang_solidity_v2_ast::ast::SMTCheckerKeywordStruct
 pub fn slang_solidity_v2_ast::ast::SMTCheckerKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::SMTCheckerKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::SMTCheckerKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::SMTCheckerKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::SMTCheckerKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::SMTCheckerKeywordStruct
 pub fn slang_solidity_v2_ast::ast::SMTCheckerKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::SecondsKeywordStruct
@@ -2359,7 +2359,7 @@ impl slang_solidity_v2_ast::ast::SecondsKeywordStruct
 pub fn slang_solidity_v2_ast::ast::SecondsKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::SecondsKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::SecondsKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::SecondsKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::SecondsKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::SecondsKeywordStruct
 pub fn slang_solidity_v2_ast::ast::SecondsKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::SemicolonStruct
@@ -2367,7 +2367,7 @@ impl slang_solidity_v2_ast::ast::SemicolonStruct
 pub fn slang_solidity_v2_ast::ast::SemicolonStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::SemicolonStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::SemicolonStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::SemicolonStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::SemicolonStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::SemicolonStruct
 pub fn slang_solidity_v2_ast::ast::SemicolonStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::ShiftExpressionStruct
@@ -2403,7 +2403,7 @@ impl slang_solidity_v2_ast::ast::SlashEqualStruct
 pub fn slang_solidity_v2_ast::ast::SlashEqualStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::SlashEqualStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::SlashEqualStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::SlashEqualStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::SlashEqualStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::SlashEqualStruct
 pub fn slang_solidity_v2_ast::ast::SlashEqualStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::SlashStruct
@@ -2411,7 +2411,7 @@ impl slang_solidity_v2_ast::ast::SlashStruct
 pub fn slang_solidity_v2_ast::ast::SlashStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::SlashStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::SlashStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::SlashStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::SlashStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::SlashStruct
 pub fn slang_solidity_v2_ast::ast::SlashStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::SourceUnitMembersStruct
@@ -2470,7 +2470,7 @@ impl slang_solidity_v2_ast::ast::StorageKeywordStruct
 pub fn slang_solidity_v2_ast::ast::StorageKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::StorageKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::StorageKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::StorageKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::StorageKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::StorageKeywordStruct
 pub fn slang_solidity_v2_ast::ast::StorageKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::StringKeywordStruct
@@ -2478,7 +2478,7 @@ impl slang_solidity_v2_ast::ast::StringKeywordStruct
 pub fn slang_solidity_v2_ast::ast::StringKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::StringKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::StringKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::StringKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::StringKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::StringKeywordStruct
 pub fn slang_solidity_v2_ast::ast::StringKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::StringLiteralStruct
@@ -2486,7 +2486,7 @@ impl slang_solidity_v2_ast::ast::StringLiteralStruct
 pub fn slang_solidity_v2_ast::ast::StringLiteralStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::StringLiteralStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::StringLiteralStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::StringLiteralStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::StringLiteralStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::ast::StringLiteralStruct::unparse(&self) -> &str
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::StringLiteralStruct
 pub fn slang_solidity_v2_ast::ast::StringLiteralStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
@@ -2537,7 +2537,7 @@ impl slang_solidity_v2_ast::ast::SuperKeywordStruct
 pub fn slang_solidity_v2_ast::ast::SuperKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::SuperKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::SuperKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::SuperKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::SuperKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::SuperKeywordStruct
 pub fn slang_solidity_v2_ast::ast::SuperKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::ThisKeywordStruct
@@ -2545,7 +2545,7 @@ impl slang_solidity_v2_ast::ast::ThisKeywordStruct
 pub fn slang_solidity_v2_ast::ast::ThisKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::ThisKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::ThisKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::ThisKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::ThisKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::ThisKeywordStruct
 pub fn slang_solidity_v2_ast::ast::ThisKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::TildeStruct
@@ -2553,7 +2553,7 @@ impl slang_solidity_v2_ast::ast::TildeStruct
 pub fn slang_solidity_v2_ast::ast::TildeStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::TildeStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::TildeStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::TildeStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::TildeStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::TildeStruct
 pub fn slang_solidity_v2_ast::ast::TildeStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::TrueKeywordStruct
@@ -2561,7 +2561,7 @@ impl slang_solidity_v2_ast::ast::TrueKeywordStruct
 pub fn slang_solidity_v2_ast::ast::TrueKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::TrueKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::TrueKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::TrueKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::TrueKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::TrueKeywordStruct
 pub fn slang_solidity_v2_ast::ast::TrueKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::TryStatementStruct
@@ -2615,7 +2615,7 @@ impl slang_solidity_v2_ast::ast::UfixedKeywordStruct
 pub fn slang_solidity_v2_ast::ast::UfixedKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::UfixedKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::UfixedKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::UfixedKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::UfixedKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::ast::UfixedKeywordStruct::unparse(&self) -> &str
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::UfixedKeywordStruct
 pub fn slang_solidity_v2_ast::ast::UfixedKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
@@ -2624,7 +2624,7 @@ impl slang_solidity_v2_ast::ast::UintKeywordStruct
 pub fn slang_solidity_v2_ast::ast::UintKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::UintKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::UintKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::UintKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::UintKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::ast::UintKeywordStruct::unparse(&self) -> &str
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::UintKeywordStruct
 pub fn slang_solidity_v2_ast::ast::UintKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
@@ -2642,7 +2642,7 @@ impl slang_solidity_v2_ast::ast::UnicodeStringLiteralStruct
 pub fn slang_solidity_v2_ast::ast::UnicodeStringLiteralStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::UnicodeStringLiteralStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::UnicodeStringLiteralStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::UnicodeStringLiteralStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::UnicodeStringLiteralStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::ast::UnicodeStringLiteralStruct::unparse(&self) -> &str
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::UnicodeStringLiteralStruct
 pub fn slang_solidity_v2_ast::ast::UnicodeStringLiteralStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
@@ -2766,7 +2766,7 @@ impl slang_solidity_v2_ast::ast::VersionSpecifierStruct
 pub fn slang_solidity_v2_ast::ast::VersionSpecifierStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::VersionSpecifierStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::VersionSpecifierStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::VersionSpecifierStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::VersionSpecifierStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::ast::VersionSpecifierStruct::unparse(&self) -> &str
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::VersionSpecifierStruct
 pub fn slang_solidity_v2_ast::ast::VersionSpecifierStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
@@ -2785,7 +2785,7 @@ impl slang_solidity_v2_ast::ast::VirtualKeywordStruct
 pub fn slang_solidity_v2_ast::ast::VirtualKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::VirtualKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::VirtualKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::VirtualKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::VirtualKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::VirtualKeywordStruct
 pub fn slang_solidity_v2_ast::ast::VirtualKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::WeeksKeywordStruct
@@ -2793,7 +2793,7 @@ impl slang_solidity_v2_ast::ast::WeeksKeywordStruct
 pub fn slang_solidity_v2_ast::ast::WeeksKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::WeeksKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::WeeksKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::WeeksKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::WeeksKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::WeeksKeywordStruct
 pub fn slang_solidity_v2_ast::ast::WeeksKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::WeiKeywordStruct
@@ -2801,7 +2801,7 @@ impl slang_solidity_v2_ast::ast::WeiKeywordStruct
 pub fn slang_solidity_v2_ast::ast::WeiKeywordStruct::get_file_id(&self) -> &str
 pub fn slang_solidity_v2_ast::ast::WeiKeywordStruct::get_text_range(&self) -> &core::ops::range::Range<usize>
 pub fn slang_solidity_v2_ast::ast::WeiKeywordStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
-pub fn slang_solidity_v2_ast::ast::WeiKeywordStruct::id(self: &alloc::rc::Rc<Self>) -> slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_ast::ast::WeiKeywordStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::WeiKeywordStruct
 pub fn slang_solidity_v2_ast::ast::WeiKeywordStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub struct slang_solidity_v2_ast::ast::WhileStatementStruct
@@ -3008,307 +3008,307 @@ pub fn slang_solidity_v2_ast::ast::YulVariableNamesStruct::iter(&self) -> impl c
 pub fn slang_solidity_v2_ast::ast::YulVariableNamesStruct::len(&self) -> usize
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::YulVariableNamesStruct
 pub fn slang_solidity_v2_ast::ast::YulVariableNamesStruct::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
-pub fn slang_solidity_v2_ast::ast::create_abicoder_pragma(ir_node: &slang_solidity_v2_ir::ir::nodes::AbicoderPragma, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::AbicoderPragma
-pub fn slang_solidity_v2_ast::ast::create_additive_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::AdditiveExpression, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::AdditiveExpression
-pub fn slang_solidity_v2_ast::ast::create_address_type(ir_node: &slang_solidity_v2_ir::ir::nodes::AddressType, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::AddressType
-pub fn slang_solidity_v2_ast::ast::create_and_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::AndExpression, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::AndExpression
-pub fn slang_solidity_v2_ast::ast::create_array_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::ArrayExpression, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ArrayExpression
-pub fn slang_solidity_v2_ast::ast::create_array_type_name(ir_node: &slang_solidity_v2_ir::ir::nodes::ArrayTypeName, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ArrayTypeName
-pub fn slang_solidity_v2_ast::ast::create_assembly_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::AssemblyStatement, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::AssemblyStatement
-pub fn slang_solidity_v2_ast::ast::create_assignment_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::AssignmentExpression, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::AssignmentExpression
-pub fn slang_solidity_v2_ast::ast::create_bitwise_and_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::BitwiseAndExpression, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::BitwiseAndExpression
-pub fn slang_solidity_v2_ast::ast::create_bitwise_or_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::BitwiseOrExpression, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::BitwiseOrExpression
-pub fn slang_solidity_v2_ast::ast::create_bitwise_xor_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::BitwiseXorExpression, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::BitwiseXorExpression
-pub fn slang_solidity_v2_ast::ast::create_block(ir_node: &slang_solidity_v2_ir::ir::nodes::Block, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::Block
-pub fn slang_solidity_v2_ast::ast::create_break_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::BreakStatement, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::BreakStatement
-pub fn slang_solidity_v2_ast::ast::create_call_options_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::CallOptionsExpression, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::CallOptionsExpression
-pub fn slang_solidity_v2_ast::ast::create_catch_clause(ir_node: &slang_solidity_v2_ir::ir::nodes::CatchClause, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::CatchClause
-pub fn slang_solidity_v2_ast::ast::create_catch_clause_error(ir_node: &slang_solidity_v2_ir::ir::nodes::CatchClauseError, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::CatchClauseError
-pub fn slang_solidity_v2_ast::ast::create_conditional_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::ConditionalExpression, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ConditionalExpression
-pub fn slang_solidity_v2_ast::ast::create_constant_definition(ir_node: &slang_solidity_v2_ir::ir::nodes::ConstantDefinition, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ConstantDefinition
-pub fn slang_solidity_v2_ast::ast::create_continue_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::ContinueStatement, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ContinueStatement
-pub fn slang_solidity_v2_ast::ast::create_contract_definition(ir_node: &slang_solidity_v2_ir::ir::nodes::ContractDefinition, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ContractDefinition
-pub fn slang_solidity_v2_ast::ast::create_decimal_number_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::DecimalNumberExpression, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::DecimalNumberExpression
-pub fn slang_solidity_v2_ast::ast::create_do_while_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::DoWhileStatement, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::DoWhileStatement
-pub fn slang_solidity_v2_ast::ast::create_emit_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::EmitStatement, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::EmitStatement
-pub fn slang_solidity_v2_ast::ast::create_enum_definition(ir_node: &slang_solidity_v2_ir::ir::nodes::EnumDefinition, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::EnumDefinition
-pub fn slang_solidity_v2_ast::ast::create_equality_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::EqualityExpression, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::EqualityExpression
-pub fn slang_solidity_v2_ast::ast::create_error_definition(ir_node: &slang_solidity_v2_ir::ir::nodes::ErrorDefinition, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ErrorDefinition
-pub fn slang_solidity_v2_ast::ast::create_event_definition(ir_node: &slang_solidity_v2_ir::ir::nodes::EventDefinition, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::EventDefinition
-pub fn slang_solidity_v2_ast::ast::create_experimental_pragma(ir_node: &slang_solidity_v2_ir::ir::nodes::ExperimentalPragma, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ExperimentalPragma
-pub fn slang_solidity_v2_ast::ast::create_exponentiation_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::ExponentiationExpression, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ExponentiationExpression
-pub fn slang_solidity_v2_ast::ast::create_expression_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::ExpressionStatement, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ExpressionStatement
-pub fn slang_solidity_v2_ast::ast::create_for_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::ForStatement, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ForStatement
-pub fn slang_solidity_v2_ast::ast::create_function_call_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::FunctionCallExpression, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::FunctionCallExpression
-pub fn slang_solidity_v2_ast::ast::create_function_definition(ir_node: &slang_solidity_v2_ir::ir::nodes::FunctionDefinition, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::FunctionDefinition
-pub fn slang_solidity_v2_ast::ast::create_function_type(ir_node: &slang_solidity_v2_ir::ir::nodes::FunctionType, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::FunctionType
-pub fn slang_solidity_v2_ast::ast::create_hex_number_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::HexNumberExpression, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::HexNumberExpression
-pub fn slang_solidity_v2_ast::ast::create_if_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::IfStatement, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::IfStatement
-pub fn slang_solidity_v2_ast::ast::create_import_deconstruction(ir_node: &slang_solidity_v2_ir::ir::nodes::ImportDeconstruction, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ImportDeconstruction
-pub fn slang_solidity_v2_ast::ast::create_import_deconstruction_symbol(ir_node: &slang_solidity_v2_ir::ir::nodes::ImportDeconstructionSymbol, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ImportDeconstructionSymbol
-pub fn slang_solidity_v2_ast::ast::create_index_access_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::IndexAccessExpression, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::IndexAccessExpression
-pub fn slang_solidity_v2_ast::ast::create_inequality_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::InequalityExpression, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::InequalityExpression
-pub fn slang_solidity_v2_ast::ast::create_inheritance_type(ir_node: &slang_solidity_v2_ir::ir::nodes::InheritanceType, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::InheritanceType
-pub fn slang_solidity_v2_ast::ast::create_interface_definition(ir_node: &slang_solidity_v2_ir::ir::nodes::InterfaceDefinition, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::InterfaceDefinition
-pub fn slang_solidity_v2_ast::ast::create_library_definition(ir_node: &slang_solidity_v2_ir::ir::nodes::LibraryDefinition, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::LibraryDefinition
-pub fn slang_solidity_v2_ast::ast::create_mapping_type(ir_node: &slang_solidity_v2_ir::ir::nodes::MappingType, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::MappingType
-pub fn slang_solidity_v2_ast::ast::create_member_access_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::MemberAccessExpression, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::MemberAccessExpression
-pub fn slang_solidity_v2_ast::ast::create_modifier_invocation(ir_node: &slang_solidity_v2_ir::ir::nodes::ModifierInvocation, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ModifierInvocation
-pub fn slang_solidity_v2_ast::ast::create_multi_typed_declaration(ir_node: &slang_solidity_v2_ir::ir::nodes::MultiTypedDeclaration, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::MultiTypedDeclaration
-pub fn slang_solidity_v2_ast::ast::create_multi_typed_declaration_element(ir_node: &slang_solidity_v2_ir::ir::nodes::MultiTypedDeclarationElement, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::MultiTypedDeclarationElement
-pub fn slang_solidity_v2_ast::ast::create_multiplicative_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::MultiplicativeExpression, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::MultiplicativeExpression
-pub fn slang_solidity_v2_ast::ast::create_named_argument(ir_node: &slang_solidity_v2_ir::ir::nodes::NamedArgument, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::NamedArgument
-pub fn slang_solidity_v2_ast::ast::create_new_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::NewExpression, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::NewExpression
-pub fn slang_solidity_v2_ast::ast::create_or_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::OrExpression, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::OrExpression
-pub fn slang_solidity_v2_ast::ast::create_parameter(ir_node: &slang_solidity_v2_ir::ir::nodes::Parameter, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::Parameter
-pub fn slang_solidity_v2_ast::ast::create_path_import(ir_node: &slang_solidity_v2_ir::ir::nodes::PathImport, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::PathImport
-pub fn slang_solidity_v2_ast::ast::create_postfix_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::PostfixExpression, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::PostfixExpression
-pub fn slang_solidity_v2_ast::ast::create_pragma_directive(ir_node: &slang_solidity_v2_ir::ir::nodes::PragmaDirective, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::PragmaDirective
-pub fn slang_solidity_v2_ast::ast::create_prefix_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::PrefixExpression, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::PrefixExpression
-pub fn slang_solidity_v2_ast::ast::create_return_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::ReturnStatement, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ReturnStatement
-pub fn slang_solidity_v2_ast::ast::create_revert_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::RevertStatement, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::RevertStatement
-pub fn slang_solidity_v2_ast::ast::create_shift_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::ShiftExpression, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ShiftExpression
-pub fn slang_solidity_v2_ast::ast::create_single_typed_declaration(ir_node: &slang_solidity_v2_ir::ir::nodes::SingleTypedDeclaration, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::SingleTypedDeclaration
-pub fn slang_solidity_v2_ast::ast::create_source_unit(ir_node: &slang_solidity_v2_ir::ir::nodes::SourceUnit, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::SourceUnit
-pub fn slang_solidity_v2_ast::ast::create_state_variable_definition(ir_node: &slang_solidity_v2_ir::ir::nodes::StateVariableDefinition, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::StateVariableDefinition
-pub fn slang_solidity_v2_ast::ast::create_struct_definition(ir_node: &slang_solidity_v2_ir::ir::nodes::StructDefinition, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::StructDefinition
-pub fn slang_solidity_v2_ast::ast::create_struct_member(ir_node: &slang_solidity_v2_ir::ir::nodes::StructMember, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::StructMember
-pub fn slang_solidity_v2_ast::ast::create_try_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::TryStatement, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::TryStatement
-pub fn slang_solidity_v2_ast::ast::create_tuple_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::TupleExpression, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::TupleExpression
-pub fn slang_solidity_v2_ast::ast::create_tuple_value(ir_node: &slang_solidity_v2_ir::ir::nodes::TupleValue, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::TupleValue
-pub fn slang_solidity_v2_ast::ast::create_type_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::TypeExpression, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::TypeExpression
-pub fn slang_solidity_v2_ast::ast::create_unchecked_block(ir_node: &slang_solidity_v2_ir::ir::nodes::UncheckedBlock, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::UncheckedBlock
-pub fn slang_solidity_v2_ast::ast::create_user_defined_value_type_definition(ir_node: &slang_solidity_v2_ir::ir::nodes::UserDefinedValueTypeDefinition, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::UserDefinedValueTypeDefinition
-pub fn slang_solidity_v2_ast::ast::create_using_deconstruction(ir_node: &slang_solidity_v2_ir::ir::nodes::UsingDeconstruction, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::UsingDeconstruction
-pub fn slang_solidity_v2_ast::ast::create_using_deconstruction_symbol(ir_node: &slang_solidity_v2_ir::ir::nodes::UsingDeconstructionSymbol, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::UsingDeconstructionSymbol
-pub fn slang_solidity_v2_ast::ast::create_using_directive(ir_node: &slang_solidity_v2_ir::ir::nodes::UsingDirective, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::UsingDirective
-pub fn slang_solidity_v2_ast::ast::create_variable_declaration(ir_node: &slang_solidity_v2_ir::ir::nodes::VariableDeclaration, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::VariableDeclaration
-pub fn slang_solidity_v2_ast::ast::create_variable_declaration_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::VariableDeclarationStatement, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::VariableDeclarationStatement
-pub fn slang_solidity_v2_ast::ast::create_version_pragma(ir_node: &slang_solidity_v2_ir::ir::nodes::VersionPragma, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::VersionPragma
-pub fn slang_solidity_v2_ast::ast::create_version_range(ir_node: &slang_solidity_v2_ir::ir::nodes::VersionRange, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::VersionRange
-pub fn slang_solidity_v2_ast::ast::create_version_term(ir_node: &slang_solidity_v2_ir::ir::nodes::VersionTerm, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::VersionTerm
-pub fn slang_solidity_v2_ast::ast::create_while_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::WhileStatement, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::WhileStatement
-pub fn slang_solidity_v2_ast::ast::create_yul_block(ir_node: &slang_solidity_v2_ir::ir::nodes::YulBlock, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulBlock
-pub fn slang_solidity_v2_ast::ast::create_yul_break_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::YulBreakStatement, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulBreakStatement
-pub fn slang_solidity_v2_ast::ast::create_yul_continue_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::YulContinueStatement, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulContinueStatement
-pub fn slang_solidity_v2_ast::ast::create_yul_default_case(ir_node: &slang_solidity_v2_ir::ir::nodes::YulDefaultCase, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulDefaultCase
-pub fn slang_solidity_v2_ast::ast::create_yul_for_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::YulForStatement, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulForStatement
-pub fn slang_solidity_v2_ast::ast::create_yul_function_call_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::YulFunctionCallExpression, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulFunctionCallExpression
-pub fn slang_solidity_v2_ast::ast::create_yul_function_definition(ir_node: &slang_solidity_v2_ir::ir::nodes::YulFunctionDefinition, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulFunctionDefinition
-pub fn slang_solidity_v2_ast::ast::create_yul_if_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::YulIfStatement, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulIfStatement
-pub fn slang_solidity_v2_ast::ast::create_yul_leave_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::YulLeaveStatement, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulLeaveStatement
-pub fn slang_solidity_v2_ast::ast::create_yul_switch_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::YulSwitchStatement, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulSwitchStatement
-pub fn slang_solidity_v2_ast::ast::create_yul_value_case(ir_node: &slang_solidity_v2_ir::ir::nodes::YulValueCase, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulValueCase
-pub fn slang_solidity_v2_ast::ast::create_yul_variable_assignment_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::YulVariableAssignmentStatement, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulVariableAssignmentStatement
-pub fn slang_solidity_v2_ast::ast::create_yul_variable_declaration_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::YulVariableDeclarationStatement, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulVariableDeclarationStatement
-pub fn slang_solidity_v2_ast::ast::create_yul_variable_declaration_value(ir_node: &slang_solidity_v2_ir::ir::nodes::YulVariableDeclarationValue, semantic: &alloc::rc::Rc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulVariableDeclarationValue
-pub type slang_solidity_v2_ast::ast::ABIEncoderV2Keyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::ABIEncoderV2KeywordStruct>
-pub type slang_solidity_v2_ast::ast::AbicoderPragma = alloc::rc::Rc<slang_solidity_v2_ast::ast::AbicoderPragmaStruct>
-pub type slang_solidity_v2_ast::ast::AbicoderV1Keyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::AbicoderV1KeywordStruct>
-pub type slang_solidity_v2_ast::ast::AbicoderV2Keyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::AbicoderV2KeywordStruct>
-pub type slang_solidity_v2_ast::ast::AbstractKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::AbstractKeywordStruct>
-pub type slang_solidity_v2_ast::ast::AdditiveExpression = alloc::rc::Rc<slang_solidity_v2_ast::ast::AdditiveExpressionStruct>
-pub type slang_solidity_v2_ast::ast::AddressType = alloc::rc::Rc<slang_solidity_v2_ast::ast::AddressTypeStruct>
-pub type slang_solidity_v2_ast::ast::Ampersand = alloc::rc::Rc<slang_solidity_v2_ast::ast::AmpersandStruct>
-pub type slang_solidity_v2_ast::ast::AmpersandEqual = alloc::rc::Rc<slang_solidity_v2_ast::ast::AmpersandEqualStruct>
-pub type slang_solidity_v2_ast::ast::AndExpression = alloc::rc::Rc<slang_solidity_v2_ast::ast::AndExpressionStruct>
-pub type slang_solidity_v2_ast::ast::AnonymousKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::AnonymousKeywordStruct>
-pub type slang_solidity_v2_ast::ast::ArrayExpression = alloc::rc::Rc<slang_solidity_v2_ast::ast::ArrayExpressionStruct>
-pub type slang_solidity_v2_ast::ast::ArrayTypeName = alloc::rc::Rc<slang_solidity_v2_ast::ast::ArrayTypeNameStruct>
-pub type slang_solidity_v2_ast::ast::ArrayValues = alloc::rc::Rc<slang_solidity_v2_ast::ast::ArrayValuesStruct>
-pub type slang_solidity_v2_ast::ast::AssemblyStatement = alloc::rc::Rc<slang_solidity_v2_ast::ast::AssemblyStatementStruct>
-pub type slang_solidity_v2_ast::ast::AssignmentExpression = alloc::rc::Rc<slang_solidity_v2_ast::ast::AssignmentExpressionStruct>
-pub type slang_solidity_v2_ast::ast::Asterisk = alloc::rc::Rc<slang_solidity_v2_ast::ast::AsteriskStruct>
-pub type slang_solidity_v2_ast::ast::AsteriskEqual = alloc::rc::Rc<slang_solidity_v2_ast::ast::AsteriskEqualStruct>
-pub type slang_solidity_v2_ast::ast::Bang = alloc::rc::Rc<slang_solidity_v2_ast::ast::BangStruct>
-pub type slang_solidity_v2_ast::ast::BangEqual = alloc::rc::Rc<slang_solidity_v2_ast::ast::BangEqualStruct>
-pub type slang_solidity_v2_ast::ast::Bar = alloc::rc::Rc<slang_solidity_v2_ast::ast::BarStruct>
-pub type slang_solidity_v2_ast::ast::BarEqual = alloc::rc::Rc<slang_solidity_v2_ast::ast::BarEqualStruct>
-pub type slang_solidity_v2_ast::ast::BitwiseAndExpression = alloc::rc::Rc<slang_solidity_v2_ast::ast::BitwiseAndExpressionStruct>
-pub type slang_solidity_v2_ast::ast::BitwiseOrExpression = alloc::rc::Rc<slang_solidity_v2_ast::ast::BitwiseOrExpressionStruct>
-pub type slang_solidity_v2_ast::ast::BitwiseXorExpression = alloc::rc::Rc<slang_solidity_v2_ast::ast::BitwiseXorExpressionStruct>
-pub type slang_solidity_v2_ast::ast::Block = alloc::rc::Rc<slang_solidity_v2_ast::ast::BlockStruct>
-pub type slang_solidity_v2_ast::ast::BoolKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::BoolKeywordStruct>
-pub type slang_solidity_v2_ast::ast::BreakStatement = alloc::rc::Rc<slang_solidity_v2_ast::ast::BreakStatementStruct>
-pub type slang_solidity_v2_ast::ast::BytesKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::BytesKeywordStruct>
-pub type slang_solidity_v2_ast::ast::CallDataKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::CallDataKeywordStruct>
-pub type slang_solidity_v2_ast::ast::CallOptions = alloc::rc::Rc<slang_solidity_v2_ast::ast::CallOptionsStruct>
-pub type slang_solidity_v2_ast::ast::CallOptionsExpression = alloc::rc::Rc<slang_solidity_v2_ast::ast::CallOptionsExpressionStruct>
-pub type slang_solidity_v2_ast::ast::Caret = alloc::rc::Rc<slang_solidity_v2_ast::ast::CaretStruct>
-pub type slang_solidity_v2_ast::ast::CaretEqual = alloc::rc::Rc<slang_solidity_v2_ast::ast::CaretEqualStruct>
-pub type slang_solidity_v2_ast::ast::CatchClause = alloc::rc::Rc<slang_solidity_v2_ast::ast::CatchClauseStruct>
-pub type slang_solidity_v2_ast::ast::CatchClauseError = alloc::rc::Rc<slang_solidity_v2_ast::ast::CatchClauseErrorStruct>
-pub type slang_solidity_v2_ast::ast::CatchClauses = alloc::rc::Rc<slang_solidity_v2_ast::ast::CatchClausesStruct>
-pub type slang_solidity_v2_ast::ast::ConditionalExpression = alloc::rc::Rc<slang_solidity_v2_ast::ast::ConditionalExpressionStruct>
-pub type slang_solidity_v2_ast::ast::ConstantDefinition = alloc::rc::Rc<slang_solidity_v2_ast::ast::ConstantDefinitionStruct>
-pub type slang_solidity_v2_ast::ast::ContinueStatement = alloc::rc::Rc<slang_solidity_v2_ast::ast::ContinueStatementStruct>
-pub type slang_solidity_v2_ast::ast::ContractDefinition = alloc::rc::Rc<slang_solidity_v2_ast::ast::ContractDefinitionStruct>
-pub type slang_solidity_v2_ast::ast::ContractMembers = alloc::rc::Rc<slang_solidity_v2_ast::ast::ContractMembersStruct>
-pub type slang_solidity_v2_ast::ast::DaysKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::DaysKeywordStruct>
-pub type slang_solidity_v2_ast::ast::DecimalLiteral = alloc::rc::Rc<slang_solidity_v2_ast::ast::DecimalLiteralStruct>
-pub type slang_solidity_v2_ast::ast::DecimalNumberExpression = alloc::rc::Rc<slang_solidity_v2_ast::ast::DecimalNumberExpressionStruct>
-pub type slang_solidity_v2_ast::ast::DeleteKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::DeleteKeywordStruct>
-pub type slang_solidity_v2_ast::ast::DoWhileStatement = alloc::rc::Rc<slang_solidity_v2_ast::ast::DoWhileStatementStruct>
-pub type slang_solidity_v2_ast::ast::EmitStatement = alloc::rc::Rc<slang_solidity_v2_ast::ast::EmitStatementStruct>
-pub type slang_solidity_v2_ast::ast::EnumDefinition = alloc::rc::Rc<slang_solidity_v2_ast::ast::EnumDefinitionStruct>
-pub type slang_solidity_v2_ast::ast::EnumMembers = alloc::rc::Rc<slang_solidity_v2_ast::ast::EnumMembersStruct>
-pub type slang_solidity_v2_ast::ast::Equal = alloc::rc::Rc<slang_solidity_v2_ast::ast::EqualStruct>
-pub type slang_solidity_v2_ast::ast::EqualEqual = alloc::rc::Rc<slang_solidity_v2_ast::ast::EqualEqualStruct>
-pub type slang_solidity_v2_ast::ast::EqualityExpression = alloc::rc::Rc<slang_solidity_v2_ast::ast::EqualityExpressionStruct>
-pub type slang_solidity_v2_ast::ast::ErrorDefinition = alloc::rc::Rc<slang_solidity_v2_ast::ast::ErrorDefinitionStruct>
-pub type slang_solidity_v2_ast::ast::EtherKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::EtherKeywordStruct>
-pub type slang_solidity_v2_ast::ast::EventDefinition = alloc::rc::Rc<slang_solidity_v2_ast::ast::EventDefinitionStruct>
-pub type slang_solidity_v2_ast::ast::ExperimentalPragma = alloc::rc::Rc<slang_solidity_v2_ast::ast::ExperimentalPragmaStruct>
-pub type slang_solidity_v2_ast::ast::ExponentiationExpression = alloc::rc::Rc<slang_solidity_v2_ast::ast::ExponentiationExpressionStruct>
-pub type slang_solidity_v2_ast::ast::ExpressionStatement = alloc::rc::Rc<slang_solidity_v2_ast::ast::ExpressionStatementStruct>
-pub type slang_solidity_v2_ast::ast::FalseKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::FalseKeywordStruct>
-pub type slang_solidity_v2_ast::ast::FixedKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::FixedKeywordStruct>
-pub type slang_solidity_v2_ast::ast::ForStatement = alloc::rc::Rc<slang_solidity_v2_ast::ast::ForStatementStruct>
-pub type slang_solidity_v2_ast::ast::FunctionCallExpression = alloc::rc::Rc<slang_solidity_v2_ast::ast::FunctionCallExpressionStruct>
-pub type slang_solidity_v2_ast::ast::FunctionDefinition = alloc::rc::Rc<slang_solidity_v2_ast::ast::FunctionDefinitionStruct>
-pub type slang_solidity_v2_ast::ast::FunctionType = alloc::rc::Rc<slang_solidity_v2_ast::ast::FunctionTypeStruct>
-pub type slang_solidity_v2_ast::ast::GlobalKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::GlobalKeywordStruct>
-pub type slang_solidity_v2_ast::ast::GreaterThan = alloc::rc::Rc<slang_solidity_v2_ast::ast::GreaterThanStruct>
-pub type slang_solidity_v2_ast::ast::GreaterThanEqual = alloc::rc::Rc<slang_solidity_v2_ast::ast::GreaterThanEqualStruct>
-pub type slang_solidity_v2_ast::ast::GreaterThanGreaterThan = alloc::rc::Rc<slang_solidity_v2_ast::ast::GreaterThanGreaterThanStruct>
-pub type slang_solidity_v2_ast::ast::GreaterThanGreaterThanEqual = alloc::rc::Rc<slang_solidity_v2_ast::ast::GreaterThanGreaterThanEqualStruct>
-pub type slang_solidity_v2_ast::ast::GreaterThanGreaterThanGreaterThan = alloc::rc::Rc<slang_solidity_v2_ast::ast::GreaterThanGreaterThanGreaterThanStruct>
-pub type slang_solidity_v2_ast::ast::GreaterThanGreaterThanGreaterThanEqual = alloc::rc::Rc<slang_solidity_v2_ast::ast::GreaterThanGreaterThanGreaterThanEqualStruct>
-pub type slang_solidity_v2_ast::ast::GweiKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::GweiKeywordStruct>
-pub type slang_solidity_v2_ast::ast::HexLiteral = alloc::rc::Rc<slang_solidity_v2_ast::ast::HexLiteralStruct>
-pub type slang_solidity_v2_ast::ast::HexNumberExpression = alloc::rc::Rc<slang_solidity_v2_ast::ast::HexNumberExpressionStruct>
-pub type slang_solidity_v2_ast::ast::HexStringLiteral = alloc::rc::Rc<slang_solidity_v2_ast::ast::HexStringLiteralStruct>
-pub type slang_solidity_v2_ast::ast::HexStringLiterals = alloc::rc::Rc<slang_solidity_v2_ast::ast::HexStringLiteralsStruct>
-pub type slang_solidity_v2_ast::ast::HoursKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::HoursKeywordStruct>
-pub type slang_solidity_v2_ast::ast::Identifier = alloc::rc::Rc<slang_solidity_v2_ast::ast::IdentifierStruct>
-pub type slang_solidity_v2_ast::ast::IdentifierPath = alloc::rc::Rc<slang_solidity_v2_ast::ast::IdentifierPathStruct>
-pub type slang_solidity_v2_ast::ast::IfStatement = alloc::rc::Rc<slang_solidity_v2_ast::ast::IfStatementStruct>
-pub type slang_solidity_v2_ast::ast::ImportDeconstruction = alloc::rc::Rc<slang_solidity_v2_ast::ast::ImportDeconstructionStruct>
-pub type slang_solidity_v2_ast::ast::ImportDeconstructionSymbol = alloc::rc::Rc<slang_solidity_v2_ast::ast::ImportDeconstructionSymbolStruct>
-pub type slang_solidity_v2_ast::ast::ImportDeconstructionSymbols = alloc::rc::Rc<slang_solidity_v2_ast::ast::ImportDeconstructionSymbolsStruct>
-pub type slang_solidity_v2_ast::ast::IndexAccessExpression = alloc::rc::Rc<slang_solidity_v2_ast::ast::IndexAccessExpressionStruct>
-pub type slang_solidity_v2_ast::ast::IndexedKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::IndexedKeywordStruct>
-pub type slang_solidity_v2_ast::ast::InequalityExpression = alloc::rc::Rc<slang_solidity_v2_ast::ast::InequalityExpressionStruct>
-pub type slang_solidity_v2_ast::ast::InheritanceType = alloc::rc::Rc<slang_solidity_v2_ast::ast::InheritanceTypeStruct>
-pub type slang_solidity_v2_ast::ast::InheritanceTypes = alloc::rc::Rc<slang_solidity_v2_ast::ast::InheritanceTypesStruct>
-pub type slang_solidity_v2_ast::ast::IntKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::IntKeywordStruct>
-pub type slang_solidity_v2_ast::ast::InterfaceDefinition = alloc::rc::Rc<slang_solidity_v2_ast::ast::InterfaceDefinitionStruct>
-pub type slang_solidity_v2_ast::ast::InterfaceMembers = alloc::rc::Rc<slang_solidity_v2_ast::ast::InterfaceMembersStruct>
-pub type slang_solidity_v2_ast::ast::LessThan = alloc::rc::Rc<slang_solidity_v2_ast::ast::LessThanStruct>
-pub type slang_solidity_v2_ast::ast::LessThanEqual = alloc::rc::Rc<slang_solidity_v2_ast::ast::LessThanEqualStruct>
-pub type slang_solidity_v2_ast::ast::LessThanLessThan = alloc::rc::Rc<slang_solidity_v2_ast::ast::LessThanLessThanStruct>
-pub type slang_solidity_v2_ast::ast::LessThanLessThanEqual = alloc::rc::Rc<slang_solidity_v2_ast::ast::LessThanLessThanEqualStruct>
-pub type slang_solidity_v2_ast::ast::LibraryDefinition = alloc::rc::Rc<slang_solidity_v2_ast::ast::LibraryDefinitionStruct>
-pub type slang_solidity_v2_ast::ast::LibraryMembers = alloc::rc::Rc<slang_solidity_v2_ast::ast::LibraryMembersStruct>
-pub type slang_solidity_v2_ast::ast::MappingType = alloc::rc::Rc<slang_solidity_v2_ast::ast::MappingTypeStruct>
-pub type slang_solidity_v2_ast::ast::MemberAccessExpression = alloc::rc::Rc<slang_solidity_v2_ast::ast::MemberAccessExpressionStruct>
-pub type slang_solidity_v2_ast::ast::MemoryKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::MemoryKeywordStruct>
-pub type slang_solidity_v2_ast::ast::Minus = alloc::rc::Rc<slang_solidity_v2_ast::ast::MinusStruct>
-pub type slang_solidity_v2_ast::ast::MinusEqual = alloc::rc::Rc<slang_solidity_v2_ast::ast::MinusEqualStruct>
-pub type slang_solidity_v2_ast::ast::MinusMinus = alloc::rc::Rc<slang_solidity_v2_ast::ast::MinusMinusStruct>
-pub type slang_solidity_v2_ast::ast::MinutesKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::MinutesKeywordStruct>
-pub type slang_solidity_v2_ast::ast::ModifierInvocation = alloc::rc::Rc<slang_solidity_v2_ast::ast::ModifierInvocationStruct>
-pub type slang_solidity_v2_ast::ast::ModifierInvocations = alloc::rc::Rc<slang_solidity_v2_ast::ast::ModifierInvocationsStruct>
-pub type slang_solidity_v2_ast::ast::MultiTypedDeclaration = alloc::rc::Rc<slang_solidity_v2_ast::ast::MultiTypedDeclarationStruct>
-pub type slang_solidity_v2_ast::ast::MultiTypedDeclarationElement = alloc::rc::Rc<slang_solidity_v2_ast::ast::MultiTypedDeclarationElementStruct>
-pub type slang_solidity_v2_ast::ast::MultiTypedDeclarationElements = alloc::rc::Rc<slang_solidity_v2_ast::ast::MultiTypedDeclarationElementsStruct>
-pub type slang_solidity_v2_ast::ast::MultiplicativeExpression = alloc::rc::Rc<slang_solidity_v2_ast::ast::MultiplicativeExpressionStruct>
-pub type slang_solidity_v2_ast::ast::NamedArgument = alloc::rc::Rc<slang_solidity_v2_ast::ast::NamedArgumentStruct>
-pub type slang_solidity_v2_ast::ast::NamedArguments = alloc::rc::Rc<slang_solidity_v2_ast::ast::NamedArgumentsStruct>
-pub type slang_solidity_v2_ast::ast::NewExpression = alloc::rc::Rc<slang_solidity_v2_ast::ast::NewExpressionStruct>
-pub type slang_solidity_v2_ast::ast::OrExpression = alloc::rc::Rc<slang_solidity_v2_ast::ast::OrExpressionStruct>
-pub type slang_solidity_v2_ast::ast::OverridePaths = alloc::rc::Rc<slang_solidity_v2_ast::ast::OverridePathsStruct>
-pub type slang_solidity_v2_ast::ast::Parameter = alloc::rc::Rc<slang_solidity_v2_ast::ast::ParameterStruct>
-pub type slang_solidity_v2_ast::ast::Parameters = alloc::rc::Rc<slang_solidity_v2_ast::ast::ParametersStruct>
-pub type slang_solidity_v2_ast::ast::PathImport = alloc::rc::Rc<slang_solidity_v2_ast::ast::PathImportStruct>
-pub type slang_solidity_v2_ast::ast::PayableKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::PayableKeywordStruct>
-pub type slang_solidity_v2_ast::ast::Percent = alloc::rc::Rc<slang_solidity_v2_ast::ast::PercentStruct>
-pub type slang_solidity_v2_ast::ast::PercentEqual = alloc::rc::Rc<slang_solidity_v2_ast::ast::PercentEqualStruct>
-pub type slang_solidity_v2_ast::ast::Plus = alloc::rc::Rc<slang_solidity_v2_ast::ast::PlusStruct>
-pub type slang_solidity_v2_ast::ast::PlusEqual = alloc::rc::Rc<slang_solidity_v2_ast::ast::PlusEqualStruct>
-pub type slang_solidity_v2_ast::ast::PlusPlus = alloc::rc::Rc<slang_solidity_v2_ast::ast::PlusPlusStruct>
-pub type slang_solidity_v2_ast::ast::PositionalArguments = alloc::rc::Rc<slang_solidity_v2_ast::ast::PositionalArgumentsStruct>
-pub type slang_solidity_v2_ast::ast::PostfixExpression = alloc::rc::Rc<slang_solidity_v2_ast::ast::PostfixExpressionStruct>
-pub type slang_solidity_v2_ast::ast::PragmaCaret = alloc::rc::Rc<slang_solidity_v2_ast::ast::PragmaCaretStruct>
-pub type slang_solidity_v2_ast::ast::PragmaDirective = alloc::rc::Rc<slang_solidity_v2_ast::ast::PragmaDirectiveStruct>
-pub type slang_solidity_v2_ast::ast::PragmaEqual = alloc::rc::Rc<slang_solidity_v2_ast::ast::PragmaEqualStruct>
-pub type slang_solidity_v2_ast::ast::PragmaGreaterThan = alloc::rc::Rc<slang_solidity_v2_ast::ast::PragmaGreaterThanStruct>
-pub type slang_solidity_v2_ast::ast::PragmaGreaterThanEqual = alloc::rc::Rc<slang_solidity_v2_ast::ast::PragmaGreaterThanEqualStruct>
-pub type slang_solidity_v2_ast::ast::PragmaLessThan = alloc::rc::Rc<slang_solidity_v2_ast::ast::PragmaLessThanStruct>
-pub type slang_solidity_v2_ast::ast::PragmaLessThanEqual = alloc::rc::Rc<slang_solidity_v2_ast::ast::PragmaLessThanEqualStruct>
-pub type slang_solidity_v2_ast::ast::PragmaTilde = alloc::rc::Rc<slang_solidity_v2_ast::ast::PragmaTildeStruct>
-pub type slang_solidity_v2_ast::ast::PrefixExpression = alloc::rc::Rc<slang_solidity_v2_ast::ast::PrefixExpressionStruct>
-pub type slang_solidity_v2_ast::ast::ReturnStatement = alloc::rc::Rc<slang_solidity_v2_ast::ast::ReturnStatementStruct>
-pub type slang_solidity_v2_ast::ast::RevertStatement = alloc::rc::Rc<slang_solidity_v2_ast::ast::RevertStatementStruct>
-pub type slang_solidity_v2_ast::ast::SMTCheckerKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::SMTCheckerKeywordStruct>
-pub type slang_solidity_v2_ast::ast::SecondsKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::SecondsKeywordStruct>
-pub type slang_solidity_v2_ast::ast::Semicolon = alloc::rc::Rc<slang_solidity_v2_ast::ast::SemicolonStruct>
-pub type slang_solidity_v2_ast::ast::ShiftExpression = alloc::rc::Rc<slang_solidity_v2_ast::ast::ShiftExpressionStruct>
-pub type slang_solidity_v2_ast::ast::SimpleVersionLiteral = alloc::rc::Rc<slang_solidity_v2_ast::ast::SimpleVersionLiteralStruct>
-pub type slang_solidity_v2_ast::ast::SingleTypedDeclaration = alloc::rc::Rc<slang_solidity_v2_ast::ast::SingleTypedDeclarationStruct>
-pub type slang_solidity_v2_ast::ast::Slash = alloc::rc::Rc<slang_solidity_v2_ast::ast::SlashStruct>
-pub type slang_solidity_v2_ast::ast::SlashEqual = alloc::rc::Rc<slang_solidity_v2_ast::ast::SlashEqualStruct>
-pub type slang_solidity_v2_ast::ast::SourceUnit = alloc::rc::Rc<slang_solidity_v2_ast::ast::SourceUnitStruct>
-pub type slang_solidity_v2_ast::ast::SourceUnitMembers = alloc::rc::Rc<slang_solidity_v2_ast::ast::SourceUnitMembersStruct>
-pub type slang_solidity_v2_ast::ast::StateVariableDefinition = alloc::rc::Rc<slang_solidity_v2_ast::ast::StateVariableDefinitionStruct>
-pub type slang_solidity_v2_ast::ast::Statements = alloc::rc::Rc<slang_solidity_v2_ast::ast::StatementsStruct>
-pub type slang_solidity_v2_ast::ast::StorageKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::StorageKeywordStruct>
-pub type slang_solidity_v2_ast::ast::StringKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::StringKeywordStruct>
-pub type slang_solidity_v2_ast::ast::StringLiteral = alloc::rc::Rc<slang_solidity_v2_ast::ast::StringLiteralStruct>
-pub type slang_solidity_v2_ast::ast::StringLiterals = alloc::rc::Rc<slang_solidity_v2_ast::ast::StringLiteralsStruct>
-pub type slang_solidity_v2_ast::ast::StructDefinition = alloc::rc::Rc<slang_solidity_v2_ast::ast::StructDefinitionStruct>
-pub type slang_solidity_v2_ast::ast::StructMember = alloc::rc::Rc<slang_solidity_v2_ast::ast::StructMemberStruct>
-pub type slang_solidity_v2_ast::ast::StructMembers = alloc::rc::Rc<slang_solidity_v2_ast::ast::StructMembersStruct>
-pub type slang_solidity_v2_ast::ast::SuperKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::SuperKeywordStruct>
-pub type slang_solidity_v2_ast::ast::ThisKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::ThisKeywordStruct>
-pub type slang_solidity_v2_ast::ast::Tilde = alloc::rc::Rc<slang_solidity_v2_ast::ast::TildeStruct>
-pub type slang_solidity_v2_ast::ast::TrueKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::TrueKeywordStruct>
-pub type slang_solidity_v2_ast::ast::TryStatement = alloc::rc::Rc<slang_solidity_v2_ast::ast::TryStatementStruct>
-pub type slang_solidity_v2_ast::ast::TupleExpression = alloc::rc::Rc<slang_solidity_v2_ast::ast::TupleExpressionStruct>
-pub type slang_solidity_v2_ast::ast::TupleValue = alloc::rc::Rc<slang_solidity_v2_ast::ast::TupleValueStruct>
-pub type slang_solidity_v2_ast::ast::TupleValues = alloc::rc::Rc<slang_solidity_v2_ast::ast::TupleValuesStruct>
-pub type slang_solidity_v2_ast::ast::TypeExpression = alloc::rc::Rc<slang_solidity_v2_ast::ast::TypeExpressionStruct>
-pub type slang_solidity_v2_ast::ast::UfixedKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::UfixedKeywordStruct>
-pub type slang_solidity_v2_ast::ast::UintKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::UintKeywordStruct>
-pub type slang_solidity_v2_ast::ast::UncheckedBlock = alloc::rc::Rc<slang_solidity_v2_ast::ast::UncheckedBlockStruct>
-pub type slang_solidity_v2_ast::ast::UnicodeStringLiteral = alloc::rc::Rc<slang_solidity_v2_ast::ast::UnicodeStringLiteralStruct>
-pub type slang_solidity_v2_ast::ast::UnicodeStringLiterals = alloc::rc::Rc<slang_solidity_v2_ast::ast::UnicodeStringLiteralsStruct>
-pub type slang_solidity_v2_ast::ast::UserDefinedValueTypeDefinition = alloc::rc::Rc<slang_solidity_v2_ast::ast::UserDefinedValueTypeDefinitionStruct>
-pub type slang_solidity_v2_ast::ast::UsingDeconstruction = alloc::rc::Rc<slang_solidity_v2_ast::ast::UsingDeconstructionStruct>
-pub type slang_solidity_v2_ast::ast::UsingDeconstructionSymbol = alloc::rc::Rc<slang_solidity_v2_ast::ast::UsingDeconstructionSymbolStruct>
-pub type slang_solidity_v2_ast::ast::UsingDeconstructionSymbols = alloc::rc::Rc<slang_solidity_v2_ast::ast::UsingDeconstructionSymbolsStruct>
-pub type slang_solidity_v2_ast::ast::UsingDirective = alloc::rc::Rc<slang_solidity_v2_ast::ast::UsingDirectiveStruct>
-pub type slang_solidity_v2_ast::ast::VariableDeclaration = alloc::rc::Rc<slang_solidity_v2_ast::ast::VariableDeclarationStruct>
-pub type slang_solidity_v2_ast::ast::VariableDeclarationStatement = alloc::rc::Rc<slang_solidity_v2_ast::ast::VariableDeclarationStatementStruct>
-pub type slang_solidity_v2_ast::ast::VersionExpressionSet = alloc::rc::Rc<slang_solidity_v2_ast::ast::VersionExpressionSetStruct>
-pub type slang_solidity_v2_ast::ast::VersionExpressionSets = alloc::rc::Rc<slang_solidity_v2_ast::ast::VersionExpressionSetsStruct>
-pub type slang_solidity_v2_ast::ast::VersionPragma = alloc::rc::Rc<slang_solidity_v2_ast::ast::VersionPragmaStruct>
-pub type slang_solidity_v2_ast::ast::VersionRange = alloc::rc::Rc<slang_solidity_v2_ast::ast::VersionRangeStruct>
-pub type slang_solidity_v2_ast::ast::VersionSpecifier = alloc::rc::Rc<slang_solidity_v2_ast::ast::VersionSpecifierStruct>
-pub type slang_solidity_v2_ast::ast::VersionTerm = alloc::rc::Rc<slang_solidity_v2_ast::ast::VersionTermStruct>
-pub type slang_solidity_v2_ast::ast::VirtualKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::VirtualKeywordStruct>
-pub type slang_solidity_v2_ast::ast::WeeksKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::WeeksKeywordStruct>
-pub type slang_solidity_v2_ast::ast::WeiKeyword = alloc::rc::Rc<slang_solidity_v2_ast::ast::WeiKeywordStruct>
-pub type slang_solidity_v2_ast::ast::WhileStatement = alloc::rc::Rc<slang_solidity_v2_ast::ast::WhileStatementStruct>
-pub type slang_solidity_v2_ast::ast::YulArguments = alloc::rc::Rc<slang_solidity_v2_ast::ast::YulArgumentsStruct>
-pub type slang_solidity_v2_ast::ast::YulBlock = alloc::rc::Rc<slang_solidity_v2_ast::ast::YulBlockStruct>
-pub type slang_solidity_v2_ast::ast::YulBreakStatement = alloc::rc::Rc<slang_solidity_v2_ast::ast::YulBreakStatementStruct>
-pub type slang_solidity_v2_ast::ast::YulContinueStatement = alloc::rc::Rc<slang_solidity_v2_ast::ast::YulContinueStatementStruct>
-pub type slang_solidity_v2_ast::ast::YulDefaultCase = alloc::rc::Rc<slang_solidity_v2_ast::ast::YulDefaultCaseStruct>
-pub type slang_solidity_v2_ast::ast::YulFlags = alloc::rc::Rc<slang_solidity_v2_ast::ast::YulFlagsStruct>
-pub type slang_solidity_v2_ast::ast::YulForStatement = alloc::rc::Rc<slang_solidity_v2_ast::ast::YulForStatementStruct>
-pub type slang_solidity_v2_ast::ast::YulFunctionCallExpression = alloc::rc::Rc<slang_solidity_v2_ast::ast::YulFunctionCallExpressionStruct>
-pub type slang_solidity_v2_ast::ast::YulFunctionDefinition = alloc::rc::Rc<slang_solidity_v2_ast::ast::YulFunctionDefinitionStruct>
-pub type slang_solidity_v2_ast::ast::YulIfStatement = alloc::rc::Rc<slang_solidity_v2_ast::ast::YulIfStatementStruct>
-pub type slang_solidity_v2_ast::ast::YulLeaveStatement = alloc::rc::Rc<slang_solidity_v2_ast::ast::YulLeaveStatementStruct>
-pub type slang_solidity_v2_ast::ast::YulParameters = alloc::rc::Rc<slang_solidity_v2_ast::ast::YulParametersStruct>
-pub type slang_solidity_v2_ast::ast::YulPath = alloc::rc::Rc<slang_solidity_v2_ast::ast::YulPathStruct>
-pub type slang_solidity_v2_ast::ast::YulPaths = alloc::rc::Rc<slang_solidity_v2_ast::ast::YulPathsStruct>
-pub type slang_solidity_v2_ast::ast::YulStatements = alloc::rc::Rc<slang_solidity_v2_ast::ast::YulStatementsStruct>
-pub type slang_solidity_v2_ast::ast::YulSwitchCases = alloc::rc::Rc<slang_solidity_v2_ast::ast::YulSwitchCasesStruct>
-pub type slang_solidity_v2_ast::ast::YulSwitchStatement = alloc::rc::Rc<slang_solidity_v2_ast::ast::YulSwitchStatementStruct>
-pub type slang_solidity_v2_ast::ast::YulValueCase = alloc::rc::Rc<slang_solidity_v2_ast::ast::YulValueCaseStruct>
-pub type slang_solidity_v2_ast::ast::YulVariableAssignmentStatement = alloc::rc::Rc<slang_solidity_v2_ast::ast::YulVariableAssignmentStatementStruct>
-pub type slang_solidity_v2_ast::ast::YulVariableDeclarationStatement = alloc::rc::Rc<slang_solidity_v2_ast::ast::YulVariableDeclarationStatementStruct>
-pub type slang_solidity_v2_ast::ast::YulVariableDeclarationValue = alloc::rc::Rc<slang_solidity_v2_ast::ast::YulVariableDeclarationValueStruct>
-pub type slang_solidity_v2_ast::ast::YulVariableNames = alloc::rc::Rc<slang_solidity_v2_ast::ast::YulVariableNamesStruct>
+pub fn slang_solidity_v2_ast::ast::create_abicoder_pragma(ir_node: &slang_solidity_v2_ir::ir::nodes::AbicoderPragma, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::AbicoderPragma
+pub fn slang_solidity_v2_ast::ast::create_additive_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::AdditiveExpression, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::AdditiveExpression
+pub fn slang_solidity_v2_ast::ast::create_address_type(ir_node: &slang_solidity_v2_ir::ir::nodes::AddressType, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::AddressType
+pub fn slang_solidity_v2_ast::ast::create_and_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::AndExpression, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::AndExpression
+pub fn slang_solidity_v2_ast::ast::create_array_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::ArrayExpression, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ArrayExpression
+pub fn slang_solidity_v2_ast::ast::create_array_type_name(ir_node: &slang_solidity_v2_ir::ir::nodes::ArrayTypeName, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ArrayTypeName
+pub fn slang_solidity_v2_ast::ast::create_assembly_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::AssemblyStatement, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::AssemblyStatement
+pub fn slang_solidity_v2_ast::ast::create_assignment_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::AssignmentExpression, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::AssignmentExpression
+pub fn slang_solidity_v2_ast::ast::create_bitwise_and_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::BitwiseAndExpression, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::BitwiseAndExpression
+pub fn slang_solidity_v2_ast::ast::create_bitwise_or_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::BitwiseOrExpression, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::BitwiseOrExpression
+pub fn slang_solidity_v2_ast::ast::create_bitwise_xor_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::BitwiseXorExpression, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::BitwiseXorExpression
+pub fn slang_solidity_v2_ast::ast::create_block(ir_node: &slang_solidity_v2_ir::ir::nodes::Block, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::Block
+pub fn slang_solidity_v2_ast::ast::create_break_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::BreakStatement, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::BreakStatement
+pub fn slang_solidity_v2_ast::ast::create_call_options_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::CallOptionsExpression, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::CallOptionsExpression
+pub fn slang_solidity_v2_ast::ast::create_catch_clause(ir_node: &slang_solidity_v2_ir::ir::nodes::CatchClause, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::CatchClause
+pub fn slang_solidity_v2_ast::ast::create_catch_clause_error(ir_node: &slang_solidity_v2_ir::ir::nodes::CatchClauseError, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::CatchClauseError
+pub fn slang_solidity_v2_ast::ast::create_conditional_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::ConditionalExpression, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ConditionalExpression
+pub fn slang_solidity_v2_ast::ast::create_constant_definition(ir_node: &slang_solidity_v2_ir::ir::nodes::ConstantDefinition, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ConstantDefinition
+pub fn slang_solidity_v2_ast::ast::create_continue_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::ContinueStatement, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ContinueStatement
+pub fn slang_solidity_v2_ast::ast::create_contract_definition(ir_node: &slang_solidity_v2_ir::ir::nodes::ContractDefinition, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ContractDefinition
+pub fn slang_solidity_v2_ast::ast::create_decimal_number_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::DecimalNumberExpression, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::DecimalNumberExpression
+pub fn slang_solidity_v2_ast::ast::create_do_while_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::DoWhileStatement, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::DoWhileStatement
+pub fn slang_solidity_v2_ast::ast::create_emit_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::EmitStatement, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::EmitStatement
+pub fn slang_solidity_v2_ast::ast::create_enum_definition(ir_node: &slang_solidity_v2_ir::ir::nodes::EnumDefinition, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::EnumDefinition
+pub fn slang_solidity_v2_ast::ast::create_equality_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::EqualityExpression, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::EqualityExpression
+pub fn slang_solidity_v2_ast::ast::create_error_definition(ir_node: &slang_solidity_v2_ir::ir::nodes::ErrorDefinition, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ErrorDefinition
+pub fn slang_solidity_v2_ast::ast::create_event_definition(ir_node: &slang_solidity_v2_ir::ir::nodes::EventDefinition, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::EventDefinition
+pub fn slang_solidity_v2_ast::ast::create_experimental_pragma(ir_node: &slang_solidity_v2_ir::ir::nodes::ExperimentalPragma, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ExperimentalPragma
+pub fn slang_solidity_v2_ast::ast::create_exponentiation_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::ExponentiationExpression, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ExponentiationExpression
+pub fn slang_solidity_v2_ast::ast::create_expression_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::ExpressionStatement, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ExpressionStatement
+pub fn slang_solidity_v2_ast::ast::create_for_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::ForStatement, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ForStatement
+pub fn slang_solidity_v2_ast::ast::create_function_call_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::FunctionCallExpression, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::FunctionCallExpression
+pub fn slang_solidity_v2_ast::ast::create_function_definition(ir_node: &slang_solidity_v2_ir::ir::nodes::FunctionDefinition, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::FunctionDefinition
+pub fn slang_solidity_v2_ast::ast::create_function_type(ir_node: &slang_solidity_v2_ir::ir::nodes::FunctionType, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::FunctionType
+pub fn slang_solidity_v2_ast::ast::create_hex_number_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::HexNumberExpression, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::HexNumberExpression
+pub fn slang_solidity_v2_ast::ast::create_if_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::IfStatement, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::IfStatement
+pub fn slang_solidity_v2_ast::ast::create_import_deconstruction(ir_node: &slang_solidity_v2_ir::ir::nodes::ImportDeconstruction, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ImportDeconstruction
+pub fn slang_solidity_v2_ast::ast::create_import_deconstruction_symbol(ir_node: &slang_solidity_v2_ir::ir::nodes::ImportDeconstructionSymbol, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ImportDeconstructionSymbol
+pub fn slang_solidity_v2_ast::ast::create_index_access_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::IndexAccessExpression, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::IndexAccessExpression
+pub fn slang_solidity_v2_ast::ast::create_inequality_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::InequalityExpression, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::InequalityExpression
+pub fn slang_solidity_v2_ast::ast::create_inheritance_type(ir_node: &slang_solidity_v2_ir::ir::nodes::InheritanceType, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::InheritanceType
+pub fn slang_solidity_v2_ast::ast::create_interface_definition(ir_node: &slang_solidity_v2_ir::ir::nodes::InterfaceDefinition, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::InterfaceDefinition
+pub fn slang_solidity_v2_ast::ast::create_library_definition(ir_node: &slang_solidity_v2_ir::ir::nodes::LibraryDefinition, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::LibraryDefinition
+pub fn slang_solidity_v2_ast::ast::create_mapping_type(ir_node: &slang_solidity_v2_ir::ir::nodes::MappingType, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::MappingType
+pub fn slang_solidity_v2_ast::ast::create_member_access_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::MemberAccessExpression, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::MemberAccessExpression
+pub fn slang_solidity_v2_ast::ast::create_modifier_invocation(ir_node: &slang_solidity_v2_ir::ir::nodes::ModifierInvocation, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ModifierInvocation
+pub fn slang_solidity_v2_ast::ast::create_multi_typed_declaration(ir_node: &slang_solidity_v2_ir::ir::nodes::MultiTypedDeclaration, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::MultiTypedDeclaration
+pub fn slang_solidity_v2_ast::ast::create_multi_typed_declaration_element(ir_node: &slang_solidity_v2_ir::ir::nodes::MultiTypedDeclarationElement, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::MultiTypedDeclarationElement
+pub fn slang_solidity_v2_ast::ast::create_multiplicative_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::MultiplicativeExpression, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::MultiplicativeExpression
+pub fn slang_solidity_v2_ast::ast::create_named_argument(ir_node: &slang_solidity_v2_ir::ir::nodes::NamedArgument, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::NamedArgument
+pub fn slang_solidity_v2_ast::ast::create_new_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::NewExpression, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::NewExpression
+pub fn slang_solidity_v2_ast::ast::create_or_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::OrExpression, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::OrExpression
+pub fn slang_solidity_v2_ast::ast::create_parameter(ir_node: &slang_solidity_v2_ir::ir::nodes::Parameter, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::Parameter
+pub fn slang_solidity_v2_ast::ast::create_path_import(ir_node: &slang_solidity_v2_ir::ir::nodes::PathImport, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::PathImport
+pub fn slang_solidity_v2_ast::ast::create_postfix_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::PostfixExpression, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::PostfixExpression
+pub fn slang_solidity_v2_ast::ast::create_pragma_directive(ir_node: &slang_solidity_v2_ir::ir::nodes::PragmaDirective, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::PragmaDirective
+pub fn slang_solidity_v2_ast::ast::create_prefix_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::PrefixExpression, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::PrefixExpression
+pub fn slang_solidity_v2_ast::ast::create_return_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::ReturnStatement, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ReturnStatement
+pub fn slang_solidity_v2_ast::ast::create_revert_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::RevertStatement, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::RevertStatement
+pub fn slang_solidity_v2_ast::ast::create_shift_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::ShiftExpression, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::ShiftExpression
+pub fn slang_solidity_v2_ast::ast::create_single_typed_declaration(ir_node: &slang_solidity_v2_ir::ir::nodes::SingleTypedDeclaration, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::SingleTypedDeclaration
+pub fn slang_solidity_v2_ast::ast::create_source_unit(ir_node: &slang_solidity_v2_ir::ir::nodes::SourceUnit, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::SourceUnit
+pub fn slang_solidity_v2_ast::ast::create_state_variable_definition(ir_node: &slang_solidity_v2_ir::ir::nodes::StateVariableDefinition, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::StateVariableDefinition
+pub fn slang_solidity_v2_ast::ast::create_struct_definition(ir_node: &slang_solidity_v2_ir::ir::nodes::StructDefinition, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::StructDefinition
+pub fn slang_solidity_v2_ast::ast::create_struct_member(ir_node: &slang_solidity_v2_ir::ir::nodes::StructMember, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::StructMember
+pub fn slang_solidity_v2_ast::ast::create_try_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::TryStatement, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::TryStatement
+pub fn slang_solidity_v2_ast::ast::create_tuple_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::TupleExpression, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::TupleExpression
+pub fn slang_solidity_v2_ast::ast::create_tuple_value(ir_node: &slang_solidity_v2_ir::ir::nodes::TupleValue, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::TupleValue
+pub fn slang_solidity_v2_ast::ast::create_type_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::TypeExpression, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::TypeExpression
+pub fn slang_solidity_v2_ast::ast::create_unchecked_block(ir_node: &slang_solidity_v2_ir::ir::nodes::UncheckedBlock, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::UncheckedBlock
+pub fn slang_solidity_v2_ast::ast::create_user_defined_value_type_definition(ir_node: &slang_solidity_v2_ir::ir::nodes::UserDefinedValueTypeDefinition, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::UserDefinedValueTypeDefinition
+pub fn slang_solidity_v2_ast::ast::create_using_deconstruction(ir_node: &slang_solidity_v2_ir::ir::nodes::UsingDeconstruction, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::UsingDeconstruction
+pub fn slang_solidity_v2_ast::ast::create_using_deconstruction_symbol(ir_node: &slang_solidity_v2_ir::ir::nodes::UsingDeconstructionSymbol, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::UsingDeconstructionSymbol
+pub fn slang_solidity_v2_ast::ast::create_using_directive(ir_node: &slang_solidity_v2_ir::ir::nodes::UsingDirective, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::UsingDirective
+pub fn slang_solidity_v2_ast::ast::create_variable_declaration(ir_node: &slang_solidity_v2_ir::ir::nodes::VariableDeclaration, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::VariableDeclaration
+pub fn slang_solidity_v2_ast::ast::create_variable_declaration_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::VariableDeclarationStatement, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::VariableDeclarationStatement
+pub fn slang_solidity_v2_ast::ast::create_version_pragma(ir_node: &slang_solidity_v2_ir::ir::nodes::VersionPragma, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::VersionPragma
+pub fn slang_solidity_v2_ast::ast::create_version_range(ir_node: &slang_solidity_v2_ir::ir::nodes::VersionRange, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::VersionRange
+pub fn slang_solidity_v2_ast::ast::create_version_term(ir_node: &slang_solidity_v2_ir::ir::nodes::VersionTerm, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::VersionTerm
+pub fn slang_solidity_v2_ast::ast::create_while_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::WhileStatement, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::WhileStatement
+pub fn slang_solidity_v2_ast::ast::create_yul_block(ir_node: &slang_solidity_v2_ir::ir::nodes::YulBlock, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulBlock
+pub fn slang_solidity_v2_ast::ast::create_yul_break_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::YulBreakStatement, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulBreakStatement
+pub fn slang_solidity_v2_ast::ast::create_yul_continue_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::YulContinueStatement, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulContinueStatement
+pub fn slang_solidity_v2_ast::ast::create_yul_default_case(ir_node: &slang_solidity_v2_ir::ir::nodes::YulDefaultCase, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulDefaultCase
+pub fn slang_solidity_v2_ast::ast::create_yul_for_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::YulForStatement, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulForStatement
+pub fn slang_solidity_v2_ast::ast::create_yul_function_call_expression(ir_node: &slang_solidity_v2_ir::ir::nodes::YulFunctionCallExpression, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulFunctionCallExpression
+pub fn slang_solidity_v2_ast::ast::create_yul_function_definition(ir_node: &slang_solidity_v2_ir::ir::nodes::YulFunctionDefinition, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulFunctionDefinition
+pub fn slang_solidity_v2_ast::ast::create_yul_if_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::YulIfStatement, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulIfStatement
+pub fn slang_solidity_v2_ast::ast::create_yul_leave_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::YulLeaveStatement, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulLeaveStatement
+pub fn slang_solidity_v2_ast::ast::create_yul_switch_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::YulSwitchStatement, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulSwitchStatement
+pub fn slang_solidity_v2_ast::ast::create_yul_value_case(ir_node: &slang_solidity_v2_ir::ir::nodes::YulValueCase, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulValueCase
+pub fn slang_solidity_v2_ast::ast::create_yul_variable_assignment_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::YulVariableAssignmentStatement, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulVariableAssignmentStatement
+pub fn slang_solidity_v2_ast::ast::create_yul_variable_declaration_statement(ir_node: &slang_solidity_v2_ir::ir::nodes::YulVariableDeclarationStatement, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulVariableDeclarationStatement
+pub fn slang_solidity_v2_ast::ast::create_yul_variable_declaration_value(ir_node: &slang_solidity_v2_ir::ir::nodes::YulVariableDeclarationValue, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> slang_solidity_v2_ast::ast::YulVariableDeclarationValue
+pub type slang_solidity_v2_ast::ast::ABIEncoderV2Keyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::ABIEncoderV2KeywordStruct>
+pub type slang_solidity_v2_ast::ast::AbicoderPragma = alloc::sync::Arc<slang_solidity_v2_ast::ast::AbicoderPragmaStruct>
+pub type slang_solidity_v2_ast::ast::AbicoderV1Keyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::AbicoderV1KeywordStruct>
+pub type slang_solidity_v2_ast::ast::AbicoderV2Keyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::AbicoderV2KeywordStruct>
+pub type slang_solidity_v2_ast::ast::AbstractKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::AbstractKeywordStruct>
+pub type slang_solidity_v2_ast::ast::AdditiveExpression = alloc::sync::Arc<slang_solidity_v2_ast::ast::AdditiveExpressionStruct>
+pub type slang_solidity_v2_ast::ast::AddressType = alloc::sync::Arc<slang_solidity_v2_ast::ast::AddressTypeStruct>
+pub type slang_solidity_v2_ast::ast::Ampersand = alloc::sync::Arc<slang_solidity_v2_ast::ast::AmpersandStruct>
+pub type slang_solidity_v2_ast::ast::AmpersandEqual = alloc::sync::Arc<slang_solidity_v2_ast::ast::AmpersandEqualStruct>
+pub type slang_solidity_v2_ast::ast::AndExpression = alloc::sync::Arc<slang_solidity_v2_ast::ast::AndExpressionStruct>
+pub type slang_solidity_v2_ast::ast::AnonymousKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::AnonymousKeywordStruct>
+pub type slang_solidity_v2_ast::ast::ArrayExpression = alloc::sync::Arc<slang_solidity_v2_ast::ast::ArrayExpressionStruct>
+pub type slang_solidity_v2_ast::ast::ArrayTypeName = alloc::sync::Arc<slang_solidity_v2_ast::ast::ArrayTypeNameStruct>
+pub type slang_solidity_v2_ast::ast::ArrayValues = alloc::sync::Arc<slang_solidity_v2_ast::ast::ArrayValuesStruct>
+pub type slang_solidity_v2_ast::ast::AssemblyStatement = alloc::sync::Arc<slang_solidity_v2_ast::ast::AssemblyStatementStruct>
+pub type slang_solidity_v2_ast::ast::AssignmentExpression = alloc::sync::Arc<slang_solidity_v2_ast::ast::AssignmentExpressionStruct>
+pub type slang_solidity_v2_ast::ast::Asterisk = alloc::sync::Arc<slang_solidity_v2_ast::ast::AsteriskStruct>
+pub type slang_solidity_v2_ast::ast::AsteriskEqual = alloc::sync::Arc<slang_solidity_v2_ast::ast::AsteriskEqualStruct>
+pub type slang_solidity_v2_ast::ast::Bang = alloc::sync::Arc<slang_solidity_v2_ast::ast::BangStruct>
+pub type slang_solidity_v2_ast::ast::BangEqual = alloc::sync::Arc<slang_solidity_v2_ast::ast::BangEqualStruct>
+pub type slang_solidity_v2_ast::ast::Bar = alloc::sync::Arc<slang_solidity_v2_ast::ast::BarStruct>
+pub type slang_solidity_v2_ast::ast::BarEqual = alloc::sync::Arc<slang_solidity_v2_ast::ast::BarEqualStruct>
+pub type slang_solidity_v2_ast::ast::BitwiseAndExpression = alloc::sync::Arc<slang_solidity_v2_ast::ast::BitwiseAndExpressionStruct>
+pub type slang_solidity_v2_ast::ast::BitwiseOrExpression = alloc::sync::Arc<slang_solidity_v2_ast::ast::BitwiseOrExpressionStruct>
+pub type slang_solidity_v2_ast::ast::BitwiseXorExpression = alloc::sync::Arc<slang_solidity_v2_ast::ast::BitwiseXorExpressionStruct>
+pub type slang_solidity_v2_ast::ast::Block = alloc::sync::Arc<slang_solidity_v2_ast::ast::BlockStruct>
+pub type slang_solidity_v2_ast::ast::BoolKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::BoolKeywordStruct>
+pub type slang_solidity_v2_ast::ast::BreakStatement = alloc::sync::Arc<slang_solidity_v2_ast::ast::BreakStatementStruct>
+pub type slang_solidity_v2_ast::ast::BytesKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::BytesKeywordStruct>
+pub type slang_solidity_v2_ast::ast::CallDataKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::CallDataKeywordStruct>
+pub type slang_solidity_v2_ast::ast::CallOptions = alloc::sync::Arc<slang_solidity_v2_ast::ast::CallOptionsStruct>
+pub type slang_solidity_v2_ast::ast::CallOptionsExpression = alloc::sync::Arc<slang_solidity_v2_ast::ast::CallOptionsExpressionStruct>
+pub type slang_solidity_v2_ast::ast::Caret = alloc::sync::Arc<slang_solidity_v2_ast::ast::CaretStruct>
+pub type slang_solidity_v2_ast::ast::CaretEqual = alloc::sync::Arc<slang_solidity_v2_ast::ast::CaretEqualStruct>
+pub type slang_solidity_v2_ast::ast::CatchClause = alloc::sync::Arc<slang_solidity_v2_ast::ast::CatchClauseStruct>
+pub type slang_solidity_v2_ast::ast::CatchClauseError = alloc::sync::Arc<slang_solidity_v2_ast::ast::CatchClauseErrorStruct>
+pub type slang_solidity_v2_ast::ast::CatchClauses = alloc::sync::Arc<slang_solidity_v2_ast::ast::CatchClausesStruct>
+pub type slang_solidity_v2_ast::ast::ConditionalExpression = alloc::sync::Arc<slang_solidity_v2_ast::ast::ConditionalExpressionStruct>
+pub type slang_solidity_v2_ast::ast::ConstantDefinition = alloc::sync::Arc<slang_solidity_v2_ast::ast::ConstantDefinitionStruct>
+pub type slang_solidity_v2_ast::ast::ContinueStatement = alloc::sync::Arc<slang_solidity_v2_ast::ast::ContinueStatementStruct>
+pub type slang_solidity_v2_ast::ast::ContractDefinition = alloc::sync::Arc<slang_solidity_v2_ast::ast::ContractDefinitionStruct>
+pub type slang_solidity_v2_ast::ast::ContractMembers = alloc::sync::Arc<slang_solidity_v2_ast::ast::ContractMembersStruct>
+pub type slang_solidity_v2_ast::ast::DaysKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::DaysKeywordStruct>
+pub type slang_solidity_v2_ast::ast::DecimalLiteral = alloc::sync::Arc<slang_solidity_v2_ast::ast::DecimalLiteralStruct>
+pub type slang_solidity_v2_ast::ast::DecimalNumberExpression = alloc::sync::Arc<slang_solidity_v2_ast::ast::DecimalNumberExpressionStruct>
+pub type slang_solidity_v2_ast::ast::DeleteKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::DeleteKeywordStruct>
+pub type slang_solidity_v2_ast::ast::DoWhileStatement = alloc::sync::Arc<slang_solidity_v2_ast::ast::DoWhileStatementStruct>
+pub type slang_solidity_v2_ast::ast::EmitStatement = alloc::sync::Arc<slang_solidity_v2_ast::ast::EmitStatementStruct>
+pub type slang_solidity_v2_ast::ast::EnumDefinition = alloc::sync::Arc<slang_solidity_v2_ast::ast::EnumDefinitionStruct>
+pub type slang_solidity_v2_ast::ast::EnumMembers = alloc::sync::Arc<slang_solidity_v2_ast::ast::EnumMembersStruct>
+pub type slang_solidity_v2_ast::ast::Equal = alloc::sync::Arc<slang_solidity_v2_ast::ast::EqualStruct>
+pub type slang_solidity_v2_ast::ast::EqualEqual = alloc::sync::Arc<slang_solidity_v2_ast::ast::EqualEqualStruct>
+pub type slang_solidity_v2_ast::ast::EqualityExpression = alloc::sync::Arc<slang_solidity_v2_ast::ast::EqualityExpressionStruct>
+pub type slang_solidity_v2_ast::ast::ErrorDefinition = alloc::sync::Arc<slang_solidity_v2_ast::ast::ErrorDefinitionStruct>
+pub type slang_solidity_v2_ast::ast::EtherKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::EtherKeywordStruct>
+pub type slang_solidity_v2_ast::ast::EventDefinition = alloc::sync::Arc<slang_solidity_v2_ast::ast::EventDefinitionStruct>
+pub type slang_solidity_v2_ast::ast::ExperimentalPragma = alloc::sync::Arc<slang_solidity_v2_ast::ast::ExperimentalPragmaStruct>
+pub type slang_solidity_v2_ast::ast::ExponentiationExpression = alloc::sync::Arc<slang_solidity_v2_ast::ast::ExponentiationExpressionStruct>
+pub type slang_solidity_v2_ast::ast::ExpressionStatement = alloc::sync::Arc<slang_solidity_v2_ast::ast::ExpressionStatementStruct>
+pub type slang_solidity_v2_ast::ast::FalseKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::FalseKeywordStruct>
+pub type slang_solidity_v2_ast::ast::FixedKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::FixedKeywordStruct>
+pub type slang_solidity_v2_ast::ast::ForStatement = alloc::sync::Arc<slang_solidity_v2_ast::ast::ForStatementStruct>
+pub type slang_solidity_v2_ast::ast::FunctionCallExpression = alloc::sync::Arc<slang_solidity_v2_ast::ast::FunctionCallExpressionStruct>
+pub type slang_solidity_v2_ast::ast::FunctionDefinition = alloc::sync::Arc<slang_solidity_v2_ast::ast::FunctionDefinitionStruct>
+pub type slang_solidity_v2_ast::ast::FunctionType = alloc::sync::Arc<slang_solidity_v2_ast::ast::FunctionTypeStruct>
+pub type slang_solidity_v2_ast::ast::GlobalKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::GlobalKeywordStruct>
+pub type slang_solidity_v2_ast::ast::GreaterThan = alloc::sync::Arc<slang_solidity_v2_ast::ast::GreaterThanStruct>
+pub type slang_solidity_v2_ast::ast::GreaterThanEqual = alloc::sync::Arc<slang_solidity_v2_ast::ast::GreaterThanEqualStruct>
+pub type slang_solidity_v2_ast::ast::GreaterThanGreaterThan = alloc::sync::Arc<slang_solidity_v2_ast::ast::GreaterThanGreaterThanStruct>
+pub type slang_solidity_v2_ast::ast::GreaterThanGreaterThanEqual = alloc::sync::Arc<slang_solidity_v2_ast::ast::GreaterThanGreaterThanEqualStruct>
+pub type slang_solidity_v2_ast::ast::GreaterThanGreaterThanGreaterThan = alloc::sync::Arc<slang_solidity_v2_ast::ast::GreaterThanGreaterThanGreaterThanStruct>
+pub type slang_solidity_v2_ast::ast::GreaterThanGreaterThanGreaterThanEqual = alloc::sync::Arc<slang_solidity_v2_ast::ast::GreaterThanGreaterThanGreaterThanEqualStruct>
+pub type slang_solidity_v2_ast::ast::GweiKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::GweiKeywordStruct>
+pub type slang_solidity_v2_ast::ast::HexLiteral = alloc::sync::Arc<slang_solidity_v2_ast::ast::HexLiteralStruct>
+pub type slang_solidity_v2_ast::ast::HexNumberExpression = alloc::sync::Arc<slang_solidity_v2_ast::ast::HexNumberExpressionStruct>
+pub type slang_solidity_v2_ast::ast::HexStringLiteral = alloc::sync::Arc<slang_solidity_v2_ast::ast::HexStringLiteralStruct>
+pub type slang_solidity_v2_ast::ast::HexStringLiterals = alloc::sync::Arc<slang_solidity_v2_ast::ast::HexStringLiteralsStruct>
+pub type slang_solidity_v2_ast::ast::HoursKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::HoursKeywordStruct>
+pub type slang_solidity_v2_ast::ast::Identifier = alloc::sync::Arc<slang_solidity_v2_ast::ast::IdentifierStruct>
+pub type slang_solidity_v2_ast::ast::IdentifierPath = alloc::sync::Arc<slang_solidity_v2_ast::ast::IdentifierPathStruct>
+pub type slang_solidity_v2_ast::ast::IfStatement = alloc::sync::Arc<slang_solidity_v2_ast::ast::IfStatementStruct>
+pub type slang_solidity_v2_ast::ast::ImportDeconstruction = alloc::sync::Arc<slang_solidity_v2_ast::ast::ImportDeconstructionStruct>
+pub type slang_solidity_v2_ast::ast::ImportDeconstructionSymbol = alloc::sync::Arc<slang_solidity_v2_ast::ast::ImportDeconstructionSymbolStruct>
+pub type slang_solidity_v2_ast::ast::ImportDeconstructionSymbols = alloc::sync::Arc<slang_solidity_v2_ast::ast::ImportDeconstructionSymbolsStruct>
+pub type slang_solidity_v2_ast::ast::IndexAccessExpression = alloc::sync::Arc<slang_solidity_v2_ast::ast::IndexAccessExpressionStruct>
+pub type slang_solidity_v2_ast::ast::IndexedKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::IndexedKeywordStruct>
+pub type slang_solidity_v2_ast::ast::InequalityExpression = alloc::sync::Arc<slang_solidity_v2_ast::ast::InequalityExpressionStruct>
+pub type slang_solidity_v2_ast::ast::InheritanceType = alloc::sync::Arc<slang_solidity_v2_ast::ast::InheritanceTypeStruct>
+pub type slang_solidity_v2_ast::ast::InheritanceTypes = alloc::sync::Arc<slang_solidity_v2_ast::ast::InheritanceTypesStruct>
+pub type slang_solidity_v2_ast::ast::IntKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::IntKeywordStruct>
+pub type slang_solidity_v2_ast::ast::InterfaceDefinition = alloc::sync::Arc<slang_solidity_v2_ast::ast::InterfaceDefinitionStruct>
+pub type slang_solidity_v2_ast::ast::InterfaceMembers = alloc::sync::Arc<slang_solidity_v2_ast::ast::InterfaceMembersStruct>
+pub type slang_solidity_v2_ast::ast::LessThan = alloc::sync::Arc<slang_solidity_v2_ast::ast::LessThanStruct>
+pub type slang_solidity_v2_ast::ast::LessThanEqual = alloc::sync::Arc<slang_solidity_v2_ast::ast::LessThanEqualStruct>
+pub type slang_solidity_v2_ast::ast::LessThanLessThan = alloc::sync::Arc<slang_solidity_v2_ast::ast::LessThanLessThanStruct>
+pub type slang_solidity_v2_ast::ast::LessThanLessThanEqual = alloc::sync::Arc<slang_solidity_v2_ast::ast::LessThanLessThanEqualStruct>
+pub type slang_solidity_v2_ast::ast::LibraryDefinition = alloc::sync::Arc<slang_solidity_v2_ast::ast::LibraryDefinitionStruct>
+pub type slang_solidity_v2_ast::ast::LibraryMembers = alloc::sync::Arc<slang_solidity_v2_ast::ast::LibraryMembersStruct>
+pub type slang_solidity_v2_ast::ast::MappingType = alloc::sync::Arc<slang_solidity_v2_ast::ast::MappingTypeStruct>
+pub type slang_solidity_v2_ast::ast::MemberAccessExpression = alloc::sync::Arc<slang_solidity_v2_ast::ast::MemberAccessExpressionStruct>
+pub type slang_solidity_v2_ast::ast::MemoryKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::MemoryKeywordStruct>
+pub type slang_solidity_v2_ast::ast::Minus = alloc::sync::Arc<slang_solidity_v2_ast::ast::MinusStruct>
+pub type slang_solidity_v2_ast::ast::MinusEqual = alloc::sync::Arc<slang_solidity_v2_ast::ast::MinusEqualStruct>
+pub type slang_solidity_v2_ast::ast::MinusMinus = alloc::sync::Arc<slang_solidity_v2_ast::ast::MinusMinusStruct>
+pub type slang_solidity_v2_ast::ast::MinutesKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::MinutesKeywordStruct>
+pub type slang_solidity_v2_ast::ast::ModifierInvocation = alloc::sync::Arc<slang_solidity_v2_ast::ast::ModifierInvocationStruct>
+pub type slang_solidity_v2_ast::ast::ModifierInvocations = alloc::sync::Arc<slang_solidity_v2_ast::ast::ModifierInvocationsStruct>
+pub type slang_solidity_v2_ast::ast::MultiTypedDeclaration = alloc::sync::Arc<slang_solidity_v2_ast::ast::MultiTypedDeclarationStruct>
+pub type slang_solidity_v2_ast::ast::MultiTypedDeclarationElement = alloc::sync::Arc<slang_solidity_v2_ast::ast::MultiTypedDeclarationElementStruct>
+pub type slang_solidity_v2_ast::ast::MultiTypedDeclarationElements = alloc::sync::Arc<slang_solidity_v2_ast::ast::MultiTypedDeclarationElementsStruct>
+pub type slang_solidity_v2_ast::ast::MultiplicativeExpression = alloc::sync::Arc<slang_solidity_v2_ast::ast::MultiplicativeExpressionStruct>
+pub type slang_solidity_v2_ast::ast::NamedArgument = alloc::sync::Arc<slang_solidity_v2_ast::ast::NamedArgumentStruct>
+pub type slang_solidity_v2_ast::ast::NamedArguments = alloc::sync::Arc<slang_solidity_v2_ast::ast::NamedArgumentsStruct>
+pub type slang_solidity_v2_ast::ast::NewExpression = alloc::sync::Arc<slang_solidity_v2_ast::ast::NewExpressionStruct>
+pub type slang_solidity_v2_ast::ast::OrExpression = alloc::sync::Arc<slang_solidity_v2_ast::ast::OrExpressionStruct>
+pub type slang_solidity_v2_ast::ast::OverridePaths = alloc::sync::Arc<slang_solidity_v2_ast::ast::OverridePathsStruct>
+pub type slang_solidity_v2_ast::ast::Parameter = alloc::sync::Arc<slang_solidity_v2_ast::ast::ParameterStruct>
+pub type slang_solidity_v2_ast::ast::Parameters = alloc::sync::Arc<slang_solidity_v2_ast::ast::ParametersStruct>
+pub type slang_solidity_v2_ast::ast::PathImport = alloc::sync::Arc<slang_solidity_v2_ast::ast::PathImportStruct>
+pub type slang_solidity_v2_ast::ast::PayableKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::PayableKeywordStruct>
+pub type slang_solidity_v2_ast::ast::Percent = alloc::sync::Arc<slang_solidity_v2_ast::ast::PercentStruct>
+pub type slang_solidity_v2_ast::ast::PercentEqual = alloc::sync::Arc<slang_solidity_v2_ast::ast::PercentEqualStruct>
+pub type slang_solidity_v2_ast::ast::Plus = alloc::sync::Arc<slang_solidity_v2_ast::ast::PlusStruct>
+pub type slang_solidity_v2_ast::ast::PlusEqual = alloc::sync::Arc<slang_solidity_v2_ast::ast::PlusEqualStruct>
+pub type slang_solidity_v2_ast::ast::PlusPlus = alloc::sync::Arc<slang_solidity_v2_ast::ast::PlusPlusStruct>
+pub type slang_solidity_v2_ast::ast::PositionalArguments = alloc::sync::Arc<slang_solidity_v2_ast::ast::PositionalArgumentsStruct>
+pub type slang_solidity_v2_ast::ast::PostfixExpression = alloc::sync::Arc<slang_solidity_v2_ast::ast::PostfixExpressionStruct>
+pub type slang_solidity_v2_ast::ast::PragmaCaret = alloc::sync::Arc<slang_solidity_v2_ast::ast::PragmaCaretStruct>
+pub type slang_solidity_v2_ast::ast::PragmaDirective = alloc::sync::Arc<slang_solidity_v2_ast::ast::PragmaDirectiveStruct>
+pub type slang_solidity_v2_ast::ast::PragmaEqual = alloc::sync::Arc<slang_solidity_v2_ast::ast::PragmaEqualStruct>
+pub type slang_solidity_v2_ast::ast::PragmaGreaterThan = alloc::sync::Arc<slang_solidity_v2_ast::ast::PragmaGreaterThanStruct>
+pub type slang_solidity_v2_ast::ast::PragmaGreaterThanEqual = alloc::sync::Arc<slang_solidity_v2_ast::ast::PragmaGreaterThanEqualStruct>
+pub type slang_solidity_v2_ast::ast::PragmaLessThan = alloc::sync::Arc<slang_solidity_v2_ast::ast::PragmaLessThanStruct>
+pub type slang_solidity_v2_ast::ast::PragmaLessThanEqual = alloc::sync::Arc<slang_solidity_v2_ast::ast::PragmaLessThanEqualStruct>
+pub type slang_solidity_v2_ast::ast::PragmaTilde = alloc::sync::Arc<slang_solidity_v2_ast::ast::PragmaTildeStruct>
+pub type slang_solidity_v2_ast::ast::PrefixExpression = alloc::sync::Arc<slang_solidity_v2_ast::ast::PrefixExpressionStruct>
+pub type slang_solidity_v2_ast::ast::ReturnStatement = alloc::sync::Arc<slang_solidity_v2_ast::ast::ReturnStatementStruct>
+pub type slang_solidity_v2_ast::ast::RevertStatement = alloc::sync::Arc<slang_solidity_v2_ast::ast::RevertStatementStruct>
+pub type slang_solidity_v2_ast::ast::SMTCheckerKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::SMTCheckerKeywordStruct>
+pub type slang_solidity_v2_ast::ast::SecondsKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::SecondsKeywordStruct>
+pub type slang_solidity_v2_ast::ast::Semicolon = alloc::sync::Arc<slang_solidity_v2_ast::ast::SemicolonStruct>
+pub type slang_solidity_v2_ast::ast::ShiftExpression = alloc::sync::Arc<slang_solidity_v2_ast::ast::ShiftExpressionStruct>
+pub type slang_solidity_v2_ast::ast::SimpleVersionLiteral = alloc::sync::Arc<slang_solidity_v2_ast::ast::SimpleVersionLiteralStruct>
+pub type slang_solidity_v2_ast::ast::SingleTypedDeclaration = alloc::sync::Arc<slang_solidity_v2_ast::ast::SingleTypedDeclarationStruct>
+pub type slang_solidity_v2_ast::ast::Slash = alloc::sync::Arc<slang_solidity_v2_ast::ast::SlashStruct>
+pub type slang_solidity_v2_ast::ast::SlashEqual = alloc::sync::Arc<slang_solidity_v2_ast::ast::SlashEqualStruct>
+pub type slang_solidity_v2_ast::ast::SourceUnit = alloc::sync::Arc<slang_solidity_v2_ast::ast::SourceUnitStruct>
+pub type slang_solidity_v2_ast::ast::SourceUnitMembers = alloc::sync::Arc<slang_solidity_v2_ast::ast::SourceUnitMembersStruct>
+pub type slang_solidity_v2_ast::ast::StateVariableDefinition = alloc::sync::Arc<slang_solidity_v2_ast::ast::StateVariableDefinitionStruct>
+pub type slang_solidity_v2_ast::ast::Statements = alloc::sync::Arc<slang_solidity_v2_ast::ast::StatementsStruct>
+pub type slang_solidity_v2_ast::ast::StorageKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::StorageKeywordStruct>
+pub type slang_solidity_v2_ast::ast::StringKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::StringKeywordStruct>
+pub type slang_solidity_v2_ast::ast::StringLiteral = alloc::sync::Arc<slang_solidity_v2_ast::ast::StringLiteralStruct>
+pub type slang_solidity_v2_ast::ast::StringLiterals = alloc::sync::Arc<slang_solidity_v2_ast::ast::StringLiteralsStruct>
+pub type slang_solidity_v2_ast::ast::StructDefinition = alloc::sync::Arc<slang_solidity_v2_ast::ast::StructDefinitionStruct>
+pub type slang_solidity_v2_ast::ast::StructMember = alloc::sync::Arc<slang_solidity_v2_ast::ast::StructMemberStruct>
+pub type slang_solidity_v2_ast::ast::StructMembers = alloc::sync::Arc<slang_solidity_v2_ast::ast::StructMembersStruct>
+pub type slang_solidity_v2_ast::ast::SuperKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::SuperKeywordStruct>
+pub type slang_solidity_v2_ast::ast::ThisKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::ThisKeywordStruct>
+pub type slang_solidity_v2_ast::ast::Tilde = alloc::sync::Arc<slang_solidity_v2_ast::ast::TildeStruct>
+pub type slang_solidity_v2_ast::ast::TrueKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::TrueKeywordStruct>
+pub type slang_solidity_v2_ast::ast::TryStatement = alloc::sync::Arc<slang_solidity_v2_ast::ast::TryStatementStruct>
+pub type slang_solidity_v2_ast::ast::TupleExpression = alloc::sync::Arc<slang_solidity_v2_ast::ast::TupleExpressionStruct>
+pub type slang_solidity_v2_ast::ast::TupleValue = alloc::sync::Arc<slang_solidity_v2_ast::ast::TupleValueStruct>
+pub type slang_solidity_v2_ast::ast::TupleValues = alloc::sync::Arc<slang_solidity_v2_ast::ast::TupleValuesStruct>
+pub type slang_solidity_v2_ast::ast::TypeExpression = alloc::sync::Arc<slang_solidity_v2_ast::ast::TypeExpressionStruct>
+pub type slang_solidity_v2_ast::ast::UfixedKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::UfixedKeywordStruct>
+pub type slang_solidity_v2_ast::ast::UintKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::UintKeywordStruct>
+pub type slang_solidity_v2_ast::ast::UncheckedBlock = alloc::sync::Arc<slang_solidity_v2_ast::ast::UncheckedBlockStruct>
+pub type slang_solidity_v2_ast::ast::UnicodeStringLiteral = alloc::sync::Arc<slang_solidity_v2_ast::ast::UnicodeStringLiteralStruct>
+pub type slang_solidity_v2_ast::ast::UnicodeStringLiterals = alloc::sync::Arc<slang_solidity_v2_ast::ast::UnicodeStringLiteralsStruct>
+pub type slang_solidity_v2_ast::ast::UserDefinedValueTypeDefinition = alloc::sync::Arc<slang_solidity_v2_ast::ast::UserDefinedValueTypeDefinitionStruct>
+pub type slang_solidity_v2_ast::ast::UsingDeconstruction = alloc::sync::Arc<slang_solidity_v2_ast::ast::UsingDeconstructionStruct>
+pub type slang_solidity_v2_ast::ast::UsingDeconstructionSymbol = alloc::sync::Arc<slang_solidity_v2_ast::ast::UsingDeconstructionSymbolStruct>
+pub type slang_solidity_v2_ast::ast::UsingDeconstructionSymbols = alloc::sync::Arc<slang_solidity_v2_ast::ast::UsingDeconstructionSymbolsStruct>
+pub type slang_solidity_v2_ast::ast::UsingDirective = alloc::sync::Arc<slang_solidity_v2_ast::ast::UsingDirectiveStruct>
+pub type slang_solidity_v2_ast::ast::VariableDeclaration = alloc::sync::Arc<slang_solidity_v2_ast::ast::VariableDeclarationStruct>
+pub type slang_solidity_v2_ast::ast::VariableDeclarationStatement = alloc::sync::Arc<slang_solidity_v2_ast::ast::VariableDeclarationStatementStruct>
+pub type slang_solidity_v2_ast::ast::VersionExpressionSet = alloc::sync::Arc<slang_solidity_v2_ast::ast::VersionExpressionSetStruct>
+pub type slang_solidity_v2_ast::ast::VersionExpressionSets = alloc::sync::Arc<slang_solidity_v2_ast::ast::VersionExpressionSetsStruct>
+pub type slang_solidity_v2_ast::ast::VersionPragma = alloc::sync::Arc<slang_solidity_v2_ast::ast::VersionPragmaStruct>
+pub type slang_solidity_v2_ast::ast::VersionRange = alloc::sync::Arc<slang_solidity_v2_ast::ast::VersionRangeStruct>
+pub type slang_solidity_v2_ast::ast::VersionSpecifier = alloc::sync::Arc<slang_solidity_v2_ast::ast::VersionSpecifierStruct>
+pub type slang_solidity_v2_ast::ast::VersionTerm = alloc::sync::Arc<slang_solidity_v2_ast::ast::VersionTermStruct>
+pub type slang_solidity_v2_ast::ast::VirtualKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::VirtualKeywordStruct>
+pub type slang_solidity_v2_ast::ast::WeeksKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::WeeksKeywordStruct>
+pub type slang_solidity_v2_ast::ast::WeiKeyword = alloc::sync::Arc<slang_solidity_v2_ast::ast::WeiKeywordStruct>
+pub type slang_solidity_v2_ast::ast::WhileStatement = alloc::sync::Arc<slang_solidity_v2_ast::ast::WhileStatementStruct>
+pub type slang_solidity_v2_ast::ast::YulArguments = alloc::sync::Arc<slang_solidity_v2_ast::ast::YulArgumentsStruct>
+pub type slang_solidity_v2_ast::ast::YulBlock = alloc::sync::Arc<slang_solidity_v2_ast::ast::YulBlockStruct>
+pub type slang_solidity_v2_ast::ast::YulBreakStatement = alloc::sync::Arc<slang_solidity_v2_ast::ast::YulBreakStatementStruct>
+pub type slang_solidity_v2_ast::ast::YulContinueStatement = alloc::sync::Arc<slang_solidity_v2_ast::ast::YulContinueStatementStruct>
+pub type slang_solidity_v2_ast::ast::YulDefaultCase = alloc::sync::Arc<slang_solidity_v2_ast::ast::YulDefaultCaseStruct>
+pub type slang_solidity_v2_ast::ast::YulFlags = alloc::sync::Arc<slang_solidity_v2_ast::ast::YulFlagsStruct>
+pub type slang_solidity_v2_ast::ast::YulForStatement = alloc::sync::Arc<slang_solidity_v2_ast::ast::YulForStatementStruct>
+pub type slang_solidity_v2_ast::ast::YulFunctionCallExpression = alloc::sync::Arc<slang_solidity_v2_ast::ast::YulFunctionCallExpressionStruct>
+pub type slang_solidity_v2_ast::ast::YulFunctionDefinition = alloc::sync::Arc<slang_solidity_v2_ast::ast::YulFunctionDefinitionStruct>
+pub type slang_solidity_v2_ast::ast::YulIfStatement = alloc::sync::Arc<slang_solidity_v2_ast::ast::YulIfStatementStruct>
+pub type slang_solidity_v2_ast::ast::YulLeaveStatement = alloc::sync::Arc<slang_solidity_v2_ast::ast::YulLeaveStatementStruct>
+pub type slang_solidity_v2_ast::ast::YulParameters = alloc::sync::Arc<slang_solidity_v2_ast::ast::YulParametersStruct>
+pub type slang_solidity_v2_ast::ast::YulPath = alloc::sync::Arc<slang_solidity_v2_ast::ast::YulPathStruct>
+pub type slang_solidity_v2_ast::ast::YulPaths = alloc::sync::Arc<slang_solidity_v2_ast::ast::YulPathsStruct>
+pub type slang_solidity_v2_ast::ast::YulStatements = alloc::sync::Arc<slang_solidity_v2_ast::ast::YulStatementsStruct>
+pub type slang_solidity_v2_ast::ast::YulSwitchCases = alloc::sync::Arc<slang_solidity_v2_ast::ast::YulSwitchCasesStruct>
+pub type slang_solidity_v2_ast::ast::YulSwitchStatement = alloc::sync::Arc<slang_solidity_v2_ast::ast::YulSwitchStatementStruct>
+pub type slang_solidity_v2_ast::ast::YulValueCase = alloc::sync::Arc<slang_solidity_v2_ast::ast::YulValueCaseStruct>
+pub type slang_solidity_v2_ast::ast::YulVariableAssignmentStatement = alloc::sync::Arc<slang_solidity_v2_ast::ast::YulVariableAssignmentStatementStruct>
+pub type slang_solidity_v2_ast::ast::YulVariableDeclarationStatement = alloc::sync::Arc<slang_solidity_v2_ast::ast::YulVariableDeclarationStatementStruct>
+pub type slang_solidity_v2_ast::ast::YulVariableDeclarationValue = alloc::sync::Arc<slang_solidity_v2_ast::ast::YulVariableDeclarationValueStruct>
+pub type slang_solidity_v2_ast::ast::YulVariableNames = alloc::sync::Arc<slang_solidity_v2_ast::ast::YulVariableNamesStruct>

@@ -4,7 +4,7 @@
 #![allow(clippy::too_many_lines)]
 #![allow(unused_variables)]
 
-use std::rc::Rc;
+use std::sync::Arc;
 
 use slang_solidity_v2_cst::structured_cst::nodes as input;
 use slang_solidity_v2_cst::structured_cst::text_range::TextRange;
@@ -25,7 +25,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let range = source.calculate_text_range().unwrap_or_default();
         let version = self.build_abicoder_version(&source.version);
 
-        Rc::new(output::AbicoderPragmaStruct { id, range, version })
+        Arc::new(output::AbicoderPragmaStruct { id, range, version })
     }
 
     pub(super) fn build_additive_expression(
@@ -40,7 +40,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         );
         let right_operand = self.build_expression(&source.right_operand);
 
-        Rc::new(output::AdditiveExpressionStruct {
+        Arc::new(output::AdditiveExpressionStruct {
             id,
             range,
             left_operand,
@@ -60,7 +60,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .as_ref()
             .map(|value| self.build_payable_keyword(value));
 
-        Rc::new(output::AddressTypeStruct {
+        Arc::new(output::AddressTypeStruct {
             id,
             range,
             payable_keyword,
@@ -76,7 +76,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let left_operand = self.build_expression(&source.left_operand);
         let right_operand = self.build_expression(&source.right_operand);
 
-        Rc::new(output::AndExpressionStruct {
+        Arc::new(output::AndExpressionStruct {
             id,
             range,
             left_operand,
@@ -92,7 +92,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let range = source.calculate_text_range().unwrap_or_default();
         let items = self.build_array_values(&source.items);
 
-        Rc::new(output::ArrayExpressionStruct { id, range, items })
+        Arc::new(output::ArrayExpressionStruct { id, range, items })
     }
 
     pub(super) fn build_array_type_name(
@@ -107,7 +107,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .as_ref()
             .map(|value| self.build_expression(value));
 
-        Rc::new(output::ArrayTypeNameStruct {
+        Arc::new(output::ArrayTypeNameStruct {
             id,
             range,
             operand,
@@ -131,7 +131,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .map(|value| self.build_yul_flags_declaration(value));
         let body = self.build_yul_block(&source.body);
 
-        Rc::new(output::AssemblyStatementStruct {
+        Arc::new(output::AssemblyStatementStruct {
             id,
             range,
             label,
@@ -152,7 +152,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         );
         let right_operand = self.build_expression(&source.right_operand);
 
-        Rc::new(output::AssignmentExpressionStruct {
+        Arc::new(output::AssignmentExpressionStruct {
             id,
             range,
             left_operand,
@@ -170,7 +170,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let left_operand = self.build_expression(&source.left_operand);
         let right_operand = self.build_expression(&source.right_operand);
 
-        Rc::new(output::BitwiseAndExpressionStruct {
+        Arc::new(output::BitwiseAndExpressionStruct {
             id,
             range,
             left_operand,
@@ -187,7 +187,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let left_operand = self.build_expression(&source.left_operand);
         let right_operand = self.build_expression(&source.right_operand);
 
-        Rc::new(output::BitwiseOrExpressionStruct {
+        Arc::new(output::BitwiseOrExpressionStruct {
             id,
             range,
             left_operand,
@@ -204,7 +204,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let left_operand = self.build_expression(&source.left_operand);
         let right_operand = self.build_expression(&source.right_operand);
 
-        Rc::new(output::BitwiseXorExpressionStruct {
+        Arc::new(output::BitwiseXorExpressionStruct {
             id,
             range,
             left_operand,
@@ -217,7 +217,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let range = source.calculate_text_range().unwrap_or_default();
         let statements = self.build_statements(&source.statements);
 
-        Rc::new(output::BlockStruct {
+        Arc::new(output::BlockStruct {
             id,
             range,
             statements,
@@ -231,7 +231,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let id = self.next_id();
         let range = source.calculate_text_range().unwrap_or_default();
 
-        Rc::new(output::BreakStatementStruct { id, range })
+        Arc::new(output::BreakStatementStruct { id, range })
     }
 
     pub(super) fn build_call_options_expression(
@@ -243,7 +243,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let operand = self.build_expression(&source.operand);
         let options = self.build_call_options(&source.options);
 
-        Rc::new(output::CallOptionsExpressionStruct {
+        Arc::new(output::CallOptionsExpressionStruct {
             id,
             range,
             operand,
@@ -263,7 +263,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .map(|value| self.build_catch_clause_error(value));
         let body = self.build_block(&source.body);
 
-        Rc::new(output::CatchClauseStruct {
+        Arc::new(output::CatchClauseStruct {
             id,
             range,
             error,
@@ -283,7 +283,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .map(|value| self.build_identifier(value));
         let parameters = self.build_parameters_declaration(&source.parameters);
 
-        Rc::new(output::CatchClauseErrorStruct {
+        Arc::new(output::CatchClauseErrorStruct {
             id,
             range,
             name,
@@ -301,7 +301,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let true_expression = self.build_expression(&source.true_expression);
         let false_expression = self.build_expression(&source.false_expression);
 
-        Rc::new(output::ConditionalExpressionStruct {
+        Arc::new(output::ConditionalExpressionStruct {
             id,
             range,
             operand,
@@ -317,7 +317,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let id = self.next_id();
         let range = source.calculate_text_range().unwrap_or_default();
 
-        Rc::new(output::ContinueStatementStruct { id, range })
+        Arc::new(output::ContinueStatementStruct { id, range })
     }
 
     pub(super) fn build_decimal_number_expression(
@@ -332,7 +332,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .as_ref()
             .map(|value| self.build_number_unit(value));
 
-        Rc::new(output::DecimalNumberExpressionStruct {
+        Arc::new(output::DecimalNumberExpressionStruct {
             id,
             range,
             literal,
@@ -349,7 +349,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let body = self.build_statement(&source.body);
         let condition = self.build_expression(&source.condition);
 
-        Rc::new(output::DoWhileStatementStruct {
+        Arc::new(output::DoWhileStatementStruct {
             id,
             range,
             body,
@@ -366,7 +366,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let event = self.build_identifier_path(&source.event);
         let arguments = self.build_arguments_declaration(&source.arguments);
 
-        Rc::new(output::EmitStatementStruct {
+        Arc::new(output::EmitStatementStruct {
             id,
             range,
             event,
@@ -383,7 +383,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let name = self.build_identifier(&source.name);
         let members = self.build_enum_members(&source.members);
 
-        Rc::new(output::EnumDefinitionStruct {
+        Arc::new(output::EnumDefinitionStruct {
             id,
             range,
             name,
@@ -403,7 +403,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         );
         let right_operand = self.build_expression(&source.right_operand);
 
-        Rc::new(output::EqualityExpressionStruct {
+        Arc::new(output::EqualityExpressionStruct {
             id,
             range,
             left_operand,
@@ -420,7 +420,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let range = source.calculate_text_range().unwrap_or_default();
         let feature = self.build_experimental_feature(&source.feature);
 
-        Rc::new(output::ExperimentalPragmaStruct { id, range, feature })
+        Arc::new(output::ExperimentalPragmaStruct { id, range, feature })
     }
 
     pub(super) fn build_exponentiation_expression(
@@ -432,7 +432,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let left_operand = self.build_expression(&source.left_operand);
         let right_operand = self.build_expression(&source.right_operand);
 
-        Rc::new(output::ExponentiationExpressionStruct {
+        Arc::new(output::ExponentiationExpressionStruct {
             id,
             range,
             left_operand,
@@ -448,7 +448,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let range = source.calculate_text_range().unwrap_or_default();
         let expression = self.build_expression(&source.expression);
 
-        Rc::new(output::ExpressionStatementStruct {
+        Arc::new(output::ExpressionStatementStruct {
             id,
             range,
             expression,
@@ -469,7 +469,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .map(|value| self.build_expression(value));
         let body = self.build_statement(&source.body);
 
-        Rc::new(output::ForStatementStruct {
+        Arc::new(output::ForStatementStruct {
             id,
             range,
             initialization,
@@ -488,7 +488,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let operand = self.build_expression(&source.operand);
         let arguments = self.build_arguments_declaration(&source.arguments);
 
-        Rc::new(output::FunctionCallExpressionStruct {
+        Arc::new(output::FunctionCallExpressionStruct {
             id,
             range,
             operand,
@@ -504,7 +504,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let range = source.calculate_text_range().unwrap_or_default();
         let literal = self.build_hex_literal(&source.literal);
 
-        Rc::new(output::HexNumberExpressionStruct { id, range, literal })
+        Arc::new(output::HexNumberExpressionStruct { id, range, literal })
     }
 
     pub(super) fn build_if_statement(
@@ -520,7 +520,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .as_ref()
             .map(|value| self.build_else_branch(value));
 
-        Rc::new(output::IfStatementStruct {
+        Arc::new(output::IfStatementStruct {
             id,
             range,
             condition,
@@ -538,7 +538,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let symbols = self.build_import_deconstruction_symbols(&source.symbols);
         let path = self.build_string_literal(&source.path);
 
-        Rc::new(output::ImportDeconstructionStruct {
+        Arc::new(output::ImportDeconstructionStruct {
             id,
             range,
             symbols,
@@ -558,7 +558,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .as_ref()
             .map(|value| self.build_import_alias(value));
 
-        Rc::new(output::ImportDeconstructionSymbolStruct {
+        Arc::new(output::ImportDeconstructionSymbolStruct {
             id,
             range,
             name,
@@ -578,7 +578,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         );
         let right_operand = self.build_expression(&source.right_operand);
 
-        Rc::new(output::InequalityExpressionStruct {
+        Arc::new(output::InequalityExpressionStruct {
             id,
             range,
             left_operand,
@@ -599,7 +599,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .as_ref()
             .map(|value| self.build_arguments_declaration(value));
 
-        Rc::new(output::InheritanceTypeStruct {
+        Arc::new(output::InheritanceTypeStruct {
             id,
             range,
             type_name,
@@ -620,7 +620,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .map(|value| self.build_inheritance_specifier(value));
         let members = self.build_interface_members(&source.members);
 
-        Rc::new(output::InterfaceDefinitionStruct {
+        Arc::new(output::InterfaceDefinitionStruct {
             id,
             range,
             name,
@@ -638,7 +638,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let name = self.build_identifier(&source.name);
         let members = self.build_library_members(&source.members);
 
-        Rc::new(output::LibraryDefinitionStruct {
+        Arc::new(output::LibraryDefinitionStruct {
             id,
             range,
             name,
@@ -655,7 +655,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let operand = self.build_expression(&source.operand);
         let member = self.build_identifier_path_element(&source.member);
 
-        Rc::new(output::MemberAccessExpressionStruct {
+        Arc::new(output::MemberAccessExpressionStruct {
             id,
             range,
             operand,
@@ -675,7 +675,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .as_ref()
             .map(|value| self.build_arguments_declaration(value));
 
-        Rc::new(output::ModifierInvocationStruct {
+        Arc::new(output::ModifierInvocationStruct {
             id,
             range,
             name,
@@ -692,7 +692,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let elements = self.build_multi_typed_declaration_elements(&source.elements);
         let value = self.build_variable_declaration_value(&source.value);
 
-        Rc::new(output::MultiTypedDeclarationStruct {
+        Arc::new(output::MultiTypedDeclarationStruct {
             id,
             range,
             elements,
@@ -711,7 +711,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .as_ref()
             .map(|value| self.build_variable_declaration(value));
 
-        Rc::new(output::MultiTypedDeclarationElementStruct { id, range, member })
+        Arc::new(output::MultiTypedDeclarationElementStruct { id, range, member })
     }
 
     pub(super) fn build_multiplicative_expression(
@@ -726,7 +726,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         );
         let right_operand = self.build_expression(&source.right_operand);
 
-        Rc::new(output::MultiplicativeExpressionStruct {
+        Arc::new(output::MultiplicativeExpressionStruct {
             id,
             range,
             left_operand,
@@ -744,7 +744,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let name = self.build_identifier(&source.name);
         let value = self.build_expression(&source.value);
 
-        Rc::new(output::NamedArgumentStruct {
+        Arc::new(output::NamedArgumentStruct {
             id,
             range,
             name,
@@ -760,7 +760,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let range = source.calculate_text_range().unwrap_or_default();
         let type_name = self.build_type_name(&source.type_name);
 
-        Rc::new(output::NewExpressionStruct {
+        Arc::new(output::NewExpressionStruct {
             id,
             range,
             type_name,
@@ -776,7 +776,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let left_operand = self.build_expression(&source.left_operand);
         let right_operand = self.build_expression(&source.right_operand);
 
-        Rc::new(output::OrExpressionStruct {
+        Arc::new(output::OrExpressionStruct {
             id,
             range,
             left_operand,
@@ -793,7 +793,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .as_ref()
             .map(|value| self.build_import_alias(value));
 
-        Rc::new(output::PathImportStruct {
+        Arc::new(output::PathImportStruct {
             id,
             range,
             path,
@@ -812,7 +812,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             &source.expression_postfix_expression_operator,
         );
 
-        Rc::new(output::PostfixExpressionStruct {
+        Arc::new(output::PostfixExpressionStruct {
             id,
             range,
             operand,
@@ -828,7 +828,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let range = source.calculate_text_range().unwrap_or_default();
         let pragma = self.build_pragma(&source.pragma);
 
-        Rc::new(output::PragmaDirectiveStruct { id, range, pragma })
+        Arc::new(output::PragmaDirectiveStruct { id, range, pragma })
     }
 
     pub(super) fn build_prefix_expression(
@@ -842,7 +842,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         );
         let operand = self.build_expression(&source.operand);
 
-        Rc::new(output::PrefixExpressionStruct {
+        Arc::new(output::PrefixExpressionStruct {
             id,
             range,
             operator,
@@ -861,7 +861,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .as_ref()
             .map(|value| self.build_expression(value));
 
-        Rc::new(output::ReturnStatementStruct {
+        Arc::new(output::ReturnStatementStruct {
             id,
             range,
             expression,
@@ -877,7 +877,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let error = self.build_identifier_path(&source.error);
         let arguments = self.build_arguments_declaration(&source.arguments);
 
-        Rc::new(output::RevertStatementStruct {
+        Arc::new(output::RevertStatementStruct {
             id,
             range,
             error,
@@ -897,7 +897,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         );
         let right_operand = self.build_expression(&source.right_operand);
 
-        Rc::new(output::ShiftExpressionStruct {
+        Arc::new(output::ShiftExpressionStruct {
             id,
             range,
             left_operand,
@@ -918,7 +918,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .as_ref()
             .map(|value| self.build_variable_declaration_value(value));
 
-        Rc::new(output::SingleTypedDeclarationStruct {
+        Arc::new(output::SingleTypedDeclarationStruct {
             id,
             range,
             declaration,
@@ -931,7 +931,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let range = source.calculate_text_range().unwrap_or_default();
         let members = self.build_source_unit_members(&source.members);
 
-        Rc::new(output::SourceUnitStruct { id, range, members })
+        Arc::new(output::SourceUnitStruct { id, range, members })
     }
 
     pub(super) fn build_struct_definition(
@@ -943,7 +943,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let name = self.build_identifier(&source.name);
         let members = self.build_struct_members(&source.members);
 
-        Rc::new(output::StructDefinitionStruct {
+        Arc::new(output::StructDefinitionStruct {
             id,
             range,
             name,
@@ -960,7 +960,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let type_name = self.build_type_name(&source.type_name);
         let name = self.build_identifier(&source.name);
 
-        Rc::new(output::StructMemberStruct {
+        Arc::new(output::StructMemberStruct {
             id,
             range,
             type_name,
@@ -982,7 +982,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let body = self.build_block(&source.body);
         let catch_clauses = self.build_catch_clauses(&source.catch_clauses);
 
-        Rc::new(output::TryStatementStruct {
+        Arc::new(output::TryStatementStruct {
             id,
             range,
             expression,
@@ -1000,7 +1000,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let range = source.calculate_text_range().unwrap_or_default();
         let items = self.build_tuple_values(&source.items);
 
-        Rc::new(output::TupleExpressionStruct { id, range, items })
+        Arc::new(output::TupleExpressionStruct { id, range, items })
     }
 
     pub(super) fn build_tuple_value(&mut self, source: &input::TupleValue) -> output::TupleValue {
@@ -1011,7 +1011,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .as_ref()
             .map(|value| self.build_expression(value));
 
-        Rc::new(output::TupleValueStruct {
+        Arc::new(output::TupleValueStruct {
             id,
             range,
             expression,
@@ -1026,7 +1026,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let range = source.calculate_text_range().unwrap_or_default();
         let type_name = self.build_type_name(&source.type_name);
 
-        Rc::new(output::TypeExpressionStruct {
+        Arc::new(output::TypeExpressionStruct {
             id,
             range,
             type_name,
@@ -1041,7 +1041,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let range = source.calculate_text_range().unwrap_or_default();
         let block = self.build_block(&source.block);
 
-        Rc::new(output::UncheckedBlockStruct { id, range, block })
+        Arc::new(output::UncheckedBlockStruct { id, range, block })
     }
 
     pub(super) fn build_user_defined_value_type_definition(
@@ -1053,7 +1053,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let name = self.build_identifier(&source.name);
         let value_type = self.build_elementary_type(&source.value_type);
 
-        Rc::new(output::UserDefinedValueTypeDefinitionStruct {
+        Arc::new(output::UserDefinedValueTypeDefinitionStruct {
             id,
             range,
             name,
@@ -1069,7 +1069,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let range = source.calculate_text_range().unwrap_or_default();
         let symbols = self.build_using_deconstruction_symbols(&source.symbols);
 
-        Rc::new(output::UsingDeconstructionStruct { id, range, symbols })
+        Arc::new(output::UsingDeconstructionStruct { id, range, symbols })
     }
 
     pub(super) fn build_using_deconstruction_symbol(
@@ -1084,7 +1084,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .as_ref()
             .map(|value| self.build_using_alias(value));
 
-        Rc::new(output::UsingDeconstructionSymbolStruct {
+        Arc::new(output::UsingDeconstructionSymbolStruct {
             id,
             range,
             name,
@@ -1105,7 +1105,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .as_ref()
             .map(|value| self.build_global_keyword(value));
 
-        Rc::new(output::UsingDirectiveStruct {
+        Arc::new(output::UsingDirectiveStruct {
             id,
             range,
             clause,
@@ -1127,7 +1127,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .map(|value| self.build_storage_location(value));
         let name = self.build_identifier(&source.name);
 
-        Rc::new(output::VariableDeclarationStruct {
+        Arc::new(output::VariableDeclarationStruct {
             id,
             range,
             type_name,
@@ -1144,7 +1144,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let range = source.calculate_text_range().unwrap_or_default();
         let target = self.build_variable_declaration_target(&source.target);
 
-        Rc::new(output::VariableDeclarationStatementStruct { id, range, target })
+        Arc::new(output::VariableDeclarationStatementStruct { id, range, target })
     }
 
     pub(super) fn build_version_pragma(
@@ -1155,7 +1155,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let range = source.calculate_text_range().unwrap_or_default();
         let sets = self.build_version_expression_sets(&source.sets);
 
-        Rc::new(output::VersionPragmaStruct { id, range, sets })
+        Arc::new(output::VersionPragmaStruct { id, range, sets })
     }
 
     pub(super) fn build_version_range(
@@ -1167,7 +1167,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let start = self.build_version_literal(&source.start);
         let end = self.build_version_literal(&source.end);
 
-        Rc::new(output::VersionRangeStruct {
+        Arc::new(output::VersionRangeStruct {
             id,
             range,
             start,
@@ -1187,7 +1187,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .map(|value| self.build_version_operator(value));
         let literal = self.build_version_literal(&source.literal);
 
-        Rc::new(output::VersionTermStruct {
+        Arc::new(output::VersionTermStruct {
             id,
             range,
             operator,
@@ -1204,7 +1204,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let condition = self.build_expression(&source.condition);
         let body = self.build_statement(&source.body);
 
-        Rc::new(output::WhileStatementStruct {
+        Arc::new(output::WhileStatementStruct {
             id,
             range,
             condition,
@@ -1217,7 +1217,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let range = source.calculate_text_range().unwrap_or_default();
         let statements = self.build_yul_statements(&source.statements);
 
-        Rc::new(output::YulBlockStruct {
+        Arc::new(output::YulBlockStruct {
             id,
             range,
             statements,
@@ -1231,7 +1231,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let id = self.next_id();
         let range = source.calculate_text_range().unwrap_or_default();
 
-        Rc::new(output::YulBreakStatementStruct { id, range })
+        Arc::new(output::YulBreakStatementStruct { id, range })
     }
 
     pub(super) fn build_yul_continue_statement(
@@ -1241,7 +1241,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let id = self.next_id();
         let range = source.calculate_text_range().unwrap_or_default();
 
-        Rc::new(output::YulContinueStatementStruct { id, range })
+        Arc::new(output::YulContinueStatementStruct { id, range })
     }
 
     pub(super) fn build_yul_default_case(
@@ -1252,7 +1252,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let range = source.calculate_text_range().unwrap_or_default();
         let body = self.build_yul_block(&source.body);
 
-        Rc::new(output::YulDefaultCaseStruct { id, range, body })
+        Arc::new(output::YulDefaultCaseStruct { id, range, body })
     }
 
     pub(super) fn build_yul_for_statement(
@@ -1266,7 +1266,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let iterator = self.build_yul_block(&source.iterator);
         let body = self.build_yul_block(&source.body);
 
-        Rc::new(output::YulForStatementStruct {
+        Arc::new(output::YulForStatementStruct {
             id,
             range,
             initialization,
@@ -1285,7 +1285,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let operand = self.build_yul_expression(&source.operand);
         let arguments = self.build_yul_arguments(&source.arguments);
 
-        Rc::new(output::YulFunctionCallExpressionStruct {
+        Arc::new(output::YulFunctionCallExpressionStruct {
             id,
             range,
             operand,
@@ -1307,7 +1307,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .map(|value| self.build_yul_returns_declaration(value));
         let body = self.build_yul_block(&source.body);
 
-        Rc::new(output::YulFunctionDefinitionStruct {
+        Arc::new(output::YulFunctionDefinitionStruct {
             id,
             range,
             name,
@@ -1326,7 +1326,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let condition = self.build_yul_expression(&source.condition);
         let body = self.build_yul_block(&source.body);
 
-        Rc::new(output::YulIfStatementStruct {
+        Arc::new(output::YulIfStatementStruct {
             id,
             range,
             condition,
@@ -1341,7 +1341,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let id = self.next_id();
         let range = source.calculate_text_range().unwrap_or_default();
 
-        Rc::new(output::YulLeaveStatementStruct { id, range })
+        Arc::new(output::YulLeaveStatementStruct { id, range })
     }
 
     pub(super) fn build_yul_switch_statement(
@@ -1353,7 +1353,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let expression = self.build_yul_expression(&source.expression);
         let cases = self.build_yul_switch_cases(&source.cases);
 
-        Rc::new(output::YulSwitchStatementStruct {
+        Arc::new(output::YulSwitchStatementStruct {
             id,
             range,
             expression,
@@ -1370,7 +1370,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let value = self.build_yul_literal(&source.value);
         let body = self.build_yul_block(&source.body);
 
-        Rc::new(output::YulValueCaseStruct {
+        Arc::new(output::YulValueCaseStruct {
             id,
             range,
             value,
@@ -1387,7 +1387,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let variables = self.build_yul_paths(&source.variables);
         let expression = self.build_yul_expression(&source.expression);
 
-        Rc::new(output::YulVariableAssignmentStatementStruct {
+        Arc::new(output::YulVariableAssignmentStatementStruct {
             id,
             range,
             variables,
@@ -1407,7 +1407,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .as_ref()
             .map(|value| self.build_yul_variable_declaration_value(value));
 
-        Rc::new(output::YulVariableDeclarationStatementStruct {
+        Arc::new(output::YulVariableDeclarationStatementStruct {
             id,
             range,
             variables,
@@ -1423,7 +1423,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let range = source.calculate_text_range().unwrap_or_default();
         let expression = self.build_yul_expression(&source.expression);
 
-        Rc::new(output::YulVariableDeclarationValueStruct {
+        Arc::new(output::YulVariableDeclarationValueStruct {
             id,
             range,
             expression,
@@ -2674,7 +2674,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         match source {
             input::IdentifierPathElement::Identifier(terminal) => {
                 let text = self.unparse_range(terminal.range.clone());
-                Rc::new(output::IdentifierStruct {
+                Arc::new(output::IdentifierStruct {
                     id: self.next_id(),
                     range: terminal.range.clone(),
                     text,
@@ -2682,7 +2682,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             }
             input::IdentifierPathElement::AddressKeyword(terminal) => {
                 let text = self.unparse_range(terminal.range.clone());
-                Rc::new(output::IdentifierStruct {
+                Arc::new(output::IdentifierStruct {
                     id: self.next_id(),
                     range: terminal.range.clone(),
                     text,
@@ -3062,7 +3062,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::ABIEncoderV2Keyword,
     ) -> output::ABIEncoderV2Keyword {
-        Rc::new(output::ABIEncoderV2KeywordStruct {
+        Arc::new(output::ABIEncoderV2KeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3072,7 +3072,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::AbicoderV1Keyword,
     ) -> output::AbicoderV1Keyword {
-        Rc::new(output::AbicoderV1KeywordStruct {
+        Arc::new(output::AbicoderV1KeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3082,7 +3082,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::AbicoderV2Keyword,
     ) -> output::AbicoderV2Keyword {
-        Rc::new(output::AbicoderV2KeywordStruct {
+        Arc::new(output::AbicoderV2KeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3092,14 +3092,14 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::AbstractKeyword,
     ) -> output::AbstractKeyword {
-        Rc::new(output::AbstractKeywordStruct {
+        Arc::new(output::AbstractKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
     }
 
     pub(super) fn build_ampersand(&mut self, source: &input::Ampersand) -> output::Ampersand {
-        Rc::new(output::AmpersandStruct {
+        Arc::new(output::AmpersandStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3109,7 +3109,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::AmpersandEqual,
     ) -> output::AmpersandEqual {
-        Rc::new(output::AmpersandEqualStruct {
+        Arc::new(output::AmpersandEqualStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3119,14 +3119,14 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::AnonymousKeyword,
     ) -> output::AnonymousKeyword {
-        Rc::new(output::AnonymousKeywordStruct {
+        Arc::new(output::AnonymousKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
     }
 
     pub(super) fn build_asterisk(&mut self, source: &input::Asterisk) -> output::Asterisk {
-        Rc::new(output::AsteriskStruct {
+        Arc::new(output::AsteriskStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3136,35 +3136,35 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::AsteriskEqual,
     ) -> output::AsteriskEqual {
-        Rc::new(output::AsteriskEqualStruct {
+        Arc::new(output::AsteriskEqualStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
     }
 
     pub(super) fn build_bang(&mut self, source: &input::Bang) -> output::Bang {
-        Rc::new(output::BangStruct {
+        Arc::new(output::BangStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
     }
 
     pub(super) fn build_bang_equal(&mut self, source: &input::BangEqual) -> output::BangEqual {
-        Rc::new(output::BangEqualStruct {
+        Arc::new(output::BangEqualStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
     }
 
     pub(super) fn build_bar(&mut self, source: &input::Bar) -> output::Bar {
-        Rc::new(output::BarStruct {
+        Arc::new(output::BarStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
     }
 
     pub(super) fn build_bar_equal(&mut self, source: &input::BarEqual) -> output::BarEqual {
-        Rc::new(output::BarEqualStruct {
+        Arc::new(output::BarEqualStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3174,7 +3174,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::BoolKeyword,
     ) -> output::BoolKeyword {
-        Rc::new(output::BoolKeywordStruct {
+        Arc::new(output::BoolKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3184,7 +3184,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::BytesKeyword,
     ) -> output::BytesKeyword {
-        Rc::new(output::BytesKeywordStruct {
+        Arc::new(output::BytesKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
             text: self.unparse_range(source.range.clone()),
@@ -3195,21 +3195,21 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::CallDataKeyword,
     ) -> output::CallDataKeyword {
-        Rc::new(output::CallDataKeywordStruct {
+        Arc::new(output::CallDataKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
     }
 
     pub(super) fn build_caret(&mut self, source: &input::Caret) -> output::Caret {
-        Rc::new(output::CaretStruct {
+        Arc::new(output::CaretStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
     }
 
     pub(super) fn build_caret_equal(&mut self, source: &input::CaretEqual) -> output::CaretEqual {
-        Rc::new(output::CaretEqualStruct {
+        Arc::new(output::CaretEqualStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3219,7 +3219,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::DaysKeyword,
     ) -> output::DaysKeyword {
-        Rc::new(output::DaysKeywordStruct {
+        Arc::new(output::DaysKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3229,7 +3229,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::DecimalLiteral,
     ) -> output::DecimalLiteral {
-        Rc::new(output::DecimalLiteralStruct {
+        Arc::new(output::DecimalLiteralStruct {
             id: self.next_id(),
             range: source.range.clone(),
             text: self.unparse_range(source.range.clone()),
@@ -3240,21 +3240,21 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::DeleteKeyword,
     ) -> output::DeleteKeyword {
-        Rc::new(output::DeleteKeywordStruct {
+        Arc::new(output::DeleteKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
     }
 
     pub(super) fn build_equal(&mut self, source: &input::Equal) -> output::Equal {
-        Rc::new(output::EqualStruct {
+        Arc::new(output::EqualStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
     }
 
     pub(super) fn build_equal_equal(&mut self, source: &input::EqualEqual) -> output::EqualEqual {
-        Rc::new(output::EqualEqualStruct {
+        Arc::new(output::EqualEqualStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3264,7 +3264,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::EtherKeyword,
     ) -> output::EtherKeyword {
-        Rc::new(output::EtherKeywordStruct {
+        Arc::new(output::EtherKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3274,7 +3274,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::FalseKeyword,
     ) -> output::FalseKeyword {
-        Rc::new(output::FalseKeywordStruct {
+        Arc::new(output::FalseKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3284,7 +3284,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::FixedKeyword,
     ) -> output::FixedKeyword {
-        Rc::new(output::FixedKeywordStruct {
+        Arc::new(output::FixedKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
             text: self.unparse_range(source.range.clone()),
@@ -3295,7 +3295,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::GlobalKeyword,
     ) -> output::GlobalKeyword {
-        Rc::new(output::GlobalKeywordStruct {
+        Arc::new(output::GlobalKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3305,7 +3305,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::GreaterThan,
     ) -> output::GreaterThan {
-        Rc::new(output::GreaterThanStruct {
+        Arc::new(output::GreaterThanStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3315,7 +3315,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::GreaterThanEqual,
     ) -> output::GreaterThanEqual {
-        Rc::new(output::GreaterThanEqualStruct {
+        Arc::new(output::GreaterThanEqualStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3325,7 +3325,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::GreaterThanGreaterThan,
     ) -> output::GreaterThanGreaterThan {
-        Rc::new(output::GreaterThanGreaterThanStruct {
+        Arc::new(output::GreaterThanGreaterThanStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3335,7 +3335,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::GreaterThanGreaterThanEqual,
     ) -> output::GreaterThanGreaterThanEqual {
-        Rc::new(output::GreaterThanGreaterThanEqualStruct {
+        Arc::new(output::GreaterThanGreaterThanEqualStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3345,7 +3345,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::GreaterThanGreaterThanGreaterThan,
     ) -> output::GreaterThanGreaterThanGreaterThan {
-        Rc::new(output::GreaterThanGreaterThanGreaterThanStruct {
+        Arc::new(output::GreaterThanGreaterThanGreaterThanStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3355,7 +3355,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::GreaterThanGreaterThanGreaterThanEqual,
     ) -> output::GreaterThanGreaterThanGreaterThanEqual {
-        Rc::new(output::GreaterThanGreaterThanGreaterThanEqualStruct {
+        Arc::new(output::GreaterThanGreaterThanGreaterThanEqualStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3365,14 +3365,14 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::GweiKeyword,
     ) -> output::GweiKeyword {
-        Rc::new(output::GweiKeywordStruct {
+        Arc::new(output::GweiKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
     }
 
     pub(super) fn build_hex_literal(&mut self, source: &input::HexLiteral) -> output::HexLiteral {
-        Rc::new(output::HexLiteralStruct {
+        Arc::new(output::HexLiteralStruct {
             id: self.next_id(),
             range: source.range.clone(),
             text: self.unparse_range(source.range.clone()),
@@ -3383,7 +3383,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::HexStringLiteral,
     ) -> output::HexStringLiteral {
-        Rc::new(output::HexStringLiteralStruct {
+        Arc::new(output::HexStringLiteralStruct {
             id: self.next_id(),
             range: source.range.clone(),
             text: self.unparse_range(source.range.clone()),
@@ -3394,14 +3394,14 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::HoursKeyword,
     ) -> output::HoursKeyword {
-        Rc::new(output::HoursKeywordStruct {
+        Arc::new(output::HoursKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
     }
 
     pub(super) fn build_identifier(&mut self, source: &input::Identifier) -> output::Identifier {
-        Rc::new(output::IdentifierStruct {
+        Arc::new(output::IdentifierStruct {
             id: self.next_id(),
             range: source.range.clone(),
             text: self.unparse_range(source.range.clone()),
@@ -3412,14 +3412,14 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::IndexedKeyword,
     ) -> output::IndexedKeyword {
-        Rc::new(output::IndexedKeywordStruct {
+        Arc::new(output::IndexedKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
     }
 
     pub(super) fn build_int_keyword(&mut self, source: &input::IntKeyword) -> output::IntKeyword {
-        Rc::new(output::IntKeywordStruct {
+        Arc::new(output::IntKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
             text: self.unparse_range(source.range.clone()),
@@ -3427,7 +3427,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     }
 
     pub(super) fn build_less_than(&mut self, source: &input::LessThan) -> output::LessThan {
-        Rc::new(output::LessThanStruct {
+        Arc::new(output::LessThanStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3437,7 +3437,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::LessThanEqual,
     ) -> output::LessThanEqual {
-        Rc::new(output::LessThanEqualStruct {
+        Arc::new(output::LessThanEqualStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3447,7 +3447,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::LessThanLessThan,
     ) -> output::LessThanLessThan {
-        Rc::new(output::LessThanLessThanStruct {
+        Arc::new(output::LessThanLessThanStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3457,7 +3457,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::LessThanLessThanEqual,
     ) -> output::LessThanLessThanEqual {
-        Rc::new(output::LessThanLessThanEqualStruct {
+        Arc::new(output::LessThanLessThanEqualStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3467,28 +3467,28 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::MemoryKeyword,
     ) -> output::MemoryKeyword {
-        Rc::new(output::MemoryKeywordStruct {
+        Arc::new(output::MemoryKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
     }
 
     pub(super) fn build_minus(&mut self, source: &input::Minus) -> output::Minus {
-        Rc::new(output::MinusStruct {
+        Arc::new(output::MinusStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
     }
 
     pub(super) fn build_minus_equal(&mut self, source: &input::MinusEqual) -> output::MinusEqual {
-        Rc::new(output::MinusEqualStruct {
+        Arc::new(output::MinusEqualStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
     }
 
     pub(super) fn build_minus_minus(&mut self, source: &input::MinusMinus) -> output::MinusMinus {
-        Rc::new(output::MinusMinusStruct {
+        Arc::new(output::MinusMinusStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3498,7 +3498,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::MinutesKeyword,
     ) -> output::MinutesKeyword {
-        Rc::new(output::MinutesKeywordStruct {
+        Arc::new(output::MinutesKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3508,14 +3508,14 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::PayableKeyword,
     ) -> output::PayableKeyword {
-        Rc::new(output::PayableKeywordStruct {
+        Arc::new(output::PayableKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
     }
 
     pub(super) fn build_percent(&mut self, source: &input::Percent) -> output::Percent {
-        Rc::new(output::PercentStruct {
+        Arc::new(output::PercentStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3525,28 +3525,28 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::PercentEqual,
     ) -> output::PercentEqual {
-        Rc::new(output::PercentEqualStruct {
+        Arc::new(output::PercentEqualStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
     }
 
     pub(super) fn build_plus(&mut self, source: &input::Plus) -> output::Plus {
-        Rc::new(output::PlusStruct {
+        Arc::new(output::PlusStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
     }
 
     pub(super) fn build_plus_equal(&mut self, source: &input::PlusEqual) -> output::PlusEqual {
-        Rc::new(output::PlusEqualStruct {
+        Arc::new(output::PlusEqualStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
     }
 
     pub(super) fn build_plus_plus(&mut self, source: &input::PlusPlus) -> output::PlusPlus {
-        Rc::new(output::PlusPlusStruct {
+        Arc::new(output::PlusPlusStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3556,7 +3556,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::PragmaCaret,
     ) -> output::PragmaCaret {
-        Rc::new(output::PragmaCaretStruct {
+        Arc::new(output::PragmaCaretStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3566,7 +3566,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::PragmaEqual,
     ) -> output::PragmaEqual {
-        Rc::new(output::PragmaEqualStruct {
+        Arc::new(output::PragmaEqualStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3576,7 +3576,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::PragmaGreaterThan,
     ) -> output::PragmaGreaterThan {
-        Rc::new(output::PragmaGreaterThanStruct {
+        Arc::new(output::PragmaGreaterThanStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3586,7 +3586,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::PragmaGreaterThanEqual,
     ) -> output::PragmaGreaterThanEqual {
-        Rc::new(output::PragmaGreaterThanEqualStruct {
+        Arc::new(output::PragmaGreaterThanEqualStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3596,7 +3596,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::PragmaLessThan,
     ) -> output::PragmaLessThan {
-        Rc::new(output::PragmaLessThanStruct {
+        Arc::new(output::PragmaLessThanStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3606,7 +3606,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::PragmaLessThanEqual,
     ) -> output::PragmaLessThanEqual {
-        Rc::new(output::PragmaLessThanEqualStruct {
+        Arc::new(output::PragmaLessThanEqualStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3616,7 +3616,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::PragmaTilde,
     ) -> output::PragmaTilde {
-        Rc::new(output::PragmaTildeStruct {
+        Arc::new(output::PragmaTildeStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3626,7 +3626,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::SMTCheckerKeyword,
     ) -> output::SMTCheckerKeyword {
-        Rc::new(output::SMTCheckerKeywordStruct {
+        Arc::new(output::SMTCheckerKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3636,28 +3636,28 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::SecondsKeyword,
     ) -> output::SecondsKeyword {
-        Rc::new(output::SecondsKeywordStruct {
+        Arc::new(output::SecondsKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
     }
 
     pub(super) fn build_semicolon(&mut self, source: &input::Semicolon) -> output::Semicolon {
-        Rc::new(output::SemicolonStruct {
+        Arc::new(output::SemicolonStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
     }
 
     pub(super) fn build_slash(&mut self, source: &input::Slash) -> output::Slash {
-        Rc::new(output::SlashStruct {
+        Arc::new(output::SlashStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
     }
 
     pub(super) fn build_slash_equal(&mut self, source: &input::SlashEqual) -> output::SlashEqual {
-        Rc::new(output::SlashEqualStruct {
+        Arc::new(output::SlashEqualStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3667,7 +3667,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::StorageKeyword,
     ) -> output::StorageKeyword {
-        Rc::new(output::StorageKeywordStruct {
+        Arc::new(output::StorageKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3677,7 +3677,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::StringKeyword,
     ) -> output::StringKeyword {
-        Rc::new(output::StringKeywordStruct {
+        Arc::new(output::StringKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3687,7 +3687,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::StringLiteral,
     ) -> output::StringLiteral {
-        Rc::new(output::StringLiteralStruct {
+        Arc::new(output::StringLiteralStruct {
             id: self.next_id(),
             range: source.range.clone(),
             text: self.unparse_range(source.range.clone()),
@@ -3698,7 +3698,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::SuperKeyword,
     ) -> output::SuperKeyword {
-        Rc::new(output::SuperKeywordStruct {
+        Arc::new(output::SuperKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3708,14 +3708,14 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::ThisKeyword,
     ) -> output::ThisKeyword {
-        Rc::new(output::ThisKeywordStruct {
+        Arc::new(output::ThisKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
     }
 
     pub(super) fn build_tilde(&mut self, source: &input::Tilde) -> output::Tilde {
-        Rc::new(output::TildeStruct {
+        Arc::new(output::TildeStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3725,7 +3725,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::TrueKeyword,
     ) -> output::TrueKeyword {
-        Rc::new(output::TrueKeywordStruct {
+        Arc::new(output::TrueKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3735,7 +3735,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::UfixedKeyword,
     ) -> output::UfixedKeyword {
-        Rc::new(output::UfixedKeywordStruct {
+        Arc::new(output::UfixedKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
             text: self.unparse_range(source.range.clone()),
@@ -3746,7 +3746,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::UintKeyword,
     ) -> output::UintKeyword {
-        Rc::new(output::UintKeywordStruct {
+        Arc::new(output::UintKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
             text: self.unparse_range(source.range.clone()),
@@ -3757,7 +3757,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::UnicodeStringLiteral,
     ) -> output::UnicodeStringLiteral {
-        Rc::new(output::UnicodeStringLiteralStruct {
+        Arc::new(output::UnicodeStringLiteralStruct {
             id: self.next_id(),
             range: source.range.clone(),
             text: self.unparse_range(source.range.clone()),
@@ -3768,7 +3768,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::VersionSpecifier,
     ) -> output::VersionSpecifier {
-        Rc::new(output::VersionSpecifierStruct {
+        Arc::new(output::VersionSpecifierStruct {
             id: self.next_id(),
             range: source.range.clone(),
             text: self.unparse_range(source.range.clone()),
@@ -3779,7 +3779,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::VirtualKeyword,
     ) -> output::VirtualKeyword {
-        Rc::new(output::VirtualKeywordStruct {
+        Arc::new(output::VirtualKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3789,14 +3789,14 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::WeeksKeyword,
     ) -> output::WeeksKeyword {
-        Rc::new(output::WeeksKeywordStruct {
+        Arc::new(output::WeeksKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
     }
 
     pub(super) fn build_wei_keyword(&mut self, source: &input::WeiKeyword) -> output::WeiKeyword {
-        Rc::new(output::WeiKeywordStruct {
+        Arc::new(output::WeiKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3810,7 +3810,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::PragmaStringLiteral,
     ) -> output::StringLiteral {
-        Rc::new(output::StringLiteralStruct {
+        Arc::new(output::StringLiteralStruct {
             id: self.next_id(),
             range: source.range.clone(),
             text: self.unparse_range(source.range.clone()),
@@ -3821,7 +3821,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::YulDecimalLiteral,
     ) -> output::DecimalLiteral {
-        Rc::new(output::DecimalLiteralStruct {
+        Arc::new(output::DecimalLiteralStruct {
             id: self.next_id(),
             range: source.range.clone(),
             text: self.unparse_range(source.range.clone()),
@@ -3832,7 +3832,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::YulFalseKeyword,
     ) -> output::FalseKeyword {
-        Rc::new(output::FalseKeywordStruct {
+        Arc::new(output::FalseKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })
@@ -3842,7 +3842,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::YulHexLiteral,
     ) -> output::HexLiteral {
-        Rc::new(output::HexLiteralStruct {
+        Arc::new(output::HexLiteralStruct {
             id: self.next_id(),
             range: source.range.clone(),
             text: self.unparse_range(source.range.clone()),
@@ -3853,7 +3853,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::YulHexStringLiteral,
     ) -> output::HexStringLiteral {
-        Rc::new(output::HexStringLiteralStruct {
+        Arc::new(output::HexStringLiteralStruct {
             id: self.next_id(),
             range: source.range.clone(),
             text: self.unparse_range(source.range.clone()),
@@ -3864,7 +3864,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::YulIdentifier,
     ) -> output::Identifier {
-        Rc::new(output::IdentifierStruct {
+        Arc::new(output::IdentifierStruct {
             id: self.next_id(),
             range: source.range.clone(),
             text: self.unparse_range(source.range.clone()),
@@ -3875,7 +3875,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::YulStringLiteral,
     ) -> output::StringLiteral {
-        Rc::new(output::StringLiteralStruct {
+        Arc::new(output::StringLiteralStruct {
             id: self.next_id(),
             range: source.range.clone(),
             text: self.unparse_range(source.range.clone()),
@@ -3886,7 +3886,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         source: &input::YulTrueKeyword,
     ) -> output::TrueKeyword {
-        Rc::new(output::TrueKeywordStruct {
+        Arc::new(output::TrueKeywordStruct {
             id: self.next_id(),
             range: source.range.clone(),
         })

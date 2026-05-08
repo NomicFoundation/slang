@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use std::rc::Rc;
+use std::sync::Arc;
 
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
@@ -121,7 +121,7 @@ impl Visitor for Pass<'_> {
                 self.binder
                     .resolve_in_scope(scope_id, symbol.name.unparse())
             });
-            let reference = Reference::new(Rc::clone(&symbol.name), resolution);
+            let reference = Reference::new(Arc::clone(&symbol.name), resolution);
             self.binder.insert_reference(reference);
         }
 
@@ -427,7 +427,7 @@ impl Visitor for Pass<'_> {
                 "Error" | "Panic" => Resolution::BuiltIn(BuiltIn::ErrorOrPanic),
                 _ => Resolution::Unresolved,
             };
-            let reference = Reference::new(Rc::clone(name), resolution);
+            let reference = Reference::new(Arc::clone(name), resolution);
             self.binder.insert_reference(reference);
         }
         true

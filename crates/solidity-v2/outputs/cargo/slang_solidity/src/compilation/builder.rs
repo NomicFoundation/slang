@@ -1,5 +1,4 @@
 use std::collections::{BTreeMap, BTreeSet, HashSet};
-use std::rc::Rc;
 
 use slang_solidity_v2_common::diagnostics::kinds::compilation::{MissingFile, UnresolvedImport};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
@@ -172,7 +171,7 @@ impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
 
         let semantic = SemanticContext::build_from(language_version, &files);
 
-        CompilationUnit::create(language_version, files, Rc::new(semantic), diagnostics)
+        CompilationUnit::create(language_version, files, semantic, diagnostics)
     }
 }
 

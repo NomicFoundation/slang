@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
 use slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
@@ -92,7 +92,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let visibility = None;
         let value = Some(self.build_expression(&source.value));
 
-        Rc::new(output::ConstantDefinitionStruct {
+        Arc::new(output::ConstantDefinitionStruct {
             id,
             range,
             type_name,
@@ -134,7 +134,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             }
         });
 
-        Rc::new(output::ContractDefinitionStruct {
+        Arc::new(output::ContractDefinitionStruct {
             id,
             range,
             abstract_keyword,
@@ -160,7 +160,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .map(|parameter| self.build_error_parameter(parameter))
             .collect();
 
-        Rc::new(output::ErrorDefinitionStruct {
+        Arc::new(output::ErrorDefinitionStruct {
             id,
             range,
             name,
@@ -187,7 +187,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .map(|parameter| self.build_event_parameter(parameter))
             .collect();
 
-        Rc::new(output::EventDefinitionStruct {
+        Arc::new(output::EventDefinitionStruct {
             id,
             range,
             name,
@@ -231,7 +231,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .map(|returns| self.build_returns_declaration(returns));
         let body = self.build_function_body(&source.body);
 
-        Rc::new(output::FunctionDefinitionStruct {
+        Arc::new(output::FunctionDefinitionStruct {
             id,
             range,
             kind,
@@ -260,7 +260,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .as_ref()
             .map(|returns| self.build_returns_declaration(returns));
 
-        Rc::new(output::FunctionTypeStruct {
+        Arc::new(output::FunctionTypeStruct {
             id,
             range,
             parameters,
@@ -286,7 +286,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .as_ref()
             .and_then(|end| end.end.as_ref().map(|end| self.build_expression(end)));
 
-        Rc::new(output::IndexAccessExpressionStruct {
+        Arc::new(output::IndexAccessExpressionStruct {
             id,
             range,
             operand,
@@ -301,7 +301,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let key_type = self.build_mapping_key_as_parameter(&source.key_type);
         let value_type = self.build_mapping_value_as_parameter(&source.value_type);
 
-        Rc::new(output::MappingTypeStruct {
+        Arc::new(output::MappingTypeStruct {
             id,
             range,
             key_type,
@@ -319,7 +319,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .map(|location| self.build_storage_location(location));
         let name = source.name.as_ref().map(|name| self.build_identifier(name));
 
-        Rc::new(output::ParameterStruct {
+        Arc::new(output::ParameterStruct {
             id,
             range,
             type_name,
@@ -347,7 +347,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .unwrap_or(output::StateVariableMutability::Mutable);
         let override_specifier = self.state_variable_override_specifier(&source.attributes);
 
-        Rc::new(output::StateVariableDefinitionStruct {
+        Arc::new(output::StateVariableDefinitionStruct {
             id,
             range,
             type_name,
@@ -399,7 +399,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
                 {
                     output::ContractMember::ConstantDefinition(
                         Self::state_variable_as_constant_definition(
-                            Rc::into_inner(output).expect("Created node is not yet shared"),
+                            Arc::into_inner(output).expect("Created node is not yet shared"),
                         ),
                     )
                 } else {
@@ -541,7 +541,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let returns = None;
         let body = Some(self.build_block(&source.body));
 
-        Rc::new(output::FunctionDefinitionStruct {
+        Arc::new(output::FunctionDefinitionStruct {
             id,
             range,
             kind,
@@ -619,7 +619,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .map(|returns| self.build_returns_declaration(returns));
         let body = self.build_function_body(&source.body);
 
-        Rc::new(output::FunctionDefinitionStruct {
+        Arc::new(output::FunctionDefinitionStruct {
             id,
             range,
             kind,
@@ -692,7 +692,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let returns = None;
         let body = self.build_function_body(&source.body);
 
-        Rc::new(output::FunctionDefinitionStruct {
+        Arc::new(output::FunctionDefinitionStruct {
             id,
             range,
             kind,
@@ -765,7 +765,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let returns = None;
         let body = self.build_function_body(&source.body);
 
-        Rc::new(output::FunctionDefinitionStruct {
+        Arc::new(output::FunctionDefinitionStruct {
             id,
             range,
             kind,
@@ -836,7 +836,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     fn state_variable_as_constant_definition(
         state_variable_definition: output::StateVariableDefinitionStruct,
     ) -> output::ConstantDefinition {
-        Rc::new(output::ConstantDefinitionStruct {
+        Arc::new(output::ConstantDefinitionStruct {
             id: state_variable_definition.id(),
             range: state_variable_definition.range,
             type_name: state_variable_definition.type_name,
@@ -872,7 +872,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let type_name = self.build_mapping_key_type(&source.key_type);
         let name = source.name.as_ref().map(|name| self.build_identifier(name));
 
-        Rc::new(output::ParameterStruct {
+        Arc::new(output::ParameterStruct {
             id,
             range,
             type_name,
@@ -902,7 +902,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let type_name = self.build_type_name(&source.type_name);
         let name = source.name.as_ref().map(|name| self.build_identifier(name));
 
-        Rc::new(output::ParameterStruct {
+        Arc::new(output::ParameterStruct {
             id,
             range,
             type_name,
@@ -925,7 +925,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let path = self.build_string_literal(&source.path);
         let alias = Some(self.build_import_alias(&source.alias));
 
-        Rc::new(output::PathImportStruct {
+        Arc::new(output::PathImportStruct {
             id,
             range,
             path,
@@ -947,7 +947,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .map(|indexed_keyword| self.build_indexed_keyword(indexed_keyword));
         let name = source.name.as_ref().map(|name| self.build_identifier(name));
 
-        Rc::new(output::ParameterStruct {
+        Arc::new(output::ParameterStruct {
             id,
             range,
             type_name,
@@ -963,7 +963,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let type_name = self.build_type_name(&source.type_name);
         let name = source.name.as_ref().map(|name| self.build_identifier(name));
 
-        Rc::new(output::ParameterStruct {
+        Arc::new(output::ParameterStruct {
             id,
             range,
             type_name,

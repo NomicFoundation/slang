@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
@@ -293,14 +293,14 @@ impl Definition {
         // for constants we store the scope_id where it's defined to use for
         // evaluation of compile-time constants (eg. fixed arrays size)
         Self::Constant(ConstantDefinition {
-            ir_node: Rc::clone(ir_node),
+            ir_node: Arc::clone(ir_node),
             scope_id,
         })
     }
 
     pub(crate) fn new_contract(ir_node: &ir::ContractDefinition) -> Self {
         Self::Contract(ContractDefinition {
-            ir_node: Rc::clone(ir_node),
+            ir_node: Arc::clone(ir_node),
             bases: None,
             constructor_parameters_scope_id: None,
             base_slot: None,
@@ -309,26 +309,26 @@ impl Definition {
 
     pub(crate) fn new_enum(ir_node: &ir::EnumDefinition) -> Self {
         Self::Enum(EnumDefinition {
-            ir_node: Rc::clone(ir_node),
+            ir_node: Arc::clone(ir_node),
         })
     }
 
     pub(crate) fn new_enum_member(ir_node: &ir::Identifier) -> Self {
         Self::EnumMember(EnumMemberDefinition {
-            ir_node: Rc::clone(ir_node),
+            ir_node: Arc::clone(ir_node),
         })
     }
 
     pub(crate) fn new_error(ir_node: &ir::ErrorDefinition, parameters_scope_id: ScopeId) -> Self {
         Self::Error(ErrorDefinition {
-            ir_node: Rc::clone(ir_node),
+            ir_node: Arc::clone(ir_node),
             parameters_scope_id,
         })
     }
 
     pub(crate) fn new_event(ir_node: &ir::EventDefinition, parameters_scope_id: ScopeId) -> Self {
         Self::Event(EventDefinition {
-            ir_node: Rc::clone(ir_node),
+            ir_node: Arc::clone(ir_node),
             parameters_scope_id,
         })
     }
@@ -346,7 +346,7 @@ impl Definition {
             "Cannot create definition for special function or modifier"
         );
         Self::Function(FunctionDefinition {
-            ir_node: Rc::clone(ir_node),
+            ir_node: Arc::clone(ir_node),
             parameters_scope_id,
         })
     }
@@ -358,7 +358,7 @@ impl Definition {
         );
 
         Self::Import(ImportDefinition {
-            ir_node: Rc::clone(ir_node),
+            ir_node: Arc::clone(ir_node),
             resolved_file_id,
         })
     }
@@ -369,7 +369,7 @@ impl Definition {
         resolved_file_id: Option<String>,
     ) -> Self {
         Self::ImportedSymbol(ImportedSymbolDefinition {
-            ir_node: Rc::clone(ir_node),
+            ir_node: Arc::clone(ir_node),
             symbol,
             resolved_file_id,
         })
@@ -377,14 +377,14 @@ impl Definition {
 
     pub(crate) fn new_interface(ir_node: &ir::InterfaceDefinition) -> Self {
         Self::Interface(InterfaceDefinition {
-            ir_node: Rc::clone(ir_node),
+            ir_node: Arc::clone(ir_node),
             bases: None,
         })
     }
 
     pub(crate) fn new_library(ir_node: &ir::LibraryDefinition) -> Self {
         Self::Library(LibraryDefinition {
-            ir_node: Rc::clone(ir_node),
+            ir_node: Arc::clone(ir_node),
         })
     }
 
@@ -398,7 +398,7 @@ impl Definition {
             "Cannot create definition from a non-modifier function definition"
         );
         Self::Modifier(ModifierDefinition {
-            ir_node: Rc::clone(ir_node),
+            ir_node: Arc::clone(ir_node),
         })
     }
 
@@ -408,26 +408,26 @@ impl Definition {
             "Parameter definition must have a name"
         );
         Self::Parameter(ParameterDefinition {
-            ir_node: Rc::clone(ir_node),
+            ir_node: Arc::clone(ir_node),
         })
     }
 
     pub(crate) fn new_state_variable(ir_node: &ir::StateVariableDefinition) -> Self {
         Self::StateVariable(StateVariableDefinition {
-            ir_node: Rc::clone(ir_node),
+            ir_node: Arc::clone(ir_node),
             getter_type_id: None,
         })
     }
 
     pub(crate) fn new_struct(ir_node: &ir::StructDefinition) -> Self {
         Self::Struct(StructDefinition {
-            ir_node: Rc::clone(ir_node),
+            ir_node: Arc::clone(ir_node),
         })
     }
 
     pub(crate) fn new_struct_member(ir_node: &ir::StructMember) -> Self {
         Self::StructMember(StructMemberDefinition {
-            ir_node: Rc::clone(ir_node),
+            ir_node: Arc::clone(ir_node),
         })
     }
 
@@ -437,7 +437,7 @@ impl Definition {
             "Cannot create definition for nameless parameter"
         );
         Self::TypeParameter(TypeParameterDefinition {
-            ir_node: Rc::clone(ir_node),
+            ir_node: Arc::clone(ir_node),
         })
     }
 
@@ -445,32 +445,32 @@ impl Definition {
         ir_node: &ir::UserDefinedValueTypeDefinition,
     ) -> Self {
         Self::UserDefinedValueType(UserDefinedValueTypeDefinition {
-            ir_node: Rc::clone(ir_node),
+            ir_node: Arc::clone(ir_node),
             target_type_id: None,
         })
     }
 
     pub(crate) fn new_variable(ir_node: &ir::VariableDeclaration) -> Self {
         Self::Variable(VariableDefinition {
-            ir_node: Rc::clone(ir_node),
+            ir_node: Arc::clone(ir_node),
         })
     }
 
     pub(crate) fn new_yul_function(ir_node: &ir::YulFunctionDefinition) -> Self {
         Self::YulFunction(YulFunctionDefinition {
-            ir_node: Rc::clone(ir_node),
+            ir_node: Arc::clone(ir_node),
         })
     }
 
     pub(crate) fn new_yul_parameter(ir_node: &ir::Identifier) -> Self {
         Self::YulParameter(YulParameterDefinition {
-            ir_node: Rc::clone(ir_node),
+            ir_node: Arc::clone(ir_node),
         })
     }
 
     pub(crate) fn new_yul_variable(ir_node: &ir::Identifier) -> Self {
         Self::YulVariable(YulVariableDefinition {
-            ir_node: Rc::clone(ir_node),
+            ir_node: Arc::clone(ir_node),
         })
     }
 }

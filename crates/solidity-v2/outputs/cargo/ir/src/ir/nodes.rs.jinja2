@@ -1,5 +1,6 @@
 {%- set target = model.ir_language_model.target -%}
-use std::rc::Rc;
+
+use std::sync::Arc;
 use std::ops::Range;
 use std::vec::Vec;
 
@@ -10,7 +11,7 @@ pub(super) use slang_solidity_v2_common::nodes::NodeId;
 //
 
 {% for parent_type, sequence in target.sequences %}
-  pub type {{ parent_type }} = Rc<{{ parent_type }}Struct>;
+  pub type {{ parent_type }} = Arc<{{ parent_type }}Struct>;
 
   #[derive(Debug)]
   pub struct {{ parent_type }}Struct {
@@ -82,7 +83,7 @@ pub(super) use slang_solidity_v2_common::nodes::NodeId;
 //
 
 {% for terminal_type, terminal in target.terminals %}
-  pub type {{ terminal_type }} = Rc<{{ terminal_type }}Struct>;
+  pub type {{ terminal_type }} = Arc<{{ terminal_type }}Struct>;
 
   #[derive(Clone, Debug, Eq, PartialEq)]
   pub struct {{ terminal_type }}Struct {

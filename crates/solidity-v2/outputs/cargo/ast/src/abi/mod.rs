@@ -2,7 +2,7 @@ mod node_extensions;
 
 use std::cmp::Ordering;
 use std::collections::HashSet;
-use std::rc::Rc;
+use std::sync::Arc;
 
 use sha3::{Digest, Keccak256};
 use slang_solidity_v2_common::nodes::NodeId;
@@ -350,7 +350,7 @@ pub fn selector_from_signature(signature: &str) -> u32 {
 }
 
 pub(crate) fn extract_function_type_parameters_abi(
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
     type_id: TypeId,
 ) -> Option<(Vec<AbiParameter>, Vec<AbiParameter>)> {
     let Type::Function(function_type) = semantic.types().get_type_by_id(type_id) else {
@@ -379,14 +379,14 @@ pub(crate) fn extract_function_type_parameters_abi(
 }
 
 pub(crate) fn type_as_abi_parameter(
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
     type_id: TypeId,
 ) -> Option<(String, Vec<ParameterComponent>)> {
     type_as_abi_parameter_impl(semantic, type_id, &mut HashSet::new())
 }
 
 fn type_as_abi_parameter_impl(
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
     type_id: TypeId,
     visited_structs: &mut HashSet<NodeId>,
 ) -> Option<(String, Vec<ParameterComponent>)> {

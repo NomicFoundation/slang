@@ -1,7 +1,7 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 use std::ops::Range;
-use std::rc::Rc;
+use std::sync::Arc;
 use std::vec::Vec;
 
 pub(super) use slang_solidity_v2_common::nodes::NodeId;
@@ -10,7 +10,7 @@ pub(super) use slang_solidity_v2_common::nodes::NodeId;
 // Sequences
 //
 
-pub type AbicoderPragma = Rc<AbicoderPragmaStruct>;
+pub type AbicoderPragma = Arc<AbicoderPragmaStruct>;
 
 #[derive(Debug)]
 pub struct AbicoderPragmaStruct {
@@ -25,7 +25,7 @@ impl AbicoderPragmaStruct {
     }
 }
 
-pub type AdditiveExpression = Rc<AdditiveExpressionStruct>;
+pub type AdditiveExpression = Arc<AdditiveExpressionStruct>;
 
 #[derive(Debug)]
 pub struct AdditiveExpressionStruct {
@@ -42,7 +42,7 @@ impl AdditiveExpressionStruct {
     }
 }
 
-pub type AddressType = Rc<AddressTypeStruct>;
+pub type AddressType = Arc<AddressTypeStruct>;
 
 #[derive(Debug)]
 pub struct AddressTypeStruct {
@@ -57,7 +57,7 @@ impl AddressTypeStruct {
     }
 }
 
-pub type AndExpression = Rc<AndExpressionStruct>;
+pub type AndExpression = Arc<AndExpressionStruct>;
 
 #[derive(Debug)]
 pub struct AndExpressionStruct {
@@ -73,7 +73,7 @@ impl AndExpressionStruct {
     }
 }
 
-pub type ArrayExpression = Rc<ArrayExpressionStruct>;
+pub type ArrayExpression = Arc<ArrayExpressionStruct>;
 
 #[derive(Debug)]
 pub struct ArrayExpressionStruct {
@@ -88,7 +88,7 @@ impl ArrayExpressionStruct {
     }
 }
 
-pub type ArrayTypeName = Rc<ArrayTypeNameStruct>;
+pub type ArrayTypeName = Arc<ArrayTypeNameStruct>;
 
 #[derive(Debug)]
 pub struct ArrayTypeNameStruct {
@@ -104,7 +104,7 @@ impl ArrayTypeNameStruct {
     }
 }
 
-pub type AssemblyStatement = Rc<AssemblyStatementStruct>;
+pub type AssemblyStatement = Arc<AssemblyStatementStruct>;
 
 #[derive(Debug)]
 pub struct AssemblyStatementStruct {
@@ -121,7 +121,7 @@ impl AssemblyStatementStruct {
     }
 }
 
-pub type AssignmentExpression = Rc<AssignmentExpressionStruct>;
+pub type AssignmentExpression = Arc<AssignmentExpressionStruct>;
 
 #[derive(Debug)]
 pub struct AssignmentExpressionStruct {
@@ -138,7 +138,7 @@ impl AssignmentExpressionStruct {
     }
 }
 
-pub type BitwiseAndExpression = Rc<BitwiseAndExpressionStruct>;
+pub type BitwiseAndExpression = Arc<BitwiseAndExpressionStruct>;
 
 #[derive(Debug)]
 pub struct BitwiseAndExpressionStruct {
@@ -154,7 +154,7 @@ impl BitwiseAndExpressionStruct {
     }
 }
 
-pub type BitwiseOrExpression = Rc<BitwiseOrExpressionStruct>;
+pub type BitwiseOrExpression = Arc<BitwiseOrExpressionStruct>;
 
 #[derive(Debug)]
 pub struct BitwiseOrExpressionStruct {
@@ -170,7 +170,7 @@ impl BitwiseOrExpressionStruct {
     }
 }
 
-pub type BitwiseXorExpression = Rc<BitwiseXorExpressionStruct>;
+pub type BitwiseXorExpression = Arc<BitwiseXorExpressionStruct>;
 
 #[derive(Debug)]
 pub struct BitwiseXorExpressionStruct {
@@ -186,7 +186,7 @@ impl BitwiseXorExpressionStruct {
     }
 }
 
-pub type Block = Rc<BlockStruct>;
+pub type Block = Arc<BlockStruct>;
 
 #[derive(Debug)]
 pub struct BlockStruct {
@@ -201,7 +201,7 @@ impl BlockStruct {
     }
 }
 
-pub type BreakStatement = Rc<BreakStatementStruct>;
+pub type BreakStatement = Arc<BreakStatementStruct>;
 
 #[derive(Debug)]
 pub struct BreakStatementStruct {
@@ -215,7 +215,7 @@ impl BreakStatementStruct {
     }
 }
 
-pub type CallOptionsExpression = Rc<CallOptionsExpressionStruct>;
+pub type CallOptionsExpression = Arc<CallOptionsExpressionStruct>;
 
 #[derive(Debug)]
 pub struct CallOptionsExpressionStruct {
@@ -231,7 +231,7 @@ impl CallOptionsExpressionStruct {
     }
 }
 
-pub type CatchClause = Rc<CatchClauseStruct>;
+pub type CatchClause = Arc<CatchClauseStruct>;
 
 #[derive(Debug)]
 pub struct CatchClauseStruct {
@@ -247,7 +247,7 @@ impl CatchClauseStruct {
     }
 }
 
-pub type CatchClauseError = Rc<CatchClauseErrorStruct>;
+pub type CatchClauseError = Arc<CatchClauseErrorStruct>;
 
 #[derive(Debug)]
 pub struct CatchClauseErrorStruct {
@@ -263,7 +263,7 @@ impl CatchClauseErrorStruct {
     }
 }
 
-pub type ConditionalExpression = Rc<ConditionalExpressionStruct>;
+pub type ConditionalExpression = Arc<ConditionalExpressionStruct>;
 
 #[derive(Debug)]
 pub struct ConditionalExpressionStruct {
@@ -280,7 +280,7 @@ impl ConditionalExpressionStruct {
     }
 }
 
-pub type ConstantDefinition = Rc<ConstantDefinitionStruct>;
+pub type ConstantDefinition = Arc<ConstantDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct ConstantDefinitionStruct {
@@ -298,7 +298,7 @@ impl ConstantDefinitionStruct {
     }
 }
 
-pub type ContinueStatement = Rc<ContinueStatementStruct>;
+pub type ContinueStatement = Arc<ContinueStatementStruct>;
 
 #[derive(Debug)]
 pub struct ContinueStatementStruct {
@@ -312,7 +312,7 @@ impl ContinueStatementStruct {
     }
 }
 
-pub type ContractDefinition = Rc<ContractDefinitionStruct>;
+pub type ContractDefinition = Arc<ContractDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct ContractDefinitionStruct {
@@ -331,7 +331,7 @@ impl ContractDefinitionStruct {
     }
 }
 
-pub type DecimalNumberExpression = Rc<DecimalNumberExpressionStruct>;
+pub type DecimalNumberExpression = Arc<DecimalNumberExpressionStruct>;
 
 #[derive(Debug)]
 pub struct DecimalNumberExpressionStruct {
@@ -347,7 +347,7 @@ impl DecimalNumberExpressionStruct {
     }
 }
 
-pub type DoWhileStatement = Rc<DoWhileStatementStruct>;
+pub type DoWhileStatement = Arc<DoWhileStatementStruct>;
 
 #[derive(Debug)]
 pub struct DoWhileStatementStruct {
@@ -363,7 +363,7 @@ impl DoWhileStatementStruct {
     }
 }
 
-pub type EmitStatement = Rc<EmitStatementStruct>;
+pub type EmitStatement = Arc<EmitStatementStruct>;
 
 #[derive(Debug)]
 pub struct EmitStatementStruct {
@@ -379,7 +379,7 @@ impl EmitStatementStruct {
     }
 }
 
-pub type EnumDefinition = Rc<EnumDefinitionStruct>;
+pub type EnumDefinition = Arc<EnumDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct EnumDefinitionStruct {
@@ -395,7 +395,7 @@ impl EnumDefinitionStruct {
     }
 }
 
-pub type EqualityExpression = Rc<EqualityExpressionStruct>;
+pub type EqualityExpression = Arc<EqualityExpressionStruct>;
 
 #[derive(Debug)]
 pub struct EqualityExpressionStruct {
@@ -412,7 +412,7 @@ impl EqualityExpressionStruct {
     }
 }
 
-pub type ErrorDefinition = Rc<ErrorDefinitionStruct>;
+pub type ErrorDefinition = Arc<ErrorDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct ErrorDefinitionStruct {
@@ -428,7 +428,7 @@ impl ErrorDefinitionStruct {
     }
 }
 
-pub type EventDefinition = Rc<EventDefinitionStruct>;
+pub type EventDefinition = Arc<EventDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct EventDefinitionStruct {
@@ -445,7 +445,7 @@ impl EventDefinitionStruct {
     }
 }
 
-pub type ExperimentalPragma = Rc<ExperimentalPragmaStruct>;
+pub type ExperimentalPragma = Arc<ExperimentalPragmaStruct>;
 
 #[derive(Debug)]
 pub struct ExperimentalPragmaStruct {
@@ -460,7 +460,7 @@ impl ExperimentalPragmaStruct {
     }
 }
 
-pub type ExponentiationExpression = Rc<ExponentiationExpressionStruct>;
+pub type ExponentiationExpression = Arc<ExponentiationExpressionStruct>;
 
 #[derive(Debug)]
 pub struct ExponentiationExpressionStruct {
@@ -476,7 +476,7 @@ impl ExponentiationExpressionStruct {
     }
 }
 
-pub type ExpressionStatement = Rc<ExpressionStatementStruct>;
+pub type ExpressionStatement = Arc<ExpressionStatementStruct>;
 
 #[derive(Debug)]
 pub struct ExpressionStatementStruct {
@@ -491,7 +491,7 @@ impl ExpressionStatementStruct {
     }
 }
 
-pub type ForStatement = Rc<ForStatementStruct>;
+pub type ForStatement = Arc<ForStatementStruct>;
 
 #[derive(Debug)]
 pub struct ForStatementStruct {
@@ -509,7 +509,7 @@ impl ForStatementStruct {
     }
 }
 
-pub type FunctionCallExpression = Rc<FunctionCallExpressionStruct>;
+pub type FunctionCallExpression = Arc<FunctionCallExpressionStruct>;
 
 #[derive(Debug)]
 pub struct FunctionCallExpressionStruct {
@@ -525,7 +525,7 @@ impl FunctionCallExpressionStruct {
     }
 }
 
-pub type FunctionDefinition = Rc<FunctionDefinitionStruct>;
+pub type FunctionDefinition = Arc<FunctionDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct FunctionDefinitionStruct {
@@ -549,7 +549,7 @@ impl FunctionDefinitionStruct {
     }
 }
 
-pub type FunctionType = Rc<FunctionTypeStruct>;
+pub type FunctionType = Arc<FunctionTypeStruct>;
 
 #[derive(Debug)]
 pub struct FunctionTypeStruct {
@@ -567,7 +567,7 @@ impl FunctionTypeStruct {
     }
 }
 
-pub type HexNumberExpression = Rc<HexNumberExpressionStruct>;
+pub type HexNumberExpression = Arc<HexNumberExpressionStruct>;
 
 #[derive(Debug)]
 pub struct HexNumberExpressionStruct {
@@ -582,7 +582,7 @@ impl HexNumberExpressionStruct {
     }
 }
 
-pub type IfStatement = Rc<IfStatementStruct>;
+pub type IfStatement = Arc<IfStatementStruct>;
 
 #[derive(Debug)]
 pub struct IfStatementStruct {
@@ -599,7 +599,7 @@ impl IfStatementStruct {
     }
 }
 
-pub type ImportDeconstruction = Rc<ImportDeconstructionStruct>;
+pub type ImportDeconstruction = Arc<ImportDeconstructionStruct>;
 
 #[derive(Debug)]
 pub struct ImportDeconstructionStruct {
@@ -615,7 +615,7 @@ impl ImportDeconstructionStruct {
     }
 }
 
-pub type ImportDeconstructionSymbol = Rc<ImportDeconstructionSymbolStruct>;
+pub type ImportDeconstructionSymbol = Arc<ImportDeconstructionSymbolStruct>;
 
 #[derive(Debug)]
 pub struct ImportDeconstructionSymbolStruct {
@@ -631,7 +631,7 @@ impl ImportDeconstructionSymbolStruct {
     }
 }
 
-pub type IndexAccessExpression = Rc<IndexAccessExpressionStruct>;
+pub type IndexAccessExpression = Arc<IndexAccessExpressionStruct>;
 
 #[derive(Debug)]
 pub struct IndexAccessExpressionStruct {
@@ -648,7 +648,7 @@ impl IndexAccessExpressionStruct {
     }
 }
 
-pub type InequalityExpression = Rc<InequalityExpressionStruct>;
+pub type InequalityExpression = Arc<InequalityExpressionStruct>;
 
 #[derive(Debug)]
 pub struct InequalityExpressionStruct {
@@ -665,7 +665,7 @@ impl InequalityExpressionStruct {
     }
 }
 
-pub type InheritanceType = Rc<InheritanceTypeStruct>;
+pub type InheritanceType = Arc<InheritanceTypeStruct>;
 
 #[derive(Debug)]
 pub struct InheritanceTypeStruct {
@@ -681,7 +681,7 @@ impl InheritanceTypeStruct {
     }
 }
 
-pub type InterfaceDefinition = Rc<InterfaceDefinitionStruct>;
+pub type InterfaceDefinition = Arc<InterfaceDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct InterfaceDefinitionStruct {
@@ -698,7 +698,7 @@ impl InterfaceDefinitionStruct {
     }
 }
 
-pub type LibraryDefinition = Rc<LibraryDefinitionStruct>;
+pub type LibraryDefinition = Arc<LibraryDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct LibraryDefinitionStruct {
@@ -714,7 +714,7 @@ impl LibraryDefinitionStruct {
     }
 }
 
-pub type MappingType = Rc<MappingTypeStruct>;
+pub type MappingType = Arc<MappingTypeStruct>;
 
 #[derive(Debug)]
 pub struct MappingTypeStruct {
@@ -730,7 +730,7 @@ impl MappingTypeStruct {
     }
 }
 
-pub type MemberAccessExpression = Rc<MemberAccessExpressionStruct>;
+pub type MemberAccessExpression = Arc<MemberAccessExpressionStruct>;
 
 #[derive(Debug)]
 pub struct MemberAccessExpressionStruct {
@@ -746,7 +746,7 @@ impl MemberAccessExpressionStruct {
     }
 }
 
-pub type ModifierInvocation = Rc<ModifierInvocationStruct>;
+pub type ModifierInvocation = Arc<ModifierInvocationStruct>;
 
 #[derive(Debug)]
 pub struct ModifierInvocationStruct {
@@ -762,7 +762,7 @@ impl ModifierInvocationStruct {
     }
 }
 
-pub type MultiTypedDeclaration = Rc<MultiTypedDeclarationStruct>;
+pub type MultiTypedDeclaration = Arc<MultiTypedDeclarationStruct>;
 
 #[derive(Debug)]
 pub struct MultiTypedDeclarationStruct {
@@ -778,7 +778,7 @@ impl MultiTypedDeclarationStruct {
     }
 }
 
-pub type MultiTypedDeclarationElement = Rc<MultiTypedDeclarationElementStruct>;
+pub type MultiTypedDeclarationElement = Arc<MultiTypedDeclarationElementStruct>;
 
 #[derive(Debug)]
 pub struct MultiTypedDeclarationElementStruct {
@@ -793,7 +793,7 @@ impl MultiTypedDeclarationElementStruct {
     }
 }
 
-pub type MultiplicativeExpression = Rc<MultiplicativeExpressionStruct>;
+pub type MultiplicativeExpression = Arc<MultiplicativeExpressionStruct>;
 
 #[derive(Debug)]
 pub struct MultiplicativeExpressionStruct {
@@ -810,7 +810,7 @@ impl MultiplicativeExpressionStruct {
     }
 }
 
-pub type NamedArgument = Rc<NamedArgumentStruct>;
+pub type NamedArgument = Arc<NamedArgumentStruct>;
 
 #[derive(Debug)]
 pub struct NamedArgumentStruct {
@@ -826,7 +826,7 @@ impl NamedArgumentStruct {
     }
 }
 
-pub type NewExpression = Rc<NewExpressionStruct>;
+pub type NewExpression = Arc<NewExpressionStruct>;
 
 #[derive(Debug)]
 pub struct NewExpressionStruct {
@@ -841,7 +841,7 @@ impl NewExpressionStruct {
     }
 }
 
-pub type OrExpression = Rc<OrExpressionStruct>;
+pub type OrExpression = Arc<OrExpressionStruct>;
 
 #[derive(Debug)]
 pub struct OrExpressionStruct {
@@ -857,7 +857,7 @@ impl OrExpressionStruct {
     }
 }
 
-pub type Parameter = Rc<ParameterStruct>;
+pub type Parameter = Arc<ParameterStruct>;
 
 #[derive(Debug)]
 pub struct ParameterStruct {
@@ -875,7 +875,7 @@ impl ParameterStruct {
     }
 }
 
-pub type PathImport = Rc<PathImportStruct>;
+pub type PathImport = Arc<PathImportStruct>;
 
 #[derive(Debug)]
 pub struct PathImportStruct {
@@ -891,7 +891,7 @@ impl PathImportStruct {
     }
 }
 
-pub type PostfixExpression = Rc<PostfixExpressionStruct>;
+pub type PostfixExpression = Arc<PostfixExpressionStruct>;
 
 #[derive(Debug)]
 pub struct PostfixExpressionStruct {
@@ -907,7 +907,7 @@ impl PostfixExpressionStruct {
     }
 }
 
-pub type PragmaDirective = Rc<PragmaDirectiveStruct>;
+pub type PragmaDirective = Arc<PragmaDirectiveStruct>;
 
 #[derive(Debug)]
 pub struct PragmaDirectiveStruct {
@@ -922,7 +922,7 @@ impl PragmaDirectiveStruct {
     }
 }
 
-pub type PrefixExpression = Rc<PrefixExpressionStruct>;
+pub type PrefixExpression = Arc<PrefixExpressionStruct>;
 
 #[derive(Debug)]
 pub struct PrefixExpressionStruct {
@@ -938,7 +938,7 @@ impl PrefixExpressionStruct {
     }
 }
 
-pub type ReturnStatement = Rc<ReturnStatementStruct>;
+pub type ReturnStatement = Arc<ReturnStatementStruct>;
 
 #[derive(Debug)]
 pub struct ReturnStatementStruct {
@@ -953,7 +953,7 @@ impl ReturnStatementStruct {
     }
 }
 
-pub type RevertStatement = Rc<RevertStatementStruct>;
+pub type RevertStatement = Arc<RevertStatementStruct>;
 
 #[derive(Debug)]
 pub struct RevertStatementStruct {
@@ -969,7 +969,7 @@ impl RevertStatementStruct {
     }
 }
 
-pub type ShiftExpression = Rc<ShiftExpressionStruct>;
+pub type ShiftExpression = Arc<ShiftExpressionStruct>;
 
 #[derive(Debug)]
 pub struct ShiftExpressionStruct {
@@ -986,7 +986,7 @@ impl ShiftExpressionStruct {
     }
 }
 
-pub type SingleTypedDeclaration = Rc<SingleTypedDeclarationStruct>;
+pub type SingleTypedDeclaration = Arc<SingleTypedDeclarationStruct>;
 
 #[derive(Debug)]
 pub struct SingleTypedDeclarationStruct {
@@ -1002,7 +1002,7 @@ impl SingleTypedDeclarationStruct {
     }
 }
 
-pub type SourceUnit = Rc<SourceUnitStruct>;
+pub type SourceUnit = Arc<SourceUnitStruct>;
 
 #[derive(Debug)]
 pub struct SourceUnitStruct {
@@ -1017,7 +1017,7 @@ impl SourceUnitStruct {
     }
 }
 
-pub type StateVariableDefinition = Rc<StateVariableDefinitionStruct>;
+pub type StateVariableDefinition = Arc<StateVariableDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct StateVariableDefinitionStruct {
@@ -1037,7 +1037,7 @@ impl StateVariableDefinitionStruct {
     }
 }
 
-pub type StructDefinition = Rc<StructDefinitionStruct>;
+pub type StructDefinition = Arc<StructDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct StructDefinitionStruct {
@@ -1053,7 +1053,7 @@ impl StructDefinitionStruct {
     }
 }
 
-pub type StructMember = Rc<StructMemberStruct>;
+pub type StructMember = Arc<StructMemberStruct>;
 
 #[derive(Debug)]
 pub struct StructMemberStruct {
@@ -1069,7 +1069,7 @@ impl StructMemberStruct {
     }
 }
 
-pub type TryStatement = Rc<TryStatementStruct>;
+pub type TryStatement = Arc<TryStatementStruct>;
 
 #[derive(Debug)]
 pub struct TryStatementStruct {
@@ -1087,7 +1087,7 @@ impl TryStatementStruct {
     }
 }
 
-pub type TupleExpression = Rc<TupleExpressionStruct>;
+pub type TupleExpression = Arc<TupleExpressionStruct>;
 
 #[derive(Debug)]
 pub struct TupleExpressionStruct {
@@ -1102,7 +1102,7 @@ impl TupleExpressionStruct {
     }
 }
 
-pub type TupleValue = Rc<TupleValueStruct>;
+pub type TupleValue = Arc<TupleValueStruct>;
 
 #[derive(Debug)]
 pub struct TupleValueStruct {
@@ -1117,7 +1117,7 @@ impl TupleValueStruct {
     }
 }
 
-pub type TypeExpression = Rc<TypeExpressionStruct>;
+pub type TypeExpression = Arc<TypeExpressionStruct>;
 
 #[derive(Debug)]
 pub struct TypeExpressionStruct {
@@ -1132,7 +1132,7 @@ impl TypeExpressionStruct {
     }
 }
 
-pub type UncheckedBlock = Rc<UncheckedBlockStruct>;
+pub type UncheckedBlock = Arc<UncheckedBlockStruct>;
 
 #[derive(Debug)]
 pub struct UncheckedBlockStruct {
@@ -1147,7 +1147,7 @@ impl UncheckedBlockStruct {
     }
 }
 
-pub type UserDefinedValueTypeDefinition = Rc<UserDefinedValueTypeDefinitionStruct>;
+pub type UserDefinedValueTypeDefinition = Arc<UserDefinedValueTypeDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct UserDefinedValueTypeDefinitionStruct {
@@ -1163,7 +1163,7 @@ impl UserDefinedValueTypeDefinitionStruct {
     }
 }
 
-pub type UsingDeconstruction = Rc<UsingDeconstructionStruct>;
+pub type UsingDeconstruction = Arc<UsingDeconstructionStruct>;
 
 #[derive(Debug)]
 pub struct UsingDeconstructionStruct {
@@ -1178,7 +1178,7 @@ impl UsingDeconstructionStruct {
     }
 }
 
-pub type UsingDeconstructionSymbol = Rc<UsingDeconstructionSymbolStruct>;
+pub type UsingDeconstructionSymbol = Arc<UsingDeconstructionSymbolStruct>;
 
 #[derive(Debug)]
 pub struct UsingDeconstructionSymbolStruct {
@@ -1194,7 +1194,7 @@ impl UsingDeconstructionSymbolStruct {
     }
 }
 
-pub type UsingDirective = Rc<UsingDirectiveStruct>;
+pub type UsingDirective = Arc<UsingDirectiveStruct>;
 
 #[derive(Debug)]
 pub struct UsingDirectiveStruct {
@@ -1211,7 +1211,7 @@ impl UsingDirectiveStruct {
     }
 }
 
-pub type VariableDeclaration = Rc<VariableDeclarationStruct>;
+pub type VariableDeclaration = Arc<VariableDeclarationStruct>;
 
 #[derive(Debug)]
 pub struct VariableDeclarationStruct {
@@ -1228,7 +1228,7 @@ impl VariableDeclarationStruct {
     }
 }
 
-pub type VariableDeclarationStatement = Rc<VariableDeclarationStatementStruct>;
+pub type VariableDeclarationStatement = Arc<VariableDeclarationStatementStruct>;
 
 #[derive(Debug)]
 pub struct VariableDeclarationStatementStruct {
@@ -1243,7 +1243,7 @@ impl VariableDeclarationStatementStruct {
     }
 }
 
-pub type VersionPragma = Rc<VersionPragmaStruct>;
+pub type VersionPragma = Arc<VersionPragmaStruct>;
 
 #[derive(Debug)]
 pub struct VersionPragmaStruct {
@@ -1258,7 +1258,7 @@ impl VersionPragmaStruct {
     }
 }
 
-pub type VersionRange = Rc<VersionRangeStruct>;
+pub type VersionRange = Arc<VersionRangeStruct>;
 
 #[derive(Debug)]
 pub struct VersionRangeStruct {
@@ -1274,7 +1274,7 @@ impl VersionRangeStruct {
     }
 }
 
-pub type VersionTerm = Rc<VersionTermStruct>;
+pub type VersionTerm = Arc<VersionTermStruct>;
 
 #[derive(Debug)]
 pub struct VersionTermStruct {
@@ -1290,7 +1290,7 @@ impl VersionTermStruct {
     }
 }
 
-pub type WhileStatement = Rc<WhileStatementStruct>;
+pub type WhileStatement = Arc<WhileStatementStruct>;
 
 #[derive(Debug)]
 pub struct WhileStatementStruct {
@@ -1306,7 +1306,7 @@ impl WhileStatementStruct {
     }
 }
 
-pub type YulBlock = Rc<YulBlockStruct>;
+pub type YulBlock = Arc<YulBlockStruct>;
 
 #[derive(Debug)]
 pub struct YulBlockStruct {
@@ -1321,7 +1321,7 @@ impl YulBlockStruct {
     }
 }
 
-pub type YulBreakStatement = Rc<YulBreakStatementStruct>;
+pub type YulBreakStatement = Arc<YulBreakStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulBreakStatementStruct {
@@ -1335,7 +1335,7 @@ impl YulBreakStatementStruct {
     }
 }
 
-pub type YulContinueStatement = Rc<YulContinueStatementStruct>;
+pub type YulContinueStatement = Arc<YulContinueStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulContinueStatementStruct {
@@ -1349,7 +1349,7 @@ impl YulContinueStatementStruct {
     }
 }
 
-pub type YulDefaultCase = Rc<YulDefaultCaseStruct>;
+pub type YulDefaultCase = Arc<YulDefaultCaseStruct>;
 
 #[derive(Debug)]
 pub struct YulDefaultCaseStruct {
@@ -1364,7 +1364,7 @@ impl YulDefaultCaseStruct {
     }
 }
 
-pub type YulForStatement = Rc<YulForStatementStruct>;
+pub type YulForStatement = Arc<YulForStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulForStatementStruct {
@@ -1382,7 +1382,7 @@ impl YulForStatementStruct {
     }
 }
 
-pub type YulFunctionCallExpression = Rc<YulFunctionCallExpressionStruct>;
+pub type YulFunctionCallExpression = Arc<YulFunctionCallExpressionStruct>;
 
 #[derive(Debug)]
 pub struct YulFunctionCallExpressionStruct {
@@ -1398,7 +1398,7 @@ impl YulFunctionCallExpressionStruct {
     }
 }
 
-pub type YulFunctionDefinition = Rc<YulFunctionDefinitionStruct>;
+pub type YulFunctionDefinition = Arc<YulFunctionDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct YulFunctionDefinitionStruct {
@@ -1416,7 +1416,7 @@ impl YulFunctionDefinitionStruct {
     }
 }
 
-pub type YulIfStatement = Rc<YulIfStatementStruct>;
+pub type YulIfStatement = Arc<YulIfStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulIfStatementStruct {
@@ -1432,7 +1432,7 @@ impl YulIfStatementStruct {
     }
 }
 
-pub type YulLeaveStatement = Rc<YulLeaveStatementStruct>;
+pub type YulLeaveStatement = Arc<YulLeaveStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulLeaveStatementStruct {
@@ -1446,7 +1446,7 @@ impl YulLeaveStatementStruct {
     }
 }
 
-pub type YulSwitchStatement = Rc<YulSwitchStatementStruct>;
+pub type YulSwitchStatement = Arc<YulSwitchStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulSwitchStatementStruct {
@@ -1462,7 +1462,7 @@ impl YulSwitchStatementStruct {
     }
 }
 
-pub type YulValueCase = Rc<YulValueCaseStruct>;
+pub type YulValueCase = Arc<YulValueCaseStruct>;
 
 #[derive(Debug)]
 pub struct YulValueCaseStruct {
@@ -1478,7 +1478,7 @@ impl YulValueCaseStruct {
     }
 }
 
-pub type YulVariableAssignmentStatement = Rc<YulVariableAssignmentStatementStruct>;
+pub type YulVariableAssignmentStatement = Arc<YulVariableAssignmentStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulVariableAssignmentStatementStruct {
@@ -1494,7 +1494,7 @@ impl YulVariableAssignmentStatementStruct {
     }
 }
 
-pub type YulVariableDeclarationStatement = Rc<YulVariableDeclarationStatementStruct>;
+pub type YulVariableDeclarationStatement = Arc<YulVariableDeclarationStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulVariableDeclarationStatementStruct {
@@ -1510,7 +1510,7 @@ impl YulVariableDeclarationStatementStruct {
     }
 }
 
-pub type YulVariableDeclarationValue = Rc<YulVariableDeclarationValueStruct>;
+pub type YulVariableDeclarationValue = Arc<YulVariableDeclarationValueStruct>;
 
 #[derive(Debug)]
 pub struct YulVariableDeclarationValueStruct {
@@ -1989,7 +1989,7 @@ pub type YulVariableNames = Vec<Identifier>;
 // Terminals
 //
 
-pub type ABIEncoderV2Keyword = Rc<ABIEncoderV2KeywordStruct>;
+pub type ABIEncoderV2Keyword = Arc<ABIEncoderV2KeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ABIEncoderV2KeywordStruct {
@@ -2003,7 +2003,7 @@ impl ABIEncoderV2KeywordStruct {
     }
 }
 
-pub type AbicoderV1Keyword = Rc<AbicoderV1KeywordStruct>;
+pub type AbicoderV1Keyword = Arc<AbicoderV1KeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct AbicoderV1KeywordStruct {
@@ -2017,7 +2017,7 @@ impl AbicoderV1KeywordStruct {
     }
 }
 
-pub type AbicoderV2Keyword = Rc<AbicoderV2KeywordStruct>;
+pub type AbicoderV2Keyword = Arc<AbicoderV2KeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct AbicoderV2KeywordStruct {
@@ -2031,7 +2031,7 @@ impl AbicoderV2KeywordStruct {
     }
 }
 
-pub type AbstractKeyword = Rc<AbstractKeywordStruct>;
+pub type AbstractKeyword = Arc<AbstractKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct AbstractKeywordStruct {
@@ -2045,7 +2045,7 @@ impl AbstractKeywordStruct {
     }
 }
 
-pub type Ampersand = Rc<AmpersandStruct>;
+pub type Ampersand = Arc<AmpersandStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct AmpersandStruct {
@@ -2059,7 +2059,7 @@ impl AmpersandStruct {
     }
 }
 
-pub type AmpersandEqual = Rc<AmpersandEqualStruct>;
+pub type AmpersandEqual = Arc<AmpersandEqualStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct AmpersandEqualStruct {
@@ -2073,7 +2073,7 @@ impl AmpersandEqualStruct {
     }
 }
 
-pub type AnonymousKeyword = Rc<AnonymousKeywordStruct>;
+pub type AnonymousKeyword = Arc<AnonymousKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct AnonymousKeywordStruct {
@@ -2087,7 +2087,7 @@ impl AnonymousKeywordStruct {
     }
 }
 
-pub type Asterisk = Rc<AsteriskStruct>;
+pub type Asterisk = Arc<AsteriskStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct AsteriskStruct {
@@ -2101,7 +2101,7 @@ impl AsteriskStruct {
     }
 }
 
-pub type AsteriskEqual = Rc<AsteriskEqualStruct>;
+pub type AsteriskEqual = Arc<AsteriskEqualStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct AsteriskEqualStruct {
@@ -2115,7 +2115,7 @@ impl AsteriskEqualStruct {
     }
 }
 
-pub type Bang = Rc<BangStruct>;
+pub type Bang = Arc<BangStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct BangStruct {
@@ -2129,7 +2129,7 @@ impl BangStruct {
     }
 }
 
-pub type BangEqual = Rc<BangEqualStruct>;
+pub type BangEqual = Arc<BangEqualStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct BangEqualStruct {
@@ -2143,7 +2143,7 @@ impl BangEqualStruct {
     }
 }
 
-pub type Bar = Rc<BarStruct>;
+pub type Bar = Arc<BarStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct BarStruct {
@@ -2157,7 +2157,7 @@ impl BarStruct {
     }
 }
 
-pub type BarEqual = Rc<BarEqualStruct>;
+pub type BarEqual = Arc<BarEqualStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct BarEqualStruct {
@@ -2171,7 +2171,7 @@ impl BarEqualStruct {
     }
 }
 
-pub type BoolKeyword = Rc<BoolKeywordStruct>;
+pub type BoolKeyword = Arc<BoolKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct BoolKeywordStruct {
@@ -2185,7 +2185,7 @@ impl BoolKeywordStruct {
     }
 }
 
-pub type BytesKeyword = Rc<BytesKeywordStruct>;
+pub type BytesKeyword = Arc<BytesKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct BytesKeywordStruct {
@@ -2203,7 +2203,7 @@ impl BytesKeywordStruct {
     }
 }
 
-pub type CallDataKeyword = Rc<CallDataKeywordStruct>;
+pub type CallDataKeyword = Arc<CallDataKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct CallDataKeywordStruct {
@@ -2217,7 +2217,7 @@ impl CallDataKeywordStruct {
     }
 }
 
-pub type Caret = Rc<CaretStruct>;
+pub type Caret = Arc<CaretStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct CaretStruct {
@@ -2231,7 +2231,7 @@ impl CaretStruct {
     }
 }
 
-pub type CaretEqual = Rc<CaretEqualStruct>;
+pub type CaretEqual = Arc<CaretEqualStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct CaretEqualStruct {
@@ -2245,7 +2245,7 @@ impl CaretEqualStruct {
     }
 }
 
-pub type DaysKeyword = Rc<DaysKeywordStruct>;
+pub type DaysKeyword = Arc<DaysKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct DaysKeywordStruct {
@@ -2259,7 +2259,7 @@ impl DaysKeywordStruct {
     }
 }
 
-pub type DecimalLiteral = Rc<DecimalLiteralStruct>;
+pub type DecimalLiteral = Arc<DecimalLiteralStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct DecimalLiteralStruct {
@@ -2277,7 +2277,7 @@ impl DecimalLiteralStruct {
     }
 }
 
-pub type DeleteKeyword = Rc<DeleteKeywordStruct>;
+pub type DeleteKeyword = Arc<DeleteKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct DeleteKeywordStruct {
@@ -2291,7 +2291,7 @@ impl DeleteKeywordStruct {
     }
 }
 
-pub type Equal = Rc<EqualStruct>;
+pub type Equal = Arc<EqualStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct EqualStruct {
@@ -2305,7 +2305,7 @@ impl EqualStruct {
     }
 }
 
-pub type EqualEqual = Rc<EqualEqualStruct>;
+pub type EqualEqual = Arc<EqualEqualStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct EqualEqualStruct {
@@ -2319,7 +2319,7 @@ impl EqualEqualStruct {
     }
 }
 
-pub type EtherKeyword = Rc<EtherKeywordStruct>;
+pub type EtherKeyword = Arc<EtherKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct EtherKeywordStruct {
@@ -2333,7 +2333,7 @@ impl EtherKeywordStruct {
     }
 }
 
-pub type FalseKeyword = Rc<FalseKeywordStruct>;
+pub type FalseKeyword = Arc<FalseKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct FalseKeywordStruct {
@@ -2347,7 +2347,7 @@ impl FalseKeywordStruct {
     }
 }
 
-pub type FixedKeyword = Rc<FixedKeywordStruct>;
+pub type FixedKeyword = Arc<FixedKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct FixedKeywordStruct {
@@ -2365,7 +2365,7 @@ impl FixedKeywordStruct {
     }
 }
 
-pub type GlobalKeyword = Rc<GlobalKeywordStruct>;
+pub type GlobalKeyword = Arc<GlobalKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct GlobalKeywordStruct {
@@ -2379,7 +2379,7 @@ impl GlobalKeywordStruct {
     }
 }
 
-pub type GreaterThan = Rc<GreaterThanStruct>;
+pub type GreaterThan = Arc<GreaterThanStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct GreaterThanStruct {
@@ -2393,7 +2393,7 @@ impl GreaterThanStruct {
     }
 }
 
-pub type GreaterThanEqual = Rc<GreaterThanEqualStruct>;
+pub type GreaterThanEqual = Arc<GreaterThanEqualStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct GreaterThanEqualStruct {
@@ -2407,7 +2407,7 @@ impl GreaterThanEqualStruct {
     }
 }
 
-pub type GreaterThanGreaterThan = Rc<GreaterThanGreaterThanStruct>;
+pub type GreaterThanGreaterThan = Arc<GreaterThanGreaterThanStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct GreaterThanGreaterThanStruct {
@@ -2421,7 +2421,7 @@ impl GreaterThanGreaterThanStruct {
     }
 }
 
-pub type GreaterThanGreaterThanEqual = Rc<GreaterThanGreaterThanEqualStruct>;
+pub type GreaterThanGreaterThanEqual = Arc<GreaterThanGreaterThanEqualStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct GreaterThanGreaterThanEqualStruct {
@@ -2435,7 +2435,7 @@ impl GreaterThanGreaterThanEqualStruct {
     }
 }
 
-pub type GreaterThanGreaterThanGreaterThan = Rc<GreaterThanGreaterThanGreaterThanStruct>;
+pub type GreaterThanGreaterThanGreaterThan = Arc<GreaterThanGreaterThanGreaterThanStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct GreaterThanGreaterThanGreaterThanStruct {
@@ -2449,7 +2449,7 @@ impl GreaterThanGreaterThanGreaterThanStruct {
     }
 }
 
-pub type GreaterThanGreaterThanGreaterThanEqual = Rc<GreaterThanGreaterThanGreaterThanEqualStruct>;
+pub type GreaterThanGreaterThanGreaterThanEqual = Arc<GreaterThanGreaterThanGreaterThanEqualStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct GreaterThanGreaterThanGreaterThanEqualStruct {
@@ -2463,7 +2463,7 @@ impl GreaterThanGreaterThanGreaterThanEqualStruct {
     }
 }
 
-pub type GweiKeyword = Rc<GweiKeywordStruct>;
+pub type GweiKeyword = Arc<GweiKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct GweiKeywordStruct {
@@ -2477,7 +2477,7 @@ impl GweiKeywordStruct {
     }
 }
 
-pub type HexLiteral = Rc<HexLiteralStruct>;
+pub type HexLiteral = Arc<HexLiteralStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct HexLiteralStruct {
@@ -2495,7 +2495,7 @@ impl HexLiteralStruct {
     }
 }
 
-pub type HexStringLiteral = Rc<HexStringLiteralStruct>;
+pub type HexStringLiteral = Arc<HexStringLiteralStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct HexStringLiteralStruct {
@@ -2513,7 +2513,7 @@ impl HexStringLiteralStruct {
     }
 }
 
-pub type HoursKeyword = Rc<HoursKeywordStruct>;
+pub type HoursKeyword = Arc<HoursKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct HoursKeywordStruct {
@@ -2527,7 +2527,7 @@ impl HoursKeywordStruct {
     }
 }
 
-pub type Identifier = Rc<IdentifierStruct>;
+pub type Identifier = Arc<IdentifierStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct IdentifierStruct {
@@ -2545,7 +2545,7 @@ impl IdentifierStruct {
     }
 }
 
-pub type IndexedKeyword = Rc<IndexedKeywordStruct>;
+pub type IndexedKeyword = Arc<IndexedKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct IndexedKeywordStruct {
@@ -2559,7 +2559,7 @@ impl IndexedKeywordStruct {
     }
 }
 
-pub type IntKeyword = Rc<IntKeywordStruct>;
+pub type IntKeyword = Arc<IntKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct IntKeywordStruct {
@@ -2577,7 +2577,7 @@ impl IntKeywordStruct {
     }
 }
 
-pub type LessThan = Rc<LessThanStruct>;
+pub type LessThan = Arc<LessThanStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct LessThanStruct {
@@ -2591,7 +2591,7 @@ impl LessThanStruct {
     }
 }
 
-pub type LessThanEqual = Rc<LessThanEqualStruct>;
+pub type LessThanEqual = Arc<LessThanEqualStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct LessThanEqualStruct {
@@ -2605,7 +2605,7 @@ impl LessThanEqualStruct {
     }
 }
 
-pub type LessThanLessThan = Rc<LessThanLessThanStruct>;
+pub type LessThanLessThan = Arc<LessThanLessThanStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct LessThanLessThanStruct {
@@ -2619,7 +2619,7 @@ impl LessThanLessThanStruct {
     }
 }
 
-pub type LessThanLessThanEqual = Rc<LessThanLessThanEqualStruct>;
+pub type LessThanLessThanEqual = Arc<LessThanLessThanEqualStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct LessThanLessThanEqualStruct {
@@ -2633,7 +2633,7 @@ impl LessThanLessThanEqualStruct {
     }
 }
 
-pub type MemoryKeyword = Rc<MemoryKeywordStruct>;
+pub type MemoryKeyword = Arc<MemoryKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct MemoryKeywordStruct {
@@ -2647,7 +2647,7 @@ impl MemoryKeywordStruct {
     }
 }
 
-pub type Minus = Rc<MinusStruct>;
+pub type Minus = Arc<MinusStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct MinusStruct {
@@ -2661,7 +2661,7 @@ impl MinusStruct {
     }
 }
 
-pub type MinusEqual = Rc<MinusEqualStruct>;
+pub type MinusEqual = Arc<MinusEqualStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct MinusEqualStruct {
@@ -2675,7 +2675,7 @@ impl MinusEqualStruct {
     }
 }
 
-pub type MinusMinus = Rc<MinusMinusStruct>;
+pub type MinusMinus = Arc<MinusMinusStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct MinusMinusStruct {
@@ -2689,7 +2689,7 @@ impl MinusMinusStruct {
     }
 }
 
-pub type MinutesKeyword = Rc<MinutesKeywordStruct>;
+pub type MinutesKeyword = Arc<MinutesKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct MinutesKeywordStruct {
@@ -2703,7 +2703,7 @@ impl MinutesKeywordStruct {
     }
 }
 
-pub type PayableKeyword = Rc<PayableKeywordStruct>;
+pub type PayableKeyword = Arc<PayableKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct PayableKeywordStruct {
@@ -2717,7 +2717,7 @@ impl PayableKeywordStruct {
     }
 }
 
-pub type Percent = Rc<PercentStruct>;
+pub type Percent = Arc<PercentStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct PercentStruct {
@@ -2731,7 +2731,7 @@ impl PercentStruct {
     }
 }
 
-pub type PercentEqual = Rc<PercentEqualStruct>;
+pub type PercentEqual = Arc<PercentEqualStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct PercentEqualStruct {
@@ -2745,7 +2745,7 @@ impl PercentEqualStruct {
     }
 }
 
-pub type Plus = Rc<PlusStruct>;
+pub type Plus = Arc<PlusStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct PlusStruct {
@@ -2759,7 +2759,7 @@ impl PlusStruct {
     }
 }
 
-pub type PlusEqual = Rc<PlusEqualStruct>;
+pub type PlusEqual = Arc<PlusEqualStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct PlusEqualStruct {
@@ -2773,7 +2773,7 @@ impl PlusEqualStruct {
     }
 }
 
-pub type PlusPlus = Rc<PlusPlusStruct>;
+pub type PlusPlus = Arc<PlusPlusStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct PlusPlusStruct {
@@ -2787,7 +2787,7 @@ impl PlusPlusStruct {
     }
 }
 
-pub type PragmaCaret = Rc<PragmaCaretStruct>;
+pub type PragmaCaret = Arc<PragmaCaretStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct PragmaCaretStruct {
@@ -2801,7 +2801,7 @@ impl PragmaCaretStruct {
     }
 }
 
-pub type PragmaEqual = Rc<PragmaEqualStruct>;
+pub type PragmaEqual = Arc<PragmaEqualStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct PragmaEqualStruct {
@@ -2815,7 +2815,7 @@ impl PragmaEqualStruct {
     }
 }
 
-pub type PragmaGreaterThan = Rc<PragmaGreaterThanStruct>;
+pub type PragmaGreaterThan = Arc<PragmaGreaterThanStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct PragmaGreaterThanStruct {
@@ -2829,7 +2829,7 @@ impl PragmaGreaterThanStruct {
     }
 }
 
-pub type PragmaGreaterThanEqual = Rc<PragmaGreaterThanEqualStruct>;
+pub type PragmaGreaterThanEqual = Arc<PragmaGreaterThanEqualStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct PragmaGreaterThanEqualStruct {
@@ -2843,7 +2843,7 @@ impl PragmaGreaterThanEqualStruct {
     }
 }
 
-pub type PragmaLessThan = Rc<PragmaLessThanStruct>;
+pub type PragmaLessThan = Arc<PragmaLessThanStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct PragmaLessThanStruct {
@@ -2857,7 +2857,7 @@ impl PragmaLessThanStruct {
     }
 }
 
-pub type PragmaLessThanEqual = Rc<PragmaLessThanEqualStruct>;
+pub type PragmaLessThanEqual = Arc<PragmaLessThanEqualStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct PragmaLessThanEqualStruct {
@@ -2871,7 +2871,7 @@ impl PragmaLessThanEqualStruct {
     }
 }
 
-pub type PragmaTilde = Rc<PragmaTildeStruct>;
+pub type PragmaTilde = Arc<PragmaTildeStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct PragmaTildeStruct {
@@ -2885,7 +2885,7 @@ impl PragmaTildeStruct {
     }
 }
 
-pub type SMTCheckerKeyword = Rc<SMTCheckerKeywordStruct>;
+pub type SMTCheckerKeyword = Arc<SMTCheckerKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct SMTCheckerKeywordStruct {
@@ -2899,7 +2899,7 @@ impl SMTCheckerKeywordStruct {
     }
 }
 
-pub type SecondsKeyword = Rc<SecondsKeywordStruct>;
+pub type SecondsKeyword = Arc<SecondsKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct SecondsKeywordStruct {
@@ -2913,7 +2913,7 @@ impl SecondsKeywordStruct {
     }
 }
 
-pub type Semicolon = Rc<SemicolonStruct>;
+pub type Semicolon = Arc<SemicolonStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct SemicolonStruct {
@@ -2927,7 +2927,7 @@ impl SemicolonStruct {
     }
 }
 
-pub type Slash = Rc<SlashStruct>;
+pub type Slash = Arc<SlashStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct SlashStruct {
@@ -2941,7 +2941,7 @@ impl SlashStruct {
     }
 }
 
-pub type SlashEqual = Rc<SlashEqualStruct>;
+pub type SlashEqual = Arc<SlashEqualStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct SlashEqualStruct {
@@ -2955,7 +2955,7 @@ impl SlashEqualStruct {
     }
 }
 
-pub type StorageKeyword = Rc<StorageKeywordStruct>;
+pub type StorageKeyword = Arc<StorageKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct StorageKeywordStruct {
@@ -2969,7 +2969,7 @@ impl StorageKeywordStruct {
     }
 }
 
-pub type StringKeyword = Rc<StringKeywordStruct>;
+pub type StringKeyword = Arc<StringKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct StringKeywordStruct {
@@ -2983,7 +2983,7 @@ impl StringKeywordStruct {
     }
 }
 
-pub type StringLiteral = Rc<StringLiteralStruct>;
+pub type StringLiteral = Arc<StringLiteralStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct StringLiteralStruct {
@@ -3001,7 +3001,7 @@ impl StringLiteralStruct {
     }
 }
 
-pub type SuperKeyword = Rc<SuperKeywordStruct>;
+pub type SuperKeyword = Arc<SuperKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct SuperKeywordStruct {
@@ -3015,7 +3015,7 @@ impl SuperKeywordStruct {
     }
 }
 
-pub type ThisKeyword = Rc<ThisKeywordStruct>;
+pub type ThisKeyword = Arc<ThisKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ThisKeywordStruct {
@@ -3029,7 +3029,7 @@ impl ThisKeywordStruct {
     }
 }
 
-pub type Tilde = Rc<TildeStruct>;
+pub type Tilde = Arc<TildeStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct TildeStruct {
@@ -3043,7 +3043,7 @@ impl TildeStruct {
     }
 }
 
-pub type TrueKeyword = Rc<TrueKeywordStruct>;
+pub type TrueKeyword = Arc<TrueKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct TrueKeywordStruct {
@@ -3057,7 +3057,7 @@ impl TrueKeywordStruct {
     }
 }
 
-pub type UfixedKeyword = Rc<UfixedKeywordStruct>;
+pub type UfixedKeyword = Arc<UfixedKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct UfixedKeywordStruct {
@@ -3075,7 +3075,7 @@ impl UfixedKeywordStruct {
     }
 }
 
-pub type UintKeyword = Rc<UintKeywordStruct>;
+pub type UintKeyword = Arc<UintKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct UintKeywordStruct {
@@ -3093,7 +3093,7 @@ impl UintKeywordStruct {
     }
 }
 
-pub type UnicodeStringLiteral = Rc<UnicodeStringLiteralStruct>;
+pub type UnicodeStringLiteral = Arc<UnicodeStringLiteralStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct UnicodeStringLiteralStruct {
@@ -3111,7 +3111,7 @@ impl UnicodeStringLiteralStruct {
     }
 }
 
-pub type VersionSpecifier = Rc<VersionSpecifierStruct>;
+pub type VersionSpecifier = Arc<VersionSpecifierStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct VersionSpecifierStruct {
@@ -3129,7 +3129,7 @@ impl VersionSpecifierStruct {
     }
 }
 
-pub type VirtualKeyword = Rc<VirtualKeywordStruct>;
+pub type VirtualKeyword = Arc<VirtualKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct VirtualKeywordStruct {
@@ -3143,7 +3143,7 @@ impl VirtualKeywordStruct {
     }
 }
 
-pub type WeeksKeyword = Rc<WeeksKeywordStruct>;
+pub type WeeksKeyword = Arc<WeeksKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct WeeksKeywordStruct {
@@ -3157,7 +3157,7 @@ impl WeeksKeywordStruct {
     }
 }
 
-pub type WeiKeyword = Rc<WeiKeywordStruct>;
+pub type WeiKeyword = Arc<WeiKeywordStruct>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct WeiKeywordStruct {

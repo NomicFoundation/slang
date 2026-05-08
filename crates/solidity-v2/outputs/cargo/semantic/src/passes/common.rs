@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
@@ -30,7 +30,7 @@ pub(super) fn resolve_identifier_path_in_scope(
             Resolution::Unresolved
         };
 
-        let reference = Reference::new(Rc::clone(identifier), resolution.clone());
+        let reference = Reference::new(Arc::clone(identifier), resolution.clone());
         binder.insert_reference(reference);
 
         // Unless we used namespace resolution and in order to continue

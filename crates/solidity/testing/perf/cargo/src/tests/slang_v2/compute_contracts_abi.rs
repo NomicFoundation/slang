@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
 use slang_solidity_v2_ast::{abi, ast};
 use slang_solidity_v2_semantic::context::{SemanticContext, SemanticFile};
@@ -6,22 +6,22 @@ use slang_solidity_v2_semantic::context::{SemanticContext, SemanticFile};
 use super::semantic::File;
 use crate::dataset::SolidityProject;
 
-pub fn setup(project: &str) -> (&'static SolidityProject, Vec<File>, Rc<SemanticContext>) {
+pub fn setup(project: &str) -> (&'static SolidityProject, Vec<File>, Arc<SemanticContext>) {
     let (project, files) = super::semantic::setup(project);
     let semantic = super::semantic::test((project, files.clone()));
-    (project, files, Rc::new(semantic))
+    (project, files, Arc::new(semantic))
 }
 
 pub fn run(
     project: &'static SolidityProject,
     files: Vec<File>,
-    semantic: Rc<SemanticContext>,
+    semantic: Arc<SemanticContext>,
 ) -> Vec<abi::ContractAbi> {
     test((project, files, semantic))
 }
 
 pub fn test(
-    (_project, files, semantic): (&'static SolidityProject, Vec<File>, Rc<SemanticContext>),
+    (_project, files, semantic): (&'static SolidityProject, Vec<File>, Arc<SemanticContext>),
 ) -> Vec<abi::ContractAbi> {
     files
         .iter()

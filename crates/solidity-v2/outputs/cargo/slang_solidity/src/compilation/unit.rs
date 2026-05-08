@@ -1,5 +1,5 @@
 use std::collections::BTreeMap;
-use std::rc::Rc;
+use std::sync::Arc;
 
 use slang_solidity_v2_ast::{abi, ast};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
@@ -10,8 +10,8 @@ use super::file::File;
 
 pub struct CompilationUnit {
     language_version: LanguageVersion,
-    files: BTreeMap<String, Rc<File>>,
-    semantic: Rc<SemanticContext>,
+    files: BTreeMap<String, File>,
+    semantic: Arc<SemanticContext>,
     diagnostics: DiagnosticCollection,
 }
 
@@ -19,17 +19,17 @@ impl CompilationUnit {
     pub(super) fn create(
         language_version: LanguageVersion,
         files: Vec<File>,
-        semantic: Rc<SemanticContext>,
+        semantic: SemanticContext,
         diagnostics: DiagnosticCollection,
     ) -> Self {
-        let files: BTreeMap<String, Rc<File>> = files
+        let files: BTreeMap<String, File> = files
             .into_iter()
-            .map(|file| (file.id().to_string(), Rc::new(file)))
+            .map(|file| (file.id().to_string(), file))
             .collect();
         Self {
             language_version,
             files,
-            semantic,
+            semantic: Arc::new(semantic),
             diagnostics,
         }
     }
@@ -51,7 +51,7 @@ impl CompilationUnit {
 
     #[cfg(feature = "__private_testing_utils")]
     #[doc(hidden)]
-    pub fn semantic(&self) -> &Rc<SemanticContext> {
+    pub fn semantic(&self) -> &Arc<SemanticContext> {
         &self.semantic
     }
 
@@ -66,7 +66,7 @@ impl CompilationUnit {
     pub fn get_file_ir_root(&self, file_id: &str) -> Option<slang_solidity_v2_ir::ir::SourceUnit> {
         self.files
             .get(file_id)
-            .map(|file| Rc::clone(file.ir_root()))
+            .map(|file| Arc::clone(file.ir_root()))
     }
 
     pub fn all_definitions(&self) -> impl Iterator<Item = ast::Definition> + use<'_> {
@@ -81,7 +81,7 @@ impl CompilationUnit {
         })
     }
 
-    pub fn find_contract_by_name(self: &Rc<Self>, name: &str) -> Option<ast::ContractDefinition> {
+    pub fn find_contract_by_name(&self, name: &str) -> Option<ast::ContractDefinition> {
         self.semantic
             .find_contract_by_name(name)
             .map(|contract| ast::create_contract_definition(&contract, &self.semantic))

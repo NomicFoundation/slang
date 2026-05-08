@@ -4,7 +4,7 @@
 #![allow(clippy::too_many_lines)]
 #![allow(unused_variables)]
 
-use std::rc::Rc;
+use std::sync::Arc;
 use crate::ir::nodes as output;
 use crate::ir::Source;
 use slang_solidity_v2_cst::structured_cst::nodes as input;
@@ -35,7 +35,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
           {%- endif -%}
         {%- endfor %}
 
-        Rc::new(output::{{ parent_type }}Struct {
+        Arc::new(output::{{ parent_type }}Struct {
           id,
           range,
           {%- for field in sequence.fields -%}
@@ -100,7 +100,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         {% for variant in collapsed.variants -%}
           input::{{ parent_type }}::{{ variant.source.name }}(terminal) => {
             let text = self.unparse_range(terminal.range.clone());
-            Rc::new(output::{{ collapsed.target.name }}Struct {
+            Arc::new(output::{{ collapsed.target.name }}Struct {
               id: self.next_id(),
               range: terminal.range.clone(),
               text,
@@ -133,7 +133,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     {# New terminals cannot be automatically built #}
     {% if not terminal.is_new %}
       pub(super) fn build_{{ terminal_type | snake_case }}(&mut self, source: &input::{{ terminal_type }}) -> output::{{ terminal_type }} {
-        Rc::new(output::{{ terminal_type }}Struct {
+        Arc::new(output::{{ terminal_type }}Struct {
           id: self.next_id(),
           range: source.range.clone(),
           {%- if not terminal.is_unique %}
@@ -149,7 +149,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
   //
   {% for source_type, normalized in builder.normalized_terminals %}
     pub(super) fn build_{{ source_type | snake_case }}(&mut self, source: &input::{{ source_type }}) -> output::{{ normalized.target }} {
-      Rc::new(output::{{ normalized.target }}Struct {
+      Arc::new(output::{{ normalized.target }}Struct {
         id: self.next_id(),
         range: source.range.clone(),
         {%- if not normalized.is_unique %}
