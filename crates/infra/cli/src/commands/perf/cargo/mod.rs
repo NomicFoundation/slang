@@ -58,7 +58,14 @@ impl CargoController {
                 Benches::SlangV2 => ("solidity_testing_perf_cargo", "slang_v2"),
             };
             Command::new("cargo")
-                .args(["build", "--package", package, "--bench", bench_name])
+                .args([
+                    "bench",
+                    "--no-run",
+                    "--package",
+                    package,
+                    "--bench",
+                    bench_name,
+                ])
                 .run();
             // Verify gprof2dot is installed (used by generate_callgraph after full benchmarks).
             PipEnv::run("gprof2dot").arg("--help").run();
