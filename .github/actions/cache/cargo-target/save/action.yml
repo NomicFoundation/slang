@@ -1,5 +1,11 @@
 name: "cache/cargo-target/save"
 
+inputs:
+  cacheKeySuffix:
+    description: "Optional suffix to isolate this cache (e.g. 'benchmark-cargo-slang'). Empty by default."
+    required: false
+    default: ""
+
 runs:
   using: "composite"
   steps:
@@ -7,7 +13,7 @@ runs:
       uses: "actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae" # v5.0.5
       with:
         # __SLANG_CI_CACHE_CARGO_TARGET_PATHS__ (keep in sync)
-        key: "cargo-target-${{ runner.os }}-v1-${{ hashFiles('Cargo.lock') }}"
+        key: "cargo-target-${{ runner.os }}-v1${{ inputs.cacheKeySuffix && format('-{0}', inputs.cacheKeySuffix) || '' }}-${{ hashFiles('Cargo.lock') }}"
         path: |
           target/
           crates/infra/cli/target/

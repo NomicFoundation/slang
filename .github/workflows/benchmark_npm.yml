@@ -65,9 +65,13 @@ jobs:
 
       - name: "Restore Dependencies Cache"
         uses: "./.github/actions/cache/dependencies/restore"
+        with:
+          cacheKeySuffix: "benchmark-npm"
 
       - name: "Restore Cargo Target Cache"
         uses: "./.github/actions/cache/cargo-target/restore"
+        with:
+          cacheKeySuffix: "benchmark-npm"
 
       - name: "Set bencher project"
         run: |
@@ -92,3 +96,15 @@ jobs:
           BENCHER_PR_START_POINT_HASH: "${{ github.event.pull_request.base.sha }}"
           BENCHER_PR_HEAD_HASH: "${{ github.event.pull_request.head.sha }}"
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: "Save Cargo Target Cache"
+        if: "${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'main' }}"
+        uses: "./.github/actions/cache/cargo-target/save"
+        with:
+          cacheKeySuffix: "benchmark-npm"
+
+      - name: "Save Dependencies Cache"
+        if: "${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'main' }}"
+        uses: "./.github/actions/cache/dependencies/save"
+        with:
+          cacheKeySuffix: "benchmark-npm"
