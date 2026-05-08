@@ -68,6 +68,7 @@
     /* Projects */
     "composite": true,
     "incremental": true,
+    "rootDir": "./",
     "tsBuildInfoFile": "target/tsc/.tsbuildinfo"
   }
 }
