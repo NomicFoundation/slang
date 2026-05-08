@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# bencher-plot-clean: deletes every plot in a given bencher project, after first
+# saving the full plot list to a local JSON backup so the previous state can be
+# inspected (or replayed) later.
+#
+# Set DRY_RUN=1 to print the delete commands without executing them. The backup
+# is still written in dry-run mode.
+#
+# usage: bencher-plot-clean project [backup-path]
+#
+# Example:
+# $  ./scripts/bin/bencher-plot-clean slang-dashboard-cargo-slang-v2
+
+set -e
+shopt -s inherit_errexit
+
+if [[ $# -lt 1 || $# -gt 2 ]]
+then
+  echo "Usage: bencher-plot-clean project [backup-path]";
+  exit 1;
+fi
+
+project=$1
+backup_path=${2:-"bencher-plots-${project}-$(date +%Y%m%d-%H%M%S).json"}
+
+# Fetch every plot, paging through results in case there are more than 255.
+all_plots="[]"
+page=1
+while :; do
+  page_data=$(bencher plot list --per-page 255 --page "${page}" "${project}")
+  count=$(echo "${page_data}" | jq 'length')
+  all_plots=$(jq -s 'add' <(echo "${all_plots}") <(echo "${page_data}"))
+  if [[ "${count}" -lt 255 ]]; then
+    break
+  fi
+  page=$((page + 1))
+done
+
+total=$(echo "${all_plots}" | jq 'length')
+echo "Found ${total} plot(s) in ${project}"
+
+echo "${all_plots}" | jq '.' > "${backup_path}"
+echo "Backup written to: ${backup_path}"
+
+if [[ "${total}" -eq 0 ]]; then
+  exit 0
+fi
+
+# Iterate plot UUIDs and delete each one. DRY_RUN=1 turns the delete into an echo.
+# shellcheck disable=SC2312
+echo "${all_plots}" | jq -r '.[].uuid' | while read -r uuid; do
+  # shellcheck disable=SC2250
+  ${DRY_RUN:+echo} bencher plot delete "${project}" "${uuid}"
+done
