@@ -94,6 +94,8 @@ impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
         let source = match self.config.read_file(&file_id) {
             Ok(source) => source,
             Err(reason) => {
+                // TODO(v2): instead of `file_id`, these errors should be placed
+                // on all imports that need it, with the import path text range.
                 self.diagnostics.push(file_id, 0..0, MissingFile { reason });
                 return;
             }
