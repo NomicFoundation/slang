@@ -1,9 +1,7 @@
 use serde::Serialize;
+use slang_solidity_v2_common::diagnostics::{DiagnosticExtensions, DiagnosticSeverity};
 
-use crate::diagnostics::extensions::DiagnosticExtensions;
-use crate::diagnostics::kinds::compilation::CompilationDiagnosticKind;
-use crate::diagnostics::kinds::DiagnosticKind;
-use crate::diagnostics::severity::DiagnosticSeverity;
+use super::CompilationDiagnosticKind;
 
 /// Diagnostic emitted when the compilation pipeline cannot resolve an
 /// `import` directive to a concrete file identifier.
@@ -28,8 +26,10 @@ impl DiagnosticExtensions for UnresolvedImport {
     }
 }
 
-impl From<UnresolvedImport> for DiagnosticKind {
+// Probably not needed since we're not pushing this diagnostic into a collection
+// of `Diagnostic<CompilationDiagnosticKind>`
+impl From<UnresolvedImport> for CompilationDiagnosticKind {
     fn from(d: UnresolvedImport) -> Self {
-        Self::Compilation(CompilationDiagnosticKind::UnresolvedImport(d))
+        Self::UnresolvedImport(d)
     }
 }

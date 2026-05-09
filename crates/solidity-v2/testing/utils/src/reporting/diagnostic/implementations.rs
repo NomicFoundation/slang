@@ -4,7 +4,7 @@ use slang_solidity_v2_common::diagnostics::{Diagnostic, DiagnosticExtensions, Di
 
 use super::RenderDiagnostic;
 
-impl RenderDiagnostic for Diagnostic {
+impl<K: DiagnosticExtensions> RenderDiagnostic for Diagnostic<K> {
     fn text_range(&self) -> Range<usize> {
         Diagnostic::text_range(self).clone()
     }

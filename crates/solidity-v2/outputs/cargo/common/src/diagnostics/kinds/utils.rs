@@ -1,6 +1,7 @@
 /// Defines a diagnostic kind enum whose variants each wrap a single type,
 /// and implements [`crate::diagnostics::extensions::DiagnosticExtensions`],
 /// delegating its methods to the wrapped variants.
+#[macro_export]
 macro_rules! define_diagnostic_kind {
     (
         $(#[$enum_attr:meta])*
@@ -19,8 +20,8 @@ macro_rules! define_diagnostic_kind {
             )+
         }
 
-        impl $crate::diagnostics::extensions::DiagnosticExtensions for $name {
-            fn severity(&self) -> $crate::diagnostics::severity::DiagnosticSeverity {
+        impl $crate::diagnostics::DiagnosticExtensions for $name {
+            fn severity(&self) -> $crate::diagnostics::DiagnosticSeverity {
                 match self {
                     $( Self::$variant(d) => d.severity(), )+
                 }
@@ -40,5 +41,3 @@ macro_rules! define_diagnostic_kind {
         }
     };
 }
-
-pub(crate) use define_diagnostic_kind;

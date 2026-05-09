@@ -1,9 +1,6 @@
 use std::collections::BTreeSet;
 
 use lalrpop_util::lalrpop_mod;
-use slang_solidity_v2_common::diagnostics::kinds::syntax::{
-    ExtraTerminal, UnexpectedEof, UnexpectedTerminal,
-};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::terminals::TerminalKind;
 use slang_solidity_v2_common::versions::LanguageVersion;
@@ -11,6 +8,9 @@ use slang_solidity_v2_cst::structured_cst::nodes::{
     new_source_unit, new_source_unit_members, SourceUnit,
 };
 
+use crate::diagnostics::syntax::{
+    ExtraTerminal, SyntaxDiagnosticKind, UnexpectedEof, UnexpectedTerminal,
+};
 use crate::lexer::{LexemeKind, Lexer};
 use crate::parser::validation::validate_syntax_version;
 
@@ -37,7 +37,7 @@ lalrpop_mod!(
 #[derive(Debug, PartialEq)]
 pub struct ParseOutput {
     pub source_unit: SourceUnit,
-    pub diagnostics: DiagnosticCollection,
+    pub diagnostics: DiagnosticCollection<SyntaxDiagnosticKind>,
 }
 
 /// A Parser for Solidity Source Units
@@ -78,7 +78,7 @@ impl Parser {
 /// Convert a LALRPOP parse error into a `DiagnosticCollection`.
 fn convert_parse_error(
     file_id: &str,
-    diagnostics: &mut DiagnosticCollection,
+    diagnostics: &mut DiagnosticCollection<SyntaxDiagnosticKind>,
     value: lalrpop_util::ParseError<usize, LexemeKind, ()>,
 ) {
     /// This function transforms the `String` representation returned by LALRPOP into an instance of `LexemeKind`

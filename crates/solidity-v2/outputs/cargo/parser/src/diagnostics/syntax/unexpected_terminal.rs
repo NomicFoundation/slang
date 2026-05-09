@@ -2,12 +2,10 @@ use std::collections::BTreeSet;
 
 use itertools::Itertools;
 use serde::Serialize;
+use slang_solidity_v2_common::diagnostics::{DiagnosticExtensions, DiagnosticSeverity};
+use slang_solidity_v2_common::terminals::TerminalKind;
 
-use crate::diagnostics::extensions::DiagnosticExtensions;
-use crate::diagnostics::kinds::syntax::SyntaxDiagnosticKind;
-use crate::diagnostics::kinds::DiagnosticKind;
-use crate::diagnostics::severity::DiagnosticSeverity;
-use crate::terminals::TerminalKind;
+use super::SyntaxDiagnosticKind;
 
 /// Diagnostic emitted when the parser encounters a terminal that is not valid
 /// at the current position.
@@ -37,8 +35,8 @@ impl DiagnosticExtensions for UnexpectedTerminal {
     }
 }
 
-impl From<UnexpectedTerminal> for DiagnosticKind {
+impl From<UnexpectedTerminal> for SyntaxDiagnosticKind {
     fn from(d: UnexpectedTerminal) -> Self {
-        Self::Syntax(SyntaxDiagnosticKind::UnexpectedTerminal(d))
+        Self::UnexpectedTerminal(d)
     }
 }

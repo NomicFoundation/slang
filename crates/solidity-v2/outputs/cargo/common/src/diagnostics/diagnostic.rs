@@ -3,7 +3,6 @@ use std::ops::Range;
 use serde::Serialize;
 
 use crate::diagnostics::extensions::DiagnosticExtensions;
-use crate::diagnostics::kinds::DiagnosticKind;
 use crate::diagnostics::severity::DiagnosticSeverity;
 
 /// A single diagnostic produced while parsing or compiling a source unit.
@@ -15,22 +14,18 @@ use crate::diagnostics::severity::DiagnosticSeverity;
 /// argument; the `impl Into<DiagnosticKind>` bound takes care of the
 /// conversion via the `From` chain in [`crate::diagnostics::kinds`].
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
-pub struct Diagnostic {
+pub struct Diagnostic<K: DiagnosticExtensions> {
     file_id: String,
     text_range: Range<usize>,
-    kind: DiagnosticKind,
+    kind: K,
 }
 
-impl Diagnostic {
+impl<K: DiagnosticExtensions> Diagnostic<K> {
     /// Creates a new diagnostic anchored at `text_range` within the file
     /// identified by `file_id`. Any leaf diagnostic type (or group enum) can
     /// be passed as `kind` thanks to the `From` chain defined in
     /// [`crate::diagnostics::kinds`].
-    pub(super) fn new(
-        file_id: String,
-        text_range: Range<usize>,
-        kind: impl Into<DiagnosticKind>,
-    ) -> Self {
+    pub(super) fn new(file_id: String, text_range: Range<usize>, kind: impl Into<K>) -> Self {
         Self {
             file_id,
             text_range,
@@ -51,12 +46,12 @@ impl Diagnostic {
 
     /// Returns the classification of this diagnostic — the specific leaf
     /// payload wrapped inside its group enum.
-    pub fn kind(&self) -> &DiagnosticKind {
+    pub fn kind(&self) -> &K {
         &self.kind
     }
 }
 
-impl DiagnosticExtensions for Diagnostic {
+impl<K: DiagnosticExtensions> DiagnosticExtensions for Diagnostic<K> {
     fn severity(&self) -> DiagnosticSeverity {
         self.kind.severity()
     }
@@ -67,5 +62,18 @@ impl DiagnosticExtensions for Diagnostic {
 
     fn message(&self) -> String {
         self.kind.message()
+    }
+}
+
+impl<K: DiagnosticExtensions> Diagnostic<K> {
+    pub fn from_diagnostic<L: DiagnosticExtensions>(other: Diagnostic<L>) -> Self
+    where
+        K: From<L>,
+    {
+        Self {
+            file_id: other.file_id,
+            text_range: other.text_range,
+            kind: other.kind.into(),
+        }
     }
 }

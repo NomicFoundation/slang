@@ -4,6 +4,7 @@ use std::ops::Range;
 
 use anyhow::Result;
 use ariadne::{Color, Config, Label, Report, ReportBuilder, ReportKind, Source};
+use slang_solidity_v2::diagnostics::DiagnosticKind;
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::binder::Resolution;
@@ -128,7 +129,7 @@ fn report_unbound_identifiers(
 
 fn report_diagnostics(
     report: &mut String,
-    diagnostics: &DiagnosticCollection,
+    diagnostics: &DiagnosticCollection<DiagnosticKind>,
     file_contents: &BTreeMap<String, String>,
 ) -> Result<()> {
     writeln!(report, "Parse errors:")?;

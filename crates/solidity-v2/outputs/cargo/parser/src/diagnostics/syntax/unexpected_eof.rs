@@ -2,12 +2,10 @@ use std::collections::BTreeSet;
 
 use itertools::Itertools;
 use serde::Serialize;
+use slang_solidity_v2_common::diagnostics::{DiagnosticExtensions, DiagnosticSeverity};
+use slang_solidity_v2_common::terminals::TerminalKind;
 
-use crate::diagnostics::extensions::DiagnosticExtensions;
-use crate::diagnostics::kinds::syntax::SyntaxDiagnosticKind;
-use crate::diagnostics::kinds::DiagnosticKind;
-use crate::diagnostics::severity::DiagnosticSeverity;
-use crate::terminals::TerminalKind;
+use super::SyntaxDiagnosticKind;
 
 /// Diagnostic emitted when the parser encounters the end of the input while
 /// one or more terminals were still expected.
@@ -34,8 +32,8 @@ impl DiagnosticExtensions for UnexpectedEof {
     }
 }
 
-impl From<UnexpectedEof> for DiagnosticKind {
+impl From<UnexpectedEof> for SyntaxDiagnosticKind {
     fn from(d: UnexpectedEof) -> Self {
-        Self::Syntax(SyntaxDiagnosticKind::UnexpectedEof(d))
+        Self::UnexpectedEof(d)
     }
 }

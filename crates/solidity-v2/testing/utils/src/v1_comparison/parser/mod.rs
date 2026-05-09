@@ -6,12 +6,13 @@ use semver::Version;
 use slang_solidity::cst::Cursor;
 use slang_solidity_v2_common::diagnostics::{Diagnostic, DiagnosticExtensions, DiagnosticSeverity};
 use slang_solidity_v2_common::versions::LanguageVersion;
+use slang_solidity_v2_parser::diagnostics::SyntaxDiagnosticKind;
 use slang_solidity_v2_parser::{ParseOutput, Parser as V2Parser};
 
 use crate::reporting::diagnostic::RenderDiagnostic;
 
 pub enum ComparisonError {
-    CompilationDiagnostic(Diagnostic),
+    CompilationDiagnostic(Diagnostic<SyntaxDiagnosticKind>),
     NodeCheckerError(NodeCheckerError),
 }
 

@@ -1,10 +1,8 @@
 use serde::Serialize;
+use slang_solidity_v2_common::diagnostics::{DiagnosticExtensions, DiagnosticSeverity};
+use slang_solidity_v2_common::versions::LanguageVersionSpecifier;
 
-use crate::diagnostics::extensions::DiagnosticExtensions;
-use crate::diagnostics::kinds::syntax::SyntaxDiagnosticKind;
-use crate::diagnostics::kinds::DiagnosticKind;
-use crate::diagnostics::severity::DiagnosticSeverity;
-use crate::versions::LanguageVersionSpecifier;
+use super::SyntaxDiagnosticKind;
 
 /// Diagnostic emitted when a piece of syntax is not available for the
 /// currently selected language version (either introduced later or
@@ -41,8 +39,8 @@ impl DiagnosticExtensions for UnsupportedSyntax {
     }
 }
 
-impl From<UnsupportedSyntax> for DiagnosticKind {
+impl From<UnsupportedSyntax> for SyntaxDiagnosticKind {
     fn from(d: UnsupportedSyntax) -> Self {
-        Self::Syntax(SyntaxDiagnosticKind::UnsupportedSyntax(d))
+        Self::UnsupportedSyntax(d)
     }
 }

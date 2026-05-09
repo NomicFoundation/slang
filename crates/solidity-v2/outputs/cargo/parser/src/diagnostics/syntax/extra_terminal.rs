@@ -1,10 +1,8 @@
 use serde::Serialize;
+use slang_solidity_v2_common::diagnostics::{DiagnosticExtensions, DiagnosticSeverity};
+use slang_solidity_v2_common::terminals::TerminalKind;
 
-use crate::diagnostics::extensions::DiagnosticExtensions;
-use crate::diagnostics::kinds::syntax::SyntaxDiagnosticKind;
-use crate::diagnostics::kinds::DiagnosticKind;
-use crate::diagnostics::severity::DiagnosticSeverity;
-use crate::terminals::TerminalKind;
+use super::SyntaxDiagnosticKind;
 
 /// Diagnostic emitted when additional input is found after the parser has
 /// already consumed a complete source unit and expected end-of-file.
@@ -31,8 +29,8 @@ impl DiagnosticExtensions for ExtraTerminal {
     }
 }
 
-impl From<ExtraTerminal> for DiagnosticKind {
+impl From<ExtraTerminal> for SyntaxDiagnosticKind {
     fn from(d: ExtraTerminal) -> Self {
-        Self::Syntax(SyntaxDiagnosticKind::ExtraTerminal(d))
+        Self::ExtraTerminal(d)
     }
 }

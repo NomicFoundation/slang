@@ -5,11 +5,10 @@ mod unsupported_syntax;
 
 pub use extra_terminal::ExtraTerminal;
 use serde::Serialize;
+use slang_solidity_v2_common::define_diagnostic_kind;
 pub use unexpected_eof::UnexpectedEof;
 pub use unexpected_terminal::UnexpectedTerminal;
 pub use unsupported_syntax::UnsupportedSyntax;
-
-use crate::diagnostics::kinds::utils::define_diagnostic_kind;
 
 define_diagnostic_kind! {
     /// Group of diagnostics produced while parsing source text.

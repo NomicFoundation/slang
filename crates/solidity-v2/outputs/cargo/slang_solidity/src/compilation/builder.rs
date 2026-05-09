@@ -1,7 +1,6 @@
 use std::collections::{BTreeMap, BTreeSet, HashSet};
 use std::rc::Rc;
 
-use slang_solidity_v2_common::diagnostics::kinds::compilation::{MissingFile, UnresolvedImport};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes as cst;
@@ -13,6 +12,8 @@ use slang_solidity_v2_semantic::context::{
 
 use super::file::File;
 use super::unit::CompilationUnit;
+use crate::diagnostics::compilation::{MissingFile, UnresolvedImport};
+use crate::diagnostics::DiagnosticKind;
 
 /// User-provided callbacks necessary for the `CompilationBuilder` to perform its job.
 pub trait CompilationBuilderConfig {
@@ -52,7 +53,7 @@ pub struct CompilationBuilder<C: CompilationBuilderConfig> {
     pub config: C,
 
     language_version: LanguageVersion,
-    diagnostics: DiagnosticCollection,
+    diagnostics: DiagnosticCollection<DiagnosticKind>,
 
     files: BTreeMap<String, InternalFile>,
     seen_files: HashSet<String>,

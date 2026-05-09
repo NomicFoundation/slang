@@ -7,12 +7,13 @@ use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_semantic::context::{SemanticContext, SemanticFile};
 
 use super::file::File;
+use crate::diagnostics::DiagnosticKind;
 
 pub struct CompilationUnit {
     language_version: LanguageVersion,
     files: BTreeMap<String, Rc<File>>,
     semantic: Rc<SemanticContext>,
-    diagnostics: DiagnosticCollection,
+    diagnostics: DiagnosticCollection<DiagnosticKind>,
 }
 
 impl CompilationUnit {
@@ -20,7 +21,7 @@ impl CompilationUnit {
         language_version: LanguageVersion,
         files: Vec<File>,
         semantic: Rc<SemanticContext>,
-        diagnostics: DiagnosticCollection,
+        diagnostics: DiagnosticCollection<DiagnosticKind>,
     ) -> Self {
         let files: BTreeMap<String, Rc<File>> = files
             .into_iter()
@@ -35,7 +36,7 @@ impl CompilationUnit {
     }
 
     /// Returns the diagnostics collected during the compilation.
-    pub fn diagnostics(&self) -> &DiagnosticCollection {
+    pub fn diagnostics(&self) -> &DiagnosticCollection<DiagnosticKind> {
         &self.diagnostics
     }
 

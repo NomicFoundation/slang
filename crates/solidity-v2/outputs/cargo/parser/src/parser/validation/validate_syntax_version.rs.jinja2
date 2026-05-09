@@ -3,7 +3,7 @@
 #![allow(clippy::needless_return)]
 #![allow(clippy::wildcard_imports)]
 
-use slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax;
+use crate::diagnostics::syntax::{SyntaxDiagnosticKind, UnsupportedSyntax};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::versions::{LanguageVersion, LanguageVersionSpecifier};
 use slang_solidity_v2_cst::structured_cst::nodes::*;
@@ -14,7 +14,7 @@ pub fn validate_syntax_version(
     root: &SourceUnit,
     version: LanguageVersion,
     file_id: &str,
-    diagnostics: &mut DiagnosticCollection,
+    diagnostics: &mut DiagnosticCollection<SyntaxDiagnosticKind>,
 ) {
     let mut validator = SyntaxVersionValidator { version, file_id, diagnostics };
     validator.check_source_unit(root);
@@ -23,7 +23,7 @@ pub fn validate_syntax_version(
 struct SyntaxVersionValidator<'a> {
     version: LanguageVersion,
     file_id: &'a str,
-    diagnostics: &'a mut DiagnosticCollection,
+    diagnostics: &'a mut DiagnosticCollection<SyntaxDiagnosticKind>,
 }
 
 impl SyntaxVersionValidator<'_> {

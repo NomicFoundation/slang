@@ -1,9 +1,7 @@
 use serde::Serialize;
+use slang_solidity_v2_common::diagnostics::{DiagnosticExtensions, DiagnosticSeverity};
 
-use crate::diagnostics::extensions::DiagnosticExtensions;
-use crate::diagnostics::kinds::compilation::CompilationDiagnosticKind;
-use crate::diagnostics::kinds::DiagnosticKind;
-use crate::diagnostics::severity::DiagnosticSeverity;
+use super::CompilationDiagnosticKind;
 
 /// Diagnostic emitted when the compilation pipeline is asked to read a file
 /// that cannot be provided by the configured `read_file` callback.
@@ -27,8 +25,10 @@ impl DiagnosticExtensions for MissingFile {
     }
 }
 
-impl From<MissingFile> for DiagnosticKind {
+// Probably not needed since we're not pushing this diagnostic into a collection
+// of `Diagnostic<CompilationDiagnosticKind>`
+impl From<MissingFile> for CompilationDiagnosticKind {
     fn from(d: MissingFile) -> Self {
-        Self::Compilation(CompilationDiagnosticKind::MissingFile(d))
+        Self::MissingFile(d)
     }
 }
