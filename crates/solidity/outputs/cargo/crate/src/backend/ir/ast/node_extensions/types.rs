@@ -3,6 +3,7 @@ use std::rc::Rc;
 use paste::paste;
 
 use super::Definition;
+use crate::backend::binder;
 use crate::backend::types::{self, DataLocation, FunctionTypeKind, LiteralKind, TypeId};
 use crate::backend::SemanticAnalysis;
 
@@ -377,6 +378,26 @@ impl UserDefinedValueType {
         };
         Definition::try_create(*definition_id, &self.semantic)
             .expect("invalid user defined value definition")
+    }
+
+    /// Returns the underlying elementary type that this UDVT wraps, or `None`
+    /// if the binder did not resolve a target type (e.g., the declaration is
+    /// ill-formed or references an unsupported elementary type).
+    pub fn target_type(&self) -> Option<Type> {
+        let types::Type::UserDefinedValue { definition_id } = self.internal_type() else {
+            unreachable!("invalid user defined value type");
+        };
+        let binder_definition = self
+            .semantic
+            .binder()
+            .find_definition_by_id(*definition_id)?;
+        let binder::Definition::UserDefinedValueType(udvt_definition) = binder_definition else {
+            unreachable!("UDVT type id should map to UDVT definition");
+        };
+        Some(Type::create(
+            udvt_definition.target_type_id?,
+            &self.semantic,
+        ))
     }
 }
 
