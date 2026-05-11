@@ -122,7 +122,7 @@ fn check_tuple_values_as_deconstruction_elements(
     let mut v1_iter = v1_children.iter();
     let mut errors = vec![];
 
-    if let Some((first, pairs)) = tuple_values.split_first() {
+    if let Some((first, pairs)) = tuple_values.iter_with_separators() {
         if let Some((child, child_offset)) = v1_iter.next() {
             errors.extend(check_tuple_value_as_deconstruction_element(
                 first,
@@ -15276,7 +15276,7 @@ impl NodeChecker for ArrayValues {
         let mut errors = vec![];
 
         // Separated collection: walk V2 list pairs, match against V1 children
-        if let Some((first, pairs)) = self.split_first() {
+        if let Some((first, pairs)) = self.iter_with_separators() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(first.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -15338,7 +15338,7 @@ impl NodeChecker for CallOptions {
         let mut errors = vec![];
 
         // Separated collection: walk V2 list pairs, match against V1 children
-        if let Some((first, pairs)) = self.split_first() {
+        if let Some((first, pairs)) = self.iter_with_separators() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(first.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -15400,7 +15400,7 @@ impl NodeChecker for CatchClauses {
         let mut errors = vec![];
 
         // Repeated collection: no separators
-        for element in self.elements() {
+        for element in self.iter() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -15444,7 +15444,7 @@ impl NodeChecker for ConstructorAttributes {
         let mut errors = vec![];
 
         // Repeated collection: no separators
-        for element in self.elements() {
+        for element in self.iter() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -15488,7 +15488,7 @@ impl NodeChecker for ContractMembers {
         let mut errors = vec![];
 
         // Repeated collection: no separators
-        for element in self.elements() {
+        for element in self.iter() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -15532,7 +15532,7 @@ impl NodeChecker for ContractSpecifiers {
         let mut errors = vec![];
 
         // Repeated collection: no separators
-        for element in self.elements() {
+        for element in self.iter() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -15576,7 +15576,7 @@ impl NodeChecker for EnumMembers {
         let mut errors = vec![];
 
         // Separated collection: walk V2 list pairs, match against V1 children
-        if let Some((first, pairs)) = self.split_first() {
+        if let Some((first, pairs)) = self.iter_with_separators() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(first.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -15638,7 +15638,7 @@ impl NodeChecker for ErrorParameters {
         let mut errors = vec![];
 
         // Separated collection: walk V2 list pairs, match against V1 children
-        if let Some((first, pairs)) = self.split_first() {
+        if let Some((first, pairs)) = self.iter_with_separators() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(first.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -15700,7 +15700,7 @@ impl NodeChecker for EventParameters {
         let mut errors = vec![];
 
         // Separated collection: walk V2 list pairs, match against V1 children
-        if let Some((first, pairs)) = self.split_first() {
+        if let Some((first, pairs)) = self.iter_with_separators() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(first.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -15762,7 +15762,7 @@ impl NodeChecker for FallbackFunctionAttributes {
         let mut errors = vec![];
 
         // Repeated collection: no separators
-        for element in self.elements() {
+        for element in self.iter() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -15806,7 +15806,7 @@ impl NodeChecker for FunctionAttributes {
         let mut errors = vec![];
 
         // Repeated collection: no separators
-        for element in self.elements() {
+        for element in self.iter() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -15850,7 +15850,7 @@ impl NodeChecker for FunctionTypeAttributes {
         let mut errors = vec![];
 
         // Repeated collection: no separators
-        for element in self.elements() {
+        for element in self.iter() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -15894,7 +15894,7 @@ impl NodeChecker for HexStringLiterals {
         let mut errors = vec![];
 
         // Repeated collection: no separators
-        for element in self.elements() {
+        for element in self.iter() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -15938,7 +15938,7 @@ impl NodeChecker for IdentifierPath {
         let mut errors = vec![];
 
         // Separated collection: walk V2 list pairs, match against V1 children
-        if let Some((first, pairs)) = self.split_first() {
+        if let Some((first, pairs)) = self.iter_with_separators() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(first.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -16000,7 +16000,7 @@ impl NodeChecker for ImportDeconstructionSymbols {
         let mut errors = vec![];
 
         // Separated collection: walk V2 list pairs, match against V1 children
-        if let Some((first, pairs)) = self.split_first() {
+        if let Some((first, pairs)) = self.iter_with_separators() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(first.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -16062,7 +16062,7 @@ impl NodeChecker for InheritanceTypes {
         let mut errors = vec![];
 
         // Separated collection: walk V2 list pairs, match against V1 children
-        if let Some((first, pairs)) = self.split_first() {
+        if let Some((first, pairs)) = self.iter_with_separators() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(first.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -16124,7 +16124,7 @@ impl NodeChecker for InterfaceMembers {
         let mut errors = vec![];
 
         // Repeated collection: no separators
-        for element in self.elements() {
+        for element in self.iter() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -16168,7 +16168,7 @@ impl NodeChecker for LibraryMembers {
         let mut errors = vec![];
 
         // Repeated collection: no separators
-        for element in self.elements() {
+        for element in self.iter() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -16212,7 +16212,7 @@ impl NodeChecker for ModifierAttributes {
         let mut errors = vec![];
 
         // Repeated collection: no separators
-        for element in self.elements() {
+        for element in self.iter() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -16253,7 +16253,7 @@ impl NodeChecker for MultiTypedDeclarationElements {
         let mut v1_iter = v1_children.iter();
         let mut errors = vec![];
 
-        if let Some((first, pairs)) = self.split_first() {
+        if let Some((first, pairs)) = self.iter_with_separators() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(first.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -16316,7 +16316,7 @@ impl NodeChecker for NamedArguments {
         let mut errors = vec![];
 
         // Separated collection: walk V2 list pairs, match against V1 children
-        if let Some((first, pairs)) = self.split_first() {
+        if let Some((first, pairs)) = self.iter_with_separators() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(first.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -16378,7 +16378,7 @@ impl NodeChecker for OverridePaths {
         let mut errors = vec![];
 
         // Separated collection: walk V2 list pairs, match against V1 children
-        if let Some((first, pairs)) = self.split_first() {
+        if let Some((first, pairs)) = self.iter_with_separators() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(first.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -16440,7 +16440,7 @@ impl NodeChecker for Parameters {
         let mut errors = vec![];
 
         // Separated collection: walk V2 list pairs, match against V1 children
-        if let Some((first, pairs)) = self.split_first() {
+        if let Some((first, pairs)) = self.iter_with_separators() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(first.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -16502,7 +16502,7 @@ impl NodeChecker for PositionalArguments {
         let mut errors = vec![];
 
         // Separated collection: walk V2 list pairs, match against V1 children
-        if let Some((first, pairs)) = self.split_first() {
+        if let Some((first, pairs)) = self.iter_with_separators() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(first.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -16564,7 +16564,7 @@ impl NodeChecker for ReceiveFunctionAttributes {
         let mut errors = vec![];
 
         // Repeated collection: no separators
-        for element in self.elements() {
+        for element in self.iter() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -16608,7 +16608,7 @@ impl NodeChecker for SimpleVersionLiteral {
         let mut errors = vec![];
 
         // Separated collection: walk V2 list pairs, match against V1 children
-        if let Some((first, pairs)) = self.split_first() {
+        if let Some((first, pairs)) = self.iter_with_separators() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(first.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -16670,7 +16670,7 @@ impl NodeChecker for SourceUnitMembers {
         let mut errors = vec![];
 
         // Repeated collection: no separators
-        for element in self.elements() {
+        for element in self.iter() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -16714,7 +16714,7 @@ impl NodeChecker for StateVariableAttributes {
         let mut errors = vec![];
 
         // Repeated collection: no separators
-        for element in self.elements() {
+        for element in self.iter() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -16758,7 +16758,7 @@ impl NodeChecker for Statements {
         let mut errors = vec![];
 
         // Repeated collection: no separators
-        for element in self.elements() {
+        for element in self.iter() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -16802,7 +16802,7 @@ impl NodeChecker for StringLiterals {
         let mut errors = vec![];
 
         // Repeated collection: no separators
-        for element in self.elements() {
+        for element in self.iter() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -16846,7 +16846,7 @@ impl NodeChecker for StructMembers {
         let mut errors = vec![];
 
         // Repeated collection: no separators
-        for element in self.elements() {
+        for element in self.iter() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -16890,7 +16890,7 @@ impl NodeChecker for TupleValues {
         let mut errors = vec![];
 
         // Separated collection: walk V2 list pairs, match against V1 children
-        if let Some((first, pairs)) = self.split_first() {
+        if let Some((first, pairs)) = self.iter_with_separators() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(first.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -16952,7 +16952,7 @@ impl NodeChecker for UnicodeStringLiterals {
         let mut errors = vec![];
 
         // Repeated collection: no separators
-        for element in self.elements() {
+        for element in self.iter() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -16996,7 +16996,7 @@ impl NodeChecker for UsingDeconstructionSymbols {
         let mut errors = vec![];
 
         // Separated collection: walk V2 list pairs, match against V1 children
-        if let Some((first, pairs)) = self.split_first() {
+        if let Some((first, pairs)) = self.iter_with_separators() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(first.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -17058,7 +17058,7 @@ impl NodeChecker for VersionExpressionSet {
         let mut errors = vec![];
 
         // Repeated collection: no separators
-        for element in self.elements() {
+        for element in self.iter() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -17102,7 +17102,7 @@ impl NodeChecker for VersionExpressionSets {
         let mut errors = vec![];
 
         // Separated collection: walk V2 list pairs, match against V1 children
-        if let Some((first, pairs)) = self.split_first() {
+        if let Some((first, pairs)) = self.iter_with_separators() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(first.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -17164,7 +17164,7 @@ impl NodeChecker for YulArguments {
         let mut errors = vec![];
 
         // Separated collection: walk V2 list pairs, match against V1 children
-        if let Some((first, pairs)) = self.split_first() {
+        if let Some((first, pairs)) = self.iter_with_separators() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(first.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -17226,7 +17226,7 @@ impl NodeChecker for YulFlags {
         let mut errors = vec![];
 
         // Separated collection: walk V2 list pairs, match against V1 children
-        if let Some((first, pairs)) = self.split_first() {
+        if let Some((first, pairs)) = self.iter_with_separators() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(first.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -17288,7 +17288,7 @@ impl NodeChecker for YulParameters {
         let mut errors = vec![];
 
         // Separated collection: walk V2 list pairs, match against V1 children
-        if let Some((first, pairs)) = self.split_first() {
+        if let Some((first, pairs)) = self.iter_with_separators() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(first.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -17350,7 +17350,7 @@ impl NodeChecker for YulPath {
         let mut errors = vec![];
 
         // Separated collection: walk V2 list pairs, match against V1 children
-        if let Some((first, pairs)) = self.split_first() {
+        if let Some((first, pairs)) = self.iter_with_separators() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(first.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -17412,7 +17412,7 @@ impl NodeChecker for YulPaths {
         let mut errors = vec![];
 
         // Separated collection: walk V2 list pairs, match against V1 children
-        if let Some((first, pairs)) = self.split_first() {
+        if let Some((first, pairs)) = self.iter_with_separators() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(first.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -17474,7 +17474,7 @@ impl NodeChecker for YulStatements {
         let mut errors = vec![];
 
         // Repeated collection: no separators
-        for element in self.elements() {
+        for element in self.iter() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -17518,7 +17518,7 @@ impl NodeChecker for YulSwitchCases {
         let mut errors = vec![];
 
         // Repeated collection: no separators
-        for element in self.elements() {
+        for element in self.iter() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -17562,7 +17562,7 @@ impl NodeChecker for YulVariableNames {
         let mut errors = vec![];
 
         // Separated collection: walk V2 list pairs, match against V1 children
-        if let Some((first, pairs)) = self.split_first() {
+        if let Some((first, pairs)) = self.iter_with_separators() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(first.check_node_with_offset(&child.node, *child_offset));
             } else {

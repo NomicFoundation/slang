@@ -9,7 +9,7 @@ use std::collections::VecDeque;
 ///
 /// The fields are private so the invariant can only be broken via the API.
 /// Callers that need to walk separators alongside elements should use
-/// [`SeparatedList::split_first`] or [`SeparatedList::into_split_first`]
+/// [`SeparatedList::iter_with_separators`] or [`SeparatedList::into_iter_with_separators`]
 /// rather than reaching for the inner collections.
 #[derive(Clone, Debug, PartialEq)]
 pub struct SeparatedList<E, S> {
@@ -82,9 +82,7 @@ impl<E, S> SeparatedList<E, S> {
     }
 
     /// Iterate over all elements (skipping separators).
-    pub fn elements(
-        &self,
-    ) -> impl DoubleEndedIterator<Item = &E> + ExactSizeIterator<Item = &E> + '_ {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = &E> + ExactSizeIterator<Item = &E> + '_ {
         self.elements.iter()
     }
 
@@ -93,14 +91,14 @@ impl<E, S> SeparatedList<E, S> {
     ///
     /// Use this when you need to walk both elements and separators without
     /// touching the parallel-collection layout directly.
-    pub fn split_first(&self) -> Option<(&E, impl Iterator<Item = (&S, &E)> + '_)> {
+    pub fn iter_with_separators(&self) -> Option<(&E, impl Iterator<Item = (&S, &E)> + '_)> {
         let mut elements = self.elements.iter();
         let first = elements.next()?;
         Some((first, self.separators.iter().zip(elements)))
     }
 
-    /// Owning version of [`Self::split_first`], for code that consumes the list.
-    pub fn into_split_first(self) -> Option<(E, impl Iterator<Item = (S, E)>)> {
+    /// Owning version of [`Self::iter_with_separators`], for code that consumes the list.
+    pub fn into_iter_with_separators(self) -> Option<(E, impl Iterator<Item = (S, E)>)> {
         let mut elements = self.elements.into_iter();
         let first = elements.next()?;
         Some((first, self.separators.into_iter().zip(elements)))

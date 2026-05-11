@@ -130,7 +130,7 @@ pub(crate) fn new_expression_index_access_path(index_access_path: IndexAccessPat
 pub(crate) fn new_expression_identifier_path(identifier_path: IdentifierPath) -> Expression {
     let (first, rest) = identifier_path
         .0
-        .into_split_first()
+        .into_iter_with_separators()
         .expect("IdentifierPath should have at least one element");
     let mut expr = match first {
         IdentifierPathElement::AddressKeyword(_) => {

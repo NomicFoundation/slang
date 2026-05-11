@@ -114,7 +114,7 @@ fn check_tuple_values_as_deconstruction_elements(
     let mut v1_iter = v1_children.iter();
     let mut errors = vec![];
 
-    if let Some((first, pairs)) = tuple_values.split_first() {
+    if let Some((first, pairs)) = tuple_values.iter_with_separators() {
         if let Some((child, child_offset)) = v1_iter.next() {
             errors.extend(check_tuple_value_as_deconstruction_element(
                 first, &child.node, *child_offset,
@@ -1156,7 +1156,7 @@ impl NodeChecker for MultiTypedDeclarationElements {
         let mut v1_iter = v1_children.iter();
         let mut errors = vec![];
 
-        if let Some((first, pairs)) = self.split_first() {
+        if let Some((first, pairs)) = self.iter_with_separators() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(first.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -1220,7 +1220,7 @@ impl NodeChecker for {{ parent_type }} {
 
         {% if collection.separator_type -%}
         // Separated collection: walk V2 list pairs, match against V1 children
-        if let Some((first, pairs)) = self.split_first() {
+        if let Some((first, pairs)) = self.iter_with_separators() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(first.check_node_with_offset(&child.node, *child_offset));
             } else {
@@ -1250,7 +1250,7 @@ impl NodeChecker for {{ parent_type }} {
         }
         {%- else %}
         // Repeated collection: no separators
-        for element in self.elements() {
+        for element in self.iter() {
             if let Some((child, child_offset)) = v1_iter.next() {
                 errors.extend(element.check_node_with_offset(&child.node, *child_offset));
             } else {

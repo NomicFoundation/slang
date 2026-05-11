@@ -102,7 +102,7 @@ use crate::separated::SeparatedList;
   }
 
   impl {{ parent_type }} {
-      pub fn elements(&self) -> impl DoubleEndedIterator<Item = &{{ collection.item_type.name }}> {
+      pub fn iter(&self) -> impl DoubleEndedIterator<Item = &{{ collection.item_type.name }}> {
           self.elements.iter()
       }
   }

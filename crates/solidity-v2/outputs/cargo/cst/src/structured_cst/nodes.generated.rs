@@ -4277,7 +4277,7 @@ pub struct CatchClauses {
 }
 
 impl CatchClauses {
-    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &CatchClause> {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = &CatchClause> {
         self.elements.iter()
     }
 }
@@ -4292,7 +4292,7 @@ pub struct ConstructorAttributes {
 }
 
 impl ConstructorAttributes {
-    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &ConstructorAttribute> {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = &ConstructorAttribute> {
         self.elements.iter()
     }
 }
@@ -4307,7 +4307,7 @@ pub struct ContractMembers {
 }
 
 impl ContractMembers {
-    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &ContractMember> {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = &ContractMember> {
         self.elements.iter()
     }
 }
@@ -4322,7 +4322,7 @@ pub struct ContractSpecifiers {
 }
 
 impl ContractSpecifiers {
-    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &ContractSpecifier> {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = &ContractSpecifier> {
         self.elements.iter()
     }
 }
@@ -4397,7 +4397,7 @@ pub struct FallbackFunctionAttributes {
 }
 
 impl FallbackFunctionAttributes {
-    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &FallbackFunctionAttribute> {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = &FallbackFunctionAttribute> {
         self.elements.iter()
     }
 }
@@ -4414,7 +4414,7 @@ pub struct FunctionAttributes {
 }
 
 impl FunctionAttributes {
-    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &FunctionAttribute> {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = &FunctionAttribute> {
         self.elements.iter()
     }
 }
@@ -4429,7 +4429,7 @@ pub struct FunctionTypeAttributes {
 }
 
 impl FunctionTypeAttributes {
-    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &FunctionTypeAttribute> {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = &FunctionTypeAttribute> {
         self.elements.iter()
     }
 }
@@ -4446,7 +4446,7 @@ pub struct HexStringLiterals {
 }
 
 impl HexStringLiterals {
-    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &HexStringLiteral> {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = &HexStringLiteral> {
         self.elements.iter()
     }
 }
@@ -4523,7 +4523,7 @@ pub struct InterfaceMembers {
 }
 
 impl InterfaceMembers {
-    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &ContractMember> {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = &ContractMember> {
         self.elements.iter()
     }
 }
@@ -4538,7 +4538,7 @@ pub struct LibraryMembers {
 }
 
 impl LibraryMembers {
-    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &ContractMember> {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = &ContractMember> {
         self.elements.iter()
     }
 }
@@ -4553,7 +4553,7 @@ pub struct ModifierAttributes {
 }
 
 impl ModifierAttributes {
-    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &ModifierAttribute> {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = &ModifierAttribute> {
         self.elements.iter()
     }
 }
@@ -4670,7 +4670,7 @@ pub struct ReceiveFunctionAttributes {
 }
 
 impl ReceiveFunctionAttributes {
-    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &ReceiveFunctionAttribute> {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = &ReceiveFunctionAttribute> {
         self.elements.iter()
     }
 }
@@ -4709,7 +4709,7 @@ pub struct SourceUnitMembers {
 }
 
 impl SourceUnitMembers {
-    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &SourceUnitMember> {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = &SourceUnitMember> {
         self.elements.iter()
     }
 }
@@ -4724,7 +4724,7 @@ pub struct StateVariableAttributes {
 }
 
 impl StateVariableAttributes {
-    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &StateVariableAttribute> {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = &StateVariableAttribute> {
         self.elements.iter()
     }
 }
@@ -4741,7 +4741,7 @@ pub struct Statements {
 }
 
 impl Statements {
-    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &Statement> {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = &Statement> {
         self.elements.iter()
     }
 }
@@ -4756,7 +4756,7 @@ pub struct StringLiterals {
 }
 
 impl StringLiterals {
-    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &StringLiteral> {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = &StringLiteral> {
         self.elements.iter()
     }
 }
@@ -4771,7 +4771,7 @@ pub struct StructMembers {
 }
 
 impl StructMembers {
-    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &StructMember> {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = &StructMember> {
         self.elements.iter()
     }
 }
@@ -4806,7 +4806,7 @@ pub struct UnicodeStringLiterals {
 }
 
 impl UnicodeStringLiterals {
-    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &UnicodeStringLiteral> {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = &UnicodeStringLiteral> {
         self.elements.iter()
     }
 }
@@ -4843,7 +4843,7 @@ pub struct VersionExpressionSet {
 }
 
 impl VersionExpressionSet {
-    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &VersionExpression> {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = &VersionExpression> {
         self.elements.iter()
     }
 }
@@ -4980,7 +4980,7 @@ pub struct YulStatements {
 }
 
 impl YulStatements {
-    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &YulStatement> {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = &YulStatement> {
         self.elements.iter()
     }
 }
@@ -4995,7 +4995,7 @@ pub struct YulSwitchCases {
 }
 
 impl YulSwitchCases {
-    pub fn elements(&self) -> impl DoubleEndedIterator<Item = &YulSwitchCase> {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = &YulSwitchCase> {
         self.elements.iter()
     }
 }

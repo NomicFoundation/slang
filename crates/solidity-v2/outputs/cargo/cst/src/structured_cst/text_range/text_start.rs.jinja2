@@ -50,7 +50,7 @@ impl<T: TextStart> TextStart for Rc<T> {
 {% for parent_type, collection in target.collections %}
     impl TextStart for {{ parent_type }} {
         fn calculate_text_start(&self) -> Option<usize> {
-            self.elements().find_map(TextStart::calculate_text_start)
+            self.iter().find_map(TextStart::calculate_text_start)
         }
     }
 {% endfor %}

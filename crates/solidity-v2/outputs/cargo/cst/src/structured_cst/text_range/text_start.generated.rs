@@ -1708,265 +1708,265 @@ impl TextStart for YulSwitchCase {
 
 impl TextStart for ArrayValues {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for CallOptions {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for CatchClauses {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for ConstructorAttributes {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for ContractMembers {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for ContractSpecifiers {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for EnumMembers {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for ErrorParameters {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for EventParameters {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for FallbackFunctionAttributes {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for FunctionAttributes {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for FunctionTypeAttributes {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for HexStringLiterals {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for IdentifierPath {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for ImportDeconstructionSymbols {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for InheritanceTypes {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for InterfaceMembers {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for LibraryMembers {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for ModifierAttributes {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for MultiTypedDeclarationElements {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for NamedArguments {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for OverridePaths {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for Parameters {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for PositionalArguments {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for ReceiveFunctionAttributes {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for SimpleVersionLiteral {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for SourceUnitMembers {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for StateVariableAttributes {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for Statements {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for StringLiterals {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for StructMembers {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for TupleValues {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for UnicodeStringLiterals {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for UsingDeconstructionSymbols {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for VersionExpressionSet {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for VersionExpressionSets {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for YulArguments {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for YulFlags {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for YulParameters {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for YulPath {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for YulPaths {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for YulStatements {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for YulSwitchCases {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
 impl TextStart for YulVariableNames {
     fn calculate_text_start(&self) -> Option<usize> {
-        self.elements().find_map(TextStart::calculate_text_start)
+        self.iter().find_map(TextStart::calculate_text_start)
     }
 }
 
