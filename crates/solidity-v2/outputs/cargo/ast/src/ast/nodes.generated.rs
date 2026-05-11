@@ -80,8 +80,8 @@ impl AdditiveExpressionStruct {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
-    pub fn operator(&self) -> Expression_AdditiveExpression_Operator {
-        create_expression_additive_expression_operator(&self.ir_node.operator, &self.semantic)
+    pub fn operator(&self) -> AdditiveExpressionOperator {
+        create_additive_expression_operator(&self.ir_node.operator, &self.semantic)
     }
 
     pub fn right_operand(&self) -> Expression {
@@ -350,8 +350,8 @@ impl AssignmentExpressionStruct {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
-    pub fn operator(&self) -> Expression_AssignmentExpression_Operator {
-        create_expression_assignment_expression_operator(&self.ir_node.operator, &self.semantic)
+    pub fn operator(&self) -> AssignmentExpressionOperator {
+        create_assignment_expression_operator(&self.ir_node.operator, &self.semantic)
     }
 
     pub fn right_operand(&self) -> Expression {
@@ -1107,8 +1107,8 @@ impl EqualityExpressionStruct {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
-    pub fn operator(&self) -> Expression_EqualityExpression_Operator {
-        create_expression_equality_expression_operator(&self.ir_node.operator, &self.semantic)
+    pub fn operator(&self) -> EqualityExpressionOperator {
+        create_equality_expression_operator(&self.ir_node.operator, &self.semantic)
     }
 
     pub fn right_operand(&self) -> Expression {
@@ -1840,8 +1840,8 @@ impl InequalityExpressionStruct {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
-    pub fn operator(&self) -> Expression_InequalityExpression_Operator {
-        create_expression_inequality_expression_operator(&self.ir_node.operator, &self.semantic)
+    pub fn operator(&self) -> InequalityExpressionOperator {
+        create_inequality_expression_operator(&self.ir_node.operator, &self.semantic)
     }
 
     pub fn right_operand(&self) -> Expression {
@@ -2243,8 +2243,8 @@ impl MultiplicativeExpressionStruct {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
-    pub fn operator(&self) -> Expression_MultiplicativeExpression_Operator {
-        create_expression_multiplicative_expression_operator(&self.ir_node.operator, &self.semantic)
+    pub fn operator(&self) -> MultiplicativeExpressionOperator {
+        create_multiplicative_expression_operator(&self.ir_node.operator, &self.semantic)
     }
 
     pub fn right_operand(&self) -> Expression {
@@ -2515,8 +2515,8 @@ impl PostfixExpressionStruct {
         create_expression(&self.ir_node.operand, &self.semantic)
     }
 
-    pub fn operator(&self) -> Expression_PostfixExpression_Operator {
-        create_expression_postfix_expression_operator(&self.ir_node.operator, &self.semantic)
+    pub fn operator(&self) -> PostfixExpressionOperator {
+        create_postfix_expression_operator(&self.ir_node.operator, &self.semantic)
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -2593,8 +2593,8 @@ impl PrefixExpressionStruct {
         self.ir_node.id()
     }
 
-    pub fn operator(&self) -> Expression_PrefixExpression_Operator {
-        create_expression_prefix_expression_operator(&self.ir_node.operator, &self.semantic)
+    pub fn operator(&self) -> PrefixExpressionOperator {
+        create_prefix_expression_operator(&self.ir_node.operator, &self.semantic)
     }
 
     pub fn operand(&self) -> Expression {
@@ -2725,8 +2725,8 @@ impl ShiftExpressionStruct {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
-    pub fn operator(&self) -> Expression_ShiftExpression_Operator {
-        create_expression_shift_expression_operator(&self.ir_node.operator, &self.semantic)
+    pub fn operator(&self) -> ShiftExpressionOperator {
+        create_shift_expression_operator(&self.ir_node.operator, &self.semantic)
     }
 
     pub fn right_operand(&self) -> Expression {
@@ -4237,6 +4237,27 @@ pub(crate) fn create_abicoder_version(
     }
 }
 
+pub enum AdditiveExpressionOperator {
+    Minus(Minus),
+    Plus(Plus),
+}
+
+#[allow(clippy::too_many_lines)]
+#[allow(clippy::trivially_copy_pass_by_ref)]
+pub(crate) fn create_additive_expression_operator(
+    ir_node: &ir::AdditiveExpressionOperator,
+    semantic: &Rc<SemanticContext>,
+) -> AdditiveExpressionOperator {
+    match ir_node {
+        ir::AdditiveExpressionOperator::Minus(variant) => {
+            AdditiveExpressionOperator::Minus(create_minus(variant, semantic))
+        }
+        ir::AdditiveExpressionOperator::Plus(variant) => {
+            AdditiveExpressionOperator::Plus(create_plus(variant, semantic))
+        }
+    }
+}
+
 pub enum ArgumentsDeclaration {
     PositionalArguments(PositionalArguments),
     NamedArguments(NamedArguments),
@@ -4254,6 +4275,73 @@ pub(crate) fn create_arguments_declaration(
         }
         ir::ArgumentsDeclaration::NamedArguments(nodes) => {
             ArgumentsDeclaration::NamedArguments(create_named_arguments(nodes, semantic))
+        }
+    }
+}
+
+pub enum AssignmentExpressionOperator {
+    AmpersandEqual(AmpersandEqual),
+    AsteriskEqual(AsteriskEqual),
+    BarEqual(BarEqual),
+    CaretEqual(CaretEqual),
+    Equal(Equal),
+    GreaterThanGreaterThanEqual(GreaterThanGreaterThanEqual),
+    GreaterThanGreaterThanGreaterThanEqual(GreaterThanGreaterThanGreaterThanEqual),
+    LessThanLessThanEqual(LessThanLessThanEqual),
+    MinusEqual(MinusEqual),
+    PercentEqual(PercentEqual),
+    PlusEqual(PlusEqual),
+    SlashEqual(SlashEqual),
+}
+
+#[allow(clippy::too_many_lines)]
+#[allow(clippy::trivially_copy_pass_by_ref)]
+pub(crate) fn create_assignment_expression_operator(
+    ir_node: &ir::AssignmentExpressionOperator,
+    semantic: &Rc<SemanticContext>,
+) -> AssignmentExpressionOperator {
+    match ir_node {
+        ir::AssignmentExpressionOperator::AmpersandEqual(variant) => {
+            AssignmentExpressionOperator::AmpersandEqual(create_ampersand_equal(variant, semantic))
+        }
+        ir::AssignmentExpressionOperator::AsteriskEqual(variant) => {
+            AssignmentExpressionOperator::AsteriskEqual(create_asterisk_equal(variant, semantic))
+        }
+        ir::AssignmentExpressionOperator::BarEqual(variant) => {
+            AssignmentExpressionOperator::BarEqual(create_bar_equal(variant, semantic))
+        }
+        ir::AssignmentExpressionOperator::CaretEqual(variant) => {
+            AssignmentExpressionOperator::CaretEqual(create_caret_equal(variant, semantic))
+        }
+        ir::AssignmentExpressionOperator::Equal(variant) => {
+            AssignmentExpressionOperator::Equal(create_equal(variant, semantic))
+        }
+        ir::AssignmentExpressionOperator::GreaterThanGreaterThanEqual(variant) => {
+            AssignmentExpressionOperator::GreaterThanGreaterThanEqual(
+                create_greater_than_greater_than_equal(variant, semantic),
+            )
+        }
+        ir::AssignmentExpressionOperator::GreaterThanGreaterThanGreaterThanEqual(variant) => {
+            AssignmentExpressionOperator::GreaterThanGreaterThanGreaterThanEqual(
+                create_greater_than_greater_than_greater_than_equal(variant, semantic),
+            )
+        }
+        ir::AssignmentExpressionOperator::LessThanLessThanEqual(variant) => {
+            AssignmentExpressionOperator::LessThanLessThanEqual(create_less_than_less_than_equal(
+                variant, semantic,
+            ))
+        }
+        ir::AssignmentExpressionOperator::MinusEqual(variant) => {
+            AssignmentExpressionOperator::MinusEqual(create_minus_equal(variant, semantic))
+        }
+        ir::AssignmentExpressionOperator::PercentEqual(variant) => {
+            AssignmentExpressionOperator::PercentEqual(create_percent_equal(variant, semantic))
+        }
+        ir::AssignmentExpressionOperator::PlusEqual(variant) => {
+            AssignmentExpressionOperator::PlusEqual(create_plus_equal(variant, semantic))
+        }
+        ir::AssignmentExpressionOperator::SlashEqual(variant) => {
+            AssignmentExpressionOperator::SlashEqual(create_slash_equal(variant, semantic))
         }
     }
 }
@@ -4352,6 +4440,27 @@ pub(crate) fn create_elementary_type(
         }
         ir::ElementaryType::UfixedKeyword(variant) => {
             ElementaryType::UfixedKeyword(create_ufixed_keyword(variant, semantic))
+        }
+    }
+}
+
+pub enum EqualityExpressionOperator {
+    BangEqual(BangEqual),
+    EqualEqual(EqualEqual),
+}
+
+#[allow(clippy::too_many_lines)]
+#[allow(clippy::trivially_copy_pass_by_ref)]
+pub(crate) fn create_equality_expression_operator(
+    ir_node: &ir::EqualityExpressionOperator,
+    semantic: &Rc<SemanticContext>,
+) -> EqualityExpressionOperator {
+    match ir_node {
+        ir::EqualityExpressionOperator::BangEqual(variant) => {
+            EqualityExpressionOperator::BangEqual(create_bang_equal(variant, semantic))
+        }
+        ir::EqualityExpressionOperator::EqualEqual(variant) => {
+            EqualityExpressionOperator::EqualEqual(create_equal_equal(variant, semantic))
         }
     }
 }
@@ -4528,284 +4637,6 @@ pub(crate) fn create_expression(
     }
 }
 
-pub enum Expression_AdditiveExpression_Operator {
-    Minus(Minus),
-    Plus(Plus),
-}
-
-#[allow(clippy::too_many_lines)]
-#[allow(clippy::trivially_copy_pass_by_ref)]
-pub(crate) fn create_expression_additive_expression_operator(
-    ir_node: &ir::Expression_AdditiveExpression_Operator,
-    semantic: &Rc<SemanticContext>,
-) -> Expression_AdditiveExpression_Operator {
-    match ir_node {
-        ir::Expression_AdditiveExpression_Operator::Minus(variant) => {
-            Expression_AdditiveExpression_Operator::Minus(create_minus(variant, semantic))
-        }
-        ir::Expression_AdditiveExpression_Operator::Plus(variant) => {
-            Expression_AdditiveExpression_Operator::Plus(create_plus(variant, semantic))
-        }
-    }
-}
-
-pub enum Expression_AssignmentExpression_Operator {
-    AmpersandEqual(AmpersandEqual),
-    AsteriskEqual(AsteriskEqual),
-    BarEqual(BarEqual),
-    CaretEqual(CaretEqual),
-    Equal(Equal),
-    GreaterThanGreaterThanEqual(GreaterThanGreaterThanEqual),
-    GreaterThanGreaterThanGreaterThanEqual(GreaterThanGreaterThanGreaterThanEqual),
-    LessThanLessThanEqual(LessThanLessThanEqual),
-    MinusEqual(MinusEqual),
-    PercentEqual(PercentEqual),
-    PlusEqual(PlusEqual),
-    SlashEqual(SlashEqual),
-}
-
-#[allow(clippy::too_many_lines)]
-#[allow(clippy::trivially_copy_pass_by_ref)]
-pub(crate) fn create_expression_assignment_expression_operator(
-    ir_node: &ir::Expression_AssignmentExpression_Operator,
-    semantic: &Rc<SemanticContext>,
-) -> Expression_AssignmentExpression_Operator {
-    match ir_node {
-        ir::Expression_AssignmentExpression_Operator::AmpersandEqual(variant) => {
-            Expression_AssignmentExpression_Operator::AmpersandEqual(create_ampersand_equal(
-                variant, semantic,
-            ))
-        }
-        ir::Expression_AssignmentExpression_Operator::AsteriskEqual(variant) => {
-            Expression_AssignmentExpression_Operator::AsteriskEqual(create_asterisk_equal(
-                variant, semantic,
-            ))
-        }
-        ir::Expression_AssignmentExpression_Operator::BarEqual(variant) => {
-            Expression_AssignmentExpression_Operator::BarEqual(create_bar_equal(variant, semantic))
-        }
-        ir::Expression_AssignmentExpression_Operator::CaretEqual(variant) => {
-            Expression_AssignmentExpression_Operator::CaretEqual(create_caret_equal(
-                variant, semantic,
-            ))
-        }
-        ir::Expression_AssignmentExpression_Operator::Equal(variant) => {
-            Expression_AssignmentExpression_Operator::Equal(create_equal(variant, semantic))
-        }
-        ir::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanEqual(variant) => {
-            Expression_AssignmentExpression_Operator::GreaterThanGreaterThanEqual(
-                create_greater_than_greater_than_equal(variant, semantic),
-            )
-        }
-        ir::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanGreaterThanEqual(
-            variant,
-        ) => Expression_AssignmentExpression_Operator::GreaterThanGreaterThanGreaterThanEqual(
-            create_greater_than_greater_than_greater_than_equal(variant, semantic),
-        ),
-        ir::Expression_AssignmentExpression_Operator::LessThanLessThanEqual(variant) => {
-            Expression_AssignmentExpression_Operator::LessThanLessThanEqual(
-                create_less_than_less_than_equal(variant, semantic),
-            )
-        }
-        ir::Expression_AssignmentExpression_Operator::MinusEqual(variant) => {
-            Expression_AssignmentExpression_Operator::MinusEqual(create_minus_equal(
-                variant, semantic,
-            ))
-        }
-        ir::Expression_AssignmentExpression_Operator::PercentEqual(variant) => {
-            Expression_AssignmentExpression_Operator::PercentEqual(create_percent_equal(
-                variant, semantic,
-            ))
-        }
-        ir::Expression_AssignmentExpression_Operator::PlusEqual(variant) => {
-            Expression_AssignmentExpression_Operator::PlusEqual(create_plus_equal(
-                variant, semantic,
-            ))
-        }
-        ir::Expression_AssignmentExpression_Operator::SlashEqual(variant) => {
-            Expression_AssignmentExpression_Operator::SlashEqual(create_slash_equal(
-                variant, semantic,
-            ))
-        }
-    }
-}
-
-pub enum Expression_EqualityExpression_Operator {
-    BangEqual(BangEqual),
-    EqualEqual(EqualEqual),
-}
-
-#[allow(clippy::too_many_lines)]
-#[allow(clippy::trivially_copy_pass_by_ref)]
-pub(crate) fn create_expression_equality_expression_operator(
-    ir_node: &ir::Expression_EqualityExpression_Operator,
-    semantic: &Rc<SemanticContext>,
-) -> Expression_EqualityExpression_Operator {
-    match ir_node {
-        ir::Expression_EqualityExpression_Operator::BangEqual(variant) => {
-            Expression_EqualityExpression_Operator::BangEqual(create_bang_equal(variant, semantic))
-        }
-        ir::Expression_EqualityExpression_Operator::EqualEqual(variant) => {
-            Expression_EqualityExpression_Operator::EqualEqual(create_equal_equal(
-                variant, semantic,
-            ))
-        }
-    }
-}
-
-pub enum Expression_InequalityExpression_Operator {
-    GreaterThan(GreaterThan),
-    GreaterThanEqual(GreaterThanEqual),
-    LessThan(LessThan),
-    LessThanEqual(LessThanEqual),
-}
-
-#[allow(clippy::too_many_lines)]
-#[allow(clippy::trivially_copy_pass_by_ref)]
-pub(crate) fn create_expression_inequality_expression_operator(
-    ir_node: &ir::Expression_InequalityExpression_Operator,
-    semantic: &Rc<SemanticContext>,
-) -> Expression_InequalityExpression_Operator {
-    match ir_node {
-        ir::Expression_InequalityExpression_Operator::GreaterThan(variant) => {
-            Expression_InequalityExpression_Operator::GreaterThan(create_greater_than(
-                variant, semantic,
-            ))
-        }
-        ir::Expression_InequalityExpression_Operator::GreaterThanEqual(variant) => {
-            Expression_InequalityExpression_Operator::GreaterThanEqual(create_greater_than_equal(
-                variant, semantic,
-            ))
-        }
-        ir::Expression_InequalityExpression_Operator::LessThan(variant) => {
-            Expression_InequalityExpression_Operator::LessThan(create_less_than(variant, semantic))
-        }
-        ir::Expression_InequalityExpression_Operator::LessThanEqual(variant) => {
-            Expression_InequalityExpression_Operator::LessThanEqual(create_less_than_equal(
-                variant, semantic,
-            ))
-        }
-    }
-}
-
-pub enum Expression_MultiplicativeExpression_Operator {
-    Asterisk(Asterisk),
-    Percent(Percent),
-    Slash(Slash),
-}
-
-#[allow(clippy::too_many_lines)]
-#[allow(clippy::trivially_copy_pass_by_ref)]
-pub(crate) fn create_expression_multiplicative_expression_operator(
-    ir_node: &ir::Expression_MultiplicativeExpression_Operator,
-    semantic: &Rc<SemanticContext>,
-) -> Expression_MultiplicativeExpression_Operator {
-    match ir_node {
-        ir::Expression_MultiplicativeExpression_Operator::Asterisk(variant) => {
-            Expression_MultiplicativeExpression_Operator::Asterisk(create_asterisk(
-                variant, semantic,
-            ))
-        }
-        ir::Expression_MultiplicativeExpression_Operator::Percent(variant) => {
-            Expression_MultiplicativeExpression_Operator::Percent(create_percent(variant, semantic))
-        }
-        ir::Expression_MultiplicativeExpression_Operator::Slash(variant) => {
-            Expression_MultiplicativeExpression_Operator::Slash(create_slash(variant, semantic))
-        }
-    }
-}
-
-pub enum Expression_PostfixExpression_Operator {
-    MinusMinus(MinusMinus),
-    PlusPlus(PlusPlus),
-}
-
-#[allow(clippy::too_many_lines)]
-#[allow(clippy::trivially_copy_pass_by_ref)]
-pub(crate) fn create_expression_postfix_expression_operator(
-    ir_node: &ir::Expression_PostfixExpression_Operator,
-    semantic: &Rc<SemanticContext>,
-) -> Expression_PostfixExpression_Operator {
-    match ir_node {
-        ir::Expression_PostfixExpression_Operator::MinusMinus(variant) => {
-            Expression_PostfixExpression_Operator::MinusMinus(create_minus_minus(variant, semantic))
-        }
-        ir::Expression_PostfixExpression_Operator::PlusPlus(variant) => {
-            Expression_PostfixExpression_Operator::PlusPlus(create_plus_plus(variant, semantic))
-        }
-    }
-}
-
-pub enum Expression_PrefixExpression_Operator {
-    Bang(Bang),
-    DeleteKeyword(DeleteKeyword),
-    Minus(Minus),
-    MinusMinus(MinusMinus),
-    PlusPlus(PlusPlus),
-    Tilde(Tilde),
-}
-
-#[allow(clippy::too_many_lines)]
-#[allow(clippy::trivially_copy_pass_by_ref)]
-pub(crate) fn create_expression_prefix_expression_operator(
-    ir_node: &ir::Expression_PrefixExpression_Operator,
-    semantic: &Rc<SemanticContext>,
-) -> Expression_PrefixExpression_Operator {
-    match ir_node {
-        ir::Expression_PrefixExpression_Operator::Bang(variant) => {
-            Expression_PrefixExpression_Operator::Bang(create_bang(variant, semantic))
-        }
-        ir::Expression_PrefixExpression_Operator::DeleteKeyword(variant) => {
-            Expression_PrefixExpression_Operator::DeleteKeyword(create_delete_keyword(
-                variant, semantic,
-            ))
-        }
-        ir::Expression_PrefixExpression_Operator::Minus(variant) => {
-            Expression_PrefixExpression_Operator::Minus(create_minus(variant, semantic))
-        }
-        ir::Expression_PrefixExpression_Operator::MinusMinus(variant) => {
-            Expression_PrefixExpression_Operator::MinusMinus(create_minus_minus(variant, semantic))
-        }
-        ir::Expression_PrefixExpression_Operator::PlusPlus(variant) => {
-            Expression_PrefixExpression_Operator::PlusPlus(create_plus_plus(variant, semantic))
-        }
-        ir::Expression_PrefixExpression_Operator::Tilde(variant) => {
-            Expression_PrefixExpression_Operator::Tilde(create_tilde(variant, semantic))
-        }
-    }
-}
-
-pub enum Expression_ShiftExpression_Operator {
-    GreaterThanGreaterThan(GreaterThanGreaterThan),
-    GreaterThanGreaterThanGreaterThan(GreaterThanGreaterThanGreaterThan),
-    LessThanLessThan(LessThanLessThan),
-}
-
-#[allow(clippy::too_many_lines)]
-#[allow(clippy::trivially_copy_pass_by_ref)]
-pub(crate) fn create_expression_shift_expression_operator(
-    ir_node: &ir::Expression_ShiftExpression_Operator,
-    semantic: &Rc<SemanticContext>,
-) -> Expression_ShiftExpression_Operator {
-    match ir_node {
-        ir::Expression_ShiftExpression_Operator::GreaterThanGreaterThan(variant) => {
-            Expression_ShiftExpression_Operator::GreaterThanGreaterThan(
-                create_greater_than_greater_than(variant, semantic),
-            )
-        }
-        ir::Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan(variant) => {
-            Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan(
-                create_greater_than_greater_than_greater_than(variant, semantic),
-            )
-        }
-        ir::Expression_ShiftExpression_Operator::LessThanLessThan(variant) => {
-            Expression_ShiftExpression_Operator::LessThanLessThan(create_less_than_less_than(
-                variant, semantic,
-            ))
-        }
-    }
-}
-
 pub enum ForStatementCondition {
     ExpressionStatement(ExpressionStatement),
     Semicolon(Semicolon),
@@ -4944,6 +4775,62 @@ pub(crate) fn create_import_clause(
     }
 }
 
+pub enum InequalityExpressionOperator {
+    GreaterThan(GreaterThan),
+    GreaterThanEqual(GreaterThanEqual),
+    LessThan(LessThan),
+    LessThanEqual(LessThanEqual),
+}
+
+#[allow(clippy::too_many_lines)]
+#[allow(clippy::trivially_copy_pass_by_ref)]
+pub(crate) fn create_inequality_expression_operator(
+    ir_node: &ir::InequalityExpressionOperator,
+    semantic: &Rc<SemanticContext>,
+) -> InequalityExpressionOperator {
+    match ir_node {
+        ir::InequalityExpressionOperator::GreaterThan(variant) => {
+            InequalityExpressionOperator::GreaterThan(create_greater_than(variant, semantic))
+        }
+        ir::InequalityExpressionOperator::GreaterThanEqual(variant) => {
+            InequalityExpressionOperator::GreaterThanEqual(create_greater_than_equal(
+                variant, semantic,
+            ))
+        }
+        ir::InequalityExpressionOperator::LessThan(variant) => {
+            InequalityExpressionOperator::LessThan(create_less_than(variant, semantic))
+        }
+        ir::InequalityExpressionOperator::LessThanEqual(variant) => {
+            InequalityExpressionOperator::LessThanEqual(create_less_than_equal(variant, semantic))
+        }
+    }
+}
+
+pub enum MultiplicativeExpressionOperator {
+    Asterisk(Asterisk),
+    Percent(Percent),
+    Slash(Slash),
+}
+
+#[allow(clippy::too_many_lines)]
+#[allow(clippy::trivially_copy_pass_by_ref)]
+pub(crate) fn create_multiplicative_expression_operator(
+    ir_node: &ir::MultiplicativeExpressionOperator,
+    semantic: &Rc<SemanticContext>,
+) -> MultiplicativeExpressionOperator {
+    match ir_node {
+        ir::MultiplicativeExpressionOperator::Asterisk(variant) => {
+            MultiplicativeExpressionOperator::Asterisk(create_asterisk(variant, semantic))
+        }
+        ir::MultiplicativeExpressionOperator::Percent(variant) => {
+            MultiplicativeExpressionOperator::Percent(create_percent(variant, semantic))
+        }
+        ir::MultiplicativeExpressionOperator::Slash(variant) => {
+            MultiplicativeExpressionOperator::Slash(create_slash(variant, semantic))
+        }
+    }
+}
+
 pub enum NumberUnit {
     WeiKeyword(WeiKeyword),
     GweiKeyword(GweiKeyword),
@@ -4989,6 +4876,27 @@ pub(crate) fn create_number_unit(
     }
 }
 
+pub enum PostfixExpressionOperator {
+    MinusMinus(MinusMinus),
+    PlusPlus(PlusPlus),
+}
+
+#[allow(clippy::too_many_lines)]
+#[allow(clippy::trivially_copy_pass_by_ref)]
+pub(crate) fn create_postfix_expression_operator(
+    ir_node: &ir::PostfixExpressionOperator,
+    semantic: &Rc<SemanticContext>,
+) -> PostfixExpressionOperator {
+    match ir_node {
+        ir::PostfixExpressionOperator::MinusMinus(variant) => {
+            PostfixExpressionOperator::MinusMinus(create_minus_minus(variant, semantic))
+        }
+        ir::PostfixExpressionOperator::PlusPlus(variant) => {
+            PostfixExpressionOperator::PlusPlus(create_plus_plus(variant, semantic))
+        }
+    }
+}
+
 pub enum Pragma {
     VersionPragma(VersionPragma),
     AbicoderPragma(AbicoderPragma),
@@ -5007,6 +4915,72 @@ pub(crate) fn create_pragma(ir_node: &ir::Pragma, semantic: &Rc<SemanticContext>
         }
         ir::Pragma::ExperimentalPragma(variant) => {
             Pragma::ExperimentalPragma(create_experimental_pragma(variant, semantic))
+        }
+    }
+}
+
+pub enum PrefixExpressionOperator {
+    Bang(Bang),
+    DeleteKeyword(DeleteKeyword),
+    Minus(Minus),
+    MinusMinus(MinusMinus),
+    PlusPlus(PlusPlus),
+    Tilde(Tilde),
+}
+
+#[allow(clippy::too_many_lines)]
+#[allow(clippy::trivially_copy_pass_by_ref)]
+pub(crate) fn create_prefix_expression_operator(
+    ir_node: &ir::PrefixExpressionOperator,
+    semantic: &Rc<SemanticContext>,
+) -> PrefixExpressionOperator {
+    match ir_node {
+        ir::PrefixExpressionOperator::Bang(variant) => {
+            PrefixExpressionOperator::Bang(create_bang(variant, semantic))
+        }
+        ir::PrefixExpressionOperator::DeleteKeyword(variant) => {
+            PrefixExpressionOperator::DeleteKeyword(create_delete_keyword(variant, semantic))
+        }
+        ir::PrefixExpressionOperator::Minus(variant) => {
+            PrefixExpressionOperator::Minus(create_minus(variant, semantic))
+        }
+        ir::PrefixExpressionOperator::MinusMinus(variant) => {
+            PrefixExpressionOperator::MinusMinus(create_minus_minus(variant, semantic))
+        }
+        ir::PrefixExpressionOperator::PlusPlus(variant) => {
+            PrefixExpressionOperator::PlusPlus(create_plus_plus(variant, semantic))
+        }
+        ir::PrefixExpressionOperator::Tilde(variant) => {
+            PrefixExpressionOperator::Tilde(create_tilde(variant, semantic))
+        }
+    }
+}
+
+pub enum ShiftExpressionOperator {
+    GreaterThanGreaterThan(GreaterThanGreaterThan),
+    GreaterThanGreaterThanGreaterThan(GreaterThanGreaterThanGreaterThan),
+    LessThanLessThan(LessThanLessThan),
+}
+
+#[allow(clippy::too_many_lines)]
+#[allow(clippy::trivially_copy_pass_by_ref)]
+pub(crate) fn create_shift_expression_operator(
+    ir_node: &ir::ShiftExpressionOperator,
+    semantic: &Rc<SemanticContext>,
+) -> ShiftExpressionOperator {
+    match ir_node {
+        ir::ShiftExpressionOperator::GreaterThanGreaterThan(variant) => {
+            ShiftExpressionOperator::GreaterThanGreaterThan(create_greater_than_greater_than(
+                variant, semantic,
+            ))
+        }
+        ir::ShiftExpressionOperator::GreaterThanGreaterThanGreaterThan(variant) => {
+            ShiftExpressionOperator::GreaterThanGreaterThanGreaterThan(
+                create_greater_than_greater_than_greater_than(variant, semantic),
+            )
+        }
+        ir::ShiftExpressionOperator::LessThanLessThan(variant) => {
+            ShiftExpressionOperator::LessThanLessThan(create_less_than_less_than(variant, semantic))
         }
     }
 }

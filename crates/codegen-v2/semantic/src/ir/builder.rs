@@ -29,6 +29,7 @@ pub fn build_v2_ir_model(language: &Language) -> ModelWithBuilder {
     simplify_parameters(&mut mutator);
     simplify_mapping_type_parameters(&mut mutator);
     rename_operator_fields(&mut mutator);
+    rename_operator_choice_types(&mut mutator);
     remove_unused_types(&mut mutator);
     remove_unreferenced_terminals(&mut mutator);
 
@@ -381,6 +382,28 @@ fn rename_operator_fields(mutator: &mut IrModelMutator) {
 
     for (sequence_id, old_label) in renames {
         mutator.rename_sequence_field(sequence_id.as_str(), old_label.as_str(), "operator");
+    }
+}
+
+// Rename auto-generated operator choice types from `Expression_<X>_Operator`
+// down to the more idiomatic `<X>Operator`. The long names come from
+// `add_precedence_expression`'s multi-operator branch (see ir/model.rs), which
+// formats `<base>_<expression>_Operator`.
+fn rename_operator_choice_types(mutator: &mut IrModelMutator) {
+    let renames: Vec<(String, String)> = mutator
+        .choices
+        .keys()
+        .filter_map(|name| {
+            let middle = name
+                .as_str()
+                .strip_prefix("Expression_")?
+                .strip_suffix("_Operator")?;
+            Some((name.as_str().to_owned(), format!("{middle}Operator")))
+        })
+        .collect();
+
+    for (old_name, new_name) in renames {
+        mutator.rename_choice_type(&old_name, &new_name);
     }
 }
 

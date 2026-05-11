@@ -1559,6 +1559,23 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     }
 
     #[allow(clippy::unused_self)]
+    pub(super) fn build_expression_additive_expression_operator(
+        &mut self,
+        source: &input::Expression_AdditiveExpression_Operator,
+    ) -> output::AdditiveExpressionOperator {
+        #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
+        match source {
+            input::Expression_AdditiveExpression_Operator::Minus(ref minus) => {
+                output::AdditiveExpressionOperator::Minus(self.build_minus(minus))
+            }
+            input::Expression_AdditiveExpression_Operator::Plus(ref plus) => {
+                output::AdditiveExpressionOperator::Plus(self.build_plus(plus))
+            }
+        }
+    }
+
+    #[allow(clippy::unused_self)]
     #[allow(dead_code)]
     pub(super) fn default_build_arguments_declaration(
         &mut self,
@@ -1569,6 +1586,41 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         match source {
             _ => panic!("Unexpected variant {source:?}"),
         }
+    }
+
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_expression_assignment_expression_operator(
+        &mut self,
+        source: &input::Expression_AssignmentExpression_Operator,
+    ) -> output::AssignmentExpressionOperator {
+        #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
+        match source {
+          input::Expression_AssignmentExpression_Operator::AmpersandEqual(ref ampersand_equal) => {
+                output::AssignmentExpressionOperator::AmpersandEqual(self.build_ampersand_equal(ampersand_equal))
+              }input::Expression_AssignmentExpression_Operator::AsteriskEqual(ref asterisk_equal) => {
+                output::AssignmentExpressionOperator::AsteriskEqual(self.build_asterisk_equal(asterisk_equal))
+              }input::Expression_AssignmentExpression_Operator::BarEqual(ref bar_equal) => {
+                output::AssignmentExpressionOperator::BarEqual(self.build_bar_equal(bar_equal))
+              }input::Expression_AssignmentExpression_Operator::CaretEqual(ref caret_equal) => {
+                output::AssignmentExpressionOperator::CaretEqual(self.build_caret_equal(caret_equal))
+              }input::Expression_AssignmentExpression_Operator::Equal(ref equal) => {
+                output::AssignmentExpressionOperator::Equal(self.build_equal(equal))
+              }input::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanEqual(ref greater_than_greater_than_equal) => {
+                output::AssignmentExpressionOperator::GreaterThanGreaterThanEqual(self.build_greater_than_greater_than_equal(greater_than_greater_than_equal))
+              }input::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanGreaterThanEqual(ref greater_than_greater_than_greater_than_equal) => {
+                output::AssignmentExpressionOperator::GreaterThanGreaterThanGreaterThanEqual(self.build_greater_than_greater_than_greater_than_equal(greater_than_greater_than_greater_than_equal))
+              }input::Expression_AssignmentExpression_Operator::LessThanLessThanEqual(ref less_than_less_than_equal) => {
+                output::AssignmentExpressionOperator::LessThanLessThanEqual(self.build_less_than_less_than_equal(less_than_less_than_equal))
+              }input::Expression_AssignmentExpression_Operator::MinusEqual(ref minus_equal) => {
+                output::AssignmentExpressionOperator::MinusEqual(self.build_minus_equal(minus_equal))
+              }input::Expression_AssignmentExpression_Operator::PercentEqual(ref percent_equal) => {
+                output::AssignmentExpressionOperator::PercentEqual(self.build_percent_equal(percent_equal))
+              }input::Expression_AssignmentExpression_Operator::PlusEqual(ref plus_equal) => {
+                output::AssignmentExpressionOperator::PlusEqual(self.build_plus_equal(plus_equal))
+              }input::Expression_AssignmentExpression_Operator::SlashEqual(ref slash_equal) => {
+                output::AssignmentExpressionOperator::SlashEqual(self.build_slash_equal(slash_equal))
+              }}
     }
 
     #[allow(clippy::unused_self)]
@@ -1651,6 +1703,23 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             }
             input::ElementaryType::UfixedKeyword(ref ufixed_keyword) => {
                 output::ElementaryType::UfixedKeyword(self.build_ufixed_keyword(ufixed_keyword))
+            }
+        }
+    }
+
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_expression_equality_expression_operator(
+        &mut self,
+        source: &input::Expression_EqualityExpression_Operator,
+    ) -> output::EqualityExpressionOperator {
+        #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
+        match source {
+            input::Expression_EqualityExpression_Operator::BangEqual(ref bang_equal) => {
+                output::EqualityExpressionOperator::BangEqual(self.build_bang_equal(bang_equal))
+            }
+            input::Expression_EqualityExpression_Operator::EqualEqual(ref equal_equal) => {
+                output::EqualityExpressionOperator::EqualEqual(self.build_equal_equal(equal_equal))
             }
         }
     }
@@ -1827,218 +1896,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     }
 
     #[allow(clippy::unused_self)]
-    pub(super) fn build_expression_additive_expression_operator(
-        &mut self,
-        source: &input::Expression_AdditiveExpression_Operator,
-    ) -> output::Expression_AdditiveExpression_Operator {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        #[allow(clippy::match_single_binding)]
-        match source {
-            input::Expression_AdditiveExpression_Operator::Minus(ref minus) => {
-                output::Expression_AdditiveExpression_Operator::Minus(self.build_minus(minus))
-            }
-            input::Expression_AdditiveExpression_Operator::Plus(ref plus) => {
-                output::Expression_AdditiveExpression_Operator::Plus(self.build_plus(plus))
-            }
-        }
-    }
-
-    #[allow(clippy::unused_self)]
-    pub(super) fn build_expression_assignment_expression_operator(
-        &mut self,
-        source: &input::Expression_AssignmentExpression_Operator,
-    ) -> output::Expression_AssignmentExpression_Operator {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        #[allow(clippy::match_single_binding)]
-        match source {
-          input::Expression_AssignmentExpression_Operator::AmpersandEqual(ref ampersand_equal) => {
-                output::Expression_AssignmentExpression_Operator::AmpersandEqual(self.build_ampersand_equal(ampersand_equal))
-              }input::Expression_AssignmentExpression_Operator::AsteriskEqual(ref asterisk_equal) => {
-                output::Expression_AssignmentExpression_Operator::AsteriskEqual(self.build_asterisk_equal(asterisk_equal))
-              }input::Expression_AssignmentExpression_Operator::BarEqual(ref bar_equal) => {
-                output::Expression_AssignmentExpression_Operator::BarEqual(self.build_bar_equal(bar_equal))
-              }input::Expression_AssignmentExpression_Operator::CaretEqual(ref caret_equal) => {
-                output::Expression_AssignmentExpression_Operator::CaretEqual(self.build_caret_equal(caret_equal))
-              }input::Expression_AssignmentExpression_Operator::Equal(ref equal) => {
-                output::Expression_AssignmentExpression_Operator::Equal(self.build_equal(equal))
-              }input::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanEqual(ref greater_than_greater_than_equal) => {
-                output::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanEqual(self.build_greater_than_greater_than_equal(greater_than_greater_than_equal))
-              }input::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanGreaterThanEqual(ref greater_than_greater_than_greater_than_equal) => {
-                output::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanGreaterThanEqual(self.build_greater_than_greater_than_greater_than_equal(greater_than_greater_than_greater_than_equal))
-              }input::Expression_AssignmentExpression_Operator::LessThanLessThanEqual(ref less_than_less_than_equal) => {
-                output::Expression_AssignmentExpression_Operator::LessThanLessThanEqual(self.build_less_than_less_than_equal(less_than_less_than_equal))
-              }input::Expression_AssignmentExpression_Operator::MinusEqual(ref minus_equal) => {
-                output::Expression_AssignmentExpression_Operator::MinusEqual(self.build_minus_equal(minus_equal))
-              }input::Expression_AssignmentExpression_Operator::PercentEqual(ref percent_equal) => {
-                output::Expression_AssignmentExpression_Operator::PercentEqual(self.build_percent_equal(percent_equal))
-              }input::Expression_AssignmentExpression_Operator::PlusEqual(ref plus_equal) => {
-                output::Expression_AssignmentExpression_Operator::PlusEqual(self.build_plus_equal(plus_equal))
-              }input::Expression_AssignmentExpression_Operator::SlashEqual(ref slash_equal) => {
-                output::Expression_AssignmentExpression_Operator::SlashEqual(self.build_slash_equal(slash_equal))
-              }}
-    }
-
-    #[allow(clippy::unused_self)]
-    pub(super) fn build_expression_equality_expression_operator(
-        &mut self,
-        source: &input::Expression_EqualityExpression_Operator,
-    ) -> output::Expression_EqualityExpression_Operator {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        #[allow(clippy::match_single_binding)]
-        match source {
-            input::Expression_EqualityExpression_Operator::BangEqual(ref bang_equal) => {
-                output::Expression_EqualityExpression_Operator::BangEqual(
-                    self.build_bang_equal(bang_equal),
-                )
-            }
-            input::Expression_EqualityExpression_Operator::EqualEqual(ref equal_equal) => {
-                output::Expression_EqualityExpression_Operator::EqualEqual(
-                    self.build_equal_equal(equal_equal),
-                )
-            }
-        }
-    }
-
-    #[allow(clippy::unused_self)]
-    pub(super) fn build_expression_inequality_expression_operator(
-        &mut self,
-        source: &input::Expression_InequalityExpression_Operator,
-    ) -> output::Expression_InequalityExpression_Operator {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        #[allow(clippy::match_single_binding)]
-        match source {
-            input::Expression_InequalityExpression_Operator::GreaterThan(ref greater_than) => {
-                output::Expression_InequalityExpression_Operator::GreaterThan(
-                    self.build_greater_than(greater_than),
-                )
-            }
-            input::Expression_InequalityExpression_Operator::GreaterThanEqual(
-                ref greater_than_equal,
-            ) => output::Expression_InequalityExpression_Operator::GreaterThanEqual(
-                self.build_greater_than_equal(greater_than_equal),
-            ),
-            input::Expression_InequalityExpression_Operator::LessThan(ref less_than) => {
-                output::Expression_InequalityExpression_Operator::LessThan(
-                    self.build_less_than(less_than),
-                )
-            }
-            input::Expression_InequalityExpression_Operator::LessThanEqual(ref less_than_equal) => {
-                output::Expression_InequalityExpression_Operator::LessThanEqual(
-                    self.build_less_than_equal(less_than_equal),
-                )
-            }
-        }
-    }
-
-    #[allow(clippy::unused_self)]
-    pub(super) fn build_expression_multiplicative_expression_operator(
-        &mut self,
-        source: &input::Expression_MultiplicativeExpression_Operator,
-    ) -> output::Expression_MultiplicativeExpression_Operator {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        #[allow(clippy::match_single_binding)]
-        match source {
-            input::Expression_MultiplicativeExpression_Operator::Asterisk(ref asterisk) => {
-                output::Expression_MultiplicativeExpression_Operator::Asterisk(
-                    self.build_asterisk(asterisk),
-                )
-            }
-            input::Expression_MultiplicativeExpression_Operator::Percent(ref percent) => {
-                output::Expression_MultiplicativeExpression_Operator::Percent(
-                    self.build_percent(percent),
-                )
-            }
-            input::Expression_MultiplicativeExpression_Operator::Slash(ref slash) => {
-                output::Expression_MultiplicativeExpression_Operator::Slash(self.build_slash(slash))
-            }
-        }
-    }
-
-    #[allow(clippy::unused_self)]
-    pub(super) fn build_expression_postfix_expression_operator(
-        &mut self,
-        source: &input::Expression_PostfixExpression_Operator,
-    ) -> output::Expression_PostfixExpression_Operator {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        #[allow(clippy::match_single_binding)]
-        match source {
-            input::Expression_PostfixExpression_Operator::MinusMinus(ref minus_minus) => {
-                output::Expression_PostfixExpression_Operator::MinusMinus(
-                    self.build_minus_minus(minus_minus),
-                )
-            }
-            input::Expression_PostfixExpression_Operator::PlusPlus(ref plus_plus) => {
-                output::Expression_PostfixExpression_Operator::PlusPlus(
-                    self.build_plus_plus(plus_plus),
-                )
-            }
-        }
-    }
-
-    #[allow(clippy::unused_self)]
-    pub(super) fn build_expression_prefix_expression_operator(
-        &mut self,
-        source: &input::Expression_PrefixExpression_Operator,
-    ) -> output::Expression_PrefixExpression_Operator {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        #[allow(clippy::match_single_binding)]
-        match source {
-            input::Expression_PrefixExpression_Operator::Bang(ref bang) => {
-                output::Expression_PrefixExpression_Operator::Bang(self.build_bang(bang))
-            }
-            input::Expression_PrefixExpression_Operator::DeleteKeyword(ref delete_keyword) => {
-                output::Expression_PrefixExpression_Operator::DeleteKeyword(
-                    self.build_delete_keyword(delete_keyword),
-                )
-            }
-            input::Expression_PrefixExpression_Operator::Minus(ref minus) => {
-                output::Expression_PrefixExpression_Operator::Minus(self.build_minus(minus))
-            }
-            input::Expression_PrefixExpression_Operator::MinusMinus(ref minus_minus) => {
-                output::Expression_PrefixExpression_Operator::MinusMinus(
-                    self.build_minus_minus(minus_minus),
-                )
-            }
-            input::Expression_PrefixExpression_Operator::PlusPlus(ref plus_plus) => {
-                output::Expression_PrefixExpression_Operator::PlusPlus(
-                    self.build_plus_plus(plus_plus),
-                )
-            }
-            input::Expression_PrefixExpression_Operator::Tilde(ref tilde) => {
-                output::Expression_PrefixExpression_Operator::Tilde(self.build_tilde(tilde))
-            }
-        }
-    }
-
-    #[allow(clippy::unused_self)]
-    pub(super) fn build_expression_shift_expression_operator(
-        &mut self,
-        source: &input::Expression_ShiftExpression_Operator,
-    ) -> output::Expression_ShiftExpression_Operator {
-        #[allow(clippy::match_wildcard_for_single_variants)]
-        #[allow(clippy::match_single_binding)]
-        match source {
-            input::Expression_ShiftExpression_Operator::GreaterThanGreaterThan(
-                ref greater_than_greater_than,
-            ) => output::Expression_ShiftExpression_Operator::GreaterThanGreaterThan(
-                self.build_greater_than_greater_than(greater_than_greater_than),
-            ),
-            input::Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan(
-                ref greater_than_greater_than_greater_than,
-            ) => output::Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan(
-                self.build_greater_than_greater_than_greater_than(
-                    greater_than_greater_than_greater_than,
-                ),
-            ),
-            input::Expression_ShiftExpression_Operator::LessThanLessThan(
-                ref less_than_less_than,
-            ) => output::Expression_ShiftExpression_Operator::LessThanLessThan(
-                self.build_less_than_less_than(less_than_less_than),
-            ),
-        }
-    }
-
-    #[allow(clippy::unused_self)]
     pub(super) fn build_for_statement_condition(
         &mut self,
         source: &input::ForStatementCondition,
@@ -2103,6 +1960,55 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     }
 
     #[allow(clippy::unused_self)]
+    pub(super) fn build_expression_inequality_expression_operator(
+        &mut self,
+        source: &input::Expression_InequalityExpression_Operator,
+    ) -> output::InequalityExpressionOperator {
+        #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
+        match source {
+            input::Expression_InequalityExpression_Operator::GreaterThan(ref greater_than) => {
+                output::InequalityExpressionOperator::GreaterThan(
+                    self.build_greater_than(greater_than),
+                )
+            }
+            input::Expression_InequalityExpression_Operator::GreaterThanEqual(
+                ref greater_than_equal,
+            ) => output::InequalityExpressionOperator::GreaterThanEqual(
+                self.build_greater_than_equal(greater_than_equal),
+            ),
+            input::Expression_InequalityExpression_Operator::LessThan(ref less_than) => {
+                output::InequalityExpressionOperator::LessThan(self.build_less_than(less_than))
+            }
+            input::Expression_InequalityExpression_Operator::LessThanEqual(ref less_than_equal) => {
+                output::InequalityExpressionOperator::LessThanEqual(
+                    self.build_less_than_equal(less_than_equal),
+                )
+            }
+        }
+    }
+
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_expression_multiplicative_expression_operator(
+        &mut self,
+        source: &input::Expression_MultiplicativeExpression_Operator,
+    ) -> output::MultiplicativeExpressionOperator {
+        #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
+        match source {
+            input::Expression_MultiplicativeExpression_Operator::Asterisk(ref asterisk) => {
+                output::MultiplicativeExpressionOperator::Asterisk(self.build_asterisk(asterisk))
+            }
+            input::Expression_MultiplicativeExpression_Operator::Percent(ref percent) => {
+                output::MultiplicativeExpressionOperator::Percent(self.build_percent(percent))
+            }
+            input::Expression_MultiplicativeExpression_Operator::Slash(ref slash) => {
+                output::MultiplicativeExpressionOperator::Slash(self.build_slash(slash))
+            }
+        }
+    }
+
+    #[allow(clippy::unused_self)]
     pub(super) fn build_number_unit(&mut self, source: &input::NumberUnit) -> output::NumberUnit {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
@@ -2135,6 +2041,23 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     }
 
     #[allow(clippy::unused_self)]
+    pub(super) fn build_expression_postfix_expression_operator(
+        &mut self,
+        source: &input::Expression_PostfixExpression_Operator,
+    ) -> output::PostfixExpressionOperator {
+        #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
+        match source {
+            input::Expression_PostfixExpression_Operator::MinusMinus(ref minus_minus) => {
+                output::PostfixExpressionOperator::MinusMinus(self.build_minus_minus(minus_minus))
+            }
+            input::Expression_PostfixExpression_Operator::PlusPlus(ref plus_plus) => {
+                output::PostfixExpressionOperator::PlusPlus(self.build_plus_plus(plus_plus))
+            }
+        }
+    }
+
+    #[allow(clippy::unused_self)]
     pub(super) fn build_pragma(&mut self, source: &input::Pragma) -> output::Pragma {
         #[allow(clippy::match_wildcard_for_single_variants)]
         #[allow(clippy::match_single_binding)]
@@ -2150,6 +2073,65 @@ impl<S: Source> CstToIrBuilder<'_, S> {
                     self.build_experimental_pragma(experimental_pragma),
                 )
             }
+        }
+    }
+
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_expression_prefix_expression_operator(
+        &mut self,
+        source: &input::Expression_PrefixExpression_Operator,
+    ) -> output::PrefixExpressionOperator {
+        #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
+        match source {
+            input::Expression_PrefixExpression_Operator::Bang(ref bang) => {
+                output::PrefixExpressionOperator::Bang(self.build_bang(bang))
+            }
+            input::Expression_PrefixExpression_Operator::DeleteKeyword(ref delete_keyword) => {
+                output::PrefixExpressionOperator::DeleteKeyword(
+                    self.build_delete_keyword(delete_keyword),
+                )
+            }
+            input::Expression_PrefixExpression_Operator::Minus(ref minus) => {
+                output::PrefixExpressionOperator::Minus(self.build_minus(minus))
+            }
+            input::Expression_PrefixExpression_Operator::MinusMinus(ref minus_minus) => {
+                output::PrefixExpressionOperator::MinusMinus(self.build_minus_minus(minus_minus))
+            }
+            input::Expression_PrefixExpression_Operator::PlusPlus(ref plus_plus) => {
+                output::PrefixExpressionOperator::PlusPlus(self.build_plus_plus(plus_plus))
+            }
+            input::Expression_PrefixExpression_Operator::Tilde(ref tilde) => {
+                output::PrefixExpressionOperator::Tilde(self.build_tilde(tilde))
+            }
+        }
+    }
+
+    #[allow(clippy::unused_self)]
+    pub(super) fn build_expression_shift_expression_operator(
+        &mut self,
+        source: &input::Expression_ShiftExpression_Operator,
+    ) -> output::ShiftExpressionOperator {
+        #[allow(clippy::match_wildcard_for_single_variants)]
+        #[allow(clippy::match_single_binding)]
+        match source {
+            input::Expression_ShiftExpression_Operator::GreaterThanGreaterThan(
+                ref greater_than_greater_than,
+            ) => output::ShiftExpressionOperator::GreaterThanGreaterThan(
+                self.build_greater_than_greater_than(greater_than_greater_than),
+            ),
+            input::Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan(
+                ref greater_than_greater_than_greater_than,
+            ) => output::ShiftExpressionOperator::GreaterThanGreaterThanGreaterThan(
+                self.build_greater_than_greater_than_greater_than(
+                    greater_than_greater_than_greater_than,
+                ),
+            ),
+            input::Expression_ShiftExpression_Operator::LessThanLessThan(
+                ref less_than_less_than,
+            ) => output::ShiftExpressionOperator::LessThanLessThan(
+                self.build_less_than_less_than(less_than_less_than),
+            ),
         }
     }
 

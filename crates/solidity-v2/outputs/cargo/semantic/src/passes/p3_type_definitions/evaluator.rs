@@ -166,19 +166,17 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
         let lhs = self.evaluate_expression(&shift_expression.left_operand)?;
         let rhs = self.evaluate_expression(&shift_expression.right_operand)?;
         match &shift_expression.operator {
-            ir::Expression_ShiftExpression_Operator::LessThanLessThan(_) => match (lhs, rhs) {
+            ir::ShiftExpressionOperator::LessThanLessThan(_) => match (lhs, rhs) {
                 (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
                     Some(ConstantValue::Integer(lhs << rhs.to_u32()?))
                 }
             },
-            ir::Expression_ShiftExpression_Operator::GreaterThanGreaterThan(_) => {
-                match (lhs, rhs) {
-                    (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
-                        Some(ConstantValue::Integer(lhs >> rhs.to_u32()?))
-                    }
+            ir::ShiftExpressionOperator::GreaterThanGreaterThan(_) => match (lhs, rhs) {
+                (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
+                    Some(ConstantValue::Integer(lhs >> rhs.to_u32()?))
                 }
-            }
-            ir::Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan(_) => None,
+            },
+            ir::ShiftExpressionOperator::GreaterThanGreaterThanGreaterThan(_) => None,
         }
     }
 
@@ -189,12 +187,12 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
         let lhs = self.evaluate_expression(&additive_expression.left_operand)?;
         let rhs = self.evaluate_expression(&additive_expression.right_operand)?;
         match &additive_expression.operator {
-            ir::Expression_AdditiveExpression_Operator::Plus(_) => match (lhs, rhs) {
+            ir::AdditiveExpressionOperator::Plus(_) => match (lhs, rhs) {
                 (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
                     Some(ConstantValue::Integer(lhs + rhs))
                 }
             },
-            ir::Expression_AdditiveExpression_Operator::Minus(_) => match (lhs, rhs) {
+            ir::AdditiveExpressionOperator::Minus(_) => match (lhs, rhs) {
                 (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
                     Some(ConstantValue::Integer(lhs - rhs))
                 }
@@ -209,17 +207,17 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
         let lhs = self.evaluate_expression(&multiplicative_expression.left_operand)?;
         let rhs = self.evaluate_expression(&multiplicative_expression.right_operand)?;
         match &multiplicative_expression.operator {
-            ir::Expression_MultiplicativeExpression_Operator::Asterisk(_) => match (lhs, rhs) {
+            ir::MultiplicativeExpressionOperator::Asterisk(_) => match (lhs, rhs) {
                 (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
                     Some(ConstantValue::Integer(lhs * rhs))
                 }
             },
-            ir::Expression_MultiplicativeExpression_Operator::Slash(_) => match (lhs, rhs) {
+            ir::MultiplicativeExpressionOperator::Slash(_) => match (lhs, rhs) {
                 (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
                     Some(ConstantValue::Integer(lhs / rhs))
                 }
             },
-            ir::Expression_MultiplicativeExpression_Operator::Percent(_) => match (lhs, rhs) {
+            ir::MultiplicativeExpressionOperator::Percent(_) => match (lhs, rhs) {
                 (ConstantValue::Integer(lhs), ConstantValue::Integer(rhs)) => {
                     Some(ConstantValue::Integer(lhs % rhs))
                 }
@@ -247,7 +245,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
     ) -> Option<ConstantValue> {
         let operand = self.evaluate_expression(&prefix_expression.operand)?;
         match &prefix_expression.operator {
-            ir::Expression_PrefixExpression_Operator::Minus(_) => match operand {
+            ir::PrefixExpressionOperator::Minus(_) => match operand {
                 ConstantValue::Integer(value) => Some(ConstantValue::Integer(BigInt::ZERO - value)),
             },
             // No unary plus in Solidity >= 0.5.0 (v2 only supports >= 0.8.0)

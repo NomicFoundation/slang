@@ -34,7 +34,7 @@ pub struct AdditiveExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub left_operand: Expression,
-    pub operator: Expression_AdditiveExpression_Operator,
+    pub operator: AdditiveExpressionOperator,
     pub right_operand: Expression,
 }
 
@@ -130,7 +130,7 @@ pub struct AssignmentExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub left_operand: Expression,
-    pub operator: Expression_AssignmentExpression_Operator,
+    pub operator: AssignmentExpressionOperator,
     pub right_operand: Expression,
 }
 
@@ -404,7 +404,7 @@ pub struct EqualityExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub left_operand: Expression,
-    pub operator: Expression_EqualityExpression_Operator,
+    pub operator: EqualityExpressionOperator,
     pub right_operand: Expression,
 }
 
@@ -657,7 +657,7 @@ pub struct InequalityExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub left_operand: Expression,
-    pub operator: Expression_InequalityExpression_Operator,
+    pub operator: InequalityExpressionOperator,
     pub right_operand: Expression,
 }
 
@@ -802,7 +802,7 @@ pub struct MultiplicativeExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub left_operand: Expression,
-    pub operator: Expression_MultiplicativeExpression_Operator,
+    pub operator: MultiplicativeExpressionOperator,
     pub right_operand: Expression,
 }
 
@@ -900,7 +900,7 @@ pub struct PostfixExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub operand: Expression,
-    pub operator: Expression_PostfixExpression_Operator,
+    pub operator: PostfixExpressionOperator,
 }
 
 impl PostfixExpressionStruct {
@@ -930,7 +930,7 @@ pub type PrefixExpression = Rc<PrefixExpressionStruct>;
 pub struct PrefixExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
-    pub operator: Expression_PrefixExpression_Operator,
+    pub operator: PrefixExpressionOperator,
     pub operand: Expression,
 }
 
@@ -978,7 +978,7 @@ pub struct ShiftExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub left_operand: Expression,
-    pub operator: Expression_ShiftExpression_Operator,
+    pub operator: ShiftExpressionOperator,
     pub right_operand: Expression,
 }
 
@@ -1538,9 +1538,31 @@ pub enum AbicoderVersion {
 }
 
 #[derive(Clone, Debug)]
+pub enum AdditiveExpressionOperator {
+    Minus(Minus),
+    Plus(Plus),
+}
+
+#[derive(Clone, Debug)]
 pub enum ArgumentsDeclaration {
     PositionalArguments(PositionalArguments),
     NamedArguments(NamedArguments),
+}
+
+#[derive(Clone, Debug)]
+pub enum AssignmentExpressionOperator {
+    AmpersandEqual(AmpersandEqual),
+    AsteriskEqual(AsteriskEqual),
+    BarEqual(BarEqual),
+    CaretEqual(CaretEqual),
+    Equal(Equal),
+    GreaterThanGreaterThanEqual(GreaterThanGreaterThanEqual),
+    GreaterThanGreaterThanGreaterThanEqual(GreaterThanGreaterThanGreaterThanEqual),
+    LessThanLessThanEqual(LessThanLessThanEqual),
+    MinusEqual(MinusEqual),
+    PercentEqual(PercentEqual),
+    PlusEqual(PlusEqual),
+    SlashEqual(SlashEqual),
 }
 
 #[derive(Clone, Debug)]
@@ -1566,6 +1588,12 @@ pub enum ElementaryType {
     UintKeyword(UintKeyword),
     FixedKeyword(FixedKeyword),
     UfixedKeyword(UfixedKeyword),
+}
+
+#[derive(Clone, Debug)]
+pub enum EqualityExpressionOperator {
+    BangEqual(BangEqual),
+    EqualEqual(EqualEqual),
 }
 
 #[derive(Clone, Debug)]
@@ -1613,72 +1641,6 @@ pub enum Expression {
 }
 
 #[derive(Clone, Debug)]
-pub enum Expression_AdditiveExpression_Operator {
-    Minus(Minus),
-    Plus(Plus),
-}
-
-#[derive(Clone, Debug)]
-pub enum Expression_AssignmentExpression_Operator {
-    AmpersandEqual(AmpersandEqual),
-    AsteriskEqual(AsteriskEqual),
-    BarEqual(BarEqual),
-    CaretEqual(CaretEqual),
-    Equal(Equal),
-    GreaterThanGreaterThanEqual(GreaterThanGreaterThanEqual),
-    GreaterThanGreaterThanGreaterThanEqual(GreaterThanGreaterThanGreaterThanEqual),
-    LessThanLessThanEqual(LessThanLessThanEqual),
-    MinusEqual(MinusEqual),
-    PercentEqual(PercentEqual),
-    PlusEqual(PlusEqual),
-    SlashEqual(SlashEqual),
-}
-
-#[derive(Clone, Debug)]
-pub enum Expression_EqualityExpression_Operator {
-    BangEqual(BangEqual),
-    EqualEqual(EqualEqual),
-}
-
-#[derive(Clone, Debug)]
-pub enum Expression_InequalityExpression_Operator {
-    GreaterThan(GreaterThan),
-    GreaterThanEqual(GreaterThanEqual),
-    LessThan(LessThan),
-    LessThanEqual(LessThanEqual),
-}
-
-#[derive(Clone, Debug)]
-pub enum Expression_MultiplicativeExpression_Operator {
-    Asterisk(Asterisk),
-    Percent(Percent),
-    Slash(Slash),
-}
-
-#[derive(Clone, Debug)]
-pub enum Expression_PostfixExpression_Operator {
-    MinusMinus(MinusMinus),
-    PlusPlus(PlusPlus),
-}
-
-#[derive(Clone, Debug)]
-pub enum Expression_PrefixExpression_Operator {
-    Bang(Bang),
-    DeleteKeyword(DeleteKeyword),
-    Minus(Minus),
-    MinusMinus(MinusMinus),
-    PlusPlus(PlusPlus),
-    Tilde(Tilde),
-}
-
-#[derive(Clone, Debug)]
-pub enum Expression_ShiftExpression_Operator {
-    GreaterThanGreaterThan(GreaterThanGreaterThan),
-    GreaterThanGreaterThanGreaterThan(GreaterThanGreaterThanGreaterThan),
-    LessThanLessThan(LessThanLessThan),
-}
-
-#[derive(Clone, Debug)]
 pub enum ForStatementCondition {
     ExpressionStatement(ExpressionStatement),
     Semicolon(Semicolon),
@@ -1723,6 +1685,21 @@ pub enum ImportClause {
 }
 
 #[derive(Clone, Debug)]
+pub enum InequalityExpressionOperator {
+    GreaterThan(GreaterThan),
+    GreaterThanEqual(GreaterThanEqual),
+    LessThan(LessThan),
+    LessThanEqual(LessThanEqual),
+}
+
+#[derive(Clone, Debug)]
+pub enum MultiplicativeExpressionOperator {
+    Asterisk(Asterisk),
+    Percent(Percent),
+    Slash(Slash),
+}
+
+#[derive(Clone, Debug)]
 pub enum NumberUnit {
     WeiKeyword(WeiKeyword),
     GweiKeyword(GweiKeyword),
@@ -1735,10 +1712,33 @@ pub enum NumberUnit {
 }
 
 #[derive(Clone, Debug)]
+pub enum PostfixExpressionOperator {
+    MinusMinus(MinusMinus),
+    PlusPlus(PlusPlus),
+}
+
+#[derive(Clone, Debug)]
 pub enum Pragma {
     VersionPragma(VersionPragma),
     AbicoderPragma(AbicoderPragma),
     ExperimentalPragma(ExperimentalPragma),
+}
+
+#[derive(Clone, Debug)]
+pub enum PrefixExpressionOperator {
+    Bang(Bang),
+    DeleteKeyword(DeleteKeyword),
+    Minus(Minus),
+    MinusMinus(MinusMinus),
+    PlusPlus(PlusPlus),
+    Tilde(Tilde),
+}
+
+#[derive(Clone, Debug)]
+pub enum ShiftExpressionOperator {
+    GreaterThanGreaterThan(GreaterThanGreaterThan),
+    GreaterThanGreaterThanGreaterThan(GreaterThanGreaterThanGreaterThan),
+    LessThanLessThan(LessThanLessThan),
 }
 
 #[derive(Clone, Debug)]
