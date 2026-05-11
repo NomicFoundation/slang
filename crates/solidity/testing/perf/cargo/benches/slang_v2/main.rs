@@ -42,7 +42,7 @@ mod __dependencies_used_in_lib__ {
 // Only 0.8.x-compatible projects belong here.
 // Edit this macro (and only this macro) to add or remove a project.
 // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
-macro_rules! projects {
+macro_rules! bench_projects {
     (
         #[$lb:meta]
         $($rest:tt)*
@@ -60,7 +60,7 @@ macro_rules! projects {
     };
 }
 
-projects! {
+bench_projects! {
     #[library_benchmark(setup = tests::slang_v2::parser::setup)]
     fn parser(project: &SolidityProject) -> Vec<(String, SourceUnit)> {
         black_box(tests::slang_v2::parser::run(black_box(project)))
@@ -69,7 +69,7 @@ projects! {
 
 // Note: the input CST source units are consumed (dropped) during IR building.
 // This is the intended use case: the CST is replaced by the IR representation.
-projects! {
+bench_projects! {
     #[library_benchmark(setup = tests::slang_v2::ir_builder::setup)]
     fn ir_builder(
         (project, source_units): (&'static SolidityProject, Vec<(String, SourceUnit)>),
@@ -81,7 +81,7 @@ projects! {
     }
 }
 
-projects! {
+bench_projects! {
     #[library_benchmark(setup = tests::slang_v2::semantic::setup)]
     fn semantic(
         (project, input_files): (
