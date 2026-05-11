@@ -2216,7 +2216,7 @@ dependencies = [
  "semver 1.0.28",
  "serde",
  "serde_json",
- "similar-asserts",
+ "similar-asserts 2.0.0",
  "tera",
  "toml 0.9.12+spec-1.1.0",
  "url",
@@ -3989,6 +3989,12 @@ name = "similar"
 version = "2.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bbbb5d9659141646ae647b42fe094daf6c6192d1620870b449d9557f748b2daa"
+
+[[package]]
+name = "similar"
+version = "3.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "04d93e861ede2e497b47833469b8ec9d5c07fa4c78ce7a00f6eb7dd8168b4b3f"
 dependencies = [
  "bstr",
  "unicode-segmentation",
@@ -4001,7 +4007,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b5b441962c817e33508847a22bd82f03a30cff43642dc2fae8b050566121eb9a"
 dependencies = [
  "console 0.15.11",
- "similar",
+ "similar 2.7.0",
+]
+
+[[package]]
+name = "similar-asserts"
+version = "2.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "997e6ca38e97437973fc9f7f50a50d1274cacd874341a4960fea90067291038c"
+dependencies = [
+ "console 0.16.3",
+ "similar 3.1.0",
 ]
 
 [[package]]
@@ -4142,7 +4158,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bebf2194b9611339d00b28260cf6bd640073c60179ce7dd1e47badef1eb606e7"
 dependencies = [
  "console 0.15.11",
- "similar-asserts",
+ "similar-asserts 1.7.0",
 ]
 
 [[package]]
