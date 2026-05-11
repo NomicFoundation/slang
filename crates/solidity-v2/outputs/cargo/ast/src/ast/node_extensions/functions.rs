@@ -1,5 +1,3 @@
-use slang_solidity_v2_ir::ir;
-
 use super::super::{FunctionDefinition, FunctionDefinitionStruct};
 
 impl FunctionDefinitionStruct {
@@ -9,14 +7,7 @@ impl FunctionDefinitionStruct {
                 // for unnamed functions, we check the kind because `receive`
                 // and `fallback` may have the same parameters but they are
                 // different functions
-                matches!(
-                    (&self.ir_node.kind, &other.ir_node.kind),
-                    (ir::FunctionKind::Constructor, ir::FunctionKind::Constructor)
-                        | (ir::FunctionKind::Fallback, ir::FunctionKind::Fallback)
-                        | (ir::FunctionKind::Modifier, ir::FunctionKind::Modifier)
-                        | (ir::FunctionKind::Receive, ir::FunctionKind::Receive)
-                        | (ir::FunctionKind::Regular, ir::FunctionKind::Regular)
-                )
+                self.ir_node.kind == other.ir_node.kind
             }
             (Some(name), Some(other_name)) => name.unparse() == other_name.unparse(),
             _ => false,

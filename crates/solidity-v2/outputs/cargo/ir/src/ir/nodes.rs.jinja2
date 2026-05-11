@@ -47,7 +47,17 @@ pub(super) use slang_solidity_v2_common::nodes::NodeId;
 //
 
 {% for parent_type, choice in target.choices %}
-  #[derive(Clone, Debug)]
+  {% set_global all_external_terminals = true %}
+  {% for variant in choice.variants %}
+    {% if not variant.is_external %}
+      {% set_global all_external_terminals = false %}
+    {% endif %}
+  {% endfor %}
+  {% if all_external_terminals -%}
+    #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+  {%- else -%}
+    #[derive(Clone, Debug)]
+  {%- endif %}
   pub enum {{ parent_type }} {
     {% for variant in choice.variants -%}
       {{ variant.name }}

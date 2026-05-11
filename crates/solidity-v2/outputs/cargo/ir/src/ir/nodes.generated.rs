@@ -1691,7 +1691,7 @@ pub enum ForStatementInitialization {
     Semicolon(Semicolon),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub enum FunctionKind {
     Regular,
     Constructor,
@@ -1700,7 +1700,7 @@ pub enum FunctionKind {
     Modifier,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub enum FunctionMutability {
     Pure,
     View,
@@ -1708,7 +1708,7 @@ pub enum FunctionMutability {
     Payable,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub enum FunctionVisibility {
     Public,
     Private,
@@ -1758,7 +1758,7 @@ pub enum SourceUnitMember {
     ConstantDefinition(ConstantDefinition),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub enum StateVariableMutability {
     Mutable,
     Constant,
@@ -1766,7 +1766,7 @@ pub enum StateVariableMutability {
     Transient,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub enum StateVariableVisibility {
     Public,
     Private,

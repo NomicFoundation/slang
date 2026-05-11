@@ -55,7 +55,7 @@ contract MyContract {
     let ir::ContractMember::FunctionDefinition(ref constructor) = contract.members[1] else {
         panic!("Expected FunctionDefinition for constructor");
     };
-    assert!(matches!(constructor.kind, ir::FunctionKind::Constructor));
+    assert_eq!(constructor.kind, ir::FunctionKind::Constructor);
     assert!(constructor.body.is_some());
     let constructor_body = constructor.body.as_ref().unwrap();
     assert_eq!(1, constructor_body.statements.len());
@@ -64,14 +64,11 @@ contract MyContract {
     let ir::ContractMember::FunctionDefinition(ref function) = contract.members[2] else {
         panic!("Expected FunctionDefinition");
     };
-    assert!(matches!(function.kind, ir::FunctionKind::Regular));
+    assert_eq!(function.kind, ir::FunctionKind::Regular);
     let function_name = function.name.as_ref().expect("function has a name");
     assert_eq!("test", function_name.unparse());
-    assert!(matches!(
-        function.visibility,
-        ir::FunctionVisibility::Public
-    ));
-    assert!(matches!(function.mutability, ir::FunctionMutability::View));
+    assert_eq!(function.visibility, ir::FunctionVisibility::Public);
+    assert_eq!(function.mutability, ir::FunctionMutability::View);
     assert_eq!(0, function.parameters.len());
     assert!(function.returns.is_some());
     assert_eq!(1, function.returns.as_ref().unwrap().len());
