@@ -178,10 +178,14 @@ impl Pass<'_> {
                 | Type::String { .. }
                 | Type::UserDefinedValue { .. } => break,
 
-                Type::Struct { definition_id, .. } => {
+                Type::Struct {
+                    definition_id,
+                    location,
+                } => {
                     // For structs the getter will return a tuple with all value
                     // type and string/bytes fields. It won't return nested
                     // structs or arrays.
+                    let struct_location = *location;
 
                     // To retrieve the fields we need to go through the
                     // scope associated to the struct...
@@ -192,20 +196,31 @@ impl Pass<'_> {
                     let Scope::Struct(struct_scope) = self.binder.get_scope_by_id(scope_id) else {
                         unreachable!("definition in struct type has no valid scope");
                     };
+                    let member_ids: Vec<NodeId> =
+                        struct_scope.definitions.values().copied().collect();
                     let mut types = Vec::new();
-                    for member_id in struct_scope.definitions.values() {
-                        let Some(member_type_id) = self.binder.node_typing(*member_id).as_type_id()
+                    for member_id in member_ids {
+                        let Some(member_type_id) = self.binder.node_typing(member_id).as_type_id()
                         else {
                             // member type cannot be resolved
                             return None;
                         };
-                        if self
-                            .types
-                            .get_type_by_id(member_type_id)
-                            .can_return_from_getter()
-                        {
-                            types.push(member_type_id);
+                        let member_type = self.types.get_type_by_id(member_type_id);
+                        if !member_type.can_return_from_getter() {
+                            continue;
                         }
+                        // Struct member types carry `DataLocation::Inherited` by
+                        // design (the location is the containing struct's).
+                        // Substitute the struct's location so the getter's
+                        // return type doesn't leak `Inherited` out.
+                        let member_type_id = if member_type.is_inherited_location() {
+                            let member_type = member_type.clone();
+                            self.types
+                                .register_type_with_data_location(member_type, struct_location)
+                        } else {
+                            member_type_id
+                        };
+                        types.push(member_type_id);
                     }
                     return_type = match types.len() {
                         0 => return None,
