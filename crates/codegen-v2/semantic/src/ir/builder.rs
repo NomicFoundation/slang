@@ -373,7 +373,7 @@ fn rename_operator_fields(mutator: &mut IrModelMutator) {
                 .iter()
                 .filter(|field| {
                     let label = field.label.as_str();
-                    label != "operator" && label.ends_with("_operator")
+                    label.ends_with("_operator")
                 })
                 .map(move |field| (sequence_id.clone(), field.label.clone()))
         })
