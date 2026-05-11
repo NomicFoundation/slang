@@ -20,18 +20,16 @@ pub(super) use slang_solidity_v2_common::nodes::NodeId;
     pub range: Range<usize>,
     {%- for field in sequence.fields %}
       pub {{ field.label | snake_case }}:
-      {%- if field.type.kind == "UniqueTerminal" -%}
+      {%- if field.field_type.kind == "External" -%}
         {%- if field.is_optional -%}
           bool,
         {%- else -%}
-          {{ throw(message="Cannot generate sequence field for non-optional unique terminal") }},
+          {{ throw(message="Cannot generate sequence field for non-optional external type") }},
         {%- endif -%}
+      {%- elif field.is_optional -%}
+        Option<{{ field.field_type.name }}>,
       {%- else -%}
-        {%- if field.is_optional -%}
-          Option<{{ field.type.name }}>,
-        {%- else -%}
-          {{ field.type.name }},
-        {%- endif -%}
+        {{ field.field_type.name }},
       {%- endif -%}
     {% endfor -%}
   }
@@ -49,26 +47,24 @@ pub(super) use slang_solidity_v2_common::nodes::NodeId;
 //
 
 {% for parent_type, choice in target.choices %}
-  {% set_global all_unique_terminals = true %}
+  {% set_global all_external_terminals = true %}
   {% for variant in choice.variants %}
-    {% if not variant.is_unique %}
-      {% set_global all_unique_terminals = false %}
+    {% if not variant.is_external %}
+      {% set_global all_external_terminals = false %}
     {% endif %}
   {% endfor %}
-  {% if all_unique_terminals -%}
+  {% if all_external_terminals -%}
     #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
   {%- else -%}
     #[derive(Clone, Debug)]
   {%- endif %}
   pub enum {{ parent_type }} {
-    {% for nonterminal in choice.variants | filter(attribute="kind", value="Nonterminal") -%}
-      {{ nonterminal.name }}({{ nonterminal.name }}),
-    {%- endfor -%}
-    {% for terminal in choice.variants | filter(attribute="kind", value="Terminal") -%}
-      {{ terminal.name }}({{ terminal.name }}),
-    {%- endfor -%}
-    {% for terminal in choice.variants | filter(attribute="kind", value="UniqueTerminal") -%}
-      {{ terminal.name }},
+    {% for variant in choice.variants -%}
+      {{ variant.name }}
+      {%- if variant.kind != "External" -%}
+        ({{ variant.name }})
+      {%- endif -%}
+      ,
     {%- endfor -%}
   }
 {% endfor %}
@@ -84,28 +80,30 @@ pub(super) use slang_solidity_v2_common::nodes::NodeId;
 {% endfor %}
 
 //
-// Non-unique Terminals
+// Terminals
 //
 
 {% for terminal_type, terminal in target.terminals %}
-  {% if not terminal.is_unique %}
-    pub type {{ terminal_type }} = Rc<{{ terminal_type }}Struct>;
+  pub type {{ terminal_type }} = Rc<{{ terminal_type }}Struct>;
 
-    #[derive(Clone, Debug, Eq, PartialEq)]
-    pub struct {{ terminal_type }}Struct {
-      pub(crate) id: NodeId,
-      pub range: Range<usize>,
+  #[derive(Clone, Debug, Eq, PartialEq)]
+  pub struct {{ terminal_type }}Struct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+    {%- if not terminal.is_unique %}
       pub text: String,
+    {%- endif %}
+  }
+
+  impl {{ terminal_type }}Struct {
+    pub fn id(&self) -> NodeId {
+      self.id
     }
 
-    impl {{ terminal_type }}Struct {
-      pub fn id(&self) -> NodeId {
-        self.id
-      }
-
+    {%- if not terminal.is_unique %}
       pub fn unparse(&self) -> &str {
         &self.text
       }
-    }
-  {% endif %}
+    {%- endif %}
+  }
 {% endfor %}

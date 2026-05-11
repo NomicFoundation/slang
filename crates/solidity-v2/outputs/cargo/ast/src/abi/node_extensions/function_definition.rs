@@ -1,11 +1,10 @@
 use slang_solidity_v2_ir::ir;
-use slang_solidity_v2_semantic::types::TypeId;
 
 use crate::abi::{
-    selector_from_signature, type_as_abi_parameter, AbiConstructor, AbiEntry, AbiFallback,
-    AbiFunction, AbiMutability, AbiParameter, AbiReceive,
+    selector_from_signature, AbiConstructor, AbiEntry, AbiFallback, AbiFunction, AbiMutability,
+    AbiReceive,
 };
-use crate::ast::{FunctionDefinitionStruct, FunctionVisibility, ParametersStruct};
+use crate::ast::{FunctionDefinitionStruct, FunctionVisibility};
 
 impl FunctionDefinitionStruct {
     pub fn is_externally_visible(&self) -> bool {
@@ -32,7 +31,7 @@ impl FunctionDefinitionStruct {
             .name
             .as_ref()
             .map(|name| name.unparse().to_string());
-        let state_mutability: AbiMutability = self.ir_node.mutability;
+        let state_mutability: AbiMutability = (&self.ir_node.mutability).into();
 
         match self.ir_node.kind {
             ir::FunctionKind::Regular => Some(AbiEntry::Function(AbiFunction {
@@ -86,55 +85,5 @@ impl FunctionDefinitionStruct {
         }
         self.compute_canonical_signature()
             .map(|sig| selector_from_signature(&sig))
-    }
-}
-
-impl ParametersStruct {
-    pub(crate) fn compute_abi_parameters(&self) -> Option<Vec<AbiParameter>> {
-        let mut result = Vec::new();
-        for parameter in &self.ir_nodes {
-            let node_id = parameter.id();
-            let name = parameter
-                .name
-                .as_ref()
-                .map(|name| name.unparse().to_string());
-            let indexed = parameter.indexed;
-            // Bail out with `None` if any of the parameters fails typing
-            let type_id = self.semantic.binder().node_typing(node_id).as_type_id()?;
-            let (type_name, components) = type_as_abi_parameter(&self.semantic, type_id)?;
-            result.push(AbiParameter {
-                node_id: Some(node_id),
-                name,
-                type_name,
-                components,
-                indexed,
-            });
-        }
-        Some(result)
-    }
-
-    fn parameter_types_iter(&self) -> impl Iterator<Item = Option<TypeId>> + '_ {
-        self.ir_nodes.iter().map(|parameter| {
-            self.semantic
-                .binder()
-                .node_typing(parameter.id())
-                .as_type_id()
-        })
-    }
-
-    pub(crate) fn compute_canonical_signature(&self) -> Option<String> {
-        let mut result = Vec::new();
-        for type_id in self.parameter_types_iter() {
-            result.push(self.semantic.type_canonical_name(type_id?)?);
-        }
-        Some(result.join(","))
-    }
-
-    pub(crate) fn compute_internal_signature(&self) -> Option<String> {
-        let mut result = Vec::new();
-        for type_id in self.parameter_types_iter() {
-            result.push(self.semantic.type_internal_name(type_id?));
-        }
-        Some(result.join(","))
     }
 }

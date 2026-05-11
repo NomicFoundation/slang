@@ -1,5 +1,8 @@
-use language_v2_definition::model::Language;
+use std::collections::BTreeSet;
 
+use language_v2_definition::model::{self, Language};
+
+use super::model::NodeType;
 use super::{IrModel, IrModelMutator, ModelWithBuilder};
 
 pub fn build_v2_ir_model(language: &Language) -> ModelWithBuilder {
@@ -25,7 +28,10 @@ pub fn build_v2_ir_model(language: &Language) -> ModelWithBuilder {
     simplify_imports(&mut mutator);
     simplify_parameters(&mut mutator);
     simplify_mapping_type_parameters(&mut mutator);
+    rename_operator_fields(&mut mutator);
+    rename_operator_choice_types(&mut mutator);
     remove_unused_types(&mut mutator);
+    remove_unreferenced_terminals(&mut mutator);
 
     mutator.into()
 }
@@ -35,8 +41,8 @@ fn remove_redundant_terminal_nodes(cst_model: &IrModel, mutator: &mut IrModelMut
     for (sequence_id, sequence) in &cst_model.sequences {
         for field in &sequence.fields {
             if !field.is_optional
-                && field.r#type.is_terminal()
-                && cst_model.terminals[field.r#type.as_identifier()].is_unique
+                && field.field_type.is_terminal()
+                && cst_model.terminals[field.field_type.as_identifier()].is_unique
             {
                 mutator.remove_sequence_field(sequence_id, &field.label);
             }
@@ -352,4 +358,91 @@ fn remove_unused_types(mutator: &mut IrModelMutator) {
     // `OverrideSpecifier` was used both in function attributes and state
     // variable attributes, but it's no longer needed
     mutator.remove_type("OverrideSpecifier");
+}
+
+// Rename auto-generated operator fields like `expression_prefix_expression_operator`
+// down to a uniform `operator` so consumers don't have to spell out the long
+// generated name. The long names come from `add_precedence_expression`'s
+// multi-operator branch, which formats `<base>_<expression>_Operator`.
+fn rename_operator_fields(mutator: &mut IrModelMutator) {
+    let renames: Vec<(model::Identifier, model::Identifier)> = mutator
+        .sequences
+        .iter()
+        .flat_map(|(sequence_id, sequence)| {
+            sequence
+                .fields
+                .iter()
+                .filter(|field| {
+                    let label = field.label.as_str();
+                    label.ends_with("_operator")
+                })
+                .map(move |field| (sequence_id.clone(), field.label.clone()))
+        })
+        .collect();
+
+    for (sequence_id, old_label) in renames {
+        mutator.rename_sequence_field(sequence_id.as_str(), old_label.as_str(), "operator");
+    }
+}
+
+// Rename auto-generated operator choice types from `Expression_<X>_Operator`
+// down to the more idiomatic `<X>Operator`. The long names come from
+// `add_precedence_expression`'s multi-operator branch (see ir/model.rs), which
+// formats `<base>_<expression>_Operator`.
+fn rename_operator_choice_types(mutator: &mut IrModelMutator) {
+    let renames: Vec<(String, String)> = mutator
+        .choices
+        .keys()
+        .filter_map(|name| {
+            let middle = name
+                .as_str()
+                .strip_prefix("Expression_")?
+                .strip_suffix("_Operator")?;
+            Some((name.as_str().to_owned(), format!("{middle}Operator")))
+        })
+        .collect();
+
+    for (old_name, new_name) in renames {
+        mutator.rename_choice_type(&old_name, &new_name);
+    }
+}
+
+// Removes terminals that are no longer referenced by any sequence field,
+// choice variant, or collection item. Useful as a final cleanup after
+// mutations like `remove_redundant_terminal_nodes` strip otherwise-unique
+// terminals from sequence fields.
+fn remove_unreferenced_terminals(mutator: &mut IrModelMutator) {
+    let mut referenced: BTreeSet<model::Identifier> = BTreeSet::new();
+    let mut add_reference = |node_type: &NodeType| {
+        if node_type.is_terminal() {
+            referenced.insert(node_type.as_identifier().clone());
+        }
+    };
+
+    for sequence in mutator.sequences.values() {
+        for field in &sequence.fields {
+            add_reference(&field.target_type);
+        }
+    }
+    for choice in mutator.choices.values() {
+        for variant in &choice.variants {
+            add_reference(&variant.target);
+        }
+    }
+    for collection in mutator.collections.values() {
+        add_reference(&collection.target_item_type);
+    }
+    // Targets of collapsed/normalized constructs are referenced by the
+    // builder even when no live field/variant points at them directly.
+    for collapsed in mutator.collapsed_sequences.values() {
+        add_reference(&collapsed.target_type);
+    }
+    for collapsed in mutator.collapsed_choices.values() {
+        add_reference(&collapsed.target);
+    }
+    for normalized in mutator.normalized_terminals.values() {
+        referenced.insert(normalized.target.clone());
+    }
+
+    mutator.terminals.retain(|id, _| referenced.contains(id));
 }

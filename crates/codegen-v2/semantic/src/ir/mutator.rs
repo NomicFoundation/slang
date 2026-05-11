@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use language_v2_definition::model;
 use serde::Serialize;
@@ -23,6 +23,11 @@ pub struct IrModelMutator {
 
     // Terminals that have been normalized (renamed) to a canonical equivalent.
     pub normalized_terminals: BTreeMap<model::Identifier, NormalizedTerminal>,
+
+    // Externally-defined types registered in this language. Their type
+    // definitions live outside the codegen and are referenced as
+    // `NodeType::External` in fields and choice variants.
+    pub external_types: BTreeSet<model::Identifier>,
 }
 
 #[derive(Clone, Serialize)]
@@ -55,7 +60,7 @@ pub struct CollapsedSequence {
     pub label: model::Identifier,
     // Original type of the field of the collapsed sequence, used to generate
     // the transformer function.
-    pub r#type: NodeType,
+    pub source_type: NodeType,
     // Target type of the collapsed sequence. This should usually be `r#type`,
     // unless that it collapsed as well.
     pub target_type: NodeType,
@@ -73,8 +78,12 @@ pub struct CollapsedChoice {
 
 #[derive(Clone, Serialize)]
 pub struct MutatedField {
+    // Output (IR struct) field name. Updated by `rename_sequence_field`.
     pub label: model::Identifier,
-    pub r#type: NodeType,
+    // Original (CST input struct) field name. Used by the auto-builder to
+    // access the source. Stays stable across renames.
+    pub source_label: model::Identifier,
+    pub field_type: NodeType,
     pub is_optional: bool,
     pub target_type: NodeType,
 }
@@ -83,9 +92,10 @@ impl From<&Field> for MutatedField {
     fn from(value: &Field) -> Self {
         Self {
             label: value.label.clone(),
-            r#type: value.r#type.clone(),
+            source_label: value.label.clone(),
+            field_type: value.field_type.clone(),
             is_optional: value.is_optional,
-            target_type: value.r#type.clone(),
+            target_type: value.field_type.clone(),
         }
     }
 }
@@ -94,7 +104,7 @@ impl From<&MutatedField> for Field {
     fn from(value: &MutatedField) -> Self {
         Self {
             label: value.label.clone(),
-            r#type: value.target_type.clone(),
+            field_type: value.target_type.clone(),
             is_optional: value.is_optional,
         }
     }
@@ -109,6 +119,9 @@ pub struct MutatedVariant {
 
 #[derive(Clone, Serialize)]
 pub struct MutatedChoice {
+    // Original (CST input enum) name. Used by the auto-builder to access the
+    // source. Stays stable across `rename_choice_type`.
+    pub source_name: model::Identifier,
     pub variants: Vec<MutatedVariant>,
 
     // Indicates some variants have been removed so the transformer
@@ -119,9 +132,10 @@ pub struct MutatedChoice {
     pub is_new: bool,
 }
 
-impl From<&Choice> for MutatedChoice {
-    fn from(value: &Choice) -> Self {
+impl MutatedChoice {
+    fn from_choice(name: &model::Identifier, value: &Choice) -> Self {
         Self {
+            source_name: name.clone(),
             variants: value
                 .variants
                 .iter()
@@ -217,7 +231,12 @@ impl IrModelMutator {
         let choices = source
             .choices
             .iter()
-            .map(|(identifier, choice)| (identifier.clone(), choice.into()))
+            .map(|(identifier, choice)| {
+                (
+                    identifier.clone(),
+                    MutatedChoice::from_choice(identifier, choice),
+                )
+            })
             .collect();
 
         let collections = source
@@ -240,6 +259,7 @@ impl IrModelMutator {
             collapsed_choices: BTreeMap::new(),
             terminals,
             normalized_terminals: BTreeMap::new(),
+            external_types: source.external_types.clone(),
         }
     }
 
@@ -273,18 +293,8 @@ impl IrModelMutator {
             sequences,
             choices,
             collections,
+            external_types: self.external_types.clone(),
         }
-    }
-
-    pub fn add_choice_type(&mut self, name: &str) {
-        self.choices.insert(
-            name.into(),
-            MutatedChoice {
-                variants: Vec::new(),
-                is_new: true,
-                has_removed_variants: false,
-            },
-        );
     }
 
     pub fn add_choice_variant(&mut self, choice_id: &str, variant: &str) {
@@ -301,36 +311,24 @@ impl IrModelMutator {
     }
 
     // Adds a synthetic (ie. not referencing any CST nodes) choice type by adding
-    // unique terminal types as the variants
+    // external terminal types as the variants
     pub fn add_enum_type(&mut self, name: &str, variants: &[&str]) {
         let mut mutated_variants = Vec::new();
         for variant in variants {
             let identifier: model::Identifier = (*variant).into();
-            if let Some(existing) = self.terminals.get(&identifier) {
-                assert!(
-                    existing.is_unique,
-                    "Attempt to insert an already existing terminal '{variant}' that is non-unique"
-                );
-            } else {
-                self.terminals.insert(
-                    identifier,
-                    MutatedTerminal {
-                        is_unique: true,
-                        is_identifier: false,
-                        is_new: true,
-                    },
-                );
-            }
-            let node_type = NodeType::UniqueTerminal((*variant).into());
+            self.external_types.insert(identifier.clone());
+            let node_type = NodeType::External(identifier);
             mutated_variants.push(MutatedVariant {
                 source: node_type.clone(),
                 target: node_type,
                 is_new: true,
             });
         }
+        let name: model::Identifier = name.into();
         self.choices.insert(
-            name.into(),
+            name.clone(),
             MutatedChoice {
+                source_name: name,
                 variants: mutated_variants,
                 is_new: true,
                 has_removed_variants: false,
@@ -415,15 +413,22 @@ impl IrModelMutator {
     }
 
     fn find_node_type(&self, identifier: &model::Identifier) -> NodeType {
-        match self.terminals.get(identifier) {
-            None => NodeType::Nonterminal(identifier.clone()),
-            Some(MutatedTerminal { is_unique, .. }) => {
-                if *is_unique {
-                    NodeType::UniqueTerminal(identifier.clone())
-                } else {
-                    NodeType::Terminal(identifier.clone())
-                }
+        if let Some(terminal) = self.terminals.get(identifier) {
+            if terminal.is_unique {
+                NodeType::UniqueTerminal(identifier.clone())
+            } else {
+                NodeType::Terminal(identifier.clone())
             }
+        } else if self.sequences.contains_key(identifier) {
+            NodeType::Sequence(identifier.clone())
+        } else if self.choices.contains_key(identifier) {
+            NodeType::Choice(identifier.clone())
+        } else if self.collections.contains_key(identifier) {
+            NodeType::Collection(identifier.clone())
+        } else if self.external_types.contains(identifier) {
+            NodeType::External(identifier.clone())
+        } else {
+            panic!("can't determine NodeType for {identifier}");
         }
     }
 
@@ -439,9 +444,11 @@ impl IrModelMutator {
         let Some(sequence) = self.sequences.get_mut(&identifier) else {
             panic!("Sequence {sequence_id} not found in IR model");
         };
+        let field_label: model::Identifier = field_label.into();
         sequence.fields.push(MutatedField {
-            label: field_label.into(),
-            r#type: target_type.clone(),
+            label: field_label.clone(),
+            source_label: field_label,
+            field_type: target_type.clone(),
             is_optional,
             target_type,
         });
@@ -469,11 +476,13 @@ impl IrModelMutator {
         else {
             panic!("Could not find {before_label} in sequence {sequence_id}");
         };
+        let field_label: model::Identifier = field_label.into();
         sequence.fields.insert(
             insertion_index,
             MutatedField {
-                label: field_label.into(),
-                r#type: target_type.clone(),
+                label: field_label.clone(),
+                source_label: field_label,
+                field_type: target_type.clone(),
                 is_optional,
                 target_type,
             },
@@ -485,6 +494,7 @@ impl IrModelMutator {
     // replacing all instances with the contents of such field.
     pub fn collapse_sequence(&mut self, sequence_id: &str) {
         let identifier: model::Identifier = sequence_id.into();
+
         let Some(sequence) = self.sequences.remove(&identifier) else {
             panic!("Sequence {sequence_id} not found in IR model");
         };
@@ -500,19 +510,19 @@ impl IrModelMutator {
             !replace_field.is_optional,
             "Cannot collapse sequence {sequence_id} of an optional field"
         );
-        let replaced_type = self.find_node_type(&sequence_id.into());
 
+        let replaced_type = NodeType::Sequence(identifier.clone());
         self.replace_type_references(&replaced_type, &replace_field.target_type);
 
         // Determine the target type; the type of the single field may be
         // already collapsed, so we need to use it in that case
         let target_type = if let Some(collapsed) = self
             .collapsed_sequences
-            .get(replace_field.r#type.as_identifier())
+            .get(replace_field.field_type.as_identifier())
         {
             collapsed.target_type.clone()
         } else {
-            replace_field.r#type.clone()
+            replace_field.field_type.clone()
         };
 
         // Create the collapsed sequence
@@ -520,7 +530,7 @@ impl IrModelMutator {
             identifier.clone(),
             CollapsedSequence {
                 label: replace_field.label,
-                r#type: replace_field.r#type.clone(),
+                source_type: replace_field.field_type.clone(),
                 target_type,
             },
         );
@@ -544,8 +554,7 @@ impl IrModelMutator {
             );
         }
 
-        // The old type is always Nonterminal (choices are nonterminals)
-        let collapsed_type = NodeType::Nonterminal(identifier.clone());
+        let collapsed_type = NodeType::Choice(identifier.clone());
 
         // Ensure the target exists as a non-unique terminal
         let target_id: model::Identifier = target.into();
@@ -584,6 +593,11 @@ impl IrModelMutator {
 
     pub fn add_collection_type(&mut self, name: &str, item_type: &str) {
         let item_type = self.find_node_type(&item_type.into());
+        assert!(
+            !item_type.is_external(),
+            "Cannot create a collection with external item type {}",
+            item_type.as_identifier()
+        );
         self.collections.insert(
             name.into(),
             MutatedCollection {
@@ -633,22 +647,47 @@ impl IrModelMutator {
         );
     }
 
-    pub fn add_non_unique_terminal(&mut self, identifier: &str) {
-        let identifier: model::Identifier = (*identifier).into();
-        if let Some(existing) = self.terminals.get(&identifier) {
-            assert!(
-                !existing.is_unique,
-                "Existing terminal {identifier} is unique",
-            );
-        } else {
-            self.terminals.insert(
-                identifier,
-                MutatedTerminal {
-                    is_unique: false,
-                    is_identifier: false,
-                    is_new: true,
-                },
-            );
-        }
+    // Renames a choice type without altering its variants. The original (CST
+    // input enum) name is preserved in `source_name` on the renamed
+    // `MutatedChoice` so the auto-builder still reads from the right source.
+    // References to the choice in sequence fields, choice variants, and
+    // collections are rewritten to point at the new name.
+    pub fn rename_choice_type(&mut self, old_name: &str, new_name: &str) {
+        let old_id: model::Identifier = old_name.into();
+        let new_id: model::Identifier = new_name.into();
+        let Some(choice) = self.choices.remove(&old_id) else {
+            panic!("Choice {old_name} not found in IR model");
+        };
+        assert!(
+            !self.sequences.contains_key(&new_id)
+                && !self.choices.contains_key(&new_id)
+                && !self.collections.contains_key(&new_id)
+                && !self.terminals.contains_key(&new_id)
+                && !self.external_types.contains(&new_id),
+            "Cannot rename choice {old_name} to {new_name}: name already in use"
+        );
+
+        let old_type = NodeType::Choice(old_id);
+        let new_type = NodeType::Choice(new_id.clone());
+        self.choices.insert(new_id, choice);
+        self.replace_type_references(&old_type, &new_type);
+    }
+
+    // Renames a field within a sequence without altering the type it
+    // references. The original (CST input) field name is preserved in
+    // `source_label` so the auto-builder still reads from the right source.
+    pub fn rename_sequence_field(&mut self, sequence_id: &str, old_label: &str, new_label: &str) {
+        let identifier: model::Identifier = sequence_id.into();
+        let Some(sequence) = self.sequences.get_mut(&identifier) else {
+            panic!("Sequence {sequence_id} not found in IR model");
+        };
+        let old_label_id: model::Identifier = old_label.into();
+        let new_label_id: model::Identifier = new_label.into();
+        let field = sequence
+            .fields
+            .iter_mut()
+            .find(|field| field.label == old_label_id)
+            .unwrap_or_else(|| panic!("Field {old_label} not found in sequence {sequence_id}"));
+        field.label = new_label_id;
     }
 }

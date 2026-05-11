@@ -2,7 +2,7 @@ use std::rc::Rc;
 
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::visitor::Visitor;
-use slang_solidity_v2_ir::ir::Expression_PrefixExpression_Operator;
+use slang_solidity_v2_ir::ir::PrefixExpressionOperator;
 
 use super::Pass;
 use crate::binder::{Reference, Resolution, Typing};
@@ -269,19 +269,19 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_prefix_expression(&mut self, node: &ir::PrefixExpression) {
-        let type_id = match node.expression_prefix_expression_operator {
-            Expression_PrefixExpression_Operator::PlusPlus
-            | Expression_PrefixExpression_Operator::MinusMinus
-            | Expression_PrefixExpression_Operator::Minus
-            | Expression_PrefixExpression_Operator::Tilde => {
+        let type_id = match node.operator {
+            PrefixExpressionOperator::PlusPlus(_)
+            | PrefixExpressionOperator::MinusMinus(_)
+            | PrefixExpressionOperator::Minus(_)
+            | PrefixExpressionOperator::Tilde(_) => {
                 // TODO(validation): check that the operand is integer
                 self.typing_of_expression(&node.operand).as_type_id()
             }
-            Expression_PrefixExpression_Operator::Bang => {
+            PrefixExpressionOperator::Bang(_) => {
                 // TODO(validation): check that the operand is boolean
                 Some(self.types.boolean())
             }
-            Expression_PrefixExpression_Operator::DeleteKeyword => Some(self.types.void()),
+            PrefixExpressionOperator::DeleteKeyword(_) => Some(self.types.void()),
         };
         self.binder.set_node_type(node.id(), type_id);
     }

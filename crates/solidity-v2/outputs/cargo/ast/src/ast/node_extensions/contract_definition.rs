@@ -1,26 +1,10 @@
 use std::cmp::Ordering;
-use std::rc::Rc;
 
 use super::super::{
-    ContractDefinition, ContractDefinitionStruct, ContractMember, ContractMembersStruct,
-    Definition, ErrorDefinition, EventDefinition, FunctionDefinition, FunctionKind,
-    InterfaceDefinition, InterfaceMembersStruct, StateVariableDefinition,
+    ContractDefinitionStruct, Definition, ErrorDefinition, EventDefinition, FunctionDefinition,
+    FunctionKind, StateVariableDefinition,
 };
-
-pub enum ContractBase {
-    Contract(ContractDefinition),
-    Interface(InterfaceDefinition),
-}
-
-impl ContractBase {
-    fn from_definition(definition: &Definition) -> Option<Self> {
-        match definition {
-            Definition::Contract(contract) => Some(Self::Contract(Rc::clone(contract))),
-            Definition::Interface(interface) => Some(Self::Interface(Rc::clone(interface))),
-            _ => None,
-        }
-    }
-}
+use super::ContractBase;
 
 impl ContractDefinitionStruct {
     pub fn direct_bases(&self) -> Vec<ContractBase> {
@@ -179,73 +163,5 @@ impl ContractDefinitionStruct {
             }
         }
         events
-    }
-}
-
-impl ContractMembersStruct {
-    pub(crate) fn iter_function_definitions(
-        &self,
-    ) -> impl Iterator<Item = FunctionDefinition> + use<'_> {
-        self.iter().filter_map(|member| {
-            if let ContractMember::FunctionDefinition(function) = member {
-                Some(function)
-            } else {
-                None
-            }
-        })
-    }
-
-    pub(crate) fn iter_state_variable_definitions(
-        &self,
-    ) -> impl Iterator<Item = StateVariableDefinition> + use<'_> {
-        self.iter().filter_map(|member| {
-            if let ContractMember::StateVariableDefinition(state_variable) = member {
-                Some(state_variable)
-            } else {
-                None
-            }
-        })
-    }
-
-    pub(crate) fn iter_error_definitions(&self) -> impl Iterator<Item = ErrorDefinition> + use<'_> {
-        self.iter().filter_map(|member| {
-            if let ContractMember::ErrorDefinition(error_definition) = member {
-                Some(error_definition)
-            } else {
-                None
-            }
-        })
-    }
-
-    pub(crate) fn iter_event_definitions(&self) -> impl Iterator<Item = EventDefinition> + use<'_> {
-        self.iter().filter_map(|member| {
-            if let ContractMember::EventDefinition(event_definition) = member {
-                Some(event_definition)
-            } else {
-                None
-            }
-        })
-    }
-}
-
-impl InterfaceMembersStruct {
-    pub(crate) fn iter_error_definitions(&self) -> impl Iterator<Item = ErrorDefinition> + use<'_> {
-        self.iter().filter_map(|member| {
-            if let ContractMember::ErrorDefinition(error_definition) = member {
-                Some(error_definition)
-            } else {
-                None
-            }
-        })
-    }
-
-    pub(crate) fn iter_event_definitions(&self) -> impl Iterator<Item = EventDefinition> + use<'_> {
-        self.iter().filter_map(|member| {
-            if let ContractMember::EventDefinition(event_definition) = member {
-                Some(event_definition)
-            } else {
-                None
-            }
-        })
     }
 }

@@ -34,7 +34,7 @@ pub struct AdditiveExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub left_operand: Expression,
-    pub expression_additive_expression_operator: Expression_AdditiveExpression_Operator,
+    pub operator: AdditiveExpressionOperator,
     pub right_operand: Expression,
 }
 
@@ -50,7 +50,7 @@ pub type AddressType = Rc<AddressTypeStruct>;
 pub struct AddressTypeStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
-    pub payable_keyword: bool,
+    pub payable_keyword: Option<PayableKeyword>,
 }
 
 impl AddressTypeStruct {
@@ -130,7 +130,7 @@ pub struct AssignmentExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub left_operand: Expression,
-    pub expression_assignment_expression_operator: Expression_AssignmentExpression_Operator,
+    pub operator: AssignmentExpressionOperator,
     pub right_operand: Expression,
 }
 
@@ -320,7 +320,7 @@ pub type ContractDefinition = Rc<ContractDefinitionStruct>;
 pub struct ContractDefinitionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
-    pub abstract_keyword: bool,
+    pub abstract_keyword: Option<AbstractKeyword>,
     pub name: Identifier,
     pub inheritance_types: InheritanceTypes,
     pub storage_layout: Option<Expression>,
@@ -404,7 +404,7 @@ pub struct EqualityExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub left_operand: Expression,
-    pub expression_equality_expression_operator: Expression_EqualityExpression_Operator,
+    pub operator: EqualityExpressionOperator,
     pub right_operand: Expression,
 }
 
@@ -437,7 +437,7 @@ pub struct EventDefinitionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub name: Identifier,
-    pub anonymous_keyword: bool,
+    pub anonymous_keyword: Option<AnonymousKeyword>,
     pub parameters: Parameters,
 }
 
@@ -538,7 +538,7 @@ pub struct FunctionDefinitionStruct {
     pub parameters: Parameters,
     pub visibility: FunctionVisibility,
     pub mutability: FunctionMutability,
-    pub virtual_keyword: bool,
+    pub virtual_keyword: Option<VirtualKeyword>,
     pub override_specifier: Option<OverridePaths>,
     pub modifier_invocations: ModifierInvocations,
     pub returns: Option<Parameters>,
@@ -657,7 +657,7 @@ pub struct InequalityExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub left_operand: Expression,
-    pub expression_inequality_expression_operator: Expression_InequalityExpression_Operator,
+    pub operator: InequalityExpressionOperator,
     pub right_operand: Expression,
 }
 
@@ -802,7 +802,7 @@ pub struct MultiplicativeExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub left_operand: Expression,
-    pub expression_multiplicative_expression_operator: Expression_MultiplicativeExpression_Operator,
+    pub operator: MultiplicativeExpressionOperator,
     pub right_operand: Expression,
 }
 
@@ -868,7 +868,7 @@ pub struct ParameterStruct {
     pub type_name: TypeName,
     pub storage_location: Option<StorageLocation>,
     pub name: Option<Identifier>,
-    pub indexed: bool,
+    pub indexed: Option<IndexedKeyword>,
 }
 
 impl ParameterStruct {
@@ -900,7 +900,7 @@ pub struct PostfixExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub operand: Expression,
-    pub expression_postfix_expression_operator: Expression_PostfixExpression_Operator,
+    pub operator: PostfixExpressionOperator,
 }
 
 impl PostfixExpressionStruct {
@@ -930,7 +930,7 @@ pub type PrefixExpression = Rc<PrefixExpressionStruct>;
 pub struct PrefixExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
-    pub expression_prefix_expression_operator: Expression_PrefixExpression_Operator,
+    pub operator: PrefixExpressionOperator,
     pub operand: Expression,
 }
 
@@ -978,7 +978,7 @@ pub struct ShiftExpressionStruct {
     pub(crate) id: NodeId,
     pub range: Range<usize>,
     pub left_operand: Expression,
-    pub expression_shift_expression_operator: Expression_ShiftExpression_Operator,
+    pub operator: ShiftExpressionOperator,
     pub right_operand: Expression,
 }
 
@@ -1204,7 +1204,7 @@ pub struct UsingDirectiveStruct {
     pub range: Range<usize>,
     pub clause: UsingClause,
     pub target: UsingTarget,
-    pub global_keyword: bool,
+    pub global_keyword: Option<GlobalKeyword>,
 }
 
 impl UsingDirectiveStruct {
@@ -1531,16 +1531,38 @@ impl YulVariableDeclarationValueStruct {
 // Choices
 //
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug)]
 pub enum AbicoderVersion {
-    AbicoderV1Keyword,
-    AbicoderV2Keyword,
+    AbicoderV1Keyword(AbicoderV1Keyword),
+    AbicoderV2Keyword(AbicoderV2Keyword),
+}
+
+#[derive(Clone, Debug)]
+pub enum AdditiveExpressionOperator {
+    Minus(Minus),
+    Plus(Plus),
 }
 
 #[derive(Clone, Debug)]
 pub enum ArgumentsDeclaration {
     PositionalArguments(PositionalArguments),
     NamedArguments(NamedArguments),
+}
+
+#[derive(Clone, Debug)]
+pub enum AssignmentExpressionOperator {
+    AmpersandEqual(AmpersandEqual),
+    AsteriskEqual(AsteriskEqual),
+    BarEqual(BarEqual),
+    CaretEqual(CaretEqual),
+    Equal(Equal),
+    GreaterThanGreaterThanEqual(GreaterThanGreaterThanEqual),
+    GreaterThanGreaterThanGreaterThanEqual(GreaterThanGreaterThanGreaterThanEqual),
+    LessThanLessThanEqual(LessThanLessThanEqual),
+    MinusEqual(MinusEqual),
+    PercentEqual(PercentEqual),
+    PlusEqual(PlusEqual),
+    SlashEqual(SlashEqual),
 }
 
 #[derive(Clone, Debug)]
@@ -1558,21 +1580,27 @@ pub enum ContractMember {
 
 #[derive(Clone, Debug)]
 pub enum ElementaryType {
+    BoolKeyword(BoolKeyword),
+    StringKeyword(StringKeyword),
     AddressType(AddressType),
     BytesKeyword(BytesKeyword),
     IntKeyword(IntKeyword),
     UintKeyword(UintKeyword),
     FixedKeyword(FixedKeyword),
     UfixedKeyword(UfixedKeyword),
-    BoolKeyword,
-    StringKeyword,
+}
+
+#[derive(Clone, Debug)]
+pub enum EqualityExpressionOperator {
+    BangEqual(BangEqual),
+    EqualEqual(EqualEqual),
 }
 
 #[derive(Clone, Debug)]
 pub enum ExperimentalFeature {
+    ABIEncoderV2Keyword(ABIEncoderV2Keyword),
+    SMTCheckerKeyword(SMTCheckerKeyword),
     StringLiteral(StringLiteral),
-    ABIEncoderV2Keyword,
-    SMTCheckerKeyword,
 }
 
 #[derive(Clone, Debug)]
@@ -1604,91 +1632,25 @@ pub enum Expression {
     DecimalNumberExpression(DecimalNumberExpression),
     StringExpression(StringExpression),
     ElementaryType(ElementaryType),
+    PayableKeyword(PayableKeyword),
+    ThisKeyword(ThisKeyword),
+    SuperKeyword(SuperKeyword),
+    TrueKeyword(TrueKeyword),
+    FalseKeyword(FalseKeyword),
     Identifier(Identifier),
-    PayableKeyword,
-    ThisKeyword,
-    SuperKeyword,
-    TrueKeyword,
-    FalseKeyword,
-}
-
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
-pub enum Expression_AdditiveExpression_Operator {
-    Minus,
-    Plus,
-}
-
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
-pub enum Expression_AssignmentExpression_Operator {
-    AmpersandEqual,
-    AsteriskEqual,
-    BarEqual,
-    CaretEqual,
-    Equal,
-    GreaterThanGreaterThanEqual,
-    GreaterThanGreaterThanGreaterThanEqual,
-    LessThanLessThanEqual,
-    MinusEqual,
-    PercentEqual,
-    PlusEqual,
-    SlashEqual,
-}
-
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
-pub enum Expression_EqualityExpression_Operator {
-    BangEqual,
-    EqualEqual,
-}
-
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
-pub enum Expression_InequalityExpression_Operator {
-    GreaterThan,
-    GreaterThanEqual,
-    LessThan,
-    LessThanEqual,
-}
-
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
-pub enum Expression_MultiplicativeExpression_Operator {
-    Asterisk,
-    Percent,
-    Slash,
-}
-
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
-pub enum Expression_PostfixExpression_Operator {
-    MinusMinus,
-    PlusPlus,
-}
-
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
-pub enum Expression_PrefixExpression_Operator {
-    Bang,
-    DeleteKeyword,
-    Minus,
-    MinusMinus,
-    PlusPlus,
-    Tilde,
-}
-
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
-pub enum Expression_ShiftExpression_Operator {
-    GreaterThanGreaterThan,
-    GreaterThanGreaterThanGreaterThan,
-    LessThanLessThan,
 }
 
 #[derive(Clone, Debug)]
 pub enum ForStatementCondition {
     ExpressionStatement(ExpressionStatement),
-    Semicolon,
+    Semicolon(Semicolon),
 }
 
 #[derive(Clone, Debug)]
 pub enum ForStatementInitialization {
     VariableDeclarationStatement(VariableDeclarationStatement),
     ExpressionStatement(ExpressionStatement),
-    Semicolon,
+    Semicolon(Semicolon),
 }
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
@@ -1722,16 +1684,37 @@ pub enum ImportClause {
     ImportDeconstruction(ImportDeconstruction),
 }
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug)]
+pub enum InequalityExpressionOperator {
+    GreaterThan(GreaterThan),
+    GreaterThanEqual(GreaterThanEqual),
+    LessThan(LessThan),
+    LessThanEqual(LessThanEqual),
+}
+
+#[derive(Clone, Debug)]
+pub enum MultiplicativeExpressionOperator {
+    Asterisk(Asterisk),
+    Percent(Percent),
+    Slash(Slash),
+}
+
+#[derive(Clone, Debug)]
 pub enum NumberUnit {
-    WeiKeyword,
-    GweiKeyword,
-    EtherKeyword,
-    SecondsKeyword,
-    MinutesKeyword,
-    HoursKeyword,
-    DaysKeyword,
-    WeeksKeyword,
+    WeiKeyword(WeiKeyword),
+    GweiKeyword(GweiKeyword),
+    EtherKeyword(EtherKeyword),
+    SecondsKeyword(SecondsKeyword),
+    MinutesKeyword(MinutesKeyword),
+    HoursKeyword(HoursKeyword),
+    DaysKeyword(DaysKeyword),
+    WeeksKeyword(WeeksKeyword),
+}
+
+#[derive(Clone, Debug)]
+pub enum PostfixExpressionOperator {
+    MinusMinus(MinusMinus),
+    PlusPlus(PlusPlus),
 }
 
 #[derive(Clone, Debug)]
@@ -1739,6 +1722,23 @@ pub enum Pragma {
     VersionPragma(VersionPragma),
     AbicoderPragma(AbicoderPragma),
     ExperimentalPragma(ExperimentalPragma),
+}
+
+#[derive(Clone, Debug)]
+pub enum PrefixExpressionOperator {
+    Bang(Bang),
+    DeleteKeyword(DeleteKeyword),
+    Minus(Minus),
+    MinusMinus(MinusMinus),
+    PlusPlus(PlusPlus),
+    Tilde(Tilde),
+}
+
+#[derive(Clone, Debug)]
+pub enum ShiftExpressionOperator {
+    GreaterThanGreaterThan(GreaterThanGreaterThan),
+    GreaterThanGreaterThanGreaterThan(GreaterThanGreaterThanGreaterThan),
+    LessThanLessThan(LessThanLessThan),
 }
 
 #[derive(Clone, Debug)]
@@ -1792,11 +1792,11 @@ pub enum Statement {
     ExpressionStatement(ExpressionStatement),
 }
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug)]
 pub enum StorageLocation {
-    MemoryKeyword,
-    StorageKeyword,
-    CallDataKeyword,
+    MemoryKeyword(MemoryKeyword),
+    StorageKeyword(StorageKeyword),
+    CallDataKeyword(CallDataKeyword),
 }
 
 #[derive(Clone, Debug)]
@@ -1821,29 +1821,29 @@ pub enum UsingClause {
     UsingDeconstruction(UsingDeconstruction),
 }
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug)]
 pub enum UsingOperator {
-    Ampersand,
-    Asterisk,
-    BangEqual,
-    Bar,
-    Caret,
-    EqualEqual,
-    GreaterThan,
-    GreaterThanEqual,
-    LessThan,
-    LessThanEqual,
-    Minus,
-    Percent,
-    Plus,
-    Slash,
-    Tilde,
+    Ampersand(Ampersand),
+    Asterisk(Asterisk),
+    BangEqual(BangEqual),
+    Bar(Bar),
+    Caret(Caret),
+    EqualEqual(EqualEqual),
+    GreaterThan(GreaterThan),
+    GreaterThanEqual(GreaterThanEqual),
+    LessThan(LessThan),
+    LessThanEqual(LessThanEqual),
+    Minus(Minus),
+    Percent(Percent),
+    Plus(Plus),
+    Slash(Slash),
+    Tilde(Tilde),
 }
 
 #[derive(Clone, Debug)]
 pub enum UsingTarget {
     TypeName(TypeName),
-    Asterisk,
+    Asterisk(Asterisk),
 }
 
 #[derive(Clone, Debug)]
@@ -1864,15 +1864,15 @@ pub enum VersionLiteral {
     StringLiteral(StringLiteral),
 }
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug)]
 pub enum VersionOperator {
-    PragmaCaret,
-    PragmaTilde,
-    PragmaEqual,
-    PragmaLessThan,
-    PragmaGreaterThan,
-    PragmaLessThanEqual,
-    PragmaGreaterThanEqual,
+    PragmaCaret(PragmaCaret),
+    PragmaTilde(PragmaTilde),
+    PragmaEqual(PragmaEqual),
+    PragmaLessThan(PragmaLessThan),
+    PragmaGreaterThan(PragmaGreaterThan),
+    PragmaLessThanEqual(PragmaLessThanEqual),
+    PragmaGreaterThanEqual(PragmaGreaterThanEqual),
 }
 
 #[derive(Clone, Debug)]
@@ -1884,12 +1884,12 @@ pub enum YulExpression {
 
 #[derive(Clone, Debug)]
 pub enum YulLiteral {
+    TrueKeyword(TrueKeyword),
+    FalseKeyword(FalseKeyword),
     DecimalLiteral(DecimalLiteral),
     HexLiteral(HexLiteral),
     HexStringLiteral(HexStringLiteral),
     StringLiteral(StringLiteral),
-    TrueKeyword,
-    FalseKeyword,
 }
 
 #[derive(Clone, Debug)]
@@ -1988,8 +1988,204 @@ pub type YulSwitchCases = Vec<YulSwitchCase>;
 pub type YulVariableNames = Vec<Identifier>;
 
 //
-// Non-unique Terminals
+// Terminals
 //
+
+pub type ABIEncoderV2Keyword = Rc<ABIEncoderV2KeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct ABIEncoderV2KeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl ABIEncoderV2KeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type AbicoderV1Keyword = Rc<AbicoderV1KeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct AbicoderV1KeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl AbicoderV1KeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type AbicoderV2Keyword = Rc<AbicoderV2KeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct AbicoderV2KeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl AbicoderV2KeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type AbstractKeyword = Rc<AbstractKeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct AbstractKeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl AbstractKeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type Ampersand = Rc<AmpersandStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct AmpersandStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl AmpersandStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type AmpersandEqual = Rc<AmpersandEqualStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct AmpersandEqualStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl AmpersandEqualStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type AnonymousKeyword = Rc<AnonymousKeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct AnonymousKeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl AnonymousKeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type Asterisk = Rc<AsteriskStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct AsteriskStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl AsteriskStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type AsteriskEqual = Rc<AsteriskEqualStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct AsteriskEqualStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl AsteriskEqualStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type Bang = Rc<BangStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct BangStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl BangStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type BangEqual = Rc<BangEqualStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct BangEqualStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl BangEqualStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type Bar = Rc<BarStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct BarStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl BarStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type BarEqual = Rc<BarEqualStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct BarEqualStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl BarEqualStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type BoolKeyword = Rc<BoolKeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct BoolKeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl BoolKeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
 
 pub type BytesKeyword = Rc<BytesKeywordStruct>;
 
@@ -2004,9 +2200,64 @@ impl BytesKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
-
     pub fn unparse(&self) -> &str {
         &self.text
+    }
+}
+
+pub type CallDataKeyword = Rc<CallDataKeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct CallDataKeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl CallDataKeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type Caret = Rc<CaretStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct CaretStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl CaretStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type CaretEqual = Rc<CaretEqualStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct CaretEqualStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl CaretEqualStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type DaysKeyword = Rc<DaysKeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct DaysKeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl DaysKeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
     }
 }
 
@@ -2023,9 +2274,78 @@ impl DecimalLiteralStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
-
     pub fn unparse(&self) -> &str {
         &self.text
+    }
+}
+
+pub type DeleteKeyword = Rc<DeleteKeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct DeleteKeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl DeleteKeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type Equal = Rc<EqualStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct EqualStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl EqualStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type EqualEqual = Rc<EqualEqualStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct EqualEqualStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl EqualEqualStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type EtherKeyword = Rc<EtherKeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct EtherKeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl EtherKeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type FalseKeyword = Rc<FalseKeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct FalseKeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl FalseKeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
     }
 }
 
@@ -2042,9 +2362,120 @@ impl FixedKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
-
     pub fn unparse(&self) -> &str {
         &self.text
+    }
+}
+
+pub type GlobalKeyword = Rc<GlobalKeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct GlobalKeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl GlobalKeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type GreaterThan = Rc<GreaterThanStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct GreaterThanStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl GreaterThanStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type GreaterThanEqual = Rc<GreaterThanEqualStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct GreaterThanEqualStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl GreaterThanEqualStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type GreaterThanGreaterThan = Rc<GreaterThanGreaterThanStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct GreaterThanGreaterThanStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl GreaterThanGreaterThanStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type GreaterThanGreaterThanEqual = Rc<GreaterThanGreaterThanEqualStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct GreaterThanGreaterThanEqualStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl GreaterThanGreaterThanEqualStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type GreaterThanGreaterThanGreaterThan = Rc<GreaterThanGreaterThanGreaterThanStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct GreaterThanGreaterThanGreaterThanStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl GreaterThanGreaterThanGreaterThanStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type GreaterThanGreaterThanGreaterThanEqual = Rc<GreaterThanGreaterThanGreaterThanEqualStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct GreaterThanGreaterThanGreaterThanEqualStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl GreaterThanGreaterThanGreaterThanEqualStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type GweiKeyword = Rc<GweiKeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct GweiKeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl GweiKeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
     }
 }
 
@@ -2061,7 +2492,6 @@ impl HexLiteralStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
-
     pub fn unparse(&self) -> &str {
         &self.text
     }
@@ -2080,9 +2510,22 @@ impl HexStringLiteralStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
-
     pub fn unparse(&self) -> &str {
         &self.text
+    }
+}
+
+pub type HoursKeyword = Rc<HoursKeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct HoursKeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl HoursKeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
     }
 }
 
@@ -2099,9 +2542,22 @@ impl IdentifierStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
-
     pub fn unparse(&self) -> &str {
         &self.text
+    }
+}
+
+pub type IndexedKeyword = Rc<IndexedKeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct IndexedKeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl IndexedKeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
     }
 }
 
@@ -2118,9 +2574,414 @@ impl IntKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
-
     pub fn unparse(&self) -> &str {
         &self.text
+    }
+}
+
+pub type LessThan = Rc<LessThanStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct LessThanStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl LessThanStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type LessThanEqual = Rc<LessThanEqualStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct LessThanEqualStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl LessThanEqualStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type LessThanLessThan = Rc<LessThanLessThanStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct LessThanLessThanStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl LessThanLessThanStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type LessThanLessThanEqual = Rc<LessThanLessThanEqualStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct LessThanLessThanEqualStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl LessThanLessThanEqualStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type MemoryKeyword = Rc<MemoryKeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct MemoryKeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl MemoryKeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type Minus = Rc<MinusStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct MinusStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl MinusStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type MinusEqual = Rc<MinusEqualStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct MinusEqualStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl MinusEqualStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type MinusMinus = Rc<MinusMinusStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct MinusMinusStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl MinusMinusStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type MinutesKeyword = Rc<MinutesKeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct MinutesKeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl MinutesKeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type PayableKeyword = Rc<PayableKeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct PayableKeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl PayableKeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type Percent = Rc<PercentStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct PercentStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl PercentStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type PercentEqual = Rc<PercentEqualStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct PercentEqualStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl PercentEqualStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type Plus = Rc<PlusStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct PlusStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl PlusStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type PlusEqual = Rc<PlusEqualStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct PlusEqualStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl PlusEqualStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type PlusPlus = Rc<PlusPlusStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct PlusPlusStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl PlusPlusStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type PragmaCaret = Rc<PragmaCaretStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct PragmaCaretStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl PragmaCaretStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type PragmaEqual = Rc<PragmaEqualStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct PragmaEqualStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl PragmaEqualStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type PragmaGreaterThan = Rc<PragmaGreaterThanStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct PragmaGreaterThanStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl PragmaGreaterThanStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type PragmaGreaterThanEqual = Rc<PragmaGreaterThanEqualStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct PragmaGreaterThanEqualStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl PragmaGreaterThanEqualStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type PragmaLessThan = Rc<PragmaLessThanStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct PragmaLessThanStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl PragmaLessThanStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type PragmaLessThanEqual = Rc<PragmaLessThanEqualStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct PragmaLessThanEqualStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl PragmaLessThanEqualStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type PragmaTilde = Rc<PragmaTildeStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct PragmaTildeStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl PragmaTildeStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type SMTCheckerKeyword = Rc<SMTCheckerKeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct SMTCheckerKeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl SMTCheckerKeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type SecondsKeyword = Rc<SecondsKeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct SecondsKeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl SecondsKeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type Semicolon = Rc<SemicolonStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct SemicolonStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl SemicolonStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type Slash = Rc<SlashStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct SlashStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl SlashStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type SlashEqual = Rc<SlashEqualStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct SlashEqualStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl SlashEqualStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type StorageKeyword = Rc<StorageKeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct StorageKeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl StorageKeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type StringKeyword = Rc<StringKeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct StringKeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl StringKeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
     }
 }
 
@@ -2137,9 +2998,64 @@ impl StringLiteralStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
-
     pub fn unparse(&self) -> &str {
         &self.text
+    }
+}
+
+pub type SuperKeyword = Rc<SuperKeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct SuperKeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl SuperKeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type ThisKeyword = Rc<ThisKeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct ThisKeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl ThisKeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type Tilde = Rc<TildeStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct TildeStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl TildeStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type TrueKeyword = Rc<TrueKeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct TrueKeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl TrueKeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
     }
 }
 
@@ -2156,7 +3072,6 @@ impl UfixedKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
-
     pub fn unparse(&self) -> &str {
         &self.text
     }
@@ -2175,7 +3090,6 @@ impl UintKeywordStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
-
     pub fn unparse(&self) -> &str {
         &self.text
     }
@@ -2194,7 +3108,6 @@ impl UnicodeStringLiteralStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
-
     pub fn unparse(&self) -> &str {
         &self.text
     }
@@ -2213,8 +3126,49 @@ impl VersionSpecifierStruct {
     pub fn id(&self) -> NodeId {
         self.id
     }
-
     pub fn unparse(&self) -> &str {
         &self.text
+    }
+}
+
+pub type VirtualKeyword = Rc<VirtualKeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct VirtualKeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl VirtualKeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type WeeksKeyword = Rc<WeeksKeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct WeeksKeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl WeeksKeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
+    }
+}
+
+pub type WeiKeyword = Rc<WeiKeywordStruct>;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct WeiKeywordStruct {
+    pub(crate) id: NodeId,
+    pub range: Range<usize>,
+}
+
+impl WeiKeywordStruct {
+    pub fn id(&self) -> NodeId {
+        self.id
     }
 }

@@ -3,7 +3,9 @@ use slang_solidity_v2_ir::ir;
 
 use super::Pass;
 use crate::binder::{Definition, Scope};
-use crate::types::{DataLocation, FunctionType, Type, TypeId};
+use crate::types::{
+    DataLocation, FunctionMutability, FunctionType, FunctionVisibility, Type, TypeId,
+};
 
 impl Pass<'_> {
     pub(super) fn type_of_identifier_path(
@@ -86,7 +88,7 @@ impl Pass<'_> {
         match elementary_type {
             ir::ElementaryType::AddressType(address_type) => {
                 Some(self.types.register_type(Type::Address {
-                    payable: address_type.payable_keyword,
+                    payable: address_type.payable_keyword.is_some(),
                 }))
             }
             ir::ElementaryType::BytesKeyword(bytes_keyword) => {
@@ -109,9 +111,9 @@ impl Pass<'_> {
                 self.types
                     .register_type(Type::from_ufixed_keyword(ufixed_keyword.unparse())),
             ),
-            ir::ElementaryType::BoolKeyword => Some(self.types.boolean()),
+            ir::ElementaryType::BoolKeyword(_) => Some(self.types.boolean()),
             // No ByteKeyword in v2 (removed since Solidity >= 0.8.0)
-            ir::ElementaryType::StringKeyword => data_location.map(|data_location| {
+            ir::ElementaryType::StringKeyword(_) => data_location.map(|data_location| {
                 self.types.register_type(Type::String {
                     location: data_location,
                 })
@@ -146,8 +148,8 @@ impl Pass<'_> {
             implicit_receiver_type,
             parameter_types,
             return_type,
-            visibility: function_definition.visibility,
-            mutability: function_definition.mutability,
+            visibility: (&function_definition.visibility).into(),
+            mutability: (&function_definition.mutability).into(),
         })))
     }
 
@@ -238,8 +240,8 @@ impl Pass<'_> {
             implicit_receiver_type: Some(receiver_type_id),
             parameter_types,
             return_type,
-            visibility: ir::FunctionVisibility::Public,
-            mutability: ir::FunctionMutability::View,
+            visibility: FunctionVisibility::Public,
+            mutability: FunctionMutability::View,
         });
         Some(self.types.register_type(getter_type))
     }

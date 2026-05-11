@@ -23,17 +23,15 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let range = source.calculate_text_range().unwrap_or_default();
         {%- for field in sequence.fields %}
           let {{ field.label | snake_case }} =
-          {%- if field.is_optional -%}
-            {%- if field.type.kind == "UniqueTerminal" -%}
-              source.{{ field.label }}.is_some();
-            {%- else -%}
-              source.{{ field.label }}.as_ref().map(
-                |value| self.build_{{ field.type.name | snake_case }}(value)
-              );
-            {%- endif -%}
+          {%- if field.field_type.kind == "External" -%}
+            {{ throw(message="Cannot auto-build external sequence field") }};
+          {%- elif field.is_optional -%}
+            source.{{ field.source_label | snake_case }}.as_ref().map(
+              |value| self.build_{{ field.field_type.name | snake_case }}(value)
+            );
           {%- else -%}
             {# Non-optional unique terminals should be elided at this point #}
-            self.build_{{ field.type.name | snake_case }}(&source.{{ field.label | snake_case }});
+            self.build_{{ field.field_type.name | snake_case }}(&source.{{ field.source_label | snake_case }});
           {%- endif -%}
         {%- endfor %}
 
@@ -54,7 +52,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
   {% for parent_type, collapsed in builder.collapsed_sequences %}
     pub(super) fn build_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ collapsed.target_type.name }}
     {
-      self.build_{{ collapsed.type.name | snake_case }}(&source.{{ collapsed.label }})
+      self.build_{{ collapsed.source_type.name | snake_case }}(&source.{{ collapsed.label }})
     }
   {% endfor %}
 
@@ -66,12 +64,12 @@ impl<S: Source> CstToIrBuilder<'_, S> {
       #[allow(clippy::unused_self)]
       {% if choice.has_removed_variants -%}
         #[allow(dead_code)]
-        pub(super) fn default_build_{{ parent_type | snake_case }}(
-          &mut self, source: &input::{{ parent_type }},
+        pub(super) fn default_build_{{ choice.source_name | snake_case }}(
+          &mut self, source: &input::{{ choice.source_name }},
         ) -> output::{{ parent_type }}
       {%- else -%}
-        pub(super) fn build_{{ parent_type | snake_case }}(
-          &mut self, source: &input::{{ parent_type }},
+        pub(super) fn build_{{ choice.source_name | snake_case }}(
+          &mut self, source: &input::{{ choice.source_name }},
         ) -> output::{{ parent_type }}
       {%- endif %}
       {
@@ -80,15 +78,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         match source {
           {% for variant in choice.variants -%}
             {% if not variant.is_new -%}
-              {%- if variant.source.is_unique -%}
-                input::{{ parent_type }}::{{ variant.source.name }}(_) => {
-                  output::{{ parent_type }}::{{ variant.target.name }}
-                }
-              {% else -%}
-                input::{{ parent_type }}::{{ variant.source.name }}(ref {{ variant.source.name | snake_case }}) => {
-                  output::{{ parent_type }}::{{ variant.target.name }}(self.build_{{ variant.source.name | snake_case }}({{ variant.source.name | snake_case }}))
-                }
-              {% endif -%}
+              input::{{ choice.source_name }}::{{ variant.source.name }}(ref {{ variant.source.name | snake_case }}) => {
+                output::{{ parent_type }}::{{ variant.target.name }}(self.build_{{ variant.source.name | snake_case }}({{ variant.source.name | snake_case }}))
+              }
             {%- endif -%}
           {%- endfor -%}
           {%- if choice.has_removed_variants -%}
@@ -138,15 +130,15 @@ impl<S: Source> CstToIrBuilder<'_, S> {
   //
 
   {% for terminal_type, terminal in builder.terminals %}
-    {# Unique terminals don't need cloning because they are not present in the IR, #}
-    {# and new terminals cannot be automatically built #}
-    {% if not terminal.is_new and not terminal.is_unique %}
+    {# New terminals cannot be automatically built #}
+    {% if not terminal.is_new %}
       pub(super) fn build_{{ terminal_type | snake_case }}(&mut self, source: &input::{{ terminal_type }}) -> output::{{ terminal_type }} {
-        let text = self.unparse_range(source.range.clone());
         Rc::new(output::{{ terminal_type }}Struct {
           id: self.next_id(),
           range: source.range.clone(),
-          text,
+          {%- if not terminal.is_unique %}
+            text: self.unparse_range(source.range.clone()),
+          {%- endif %}
         })
       }
     {% endif %}
@@ -156,15 +148,14 @@ impl<S: Source> CstToIrBuilder<'_, S> {
   // Normalized Terminals
   //
   {% for source_type, normalized in builder.normalized_terminals %}
-    {% if not normalized.is_unique %}
-      pub(super) fn build_{{ source_type | snake_case }}(&mut self, source: &input::{{ source_type }}) -> output::{{ normalized.target }} {
-        let text = self.unparse_range(source.range.clone());
-        Rc::new(output::{{ normalized.target }}Struct {
-          id: self.next_id(),
-          range: source.range.clone(),
-          text,
-        })
-      }
-    {% endif %}
+    pub(super) fn build_{{ source_type | snake_case }}(&mut self, source: &input::{{ source_type }}) -> output::{{ normalized.target }} {
+      Rc::new(output::{{ normalized.target }}Struct {
+        id: self.next_id(),
+        range: source.range.clone(),
+        {%- if not normalized.is_unique %}
+          text: self.unparse_range(source.range.clone()),
+        {%- endif %}
+      })
+    }
   {% endfor %}
 }

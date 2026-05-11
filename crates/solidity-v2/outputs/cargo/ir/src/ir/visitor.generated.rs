@@ -504,10 +504,23 @@ pub trait Visitor {
     }
     fn leave_abicoder_version(&mut self, _node: &AbicoderVersion) {}
 
+    fn enter_additive_expression_operator(&mut self, _node: &AdditiveExpressionOperator) -> bool {
+        true
+    }
+    fn leave_additive_expression_operator(&mut self, _node: &AdditiveExpressionOperator) {}
+
     fn enter_arguments_declaration(&mut self, _node: &ArgumentsDeclaration) -> bool {
         true
     }
     fn leave_arguments_declaration(&mut self, _node: &ArgumentsDeclaration) {}
+
+    fn enter_assignment_expression_operator(
+        &mut self,
+        _node: &AssignmentExpressionOperator,
+    ) -> bool {
+        true
+    }
+    fn leave_assignment_expression_operator(&mut self, _node: &AssignmentExpressionOperator) {}
 
     fn enter_contract_member(&mut self, _node: &ContractMember) -> bool {
         true
@@ -519,6 +532,11 @@ pub trait Visitor {
     }
     fn leave_elementary_type(&mut self, _node: &ElementaryType) {}
 
+    fn enter_equality_expression_operator(&mut self, _node: &EqualityExpressionOperator) -> bool {
+        true
+    }
+    fn leave_equality_expression_operator(&mut self, _node: &EqualityExpressionOperator) {}
+
     fn enter_experimental_feature(&mut self, _node: &ExperimentalFeature) -> bool {
         true
     }
@@ -528,102 +546,6 @@ pub trait Visitor {
         true
     }
     fn leave_expression(&mut self, _node: &Expression) {}
-
-    fn enter_expression_additive_expression_operator(
-        &mut self,
-        _node: &Expression_AdditiveExpression_Operator,
-    ) -> bool {
-        true
-    }
-    fn leave_expression_additive_expression_operator(
-        &mut self,
-        _node: &Expression_AdditiveExpression_Operator,
-    ) {
-    }
-
-    fn enter_expression_assignment_expression_operator(
-        &mut self,
-        _node: &Expression_AssignmentExpression_Operator,
-    ) -> bool {
-        true
-    }
-    fn leave_expression_assignment_expression_operator(
-        &mut self,
-        _node: &Expression_AssignmentExpression_Operator,
-    ) {
-    }
-
-    fn enter_expression_equality_expression_operator(
-        &mut self,
-        _node: &Expression_EqualityExpression_Operator,
-    ) -> bool {
-        true
-    }
-    fn leave_expression_equality_expression_operator(
-        &mut self,
-        _node: &Expression_EqualityExpression_Operator,
-    ) {
-    }
-
-    fn enter_expression_inequality_expression_operator(
-        &mut self,
-        _node: &Expression_InequalityExpression_Operator,
-    ) -> bool {
-        true
-    }
-    fn leave_expression_inequality_expression_operator(
-        &mut self,
-        _node: &Expression_InequalityExpression_Operator,
-    ) {
-    }
-
-    fn enter_expression_multiplicative_expression_operator(
-        &mut self,
-        _node: &Expression_MultiplicativeExpression_Operator,
-    ) -> bool {
-        true
-    }
-    fn leave_expression_multiplicative_expression_operator(
-        &mut self,
-        _node: &Expression_MultiplicativeExpression_Operator,
-    ) {
-    }
-
-    fn enter_expression_postfix_expression_operator(
-        &mut self,
-        _node: &Expression_PostfixExpression_Operator,
-    ) -> bool {
-        true
-    }
-    fn leave_expression_postfix_expression_operator(
-        &mut self,
-        _node: &Expression_PostfixExpression_Operator,
-    ) {
-    }
-
-    fn enter_expression_prefix_expression_operator(
-        &mut self,
-        _node: &Expression_PrefixExpression_Operator,
-    ) -> bool {
-        true
-    }
-    fn leave_expression_prefix_expression_operator(
-        &mut self,
-        _node: &Expression_PrefixExpression_Operator,
-    ) {
-    }
-
-    fn enter_expression_shift_expression_operator(
-        &mut self,
-        _node: &Expression_ShiftExpression_Operator,
-    ) -> bool {
-        true
-    }
-    fn leave_expression_shift_expression_operator(
-        &mut self,
-        _node: &Expression_ShiftExpression_Operator,
-    ) {
-    }
 
     fn enter_for_statement_condition(&mut self, _node: &ForStatementCondition) -> bool {
         true
@@ -655,15 +577,50 @@ pub trait Visitor {
     }
     fn leave_import_clause(&mut self, _node: &ImportClause) {}
 
+    fn enter_inequality_expression_operator(
+        &mut self,
+        _node: &InequalityExpressionOperator,
+    ) -> bool {
+        true
+    }
+    fn leave_inequality_expression_operator(&mut self, _node: &InequalityExpressionOperator) {}
+
+    fn enter_multiplicative_expression_operator(
+        &mut self,
+        _node: &MultiplicativeExpressionOperator,
+    ) -> bool {
+        true
+    }
+    fn leave_multiplicative_expression_operator(
+        &mut self,
+        _node: &MultiplicativeExpressionOperator,
+    ) {
+    }
+
     fn enter_number_unit(&mut self, _node: &NumberUnit) -> bool {
         true
     }
     fn leave_number_unit(&mut self, _node: &NumberUnit) {}
 
+    fn enter_postfix_expression_operator(&mut self, _node: &PostfixExpressionOperator) -> bool {
+        true
+    }
+    fn leave_postfix_expression_operator(&mut self, _node: &PostfixExpressionOperator) {}
+
     fn enter_pragma(&mut self, _node: &Pragma) -> bool {
         true
     }
     fn leave_pragma(&mut self, _node: &Pragma) {}
+
+    fn enter_prefix_expression_operator(&mut self, _node: &PrefixExpressionOperator) -> bool {
+        true
+    }
+    fn leave_prefix_expression_operator(&mut self, _node: &PrefixExpressionOperator) {}
+
+    fn enter_shift_expression_operator(&mut self, _node: &ShiftExpressionOperator) -> bool {
+        true
+    }
+    fn leave_shift_expression_operator(&mut self, _node: &ShiftExpressionOperator) {}
 
     fn enter_source_unit_member(&mut self, _node: &SourceUnitMember) -> bool {
         true
@@ -935,6 +892,7 @@ pub trait Visitor {
         true
     }
     fn leave_yul_variable_names(&mut self, _items: &YulVariableNames) {}
+
     fn visit_identifier(&mut self, _node: &Identifier) {}
 }
 
@@ -955,10 +913,7 @@ pub fn accept_additive_expression(node: &AdditiveExpression, visitor: &mut impl 
         return;
     }
     accept_expression(&node.left_operand, visitor);
-    accept_expression_additive_expression_operator(
-        &node.expression_additive_expression_operator,
-        visitor,
-    );
+    accept_additive_expression_operator(&node.operator, visitor);
     accept_expression(&node.right_operand, visitor);
     visitor.leave_additive_expression(node);
 }
@@ -1014,10 +969,7 @@ pub fn accept_assignment_expression(node: &AssignmentExpression, visitor: &mut i
         return;
     }
     accept_expression(&node.left_operand, visitor);
-    accept_expression_assignment_expression_operator(
-        &node.expression_assignment_expression_operator,
-        visitor,
-    );
+    accept_assignment_expression_operator(&node.operator, visitor);
     accept_expression(&node.right_operand, visitor);
     visitor.leave_assignment_expression(node);
 }
@@ -1185,10 +1137,7 @@ pub fn accept_equality_expression(node: &EqualityExpression, visitor: &mut impl 
         return;
     }
     accept_expression(&node.left_operand, visitor);
-    accept_expression_equality_expression_operator(
-        &node.expression_equality_expression_operator,
-        visitor,
-    );
+    accept_equality_expression_operator(&node.operator, visitor);
     accept_expression(&node.right_operand, visitor);
     visitor.leave_equality_expression(node);
 }
@@ -1358,10 +1307,7 @@ pub fn accept_inequality_expression(node: &InequalityExpression, visitor: &mut i
         return;
     }
     accept_expression(&node.left_operand, visitor);
-    accept_expression_inequality_expression_operator(
-        &node.expression_inequality_expression_operator,
-        visitor,
-    );
+    accept_inequality_expression_operator(&node.operator, visitor);
     accept_expression(&node.right_operand, visitor);
     visitor.leave_inequality_expression(node);
 }
@@ -1457,10 +1403,7 @@ pub fn accept_multiplicative_expression(
         return;
     }
     accept_expression(&node.left_operand, visitor);
-    accept_expression_multiplicative_expression_operator(
-        &node.expression_multiplicative_expression_operator,
-        visitor,
-    );
+    accept_multiplicative_expression_operator(&node.operator, visitor);
     accept_expression(&node.right_operand, visitor);
     visitor.leave_multiplicative_expression(node);
 }
@@ -1520,10 +1463,7 @@ pub fn accept_postfix_expression(node: &PostfixExpression, visitor: &mut impl Vi
         return;
     }
     accept_expression(&node.operand, visitor);
-    accept_expression_postfix_expression_operator(
-        &node.expression_postfix_expression_operator,
-        visitor,
-    );
+    accept_postfix_expression_operator(&node.operator, visitor);
     visitor.leave_postfix_expression(node);
 }
 
@@ -1539,10 +1479,7 @@ pub fn accept_prefix_expression(node: &PrefixExpression, visitor: &mut impl Visi
     if !visitor.enter_prefix_expression(node) {
         return;
     }
-    accept_expression_prefix_expression_operator(
-        &node.expression_prefix_expression_operator,
-        visitor,
-    );
+    accept_prefix_expression_operator(&node.operator, visitor);
     accept_expression(&node.operand, visitor);
     visitor.leave_prefix_expression(node);
 }
@@ -1571,10 +1508,7 @@ pub fn accept_shift_expression(node: &ShiftExpression, visitor: &mut impl Visito
         return;
     }
     accept_expression(&node.left_operand, visitor);
-    accept_expression_shift_expression_operator(
-        &node.expression_shift_expression_operator,
-        visitor,
-    );
+    accept_shift_expression_operator(&node.operator, visitor);
     accept_expression(&node.right_operand, visitor);
     visitor.leave_shift_expression(node);
 }
@@ -1927,7 +1861,30 @@ pub fn accept_yul_variable_declaration_value(
 // Choices
 //
 
-pub fn accept_abicoder_version(_node: &AbicoderVersion, _visitor: &mut impl Visitor) {}
+pub fn accept_abicoder_version(node: &AbicoderVersion, visitor: &mut impl Visitor) {
+    if !visitor.enter_abicoder_version(node) {
+        return;
+    }
+    match node {
+        AbicoderVersion::AbicoderV1Keyword(_) => {}
+        AbicoderVersion::AbicoderV2Keyword(_) => {}
+    }
+    visitor.leave_abicoder_version(node);
+}
+
+pub fn accept_additive_expression_operator(
+    node: &AdditiveExpressionOperator,
+    visitor: &mut impl Visitor,
+) {
+    if !visitor.enter_additive_expression_operator(node) {
+        return;
+    }
+    match node {
+        AdditiveExpressionOperator::Minus(_) => {}
+        AdditiveExpressionOperator::Plus(_) => {}
+    }
+    visitor.leave_additive_expression_operator(node);
+}
 
 pub fn accept_arguments_declaration(node: &ArgumentsDeclaration, visitor: &mut impl Visitor) {
     if !visitor.enter_arguments_declaration(node) {
@@ -1942,6 +1899,30 @@ pub fn accept_arguments_declaration(node: &ArgumentsDeclaration, visitor: &mut i
         }
     }
     visitor.leave_arguments_declaration(node);
+}
+
+pub fn accept_assignment_expression_operator(
+    node: &AssignmentExpressionOperator,
+    visitor: &mut impl Visitor,
+) {
+    if !visitor.enter_assignment_expression_operator(node) {
+        return;
+    }
+    match node {
+        AssignmentExpressionOperator::AmpersandEqual(_) => {}
+        AssignmentExpressionOperator::AsteriskEqual(_) => {}
+        AssignmentExpressionOperator::BarEqual(_) => {}
+        AssignmentExpressionOperator::CaretEqual(_) => {}
+        AssignmentExpressionOperator::Equal(_) => {}
+        AssignmentExpressionOperator::GreaterThanGreaterThanEqual(_) => {}
+        AssignmentExpressionOperator::GreaterThanGreaterThanGreaterThanEqual(_) => {}
+        AssignmentExpressionOperator::LessThanLessThanEqual(_) => {}
+        AssignmentExpressionOperator::MinusEqual(_) => {}
+        AssignmentExpressionOperator::PercentEqual(_) => {}
+        AssignmentExpressionOperator::PlusEqual(_) => {}
+        AssignmentExpressionOperator::SlashEqual(_) => {}
+    }
+    visitor.leave_assignment_expression_operator(node);
 }
 
 pub fn accept_contract_member(node: &ContractMember, visitor: &mut impl Visitor) {
@@ -1985,6 +1966,8 @@ pub fn accept_elementary_type(node: &ElementaryType, visitor: &mut impl Visitor)
         return;
     }
     match node {
+        ElementaryType::BoolKeyword(_) => {}
+        ElementaryType::StringKeyword(_) => {}
         ElementaryType::AddressType(ref address_type) => {
             accept_address_type(address_type, visitor);
         }
@@ -1993,12 +1976,35 @@ pub fn accept_elementary_type(node: &ElementaryType, visitor: &mut impl Visitor)
         ElementaryType::UintKeyword(_) => {}
         ElementaryType::FixedKeyword(_) => {}
         ElementaryType::UfixedKeyword(_) => {}
-        ElementaryType::BoolKeyword | ElementaryType::StringKeyword => {}
     }
     visitor.leave_elementary_type(node);
 }
 
-pub fn accept_experimental_feature(_node: &ExperimentalFeature, _visitor: &mut impl Visitor) {}
+pub fn accept_equality_expression_operator(
+    node: &EqualityExpressionOperator,
+    visitor: &mut impl Visitor,
+) {
+    if !visitor.enter_equality_expression_operator(node) {
+        return;
+    }
+    match node {
+        EqualityExpressionOperator::BangEqual(_) => {}
+        EqualityExpressionOperator::EqualEqual(_) => {}
+    }
+    visitor.leave_equality_expression_operator(node);
+}
+
+pub fn accept_experimental_feature(node: &ExperimentalFeature, visitor: &mut impl Visitor) {
+    if !visitor.enter_experimental_feature(node) {
+        return;
+    }
+    match node {
+        ExperimentalFeature::ABIEncoderV2Keyword(_) => {}
+        ExperimentalFeature::SMTCheckerKeyword(_) => {}
+        ExperimentalFeature::StringLiteral(_) => {}
+    }
+    visitor.leave_experimental_feature(node);
+}
 
 pub fn accept_expression(node: &Expression, visitor: &mut impl Visitor) {
     if !visitor.enter_expression(node) {
@@ -2086,64 +2092,16 @@ pub fn accept_expression(node: &Expression, visitor: &mut impl Visitor) {
         Expression::ElementaryType(ref elementary_type) => {
             accept_elementary_type(elementary_type, visitor);
         }
+        Expression::PayableKeyword(_) => {}
+        Expression::ThisKeyword(_) => {}
+        Expression::SuperKeyword(_) => {}
+        Expression::TrueKeyword(_) => {}
+        Expression::FalseKeyword(_) => {}
         Expression::Identifier(ref identifier) => {
             visitor.visit_identifier(identifier);
         }
-        Expression::PayableKeyword
-        | Expression::ThisKeyword
-        | Expression::SuperKeyword
-        | Expression::TrueKeyword
-        | Expression::FalseKeyword => {}
     }
     visitor.leave_expression(node);
-}
-
-pub fn accept_expression_additive_expression_operator(
-    _node: &Expression_AdditiveExpression_Operator,
-    _visitor: &mut impl Visitor,
-) {
-}
-
-pub fn accept_expression_assignment_expression_operator(
-    _node: &Expression_AssignmentExpression_Operator,
-    _visitor: &mut impl Visitor,
-) {
-}
-
-pub fn accept_expression_equality_expression_operator(
-    _node: &Expression_EqualityExpression_Operator,
-    _visitor: &mut impl Visitor,
-) {
-}
-
-pub fn accept_expression_inequality_expression_operator(
-    _node: &Expression_InequalityExpression_Operator,
-    _visitor: &mut impl Visitor,
-) {
-}
-
-pub fn accept_expression_multiplicative_expression_operator(
-    _node: &Expression_MultiplicativeExpression_Operator,
-    _visitor: &mut impl Visitor,
-) {
-}
-
-pub fn accept_expression_postfix_expression_operator(
-    _node: &Expression_PostfixExpression_Operator,
-    _visitor: &mut impl Visitor,
-) {
-}
-
-pub fn accept_expression_prefix_expression_operator(
-    _node: &Expression_PrefixExpression_Operator,
-    _visitor: &mut impl Visitor,
-) {
-}
-
-pub fn accept_expression_shift_expression_operator(
-    _node: &Expression_ShiftExpression_Operator,
-    _visitor: &mut impl Visitor,
-) {
 }
 
 pub fn accept_for_statement_condition(node: &ForStatementCondition, visitor: &mut impl Visitor) {
@@ -2154,7 +2112,7 @@ pub fn accept_for_statement_condition(node: &ForStatementCondition, visitor: &mu
         ForStatementCondition::ExpressionStatement(ref expression_statement) => {
             accept_expression_statement(expression_statement, visitor);
         }
-        ForStatementCondition::Semicolon => {}
+        ForStatementCondition::Semicolon(_) => {}
     }
     visitor.leave_for_statement_condition(node);
 }
@@ -2175,16 +2133,50 @@ pub fn accept_for_statement_initialization(
         ForStatementInitialization::ExpressionStatement(ref expression_statement) => {
             accept_expression_statement(expression_statement, visitor);
         }
-        ForStatementInitialization::Semicolon => {}
+        ForStatementInitialization::Semicolon(_) => {}
     }
     visitor.leave_for_statement_initialization(node);
 }
 
-pub fn accept_function_kind(_node: &FunctionKind, _visitor: &mut impl Visitor) {}
+pub fn accept_function_kind(node: &FunctionKind, visitor: &mut impl Visitor) {
+    if !visitor.enter_function_kind(node) {
+        return;
+    }
+    match node {
+        FunctionKind::Regular => {}
+        FunctionKind::Constructor => {}
+        FunctionKind::Fallback => {}
+        FunctionKind::Receive => {}
+        FunctionKind::Modifier => {}
+    }
+    visitor.leave_function_kind(node);
+}
 
-pub fn accept_function_mutability(_node: &FunctionMutability, _visitor: &mut impl Visitor) {}
+pub fn accept_function_mutability(node: &FunctionMutability, visitor: &mut impl Visitor) {
+    if !visitor.enter_function_mutability(node) {
+        return;
+    }
+    match node {
+        FunctionMutability::Pure => {}
+        FunctionMutability::View => {}
+        FunctionMutability::NonPayable => {}
+        FunctionMutability::Payable => {}
+    }
+    visitor.leave_function_mutability(node);
+}
 
-pub fn accept_function_visibility(_node: &FunctionVisibility, _visitor: &mut impl Visitor) {}
+pub fn accept_function_visibility(node: &FunctionVisibility, visitor: &mut impl Visitor) {
+    if !visitor.enter_function_visibility(node) {
+        return;
+    }
+    match node {
+        FunctionVisibility::Public => {}
+        FunctionVisibility::Private => {}
+        FunctionVisibility::Internal => {}
+        FunctionVisibility::External => {}
+    }
+    visitor.leave_function_visibility(node);
+}
 
 pub fn accept_import_clause(node: &ImportClause, visitor: &mut impl Visitor) {
     if !visitor.enter_import_clause(node) {
@@ -2201,7 +2193,67 @@ pub fn accept_import_clause(node: &ImportClause, visitor: &mut impl Visitor) {
     visitor.leave_import_clause(node);
 }
 
-pub fn accept_number_unit(_node: &NumberUnit, _visitor: &mut impl Visitor) {}
+pub fn accept_inequality_expression_operator(
+    node: &InequalityExpressionOperator,
+    visitor: &mut impl Visitor,
+) {
+    if !visitor.enter_inequality_expression_operator(node) {
+        return;
+    }
+    match node {
+        InequalityExpressionOperator::GreaterThan(_) => {}
+        InequalityExpressionOperator::GreaterThanEqual(_) => {}
+        InequalityExpressionOperator::LessThan(_) => {}
+        InequalityExpressionOperator::LessThanEqual(_) => {}
+    }
+    visitor.leave_inequality_expression_operator(node);
+}
+
+pub fn accept_multiplicative_expression_operator(
+    node: &MultiplicativeExpressionOperator,
+    visitor: &mut impl Visitor,
+) {
+    if !visitor.enter_multiplicative_expression_operator(node) {
+        return;
+    }
+    match node {
+        MultiplicativeExpressionOperator::Asterisk(_) => {}
+        MultiplicativeExpressionOperator::Percent(_) => {}
+        MultiplicativeExpressionOperator::Slash(_) => {}
+    }
+    visitor.leave_multiplicative_expression_operator(node);
+}
+
+pub fn accept_number_unit(node: &NumberUnit, visitor: &mut impl Visitor) {
+    if !visitor.enter_number_unit(node) {
+        return;
+    }
+    match node {
+        NumberUnit::WeiKeyword(_) => {}
+        NumberUnit::GweiKeyword(_) => {}
+        NumberUnit::EtherKeyword(_) => {}
+        NumberUnit::SecondsKeyword(_) => {}
+        NumberUnit::MinutesKeyword(_) => {}
+        NumberUnit::HoursKeyword(_) => {}
+        NumberUnit::DaysKeyword(_) => {}
+        NumberUnit::WeeksKeyword(_) => {}
+    }
+    visitor.leave_number_unit(node);
+}
+
+pub fn accept_postfix_expression_operator(
+    node: &PostfixExpressionOperator,
+    visitor: &mut impl Visitor,
+) {
+    if !visitor.enter_postfix_expression_operator(node) {
+        return;
+    }
+    match node {
+        PostfixExpressionOperator::MinusMinus(_) => {}
+        PostfixExpressionOperator::PlusPlus(_) => {}
+    }
+    visitor.leave_postfix_expression_operator(node);
+}
 
 pub fn accept_pragma(node: &Pragma, visitor: &mut impl Visitor) {
     if !visitor.enter_pragma(node) {
@@ -2219,6 +2271,39 @@ pub fn accept_pragma(node: &Pragma, visitor: &mut impl Visitor) {
         }
     }
     visitor.leave_pragma(node);
+}
+
+pub fn accept_prefix_expression_operator(
+    node: &PrefixExpressionOperator,
+    visitor: &mut impl Visitor,
+) {
+    if !visitor.enter_prefix_expression_operator(node) {
+        return;
+    }
+    match node {
+        PrefixExpressionOperator::Bang(_) => {}
+        PrefixExpressionOperator::DeleteKeyword(_) => {}
+        PrefixExpressionOperator::Minus(_) => {}
+        PrefixExpressionOperator::MinusMinus(_) => {}
+        PrefixExpressionOperator::PlusPlus(_) => {}
+        PrefixExpressionOperator::Tilde(_) => {}
+    }
+    visitor.leave_prefix_expression_operator(node);
+}
+
+pub fn accept_shift_expression_operator(
+    node: &ShiftExpressionOperator,
+    visitor: &mut impl Visitor,
+) {
+    if !visitor.enter_shift_expression_operator(node) {
+        return;
+    }
+    match node {
+        ShiftExpressionOperator::GreaterThanGreaterThan(_) => {}
+        ShiftExpressionOperator::GreaterThanGreaterThanGreaterThan(_) => {}
+        ShiftExpressionOperator::LessThanLessThan(_) => {}
+    }
+    visitor.leave_shift_expression_operator(node);
 }
 
 pub fn accept_source_unit_member(node: &SourceUnitMember, visitor: &mut impl Visitor) {
@@ -2272,15 +2357,34 @@ pub fn accept_source_unit_member(node: &SourceUnitMember, visitor: &mut impl Vis
 }
 
 pub fn accept_state_variable_mutability(
-    _node: &StateVariableMutability,
-    _visitor: &mut impl Visitor,
+    node: &StateVariableMutability,
+    visitor: &mut impl Visitor,
 ) {
+    if !visitor.enter_state_variable_mutability(node) {
+        return;
+    }
+    match node {
+        StateVariableMutability::Mutable => {}
+        StateVariableMutability::Constant => {}
+        StateVariableMutability::Immutable => {}
+        StateVariableMutability::Transient => {}
+    }
+    visitor.leave_state_variable_mutability(node);
 }
 
 pub fn accept_state_variable_visibility(
-    _node: &StateVariableVisibility,
-    _visitor: &mut impl Visitor,
+    node: &StateVariableVisibility,
+    visitor: &mut impl Visitor,
 ) {
+    if !visitor.enter_state_variable_visibility(node) {
+        return;
+    }
+    match node {
+        StateVariableVisibility::Public => {}
+        StateVariableVisibility::Private => {}
+        StateVariableVisibility::Internal => {}
+    }
+    visitor.leave_state_variable_visibility(node);
 }
 
 pub fn accept_statement(node: &Statement, visitor: &mut impl Visitor) {
@@ -2337,7 +2441,17 @@ pub fn accept_statement(node: &Statement, visitor: &mut impl Visitor) {
     visitor.leave_statement(node);
 }
 
-pub fn accept_storage_location(_node: &StorageLocation, _visitor: &mut impl Visitor) {}
+pub fn accept_storage_location(node: &StorageLocation, visitor: &mut impl Visitor) {
+    if !visitor.enter_storage_location(node) {
+        return;
+    }
+    match node {
+        StorageLocation::MemoryKeyword(_) => {}
+        StorageLocation::StorageKeyword(_) => {}
+        StorageLocation::CallDataKeyword(_) => {}
+    }
+    visitor.leave_storage_location(node);
+}
 
 pub fn accept_string_expression(node: &StringExpression, visitor: &mut impl Visitor) {
     if !visitor.enter_string_expression(node) {
@@ -2396,7 +2510,29 @@ pub fn accept_using_clause(node: &UsingClause, visitor: &mut impl Visitor) {
     visitor.leave_using_clause(node);
 }
 
-pub fn accept_using_operator(_node: &UsingOperator, _visitor: &mut impl Visitor) {}
+pub fn accept_using_operator(node: &UsingOperator, visitor: &mut impl Visitor) {
+    if !visitor.enter_using_operator(node) {
+        return;
+    }
+    match node {
+        UsingOperator::Ampersand(_) => {}
+        UsingOperator::Asterisk(_) => {}
+        UsingOperator::BangEqual(_) => {}
+        UsingOperator::Bar(_) => {}
+        UsingOperator::Caret(_) => {}
+        UsingOperator::EqualEqual(_) => {}
+        UsingOperator::GreaterThan(_) => {}
+        UsingOperator::GreaterThanEqual(_) => {}
+        UsingOperator::LessThan(_) => {}
+        UsingOperator::LessThanEqual(_) => {}
+        UsingOperator::Minus(_) => {}
+        UsingOperator::Percent(_) => {}
+        UsingOperator::Plus(_) => {}
+        UsingOperator::Slash(_) => {}
+        UsingOperator::Tilde(_) => {}
+    }
+    visitor.leave_using_operator(node);
+}
 
 pub fn accept_using_target(node: &UsingTarget, visitor: &mut impl Visitor) {
     if !visitor.enter_using_target(node) {
@@ -2406,7 +2542,7 @@ pub fn accept_using_target(node: &UsingTarget, visitor: &mut impl Visitor) {
         UsingTarget::TypeName(ref type_name) => {
             accept_type_name(type_name, visitor);
         }
-        UsingTarget::Asterisk => {}
+        UsingTarget::Asterisk(_) => {}
     }
     visitor.leave_using_target(node);
 }
@@ -2457,7 +2593,21 @@ pub fn accept_version_literal(node: &VersionLiteral, visitor: &mut impl Visitor)
     visitor.leave_version_literal(node);
 }
 
-pub fn accept_version_operator(_node: &VersionOperator, _visitor: &mut impl Visitor) {}
+pub fn accept_version_operator(node: &VersionOperator, visitor: &mut impl Visitor) {
+    if !visitor.enter_version_operator(node) {
+        return;
+    }
+    match node {
+        VersionOperator::PragmaCaret(_) => {}
+        VersionOperator::PragmaTilde(_) => {}
+        VersionOperator::PragmaEqual(_) => {}
+        VersionOperator::PragmaLessThan(_) => {}
+        VersionOperator::PragmaGreaterThan(_) => {}
+        VersionOperator::PragmaLessThanEqual(_) => {}
+        VersionOperator::PragmaGreaterThanEqual(_) => {}
+    }
+    visitor.leave_version_operator(node);
+}
 
 pub fn accept_yul_expression(node: &YulExpression, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_expression(node) {
@@ -2477,7 +2627,20 @@ pub fn accept_yul_expression(node: &YulExpression, visitor: &mut impl Visitor) {
     visitor.leave_yul_expression(node);
 }
 
-pub fn accept_yul_literal(_node: &YulLiteral, _visitor: &mut impl Visitor) {}
+pub fn accept_yul_literal(node: &YulLiteral, visitor: &mut impl Visitor) {
+    if !visitor.enter_yul_literal(node) {
+        return;
+    }
+    match node {
+        YulLiteral::TrueKeyword(_) => {}
+        YulLiteral::FalseKeyword(_) => {}
+        YulLiteral::DecimalLiteral(_) => {}
+        YulLiteral::HexLiteral(_) => {}
+        YulLiteral::HexStringLiteral(_) => {}
+        YulLiteral::StringLiteral(_) => {}
+    }
+    visitor.leave_yul_literal(node);
+}
 
 pub fn accept_yul_statement(node: &YulStatement, visitor: &mut impl Visitor) {
     if !visitor.enter_yul_statement(node) {

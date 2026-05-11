@@ -2,9 +2,10 @@ use std::rc::Rc;
 
 use paste::paste;
 use slang_solidity_v2_common::nodes::NodeId;
-use slang_solidity_v2_ir::ir::{FunctionMutability, FunctionVisibility};
 use slang_solidity_v2_semantic::context::SemanticContext;
-use slang_solidity_v2_semantic::types::{self, DataLocation, TypeId};
+use slang_solidity_v2_semantic::types::{
+    self, DataLocation, FunctionMutability, FunctionVisibility, TypeId,
+};
 
 use super::Definition;
 

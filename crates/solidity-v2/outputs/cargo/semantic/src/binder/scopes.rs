@@ -402,9 +402,51 @@ pub(crate) enum UsingDirective {
     },
     SingleTypeOperator {
         scope_id: ScopeId,
-        operator_mapping: HashMap<ir::UsingOperator, String>,
+        operator_mapping: HashMap<UsingOperator, String>,
         type_id: TypeId,
     },
+}
+
+// Mirrors `ir::UsingOperator`
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+pub(crate) enum UsingOperator {
+    Ampersand,
+    Asterisk,
+    BangEqual,
+    Bar,
+    Caret,
+    EqualEqual,
+    GreaterThan,
+    GreaterThanEqual,
+    LessThan,
+    LessThanEqual,
+    Minus,
+    Percent,
+    Plus,
+    Slash,
+    Tilde,
+}
+
+impl From<&ir::UsingOperator> for UsingOperator {
+    fn from(value: &ir::UsingOperator) -> Self {
+        match value {
+            ir::UsingOperator::Ampersand(_) => Self::Ampersand,
+            ir::UsingOperator::Asterisk(_) => Self::Asterisk,
+            ir::UsingOperator::BangEqual(_) => Self::BangEqual,
+            ir::UsingOperator::Bar(_) => Self::Bar,
+            ir::UsingOperator::Caret(_) => Self::Caret,
+            ir::UsingOperator::EqualEqual(_) => Self::EqualEqual,
+            ir::UsingOperator::GreaterThan(_) => Self::GreaterThan,
+            ir::UsingOperator::GreaterThanEqual(_) => Self::GreaterThanEqual,
+            ir::UsingOperator::LessThan(_) => Self::LessThan,
+            ir::UsingOperator::LessThanEqual(_) => Self::LessThanEqual,
+            ir::UsingOperator::Minus(_) => Self::Minus,
+            ir::UsingOperator::Percent(_) => Self::Percent,
+            ir::UsingOperator::Plus(_) => Self::Plus,
+            ir::UsingOperator::Slash(_) => Self::Slash,
+            ir::UsingOperator::Tilde(_) => Self::Tilde,
+        }
+    }
 }
 
 impl UsingDirective {
@@ -419,7 +461,7 @@ impl UsingDirective {
     pub(crate) fn new_single_type_with_operators(
         scope_id: ScopeId,
         type_id: TypeId,
-        operator_mapping: HashMap<ir::UsingOperator, String>,
+        operator_mapping: HashMap<UsingOperator, String>,
     ) -> Self {
         Self::SingleTypeOperator {
             scope_id,

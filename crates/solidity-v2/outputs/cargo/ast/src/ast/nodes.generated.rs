@@ -80,13 +80,8 @@ impl AdditiveExpressionStruct {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
-    pub fn expression_additive_expression_operator(
-        &self,
-    ) -> Expression_AdditiveExpression_Operator {
-        create_expression_additive_expression_operator(
-            &self.ir_node.expression_additive_expression_operator,
-            &self.semantic,
-        )
+    pub fn operator(&self) -> AdditiveExpressionOperator {
+        create_additive_expression_operator(&self.ir_node.operator, &self.semantic)
     }
 
     pub fn right_operand(&self) -> Expression {
@@ -128,8 +123,11 @@ impl AddressTypeStruct {
         self.ir_node.id()
     }
 
-    pub fn payable_keyword(&self) -> bool {
-        self.ir_node.payable_keyword
+    pub fn payable_keyword(&self) -> Option<PayableKeyword> {
+        self.ir_node
+            .payable_keyword
+            .as_ref()
+            .map(|ir_node| create_payable_keyword(ir_node, &self.semantic))
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -295,12 +293,18 @@ impl AssemblyStatementStruct {
         self.ir_node.id()
     }
 
-    pub fn label(&self) -> Option<ir::StringLiteral> {
-        self.ir_node.label.as_ref().map(Rc::clone)
+    pub fn label(&self) -> Option<StringLiteral> {
+        self.ir_node
+            .label
+            .as_ref()
+            .map(|ir_node| create_string_literal(ir_node, &self.semantic))
     }
 
-    pub fn flags(&self) -> Option<Vec<ir::StringLiteral>> {
-        self.ir_node.flags.clone()
+    pub fn flags(&self) -> Option<YulFlags> {
+        self.ir_node
+            .flags
+            .as_ref()
+            .map(|ir_node| create_yul_flags(ir_node, &self.semantic))
     }
 
     pub fn body(&self) -> YulBlock {
@@ -346,13 +350,8 @@ impl AssignmentExpressionStruct {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
-    pub fn expression_assignment_expression_operator(
-        &self,
-    ) -> Expression_AssignmentExpression_Operator {
-        create_expression_assignment_expression_operator(
-            &self.ir_node.expression_assignment_expression_operator,
-            &self.semantic,
-        )
+    pub fn operator(&self) -> AssignmentExpressionOperator {
+        create_assignment_expression_operator(&self.ir_node.operator, &self.semantic)
     }
 
     pub fn right_operand(&self) -> Expression {
@@ -868,8 +867,11 @@ impl ContractDefinitionStruct {
         self.ir_node.id()
     }
 
-    pub fn abstract_keyword(&self) -> bool {
-        self.ir_node.abstract_keyword
+    pub fn abstract_keyword(&self) -> Option<AbstractKeyword> {
+        self.ir_node
+            .abstract_keyword
+            .as_ref()
+            .map(|ir_node| create_abstract_keyword(ir_node, &self.semantic))
     }
 
     pub fn name(&self) -> Identifier {
@@ -926,8 +928,8 @@ impl DecimalNumberExpressionStruct {
         self.ir_node.id()
     }
 
-    pub fn literal(&self) -> ir::DecimalLiteral {
-        Rc::clone(&self.ir_node.literal)
+    pub fn literal(&self) -> DecimalLiteral {
+        create_decimal_literal(&self.ir_node.literal, &self.semantic)
     }
 
     pub fn unit(&self) -> Option<NumberUnit> {
@@ -1105,13 +1107,8 @@ impl EqualityExpressionStruct {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
-    pub fn expression_equality_expression_operator(
-        &self,
-    ) -> Expression_EqualityExpression_Operator {
-        create_expression_equality_expression_operator(
-            &self.ir_node.expression_equality_expression_operator,
-            &self.semantic,
-        )
+    pub fn operator(&self) -> EqualityExpressionOperator {
+        create_equality_expression_operator(&self.ir_node.operator, &self.semantic)
     }
 
     pub fn right_operand(&self) -> Expression {
@@ -1200,8 +1197,11 @@ impl EventDefinitionStruct {
         create_identifier(&self.ir_node.name, &self.semantic)
     }
 
-    pub fn anonymous_keyword(&self) -> bool {
-        self.ir_node.anonymous_keyword
+    pub fn anonymous_keyword(&self) -> Option<AnonymousKeyword> {
+        self.ir_node
+            .anonymous_keyword
+            .as_ref()
+            .map(|ir_node| create_anonymous_keyword(ir_node, &self.semantic))
     }
 
     pub fn parameters(&self) -> Parameters {
@@ -1484,8 +1484,11 @@ impl FunctionDefinitionStruct {
         create_function_mutability(&self.ir_node.mutability, &self.semantic)
     }
 
-    pub fn virtual_keyword(&self) -> bool {
-        self.ir_node.virtual_keyword
+    pub fn virtual_keyword(&self) -> Option<VirtualKeyword> {
+        self.ir_node
+            .virtual_keyword
+            .as_ref()
+            .map(|ir_node| create_virtual_keyword(ir_node, &self.semantic))
     }
 
     pub fn override_specifier(&self) -> Option<OverridePaths> {
@@ -1602,8 +1605,8 @@ impl HexNumberExpressionStruct {
         self.ir_node.id()
     }
 
-    pub fn literal(&self) -> ir::HexLiteral {
-        Rc::clone(&self.ir_node.literal)
+    pub fn literal(&self) -> HexLiteral {
+        create_hex_literal(&self.ir_node.literal, &self.semantic)
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -1695,8 +1698,8 @@ impl ImportDeconstructionStruct {
         create_import_deconstruction_symbols(&self.ir_node.symbols, &self.semantic)
     }
 
-    pub fn path(&self) -> ir::StringLiteral {
-        Rc::clone(&self.ir_node.path)
+    pub fn path(&self) -> StringLiteral {
+        create_string_literal(&self.ir_node.path, &self.semantic)
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -1837,13 +1840,8 @@ impl InequalityExpressionStruct {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
-    pub fn expression_inequality_expression_operator(
-        &self,
-    ) -> Expression_InequalityExpression_Operator {
-        create_expression_inequality_expression_operator(
-            &self.ir_node.expression_inequality_expression_operator,
-            &self.semantic,
-        )
+    pub fn operator(&self) -> InequalityExpressionOperator {
+        create_inequality_expression_operator(&self.ir_node.operator, &self.semantic)
     }
 
     pub fn right_operand(&self) -> Expression {
@@ -2245,13 +2243,8 @@ impl MultiplicativeExpressionStruct {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
-    pub fn expression_multiplicative_expression_operator(
-        &self,
-    ) -> Expression_MultiplicativeExpression_Operator {
-        create_expression_multiplicative_expression_operator(
-            &self.ir_node.expression_multiplicative_expression_operator,
-            &self.semantic,
-        )
+    pub fn operator(&self) -> MultiplicativeExpressionOperator {
+        create_multiplicative_expression_operator(&self.ir_node.operator, &self.semantic)
     }
 
     pub fn right_operand(&self) -> Expression {
@@ -2433,8 +2426,11 @@ impl ParameterStruct {
             .map(|ir_node| create_identifier(ir_node, &self.semantic))
     }
 
-    pub fn indexed(&self) -> bool {
-        self.ir_node.indexed
+    pub fn indexed(&self) -> Option<IndexedKeyword> {
+        self.ir_node
+            .indexed
+            .as_ref()
+            .map(|ir_node| create_indexed_keyword(ir_node, &self.semantic))
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -2469,8 +2465,8 @@ impl PathImportStruct {
         self.ir_node.id()
     }
 
-    pub fn path(&self) -> ir::StringLiteral {
-        Rc::clone(&self.ir_node.path)
+    pub fn path(&self) -> StringLiteral {
+        create_string_literal(&self.ir_node.path, &self.semantic)
     }
 
     pub fn alias(&self) -> Option<Identifier> {
@@ -2519,11 +2515,8 @@ impl PostfixExpressionStruct {
         create_expression(&self.ir_node.operand, &self.semantic)
     }
 
-    pub fn expression_postfix_expression_operator(&self) -> Expression_PostfixExpression_Operator {
-        create_expression_postfix_expression_operator(
-            &self.ir_node.expression_postfix_expression_operator,
-            &self.semantic,
-        )
+    pub fn operator(&self) -> PostfixExpressionOperator {
+        create_postfix_expression_operator(&self.ir_node.operator, &self.semantic)
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -2600,11 +2593,8 @@ impl PrefixExpressionStruct {
         self.ir_node.id()
     }
 
-    pub fn expression_prefix_expression_operator(&self) -> Expression_PrefixExpression_Operator {
-        create_expression_prefix_expression_operator(
-            &self.ir_node.expression_prefix_expression_operator,
-            &self.semantic,
-        )
+    pub fn operator(&self) -> PrefixExpressionOperator {
+        create_prefix_expression_operator(&self.ir_node.operator, &self.semantic)
     }
 
     pub fn operand(&self) -> Expression {
@@ -2735,11 +2725,8 @@ impl ShiftExpressionStruct {
         create_expression(&self.ir_node.left_operand, &self.semantic)
     }
 
-    pub fn expression_shift_expression_operator(&self) -> Expression_ShiftExpression_Operator {
-        create_expression_shift_expression_operator(
-            &self.ir_node.expression_shift_expression_operator,
-            &self.semantic,
-        )
+    pub fn operator(&self) -> ShiftExpressionOperator {
+        create_shift_expression_operator(&self.ir_node.operator, &self.semantic)
     }
 
     pub fn right_operand(&self) -> Expression {
@@ -3360,8 +3347,11 @@ impl UsingDirectiveStruct {
         create_using_target(&self.ir_node.target, &self.semantic)
     }
 
-    pub fn global_keyword(&self) -> bool {
-        self.ir_node.global_keyword
+    pub fn global_keyword(&self) -> Option<GlobalKeyword> {
+        self.ir_node
+            .global_keyword
+            .as_ref()
+            .map(|ir_node| create_global_keyword(ir_node, &self.semantic))
     }
 
     pub fn get_type(&self) -> Option<Type> {
@@ -4227,8 +4217,8 @@ impl YulVariableDeclarationValueStruct {
 //
 
 pub enum AbicoderVersion {
-    AbicoderV1Keyword,
-    AbicoderV2Keyword,
+    AbicoderV1Keyword(AbicoderV1Keyword),
+    AbicoderV2Keyword(AbicoderV2Keyword),
 }
 
 #[allow(clippy::too_many_lines)]
@@ -4238,8 +4228,33 @@ pub(crate) fn create_abicoder_version(
     semantic: &Rc<SemanticContext>,
 ) -> AbicoderVersion {
     match ir_node {
-        ir::AbicoderVersion::AbicoderV1Keyword => AbicoderVersion::AbicoderV1Keyword,
-        ir::AbicoderVersion::AbicoderV2Keyword => AbicoderVersion::AbicoderV2Keyword,
+        ir::AbicoderVersion::AbicoderV1Keyword(variant) => {
+            AbicoderVersion::AbicoderV1Keyword(create_abicoder_v1_keyword(variant, semantic))
+        }
+        ir::AbicoderVersion::AbicoderV2Keyword(variant) => {
+            AbicoderVersion::AbicoderV2Keyword(create_abicoder_v2_keyword(variant, semantic))
+        }
+    }
+}
+
+pub enum AdditiveExpressionOperator {
+    Minus(Minus),
+    Plus(Plus),
+}
+
+#[allow(clippy::too_many_lines)]
+#[allow(clippy::trivially_copy_pass_by_ref)]
+pub(crate) fn create_additive_expression_operator(
+    ir_node: &ir::AdditiveExpressionOperator,
+    semantic: &Rc<SemanticContext>,
+) -> AdditiveExpressionOperator {
+    match ir_node {
+        ir::AdditiveExpressionOperator::Minus(variant) => {
+            AdditiveExpressionOperator::Minus(create_minus(variant, semantic))
+        }
+        ir::AdditiveExpressionOperator::Plus(variant) => {
+            AdditiveExpressionOperator::Plus(create_plus(variant, semantic))
+        }
     }
 }
 
@@ -4258,9 +4273,75 @@ pub(crate) fn create_arguments_declaration(
         ir::ArgumentsDeclaration::PositionalArguments(nodes) => {
             ArgumentsDeclaration::PositionalArguments(create_positional_arguments(nodes, semantic))
         }
-
         ir::ArgumentsDeclaration::NamedArguments(nodes) => {
             ArgumentsDeclaration::NamedArguments(create_named_arguments(nodes, semantic))
+        }
+    }
+}
+
+pub enum AssignmentExpressionOperator {
+    AmpersandEqual(AmpersandEqual),
+    AsteriskEqual(AsteriskEqual),
+    BarEqual(BarEqual),
+    CaretEqual(CaretEqual),
+    Equal(Equal),
+    GreaterThanGreaterThanEqual(GreaterThanGreaterThanEqual),
+    GreaterThanGreaterThanGreaterThanEqual(GreaterThanGreaterThanGreaterThanEqual),
+    LessThanLessThanEqual(LessThanLessThanEqual),
+    MinusEqual(MinusEqual),
+    PercentEqual(PercentEqual),
+    PlusEqual(PlusEqual),
+    SlashEqual(SlashEqual),
+}
+
+#[allow(clippy::too_many_lines)]
+#[allow(clippy::trivially_copy_pass_by_ref)]
+pub(crate) fn create_assignment_expression_operator(
+    ir_node: &ir::AssignmentExpressionOperator,
+    semantic: &Rc<SemanticContext>,
+) -> AssignmentExpressionOperator {
+    match ir_node {
+        ir::AssignmentExpressionOperator::AmpersandEqual(variant) => {
+            AssignmentExpressionOperator::AmpersandEqual(create_ampersand_equal(variant, semantic))
+        }
+        ir::AssignmentExpressionOperator::AsteriskEqual(variant) => {
+            AssignmentExpressionOperator::AsteriskEqual(create_asterisk_equal(variant, semantic))
+        }
+        ir::AssignmentExpressionOperator::BarEqual(variant) => {
+            AssignmentExpressionOperator::BarEqual(create_bar_equal(variant, semantic))
+        }
+        ir::AssignmentExpressionOperator::CaretEqual(variant) => {
+            AssignmentExpressionOperator::CaretEqual(create_caret_equal(variant, semantic))
+        }
+        ir::AssignmentExpressionOperator::Equal(variant) => {
+            AssignmentExpressionOperator::Equal(create_equal(variant, semantic))
+        }
+        ir::AssignmentExpressionOperator::GreaterThanGreaterThanEqual(variant) => {
+            AssignmentExpressionOperator::GreaterThanGreaterThanEqual(
+                create_greater_than_greater_than_equal(variant, semantic),
+            )
+        }
+        ir::AssignmentExpressionOperator::GreaterThanGreaterThanGreaterThanEqual(variant) => {
+            AssignmentExpressionOperator::GreaterThanGreaterThanGreaterThanEqual(
+                create_greater_than_greater_than_greater_than_equal(variant, semantic),
+            )
+        }
+        ir::AssignmentExpressionOperator::LessThanLessThanEqual(variant) => {
+            AssignmentExpressionOperator::LessThanLessThanEqual(create_less_than_less_than_equal(
+                variant, semantic,
+            ))
+        }
+        ir::AssignmentExpressionOperator::MinusEqual(variant) => {
+            AssignmentExpressionOperator::MinusEqual(create_minus_equal(variant, semantic))
+        }
+        ir::AssignmentExpressionOperator::PercentEqual(variant) => {
+            AssignmentExpressionOperator::PercentEqual(create_percent_equal(variant, semantic))
+        }
+        ir::AssignmentExpressionOperator::PlusEqual(variant) => {
+            AssignmentExpressionOperator::PlusEqual(create_plus_equal(variant, semantic))
+        }
+        ir::AssignmentExpressionOperator::SlashEqual(variant) => {
+            AssignmentExpressionOperator::SlashEqual(create_slash_equal(variant, semantic))
         }
     }
 }
@@ -4319,14 +4400,14 @@ pub(crate) fn create_contract_member(
 }
 
 pub enum ElementaryType {
-    BoolKeyword,
-    StringKeyword,
+    BoolKeyword(BoolKeyword),
+    StringKeyword(StringKeyword),
     AddressType(AddressType),
-    BytesKeyword(ir::BytesKeyword),
-    IntKeyword(ir::IntKeyword),
-    UintKeyword(ir::UintKeyword),
-    FixedKeyword(ir::FixedKeyword),
-    UfixedKeyword(ir::UfixedKeyword),
+    BytesKeyword(BytesKeyword),
+    IntKeyword(IntKeyword),
+    UintKeyword(UintKeyword),
+    FixedKeyword(FixedKeyword),
+    UfixedKeyword(UfixedKeyword),
 }
 
 #[allow(clippy::too_many_lines)]
@@ -4336,29 +4417,58 @@ pub(crate) fn create_elementary_type(
     semantic: &Rc<SemanticContext>,
 ) -> ElementaryType {
     match ir_node {
-        ir::ElementaryType::BoolKeyword => ElementaryType::BoolKeyword,
-        ir::ElementaryType::StringKeyword => ElementaryType::StringKeyword,
+        ir::ElementaryType::BoolKeyword(variant) => {
+            ElementaryType::BoolKeyword(create_bool_keyword(variant, semantic))
+        }
+        ir::ElementaryType::StringKeyword(variant) => {
+            ElementaryType::StringKeyword(create_string_keyword(variant, semantic))
+        }
         ir::ElementaryType::AddressType(variant) => {
             ElementaryType::AddressType(create_address_type(variant, semantic))
         }
         ir::ElementaryType::BytesKeyword(variant) => {
-            ElementaryType::BytesKeyword(Rc::clone(variant))
+            ElementaryType::BytesKeyword(create_bytes_keyword(variant, semantic))
         }
-        ir::ElementaryType::IntKeyword(variant) => ElementaryType::IntKeyword(Rc::clone(variant)),
-        ir::ElementaryType::UintKeyword(variant) => ElementaryType::UintKeyword(Rc::clone(variant)),
+        ir::ElementaryType::IntKeyword(variant) => {
+            ElementaryType::IntKeyword(create_int_keyword(variant, semantic))
+        }
+        ir::ElementaryType::UintKeyword(variant) => {
+            ElementaryType::UintKeyword(create_uint_keyword(variant, semantic))
+        }
         ir::ElementaryType::FixedKeyword(variant) => {
-            ElementaryType::FixedKeyword(Rc::clone(variant))
+            ElementaryType::FixedKeyword(create_fixed_keyword(variant, semantic))
         }
         ir::ElementaryType::UfixedKeyword(variant) => {
-            ElementaryType::UfixedKeyword(Rc::clone(variant))
+            ElementaryType::UfixedKeyword(create_ufixed_keyword(variant, semantic))
+        }
+    }
+}
+
+pub enum EqualityExpressionOperator {
+    BangEqual(BangEqual),
+    EqualEqual(EqualEqual),
+}
+
+#[allow(clippy::too_many_lines)]
+#[allow(clippy::trivially_copy_pass_by_ref)]
+pub(crate) fn create_equality_expression_operator(
+    ir_node: &ir::EqualityExpressionOperator,
+    semantic: &Rc<SemanticContext>,
+) -> EqualityExpressionOperator {
+    match ir_node {
+        ir::EqualityExpressionOperator::BangEqual(variant) => {
+            EqualityExpressionOperator::BangEqual(create_bang_equal(variant, semantic))
+        }
+        ir::EqualityExpressionOperator::EqualEqual(variant) => {
+            EqualityExpressionOperator::EqualEqual(create_equal_equal(variant, semantic))
         }
     }
 }
 
 pub enum ExperimentalFeature {
-    ABIEncoderV2Keyword,
-    SMTCheckerKeyword,
-    StringLiteral(ir::StringLiteral),
+    ABIEncoderV2Keyword(ABIEncoderV2Keyword),
+    SMTCheckerKeyword(SMTCheckerKeyword),
+    StringLiteral(StringLiteral),
 }
 
 #[allow(clippy::too_many_lines)]
@@ -4368,10 +4478,16 @@ pub(crate) fn create_experimental_feature(
     semantic: &Rc<SemanticContext>,
 ) -> ExperimentalFeature {
     match ir_node {
-        ir::ExperimentalFeature::ABIEncoderV2Keyword => ExperimentalFeature::ABIEncoderV2Keyword,
-        ir::ExperimentalFeature::SMTCheckerKeyword => ExperimentalFeature::SMTCheckerKeyword,
+        ir::ExperimentalFeature::ABIEncoderV2Keyword(variant) => {
+            ExperimentalFeature::ABIEncoderV2Keyword(create_abi_encoder_v2_keyword(
+                variant, semantic,
+            ))
+        }
+        ir::ExperimentalFeature::SMTCheckerKeyword(variant) => {
+            ExperimentalFeature::SMTCheckerKeyword(create_smt_checker_keyword(variant, semantic))
+        }
         ir::ExperimentalFeature::StringLiteral(variant) => {
-            ExperimentalFeature::StringLiteral(Rc::clone(variant))
+            ExperimentalFeature::StringLiteral(create_string_literal(variant, semantic))
         }
     }
 }
@@ -4404,11 +4520,11 @@ pub enum Expression {
     DecimalNumberExpression(DecimalNumberExpression),
     StringExpression(StringExpression),
     ElementaryType(ElementaryType),
-    PayableKeyword,
-    ThisKeyword,
-    SuperKeyword,
-    TrueKeyword,
-    FalseKeyword,
+    PayableKeyword(PayableKeyword),
+    ThisKeyword(ThisKeyword),
+    SuperKeyword(SuperKeyword),
+    TrueKeyword(TrueKeyword),
+    FalseKeyword(FalseKeyword),
     Identifier(Identifier),
 }
 
@@ -4500,260 +4616,30 @@ pub(crate) fn create_expression(
         ir::Expression::ElementaryType(variant) => {
             Expression::ElementaryType(create_elementary_type(variant, semantic))
         }
-        ir::Expression::PayableKeyword => Expression::PayableKeyword,
-        ir::Expression::ThisKeyword => Expression::ThisKeyword,
-        ir::Expression::SuperKeyword => Expression::SuperKeyword,
-        ir::Expression::TrueKeyword => Expression::TrueKeyword,
-        ir::Expression::FalseKeyword => Expression::FalseKeyword,
+        ir::Expression::PayableKeyword(variant) => {
+            Expression::PayableKeyword(create_payable_keyword(variant, semantic))
+        }
+        ir::Expression::ThisKeyword(variant) => {
+            Expression::ThisKeyword(create_this_keyword(variant, semantic))
+        }
+        ir::Expression::SuperKeyword(variant) => {
+            Expression::SuperKeyword(create_super_keyword(variant, semantic))
+        }
+        ir::Expression::TrueKeyword(variant) => {
+            Expression::TrueKeyword(create_true_keyword(variant, semantic))
+        }
+        ir::Expression::FalseKeyword(variant) => {
+            Expression::FalseKeyword(create_false_keyword(variant, semantic))
+        }
         ir::Expression::Identifier(variant) => {
             Expression::Identifier(create_identifier(variant, semantic))
         }
     }
 }
 
-pub enum Expression_AdditiveExpression_Operator {
-    Minus,
-    Plus,
-}
-
-#[allow(clippy::too_many_lines)]
-#[allow(clippy::trivially_copy_pass_by_ref)]
-pub(crate) fn create_expression_additive_expression_operator(
-    ir_node: &ir::Expression_AdditiveExpression_Operator,
-    semantic: &Rc<SemanticContext>,
-) -> Expression_AdditiveExpression_Operator {
-    match ir_node {
-        ir::Expression_AdditiveExpression_Operator::Minus => {
-            Expression_AdditiveExpression_Operator::Minus
-        }
-        ir::Expression_AdditiveExpression_Operator::Plus => {
-            Expression_AdditiveExpression_Operator::Plus
-        }
-    }
-}
-
-pub enum Expression_AssignmentExpression_Operator {
-    AmpersandEqual,
-    AsteriskEqual,
-    BarEqual,
-    CaretEqual,
-    Equal,
-    GreaterThanGreaterThanEqual,
-    GreaterThanGreaterThanGreaterThanEqual,
-    LessThanLessThanEqual,
-    MinusEqual,
-    PercentEqual,
-    PlusEqual,
-    SlashEqual,
-}
-
-#[allow(clippy::too_many_lines)]
-#[allow(clippy::trivially_copy_pass_by_ref)]
-pub(crate) fn create_expression_assignment_expression_operator(
-    ir_node: &ir::Expression_AssignmentExpression_Operator,
-    semantic: &Rc<SemanticContext>,
-) -> Expression_AssignmentExpression_Operator {
-    match ir_node {
-        ir::Expression_AssignmentExpression_Operator::AmpersandEqual => {
-            Expression_AssignmentExpression_Operator::AmpersandEqual
-        }
-        ir::Expression_AssignmentExpression_Operator::AsteriskEqual => {
-            Expression_AssignmentExpression_Operator::AsteriskEqual
-        }
-        ir::Expression_AssignmentExpression_Operator::BarEqual => {
-            Expression_AssignmentExpression_Operator::BarEqual
-        }
-        ir::Expression_AssignmentExpression_Operator::CaretEqual => {
-            Expression_AssignmentExpression_Operator::CaretEqual
-        }
-        ir::Expression_AssignmentExpression_Operator::Equal => {
-            Expression_AssignmentExpression_Operator::Equal
-        }
-        ir::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanEqual => {
-            Expression_AssignmentExpression_Operator::GreaterThanGreaterThanEqual
-        }
-        ir::Expression_AssignmentExpression_Operator::GreaterThanGreaterThanGreaterThanEqual => {
-            Expression_AssignmentExpression_Operator::GreaterThanGreaterThanGreaterThanEqual
-        }
-        ir::Expression_AssignmentExpression_Operator::LessThanLessThanEqual => {
-            Expression_AssignmentExpression_Operator::LessThanLessThanEqual
-        }
-        ir::Expression_AssignmentExpression_Operator::MinusEqual => {
-            Expression_AssignmentExpression_Operator::MinusEqual
-        }
-        ir::Expression_AssignmentExpression_Operator::PercentEqual => {
-            Expression_AssignmentExpression_Operator::PercentEqual
-        }
-        ir::Expression_AssignmentExpression_Operator::PlusEqual => {
-            Expression_AssignmentExpression_Operator::PlusEqual
-        }
-        ir::Expression_AssignmentExpression_Operator::SlashEqual => {
-            Expression_AssignmentExpression_Operator::SlashEqual
-        }
-    }
-}
-
-pub enum Expression_EqualityExpression_Operator {
-    BangEqual,
-    EqualEqual,
-}
-
-#[allow(clippy::too_many_lines)]
-#[allow(clippy::trivially_copy_pass_by_ref)]
-pub(crate) fn create_expression_equality_expression_operator(
-    ir_node: &ir::Expression_EqualityExpression_Operator,
-    semantic: &Rc<SemanticContext>,
-) -> Expression_EqualityExpression_Operator {
-    match ir_node {
-        ir::Expression_EqualityExpression_Operator::BangEqual => {
-            Expression_EqualityExpression_Operator::BangEqual
-        }
-        ir::Expression_EqualityExpression_Operator::EqualEqual => {
-            Expression_EqualityExpression_Operator::EqualEqual
-        }
-    }
-}
-
-pub enum Expression_InequalityExpression_Operator {
-    GreaterThan,
-    GreaterThanEqual,
-    LessThan,
-    LessThanEqual,
-}
-
-#[allow(clippy::too_many_lines)]
-#[allow(clippy::trivially_copy_pass_by_ref)]
-pub(crate) fn create_expression_inequality_expression_operator(
-    ir_node: &ir::Expression_InequalityExpression_Operator,
-    semantic: &Rc<SemanticContext>,
-) -> Expression_InequalityExpression_Operator {
-    match ir_node {
-        ir::Expression_InequalityExpression_Operator::GreaterThan => {
-            Expression_InequalityExpression_Operator::GreaterThan
-        }
-        ir::Expression_InequalityExpression_Operator::GreaterThanEqual => {
-            Expression_InequalityExpression_Operator::GreaterThanEqual
-        }
-        ir::Expression_InequalityExpression_Operator::LessThan => {
-            Expression_InequalityExpression_Operator::LessThan
-        }
-        ir::Expression_InequalityExpression_Operator::LessThanEqual => {
-            Expression_InequalityExpression_Operator::LessThanEqual
-        }
-    }
-}
-
-pub enum Expression_MultiplicativeExpression_Operator {
-    Asterisk,
-    Percent,
-    Slash,
-}
-
-#[allow(clippy::too_many_lines)]
-#[allow(clippy::trivially_copy_pass_by_ref)]
-pub(crate) fn create_expression_multiplicative_expression_operator(
-    ir_node: &ir::Expression_MultiplicativeExpression_Operator,
-    semantic: &Rc<SemanticContext>,
-) -> Expression_MultiplicativeExpression_Operator {
-    match ir_node {
-        ir::Expression_MultiplicativeExpression_Operator::Asterisk => {
-            Expression_MultiplicativeExpression_Operator::Asterisk
-        }
-        ir::Expression_MultiplicativeExpression_Operator::Percent => {
-            Expression_MultiplicativeExpression_Operator::Percent
-        }
-        ir::Expression_MultiplicativeExpression_Operator::Slash => {
-            Expression_MultiplicativeExpression_Operator::Slash
-        }
-    }
-}
-
-pub enum Expression_PostfixExpression_Operator {
-    MinusMinus,
-    PlusPlus,
-}
-
-#[allow(clippy::too_many_lines)]
-#[allow(clippy::trivially_copy_pass_by_ref)]
-pub(crate) fn create_expression_postfix_expression_operator(
-    ir_node: &ir::Expression_PostfixExpression_Operator,
-    semantic: &Rc<SemanticContext>,
-) -> Expression_PostfixExpression_Operator {
-    match ir_node {
-        ir::Expression_PostfixExpression_Operator::MinusMinus => {
-            Expression_PostfixExpression_Operator::MinusMinus
-        }
-        ir::Expression_PostfixExpression_Operator::PlusPlus => {
-            Expression_PostfixExpression_Operator::PlusPlus
-        }
-    }
-}
-
-pub enum Expression_PrefixExpression_Operator {
-    Bang,
-    DeleteKeyword,
-    Minus,
-    MinusMinus,
-    PlusPlus,
-    Tilde,
-}
-
-#[allow(clippy::too_many_lines)]
-#[allow(clippy::trivially_copy_pass_by_ref)]
-pub(crate) fn create_expression_prefix_expression_operator(
-    ir_node: &ir::Expression_PrefixExpression_Operator,
-    semantic: &Rc<SemanticContext>,
-) -> Expression_PrefixExpression_Operator {
-    match ir_node {
-        ir::Expression_PrefixExpression_Operator::Bang => {
-            Expression_PrefixExpression_Operator::Bang
-        }
-        ir::Expression_PrefixExpression_Operator::DeleteKeyword => {
-            Expression_PrefixExpression_Operator::DeleteKeyword
-        }
-        ir::Expression_PrefixExpression_Operator::Minus => {
-            Expression_PrefixExpression_Operator::Minus
-        }
-        ir::Expression_PrefixExpression_Operator::MinusMinus => {
-            Expression_PrefixExpression_Operator::MinusMinus
-        }
-        ir::Expression_PrefixExpression_Operator::PlusPlus => {
-            Expression_PrefixExpression_Operator::PlusPlus
-        }
-        ir::Expression_PrefixExpression_Operator::Tilde => {
-            Expression_PrefixExpression_Operator::Tilde
-        }
-    }
-}
-
-pub enum Expression_ShiftExpression_Operator {
-    GreaterThanGreaterThan,
-    GreaterThanGreaterThanGreaterThan,
-    LessThanLessThan,
-}
-
-#[allow(clippy::too_many_lines)]
-#[allow(clippy::trivially_copy_pass_by_ref)]
-pub(crate) fn create_expression_shift_expression_operator(
-    ir_node: &ir::Expression_ShiftExpression_Operator,
-    semantic: &Rc<SemanticContext>,
-) -> Expression_ShiftExpression_Operator {
-    match ir_node {
-        ir::Expression_ShiftExpression_Operator::GreaterThanGreaterThan => {
-            Expression_ShiftExpression_Operator::GreaterThanGreaterThan
-        }
-        ir::Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan => {
-            Expression_ShiftExpression_Operator::GreaterThanGreaterThanGreaterThan
-        }
-        ir::Expression_ShiftExpression_Operator::LessThanLessThan => {
-            Expression_ShiftExpression_Operator::LessThanLessThan
-        }
-    }
-}
-
 pub enum ForStatementCondition {
     ExpressionStatement(ExpressionStatement),
-    Semicolon,
+    Semicolon(Semicolon),
 }
 
 #[allow(clippy::too_many_lines)]
@@ -4768,14 +4654,16 @@ pub(crate) fn create_for_statement_condition(
                 variant, semantic,
             ))
         }
-        ir::ForStatementCondition::Semicolon => ForStatementCondition::Semicolon,
+        ir::ForStatementCondition::Semicolon(variant) => {
+            ForStatementCondition::Semicolon(create_semicolon(variant, semantic))
+        }
     }
 }
 
 pub enum ForStatementInitialization {
     VariableDeclarationStatement(VariableDeclarationStatement),
     ExpressionStatement(ExpressionStatement),
-    Semicolon,
+    Semicolon(Semicolon),
 }
 
 #[allow(clippy::too_many_lines)]
@@ -4795,7 +4683,9 @@ pub(crate) fn create_for_statement_initialization(
                 variant, semantic,
             ))
         }
-        ir::ForStatementInitialization::Semicolon => ForStatementInitialization::Semicolon,
+        ir::ForStatementInitialization::Semicolon(variant) => {
+            ForStatementInitialization::Semicolon(create_semicolon(variant, semantic))
+        }
     }
 }
 
@@ -4885,15 +4775,71 @@ pub(crate) fn create_import_clause(
     }
 }
 
+pub enum InequalityExpressionOperator {
+    GreaterThan(GreaterThan),
+    GreaterThanEqual(GreaterThanEqual),
+    LessThan(LessThan),
+    LessThanEqual(LessThanEqual),
+}
+
+#[allow(clippy::too_many_lines)]
+#[allow(clippy::trivially_copy_pass_by_ref)]
+pub(crate) fn create_inequality_expression_operator(
+    ir_node: &ir::InequalityExpressionOperator,
+    semantic: &Rc<SemanticContext>,
+) -> InequalityExpressionOperator {
+    match ir_node {
+        ir::InequalityExpressionOperator::GreaterThan(variant) => {
+            InequalityExpressionOperator::GreaterThan(create_greater_than(variant, semantic))
+        }
+        ir::InequalityExpressionOperator::GreaterThanEqual(variant) => {
+            InequalityExpressionOperator::GreaterThanEqual(create_greater_than_equal(
+                variant, semantic,
+            ))
+        }
+        ir::InequalityExpressionOperator::LessThan(variant) => {
+            InequalityExpressionOperator::LessThan(create_less_than(variant, semantic))
+        }
+        ir::InequalityExpressionOperator::LessThanEqual(variant) => {
+            InequalityExpressionOperator::LessThanEqual(create_less_than_equal(variant, semantic))
+        }
+    }
+}
+
+pub enum MultiplicativeExpressionOperator {
+    Asterisk(Asterisk),
+    Percent(Percent),
+    Slash(Slash),
+}
+
+#[allow(clippy::too_many_lines)]
+#[allow(clippy::trivially_copy_pass_by_ref)]
+pub(crate) fn create_multiplicative_expression_operator(
+    ir_node: &ir::MultiplicativeExpressionOperator,
+    semantic: &Rc<SemanticContext>,
+) -> MultiplicativeExpressionOperator {
+    match ir_node {
+        ir::MultiplicativeExpressionOperator::Asterisk(variant) => {
+            MultiplicativeExpressionOperator::Asterisk(create_asterisk(variant, semantic))
+        }
+        ir::MultiplicativeExpressionOperator::Percent(variant) => {
+            MultiplicativeExpressionOperator::Percent(create_percent(variant, semantic))
+        }
+        ir::MultiplicativeExpressionOperator::Slash(variant) => {
+            MultiplicativeExpressionOperator::Slash(create_slash(variant, semantic))
+        }
+    }
+}
+
 pub enum NumberUnit {
-    WeiKeyword,
-    GweiKeyword,
-    EtherKeyword,
-    SecondsKeyword,
-    MinutesKeyword,
-    HoursKeyword,
-    DaysKeyword,
-    WeeksKeyword,
+    WeiKeyword(WeiKeyword),
+    GweiKeyword(GweiKeyword),
+    EtherKeyword(EtherKeyword),
+    SecondsKeyword(SecondsKeyword),
+    MinutesKeyword(MinutesKeyword),
+    HoursKeyword(HoursKeyword),
+    DaysKeyword(DaysKeyword),
+    WeeksKeyword(WeeksKeyword),
 }
 
 #[allow(clippy::too_many_lines)]
@@ -4903,14 +4849,51 @@ pub(crate) fn create_number_unit(
     semantic: &Rc<SemanticContext>,
 ) -> NumberUnit {
     match ir_node {
-        ir::NumberUnit::WeiKeyword => NumberUnit::WeiKeyword,
-        ir::NumberUnit::GweiKeyword => NumberUnit::GweiKeyword,
-        ir::NumberUnit::EtherKeyword => NumberUnit::EtherKeyword,
-        ir::NumberUnit::SecondsKeyword => NumberUnit::SecondsKeyword,
-        ir::NumberUnit::MinutesKeyword => NumberUnit::MinutesKeyword,
-        ir::NumberUnit::HoursKeyword => NumberUnit::HoursKeyword,
-        ir::NumberUnit::DaysKeyword => NumberUnit::DaysKeyword,
-        ir::NumberUnit::WeeksKeyword => NumberUnit::WeeksKeyword,
+        ir::NumberUnit::WeiKeyword(variant) => {
+            NumberUnit::WeiKeyword(create_wei_keyword(variant, semantic))
+        }
+        ir::NumberUnit::GweiKeyword(variant) => {
+            NumberUnit::GweiKeyword(create_gwei_keyword(variant, semantic))
+        }
+        ir::NumberUnit::EtherKeyword(variant) => {
+            NumberUnit::EtherKeyword(create_ether_keyword(variant, semantic))
+        }
+        ir::NumberUnit::SecondsKeyword(variant) => {
+            NumberUnit::SecondsKeyword(create_seconds_keyword(variant, semantic))
+        }
+        ir::NumberUnit::MinutesKeyword(variant) => {
+            NumberUnit::MinutesKeyword(create_minutes_keyword(variant, semantic))
+        }
+        ir::NumberUnit::HoursKeyword(variant) => {
+            NumberUnit::HoursKeyword(create_hours_keyword(variant, semantic))
+        }
+        ir::NumberUnit::DaysKeyword(variant) => {
+            NumberUnit::DaysKeyword(create_days_keyword(variant, semantic))
+        }
+        ir::NumberUnit::WeeksKeyword(variant) => {
+            NumberUnit::WeeksKeyword(create_weeks_keyword(variant, semantic))
+        }
+    }
+}
+
+pub enum PostfixExpressionOperator {
+    MinusMinus(MinusMinus),
+    PlusPlus(PlusPlus),
+}
+
+#[allow(clippy::too_many_lines)]
+#[allow(clippy::trivially_copy_pass_by_ref)]
+pub(crate) fn create_postfix_expression_operator(
+    ir_node: &ir::PostfixExpressionOperator,
+    semantic: &Rc<SemanticContext>,
+) -> PostfixExpressionOperator {
+    match ir_node {
+        ir::PostfixExpressionOperator::MinusMinus(variant) => {
+            PostfixExpressionOperator::MinusMinus(create_minus_minus(variant, semantic))
+        }
+        ir::PostfixExpressionOperator::PlusPlus(variant) => {
+            PostfixExpressionOperator::PlusPlus(create_plus_plus(variant, semantic))
+        }
     }
 }
 
@@ -4932,6 +4915,72 @@ pub(crate) fn create_pragma(ir_node: &ir::Pragma, semantic: &Rc<SemanticContext>
         }
         ir::Pragma::ExperimentalPragma(variant) => {
             Pragma::ExperimentalPragma(create_experimental_pragma(variant, semantic))
+        }
+    }
+}
+
+pub enum PrefixExpressionOperator {
+    Bang(Bang),
+    DeleteKeyword(DeleteKeyword),
+    Minus(Minus),
+    MinusMinus(MinusMinus),
+    PlusPlus(PlusPlus),
+    Tilde(Tilde),
+}
+
+#[allow(clippy::too_many_lines)]
+#[allow(clippy::trivially_copy_pass_by_ref)]
+pub(crate) fn create_prefix_expression_operator(
+    ir_node: &ir::PrefixExpressionOperator,
+    semantic: &Rc<SemanticContext>,
+) -> PrefixExpressionOperator {
+    match ir_node {
+        ir::PrefixExpressionOperator::Bang(variant) => {
+            PrefixExpressionOperator::Bang(create_bang(variant, semantic))
+        }
+        ir::PrefixExpressionOperator::DeleteKeyword(variant) => {
+            PrefixExpressionOperator::DeleteKeyword(create_delete_keyword(variant, semantic))
+        }
+        ir::PrefixExpressionOperator::Minus(variant) => {
+            PrefixExpressionOperator::Minus(create_minus(variant, semantic))
+        }
+        ir::PrefixExpressionOperator::MinusMinus(variant) => {
+            PrefixExpressionOperator::MinusMinus(create_minus_minus(variant, semantic))
+        }
+        ir::PrefixExpressionOperator::PlusPlus(variant) => {
+            PrefixExpressionOperator::PlusPlus(create_plus_plus(variant, semantic))
+        }
+        ir::PrefixExpressionOperator::Tilde(variant) => {
+            PrefixExpressionOperator::Tilde(create_tilde(variant, semantic))
+        }
+    }
+}
+
+pub enum ShiftExpressionOperator {
+    GreaterThanGreaterThan(GreaterThanGreaterThan),
+    GreaterThanGreaterThanGreaterThan(GreaterThanGreaterThanGreaterThan),
+    LessThanLessThan(LessThanLessThan),
+}
+
+#[allow(clippy::too_many_lines)]
+#[allow(clippy::trivially_copy_pass_by_ref)]
+pub(crate) fn create_shift_expression_operator(
+    ir_node: &ir::ShiftExpressionOperator,
+    semantic: &Rc<SemanticContext>,
+) -> ShiftExpressionOperator {
+    match ir_node {
+        ir::ShiftExpressionOperator::GreaterThanGreaterThan(variant) => {
+            ShiftExpressionOperator::GreaterThanGreaterThan(create_greater_than_greater_than(
+                variant, semantic,
+            ))
+        }
+        ir::ShiftExpressionOperator::GreaterThanGreaterThanGreaterThan(variant) => {
+            ShiftExpressionOperator::GreaterThanGreaterThanGreaterThan(
+                create_greater_than_greater_than_greater_than(variant, semantic),
+            )
+        }
+        ir::ShiftExpressionOperator::LessThanLessThan(variant) => {
+            ShiftExpressionOperator::LessThanLessThan(create_less_than_less_than(variant, semantic))
         }
     }
 }
@@ -5117,9 +5166,9 @@ pub(crate) fn create_statement(
 }
 
 pub enum StorageLocation {
-    MemoryKeyword,
-    StorageKeyword,
-    CallDataKeyword,
+    MemoryKeyword(MemoryKeyword),
+    StorageKeyword(StorageKeyword),
+    CallDataKeyword(CallDataKeyword),
 }
 
 #[allow(clippy::too_many_lines)]
@@ -5129,16 +5178,22 @@ pub(crate) fn create_storage_location(
     semantic: &Rc<SemanticContext>,
 ) -> StorageLocation {
     match ir_node {
-        ir::StorageLocation::MemoryKeyword => StorageLocation::MemoryKeyword,
-        ir::StorageLocation::StorageKeyword => StorageLocation::StorageKeyword,
-        ir::StorageLocation::CallDataKeyword => StorageLocation::CallDataKeyword,
+        ir::StorageLocation::MemoryKeyword(variant) => {
+            StorageLocation::MemoryKeyword(create_memory_keyword(variant, semantic))
+        }
+        ir::StorageLocation::StorageKeyword(variant) => {
+            StorageLocation::StorageKeyword(create_storage_keyword(variant, semantic))
+        }
+        ir::StorageLocation::CallDataKeyword(variant) => {
+            StorageLocation::CallDataKeyword(create_call_data_keyword(variant, semantic))
+        }
     }
 }
 
 pub enum StringExpression {
-    StringLiterals(Vec<ir::StringLiteral>),
-    HexStringLiterals(Vec<ir::HexStringLiteral>),
-    UnicodeStringLiterals(Vec<ir::UnicodeStringLiteral>),
+    StringLiterals(StringLiterals),
+    HexStringLiterals(HexStringLiterals),
+    UnicodeStringLiterals(UnicodeStringLiterals),
 }
 
 #[allow(clippy::too_many_lines)]
@@ -5149,15 +5204,13 @@ pub(crate) fn create_string_expression(
 ) -> StringExpression {
     match ir_node {
         ir::StringExpression::StringLiterals(nodes) => {
-            StringExpression::StringLiterals(nodes.clone())
+            StringExpression::StringLiterals(create_string_literals(nodes, semantic))
         }
-
         ir::StringExpression::HexStringLiterals(nodes) => {
-            StringExpression::HexStringLiterals(nodes.clone())
+            StringExpression::HexStringLiterals(create_hex_string_literals(nodes, semantic))
         }
-
         ir::StringExpression::UnicodeStringLiterals(nodes) => {
-            StringExpression::UnicodeStringLiterals(nodes.clone())
+            StringExpression::UnicodeStringLiterals(create_unicode_string_literals(nodes, semantic))
         }
     }
 }
@@ -5207,7 +5260,6 @@ pub(crate) fn create_using_clause(
         ir::UsingClause::IdentifierPath(nodes) => {
             UsingClause::IdentifierPath(create_identifier_path(nodes, semantic))
         }
-
         ir::UsingClause::UsingDeconstruction(variant) => {
             UsingClause::UsingDeconstruction(create_using_deconstruction(variant, semantic))
         }
@@ -5215,21 +5267,21 @@ pub(crate) fn create_using_clause(
 }
 
 pub enum UsingOperator {
-    Ampersand,
-    Asterisk,
-    BangEqual,
-    Bar,
-    Caret,
-    EqualEqual,
-    GreaterThan,
-    GreaterThanEqual,
-    LessThan,
-    LessThanEqual,
-    Minus,
-    Percent,
-    Plus,
-    Slash,
-    Tilde,
+    Ampersand(Ampersand),
+    Asterisk(Asterisk),
+    BangEqual(BangEqual),
+    Bar(Bar),
+    Caret(Caret),
+    EqualEqual(EqualEqual),
+    GreaterThan(GreaterThan),
+    GreaterThanEqual(GreaterThanEqual),
+    LessThan(LessThan),
+    LessThanEqual(LessThanEqual),
+    Minus(Minus),
+    Percent(Percent),
+    Plus(Plus),
+    Slash(Slash),
+    Tilde(Tilde),
 }
 
 #[allow(clippy::too_many_lines)]
@@ -5239,27 +5291,45 @@ pub(crate) fn create_using_operator(
     semantic: &Rc<SemanticContext>,
 ) -> UsingOperator {
     match ir_node {
-        ir::UsingOperator::Ampersand => UsingOperator::Ampersand,
-        ir::UsingOperator::Asterisk => UsingOperator::Asterisk,
-        ir::UsingOperator::BangEqual => UsingOperator::BangEqual,
-        ir::UsingOperator::Bar => UsingOperator::Bar,
-        ir::UsingOperator::Caret => UsingOperator::Caret,
-        ir::UsingOperator::EqualEqual => UsingOperator::EqualEqual,
-        ir::UsingOperator::GreaterThan => UsingOperator::GreaterThan,
-        ir::UsingOperator::GreaterThanEqual => UsingOperator::GreaterThanEqual,
-        ir::UsingOperator::LessThan => UsingOperator::LessThan,
-        ir::UsingOperator::LessThanEqual => UsingOperator::LessThanEqual,
-        ir::UsingOperator::Minus => UsingOperator::Minus,
-        ir::UsingOperator::Percent => UsingOperator::Percent,
-        ir::UsingOperator::Plus => UsingOperator::Plus,
-        ir::UsingOperator::Slash => UsingOperator::Slash,
-        ir::UsingOperator::Tilde => UsingOperator::Tilde,
+        ir::UsingOperator::Ampersand(variant) => {
+            UsingOperator::Ampersand(create_ampersand(variant, semantic))
+        }
+        ir::UsingOperator::Asterisk(variant) => {
+            UsingOperator::Asterisk(create_asterisk(variant, semantic))
+        }
+        ir::UsingOperator::BangEqual(variant) => {
+            UsingOperator::BangEqual(create_bang_equal(variant, semantic))
+        }
+        ir::UsingOperator::Bar(variant) => UsingOperator::Bar(create_bar(variant, semantic)),
+        ir::UsingOperator::Caret(variant) => UsingOperator::Caret(create_caret(variant, semantic)),
+        ir::UsingOperator::EqualEqual(variant) => {
+            UsingOperator::EqualEqual(create_equal_equal(variant, semantic))
+        }
+        ir::UsingOperator::GreaterThan(variant) => {
+            UsingOperator::GreaterThan(create_greater_than(variant, semantic))
+        }
+        ir::UsingOperator::GreaterThanEqual(variant) => {
+            UsingOperator::GreaterThanEqual(create_greater_than_equal(variant, semantic))
+        }
+        ir::UsingOperator::LessThan(variant) => {
+            UsingOperator::LessThan(create_less_than(variant, semantic))
+        }
+        ir::UsingOperator::LessThanEqual(variant) => {
+            UsingOperator::LessThanEqual(create_less_than_equal(variant, semantic))
+        }
+        ir::UsingOperator::Minus(variant) => UsingOperator::Minus(create_minus(variant, semantic)),
+        ir::UsingOperator::Percent(variant) => {
+            UsingOperator::Percent(create_percent(variant, semantic))
+        }
+        ir::UsingOperator::Plus(variant) => UsingOperator::Plus(create_plus(variant, semantic)),
+        ir::UsingOperator::Slash(variant) => UsingOperator::Slash(create_slash(variant, semantic)),
+        ir::UsingOperator::Tilde(variant) => UsingOperator::Tilde(create_tilde(variant, semantic)),
     }
 }
 
 pub enum UsingTarget {
     TypeName(TypeName),
-    Asterisk,
+    Asterisk(Asterisk),
 }
 
 #[allow(clippy::too_many_lines)]
@@ -5272,7 +5342,9 @@ pub(crate) fn create_using_target(
         ir::UsingTarget::TypeName(variant) => {
             UsingTarget::TypeName(create_type_name(variant, semantic))
         }
-        ir::UsingTarget::Asterisk => UsingTarget::Asterisk,
+        ir::UsingTarget::Asterisk(variant) => {
+            UsingTarget::Asterisk(create_asterisk(variant, semantic))
+        }
     }
 }
 
@@ -5323,8 +5395,8 @@ pub(crate) fn create_version_expression(
 }
 
 pub enum VersionLiteral {
-    SimpleVersionLiteral(Vec<ir::VersionSpecifier>),
-    StringLiteral(ir::StringLiteral),
+    SimpleVersionLiteral(SimpleVersionLiteral),
+    StringLiteral(StringLiteral),
 }
 
 #[allow(clippy::too_many_lines)]
@@ -5335,23 +5407,22 @@ pub(crate) fn create_version_literal(
 ) -> VersionLiteral {
     match ir_node {
         ir::VersionLiteral::SimpleVersionLiteral(nodes) => {
-            VersionLiteral::SimpleVersionLiteral(nodes.clone())
+            VersionLiteral::SimpleVersionLiteral(create_simple_version_literal(nodes, semantic))
         }
-
         ir::VersionLiteral::StringLiteral(variant) => {
-            VersionLiteral::StringLiteral(Rc::clone(variant))
+            VersionLiteral::StringLiteral(create_string_literal(variant, semantic))
         }
     }
 }
 
 pub enum VersionOperator {
-    PragmaCaret,
-    PragmaTilde,
-    PragmaEqual,
-    PragmaLessThan,
-    PragmaGreaterThan,
-    PragmaLessThanEqual,
-    PragmaGreaterThanEqual,
+    PragmaCaret(PragmaCaret),
+    PragmaTilde(PragmaTilde),
+    PragmaEqual(PragmaEqual),
+    PragmaLessThan(PragmaLessThan),
+    PragmaGreaterThan(PragmaGreaterThan),
+    PragmaLessThanEqual(PragmaLessThanEqual),
+    PragmaGreaterThanEqual(PragmaGreaterThanEqual),
 }
 
 #[allow(clippy::too_many_lines)]
@@ -5361,13 +5432,29 @@ pub(crate) fn create_version_operator(
     semantic: &Rc<SemanticContext>,
 ) -> VersionOperator {
     match ir_node {
-        ir::VersionOperator::PragmaCaret => VersionOperator::PragmaCaret,
-        ir::VersionOperator::PragmaTilde => VersionOperator::PragmaTilde,
-        ir::VersionOperator::PragmaEqual => VersionOperator::PragmaEqual,
-        ir::VersionOperator::PragmaLessThan => VersionOperator::PragmaLessThan,
-        ir::VersionOperator::PragmaGreaterThan => VersionOperator::PragmaGreaterThan,
-        ir::VersionOperator::PragmaLessThanEqual => VersionOperator::PragmaLessThanEqual,
-        ir::VersionOperator::PragmaGreaterThanEqual => VersionOperator::PragmaGreaterThanEqual,
+        ir::VersionOperator::PragmaCaret(variant) => {
+            VersionOperator::PragmaCaret(create_pragma_caret(variant, semantic))
+        }
+        ir::VersionOperator::PragmaTilde(variant) => {
+            VersionOperator::PragmaTilde(create_pragma_tilde(variant, semantic))
+        }
+        ir::VersionOperator::PragmaEqual(variant) => {
+            VersionOperator::PragmaEqual(create_pragma_equal(variant, semantic))
+        }
+        ir::VersionOperator::PragmaLessThan(variant) => {
+            VersionOperator::PragmaLessThan(create_pragma_less_than(variant, semantic))
+        }
+        ir::VersionOperator::PragmaGreaterThan(variant) => {
+            VersionOperator::PragmaGreaterThan(create_pragma_greater_than(variant, semantic))
+        }
+        ir::VersionOperator::PragmaLessThanEqual(variant) => {
+            VersionOperator::PragmaLessThanEqual(create_pragma_less_than_equal(variant, semantic))
+        }
+        ir::VersionOperator::PragmaGreaterThanEqual(variant) => {
+            VersionOperator::PragmaGreaterThanEqual(create_pragma_greater_than_equal(
+                variant, semantic,
+            ))
+        }
     }
 }
 
@@ -5399,12 +5486,12 @@ pub(crate) fn create_yul_expression(
 }
 
 pub enum YulLiteral {
-    TrueKeyword,
-    FalseKeyword,
-    DecimalLiteral(ir::DecimalLiteral),
-    HexLiteral(ir::HexLiteral),
-    HexStringLiteral(ir::HexStringLiteral),
-    StringLiteral(ir::StringLiteral),
+    TrueKeyword(TrueKeyword),
+    FalseKeyword(FalseKeyword),
+    DecimalLiteral(DecimalLiteral),
+    HexLiteral(HexLiteral),
+    HexStringLiteral(HexStringLiteral),
+    StringLiteral(StringLiteral),
 }
 
 #[allow(clippy::too_many_lines)]
@@ -5414,14 +5501,24 @@ pub(crate) fn create_yul_literal(
     semantic: &Rc<SemanticContext>,
 ) -> YulLiteral {
     match ir_node {
-        ir::YulLiteral::TrueKeyword => YulLiteral::TrueKeyword,
-        ir::YulLiteral::FalseKeyword => YulLiteral::FalseKeyword,
-        ir::YulLiteral::DecimalLiteral(variant) => YulLiteral::DecimalLiteral(Rc::clone(variant)),
-        ir::YulLiteral::HexLiteral(variant) => YulLiteral::HexLiteral(Rc::clone(variant)),
-        ir::YulLiteral::HexStringLiteral(variant) => {
-            YulLiteral::HexStringLiteral(Rc::clone(variant))
+        ir::YulLiteral::TrueKeyword(variant) => {
+            YulLiteral::TrueKeyword(create_true_keyword(variant, semantic))
         }
-        ir::YulLiteral::StringLiteral(variant) => YulLiteral::StringLiteral(Rc::clone(variant)),
+        ir::YulLiteral::FalseKeyword(variant) => {
+            YulLiteral::FalseKeyword(create_false_keyword(variant, semantic))
+        }
+        ir::YulLiteral::DecimalLiteral(variant) => {
+            YulLiteral::DecimalLiteral(create_decimal_literal(variant, semantic))
+        }
+        ir::YulLiteral::HexLiteral(variant) => {
+            YulLiteral::HexLiteral(create_hex_literal(variant, semantic))
+        }
+        ir::YulLiteral::HexStringLiteral(variant) => {
+            YulLiteral::HexStringLiteral(create_hex_string_literal(variant, semantic))
+        }
+        ir::YulLiteral::StringLiteral(variant) => {
+            YulLiteral::StringLiteral(create_string_literal(variant, semantic))
+        }
     }
 }
 
@@ -5534,14 +5631,15 @@ impl ArrayValuesStruct {
             .iter()
             .map(|ir_node| create_expression(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
-
 pub type CallOptions = Rc<CallOptionsStruct>;
 
 pub(crate) fn create_call_options(
@@ -5565,14 +5663,15 @@ impl CallOptionsStruct {
             .iter()
             .map(|ir_node| create_named_argument(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
-
 pub type CatchClauses = Rc<CatchClausesStruct>;
 
 pub(crate) fn create_catch_clauses(
@@ -5596,14 +5695,15 @@ impl CatchClausesStruct {
             .iter()
             .map(|ir_node| create_catch_clause(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
-
 pub type ContractMembers = Rc<ContractMembersStruct>;
 
 pub(crate) fn create_contract_members(
@@ -5627,14 +5727,15 @@ impl ContractMembersStruct {
             .iter()
             .map(|ir_node| create_contract_member(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
-
 pub type EnumMembers = Rc<EnumMembersStruct>;
 
 pub(crate) fn create_enum_members(
@@ -5658,14 +5759,47 @@ impl EnumMembersStruct {
             .iter()
             .map(|ir_node| create_identifier(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
+pub type HexStringLiterals = Rc<HexStringLiteralsStruct>;
 
+pub(crate) fn create_hex_string_literals(
+    nodes: &[ir::HexStringLiteral],
+    semantic: &Rc<SemanticContext>,
+) -> HexStringLiterals {
+    Rc::new(HexStringLiteralsStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+pub struct HexStringLiteralsStruct {
+    pub(crate) ir_nodes: Vec<ir::HexStringLiteral>,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+impl HexStringLiteralsStruct {
+    pub fn iter(&self) -> impl Iterator<Item = HexStringLiteral> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| create_hex_string_literal(ir_node, &self.semantic))
+    }
+
+    pub fn len(&self) -> usize {
+        self.ir_nodes.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.ir_nodes.is_empty()
+    }
+}
 pub type IdentifierPath = Rc<IdentifierPathStruct>;
 
 pub(crate) fn create_identifier_path(
@@ -5689,14 +5823,15 @@ impl IdentifierPathStruct {
             .iter()
             .map(|ir_node| create_identifier(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
-
 pub type ImportDeconstructionSymbols = Rc<ImportDeconstructionSymbolsStruct>;
 
 pub(crate) fn create_import_deconstruction_symbols(
@@ -5720,14 +5855,15 @@ impl ImportDeconstructionSymbolsStruct {
             .iter()
             .map(|ir_node| create_import_deconstruction_symbol(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
-
 pub type InheritanceTypes = Rc<InheritanceTypesStruct>;
 
 pub(crate) fn create_inheritance_types(
@@ -5751,14 +5887,15 @@ impl InheritanceTypesStruct {
             .iter()
             .map(|ir_node| create_inheritance_type(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
-
 pub type InterfaceMembers = Rc<InterfaceMembersStruct>;
 
 pub(crate) fn create_interface_members(
@@ -5782,14 +5919,15 @@ impl InterfaceMembersStruct {
             .iter()
             .map(|ir_node| create_contract_member(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
-
 pub type LibraryMembers = Rc<LibraryMembersStruct>;
 
 pub(crate) fn create_library_members(
@@ -5813,14 +5951,15 @@ impl LibraryMembersStruct {
             .iter()
             .map(|ir_node| create_contract_member(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
-
 pub type ModifierInvocations = Rc<ModifierInvocationsStruct>;
 
 pub(crate) fn create_modifier_invocations(
@@ -5844,14 +5983,15 @@ impl ModifierInvocationsStruct {
             .iter()
             .map(|ir_node| create_modifier_invocation(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
-
 pub type MultiTypedDeclarationElements = Rc<MultiTypedDeclarationElementsStruct>;
 
 pub(crate) fn create_multi_typed_declaration_elements(
@@ -5875,14 +6015,15 @@ impl MultiTypedDeclarationElementsStruct {
             .iter()
             .map(|ir_node| create_multi_typed_declaration_element(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
-
 pub type NamedArguments = Rc<NamedArgumentsStruct>;
 
 pub(crate) fn create_named_arguments(
@@ -5906,14 +6047,15 @@ impl NamedArgumentsStruct {
             .iter()
             .map(|ir_node| create_named_argument(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
-
 pub type OverridePaths = Rc<OverridePathsStruct>;
 
 pub(crate) fn create_override_paths(
@@ -5937,14 +6079,15 @@ impl OverridePathsStruct {
             .iter()
             .map(|ir_node| create_identifier_path(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
-
 pub type Parameters = Rc<ParametersStruct>;
 
 pub(crate) fn create_parameters(
@@ -5968,14 +6111,15 @@ impl ParametersStruct {
             .iter()
             .map(|ir_node| create_parameter(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
-
 pub type PositionalArguments = Rc<PositionalArgumentsStruct>;
 
 pub(crate) fn create_positional_arguments(
@@ -5999,14 +6143,47 @@ impl PositionalArgumentsStruct {
             .iter()
             .map(|ir_node| create_expression(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
+pub type SimpleVersionLiteral = Rc<SimpleVersionLiteralStruct>;
 
+pub(crate) fn create_simple_version_literal(
+    nodes: &[ir::VersionSpecifier],
+    semantic: &Rc<SemanticContext>,
+) -> SimpleVersionLiteral {
+    Rc::new(SimpleVersionLiteralStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+pub struct SimpleVersionLiteralStruct {
+    pub(crate) ir_nodes: Vec<ir::VersionSpecifier>,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+impl SimpleVersionLiteralStruct {
+    pub fn iter(&self) -> impl Iterator<Item = VersionSpecifier> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| create_version_specifier(ir_node, &self.semantic))
+    }
+
+    pub fn len(&self) -> usize {
+        self.ir_nodes.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.ir_nodes.is_empty()
+    }
+}
 pub type SourceUnitMembers = Rc<SourceUnitMembersStruct>;
 
 pub(crate) fn create_source_unit_members(
@@ -6030,14 +6207,15 @@ impl SourceUnitMembersStruct {
             .iter()
             .map(|ir_node| create_source_unit_member(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
-
 pub type Statements = Rc<StatementsStruct>;
 
 pub(crate) fn create_statements(
@@ -6061,14 +6239,47 @@ impl StatementsStruct {
             .iter()
             .map(|ir_node| create_statement(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
+pub type StringLiterals = Rc<StringLiteralsStruct>;
 
+pub(crate) fn create_string_literals(
+    nodes: &[ir::StringLiteral],
+    semantic: &Rc<SemanticContext>,
+) -> StringLiterals {
+    Rc::new(StringLiteralsStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+pub struct StringLiteralsStruct {
+    pub(crate) ir_nodes: Vec<ir::StringLiteral>,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+impl StringLiteralsStruct {
+    pub fn iter(&self) -> impl Iterator<Item = StringLiteral> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| create_string_literal(ir_node, &self.semantic))
+    }
+
+    pub fn len(&self) -> usize {
+        self.ir_nodes.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.ir_nodes.is_empty()
+    }
+}
 pub type StructMembers = Rc<StructMembersStruct>;
 
 pub(crate) fn create_struct_members(
@@ -6092,14 +6303,15 @@ impl StructMembersStruct {
             .iter()
             .map(|ir_node| create_struct_member(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
-
 pub type TupleValues = Rc<TupleValuesStruct>;
 
 pub(crate) fn create_tuple_values(
@@ -6123,14 +6335,47 @@ impl TupleValuesStruct {
             .iter()
             .map(|ir_node| create_tuple_value(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
+pub type UnicodeStringLiterals = Rc<UnicodeStringLiteralsStruct>;
 
+pub(crate) fn create_unicode_string_literals(
+    nodes: &[ir::UnicodeStringLiteral],
+    semantic: &Rc<SemanticContext>,
+) -> UnicodeStringLiterals {
+    Rc::new(UnicodeStringLiteralsStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+pub struct UnicodeStringLiteralsStruct {
+    pub(crate) ir_nodes: Vec<ir::UnicodeStringLiteral>,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+impl UnicodeStringLiteralsStruct {
+    pub fn iter(&self) -> impl Iterator<Item = UnicodeStringLiteral> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| create_unicode_string_literal(ir_node, &self.semantic))
+    }
+
+    pub fn len(&self) -> usize {
+        self.ir_nodes.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.ir_nodes.is_empty()
+    }
+}
 pub type UsingDeconstructionSymbols = Rc<UsingDeconstructionSymbolsStruct>;
 
 pub(crate) fn create_using_deconstruction_symbols(
@@ -6154,14 +6399,15 @@ impl UsingDeconstructionSymbolsStruct {
             .iter()
             .map(|ir_node| create_using_deconstruction_symbol(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
-
 pub type VersionExpressionSet = Rc<VersionExpressionSetStruct>;
 
 pub(crate) fn create_version_expression_set(
@@ -6185,14 +6431,15 @@ impl VersionExpressionSetStruct {
             .iter()
             .map(|ir_node| create_version_expression(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
-
 pub type VersionExpressionSets = Rc<VersionExpressionSetsStruct>;
 
 pub(crate) fn create_version_expression_sets(
@@ -6216,14 +6463,15 @@ impl VersionExpressionSetsStruct {
             .iter()
             .map(|ir_node| create_version_expression_set(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
-
 pub type YulArguments = Rc<YulArgumentsStruct>;
 
 pub(crate) fn create_yul_arguments(
@@ -6247,14 +6495,47 @@ impl YulArgumentsStruct {
             .iter()
             .map(|ir_node| create_yul_expression(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
+pub type YulFlags = Rc<YulFlagsStruct>;
 
+pub(crate) fn create_yul_flags(
+    nodes: &[ir::StringLiteral],
+    semantic: &Rc<SemanticContext>,
+) -> YulFlags {
+    Rc::new(YulFlagsStruct {
+        ir_nodes: nodes.to_vec(),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+pub struct YulFlagsStruct {
+    pub(crate) ir_nodes: Vec<ir::StringLiteral>,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+impl YulFlagsStruct {
+    pub fn iter(&self) -> impl Iterator<Item = StringLiteral> + use<'_> {
+        self.ir_nodes
+            .iter()
+            .map(|ir_node| create_string_literal(ir_node, &self.semantic))
+    }
+
+    pub fn len(&self) -> usize {
+        self.ir_nodes.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.ir_nodes.is_empty()
+    }
+}
 pub type YulParameters = Rc<YulParametersStruct>;
 
 pub(crate) fn create_yul_parameters(
@@ -6278,14 +6559,15 @@ impl YulParametersStruct {
             .iter()
             .map(|ir_node| create_identifier(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
-
 pub type YulPath = Rc<YulPathStruct>;
 
 pub(crate) fn create_yul_path(nodes: &[ir::Identifier], semantic: &Rc<SemanticContext>) -> YulPath {
@@ -6306,14 +6588,15 @@ impl YulPathStruct {
             .iter()
             .map(|ir_node| create_identifier(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
-
 pub type YulPaths = Rc<YulPathsStruct>;
 
 pub(crate) fn create_yul_paths(nodes: &[ir::YulPath], semantic: &Rc<SemanticContext>) -> YulPaths {
@@ -6334,14 +6617,15 @@ impl YulPathsStruct {
             .iter()
             .map(|ir_node| create_yul_path(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
-
 pub type YulStatements = Rc<YulStatementsStruct>;
 
 pub(crate) fn create_yul_statements(
@@ -6365,14 +6649,15 @@ impl YulStatementsStruct {
             .iter()
             .map(|ir_node| create_yul_statement(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
-
 pub type YulSwitchCases = Rc<YulSwitchCasesStruct>;
 
 pub(crate) fn create_yul_switch_cases(
@@ -6396,14 +6681,15 @@ impl YulSwitchCasesStruct {
             .iter()
             .map(|ir_node| create_yul_switch_case(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
-
 pub type YulVariableNames = Rc<YulVariableNamesStruct>;
 
 pub(crate) fn create_yul_variable_names(
@@ -6427,17 +6713,1311 @@ impl YulVariableNamesStruct {
             .iter()
             .map(|ir_node| create_identifier(ir_node, &self.semantic))
     }
+
     pub fn len(&self) -> usize {
         self.ir_nodes.len()
     }
+
     pub fn is_empty(&self) -> bool {
         self.ir_nodes.is_empty()
     }
 }
 
 //
-// Identifiers
+// Terminals
 //
+
+pub type ABIEncoderV2Keyword = Rc<ABIEncoderV2KeywordStruct>;
+
+pub struct ABIEncoderV2KeywordStruct {
+    pub(crate) ir_node: ir::ABIEncoderV2Keyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_abi_encoder_v2_keyword(
+    ir_node: &ir::ABIEncoderV2Keyword,
+    semantic: &Rc<SemanticContext>,
+) -> ABIEncoderV2Keyword {
+    Rc::new(ABIEncoderV2KeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl ABIEncoderV2KeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type AbicoderV1Keyword = Rc<AbicoderV1KeywordStruct>;
+
+pub struct AbicoderV1KeywordStruct {
+    pub(crate) ir_node: ir::AbicoderV1Keyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_abicoder_v1_keyword(
+    ir_node: &ir::AbicoderV1Keyword,
+    semantic: &Rc<SemanticContext>,
+) -> AbicoderV1Keyword {
+    Rc::new(AbicoderV1KeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl AbicoderV1KeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type AbicoderV2Keyword = Rc<AbicoderV2KeywordStruct>;
+
+pub struct AbicoderV2KeywordStruct {
+    pub(crate) ir_node: ir::AbicoderV2Keyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_abicoder_v2_keyword(
+    ir_node: &ir::AbicoderV2Keyword,
+    semantic: &Rc<SemanticContext>,
+) -> AbicoderV2Keyword {
+    Rc::new(AbicoderV2KeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl AbicoderV2KeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type AbstractKeyword = Rc<AbstractKeywordStruct>;
+
+pub struct AbstractKeywordStruct {
+    pub(crate) ir_node: ir::AbstractKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_abstract_keyword(
+    ir_node: &ir::AbstractKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> AbstractKeyword {
+    Rc::new(AbstractKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl AbstractKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type Ampersand = Rc<AmpersandStruct>;
+
+pub struct AmpersandStruct {
+    pub(crate) ir_node: ir::Ampersand,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_ampersand(
+    ir_node: &ir::Ampersand,
+    semantic: &Rc<SemanticContext>,
+) -> Ampersand {
+    Rc::new(AmpersandStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl AmpersandStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type AmpersandEqual = Rc<AmpersandEqualStruct>;
+
+pub struct AmpersandEqualStruct {
+    pub(crate) ir_node: ir::AmpersandEqual,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_ampersand_equal(
+    ir_node: &ir::AmpersandEqual,
+    semantic: &Rc<SemanticContext>,
+) -> AmpersandEqual {
+    Rc::new(AmpersandEqualStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl AmpersandEqualStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type AnonymousKeyword = Rc<AnonymousKeywordStruct>;
+
+pub struct AnonymousKeywordStruct {
+    pub(crate) ir_node: ir::AnonymousKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_anonymous_keyword(
+    ir_node: &ir::AnonymousKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> AnonymousKeyword {
+    Rc::new(AnonymousKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl AnonymousKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type Asterisk = Rc<AsteriskStruct>;
+
+pub struct AsteriskStruct {
+    pub(crate) ir_node: ir::Asterisk,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_asterisk(ir_node: &ir::Asterisk, semantic: &Rc<SemanticContext>) -> Asterisk {
+    Rc::new(AsteriskStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl AsteriskStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type AsteriskEqual = Rc<AsteriskEqualStruct>;
+
+pub struct AsteriskEqualStruct {
+    pub(crate) ir_node: ir::AsteriskEqual,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_asterisk_equal(
+    ir_node: &ir::AsteriskEqual,
+    semantic: &Rc<SemanticContext>,
+) -> AsteriskEqual {
+    Rc::new(AsteriskEqualStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl AsteriskEqualStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type Bang = Rc<BangStruct>;
+
+pub struct BangStruct {
+    pub(crate) ir_node: ir::Bang,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_bang(ir_node: &ir::Bang, semantic: &Rc<SemanticContext>) -> Bang {
+    Rc::new(BangStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl BangStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type BangEqual = Rc<BangEqualStruct>;
+
+pub struct BangEqualStruct {
+    pub(crate) ir_node: ir::BangEqual,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_bang_equal(
+    ir_node: &ir::BangEqual,
+    semantic: &Rc<SemanticContext>,
+) -> BangEqual {
+    Rc::new(BangEqualStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl BangEqualStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type Bar = Rc<BarStruct>;
+
+pub struct BarStruct {
+    pub(crate) ir_node: ir::Bar,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_bar(ir_node: &ir::Bar, semantic: &Rc<SemanticContext>) -> Bar {
+    Rc::new(BarStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl BarStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type BarEqual = Rc<BarEqualStruct>;
+
+pub struct BarEqualStruct {
+    pub(crate) ir_node: ir::BarEqual,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_bar_equal(ir_node: &ir::BarEqual, semantic: &Rc<SemanticContext>) -> BarEqual {
+    Rc::new(BarEqualStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl BarEqualStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type BoolKeyword = Rc<BoolKeywordStruct>;
+
+pub struct BoolKeywordStruct {
+    pub(crate) ir_node: ir::BoolKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_bool_keyword(
+    ir_node: &ir::BoolKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> BoolKeyword {
+    Rc::new(BoolKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl BoolKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type BytesKeyword = Rc<BytesKeywordStruct>;
+
+pub struct BytesKeywordStruct {
+    pub(crate) ir_node: ir::BytesKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_bytes_keyword(
+    ir_node: &ir::BytesKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> BytesKeyword {
+    Rc::new(BytesKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl BytesKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type CallDataKeyword = Rc<CallDataKeywordStruct>;
+
+pub struct CallDataKeywordStruct {
+    pub(crate) ir_node: ir::CallDataKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_call_data_keyword(
+    ir_node: &ir::CallDataKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> CallDataKeyword {
+    Rc::new(CallDataKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl CallDataKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type Caret = Rc<CaretStruct>;
+
+pub struct CaretStruct {
+    pub(crate) ir_node: ir::Caret,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_caret(ir_node: &ir::Caret, semantic: &Rc<SemanticContext>) -> Caret {
+    Rc::new(CaretStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl CaretStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type CaretEqual = Rc<CaretEqualStruct>;
+
+pub struct CaretEqualStruct {
+    pub(crate) ir_node: ir::CaretEqual,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_caret_equal(
+    ir_node: &ir::CaretEqual,
+    semantic: &Rc<SemanticContext>,
+) -> CaretEqual {
+    Rc::new(CaretEqualStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl CaretEqualStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type DaysKeyword = Rc<DaysKeywordStruct>;
+
+pub struct DaysKeywordStruct {
+    pub(crate) ir_node: ir::DaysKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_days_keyword(
+    ir_node: &ir::DaysKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> DaysKeyword {
+    Rc::new(DaysKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl DaysKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type DecimalLiteral = Rc<DecimalLiteralStruct>;
+
+pub struct DecimalLiteralStruct {
+    pub(crate) ir_node: ir::DecimalLiteral,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_decimal_literal(
+    ir_node: &ir::DecimalLiteral,
+    semantic: &Rc<SemanticContext>,
+) -> DecimalLiteral {
+    Rc::new(DecimalLiteralStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl DecimalLiteralStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type DeleteKeyword = Rc<DeleteKeywordStruct>;
+
+pub struct DeleteKeywordStruct {
+    pub(crate) ir_node: ir::DeleteKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_delete_keyword(
+    ir_node: &ir::DeleteKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> DeleteKeyword {
+    Rc::new(DeleteKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl DeleteKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type Equal = Rc<EqualStruct>;
+
+pub struct EqualStruct {
+    pub(crate) ir_node: ir::Equal,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_equal(ir_node: &ir::Equal, semantic: &Rc<SemanticContext>) -> Equal {
+    Rc::new(EqualStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl EqualStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type EqualEqual = Rc<EqualEqualStruct>;
+
+pub struct EqualEqualStruct {
+    pub(crate) ir_node: ir::EqualEqual,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_equal_equal(
+    ir_node: &ir::EqualEqual,
+    semantic: &Rc<SemanticContext>,
+) -> EqualEqual {
+    Rc::new(EqualEqualStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl EqualEqualStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type EtherKeyword = Rc<EtherKeywordStruct>;
+
+pub struct EtherKeywordStruct {
+    pub(crate) ir_node: ir::EtherKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_ether_keyword(
+    ir_node: &ir::EtherKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> EtherKeyword {
+    Rc::new(EtherKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl EtherKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type FalseKeyword = Rc<FalseKeywordStruct>;
+
+pub struct FalseKeywordStruct {
+    pub(crate) ir_node: ir::FalseKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_false_keyword(
+    ir_node: &ir::FalseKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> FalseKeyword {
+    Rc::new(FalseKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl FalseKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type FixedKeyword = Rc<FixedKeywordStruct>;
+
+pub struct FixedKeywordStruct {
+    pub(crate) ir_node: ir::FixedKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_fixed_keyword(
+    ir_node: &ir::FixedKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> FixedKeyword {
+    Rc::new(FixedKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl FixedKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type GlobalKeyword = Rc<GlobalKeywordStruct>;
+
+pub struct GlobalKeywordStruct {
+    pub(crate) ir_node: ir::GlobalKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_global_keyword(
+    ir_node: &ir::GlobalKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> GlobalKeyword {
+    Rc::new(GlobalKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl GlobalKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type GreaterThan = Rc<GreaterThanStruct>;
+
+pub struct GreaterThanStruct {
+    pub(crate) ir_node: ir::GreaterThan,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_greater_than(
+    ir_node: &ir::GreaterThan,
+    semantic: &Rc<SemanticContext>,
+) -> GreaterThan {
+    Rc::new(GreaterThanStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl GreaterThanStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type GreaterThanEqual = Rc<GreaterThanEqualStruct>;
+
+pub struct GreaterThanEqualStruct {
+    pub(crate) ir_node: ir::GreaterThanEqual,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_greater_than_equal(
+    ir_node: &ir::GreaterThanEqual,
+    semantic: &Rc<SemanticContext>,
+) -> GreaterThanEqual {
+    Rc::new(GreaterThanEqualStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl GreaterThanEqualStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type GreaterThanGreaterThan = Rc<GreaterThanGreaterThanStruct>;
+
+pub struct GreaterThanGreaterThanStruct {
+    pub(crate) ir_node: ir::GreaterThanGreaterThan,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_greater_than_greater_than(
+    ir_node: &ir::GreaterThanGreaterThan,
+    semantic: &Rc<SemanticContext>,
+) -> GreaterThanGreaterThan {
+    Rc::new(GreaterThanGreaterThanStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl GreaterThanGreaterThanStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type GreaterThanGreaterThanEqual = Rc<GreaterThanGreaterThanEqualStruct>;
+
+pub struct GreaterThanGreaterThanEqualStruct {
+    pub(crate) ir_node: ir::GreaterThanGreaterThanEqual,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_greater_than_greater_than_equal(
+    ir_node: &ir::GreaterThanGreaterThanEqual,
+    semantic: &Rc<SemanticContext>,
+) -> GreaterThanGreaterThanEqual {
+    Rc::new(GreaterThanGreaterThanEqualStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl GreaterThanGreaterThanEqualStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type GreaterThanGreaterThanGreaterThan = Rc<GreaterThanGreaterThanGreaterThanStruct>;
+
+pub struct GreaterThanGreaterThanGreaterThanStruct {
+    pub(crate) ir_node: ir::GreaterThanGreaterThanGreaterThan,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_greater_than_greater_than_greater_than(
+    ir_node: &ir::GreaterThanGreaterThanGreaterThan,
+    semantic: &Rc<SemanticContext>,
+) -> GreaterThanGreaterThanGreaterThan {
+    Rc::new(GreaterThanGreaterThanGreaterThanStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl GreaterThanGreaterThanGreaterThanStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type GreaterThanGreaterThanGreaterThanEqual = Rc<GreaterThanGreaterThanGreaterThanEqualStruct>;
+
+pub struct GreaterThanGreaterThanGreaterThanEqualStruct {
+    pub(crate) ir_node: ir::GreaterThanGreaterThanGreaterThanEqual,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_greater_than_greater_than_greater_than_equal(
+    ir_node: &ir::GreaterThanGreaterThanGreaterThanEqual,
+    semantic: &Rc<SemanticContext>,
+) -> GreaterThanGreaterThanGreaterThanEqual {
+    Rc::new(GreaterThanGreaterThanGreaterThanEqualStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl GreaterThanGreaterThanGreaterThanEqualStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type GweiKeyword = Rc<GweiKeywordStruct>;
+
+pub struct GweiKeywordStruct {
+    pub(crate) ir_node: ir::GweiKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_gwei_keyword(
+    ir_node: &ir::GweiKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> GweiKeyword {
+    Rc::new(GweiKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl GweiKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type HexLiteral = Rc<HexLiteralStruct>;
+
+pub struct HexLiteralStruct {
+    pub(crate) ir_node: ir::HexLiteral,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_hex_literal(
+    ir_node: &ir::HexLiteral,
+    semantic: &Rc<SemanticContext>,
+) -> HexLiteral {
+    Rc::new(HexLiteralStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl HexLiteralStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type HexStringLiteral = Rc<HexStringLiteralStruct>;
+
+pub struct HexStringLiteralStruct {
+    pub(crate) ir_node: ir::HexStringLiteral,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_hex_string_literal(
+    ir_node: &ir::HexStringLiteral,
+    semantic: &Rc<SemanticContext>,
+) -> HexStringLiteral {
+    Rc::new(HexStringLiteralStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl HexStringLiteralStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type HoursKeyword = Rc<HoursKeywordStruct>;
+
+pub struct HoursKeywordStruct {
+    pub(crate) ir_node: ir::HoursKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_hours_keyword(
+    ir_node: &ir::HoursKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> HoursKeyword {
+    Rc::new(HoursKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl HoursKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
 
 pub type Identifier = Rc<IdentifierStruct>;
 
@@ -6460,9 +8040,1510 @@ impl IdentifierStruct {
     pub fn id(self: &Rc<Self>) -> NodeId {
         self.ir_node.id()
     }
-
     pub fn unparse(&self) -> &str {
         self.ir_node.unparse()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type IndexedKeyword = Rc<IndexedKeywordStruct>;
+
+pub struct IndexedKeywordStruct {
+    pub(crate) ir_node: ir::IndexedKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_indexed_keyword(
+    ir_node: &ir::IndexedKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> IndexedKeyword {
+    Rc::new(IndexedKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl IndexedKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type IntKeyword = Rc<IntKeywordStruct>;
+
+pub struct IntKeywordStruct {
+    pub(crate) ir_node: ir::IntKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_int_keyword(
+    ir_node: &ir::IntKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> IntKeyword {
+    Rc::new(IntKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl IntKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type LessThan = Rc<LessThanStruct>;
+
+pub struct LessThanStruct {
+    pub(crate) ir_node: ir::LessThan,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_less_than(ir_node: &ir::LessThan, semantic: &Rc<SemanticContext>) -> LessThan {
+    Rc::new(LessThanStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl LessThanStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type LessThanEqual = Rc<LessThanEqualStruct>;
+
+pub struct LessThanEqualStruct {
+    pub(crate) ir_node: ir::LessThanEqual,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_less_than_equal(
+    ir_node: &ir::LessThanEqual,
+    semantic: &Rc<SemanticContext>,
+) -> LessThanEqual {
+    Rc::new(LessThanEqualStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl LessThanEqualStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type LessThanLessThan = Rc<LessThanLessThanStruct>;
+
+pub struct LessThanLessThanStruct {
+    pub(crate) ir_node: ir::LessThanLessThan,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_less_than_less_than(
+    ir_node: &ir::LessThanLessThan,
+    semantic: &Rc<SemanticContext>,
+) -> LessThanLessThan {
+    Rc::new(LessThanLessThanStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl LessThanLessThanStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type LessThanLessThanEqual = Rc<LessThanLessThanEqualStruct>;
+
+pub struct LessThanLessThanEqualStruct {
+    pub(crate) ir_node: ir::LessThanLessThanEqual,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_less_than_less_than_equal(
+    ir_node: &ir::LessThanLessThanEqual,
+    semantic: &Rc<SemanticContext>,
+) -> LessThanLessThanEqual {
+    Rc::new(LessThanLessThanEqualStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl LessThanLessThanEqualStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type MemoryKeyword = Rc<MemoryKeywordStruct>;
+
+pub struct MemoryKeywordStruct {
+    pub(crate) ir_node: ir::MemoryKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_memory_keyword(
+    ir_node: &ir::MemoryKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> MemoryKeyword {
+    Rc::new(MemoryKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl MemoryKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type Minus = Rc<MinusStruct>;
+
+pub struct MinusStruct {
+    pub(crate) ir_node: ir::Minus,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_minus(ir_node: &ir::Minus, semantic: &Rc<SemanticContext>) -> Minus {
+    Rc::new(MinusStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl MinusStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type MinusEqual = Rc<MinusEqualStruct>;
+
+pub struct MinusEqualStruct {
+    pub(crate) ir_node: ir::MinusEqual,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_minus_equal(
+    ir_node: &ir::MinusEqual,
+    semantic: &Rc<SemanticContext>,
+) -> MinusEqual {
+    Rc::new(MinusEqualStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl MinusEqualStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type MinusMinus = Rc<MinusMinusStruct>;
+
+pub struct MinusMinusStruct {
+    pub(crate) ir_node: ir::MinusMinus,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_minus_minus(
+    ir_node: &ir::MinusMinus,
+    semantic: &Rc<SemanticContext>,
+) -> MinusMinus {
+    Rc::new(MinusMinusStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl MinusMinusStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type MinutesKeyword = Rc<MinutesKeywordStruct>;
+
+pub struct MinutesKeywordStruct {
+    pub(crate) ir_node: ir::MinutesKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_minutes_keyword(
+    ir_node: &ir::MinutesKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> MinutesKeyword {
+    Rc::new(MinutesKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl MinutesKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type PayableKeyword = Rc<PayableKeywordStruct>;
+
+pub struct PayableKeywordStruct {
+    pub(crate) ir_node: ir::PayableKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_payable_keyword(
+    ir_node: &ir::PayableKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> PayableKeyword {
+    Rc::new(PayableKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl PayableKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type Percent = Rc<PercentStruct>;
+
+pub struct PercentStruct {
+    pub(crate) ir_node: ir::Percent,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_percent(ir_node: &ir::Percent, semantic: &Rc<SemanticContext>) -> Percent {
+    Rc::new(PercentStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl PercentStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type PercentEqual = Rc<PercentEqualStruct>;
+
+pub struct PercentEqualStruct {
+    pub(crate) ir_node: ir::PercentEqual,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_percent_equal(
+    ir_node: &ir::PercentEqual,
+    semantic: &Rc<SemanticContext>,
+) -> PercentEqual {
+    Rc::new(PercentEqualStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl PercentEqualStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type Plus = Rc<PlusStruct>;
+
+pub struct PlusStruct {
+    pub(crate) ir_node: ir::Plus,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_plus(ir_node: &ir::Plus, semantic: &Rc<SemanticContext>) -> Plus {
+    Rc::new(PlusStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl PlusStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type PlusEqual = Rc<PlusEqualStruct>;
+
+pub struct PlusEqualStruct {
+    pub(crate) ir_node: ir::PlusEqual,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_plus_equal(
+    ir_node: &ir::PlusEqual,
+    semantic: &Rc<SemanticContext>,
+) -> PlusEqual {
+    Rc::new(PlusEqualStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl PlusEqualStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type PlusPlus = Rc<PlusPlusStruct>;
+
+pub struct PlusPlusStruct {
+    pub(crate) ir_node: ir::PlusPlus,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_plus_plus(ir_node: &ir::PlusPlus, semantic: &Rc<SemanticContext>) -> PlusPlus {
+    Rc::new(PlusPlusStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl PlusPlusStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type PragmaCaret = Rc<PragmaCaretStruct>;
+
+pub struct PragmaCaretStruct {
+    pub(crate) ir_node: ir::PragmaCaret,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_pragma_caret(
+    ir_node: &ir::PragmaCaret,
+    semantic: &Rc<SemanticContext>,
+) -> PragmaCaret {
+    Rc::new(PragmaCaretStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl PragmaCaretStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type PragmaEqual = Rc<PragmaEqualStruct>;
+
+pub struct PragmaEqualStruct {
+    pub(crate) ir_node: ir::PragmaEqual,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_pragma_equal(
+    ir_node: &ir::PragmaEqual,
+    semantic: &Rc<SemanticContext>,
+) -> PragmaEqual {
+    Rc::new(PragmaEqualStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl PragmaEqualStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type PragmaGreaterThan = Rc<PragmaGreaterThanStruct>;
+
+pub struct PragmaGreaterThanStruct {
+    pub(crate) ir_node: ir::PragmaGreaterThan,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_pragma_greater_than(
+    ir_node: &ir::PragmaGreaterThan,
+    semantic: &Rc<SemanticContext>,
+) -> PragmaGreaterThan {
+    Rc::new(PragmaGreaterThanStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl PragmaGreaterThanStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type PragmaGreaterThanEqual = Rc<PragmaGreaterThanEqualStruct>;
+
+pub struct PragmaGreaterThanEqualStruct {
+    pub(crate) ir_node: ir::PragmaGreaterThanEqual,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_pragma_greater_than_equal(
+    ir_node: &ir::PragmaGreaterThanEqual,
+    semantic: &Rc<SemanticContext>,
+) -> PragmaGreaterThanEqual {
+    Rc::new(PragmaGreaterThanEqualStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl PragmaGreaterThanEqualStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type PragmaLessThan = Rc<PragmaLessThanStruct>;
+
+pub struct PragmaLessThanStruct {
+    pub(crate) ir_node: ir::PragmaLessThan,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_pragma_less_than(
+    ir_node: &ir::PragmaLessThan,
+    semantic: &Rc<SemanticContext>,
+) -> PragmaLessThan {
+    Rc::new(PragmaLessThanStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl PragmaLessThanStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type PragmaLessThanEqual = Rc<PragmaLessThanEqualStruct>;
+
+pub struct PragmaLessThanEqualStruct {
+    pub(crate) ir_node: ir::PragmaLessThanEqual,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_pragma_less_than_equal(
+    ir_node: &ir::PragmaLessThanEqual,
+    semantic: &Rc<SemanticContext>,
+) -> PragmaLessThanEqual {
+    Rc::new(PragmaLessThanEqualStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl PragmaLessThanEqualStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type PragmaTilde = Rc<PragmaTildeStruct>;
+
+pub struct PragmaTildeStruct {
+    pub(crate) ir_node: ir::PragmaTilde,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_pragma_tilde(
+    ir_node: &ir::PragmaTilde,
+    semantic: &Rc<SemanticContext>,
+) -> PragmaTilde {
+    Rc::new(PragmaTildeStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl PragmaTildeStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type SMTCheckerKeyword = Rc<SMTCheckerKeywordStruct>;
+
+pub struct SMTCheckerKeywordStruct {
+    pub(crate) ir_node: ir::SMTCheckerKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_smt_checker_keyword(
+    ir_node: &ir::SMTCheckerKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> SMTCheckerKeyword {
+    Rc::new(SMTCheckerKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl SMTCheckerKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type SecondsKeyword = Rc<SecondsKeywordStruct>;
+
+pub struct SecondsKeywordStruct {
+    pub(crate) ir_node: ir::SecondsKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_seconds_keyword(
+    ir_node: &ir::SecondsKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> SecondsKeyword {
+    Rc::new(SecondsKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl SecondsKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type Semicolon = Rc<SemicolonStruct>;
+
+pub struct SemicolonStruct {
+    pub(crate) ir_node: ir::Semicolon,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_semicolon(
+    ir_node: &ir::Semicolon,
+    semantic: &Rc<SemanticContext>,
+) -> Semicolon {
+    Rc::new(SemicolonStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl SemicolonStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type Slash = Rc<SlashStruct>;
+
+pub struct SlashStruct {
+    pub(crate) ir_node: ir::Slash,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_slash(ir_node: &ir::Slash, semantic: &Rc<SemanticContext>) -> Slash {
+    Rc::new(SlashStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl SlashStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type SlashEqual = Rc<SlashEqualStruct>;
+
+pub struct SlashEqualStruct {
+    pub(crate) ir_node: ir::SlashEqual,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_slash_equal(
+    ir_node: &ir::SlashEqual,
+    semantic: &Rc<SemanticContext>,
+) -> SlashEqual {
+    Rc::new(SlashEqualStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl SlashEqualStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type StorageKeyword = Rc<StorageKeywordStruct>;
+
+pub struct StorageKeywordStruct {
+    pub(crate) ir_node: ir::StorageKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_storage_keyword(
+    ir_node: &ir::StorageKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> StorageKeyword {
+    Rc::new(StorageKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl StorageKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type StringKeyword = Rc<StringKeywordStruct>;
+
+pub struct StringKeywordStruct {
+    pub(crate) ir_node: ir::StringKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_string_keyword(
+    ir_node: &ir::StringKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> StringKeyword {
+    Rc::new(StringKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl StringKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type StringLiteral = Rc<StringLiteralStruct>;
+
+pub struct StringLiteralStruct {
+    pub(crate) ir_node: ir::StringLiteral,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_string_literal(
+    ir_node: &ir::StringLiteral,
+    semantic: &Rc<SemanticContext>,
+) -> StringLiteral {
+    Rc::new(StringLiteralStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl StringLiteralStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type SuperKeyword = Rc<SuperKeywordStruct>;
+
+pub struct SuperKeywordStruct {
+    pub(crate) ir_node: ir::SuperKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_super_keyword(
+    ir_node: &ir::SuperKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> SuperKeyword {
+    Rc::new(SuperKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl SuperKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type ThisKeyword = Rc<ThisKeywordStruct>;
+
+pub struct ThisKeywordStruct {
+    pub(crate) ir_node: ir::ThisKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_this_keyword(
+    ir_node: &ir::ThisKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> ThisKeyword {
+    Rc::new(ThisKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl ThisKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type Tilde = Rc<TildeStruct>;
+
+pub struct TildeStruct {
+    pub(crate) ir_node: ir::Tilde,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_tilde(ir_node: &ir::Tilde, semantic: &Rc<SemanticContext>) -> Tilde {
+    Rc::new(TildeStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl TildeStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type TrueKeyword = Rc<TrueKeywordStruct>;
+
+pub struct TrueKeywordStruct {
+    pub(crate) ir_node: ir::TrueKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_true_keyword(
+    ir_node: &ir::TrueKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> TrueKeyword {
+    Rc::new(TrueKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl TrueKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type UfixedKeyword = Rc<UfixedKeywordStruct>;
+
+pub struct UfixedKeywordStruct {
+    pub(crate) ir_node: ir::UfixedKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_ufixed_keyword(
+    ir_node: &ir::UfixedKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> UfixedKeyword {
+    Rc::new(UfixedKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl UfixedKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type UintKeyword = Rc<UintKeywordStruct>;
+
+pub struct UintKeywordStruct {
+    pub(crate) ir_node: ir::UintKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_uint_keyword(
+    ir_node: &ir::UintKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> UintKeyword {
+    Rc::new(UintKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl UintKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type UnicodeStringLiteral = Rc<UnicodeStringLiteralStruct>;
+
+pub struct UnicodeStringLiteralStruct {
+    pub(crate) ir_node: ir::UnicodeStringLiteral,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_unicode_string_literal(
+    ir_node: &ir::UnicodeStringLiteral,
+    semantic: &Rc<SemanticContext>,
+) -> UnicodeStringLiteral {
+    Rc::new(UnicodeStringLiteralStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl UnicodeStringLiteralStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type VersionSpecifier = Rc<VersionSpecifierStruct>;
+
+pub struct VersionSpecifierStruct {
+    pub(crate) ir_node: ir::VersionSpecifier,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_version_specifier(
+    ir_node: &ir::VersionSpecifier,
+    semantic: &Rc<SemanticContext>,
+) -> VersionSpecifier {
+    Rc::new(VersionSpecifierStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl VersionSpecifierStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+    pub fn unparse(&self) -> &str {
+        self.ir_node.unparse()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type VirtualKeyword = Rc<VirtualKeywordStruct>;
+
+pub struct VirtualKeywordStruct {
+    pub(crate) ir_node: ir::VirtualKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_virtual_keyword(
+    ir_node: &ir::VirtualKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> VirtualKeyword {
+    Rc::new(VirtualKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl VirtualKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type WeeksKeyword = Rc<WeeksKeywordStruct>;
+
+pub struct WeeksKeywordStruct {
+    pub(crate) ir_node: ir::WeeksKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_weeks_keyword(
+    ir_node: &ir::WeeksKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> WeeksKeyword {
+    Rc::new(WeeksKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl WeeksKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
+    }
+
+    pub fn get_type(&self) -> Option<Type> {
+        Type::try_create_for_node_id(self.ir_node.id(), &self.semantic)
+    }
+
+    pub fn get_file_id(&self) -> &str {
+        self.semantic.file_id_from_node_id(self.ir_node.id())
+    }
+
+    pub fn get_text_range(&self) -> &Range<usize> {
+        &self.ir_node.range
+    }
+}
+
+pub type WeiKeyword = Rc<WeiKeywordStruct>;
+
+pub struct WeiKeywordStruct {
+    pub(crate) ir_node: ir::WeiKeyword,
+    pub(crate) semantic: Rc<SemanticContext>,
+}
+
+pub(crate) fn create_wei_keyword(
+    ir_node: &ir::WeiKeyword,
+    semantic: &Rc<SemanticContext>,
+) -> WeiKeyword {
+    Rc::new(WeiKeywordStruct {
+        ir_node: Rc::clone(ir_node),
+        semantic: Rc::clone(semantic),
+    })
+}
+
+impl WeiKeywordStruct {
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        self.ir_node.id()
     }
 
     pub fn get_type(&self) -> Option<Type> {

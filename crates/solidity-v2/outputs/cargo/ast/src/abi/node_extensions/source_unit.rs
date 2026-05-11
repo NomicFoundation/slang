@@ -7,7 +7,7 @@ impl SourceUnitStruct {
         self.contracts()
             .iter()
             .filter_map(|contract| {
-                if contract.abstract_keyword() {
+                if contract.abstract_keyword().is_some() {
                     None
                 } else {
                     contract.compute_abi_with_file_id(file_id.to_string())
