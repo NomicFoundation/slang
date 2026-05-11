@@ -118,8 +118,10 @@ fn push_collapsible_list(
 /// names from `cargo bench -- --list`, and how to fetch + canonicalize the
 /// names recorded on bencher.
 pub mod gungraun {
-    use anyhow::{Context, Result};
+    use anyhow::Result;
     use infra_utils::commands::Command;
+
+    use crate::toolchains::bencher;
 
     /// Collect the local and remote name sets for the given bench.
     pub fn collect_names(
@@ -142,7 +144,10 @@ pub mod gungraun {
             .evaluate()?;
 
         let local = parse_local_names(&output);
-        let remote = list_remote_names(bencher_project)?;
+        let remote = bencher::list_project_benchmarks(bencher_project)?
+            .iter()
+            .map(|name| canonicalize_label(name))
+            .collect();
         Ok((local, remote))
     }
 
@@ -153,55 +158,6 @@ pub mod gungraun {
             .lines()
             .filter_map(|line| line.strip_suffix(": benchmark").map(str::to_owned))
             .collect()
-    }
-
-    /// Bulk-fetch every benchmark recorded for `project`, paginating through
-    /// the bencher API and canonicalizing each label back to the form
-    /// gungraun emits locally so the two sides can be set-compared.
-    ///
-    /// The slang bencher projects allow read-only public listing, so no token
-    /// is required.
-    fn list_remote_names(project: &str) -> Result<Vec<String>> {
-        // 255 is the bencher API's per-page cap; using it minimizes round trips.
-        const PER_PAGE: usize = 255;
-        let mut names = Vec::new();
-        let mut page = 1usize;
-
-        loop {
-            let output = Command::new("bencher")
-                .args([
-                    "benchmark",
-                    "list",
-                    project,
-                    "--per-page",
-                    &PER_PAGE.to_string(),
-                    "--page",
-                    &page.to_string(),
-                ])
-                .evaluate()?;
-
-            let entries: Vec<serde_json::Value> = serde_json::from_str(&output)
-                .with_context(|| format!("failed to parse bencher response for {project}"))?;
-
-            if entries.is_empty() {
-                break;
-            }
-
-            let count = entries.len();
-            names.extend(
-                entries
-                    .iter()
-                    .filter_map(|entry| entry.get("name").and_then(|v| v.as_str()))
-                    .map(canonicalize_label),
-            );
-
-            if count < PER_PAGE {
-                break;
-            }
-            page += 1;
-        }
-
-        Ok(names)
     }
 
     /// Convert a bencher-stored label like
