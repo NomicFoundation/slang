@@ -2,13 +2,13 @@ use std::collections::BTreeMap;
 use std::fmt::Display;
 use std::ops::Range;
 
-use slang_solidity_v2::compilation::unit::CompilationUnit;
+use slang_solidity_v2::compilation::CompilationUnit;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir::visitor::{accept_source_unit, Visitor};
 use slang_solidity_v2_ir::ir::Identifier;
 use slang_solidity_v2_parser::ParserError;
 use slang_solidity_v2_semantic::binder::{Definition, Resolution, Typing};
-use slang_solidity_v2_semantic::context::{SemanticContext, SemanticFile};
+use slang_solidity_v2_semantic::context::SemanticContext;
 use slang_solidity_v2_semantic::types::{DataLocation, FunctionType, LiteralKind, Type, TypeId};
 
 // Types
@@ -144,9 +144,14 @@ fn collect_all_identifiers(
         current_file: None,
     };
 
-    for file in &compilation.files() {
-        collector.current_file = files.get_key_value(file.id());
-        accept_source_unit(file.ir_root(), &mut collector);
+    for file_id in &compilation.file_ids() {
+        collector.current_file = files.get_key_value(file_id);
+        accept_source_unit(
+            &compilation
+                .get_file_ir_root(file_id)
+                .expect("file has IR root"),
+            &mut collector,
+        );
     }
 
     collector.identifiers

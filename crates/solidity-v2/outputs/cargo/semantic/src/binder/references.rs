@@ -47,7 +47,7 @@ impl Reference {
 }
 
 impl Resolution {
-    pub fn as_definition_id(&self) -> Option<NodeId> {
+    pub(crate) fn as_definition_id(&self) -> Option<NodeId> {
         if let Resolution::Definition(definition_id) = self {
             Some(*definition_id)
         } else {
@@ -64,16 +64,7 @@ impl Resolution {
     }
 
     #[must_use]
-    pub fn non_ambiguous(self) -> Self {
-        if matches!(self, Self::Ambiguous(_)) {
-            Self::Unresolved
-        } else {
-            self
-        }
-    }
-
-    #[must_use]
-    pub fn or_else<F>(self, f: F) -> Self
+    pub(crate) fn or_else<F>(self, f: F) -> Self
     where
         F: FnOnce() -> Self,
     {

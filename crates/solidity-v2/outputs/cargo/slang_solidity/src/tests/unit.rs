@@ -1,13 +1,13 @@
 use anyhow::Result;
-use slang_solidity_v2_ast::ast::Definition;
 
 use super::fixtures;
+use crate::ast::Definition;
 
 #[test]
 fn test_get_file_ast_root() -> Result<()> {
     let unit = fixtures::Counter::build_compilation_unit()?;
 
-    assert_eq!(unit.files().len(), 3);
+    assert_eq!(unit.file_ids().len(), 3);
 
     let main_ast = unit
         .get_file_ast_root("main.sol")

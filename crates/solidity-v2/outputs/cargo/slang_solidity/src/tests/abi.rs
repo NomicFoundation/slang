@@ -1,7 +1,7 @@
 use anyhow::Result;
-use slang_solidity_v2_ast::abi::AbiEntry;
 
 use super::fixtures;
+use crate::abi::AbiEntry;
 
 /// Convenience macro to test equality of tuple components for input/output parameters.
 ///

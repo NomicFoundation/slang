@@ -1,8 +1,7 @@
 use anyhow::Result;
-use slang_solidity_v2_ast::ast::{self, ContractBase, ContractMember, Definition, FunctionKind};
-use slang_solidity_v2_common::built_ins::BuiltIn;
 
 use super::fixtures;
+use crate::ast::{self, BuiltIn, ContractBase, ContractMember, Definition, FunctionKind};
 
 #[derive(Default)]
 struct IdentifierCounter {

@@ -5,7 +5,7 @@ use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
-use slang_solidity_v2::compilation::builder::{
+use slang_solidity_v2::compilation::{
     CompilationBuilder, CompilationBuilderConfig, CompilationBuilderError,
 };
 use slang_solidity_v2_common::versions::LanguageVersion;

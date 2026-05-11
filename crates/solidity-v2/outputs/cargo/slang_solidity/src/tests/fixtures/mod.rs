@@ -1,12 +1,11 @@
 use std::rc::Rc;
 
 use anyhow::Result;
-use slang_solidity_v2_common::versions::LanguageVersion;
 
-use crate::compilation::builder::{
-    CompilationBuilder, CompilationBuilderConfig, CompilationBuilderError,
+use crate::compilation::{
+    CompilationBuilder, CompilationBuilderConfig, CompilationBuilderError, CompilationUnit,
 };
-use crate::compilation::unit::CompilationUnit;
+use crate::utils::LanguageVersion;
 
 mod abi_with_tuples;
 mod chained_imports;
@@ -44,7 +43,7 @@ macro_rules! define_fixture {
 
         impl $name {
             pub(crate) fn build_compilation_unit(
-            ) -> anyhow::Result<std::rc::Rc<$crate::compilation::unit::CompilationUnit>> {
+            ) -> anyhow::Result<std::rc::Rc<$crate::compilation::CompilationUnit>> {
                 $crate::tests::fixtures::build_compilation_unit_from_fixture(FILES)
             }
         }
@@ -106,41 +105,41 @@ pub(super) fn build_compilation_unit_from_fixture(
 #[test]
 fn test_build_abi_with_tuples_fixture() -> Result<()> {
     let unit = AbiWithTuples::build_compilation_unit()?;
-    assert_eq!(1, unit.files().len());
+    assert_eq!(1, unit.file_ids().len());
     Ok(())
 }
 
 #[test]
 fn test_build_chained_imports_fixture() -> Result<()> {
     let unit = ChainedImports::build_compilation_unit()?;
-    assert_eq!(3, unit.files().len());
+    assert_eq!(3, unit.file_ids().len());
     Ok(())
 }
 
 #[test]
 fn test_build_counter_fixture() -> Result<()> {
     let unit = Counter::build_compilation_unit()?;
-    assert_eq!(3, unit.files().len());
+    assert_eq!(3, unit.file_ids().len());
     Ok(())
 }
 
 #[test]
 fn test_build_full_abi_fixture() -> Result<()> {
     let unit = FullAbi::build_compilation_unit()?;
-    assert_eq!(1, unit.files().len());
+    assert_eq!(1, unit.file_ids().len());
     Ok(())
 }
 
 #[test]
 fn test_build_overrides_fixture() -> Result<()> {
     let unit = Overrides::build_compilation_unit()?;
-    assert_eq!(1, unit.files().len());
+    assert_eq!(1, unit.file_ids().len());
     Ok(())
 }
 
 #[test]
 fn test_build_storage_layout_fixture() -> Result<()> {
     let unit = StorageLayout::build_compilation_unit()?;
-    assert_eq!(1, unit.files().len());
+    assert_eq!(1, unit.file_ids().len());
     Ok(())
 }

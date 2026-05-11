@@ -7,7 +7,7 @@ use ariadne::{Color, Config, Label, Report, ReportBuilder, ReportKind, Source};
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_parser::ParserError;
 use slang_solidity_v2_semantic::binder::Resolution;
-use slang_solidity_v2_semantic::context::{SemanticContext, SemanticFile};
+use slang_solidity_v2_semantic::context::SemanticContext;
 use solidity_v2_testing_utils::reporting::diagnostic;
 
 use super::report_data::{
@@ -48,10 +48,9 @@ pub(crate) fn binder_report(report_data: &'_ ReportData<'_>) -> Result<String> {
 
     report_unbound_identifiers(&mut report, unbound_identifiers)?;
 
-    for file in &compilation.files() {
+    for file_id in &compilation.file_ids() {
         writeln!(report, "{SEPARATOR}")?;
 
-        let file_id = file.id();
         if let Some(contents) = files.get(file_id) {
             render_bindings_for_file(
                 &mut report,
