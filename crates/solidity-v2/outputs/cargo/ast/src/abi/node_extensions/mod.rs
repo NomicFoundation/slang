@@ -1,6 +1,7 @@
-mod contracts;
-mod errors;
-mod events;
-mod functions;
+mod contract_definition;
+mod error_definition;
+mod event_definition;
+mod function_definition;
+mod parameters;
 mod source_unit;
-mod state_variables;
+mod state_variable_definition;

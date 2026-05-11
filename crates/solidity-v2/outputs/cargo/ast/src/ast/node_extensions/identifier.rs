@@ -2,7 +2,7 @@ use slang_solidity_v2_common::built_ins::BuiltIn;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::binder;
 
-use super::super::nodes::{IdentifierPathStruct, IdentifierStruct};
+use super::super::nodes::IdentifierStruct;
 use crate::ast::references::references_binding_to_definition;
 use crate::ast::{Definition, Reference};
 
@@ -82,37 +82,5 @@ impl IdentifierStruct {
     // only makes sense if `is_definition()` is true
     pub fn references(&self) -> Vec<Reference> {
         references_binding_to_definition(self.ir_node.id(), &self.semantic)
-    }
-}
-
-impl IdentifierPathStruct {
-    pub fn name(&self) -> String {
-        self.ir_nodes
-            .iter()
-            .map(|ir_node| ir_node.unparse())
-            .collect::<Vec<_>>()
-            .join(".")
-    }
-
-    /// Attempts to resolve the identifier path to a definition, following
-    /// symbol aliases (import deconstructions).
-    pub fn resolve_to_definition(&self) -> Option<Definition> {
-        let ir_node = self.ir_nodes.last()?;
-        let definition_id = self
-            .semantic
-            .resolve_reference_identifier_to_definition_id(ir_node.id())?;
-        Definition::try_create(definition_id, &self.semantic)
-    }
-
-    /// Attempts to resolve the identifier path to an immediate definition,
-    /// without following symbol aliases, possibly returning import
-    /// deconstruction symbols. If the path refers to a direct definition, this
-    /// is equivalent to `resolve_to_definition`.
-    pub fn resolve_to_immediate_definition(&self) -> Option<Definition> {
-        let ir_node = self.ir_nodes.last()?;
-        let definition_id = self
-            .semantic
-            .resolve_reference_identifier_to_immediate_definition_id(ir_node.id())?;
-        Definition::try_create(definition_id, &self.semantic)
     }
 }
