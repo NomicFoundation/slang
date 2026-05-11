@@ -3,9 +3,8 @@ use std::rc::Rc;
 use paste::paste;
 
 use super::Definition;
-use crate::backend::binder;
 use crate::backend::types::{self, DataLocation, FunctionTypeKind, LiteralKind, TypeId};
-use crate::backend::SemanticAnalysis;
+use crate::backend::{binder, SemanticAnalysis};
 
 // __SLANG_TYPE_TYPES__ keep in sync with binder types
 #[derive(Clone)]
@@ -125,6 +124,38 @@ impl Type {
             Type::UserDefinedValue(details) => details.type_id,
             Type::Void(details) => details.type_id,
         }
+    }
+
+    /// Returns the data location of this type when it has one.
+    ///
+    /// Container types (`Array`, `Bytes`, `FixedSizeArray`, `String`, `Struct`)
+    /// carry their data location explicitly. `Mapping` is always `Storage`.
+    /// All other types are value types with no associated location and return
+    /// `None`.
+    pub fn data_location(&self) -> Option<DataLocation> {
+        match self {
+            Type::Array(details) => Some(details.location()),
+            Type::Bytes(details) => Some(details.location()),
+            Type::FixedSizeArray(details) => Some(details.location()),
+            Type::String(details) => Some(details.location()),
+            Type::Struct(details) => Some(details.location()),
+            Type::Mapping(_) => Some(DataLocation::Storage),
+            _ => None,
+        }
+    }
+
+    /// Returns `true` if this type is a Solidity reference type
+    /// (`array`, `fixed-size array`, `bytes`, `string`, `mapping`, `struct`).
+    pub fn is_reference_type(&self) -> bool {
+        matches!(
+            self,
+            Type::Array(_)
+                | Type::FixedSizeArray(_)
+                | Type::Bytes(_)
+                | Type::String(_)
+                | Type::Mapping(_)
+                | Type::Struct(_)
+        )
     }
 }
 
