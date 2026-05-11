@@ -64,12 +64,12 @@ impl<S: Source> CstToIrBuilder<'_, S> {
       #[allow(clippy::unused_self)]
       {% if choice.has_removed_variants -%}
         #[allow(dead_code)]
-        pub(super) fn default_build_{{ parent_type | snake_case }}(
-          &mut self, source: &input::{{ parent_type }},
+        pub(super) fn default_build_{{ choice.source_name | snake_case }}(
+          &mut self, source: &input::{{ choice.source_name }},
         ) -> output::{{ parent_type }}
       {%- else -%}
-        pub(super) fn build_{{ parent_type | snake_case }}(
-          &mut self, source: &input::{{ parent_type }},
+        pub(super) fn build_{{ choice.source_name | snake_case }}(
+          &mut self, source: &input::{{ choice.source_name }},
         ) -> output::{{ parent_type }}
       {%- endif %}
       {
@@ -78,7 +78,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         match source {
           {% for variant in choice.variants -%}
             {% if not variant.is_new -%}
-              input::{{ parent_type }}::{{ variant.source.name }}(ref {{ variant.source.name | snake_case }}) => {
+              input::{{ choice.source_name }}::{{ variant.source.name }}(ref {{ variant.source.name | snake_case }}) => {
                 output::{{ parent_type }}::{{ variant.target.name }}(self.build_{{ variant.source.name | snake_case }}({{ variant.source.name | snake_case }}))
               }
             {%- endif -%}

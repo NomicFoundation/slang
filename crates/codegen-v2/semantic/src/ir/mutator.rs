@@ -119,6 +119,9 @@ pub struct MutatedVariant {
 
 #[derive(Clone, Serialize)]
 pub struct MutatedChoice {
+    // Original (CST input enum) name. Used by the auto-builder to access the
+    // source. Stays stable across `rename_choice_type`.
+    pub source_name: model::Identifier,
     pub variants: Vec<MutatedVariant>,
 
     // Indicates some variants have been removed so the transformer
@@ -129,9 +132,10 @@ pub struct MutatedChoice {
     pub is_new: bool,
 }
 
-impl From<&Choice> for MutatedChoice {
-    fn from(value: &Choice) -> Self {
+impl MutatedChoice {
+    fn from_choice(name: &model::Identifier, value: &Choice) -> Self {
         Self {
+            source_name: name.clone(),
             variants: value
                 .variants
                 .iter()
@@ -227,7 +231,12 @@ impl IrModelMutator {
         let choices = source
             .choices
             .iter()
-            .map(|(identifier, choice)| (identifier.clone(), choice.into()))
+            .map(|(identifier, choice)| {
+                (
+                    identifier.clone(),
+                    MutatedChoice::from_choice(identifier, choice),
+                )
+            })
             .collect();
 
         let collections = source
@@ -315,9 +324,11 @@ impl IrModelMutator {
                 is_new: true,
             });
         }
+        let name: model::Identifier = name.into();
         self.choices.insert(
-            name.into(),
+            name.clone(),
             MutatedChoice {
+                source_name: name,
                 variants: mutated_variants,
                 is_new: true,
                 has_removed_variants: false,
@@ -634,6 +645,32 @@ impl IrModelMutator {
                 is_unique,
             },
         );
+    }
+
+    // Renames a choice type without altering its variants. The original (CST
+    // input enum) name is preserved in `source_name` on the renamed
+    // `MutatedChoice` so the auto-builder still reads from the right source.
+    // References to the choice in sequence fields, choice variants, and
+    // collections are rewritten to point at the new name.
+    pub fn rename_choice_type(&mut self, old_name: &str, new_name: &str) {
+        let old_id: model::Identifier = old_name.into();
+        let new_id: model::Identifier = new_name.into();
+        let Some(choice) = self.choices.remove(&old_id) else {
+            panic!("Choice {old_name} not found in IR model");
+        };
+        assert!(
+            !self.sequences.contains_key(&new_id)
+                && !self.choices.contains_key(&new_id)
+                && !self.collections.contains_key(&new_id)
+                && !self.terminals.contains_key(&new_id)
+                && !self.external_types.contains(&new_id),
+            "Cannot rename choice {old_name} to {new_name}: name already in use"
+        );
+
+        let old_type = NodeType::Choice(old_id);
+        let new_type = NodeType::Choice(new_id.clone());
+        self.choices.insert(new_id, choice);
+        self.replace_type_references(&old_type, &new_type);
     }
 
     // Renames a field within a sequence without altering the type it
