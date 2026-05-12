@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# bencher-plot-cargo: creates a plot in the given bencher project for the comparison of libraries.
+# plot-cargo.sh: creates a plot in the given bencher project for the comparison of libraries.
 #
 # In essence, it helps to pick the right benchmarks, and solves the internal uuids use by bencher from the slug name
 # of every part of it.
 #
-# usage: bencher-plot-cargo project branches testbeds benchmarks title
+# usage: plot-cargo.sh project branches testbeds benchmarks title
 #
 # Example of usage to build plots in batch based on the project.json file:
-# $  jq "[.projects,.files] | add | map(.name) | .[]" crates/solidity/testing/perf/projects.json | xargs -L1 -I{} bash ./scripts/bin/bencher-plot-cargo slang-dashboard-cargo-cmp main ci {} "{}"
+# $  jq "[.projects,.files] | add | map(.name) | .[]" crates/solidity/testing/perf/projects.json | xargs -L1 -I{} bash ./scripts/bencher/plot-cargo.sh slang-dashboard-cargo-cmp main ci {} "{}"
 
 set -e
 shopt -s inherit_errexit
@@ -20,13 +20,12 @@ benchmarks=$4
 title=$5
 measure="Instructions"
 
-if [[ $# -ne 5 ]]
-then
-  echo "Usage: bencher-plot-cargo project branches testbeds benchmarks title";
-  exit 1;
+if [[ $# -ne 5 ]]; then
+  echo "Usage: plot-cargo.sh project branches testbeds benchmarks title"
+  exit 1
 fi
 
-source "$(dirname "$0")/bencher-common"
+source "$(dirname "$0")/_common.sh"
 
 function get_benchmarks() {
   details=$(bencher benchmark list --search "${benchmarks}" --per-page 255 "${project}")

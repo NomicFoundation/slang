@@ -1,24 +1,23 @@
 #!/bin/bash
 
-# bencher-plot-clean: deletes every plot in a given bencher project, after first
+# plot-clean.sh: deletes every plot in a given bencher project, after first
 # saving the full plot list to a local JSON backup so the previous state can be
 # inspected (or replayed) later.
 #
 # Set DRY_RUN=1 to print the delete commands without executing them. The backup
 # is still written in dry-run mode.
 #
-# usage: bencher-plot-clean project [backup-path]
+# usage: plot-clean.sh project [backup-path]
 #
 # Example:
-# $  ./scripts/bin/bencher-plot-clean slang-dashboard-cargo-slang-v2
+# $  ./scripts/bencher/plot-clean.sh slang-dashboard-cargo-slang-v2
 
 set -e
 shopt -s inherit_errexit
 
-if [[ $# -lt 1 || $# -gt 2 ]]
-then
-  echo "Usage: bencher-plot-clean project [backup-path]";
-  exit 1;
+if [[ $# -lt 1 || $# -gt 2 ]]; then
+  echo "Usage: plot-clean.sh project [backup-path]"
+  exit 1
 fi
 
 project=$1

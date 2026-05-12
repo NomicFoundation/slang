@@ -13,7 +13,10 @@ function get_branches() {
     uuid=$(echo "${details}" | jq -r ".[].uuid")
     uuid_list+=("--branches ${uuid}")
   done
-  (IFS=' '; echo "${uuid_list[*]}")
+  (
+    IFS=' '
+    echo "${uuid_list[*]}"
+  )
 }
 
 # Returns the uuids of a given a list of testbeds listed in the $testbeds variable
@@ -26,7 +29,10 @@ function get_testbeds() {
     uuid=$(echo "${details}" | jq -r ".[].uuid")
     uuid_list+=("--testbeds ${uuid}")
   done
-  (IFS=' '; echo "${uuid_list[*]}")
+  (
+    IFS=' '
+    echo "${uuid_list[*]}"
+  )
 }
 
 # Returns the uuid of a given $measure
