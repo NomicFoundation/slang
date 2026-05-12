@@ -3,8 +3,10 @@ use std::rc::Rc;
 
 use super::super::{
     ContractDefinition, ContractDefinitionStruct, ContractMember, ContractMembersStruct,
-    Definition, FunctionDefinition, FunctionKind, InterfaceDefinition, StateVariableDefinition,
+    Definition, FunctionDefinition, FunctionKind, FunctionMutability, InterfaceDefinition,
+    StateVariableDefinition,
 };
+use crate::backend::binder;
 use crate::backend::ir::ast::{
     ErrorDefinition, EventDefinition, FunctionDefinitionStruct, InterfaceMembersStruct,
 };
@@ -108,6 +110,23 @@ impl ContractDefinitionStruct {
     /// Returns the list of functions defined in all the hierarchy of the
     /// contract, in alphabetical order
     pub fn compute_linearised_functions(&self) -> Vec<FunctionDefinition> {
+        let Some(binder::Definition::Contract(contract_definition)) = self
+            .semantic
+            .binder()
+            .find_definition_by_id(self.ir_node.node_id)
+        else {
+            unreachable!("ContractDefinition AST node maps to a Contract definition");
+        };
+        if let Some(node_ids) = contract_definition.linearised_functions.get() {
+            return node_ids
+                .iter()
+                .filter_map(|id| match Definition::try_create(*id, &self.semantic)? {
+                    Definition::Function(function) => Some(function),
+                    _ => None,
+                })
+                .collect();
+        }
+
         let mut functions: Vec<FunctionDefinition> = Vec::new();
         let bases = self.compute_linearised_bases();
         for base in &bases {
@@ -143,7 +162,20 @@ impl ContractDefinitionStruct {
             (Some(_), None) => Ordering::Greater,
             (Some(a), Some(b)) => a.name().cmp(&b.name()),
         });
+
+        contract_definition
+            .linearised_functions
+            .set(functions.iter().map(|function| function.node_id()).collect())
+            .expect("cell empty per the get() check above");
         functions
+    }
+
+    pub fn is_payable(&self) -> bool {
+        self.compute_linearised_functions().iter().any(|function| {
+            matches!(function.kind(), FunctionKind::Receive)
+                || (matches!(function.kind(), FunctionKind::Fallback)
+                    && matches!(function.mutability(), FunctionMutability::Payable))
+        })
     }
 
     pub fn errors(&self) -> Vec<ErrorDefinition> {

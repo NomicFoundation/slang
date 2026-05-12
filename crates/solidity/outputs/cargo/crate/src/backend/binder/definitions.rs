@@ -1,3 +1,4 @@
+use std::cell::OnceCell;
 use std::rc::Rc;
 
 use super::ScopeId;
@@ -48,6 +49,7 @@ pub struct ContractDefinition {
     pub bases: Option<Vec<NodeId>>,
     pub constructor_parameters_scope_id: Option<ScopeId>,
     pub base_slot: Option<usize>,
+    pub linearised_functions: OnceCell<Vec<NodeId>>,
 }
 
 #[derive(Debug)]
@@ -318,6 +320,7 @@ impl Definition {
             bases: None,
             constructor_parameters_scope_id: None,
             base_slot: None,
+            linearised_functions: OnceCell::new(),
         })
     }
 

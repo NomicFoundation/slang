@@ -195,8 +195,11 @@ impl Binder {
         if self.definitions.contains_key(&node_id) {
             unreachable!("attempt to insert duplicate definition on node {node_id:?}");
         }
-        self.definitions_by_identifier
-            .insert(definition.identifier().id(), node_id);
+        if !matches!(&definition, Definition::Function(function) if function.ir_node.name.is_none())
+        {
+            self.definitions_by_identifier
+                .insert(definition.identifier().id(), node_id);
+        }
         self.definitions.insert(node_id, definition);
     }
 

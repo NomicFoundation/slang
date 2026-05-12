@@ -329,6 +329,16 @@ impl Visitor for Pass<'_> {
                     // Register the constructor to resolve named parameters when
                     // constructing this contract
                     self.register_constructor_parameters(parameters_scope_id);
+                } else if matches!(
+                    node.kind,
+                    input_ir::FunctionKind::Fallback
+                        | input_ir::FunctionKind::Receive
+                        | input_ir::FunctionKind::Unnamed
+                ) {
+                    let visibility = (&node.visibility).into();
+                    let definition =
+                        Definition::new_function(node, parameters_scope_id, visibility);
+                    self.binder.insert_definition_no_scope(definition);
                 }
 
                 let function_scope =
