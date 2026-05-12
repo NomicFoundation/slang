@@ -191,6 +191,7 @@ impl Number {
     }
 
     pub(crate) fn pow(&self, exponent: &Self) -> Option<Self> {
+        // TODO(validation): validate range of exponent
         let exponent = exponent.as_integer()?;
         let exp_abs = exponent.abs().to_u32()?;
         let raised = match self {
@@ -269,6 +270,7 @@ fn number_unit_multiplier(unit: &ir::NumberUnit) -> BigInt {
 /// - signed negative: `(-value - 1).bits() + 1` (two's-complement width).
 fn integer_bits_required(value: &BigInt, signed: bool) -> u32 {
     if !signed {
+        debug_assert!(!value.is_negative());
         u32::try_from(value.bits()).unwrap().max(1)
     } else if value.is_negative() {
         let magnitude_minus_one = -value - 1u32;
