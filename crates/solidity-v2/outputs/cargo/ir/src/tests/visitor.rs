@@ -87,10 +87,19 @@ contract Counter is Ownable {
     );
 
     let mut id_generator = ir::NodeIdGenerator::default();
-    let source_unit = ir::build(&source_unit, &CONTENTS, &mut id_generator);
+
+    let ir::BuildOutput {
+        ir_root,
+        diagnostics,
+    } = ir::build("test.sol", &source_unit, &CONTENTS, &mut id_generator);
+
+    assert!(
+        diagnostics.is_empty(),
+        "IR builder diagnostics: {diagnostics:?}"
+    );
 
     let mut visitor = CounterVisitor::new(true);
-    ir::visitor::accept_source_unit(&source_unit, &mut visitor);
+    ir::visitor::accept_source_unit(&ir_root, &mut visitor);
 
     assert_eq!(2, visitor.contracts);
     assert_eq!(2, visitor.constructors);
@@ -99,7 +108,7 @@ contract Counter is Ownable {
     assert_eq!(3, visitor.functions);
 
     let mut shallow_visitor = CounterVisitor::new(false);
-    ir::visitor::accept_source_unit(&source_unit, &mut shallow_visitor);
+    ir::visitor::accept_source_unit(&ir_root, &mut shallow_visitor);
 
     assert_eq!(2, shallow_visitor.contracts);
     assert_eq!(0, shallow_visitor.constructors);

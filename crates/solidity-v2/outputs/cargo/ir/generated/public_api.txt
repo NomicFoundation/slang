@@ -637,6 +637,21 @@ pub fn slang_solidity_v2_ir::ir::FunctionMutability::clone(&self) -> slang_solid
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::FunctionMutability
 impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::FunctionMutability
 pub fn slang_solidity_v2_ir::ir::FunctionMutability::eq(&self, other: &slang_solidity_v2_ir::ir::FunctionMutability) -> bool
+impl core::convert::TryFrom<&slang_solidity_v2_cst::structured_cst::nodes::ConstructorAttribute> for slang_solidity_v2_ir::ir::FunctionMutability
+pub type slang_solidity_v2_ir::ir::FunctionMutability::Error = ()
+pub fn slang_solidity_v2_ir::ir::FunctionMutability::try_from(value: &slang_solidity_v2_cst::structured_cst::nodes::ConstructorAttribute) -> core::result::Result<Self, Self::Error>
+impl core::convert::TryFrom<&slang_solidity_v2_cst::structured_cst::nodes::FallbackFunctionAttribute> for slang_solidity_v2_ir::ir::FunctionMutability
+pub type slang_solidity_v2_ir::ir::FunctionMutability::Error = ()
+pub fn slang_solidity_v2_ir::ir::FunctionMutability::try_from(value: &slang_solidity_v2_cst::structured_cst::nodes::FallbackFunctionAttribute) -> core::result::Result<Self, Self::Error>
+impl core::convert::TryFrom<&slang_solidity_v2_cst::structured_cst::nodes::FunctionAttribute> for slang_solidity_v2_ir::ir::FunctionMutability
+pub type slang_solidity_v2_ir::ir::FunctionMutability::Error = ()
+pub fn slang_solidity_v2_ir::ir::FunctionMutability::try_from(value: &slang_solidity_v2_cst::structured_cst::nodes::FunctionAttribute) -> core::result::Result<Self, Self::Error>
+impl core::convert::TryFrom<&slang_solidity_v2_cst::structured_cst::nodes::FunctionTypeAttribute> for slang_solidity_v2_ir::ir::FunctionMutability
+pub type slang_solidity_v2_ir::ir::FunctionMutability::Error = ()
+pub fn slang_solidity_v2_ir::ir::FunctionMutability::try_from(value: &slang_solidity_v2_cst::structured_cst::nodes::FunctionTypeAttribute) -> core::result::Result<Self, Self::Error>
+impl core::convert::TryFrom<&slang_solidity_v2_cst::structured_cst::nodes::ReceiveFunctionAttribute> for slang_solidity_v2_ir::ir::FunctionMutability
+pub type slang_solidity_v2_ir::ir::FunctionMutability::Error = ()
+pub fn slang_solidity_v2_ir::ir::FunctionMutability::try_from(value: &slang_solidity_v2_cst::structured_cst::nodes::ReceiveFunctionAttribute) -> core::result::Result<Self, Self::Error>
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::FunctionMutability
 pub fn slang_solidity_v2_ir::ir::FunctionMutability::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::hash::Hash for slang_solidity_v2_ir::ir::FunctionMutability
@@ -758,6 +773,9 @@ pub fn slang_solidity_v2_ir::ir::StateVariableMutability::clone(&self) -> slang_
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::StateVariableMutability
 impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::StateVariableMutability
 pub fn slang_solidity_v2_ir::ir::StateVariableMutability::eq(&self, other: &slang_solidity_v2_ir::ir::StateVariableMutability) -> bool
+impl core::convert::TryFrom<&slang_solidity_v2_cst::structured_cst::nodes::StateVariableAttribute> for slang_solidity_v2_ir::ir::StateVariableMutability
+pub type slang_solidity_v2_ir::ir::StateVariableMutability::Error = ()
+pub fn slang_solidity_v2_ir::ir::StateVariableMutability::try_from(value: &slang_solidity_v2_cst::structured_cst::nodes::StateVariableAttribute) -> core::result::Result<Self, Self::Error>
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::StateVariableMutability
 pub fn slang_solidity_v2_ir::ir::StateVariableMutability::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::hash::Hash for slang_solidity_v2_ir::ir::StateVariableMutability
@@ -1203,6 +1221,9 @@ impl slang_solidity_v2_ir::ir::BreakStatementStruct
 pub fn slang_solidity_v2_ir::ir::BreakStatementStruct::id(&self) -> slang_solidity_v2_common::nodes::NodeId
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::BreakStatementStruct
 pub fn slang_solidity_v2_ir::ir::BreakStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity_v2_ir::ir::BuildOutput
+pub slang_solidity_v2_ir::ir::BuildOutput::diagnostics: slang_solidity_v2_common::diagnostics::collection::DiagnosticCollection
+pub slang_solidity_v2_ir::ir::BuildOutput::ir_root: slang_solidity_v2_ir::ir::SourceUnit
 pub struct slang_solidity_v2_ir::ir::BytesKeywordStruct
 pub slang_solidity_v2_ir::ir::BytesKeywordStruct::range: core::ops::range::Range<usize>
 pub slang_solidity_v2_ir::ir::BytesKeywordStruct::text: alloc::string::String
@@ -2706,7 +2727,7 @@ impl slang_solidity_v2_ir::ir::Source for alloc::string::String
 pub fn alloc::string::String::text(&self, range: core::ops::range::Range<usize>) -> &str
 impl slang_solidity_v2_ir::ir::Source for str
 pub fn str::text(&self, range: core::ops::range::Range<usize>) -> &str
-pub fn slang_solidity_v2_ir::ir::build(source_unit: &slang_solidity_v2_cst::structured_cst::nodes::SourceUnit, source: &impl slang_solidity_v2_ir::ir::Source, id_generator: &mut slang_solidity_v2_ir::ir::NodeIdGenerator) -> slang_solidity_v2_ir::ir::SourceUnit
+pub fn slang_solidity_v2_ir::ir::build(file_id: &str, source_unit: &slang_solidity_v2_cst::structured_cst::nodes::SourceUnit, source: &impl slang_solidity_v2_ir::ir::Source, id_generator: &mut slang_solidity_v2_ir::ir::NodeIdGenerator) -> slang_solidity_v2_ir::ir::BuildOutput
 pub type slang_solidity_v2_ir::ir::ABIEncoderV2Keyword = alloc::rc::Rc<slang_solidity_v2_ir::ir::ABIEncoderV2KeywordStruct>
 pub type slang_solidity_v2_ir::ir::AbicoderPragma = alloc::rc::Rc<slang_solidity_v2_ir::ir::AbicoderPragmaStruct>
 pub type slang_solidity_v2_ir::ir::AbicoderV1Keyword = alloc::rc::Rc<slang_solidity_v2_ir::ir::AbicoderV1KeywordStruct>

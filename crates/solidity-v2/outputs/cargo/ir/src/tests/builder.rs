@@ -31,19 +31,29 @@ contract MyContract {
     );
 
     let mut id_generator = ir::NodeIdGenerator::default();
-    let source_unit = ir::build(&source_unit, &CONTENTS, &mut id_generator);
-    assert_eq!(2, source_unit.members.len());
+
+    let ir::BuildOutput {
+        ir_root,
+        diagnostics,
+    } = ir::build("test.sol", &source_unit, &CONTENTS, &mut id_generator);
+
+    assert!(
+        diagnostics.is_empty(),
+        "IR builder diagnostics: {diagnostics:?}"
+    );
+
+    assert_eq!(2, ir_root.members.len());
     assert!(matches!(
-        source_unit.members[0],
+        ir_root.members[0],
         ir::SourceUnitMember::PragmaDirective(_)
     ));
     assert!(matches!(
-        source_unit.members[1],
+        ir_root.members[1],
         ir::SourceUnitMember::ContractDefinition(_)
     ));
 
     // MyContract contract
-    let ir::SourceUnitMember::ContractDefinition(ref contract) = source_unit.members[1] else {
+    let ir::SourceUnitMember::ContractDefinition(ref contract) = ir_root.members[1] else {
         panic!("Expected ContractDefinition");
     };
     assert_eq!("MyContract", contract.name.unparse());
@@ -99,13 +109,25 @@ contract Test is Base layout at 0 {}
     );
 
     let mut id_generator = ir::NodeIdGenerator::default();
-    let source_unit = ir::build(&source_unit, &CONTENTS, &mut id_generator);
+
+    let ir::BuildOutput {
+        ir_root,
+        diagnostics,
+    } = ir::build("test.sol", &source_unit, &CONTENTS, &mut id_generator);
+
     let sentinel_node_id = id_generator.next_id();
 
-    assert_eq!(2, source_unit.members.len());
-    assert!(source_unit.id() < sentinel_node_id);
+    assert_eq!(2, ir_root.members.len());
+    assert!(ir_root.id() < sentinel_node_id);
 
-    let ir::SourceUnitMember::ContractDefinition(base_contract) = &source_unit.members[0] else {
+    assert!(
+        diagnostics.is_empty(),
+        "IR builder diagnostics: {diagnostics:?}"
+    );
+
+    assert_eq!(2, ir_root.members.len());
+
+    let ir::SourceUnitMember::ContractDefinition(base_contract) = &ir_root.members[0] else {
         panic!("Expected ContractDefinition");
     };
     assert_eq!("Base", base_contract.name.unparse());
@@ -114,7 +136,7 @@ contract Test is Base layout at 0 {}
     assert!(base_contract.id() < sentinel_node_id);
     assert!(base_contract.name.id() < sentinel_node_id);
 
-    let ir::SourceUnitMember::ContractDefinition(test_contract) = &source_unit.members[1] else {
+    let ir::SourceUnitMember::ContractDefinition(test_contract) = &ir_root.members[1] else {
         panic!("Expected ContractDefinition");
     };
     assert_eq!("Test", test_contract.name.unparse());

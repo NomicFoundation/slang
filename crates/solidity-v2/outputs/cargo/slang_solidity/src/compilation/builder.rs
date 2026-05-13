@@ -5,7 +5,7 @@ use slang_solidity_v2_common::diagnostics::kinds::compilation::{MissingFile, Unr
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes as cst;
-use slang_solidity_v2_ir::ir;
+use slang_solidity_v2_ir::ir::{self, BuildOutput};
 use slang_solidity_v2_parser::{ParseOutput, Parser};
 use slang_solidity_v2_semantic::context::{
     extract_import_paths_from_source_unit, SemanticContext, SemanticFile,
@@ -140,18 +140,24 @@ impl<C: CompilationBuilderConfig> CompilationBuilder<C> {
     /// Builds and returns the final compilation unit.
     pub fn build(self) -> CompilationUnit {
         let language_version = self.language_version;
-        let diagnostics = self.diagnostics;
+        let mut diagnostics = self.diagnostics;
 
         let mut id_generator = ir::NodeIdGenerator::default();
         let files: Vec<File> = self
             .files
             .into_iter()
             .map(|(file_id, internal_file)| {
-                let ir_root = ir::build(
+                let BuildOutput {
+                    ir_root,
+                    diagnostics: ir_diagnostics,
+                } = ir::build(
+                    &file_id,
                     &internal_file.source_unit,
                     &internal_file.contents,
                     &mut id_generator,
                 );
+                diagnostics.extend(ir_diagnostics);
+
                 let mut file = File::new(file_id, ir_root);
                 for (node_id, import_path) in extract_import_paths_from_source_unit(file.ir_root())
                 {

@@ -1,6 +1,7 @@
+mod utils;
+
 pub mod compilation;
 pub mod syntax;
-mod utils;
 
 use compilation::CompilationDiagnosticKind;
 use serde::Serialize;

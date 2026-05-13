@@ -2,6 +2,8 @@
 mod nodes;
 pub use nodes::*;
 
+mod node_extensions;
+
 mod builder;
 
 mod source;
@@ -10,4 +12,4 @@ pub use source::Source;
 #[path = "visitor.generated.rs"]
 pub mod visitor;
 
-pub use builder::{build_source_unit as build, NodeIdGenerator};
+pub use builder::{build_source_unit as build, BuildOutput, NodeIdGenerator};

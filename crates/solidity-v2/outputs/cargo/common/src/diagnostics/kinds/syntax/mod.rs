@@ -1,9 +1,11 @@
 mod extra_terminal;
+mod multiple_mutability_specifiers;
 mod unexpected_eof;
 mod unexpected_terminal;
 mod unsupported_syntax;
 
 pub use extra_terminal::ExtraTerminal;
+pub use multiple_mutability_specifiers::MultipleMutabilitySpecifiers;
 use serde::Serialize;
 pub use unexpected_eof::UnexpectedEof;
 pub use unexpected_terminal::UnexpectedTerminal;
@@ -24,7 +26,11 @@ define_diagnostic_kind! {
         UnexpectedTerminal(UnexpectedTerminal),
         /// The parser encountered extra input after a complete source unit.
         ExtraTerminal(ExtraTerminal),
+
         /// A piece of syntax is not supported by the currently selected version.
         UnsupportedSyntax(UnsupportedSyntax),
+
+        /// More than one mutability specifier was provided on a definition.
+        MultipleMutabilitySpecifiers(MultipleMutabilitySpecifiers),
     }
 }
