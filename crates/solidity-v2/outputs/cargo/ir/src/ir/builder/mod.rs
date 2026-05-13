@@ -33,8 +33,8 @@ impl Default for NodeIdGenerator {
     }
 }
 
-/// The output of a CST → IR build operation, containing both the flattened
-/// source unit and any semantic diagnostics emitted during the build.
+/// The output of a CST → IR build operation, containing both the built IR
+/// source unit and any diagnostics emitted during the build.
 pub struct BuildOutput {
     pub ir_root: output::SourceUnit,
     pub diagnostics: DiagnosticCollection,

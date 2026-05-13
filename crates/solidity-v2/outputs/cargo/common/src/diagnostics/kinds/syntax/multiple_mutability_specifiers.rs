@@ -1,8 +1,6 @@
 use serde::Serialize;
 
 use crate::diagnostics::extensions::DiagnosticExtensions;
-use crate::diagnostics::kinds::syntax::SyntaxDiagnosticKind;
-use crate::diagnostics::kinds::DiagnosticKind;
 use crate::diagnostics::severity::DiagnosticSeverity;
 
 /// Diagnostic emitted when a definition carries more than one mutability
@@ -21,11 +19,5 @@ impl DiagnosticExtensions for MultipleMutabilitySpecifiers {
 
     fn message(&self) -> String {
         "Only a single mutability specifier can be provided.".to_string()
-    }
-}
-
-impl From<MultipleMutabilitySpecifiers> for DiagnosticKind {
-    fn from(d: MultipleMutabilitySpecifiers) -> Self {
-        Self::Syntax(SyntaxDiagnosticKind::MultipleMutabilitySpecifiers(d))
     }
 }
