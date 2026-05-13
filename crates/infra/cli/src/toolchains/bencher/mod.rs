@@ -154,53 +154,50 @@ fn bencher_archive_command(action: &str, project: &str, branch: &str) {
         .run();
 }
 
-/// List every benchmark name recorded for `project` on bencher.dev,
-/// paginating through the bencher API.
+/// List every benchmark name recorded in the most recent report on `branch`
+/// (scoped to the `ci` testbed).
 ///
-/// Honours the `SLANG_BENCHER_PROJECT` env var as an override, matching
-/// `run_bench`. Unauthenticated: slang's bencher projects allow public
-/// read-only listing.
-pub(crate) fn list_project_benchmarks(project: &str) -> Result<Vec<String>> {
-    // 255 is the bencher API's per-page cap; using it minimizes round trips.
-    const PER_PAGE: usize = 255;
+/// Honours `SLANG_BENCHER_PROJECT` for parity with `run_bench`.
+/// Unauthenticated: slang's bencher projects allow public read-only listing.
+pub(crate) fn list_benchmarks_latest_report(project: &str, branch: &str) -> Result<Vec<String>> {
+    let project = std::env::var("SLANG_BENCHER_PROJECT").unwrap_or_else(|_| project.to_owned());
 
-    let project = std::env::var("SLANG_BENCHER_PROJECT").unwrap_or(project.to_owned());
+    // Newest-first + per-page 1 → just the latest report on the branch.
+    let output = Command::new("bencher")
+        .args([
+            "report",
+            "list",
+            &project,
+            "--branch",
+            branch,
+            "--testbed",
+            "ci",
+            "--per-page",
+            "1",
+            "--direction",
+            "desc",
+            "--sort",
+            "date_time",
+        ])
+        .evaluate()?;
 
-    let mut names = Vec::new();
-    let mut page = 1usize;
-    loop {
-        let output = Command::new("bencher")
-            .args([
-                "benchmark",
-                "list",
-                &project,
-                "--per-page",
-                &PER_PAGE.to_string(),
-                "--page",
-                &page.to_string(),
-            ])
-            .evaluate()?;
+    let reports: Vec<serde_json::Value> = serde_json::from_str(&output)
+        .with_context(|| format!("failed to parse bencher report list for {project}"))?;
 
-        let entries: Vec<serde_json::Value> = serde_json::from_str(&output)
-            .with_context(|| format!("failed to parse bencher response for {project}"))?;
+    let Some(latest) = reports.first() else {
+        return Ok(Vec::new());
+    };
 
-        if entries.is_empty() {
-            break;
-        }
-
-        let count = entries.len();
-        names.extend(
-            entries
-                .iter()
-                .filter_map(|entry| entry.get("name").and_then(|v| v.as_str()))
-                .map(str::to_owned),
-        );
-
-        if count < PER_PAGE {
-            break;
-        }
-        page += 1;
-    }
-
-    Ok(names)
+    // `results` is `Vec<Iteration>` where each `Iteration` is `Vec<Result>`;
+    // each `Result` has `benchmark.name`. Flatten both levels.
+    Ok(latest
+        .get("results")
+        .and_then(serde_json::Value::as_array)
+        .into_iter()
+        .flatten()
+        .filter_map(serde_json::Value::as_array)
+        .flatten()
+        .filter_map(|result| result.get("benchmark")?.get("name")?.as_str())
+        .map(str::to_owned)
+        .collect())
 }
