@@ -6750,7 +6750,7 @@ pub(crate) fn create_abi_encoder_v2_keyword(
 }
 
 impl ABIEncoderV2KeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -6785,7 +6785,7 @@ pub(crate) fn create_abicoder_v1_keyword(
 }
 
 impl AbicoderV1KeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -6820,7 +6820,7 @@ pub(crate) fn create_abicoder_v2_keyword(
 }
 
 impl AbicoderV2KeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -6855,7 +6855,7 @@ pub(crate) fn create_abstract_keyword(
 }
 
 impl AbstractKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -6890,7 +6890,7 @@ pub(crate) fn create_ampersand(
 }
 
 impl AmpersandStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -6925,7 +6925,7 @@ pub(crate) fn create_ampersand_equal(
 }
 
 impl AmpersandEqualStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -6960,7 +6960,7 @@ pub(crate) fn create_anonymous_keyword(
 }
 
 impl AnonymousKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -6992,7 +6992,7 @@ pub(crate) fn create_asterisk(ir_node: &ir::Asterisk, semantic: &Arc<SemanticCon
 }
 
 impl AsteriskStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7027,7 +7027,7 @@ pub(crate) fn create_asterisk_equal(
 }
 
 impl AsteriskEqualStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7059,7 +7059,7 @@ pub(crate) fn create_bang(ir_node: &ir::Bang, semantic: &Arc<SemanticContext>) -
 }
 
 impl BangStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7094,7 +7094,7 @@ pub(crate) fn create_bang_equal(
 }
 
 impl BangEqualStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7126,7 +7126,7 @@ pub(crate) fn create_bar(ir_node: &ir::Bar, semantic: &Arc<SemanticContext>) -> 
 }
 
 impl BarStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7161,7 +7161,7 @@ pub(crate) fn create_bar_equal(
 }
 
 impl BarEqualStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7196,7 +7196,7 @@ pub(crate) fn create_bool_keyword(
 }
 
 impl BoolKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7231,7 +7231,7 @@ pub(crate) fn create_bytes_keyword(
 }
 
 impl BytesKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
     pub fn unparse(&self) -> &str {
@@ -7269,7 +7269,7 @@ pub(crate) fn create_call_data_keyword(
 }
 
 impl CallDataKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7301,7 +7301,7 @@ pub(crate) fn create_caret(ir_node: &ir::Caret, semantic: &Arc<SemanticContext>)
 }
 
 impl CaretStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7336,7 +7336,7 @@ pub(crate) fn create_caret_equal(
 }
 
 impl CaretEqualStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7371,7 +7371,7 @@ pub(crate) fn create_days_keyword(
 }
 
 impl DaysKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7406,7 +7406,7 @@ pub(crate) fn create_decimal_literal(
 }
 
 impl DecimalLiteralStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
     pub fn unparse(&self) -> &str {
@@ -7444,7 +7444,7 @@ pub(crate) fn create_delete_keyword(
 }
 
 impl DeleteKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7476,7 +7476,7 @@ pub(crate) fn create_equal(ir_node: &ir::Equal, semantic: &Arc<SemanticContext>)
 }
 
 impl EqualStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7511,7 +7511,7 @@ pub(crate) fn create_equal_equal(
 }
 
 impl EqualEqualStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7546,7 +7546,7 @@ pub(crate) fn create_ether_keyword(
 }
 
 impl EtherKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7581,7 +7581,7 @@ pub(crate) fn create_false_keyword(
 }
 
 impl FalseKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7616,7 +7616,7 @@ pub(crate) fn create_fixed_keyword(
 }
 
 impl FixedKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
     pub fn unparse(&self) -> &str {
@@ -7654,7 +7654,7 @@ pub(crate) fn create_global_keyword(
 }
 
 impl GlobalKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7689,7 +7689,7 @@ pub(crate) fn create_greater_than(
 }
 
 impl GreaterThanStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7724,7 +7724,7 @@ pub(crate) fn create_greater_than_equal(
 }
 
 impl GreaterThanEqualStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7759,7 +7759,7 @@ pub(crate) fn create_greater_than_greater_than(
 }
 
 impl GreaterThanGreaterThanStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7794,7 +7794,7 @@ pub(crate) fn create_greater_than_greater_than_equal(
 }
 
 impl GreaterThanGreaterThanEqualStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7829,7 +7829,7 @@ pub(crate) fn create_greater_than_greater_than_greater_than(
 }
 
 impl GreaterThanGreaterThanGreaterThanStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7864,7 +7864,7 @@ pub(crate) fn create_greater_than_greater_than_greater_than_equal(
 }
 
 impl GreaterThanGreaterThanGreaterThanEqualStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7899,7 +7899,7 @@ pub(crate) fn create_gwei_keyword(
 }
 
 impl GweiKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7934,7 +7934,7 @@ pub(crate) fn create_hex_literal(
 }
 
 impl HexLiteralStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
     pub fn unparse(&self) -> &str {
@@ -7972,7 +7972,7 @@ pub(crate) fn create_hex_string_literal(
 }
 
 impl HexStringLiteralStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
     pub fn unparse(&self) -> &str {
@@ -8010,7 +8010,7 @@ pub(crate) fn create_hours_keyword(
 }
 
 impl HoursKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8045,7 +8045,7 @@ pub(crate) fn create_identifier(
 }
 
 impl IdentifierStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
     pub fn unparse(&self) -> &str {
@@ -8083,7 +8083,7 @@ pub(crate) fn create_indexed_keyword(
 }
 
 impl IndexedKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8118,7 +8118,7 @@ pub(crate) fn create_int_keyword(
 }
 
 impl IntKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
     pub fn unparse(&self) -> &str {
@@ -8156,7 +8156,7 @@ pub(crate) fn create_less_than(
 }
 
 impl LessThanStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8191,7 +8191,7 @@ pub(crate) fn create_less_than_equal(
 }
 
 impl LessThanEqualStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8226,7 +8226,7 @@ pub(crate) fn create_less_than_less_than(
 }
 
 impl LessThanLessThanStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8261,7 +8261,7 @@ pub(crate) fn create_less_than_less_than_equal(
 }
 
 impl LessThanLessThanEqualStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8296,7 +8296,7 @@ pub(crate) fn create_memory_keyword(
 }
 
 impl MemoryKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8328,7 +8328,7 @@ pub(crate) fn create_minus(ir_node: &ir::Minus, semantic: &Arc<SemanticContext>)
 }
 
 impl MinusStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8363,7 +8363,7 @@ pub(crate) fn create_minus_equal(
 }
 
 impl MinusEqualStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8398,7 +8398,7 @@ pub(crate) fn create_minus_minus(
 }
 
 impl MinusMinusStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8433,7 +8433,7 @@ pub(crate) fn create_minutes_keyword(
 }
 
 impl MinutesKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8468,7 +8468,7 @@ pub(crate) fn create_payable_keyword(
 }
 
 impl PayableKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8500,7 +8500,7 @@ pub(crate) fn create_percent(ir_node: &ir::Percent, semantic: &Arc<SemanticConte
 }
 
 impl PercentStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8535,7 +8535,7 @@ pub(crate) fn create_percent_equal(
 }
 
 impl PercentEqualStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8567,7 +8567,7 @@ pub(crate) fn create_plus(ir_node: &ir::Plus, semantic: &Arc<SemanticContext>) -
 }
 
 impl PlusStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8602,7 +8602,7 @@ pub(crate) fn create_plus_equal(
 }
 
 impl PlusEqualStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8637,7 +8637,7 @@ pub(crate) fn create_plus_plus(
 }
 
 impl PlusPlusStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8672,7 +8672,7 @@ pub(crate) fn create_pragma_caret(
 }
 
 impl PragmaCaretStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8707,7 +8707,7 @@ pub(crate) fn create_pragma_equal(
 }
 
 impl PragmaEqualStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8742,7 +8742,7 @@ pub(crate) fn create_pragma_greater_than(
 }
 
 impl PragmaGreaterThanStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8777,7 +8777,7 @@ pub(crate) fn create_pragma_greater_than_equal(
 }
 
 impl PragmaGreaterThanEqualStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8812,7 +8812,7 @@ pub(crate) fn create_pragma_less_than(
 }
 
 impl PragmaLessThanStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8847,7 +8847,7 @@ pub(crate) fn create_pragma_less_than_equal(
 }
 
 impl PragmaLessThanEqualStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8882,7 +8882,7 @@ pub(crate) fn create_pragma_tilde(
 }
 
 impl PragmaTildeStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8917,7 +8917,7 @@ pub(crate) fn create_smt_checker_keyword(
 }
 
 impl SMTCheckerKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8952,7 +8952,7 @@ pub(crate) fn create_seconds_keyword(
 }
 
 impl SecondsKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8987,7 +8987,7 @@ pub(crate) fn create_semicolon(
 }
 
 impl SemicolonStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -9019,7 +9019,7 @@ pub(crate) fn create_slash(ir_node: &ir::Slash, semantic: &Arc<SemanticContext>)
 }
 
 impl SlashStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -9054,7 +9054,7 @@ pub(crate) fn create_slash_equal(
 }
 
 impl SlashEqualStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -9089,7 +9089,7 @@ pub(crate) fn create_storage_keyword(
 }
 
 impl StorageKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -9124,7 +9124,7 @@ pub(crate) fn create_string_keyword(
 }
 
 impl StringKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -9159,7 +9159,7 @@ pub(crate) fn create_string_literal(
 }
 
 impl StringLiteralStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
     pub fn unparse(&self) -> &str {
@@ -9197,7 +9197,7 @@ pub(crate) fn create_super_keyword(
 }
 
 impl SuperKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -9232,7 +9232,7 @@ pub(crate) fn create_this_keyword(
 }
 
 impl ThisKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -9264,7 +9264,7 @@ pub(crate) fn create_tilde(ir_node: &ir::Tilde, semantic: &Arc<SemanticContext>)
 }
 
 impl TildeStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -9299,7 +9299,7 @@ pub(crate) fn create_true_keyword(
 }
 
 impl TrueKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -9334,7 +9334,7 @@ pub(crate) fn create_ufixed_keyword(
 }
 
 impl UfixedKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
     pub fn unparse(&self) -> &str {
@@ -9372,7 +9372,7 @@ pub(crate) fn create_uint_keyword(
 }
 
 impl UintKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
     pub fn unparse(&self) -> &str {
@@ -9410,7 +9410,7 @@ pub(crate) fn create_unicode_string_literal(
 }
 
 impl UnicodeStringLiteralStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
     pub fn unparse(&self) -> &str {
@@ -9448,7 +9448,7 @@ pub(crate) fn create_version_specifier(
 }
 
 impl VersionSpecifierStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
     pub fn unparse(&self) -> &str {
@@ -9486,7 +9486,7 @@ pub(crate) fn create_virtual_keyword(
 }
 
 impl VirtualKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -9521,7 +9521,7 @@ pub(crate) fn create_weeks_keyword(
 }
 
 impl WeeksKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -9556,7 +9556,7 @@ pub(crate) fn create_wei_keyword(
 }
 
 impl WeiKeywordStruct {
-    pub fn id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         self.ir_node.id()
     }
 
