@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
-use slang_solidity_v2_semantic::binder;
+use slang_solidity_v2_semantic::binder::{self, Resolution};
 use slang_solidity_v2_semantic::context::{
     extract_import_paths_from_source_unit, SemanticContext, SemanticFile,
 };
@@ -36,8 +36,9 @@ impl SemanticFile for File {
 }
 
 pub fn setup(project: &str) -> (&'static SolidityProject, Vec<File>) {
-    let (project, sources) = super::ir_builder::setup(project);
-    let ir_source_units = super::ir_builder::test(project, sources);
+    let payload = super::ir_builder::setup(project);
+    let project = payload.0;
+    let ir_source_units = super::ir_builder::test(payload);
     let files = build_files(project, ir_source_units);
     (project, files)
 }
@@ -54,9 +55,16 @@ pub fn build_files(
             let resolved_imports = import_paths
                 .iter()
                 .filter_map(|(node_id, import_path)| {
-                    let resolved_file_id = project
-                        .import_resolver
-                        .resolve_import(file_id, import_path)?;
+                    // Import paths come from the IR as the unparsed string
+                    // literal, including the surrounding quotes; strip them
+                    // before delegating to the resolver (which expects the
+                    // unquoted path).
+                    let stripped = import_path
+                        .strip_prefix(|c: char| matches!(c, '"' | '\''))
+                        .and_then(|p| p.strip_suffix(|c: char| matches!(c, '"' | '\'')))?
+                        .trim();
+                    let resolved_file_id =
+                        project.import_resolver.resolve_import(file_id, stripped)?;
                     Some((*node_id, resolved_file_id))
                 })
                 .collect();
@@ -70,10 +78,12 @@ pub fn build_files(
 }
 
 pub fn run(project: &'static SolidityProject, files: Vec<File>) -> SemanticContext {
-    test(project, files)
+    test((project, files))
 }
 
-pub fn test(project: &'static SolidityProject, files: Vec<impl SemanticFile>) -> SemanticContext {
+pub fn test(
+    (project, files): (&'static SolidityProject, Vec<impl SemanticFile>),
+) -> SemanticContext {
     let language_version = super::parser::parse_version(project);
     SemanticContext::build_from(language_version, &files)
 }
@@ -92,4 +102,18 @@ pub fn count_contracts(semantic: &SemanticContext) -> usize {
             )
         })
         .count()
+}
+
+pub fn count_resolved_references(semantic: &SemanticContext) -> usize {
+    let references = semantic.binder().references();
+    // This is a bit stronger than just counting, but it's good to check that these
+    // projects are fully resolved
+    for reference in references.values() {
+        assert!(
+            !matches!(reference.resolution, Resolution::Unresolved),
+            "unresolved reference at node_id={:?}",
+            reference.node_id(),
+        );
+    }
+    references.len()
 }

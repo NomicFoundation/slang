@@ -1,4 +1,5 @@
 use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit as InputSourceUnit;
+use slang_solidity_v2_ir::ir::visitor::{accept_source_unit, Visitor};
 use slang_solidity_v2_ir::ir::{self, NodeIdGenerator, SourceUnit, SourceUnitMember};
 
 use crate::dataset::SolidityProject;
@@ -13,12 +14,11 @@ pub fn run(
     project: &'static SolidityProject,
     sources: Vec<(String, InputSourceUnit)>,
 ) -> Vec<SourceUnit> {
-    test(project, sources)
+    test((project, sources))
 }
 
 pub fn test(
-    project: &'static SolidityProject,
-    sources: Vec<(String, InputSourceUnit)>,
+    (project, sources): (&'static SolidityProject, Vec<(String, InputSourceUnit)>),
 ) -> Vec<SourceUnit> {
     let mut id_generator = NodeIdGenerator::default();
     let mut ir_source_units = Vec::new();
@@ -48,4 +48,22 @@ pub fn count_contracts(source_units: &Vec<SourceUnit>) -> usize {
         }
     }
     contract_count
+}
+
+pub fn count_identifiers(source_units: &Vec<SourceUnit>) -> usize {
+    struct Checker {
+        total: usize,
+    }
+
+    impl Visitor for Checker {
+        fn visit_identifier(&mut self, _node: &ir::Identifier) {
+            self.total += 1;
+        }
+    }
+
+    let mut checker = Checker { total: 0 };
+    for source_unit in source_units {
+        accept_source_unit(source_unit, &mut checker);
+    }
+    checker.total
 }
