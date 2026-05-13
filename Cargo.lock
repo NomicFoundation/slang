@@ -4388,6 +4388,7 @@ dependencies = [
  "serde",
  "serde_json",
  "slang_solidity",
+ "slang_solidity_v2_ast",
  "slang_solidity_v2_common",
  "slang_solidity_v2_cst",
  "slang_solidity_v2_ir",

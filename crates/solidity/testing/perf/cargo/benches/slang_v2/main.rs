@@ -4,6 +4,7 @@ use std::hint::black_box;
 
 use iai_callgrind::{library_benchmark, library_benchmark_group, main};
 use paste::paste;
+use slang_solidity_v2_ast::abi;
 use slang_solidity_v2_cst::structured_cst::nodes::SourceUnit;
 use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_semantic::context::SemanticContext;
@@ -62,6 +63,24 @@ macro_rules! slang_v2_define_tests {
                 black_box(tests::slang_v2::semantic::run(black_box(project), black_box(input_files)))
             }
 
+            #[library_benchmark(setup = tests::slang_v2::compute_contracts_abi::setup)]
+            #[bench::test(stringify!($prj))]
+            pub fn [< $prj _compute_contracts_abi >](
+                (project, files, semantic): (
+                    &'static SolidityProject,
+                    Vec<tests::slang_v2::semantic::File>,
+                    std::rc::Rc<SemanticContext>,
+                ),
+            ) -> Vec<abi::ContractAbi> {
+                black_box(tests::slang_v2::compute_contracts_abi::run(
+                    black_box(project),
+                    black_box(files),
+                    black_box(semantic),
+                ))
+            }
+
+
+
             library_benchmark_group!(
                 name = [< $prj _full_v2 >];
 
@@ -70,6 +89,7 @@ macro_rules! slang_v2_define_tests {
                 [< $prj _parser >],
                 [< $prj _ir_builder >],
                 [< $prj _semantic >],
+                [< $prj _compute_contracts_abi >],
             );
         }
     };
