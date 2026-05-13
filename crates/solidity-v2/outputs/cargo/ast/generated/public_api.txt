@@ -131,6 +131,8 @@ impl core::marker::StructuralPartialEq for slang_solidity_v2_ast::abi::StorageIt
 pub fn slang_solidity_v2_ast::abi::selector_from_signature(signature: &str) -> u32
 pub type slang_solidity_v2_ast::abi::AbiMutability = slang_solidity_v2_semantic::types::FunctionMutability
 pub mod slang_solidity_v2_ast::ast
+pub use slang_solidity_v2_ast::ast::LiteralKind
+pub use slang_solidity_v2_ast::ast::Number
 pub mod slang_solidity_v2_ast::ast::visitor
 pub trait slang_solidity_v2_ast::ast::visitor::Visitor
 pub fn slang_solidity_v2_ast::ast::visitor::Visitor::enter_abicoder_pragma(&mut self, _node: &slang_solidity_v2_ast::ast::AbicoderPragma) -> bool
@@ -1272,6 +1274,10 @@ pub fn slang_solidity_v2_ast::ast::DecimalNumberExpressionStruct::get_type(&self
 pub fn slang_solidity_v2_ast::ast::DecimalNumberExpressionStruct::literal(&self) -> slang_solidity_v2_ast::ast::DecimalLiteral
 pub fn slang_solidity_v2_ast::ast::DecimalNumberExpressionStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::ast::DecimalNumberExpressionStruct::unit(&self) -> core::option::Option<slang_solidity_v2_ast::ast::NumberUnit>
+impl slang_solidity_v2_ast::ast::DecimalNumberExpressionStruct
+pub fn slang_solidity_v2_ast::ast::DecimalNumberExpressionStruct::integer_value(&self) -> core::option::Option<num_bigint::bigint::BigInt>
+pub fn slang_solidity_v2_ast::ast::DecimalNumberExpressionStruct::number_value(&self) -> core::option::Option<slang_solidity_v2_semantic::types::literals::numbers::Number>
+pub fn slang_solidity_v2_ast::ast::DecimalNumberExpressionStruct::rational_value(&self) -> core::option::Option<num_rational::BigRational>
 pub struct slang_solidity_v2_ast::ast::DeleteKeywordStruct
 impl slang_solidity_v2_ast::ast::DeleteKeywordStruct
 pub fn slang_solidity_v2_ast::ast::DeleteKeywordStruct::get_file_id(&self) -> &str
@@ -1522,6 +1528,9 @@ pub fn slang_solidity_v2_ast::ast::HexNumberExpressionStruct::get_text_range(&se
 pub fn slang_solidity_v2_ast::ast::HexNumberExpressionStruct::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
 pub fn slang_solidity_v2_ast::ast::HexNumberExpressionStruct::literal(&self) -> slang_solidity_v2_ast::ast::HexLiteral
 pub fn slang_solidity_v2_ast::ast::HexNumberExpressionStruct::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl slang_solidity_v2_ast::ast::HexNumberExpressionStruct
+pub fn slang_solidity_v2_ast::ast::HexNumberExpressionStruct::integer_value(&self) -> core::option::Option<num_bigint::bigint::BigInt>
+pub fn slang_solidity_v2_ast::ast::HexNumberExpressionStruct::number_value(&self) -> core::option::Option<slang_solidity_v2_semantic::types::literals::numbers::Number>
 pub struct slang_solidity_v2_ast::ast::HexStringLiteralStruct
 impl slang_solidity_v2_ast::ast::HexStringLiteralStruct
 pub fn slang_solidity_v2_ast::ast::HexStringLiteralStruct::get_file_id(&self) -> &str
@@ -1534,6 +1543,8 @@ impl slang_solidity_v2_ast::ast::HexStringLiteralsStruct
 pub fn slang_solidity_v2_ast::ast::HexStringLiteralsStruct::is_empty(&self) -> bool
 pub fn slang_solidity_v2_ast::ast::HexStringLiteralsStruct::iter(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::ast::HexStringLiteral> + use<'_>
 pub fn slang_solidity_v2_ast::ast::HexStringLiteralsStruct::len(&self) -> usize
+impl slang_solidity_v2_ast::ast::HexStringLiteralsStruct
+pub fn slang_solidity_v2_ast::ast::HexStringLiteralsStruct::value(&self) -> alloc::vec::Vec<u8>
 pub struct slang_solidity_v2_ast::ast::HoursKeywordStruct
 impl slang_solidity_v2_ast::ast::HoursKeywordStruct
 pub fn slang_solidity_v2_ast::ast::HoursKeywordStruct::get_file_id(&self) -> &str
@@ -2098,6 +2109,8 @@ impl slang_solidity_v2_ast::ast::StringLiteralsStruct
 pub fn slang_solidity_v2_ast::ast::StringLiteralsStruct::is_empty(&self) -> bool
 pub fn slang_solidity_v2_ast::ast::StringLiteralsStruct::iter(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::ast::StringLiteral> + use<'_>
 pub fn slang_solidity_v2_ast::ast::StringLiteralsStruct::len(&self) -> usize
+impl slang_solidity_v2_ast::ast::StringLiteralsStruct
+pub fn slang_solidity_v2_ast::ast::StringLiteralsStruct::value(&self) -> alloc::vec::Vec<u8>
 pub struct slang_solidity_v2_ast::ast::StructDefinitionStruct
 impl slang_solidity_v2_ast::ast::StructDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::StructDefinitionStruct::as_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
@@ -2218,6 +2231,8 @@ impl slang_solidity_v2_ast::ast::UnicodeStringLiteralsStruct
 pub fn slang_solidity_v2_ast::ast::UnicodeStringLiteralsStruct::is_empty(&self) -> bool
 pub fn slang_solidity_v2_ast::ast::UnicodeStringLiteralsStruct::iter(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2_ast::ast::UnicodeStringLiteral> + use<'_>
 pub fn slang_solidity_v2_ast::ast::UnicodeStringLiteralsStruct::len(&self) -> usize
+impl slang_solidity_v2_ast::ast::UnicodeStringLiteralsStruct
+pub fn slang_solidity_v2_ast::ast::UnicodeStringLiteralsStruct::value(&self) -> alloc::vec::Vec<u8>
 pub struct slang_solidity_v2_ast::ast::UserDefinedValueTypeDefinitionStruct
 impl slang_solidity_v2_ast::ast::UserDefinedValueTypeDefinitionStruct
 pub fn slang_solidity_v2_ast::ast::UserDefinedValueTypeDefinitionStruct::as_definition(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Definition>
