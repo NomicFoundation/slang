@@ -1,8 +1,10 @@
 pub mod compilation;
+pub mod semantic;
 pub mod syntax;
 mod utils;
 
 use compilation::CompilationDiagnosticKind;
+use semantic::SemanticDiagnosticKind;
 use serde::Serialize;
 use syntax::SyntaxDiagnosticKind;
 
@@ -18,5 +20,7 @@ define_diagnostic_kind! {
         Compilation(CompilationDiagnosticKind),
         /// A diagnostic produced while parsing source text.
         Syntax(SyntaxDiagnosticKind),
+        /// A diagnostic produced by semantic analysis of the source.
+        Semantic(SemanticDiagnosticKind),
     }
 }
