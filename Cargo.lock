@@ -2217,6 +2217,7 @@ dependencies = [
  "serde",
  "serde_json",
  "similar-asserts 2.0.0",
+ "strum 0.28.0",
  "tera",
  "toml 0.9.12+spec-1.1.0",
  "url",
