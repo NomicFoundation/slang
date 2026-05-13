@@ -74,12 +74,25 @@ impl CargoController {
             binaries::install_bencher_cli()?;
         }
 
+        let (package, bench_name, bencher_project) = match self.bench {
+            Benches::Slang => (
+                "solidity_testing_perf_cargo",
+                "slang",
+                DEFAULT_BENCHER_PROJECT_SLANG,
+            ),
+            Benches::Comparison => (
+                "solidity_testing_perf_cargo",
+                "comparison",
+                DEFAULT_BENCHER_PROJECT_CMP,
+            ),
+            Benches::SlangV2 => (
+                "solidity_testing_perf_cargo",
+                "slang_v2",
+                DEFAULT_BENCHER_PROJECT_SLANG_V2,
+            ),
+        };
+
         if self.smoke {
-            let (package, bench_name) = match self.bench {
-                Benches::Slang => ("solidity_testing_perf_cargo", "slang"),
-                Benches::Comparison => ("solidity_testing_perf_cargo", "comparison"),
-                Benches::SlangV2 => ("solidity_testing_perf_cargo", "slang_v2"),
-            };
             Command::new("cargo")
                 .args(["build", "--package", package, "--bench", bench_name])
                 .run();
@@ -90,23 +103,7 @@ impl CargoController {
 
         // Bencher supports multiple languages/frameworks: https://bencher.dev/docs/explanation/adapters/
         // We currently only have one benchmark suite (Rust/gungraun), but we can add more here in the future.
-        match self.bench {
-            Benches::Slang => self.run_gungraun_bench(
-                "solidity_testing_perf_cargo",
-                "slang",
-                DEFAULT_BENCHER_PROJECT_SLANG,
-            ),
-            Benches::Comparison => self.run_gungraun_bench(
-                "solidity_testing_perf_cargo",
-                "comparison",
-                DEFAULT_BENCHER_PROJECT_CMP,
-            ),
-            Benches::SlangV2 => self.run_gungraun_bench(
-                "solidity_testing_perf_cargo",
-                "slang_v2",
-                DEFAULT_BENCHER_PROJECT_SLANG_V2,
-            ),
-        }
+        self.run_gungraun_bench(package, bench_name, bencher_project);
         Ok(())
     }
 
