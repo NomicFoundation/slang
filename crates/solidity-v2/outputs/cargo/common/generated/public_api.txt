@@ -1,0 +1,829 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+pub mod slang_solidity_v2_common
+pub mod slang_solidity_v2_common::built_ins
+pub enum slang_solidity_v2_common::built_ins::BuiltIn
+pub slang_solidity_v2_common::built_ins::BuiltIn::Abi
+pub slang_solidity_v2_common::built_ins::BuiltIn::AbiDecode
+pub slang_solidity_v2_common::built_ins::BuiltIn::AbiEncode
+pub slang_solidity_v2_common::built_ins::BuiltIn::AbiEncodeCall
+pub slang_solidity_v2_common::built_ins::BuiltIn::AbiEncodePacked
+pub slang_solidity_v2_common::built_ins::BuiltIn::AbiEncodeWithSelector
+pub slang_solidity_v2_common::built_ins::BuiltIn::AbiEncodeWithSignature
+pub slang_solidity_v2_common::built_ins::BuiltIn::Addmod
+pub slang_solidity_v2_common::built_ins::BuiltIn::Address
+pub slang_solidity_v2_common::built_ins::BuiltIn::AddressBalance
+pub slang_solidity_v2_common::built_ins::BuiltIn::AddressCall
+pub slang_solidity_v2_common::built_ins::BuiltIn::AddressCallcode
+pub slang_solidity_v2_common::built_ins::BuiltIn::AddressCode
+pub slang_solidity_v2_common::built_ins::BuiltIn::AddressCodehash
+pub slang_solidity_v2_common::built_ins::BuiltIn::AddressDelegatecall
+pub slang_solidity_v2_common::built_ins::BuiltIn::AddressSend
+pub slang_solidity_v2_common::built_ins::BuiltIn::AddressStaticcall
+pub slang_solidity_v2_common::built_ins::BuiltIn::AddressTransfer
+pub slang_solidity_v2_common::built_ins::BuiltIn::ArrayPop
+pub slang_solidity_v2_common::built_ins::BuiltIn::ArrayPush
+pub slang_solidity_v2_common::built_ins::BuiltIn::Assert
+pub slang_solidity_v2_common::built_ins::BuiltIn::Blobhash
+pub slang_solidity_v2_common::built_ins::BuiltIn::Block
+pub slang_solidity_v2_common::built_ins::BuiltIn::BlockBasefee
+pub slang_solidity_v2_common::built_ins::BuiltIn::BlockBlobbasefee
+pub slang_solidity_v2_common::built_ins::BuiltIn::BlockChainid
+pub slang_solidity_v2_common::built_ins::BuiltIn::BlockCoinbase
+pub slang_solidity_v2_common::built_ins::BuiltIn::BlockDifficulty
+pub slang_solidity_v2_common::built_ins::BuiltIn::BlockGaslimit
+pub slang_solidity_v2_common::built_ins::BuiltIn::BlockNumber
+pub slang_solidity_v2_common::built_ins::BuiltIn::BlockPrevrandao
+pub slang_solidity_v2_common::built_ins::BuiltIn::BlockTimestamp
+pub slang_solidity_v2_common::built_ins::BuiltIn::Blockhash
+pub slang_solidity_v2_common::built_ins::BuiltIn::BytesConcat
+pub slang_solidity_v2_common::built_ins::BuiltIn::CallOptionGas
+pub slang_solidity_v2_common::built_ins::BuiltIn::CallOptionSalt
+pub slang_solidity_v2_common::built_ins::BuiltIn::CallOptionValue
+pub slang_solidity_v2_common::built_ins::BuiltIn::Ecrecover
+pub slang_solidity_v2_common::built_ins::BuiltIn::Erc7201
+pub slang_solidity_v2_common::built_ins::BuiltIn::ErrorOrPanic
+pub slang_solidity_v2_common::built_ins::BuiltIn::ErrorSelector
+pub slang_solidity_v2_common::built_ins::BuiltIn::EventSelector
+pub slang_solidity_v2_common::built_ins::BuiltIn::FunctionAddress
+pub slang_solidity_v2_common::built_ins::BuiltIn::FunctionSelector
+pub slang_solidity_v2_common::built_ins::BuiltIn::Gasleft
+pub slang_solidity_v2_common::built_ins::BuiltIn::Keccak256
+pub slang_solidity_v2_common::built_ins::BuiltIn::Length
+pub slang_solidity_v2_common::built_ins::BuiltIn::ModifierUnderscore
+pub slang_solidity_v2_common::built_ins::BuiltIn::Msg
+pub slang_solidity_v2_common::built_ins::BuiltIn::MsgData
+pub slang_solidity_v2_common::built_ins::BuiltIn::MsgSender
+pub slang_solidity_v2_common::built_ins::BuiltIn::MsgSig
+pub slang_solidity_v2_common::built_ins::BuiltIn::MsgValue
+pub slang_solidity_v2_common::built_ins::BuiltIn::Mulmod
+pub slang_solidity_v2_common::built_ins::BuiltIn::Require
+pub slang_solidity_v2_common::built_ins::BuiltIn::Revert
+pub slang_solidity_v2_common::built_ins::BuiltIn::Ripemd160
+pub slang_solidity_v2_common::built_ins::BuiltIn::Selfdestruct
+pub slang_solidity_v2_common::built_ins::BuiltIn::Sha256
+pub slang_solidity_v2_common::built_ins::BuiltIn::StringConcat
+pub slang_solidity_v2_common::built_ins::BuiltIn::Tx
+pub slang_solidity_v2_common::built_ins::BuiltIn::TxGasPrice
+pub slang_solidity_v2_common::built_ins::BuiltIn::TxOrigin
+pub slang_solidity_v2_common::built_ins::BuiltIn::Type
+pub slang_solidity_v2_common::built_ins::BuiltIn::TypeCreationCode
+pub slang_solidity_v2_common::built_ins::BuiltIn::TypeEnumMax
+pub slang_solidity_v2_common::built_ins::BuiltIn::TypeEnumMin
+pub slang_solidity_v2_common::built_ins::BuiltIn::TypeInterfaceId
+pub slang_solidity_v2_common::built_ins::BuiltIn::TypeMax
+pub slang_solidity_v2_common::built_ins::BuiltIn::TypeMin
+pub slang_solidity_v2_common::built_ins::BuiltIn::TypeName
+pub slang_solidity_v2_common::built_ins::BuiltIn::TypeRuntimeCode
+pub slang_solidity_v2_common::built_ins::BuiltIn::Unwrap
+pub slang_solidity_v2_common::built_ins::BuiltIn::Wrap
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulAdd
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulAddmod
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulAddress
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulAddressField
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulAnd
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulBalance
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulBasefee
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulBlobbasefee
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulBlobhash
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulBlockhash
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulByte
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulCall
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulCallcode
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulCalldatacopy
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulCalldataload
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulCalldatasize
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulCaller
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulCallvalue
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulChainid
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulClz
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulCodecopy
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulCodesize
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulCoinbase
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulCreate
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulCreate2
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulDelegatecall
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulDifficulty
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulDiv
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulEq
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulExp
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulExtcodecopy
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulExtcodehash
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulExtcodesize
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulGas
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulGaslimit
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulGasprice
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulGt
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulInvalid
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulIszero
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulKeccak256
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulLengthField
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulLog
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulLt
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulMcopy
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulMload
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulMod
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulMsize
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulMstore
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulMstore8
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulMul
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulMulmod
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulNot
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulNumber
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulOffset
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulOr
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulOrigin
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulPop
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulPrevrandao
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulReturn
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulReturndatacopy
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulReturndatasize
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulRevert
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulSar
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulSdiv
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulSelector
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulSelfbalance
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulSelfdestruct
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulSgt
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulShl
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulShr
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulSignextend
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulSload
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulSlot
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulSlt
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulSmod
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulSstore
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulStaticcall
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulStop
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulSub
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulTimestamp
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulTload
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulTstore
+pub slang_solidity_v2_common::built_ins::BuiltIn::YulXor
+impl core::clone::Clone for slang_solidity_v2_common::built_ins::BuiltIn
+pub fn slang_solidity_v2_common::built_ins::BuiltIn::clone(&self) -> slang_solidity_v2_common::built_ins::BuiltIn
+impl core::cmp::Eq for slang_solidity_v2_common::built_ins::BuiltIn
+impl core::cmp::PartialEq for slang_solidity_v2_common::built_ins::BuiltIn
+pub fn slang_solidity_v2_common::built_ins::BuiltIn::eq(&self, other: &slang_solidity_v2_common::built_ins::BuiltIn) -> bool
+impl core::fmt::Debug for slang_solidity_v2_common::built_ins::BuiltIn
+pub fn slang_solidity_v2_common::built_ins::BuiltIn::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for slang_solidity_v2_common::built_ins::BuiltIn
+pub fn slang_solidity_v2_common::built_ins::BuiltIn::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
+impl core::marker::Copy for slang_solidity_v2_common::built_ins::BuiltIn
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::built_ins::BuiltIn
+pub mod slang_solidity_v2_common::diagnostics
+pub mod slang_solidity_v2_common::diagnostics::kinds
+pub mod slang_solidity_v2_common::diagnostics::kinds::compilation
+pub enum slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind
+pub slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind::MissingFile(slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile)
+pub slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind::UnresolvedImport(slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport)
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind::eq(&self, other: &slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile> for slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport> for slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile
+pub slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile::reason: alloc::string::String
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile::eq(&self, other: &slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile> for slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport
+pub slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport::reason: alloc::string::String
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport::eq(&self, other: &slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport> for slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub mod slang_solidity_v2_common::diagnostics::kinds::syntax
+pub enum slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::ExtraTerminal(slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal)
+pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::UnexpectedEof(slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof)
+pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::UnexpectedTerminal(slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal)
+pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::UnsupportedSyntax(slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax)
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::eq(&self, other: &slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal
+pub slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal::found: slang_solidity_v2_common::terminals::TerminalKind
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal::eq(&self, other: &slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof
+pub slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof::expected: alloc::collections::btree::set::BTreeSet<slang_solidity_v2_common::terminals::TerminalKind>
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof::eq(&self, other: &slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal
+pub slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal::expected: alloc::collections::btree::set::BTreeSet<slang_solidity_v2_common::terminals::TerminalKind>
+pub slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal::found: slang_solidity_v2_common::terminals::TerminalKind
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal::eq(&self, other: &slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax
+pub slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax::supported_in: slang_solidity_v2_common::versions::LanguageVersionSpecifier
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax::eq(&self, other: &slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub enum slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::Compilation(slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind)
+pub slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::Syntax(slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind)
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::eq(&self, other: &slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub enum slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub slang_solidity_v2_common::diagnostics::DiagnosticSeverity::Error
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub fn slang_solidity_v2_common::diagnostics::DiagnosticSeverity::clone(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub fn slang_solidity_v2_common::diagnostics::DiagnosticSeverity::eq(&self, other: &slang_solidity_v2_common::diagnostics::DiagnosticSeverity) -> bool
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub fn slang_solidity_v2_common::diagnostics::DiagnosticSeverity::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::Diagnostic
+impl slang_solidity_v2_common::diagnostics::Diagnostic
+pub fn slang_solidity_v2_common::diagnostics::Diagnostic::file_id(&self) -> &str
+pub fn slang_solidity_v2_common::diagnostics::Diagnostic::kind(&self) -> &slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::Diagnostic::text_range(&self) -> &core::ops::range::Range<usize>
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::Diagnostic
+pub fn slang_solidity_v2_common::diagnostics::Diagnostic::clone(&self) -> slang_solidity_v2_common::diagnostics::Diagnostic
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::Diagnostic
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::Diagnostic
+pub fn slang_solidity_v2_common::diagnostics::Diagnostic::eq(&self, other: &slang_solidity_v2_common::diagnostics::Diagnostic) -> bool
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::Diagnostic
+pub fn slang_solidity_v2_common::diagnostics::Diagnostic::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::iter::traits::collect::Extend<slang_solidity_v2_common::diagnostics::Diagnostic> for slang_solidity_v2_common::diagnostics::DiagnosticCollection
+pub fn slang_solidity_v2_common::diagnostics::DiagnosticCollection::extend<I: core::iter::traits::collect::IntoIterator<Item = slang_solidity_v2_common::diagnostics::Diagnostic>>(&mut self, iter: I)
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::Diagnostic
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::Diagnostic
+pub fn slang_solidity_v2_common::diagnostics::Diagnostic::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::Diagnostic
+pub fn slang_solidity_v2_common::diagnostics::Diagnostic::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::Diagnostic::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::Diagnostic::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::DiagnosticCollection
+impl slang_solidity_v2_common::diagnostics::DiagnosticCollection
+pub fn slang_solidity_v2_common::diagnostics::DiagnosticCollection::is_empty(&self) -> bool
+pub fn slang_solidity_v2_common::diagnostics::DiagnosticCollection::iter(&self) -> impl core::iter::traits::iterator::Iterator<Item = &slang_solidity_v2_common::diagnostics::Diagnostic>
+pub fn slang_solidity_v2_common::diagnostics::DiagnosticCollection::push(&mut self, file_id: alloc::string::String, text_range: core::ops::range::Range<usize>, kind: impl core::convert::Into<slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind>)
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::DiagnosticCollection
+pub fn slang_solidity_v2_common::diagnostics::DiagnosticCollection::clone(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticCollection
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::DiagnosticCollection
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::DiagnosticCollection
+pub fn slang_solidity_v2_common::diagnostics::DiagnosticCollection::eq(&self, other: &slang_solidity_v2_common::diagnostics::DiagnosticCollection) -> bool
+impl core::default::Default for slang_solidity_v2_common::diagnostics::DiagnosticCollection
+pub fn slang_solidity_v2_common::diagnostics::DiagnosticCollection::default() -> slang_solidity_v2_common::diagnostics::DiagnosticCollection
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::DiagnosticCollection
+pub fn slang_solidity_v2_common::diagnostics::DiagnosticCollection::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::iter::traits::collect::Extend<slang_solidity_v2_common::diagnostics::Diagnostic> for slang_solidity_v2_common::diagnostics::DiagnosticCollection
+pub fn slang_solidity_v2_common::diagnostics::DiagnosticCollection::extend<I: core::iter::traits::collect::IntoIterator<Item = slang_solidity_v2_common::diagnostics::Diagnostic>>(&mut self, iter: I)
+impl core::iter::traits::collect::IntoIterator for slang_solidity_v2_common::diagnostics::DiagnosticCollection
+pub type slang_solidity_v2_common::diagnostics::DiagnosticCollection::IntoIter = alloc::vec::into_iter::IntoIter<slang_solidity_v2_common::diagnostics::Diagnostic>
+pub type slang_solidity_v2_common::diagnostics::DiagnosticCollection::Item = slang_solidity_v2_common::diagnostics::Diagnostic
+pub fn slang_solidity_v2_common::diagnostics::DiagnosticCollection::into_iter(self) -> Self::IntoIter
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::DiagnosticCollection
+impl<'a> core::iter::traits::collect::IntoIterator for &'a slang_solidity_v2_common::diagnostics::DiagnosticCollection
+pub type &'a slang_solidity_v2_common::diagnostics::DiagnosticCollection::IntoIter = core::slice::iter::Iter<'a, slang_solidity_v2_common::diagnostics::Diagnostic>
+pub type &'a slang_solidity_v2_common::diagnostics::DiagnosticCollection::Item = &'a slang_solidity_v2_common::diagnostics::Diagnostic
+pub fn &'a slang_solidity_v2_common::diagnostics::DiagnosticCollection::into_iter(self) -> Self::IntoIter
+pub trait slang_solidity_v2_common::diagnostics::DiagnosticExtensions
+pub fn slang_solidity_v2_common::diagnostics::DiagnosticExtensions::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::DiagnosticExtensions::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::DiagnosticExtensions::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::Diagnostic
+pub fn slang_solidity_v2_common::diagnostics::Diagnostic::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::Diagnostic::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::Diagnostic::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::CompilationDiagnosticKind::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::MissingFile::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedTerminal::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::UnsupportedSyntax::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub mod slang_solidity_v2_common::nodes
+#[repr(transparent)] pub struct slang_solidity_v2_common::nodes::NodeId(_)
+impl core::clone::Clone for slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_common::nodes::NodeId::clone(&self) -> slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Eq for slang_solidity_v2_common::nodes::NodeId
+impl core::cmp::Ord for slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_common::nodes::NodeId::cmp(&self, other: &slang_solidity_v2_common::nodes::NodeId) -> core::cmp::Ordering
+impl core::cmp::PartialEq for slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_common::nodes::NodeId::eq(&self, other: &slang_solidity_v2_common::nodes::NodeId) -> bool
+impl core::cmp::PartialOrd for slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_common::nodes::NodeId::partial_cmp(&self, other: &slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<core::cmp::Ordering>
+impl core::convert::From<usize> for slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_common::nodes::NodeId::from(value: usize) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_common::nodes::NodeId::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_common::nodes::NodeId::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
+impl core::marker::Copy for slang_solidity_v2_common::nodes::NodeId
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::nodes::NodeId
+pub mod slang_solidity_v2_common::terminals
+pub enum slang_solidity_v2_common::terminals::TerminalKind
+pub slang_solidity_v2_common::terminals::TerminalKind::ABIEncoderV2Keyword
+pub slang_solidity_v2_common::terminals::TerminalKind::AbicoderKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::AbicoderV1Keyword
+pub slang_solidity_v2_common::terminals::TerminalKind::AbicoderV2Keyword
+pub slang_solidity_v2_common::terminals::TerminalKind::AbstractKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::AddressKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::AfterKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::AliasKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::Ampersand
+pub slang_solidity_v2_common::terminals::TerminalKind::AmpersandAmpersand
+pub slang_solidity_v2_common::terminals::TerminalKind::AmpersandEqual
+pub slang_solidity_v2_common::terminals::TerminalKind::AnonymousKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::ApplyKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::AsKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::AssemblyKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::Asterisk
+pub slang_solidity_v2_common::terminals::TerminalKind::AsteriskAsterisk
+pub slang_solidity_v2_common::terminals::TerminalKind::AsteriskEqual
+pub slang_solidity_v2_common::terminals::TerminalKind::AtKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::AutoKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::Bang
+pub slang_solidity_v2_common::terminals::TerminalKind::BangEqual
+pub slang_solidity_v2_common::terminals::TerminalKind::Bar
+pub slang_solidity_v2_common::terminals::TerminalKind::BarBar
+pub slang_solidity_v2_common::terminals::TerminalKind::BarEqual
+pub slang_solidity_v2_common::terminals::TerminalKind::BoolKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::BreakKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::ByteKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::BytesKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::CallDataKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::Caret
+pub slang_solidity_v2_common::terminals::TerminalKind::CaretEqual
+pub slang_solidity_v2_common::terminals::TerminalKind::CaseKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::CatchKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::CloseBrace
+pub slang_solidity_v2_common::terminals::TerminalKind::CloseBracket
+pub slang_solidity_v2_common::terminals::TerminalKind::CloseParen
+pub slang_solidity_v2_common::terminals::TerminalKind::Colon
+pub slang_solidity_v2_common::terminals::TerminalKind::Comma
+pub slang_solidity_v2_common::terminals::TerminalKind::ConstantKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::ConstructorKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::ContinueKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::ContractKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::CopyOfKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::DaysKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::DecimalLiteral
+pub slang_solidity_v2_common::terminals::TerminalKind::DefaultKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::DefineKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::DeleteKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::DoKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::ElseKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::EmitKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::EnumKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::Equal
+pub slang_solidity_v2_common::terminals::TerminalKind::EqualEqual
+pub slang_solidity_v2_common::terminals::TerminalKind::EqualGreaterThan
+pub slang_solidity_v2_common::terminals::TerminalKind::ErrorKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::EtherKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::EventKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::ExperimentalKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::ExternalKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::FallbackKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::FalseKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::FinalKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::FixedKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::ForKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::FromKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::FunctionKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::GlobalKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::GreaterThan
+pub slang_solidity_v2_common::terminals::TerminalKind::GreaterThanEqual
+pub slang_solidity_v2_common::terminals::TerminalKind::GreaterThanGreaterThan
+pub slang_solidity_v2_common::terminals::TerminalKind::GreaterThanGreaterThanEqual
+pub slang_solidity_v2_common::terminals::TerminalKind::GreaterThanGreaterThanGreaterThan
+pub slang_solidity_v2_common::terminals::TerminalKind::GreaterThanGreaterThanGreaterThanEqual
+pub slang_solidity_v2_common::terminals::TerminalKind::GweiKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::HexKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::HexLiteral
+pub slang_solidity_v2_common::terminals::TerminalKind::HexStringLiteral
+pub slang_solidity_v2_common::terminals::TerminalKind::HoursKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::Identifier
+pub slang_solidity_v2_common::terminals::TerminalKind::IfKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::ImmutableKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::ImplementsKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::ImportKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::InKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::IndexedKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::InlineKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::IntKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::InterfaceKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::InternalKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::IsKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::LayoutKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::LessThan
+pub slang_solidity_v2_common::terminals::TerminalKind::LessThanEqual
+pub slang_solidity_v2_common::terminals::TerminalKind::LessThanLessThan
+pub slang_solidity_v2_common::terminals::TerminalKind::LessThanLessThanEqual
+pub slang_solidity_v2_common::terminals::TerminalKind::LetKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::LibraryKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::MacroKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::MappingKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::MatchKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::MemoryKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::Minus
+pub slang_solidity_v2_common::terminals::TerminalKind::MinusEqual
+pub slang_solidity_v2_common::terminals::TerminalKind::MinusMinus
+pub slang_solidity_v2_common::terminals::TerminalKind::MinutesKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::ModifierKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::MutableKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::NewKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::NullKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::OfKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::OpenBrace
+pub slang_solidity_v2_common::terminals::TerminalKind::OpenBracket
+pub slang_solidity_v2_common::terminals::TerminalKind::OpenParen
+pub slang_solidity_v2_common::terminals::TerminalKind::OverrideKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::PartialKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::PayableKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::Percent
+pub slang_solidity_v2_common::terminals::TerminalKind::PercentEqual
+pub slang_solidity_v2_common::terminals::TerminalKind::Period
+pub slang_solidity_v2_common::terminals::TerminalKind::Plus
+pub slang_solidity_v2_common::terminals::TerminalKind::PlusEqual
+pub slang_solidity_v2_common::terminals::TerminalKind::PlusPlus
+pub slang_solidity_v2_common::terminals::TerminalKind::PragmaBarBar
+pub slang_solidity_v2_common::terminals::TerminalKind::PragmaCaret
+pub slang_solidity_v2_common::terminals::TerminalKind::PragmaEqual
+pub slang_solidity_v2_common::terminals::TerminalKind::PragmaGreaterThan
+pub slang_solidity_v2_common::terminals::TerminalKind::PragmaGreaterThanEqual
+pub slang_solidity_v2_common::terminals::TerminalKind::PragmaKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::PragmaLessThan
+pub slang_solidity_v2_common::terminals::TerminalKind::PragmaLessThanEqual
+pub slang_solidity_v2_common::terminals::TerminalKind::PragmaMinus
+pub slang_solidity_v2_common::terminals::TerminalKind::PragmaPeriod
+pub slang_solidity_v2_common::terminals::TerminalKind::PragmaSemicolon
+pub slang_solidity_v2_common::terminals::TerminalKind::PragmaStringLiteral
+pub slang_solidity_v2_common::terminals::TerminalKind::PragmaTilde
+pub slang_solidity_v2_common::terminals::TerminalKind::PrivateKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::PromiseKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::PublicKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::PureKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::QuestionMark
+pub slang_solidity_v2_common::terminals::TerminalKind::ReceiveKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::ReferenceKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::RelocatableKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::ReturnKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::ReturnsKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::RevertKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::SMTCheckerKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::SealedKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::SecondsKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::Semicolon
+pub slang_solidity_v2_common::terminals::TerminalKind::SizeOfKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::Slash
+pub slang_solidity_v2_common::terminals::TerminalKind::SlashEqual
+pub slang_solidity_v2_common::terminals::TerminalKind::SolidityKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::StaticKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::StorageKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::StringKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::StringLiteral
+pub slang_solidity_v2_common::terminals::TerminalKind::StructKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::SuperKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::SupportsKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::SwitchKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::ThisKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::ThrowKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::Tilde
+pub slang_solidity_v2_common::terminals::TerminalKind::TransientKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::TrueKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::TryKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::TypeDefKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::TypeKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::TypeOfKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::UNRECOGNIZED
+pub slang_solidity_v2_common::terminals::TerminalKind::UfixedKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::UintKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::UncheckedKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::UnicodeStringLiteral
+pub slang_solidity_v2_common::terminals::TerminalKind::UsingKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::VarKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::VersionSpecifier
+pub slang_solidity_v2_common::terminals::TerminalKind::ViewKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::VirtualKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::WeeksKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::WeiKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::WhileKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::YearsKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::YulBreakKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::YulCaseKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::YulCloseBrace
+pub slang_solidity_v2_common::terminals::TerminalKind::YulCloseParen
+pub slang_solidity_v2_common::terminals::TerminalKind::YulColonEqual
+pub slang_solidity_v2_common::terminals::TerminalKind::YulComma
+pub slang_solidity_v2_common::terminals::TerminalKind::YulContinueKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::YulDecimalLiteral
+pub slang_solidity_v2_common::terminals::TerminalKind::YulDefaultKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::YulFalseKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::YulForKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::YulFunctionKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::YulHexKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::YulHexLiteral
+pub slang_solidity_v2_common::terminals::TerminalKind::YulHexStringLiteral
+pub slang_solidity_v2_common::terminals::TerminalKind::YulIdentifier
+pub slang_solidity_v2_common::terminals::TerminalKind::YulIfKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::YulLeaveKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::YulLetKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::YulMinusGreaterThan
+pub slang_solidity_v2_common::terminals::TerminalKind::YulOpenBrace
+pub slang_solidity_v2_common::terminals::TerminalKind::YulOpenParen
+pub slang_solidity_v2_common::terminals::TerminalKind::YulPeriod
+pub slang_solidity_v2_common::terminals::TerminalKind::YulStringLiteral
+pub slang_solidity_v2_common::terminals::TerminalKind::YulSuperKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::YulSwitchKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::YulThisKeyword
+pub slang_solidity_v2_common::terminals::TerminalKind::YulTrueKeyword
+impl core::clone::Clone for slang_solidity_v2_common::terminals::TerminalKind
+pub fn slang_solidity_v2_common::terminals::TerminalKind::clone(&self) -> slang_solidity_v2_common::terminals::TerminalKind
+impl core::cmp::Eq for slang_solidity_v2_common::terminals::TerminalKind
+impl core::cmp::Ord for slang_solidity_v2_common::terminals::TerminalKind
+pub fn slang_solidity_v2_common::terminals::TerminalKind::cmp(&self, other: &slang_solidity_v2_common::terminals::TerminalKind) -> core::cmp::Ordering
+impl core::cmp::PartialEq for slang_solidity_v2_common::terminals::TerminalKind
+pub fn slang_solidity_v2_common::terminals::TerminalKind::eq(&self, other: &slang_solidity_v2_common::terminals::TerminalKind) -> bool
+impl core::cmp::PartialOrd for slang_solidity_v2_common::terminals::TerminalKind
+pub fn slang_solidity_v2_common::terminals::TerminalKind::partial_cmp(&self, other: &slang_solidity_v2_common::terminals::TerminalKind) -> core::option::Option<core::cmp::Ordering>
+impl core::fmt::Debug for slang_solidity_v2_common::terminals::TerminalKind
+pub fn slang_solidity_v2_common::terminals::TerminalKind::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for slang_solidity_v2_common::terminals::TerminalKind
+pub fn slang_solidity_v2_common::terminals::TerminalKind::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::result::Result<(), core::fmt::Error>
+impl core::hash::Hash for slang_solidity_v2_common::terminals::TerminalKind
+pub fn slang_solidity_v2_common::terminals::TerminalKind::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
+impl core::marker::Copy for slang_solidity_v2_common::terminals::TerminalKind
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::terminals::TerminalKind
+impl serde_core::ser::Serialize for slang_solidity_v2_common::terminals::TerminalKind
+pub fn slang_solidity_v2_common::terminals::TerminalKind::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+pub mod slang_solidity_v2_common::versions
+pub enum slang_solidity_v2_common::versions::FromSemverError
+pub slang_solidity_v2_common::versions::FromSemverError::UnexpectedMetadata
+pub slang_solidity_v2_common::versions::FromSemverError::UnsupportedVersion
+impl core::cmp::PartialEq for slang_solidity_v2_common::versions::FromSemverError
+pub fn slang_solidity_v2_common::versions::FromSemverError::eq(&self, other: &slang_solidity_v2_common::versions::FromSemverError) -> bool
+impl core::error::Error for slang_solidity_v2_common::versions::FromSemverError
+impl core::fmt::Debug for slang_solidity_v2_common::versions::FromSemverError
+pub fn slang_solidity_v2_common::versions::FromSemverError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for slang_solidity_v2_common::versions::FromSemverError
+pub fn slang_solidity_v2_common::versions::FromSemverError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::versions::FromSemverError
+pub enum slang_solidity_v2_common::versions::LanguageVersion
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_0
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_1
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_10
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_11
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_12
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_13
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_14
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_15
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_16
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_17
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_18
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_19
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_2
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_20
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_21
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_22
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_23
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_24
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_25
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_26
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_27
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_28
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_29
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_3
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_30
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_31
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_32
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_33
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_34
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_35
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_4
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_5
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_6
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_7
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_8
+pub slang_solidity_v2_common::versions::LanguageVersion::V0_8_9
+impl core::clone::Clone for slang_solidity_v2_common::versions::LanguageVersion
+pub fn slang_solidity_v2_common::versions::LanguageVersion::clone(&self) -> slang_solidity_v2_common::versions::LanguageVersion
+impl core::cmp::Eq for slang_solidity_v2_common::versions::LanguageVersion
+impl core::cmp::Ord for slang_solidity_v2_common::versions::LanguageVersion
+pub fn slang_solidity_v2_common::versions::LanguageVersion::cmp(&self, other: &slang_solidity_v2_common::versions::LanguageVersion) -> core::cmp::Ordering
+impl core::cmp::PartialEq for slang_solidity_v2_common::versions::LanguageVersion
+pub fn slang_solidity_v2_common::versions::LanguageVersion::eq(&self, other: &slang_solidity_v2_common::versions::LanguageVersion) -> bool
+impl core::cmp::PartialOrd for slang_solidity_v2_common::versions::LanguageVersion
+pub fn slang_solidity_v2_common::versions::LanguageVersion::partial_cmp(&self, other: &slang_solidity_v2_common::versions::LanguageVersion) -> core::option::Option<core::cmp::Ordering>
+impl core::convert::From<slang_solidity_v2_common::versions::LanguageVersion> for semver::Version
+pub fn semver::Version::from(version: slang_solidity_v2_common::versions::LanguageVersion) -> Self
+impl core::convert::TryFrom<semver::Version> for slang_solidity_v2_common::versions::LanguageVersion
+pub type slang_solidity_v2_common::versions::LanguageVersion::Error = slang_solidity_v2_common::versions::FromSemverError
+pub fn slang_solidity_v2_common::versions::LanguageVersion::try_from(version: semver::Version) -> core::result::Result<Self, Self::Error>
+impl core::fmt::Debug for slang_solidity_v2_common::versions::LanguageVersion
+pub fn slang_solidity_v2_common::versions::LanguageVersion::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for slang_solidity_v2_common::versions::LanguageVersion
+pub fn slang_solidity_v2_common::versions::LanguageVersion::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for slang_solidity_v2_common::versions::LanguageVersion
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::versions::LanguageVersion
+impl serde_core::ser::Serialize for slang_solidity_v2_common::versions::LanguageVersion
+pub fn slang_solidity_v2_common::versions::LanguageVersion::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+pub enum slang_solidity_v2_common::versions::LanguageVersionSpecifier
+pub slang_solidity_v2_common::versions::LanguageVersionSpecifier::From
+pub slang_solidity_v2_common::versions::LanguageVersionSpecifier::From::from: slang_solidity_v2_common::versions::LanguageVersion
+pub slang_solidity_v2_common::versions::LanguageVersionSpecifier::Range
+pub slang_solidity_v2_common::versions::LanguageVersionSpecifier::Range::from: slang_solidity_v2_common::versions::LanguageVersion
+pub slang_solidity_v2_common::versions::LanguageVersionSpecifier::Range::till: slang_solidity_v2_common::versions::LanguageVersion
+pub slang_solidity_v2_common::versions::LanguageVersionSpecifier::Till
+pub slang_solidity_v2_common::versions::LanguageVersionSpecifier::Till::till: slang_solidity_v2_common::versions::LanguageVersion
+impl slang_solidity_v2_common::versions::LanguageVersionSpecifier
+pub fn slang_solidity_v2_common::versions::LanguageVersionSpecifier::contains(&self, other: slang_solidity_v2_common::versions::LanguageVersion) -> bool
+impl core::clone::Clone for slang_solidity_v2_common::versions::LanguageVersionSpecifier
+pub fn slang_solidity_v2_common::versions::LanguageVersionSpecifier::clone(&self) -> slang_solidity_v2_common::versions::LanguageVersionSpecifier
+impl core::cmp::Eq for slang_solidity_v2_common::versions::LanguageVersionSpecifier
+impl core::cmp::PartialEq for slang_solidity_v2_common::versions::LanguageVersionSpecifier
+pub fn slang_solidity_v2_common::versions::LanguageVersionSpecifier::eq(&self, other: &slang_solidity_v2_common::versions::LanguageVersionSpecifier) -> bool
+impl core::fmt::Debug for slang_solidity_v2_common::versions::LanguageVersionSpecifier
+pub fn slang_solidity_v2_common::versions::LanguageVersionSpecifier::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::versions::LanguageVersionSpecifier
+impl serde_core::ser::Serialize for slang_solidity_v2_common::versions::LanguageVersionSpecifier
+pub fn slang_solidity_v2_common::versions::LanguageVersionSpecifier::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer

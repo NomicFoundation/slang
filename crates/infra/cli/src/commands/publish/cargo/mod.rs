@@ -1,10 +1,9 @@
 use anyhow::Result;
 use clap::Parser;
-use infra_utils::cargo::CargoWorkspace;
+use infra_utils::cargo::{CargoWorkspace, UserFacingV1Crate};
 use infra_utils::commands::Command;
 use strum::IntoEnumIterator;
 
-use crate::toolchains::public_api::UserFacingCrate;
 use crate::utils::DryRun;
 
 #[derive(Clone, Debug, Parser)]
@@ -17,7 +16,7 @@ impl CargoController {
     pub fn execute(&self) -> Result<()> {
         let mut changed_crates = vec![];
 
-        for crate_name in UserFacingCrate::iter() {
+        for crate_name in UserFacingV1Crate::iter() {
             let crate_name = crate_name.to_string();
 
             if prepare_for_publish(&crate_name)? {

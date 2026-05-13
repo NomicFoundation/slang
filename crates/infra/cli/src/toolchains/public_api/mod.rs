@@ -1,32 +1,28 @@
 use anyhow::{Context, Result};
-use infra_utils::cargo::CargoWorkspace;
+use infra_utils::cargo::{CargoWorkspace, UserFacingV1Crate, UserFacingV2Crate};
 use infra_utils::codegen::CodegenFileSystem;
 use rayon::iter::{ParallelBridge, ParallelIterator};
-use strum::{Display, EnumIter, IntoEnumIterator};
-
-#[derive(Clone, Copy, Debug, Display, EnumIter)]
-#[allow(non_camel_case_types)]
-pub enum UserFacingCrate {
-    // Sorted by dependency order (from dependencies to dependents):
-    metaslang_cst,
-    metaslang_graph_builder,
-    metaslang_stack_graphs,
-    metaslang_bindings,
-    slang_solidity,
-    slang_solidity_cli,
-}
+use strum::IntoEnumIterator;
 
 pub fn generate_public_api_snapshots() {
     assert!(env!("RUST_NIGHTLY_VERSION").ge(public_api::MINIMUM_NIGHTLY_RUST_VERSION));
 
-    UserFacingCrate::iter()
-        .filter(|&crate_name| has_library_target(crate_name))
+    let v1_libs = UserFacingV1Crate::iter()
+        .filter(|c| c.has_library_target())
+        .map(|c| c.to_string());
+
+    let v2_libs = UserFacingV2Crate::iter()
+        .filter(|c| c.has_library_target())
+        .map(|c| c.to_string());
+
+    v1_libs
+        .chain(v2_libs)
         .par_bridge()
-        .for_each(|crate_name| generate_public_api(crate_name).unwrap());
+        .for_each(|crate_name| generate_public_api(&crate_name).unwrap());
 }
 
-fn generate_public_api(crate_name: UserFacingCrate) -> Result<()> {
-    let crate_dir = CargoWorkspace::locate_source_crate(crate_name.to_string())?;
+fn generate_public_api(crate_name: &str) -> Result<()> {
+    let crate_dir = CargoWorkspace::locate_source_crate(crate_name)?;
 
     let rustdoc_json = rustdoc_json::Builder::default()
         .manifest_path(crate_dir.join("Cargo.toml"))
@@ -45,15 +41,4 @@ fn generate_public_api(crate_name: UserFacingCrate) -> Result<()> {
     let mut fs = CodegenFileSystem::default();
 
     fs.write_file_raw(output_path, public_api.to_string())
-}
-
-fn has_library_target(crate_name: UserFacingCrate) -> bool {
-    match crate_name {
-        UserFacingCrate::metaslang_cst => true,
-        UserFacingCrate::metaslang_graph_builder => true,
-        UserFacingCrate::metaslang_stack_graphs => true,
-        UserFacingCrate::metaslang_bindings => true,
-        UserFacingCrate::slang_solidity => true,
-        UserFacingCrate::slang_solidity_cli => false,
-    }
 }

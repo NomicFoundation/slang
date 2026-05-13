@@ -7,11 +7,9 @@ use infra_utils::commands::Command;
 use infra_utils::github::GitHub;
 use infra_utils::paths::{FileWalker, PathExtensions};
 use infra_utils::terminal::Terminal;
-use strum::IntoEnumIterator;
 
 use crate::toolchains::mkdocs::Mkdocs;
 use crate::toolchains::pipenv::PipEnv;
-use crate::toolchains::public_api::UserFacingCrate;
 use crate::utils::{ClapExtensions, OrderedCommand};
 
 #[derive(Clone, Debug, Default, Parser)]
@@ -103,15 +101,14 @@ fn run_rustdoc() {
 }
 
 fn run_rustdoc_test() {
-    let mut command = Command::new("cargo")
+    Command::new("cargo")
         .arg("test")
         .flag("--doc")
-        .flag("--all-features");
-
-    for crate_name in UserFacingCrate::iter() {
-        command = command.property("--package", crate_name.to_string());
-    }
-    command.run();
+        .flag("--workspace")
+        .flag("--all-features")
+        .flag("--no-fail-fast")
+        .add_build_rustflags()
+        .run();
 }
 
 fn run_mkdocs() {
