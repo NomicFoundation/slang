@@ -1,2 +1,4 @@
-mod generated;
 mod runner;
+
+#[path = "snapshots.generated.rs"]
+mod snapshots;

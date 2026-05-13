@@ -13,23 +13,28 @@ pub struct CodegenRuntime;
 impl CodegenRuntime {
     pub fn render_templates_in_place(
         fs: &mut CodegenFileSystem,
-        dir: impl Into<PathBuf>,
+        dir: &Path,
         model: impl Serialize,
     ) -> Result<()> {
         let tera = TeraWrapper::new(dir)?;
+
+        let all_templates = tera
+            .find_all_templates()?
+            .filter(|path|
+            // Templates starting with underscore are meant to contain common macros.
+            // They are not rendered directly, but imported by other templates.
+            !path.unwrap_name().starts_with('_'))
+            .collect::<Vec<_>>();
+
+        assert!(
+            !all_templates.is_empty(),
+            "No templates found in directory: {dir:?}",
+        );
+
         let mut context = tera::Context::new();
         context.insert("model", &model);
 
-        for template_path in tera.find_all_templates()? {
-            // Ignore templates starting with `_`. Those templates will be rendered by another process.
-            if template_path
-                .file_name()
-                .unwrap()
-                .to_string_lossy()
-                .starts_with('_')
-            {
-                continue;
-            }
+        for template_path in all_templates {
             let generated_path = Self::get_in_place_path(&template_path);
             let rendered = tera.render(&template_path, &context)?;
 
@@ -44,9 +49,6 @@ impl CodegenRuntime {
 
         let template_path = template_path.with_extension("");
         let (base_name, extension) = template_path.unwrap_name().rsplit_once('.').unwrap();
-
-        // remove the starting `_` if there is one (ir templates starts with this marker)
-        let base_name = base_name.strip_prefix('_').unwrap_or(base_name);
 
         template_path
             .unwrap_parent()

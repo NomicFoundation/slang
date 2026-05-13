@@ -6,10 +6,10 @@ use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
 use slang_solidity::cst::NonterminalKind;
 use slang_solidity::parser::Parser;
+use solidity_language::SolidityDefinition;
 use strum::Display;
 
 use crate::cst::cst_output::renderer::render;
-use crate::cst::generated::VERSION_BREAKS;
 
 #[derive(Display)]
 #[strum(serialize_all = "kebab_case")]
@@ -33,7 +33,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
 
     let mut last_output = None;
 
-    for version in VERSION_BREAKS {
+    for version in SolidityDefinition::create().collect_all_breaking_versions() {
         let tested_kind = NonterminalKind::from_str(parser_name)
             .unwrap_or_else(|_| panic!("No such parser: {parser_name}"));
 

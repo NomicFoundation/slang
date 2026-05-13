@@ -10,7 +10,6 @@ publish = false
 anyhow = { workspace = true }
 codegen_generator = { workspace = true }
 codegen_spec = { workspace = true }
-codegen_testing = { workspace = true }
 infra_utils = { workspace = true }
 language_definition = { workspace = true }
 language_v2_definition = { workspace = true }
