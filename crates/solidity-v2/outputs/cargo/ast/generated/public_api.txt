@@ -703,6 +703,8 @@ pub slang_solidity_v2_ast::ast::ElementaryType::IntKeyword(slang_solidity_v2_ast
 pub slang_solidity_v2_ast::ast::ElementaryType::StringKeyword(slang_solidity_v2_ast::ast::StringKeyword)
 pub slang_solidity_v2_ast::ast::ElementaryType::UfixedKeyword(slang_solidity_v2_ast::ast::UfixedKeyword)
 pub slang_solidity_v2_ast::ast::ElementaryType::UintKeyword(slang_solidity_v2_ast::ast::UintKeyword)
+impl slang_solidity_v2_ast::ast::ElementaryType
+pub fn slang_solidity_v2_ast::ast::ElementaryType::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::ElementaryType
 pub fn slang_solidity_v2_ast::ast::ElementaryType::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub enum slang_solidity_v2_ast::ast::EqualityExpressionOperator
@@ -750,6 +752,8 @@ pub slang_solidity_v2_ast::ast::Expression::ThisKeyword(slang_solidity_v2_ast::a
 pub slang_solidity_v2_ast::ast::Expression::TrueKeyword(slang_solidity_v2_ast::ast::TrueKeyword)
 pub slang_solidity_v2_ast::ast::Expression::TupleExpression(slang_solidity_v2_ast::ast::TupleExpression)
 pub slang_solidity_v2_ast::ast::Expression::TypeExpression(slang_solidity_v2_ast::ast::TypeExpression)
+impl slang_solidity_v2_ast::ast::Expression
+pub fn slang_solidity_v2_ast::ast::Expression::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::Expression
 pub fn slang_solidity_v2_ast::ast::Expression::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub enum slang_solidity_v2_ast::ast::ForStatementCondition
@@ -898,6 +902,7 @@ pub slang_solidity_v2_ast::ast::StringExpression::HexStringLiterals(slang_solidi
 pub slang_solidity_v2_ast::ast::StringExpression::StringLiterals(slang_solidity_v2_ast::ast::StringLiterals)
 pub slang_solidity_v2_ast::ast::StringExpression::UnicodeStringLiterals(slang_solidity_v2_ast::ast::UnicodeStringLiterals)
 impl slang_solidity_v2_ast::ast::StringExpression
+pub fn slang_solidity_v2_ast::ast::StringExpression::get_type(&self) -> core::option::Option<slang_solidity_v2_ast::ast::Type>
 pub fn slang_solidity_v2_ast::ast::StringExpression::value(&self) -> alloc::vec::Vec<u8>
 impl serde_core::ser::Serialize for slang_solidity_v2_ast::ast::StringExpression
 pub fn slang_solidity_v2_ast::ast::StringExpression::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
