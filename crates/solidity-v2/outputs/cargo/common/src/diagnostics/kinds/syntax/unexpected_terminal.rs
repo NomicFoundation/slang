@@ -4,8 +4,6 @@ use itertools::Itertools;
 use serde::Serialize;
 
 use crate::diagnostics::extensions::DiagnosticExtensions;
-use crate::diagnostics::kinds::syntax::SyntaxDiagnosticKind;
-use crate::diagnostics::kinds::DiagnosticKind;
 use crate::diagnostics::severity::DiagnosticSeverity;
 use crate::terminals::TerminalKind;
 
@@ -34,11 +32,5 @@ impl DiagnosticExtensions for UnexpectedTerminal {
             found = self.found,
             expected_list = self.expected.iter().map(|e| format!("{e}")).join(", ")
         )
-    }
-}
-
-impl From<UnexpectedTerminal> for DiagnosticKind {
-    fn from(d: UnexpectedTerminal) -> Self {
-        Self::Syntax(SyntaxDiagnosticKind::UnexpectedTerminal(d))
     }
 }

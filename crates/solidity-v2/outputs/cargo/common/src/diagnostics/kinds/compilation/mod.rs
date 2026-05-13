@@ -6,8 +6,11 @@ use serde::Serialize;
 pub use unresolved_import::UnresolvedImport;
 
 use crate::diagnostics::kinds::utils::define_diagnostic_kind;
+use crate::diagnostics::kinds::DiagnosticKind;
 
 define_diagnostic_kind! {
+    parent_kind = DiagnosticKind::Compilation;
+
     /// Group of diagnostics produced by the compilation pipeline — i.e. failures
     /// that involve the file graph (reading files, resolving imports).
     #[derive(Clone, Debug, Eq, PartialEq, Serialize)]

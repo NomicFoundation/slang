@@ -1,8 +1,6 @@
 use serde::Serialize;
 
 use crate::diagnostics::extensions::DiagnosticExtensions;
-use crate::diagnostics::kinds::syntax::SyntaxDiagnosticKind;
-use crate::diagnostics::kinds::DiagnosticKind;
 use crate::diagnostics::severity::DiagnosticSeverity;
 use crate::terminals::TerminalKind;
 
@@ -28,11 +26,5 @@ impl DiagnosticExtensions for ExtraTerminal {
             "Unexpected {found}. End of file was expected",
             found = self.found
         )
-    }
-}
-
-impl From<ExtraTerminal> for DiagnosticKind {
-    fn from(d: ExtraTerminal) -> Self {
-        Self::Syntax(SyntaxDiagnosticKind::ExtraTerminal(d))
     }
 }

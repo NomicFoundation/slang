@@ -4,8 +4,6 @@ use itertools::Itertools;
 use serde::Serialize;
 
 use crate::diagnostics::extensions::DiagnosticExtensions;
-use crate::diagnostics::kinds::syntax::SyntaxDiagnosticKind;
-use crate::diagnostics::kinds::DiagnosticKind;
 use crate::diagnostics::severity::DiagnosticSeverity;
 use crate::terminals::TerminalKind;
 
@@ -31,11 +29,5 @@ impl DiagnosticExtensions for UnexpectedEof {
             "Unexpected end of file. One of {expected_list} was expected",
             expected_list = self.expected.iter().map(|e| format!("{e}")).join(", ")
         )
-    }
-}
-
-impl From<UnexpectedEof> for DiagnosticKind {
-    fn from(d: UnexpectedEof) -> Self {
-        Self::Syntax(SyntaxDiagnosticKind::UnexpectedEof(d))
     }
 }

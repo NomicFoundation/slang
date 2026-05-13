@@ -1,8 +1,6 @@
 use serde::Serialize;
 
 use crate::diagnostics::extensions::DiagnosticExtensions;
-use crate::diagnostics::kinds::compilation::CompilationDiagnosticKind;
-use crate::diagnostics::kinds::DiagnosticKind;
 use crate::diagnostics::severity::DiagnosticSeverity;
 
 /// Diagnostic emitted when the compilation pipeline cannot resolve an
@@ -25,11 +23,5 @@ impl DiagnosticExtensions for UnresolvedImport {
 
     fn message(&self) -> String {
         format!("Unresolved import: {}", self.reason)
-    }
-}
-
-impl From<UnresolvedImport> for DiagnosticKind {
-    fn from(d: UnresolvedImport) -> Self {
-        Self::Compilation(CompilationDiagnosticKind::UnresolvedImport(d))
     }
 }

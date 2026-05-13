@@ -10,8 +10,11 @@ pub use unexpected_terminal::UnexpectedTerminal;
 pub use unsupported_syntax::UnsupportedSyntax;
 
 use crate::diagnostics::kinds::utils::define_diagnostic_kind;
+use crate::diagnostics::kinds::DiagnosticKind;
 
 define_diagnostic_kind! {
+    parent_kind = DiagnosticKind::Syntax;
+
     /// Group of diagnostics produced while parsing source text.
     #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
     pub enum SyntaxDiagnosticKind {
