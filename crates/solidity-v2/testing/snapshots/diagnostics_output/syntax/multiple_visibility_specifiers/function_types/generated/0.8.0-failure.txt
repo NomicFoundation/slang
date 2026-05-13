@@ -1,0 +1,67 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 8
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:2:34]
+   │
+ 2 │   function foo(function() public private returns (uint) callback) {}
+   │                                  ───┬───  
+   │                                     ╰───── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:3:36]
+   │
+ 3 │   function bar(function() internal external returns (uint) cb1, function() private public returns (uint) cb2) {}
+   │                                    ────┬───  
+   │                                        ╰───── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:3:84]
+   │
+ 3 │   function bar(function() internal external returns (uint) cb1, function() private public returns (uint) cb2) {}
+   │                                                                                    ───┬──  
+   │                                                                                       ╰──── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:4:39]
+   │
+ 4 │   function baz(function() public pure private returns (uint) callback) {}
+   │                                       ───┬───  
+   │                                          ╰───── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:5:38]
+   │
+ 5 │   function triple1(function() public private internal returns (uint) cb) {}
+   │                                      ───┬───  
+   │                                         ╰───── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:5:46]
+   │
+ 5 │   function triple1(function() public private internal returns (uint) cb) {}
+   │                                              ────┬───  
+   │                                                  ╰───── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:6:40]
+   │
+ 6 │   function triple2(function() external internal private returns (uint) cb) {}
+   │                                        ────┬───  
+   │                                            ╰───── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:6:49]
+   │
+ 6 │   function triple2(function() external internal private returns (uint) cb) {}
+   │                                                 ───┬───  
+   │                                                    ╰───── Error occurred here.
+───╯

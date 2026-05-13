@@ -1,0 +1,131 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 16
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:2:15]
+   │
+ 2 │   uint public private x = 1;
+   │               ───┬───  
+   │                  ╰───── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:3:16]
+   │
+ 3 │   uint private public y = 2;
+   │                ───┬──  
+   │                   ╰──── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:4:15]
+   │
+ 4 │   uint public private constant z = 3;
+   │               ───┬───  
+   │                  ╰───── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:5:17]
+   │
+ 5 │   uint internal public w = 4;
+   │                 ───┬──  
+   │                    ╰──── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:6:15]
+   │
+ 6 │   uint public private internal v = 5;
+   │               ───┬───  
+   │                  ╰───── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:6:23]
+   │
+ 6 │   uint public private internal v = 5;
+   │                       ────┬───  
+   │                           ╰───── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:7:34]
+   │
+ 7 │   uint public constant immutable private a = 6;
+   │                                  ───┬───  
+   │                                     ╰───── Error occurred here.
+───╯
+
+Error: Only a single mutability specifier can be provided.
+   ╭─[input.sol:7:24]
+   │
+ 7 │   uint public constant immutable private a = 6;
+   │                        ────┬────  
+   │                            ╰────── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:8:35]
+   │
+ 8 │   uint private immutable constant public b = 7;
+   │                                   ───┬──  
+   │                                      ╰──── Error occurred here.
+───╯
+
+Error: Only a single mutability specifier can be provided.
+   ╭─[input.sol:8:26]
+   │
+ 8 │   uint private immutable constant public b = 7;
+   │                          ────┬───  
+   │                              ╰───── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:9:15]
+   │
+ 9 │   uint public private internal e = 10;
+   │               ───┬───  
+   │                  ╰───── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:9:23]
+   │
+ 9 │   uint public private internal e = 10;
+   │                       ────┬───  
+   │                           ╰───── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+    ╭─[input.sol:10:15]
+    │
+ 10 │   uint public internal private f = 11;
+    │               ────┬───  
+    │                   ╰───── Error occurred here.
+────╯
+
+Error: Only a single visibility specifier can be provided.
+    ╭─[input.sol:10:24]
+    │
+ 10 │   uint public internal private f = 11;
+    │                        ───┬───  
+    │                           ╰───── Error occurred here.
+────╯
+
+Error: Only a single visibility specifier can be provided.
+    ╭─[input.sol:11:16]
+    │
+ 11 │   uint private internal public g = 12;
+    │                ────┬───  
+    │                    ╰───── Error occurred here.
+────╯
+
+Error: Only a single visibility specifier can be provided.
+    ╭─[input.sol:11:25]
+    │
+ 11 │   uint private internal public g = 12;
+    │                         ───┬──  
+    │                            ╰──── Error occurred here.
+────╯

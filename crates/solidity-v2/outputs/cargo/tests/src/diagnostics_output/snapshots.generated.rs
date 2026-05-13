@@ -58,6 +58,30 @@ mod syntax {
         }
     }
 
+    mod multiple_visibility_specifiers {
+        use super::*;
+
+        #[test]
+        fn constructors() -> Result<()> {
+            run("syntax/multiple_visibility_specifiers", "constructors")
+        }
+
+        #[test]
+        fn function_types() -> Result<()> {
+            run("syntax/multiple_visibility_specifiers", "function_types")
+        }
+
+        #[test]
+        fn functions() -> Result<()> {
+            run("syntax/multiple_visibility_specifiers", "functions")
+        }
+
+        #[test]
+        fn state_variables() -> Result<()> {
+            run("syntax/multiple_visibility_specifiers", "state_variables")
+        }
+    }
+
     #[test]
     fn unexpected_eof() -> Result<()> {
         run("syntax", "unexpected_eof")

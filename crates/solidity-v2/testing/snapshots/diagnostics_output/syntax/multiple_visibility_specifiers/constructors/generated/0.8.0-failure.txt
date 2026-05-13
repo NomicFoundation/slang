@@ -1,0 +1,75 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 9
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:2:24]
+   │
+ 2 │   constructor() public internal {}
+   │                        ────┬───  
+   │                            ╰───── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:4:26]
+   │
+ 4 │   constructor() internal public {}
+   │                          ───┬──  
+   │                             ╰──── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:6:24]
+   │
+ 6 │   constructor() public internal payable {}
+   │                        ────┬───  
+   │                            ╰───── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:8:32]
+   │
+ 8 │   constructor() public payable internal {}
+   │                                ────┬───  
+   │                                    ╰───── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+    ╭─[input.sol:10:34]
+    │
+ 10 │   constructor() internal payable public {}
+    │                                  ───┬──  
+    │                                     ╰──── Error occurred here.
+────╯
+
+Error: Only a single visibility specifier can be provided.
+    ╭─[input.sol:12:24]
+    │
+ 12 │   constructor() public internal public {}
+    │                        ────┬───  
+    │                            ╰───── Error occurred here.
+────╯
+
+Error: Only a single visibility specifier can be provided.
+    ╭─[input.sol:12:33]
+    │
+ 12 │   constructor() public internal public {}
+    │                                 ───┬──  
+    │                                    ╰──── Error occurred here.
+────╯
+
+Error: Only a single visibility specifier can be provided.
+    ╭─[input.sol:14:26]
+    │
+ 14 │   constructor() internal public internal {}
+    │                          ───┬──  
+    │                             ╰──── Error occurred here.
+────╯
+
+Error: Only a single visibility specifier can be provided.
+    ╭─[input.sol:14:33]
+    │
+ 14 │   constructor() internal public internal {}
+    │                                 ────┬───  
+    │                                     ╰───── Error occurred here.
+────╯

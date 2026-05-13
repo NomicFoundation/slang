@@ -668,6 +668,15 @@ pub fn slang_solidity_v2_ir::ir::FunctionVisibility::clone(&self) -> slang_solid
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::FunctionVisibility
 impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::FunctionVisibility
 pub fn slang_solidity_v2_ir::ir::FunctionVisibility::eq(&self, other: &slang_solidity_v2_ir::ir::FunctionVisibility) -> bool
+impl core::convert::TryFrom<&slang_solidity_v2_cst::structured_cst::nodes::ConstructorAttribute> for slang_solidity_v2_ir::ir::FunctionVisibility
+pub type slang_solidity_v2_ir::ir::FunctionVisibility::Error = ()
+pub fn slang_solidity_v2_ir::ir::FunctionVisibility::try_from(value: &slang_solidity_v2_cst::structured_cst::nodes::ConstructorAttribute) -> core::result::Result<Self, Self::Error>
+impl core::convert::TryFrom<&slang_solidity_v2_cst::structured_cst::nodes::FunctionAttribute> for slang_solidity_v2_ir::ir::FunctionVisibility
+pub type slang_solidity_v2_ir::ir::FunctionVisibility::Error = ()
+pub fn slang_solidity_v2_ir::ir::FunctionVisibility::try_from(value: &slang_solidity_v2_cst::structured_cst::nodes::FunctionAttribute) -> core::result::Result<Self, Self::Error>
+impl core::convert::TryFrom<&slang_solidity_v2_cst::structured_cst::nodes::FunctionTypeAttribute> for slang_solidity_v2_ir::ir::FunctionVisibility
+pub type slang_solidity_v2_ir::ir::FunctionVisibility::Error = ()
+pub fn slang_solidity_v2_ir::ir::FunctionVisibility::try_from(value: &slang_solidity_v2_cst::structured_cst::nodes::FunctionTypeAttribute) -> core::result::Result<Self, Self::Error>
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::FunctionVisibility
 pub fn slang_solidity_v2_ir::ir::FunctionVisibility::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::hash::Hash for slang_solidity_v2_ir::ir::FunctionVisibility
@@ -791,6 +800,9 @@ pub fn slang_solidity_v2_ir::ir::StateVariableVisibility::clone(&self) -> slang_
 impl core::cmp::Eq for slang_solidity_v2_ir::ir::StateVariableVisibility
 impl core::cmp::PartialEq for slang_solidity_v2_ir::ir::StateVariableVisibility
 pub fn slang_solidity_v2_ir::ir::StateVariableVisibility::eq(&self, other: &slang_solidity_v2_ir::ir::StateVariableVisibility) -> bool
+impl core::convert::TryFrom<&slang_solidity_v2_cst::structured_cst::nodes::StateVariableAttribute> for slang_solidity_v2_ir::ir::StateVariableVisibility
+pub type slang_solidity_v2_ir::ir::StateVariableVisibility::Error = ()
+pub fn slang_solidity_v2_ir::ir::StateVariableVisibility::try_from(value: &slang_solidity_v2_cst::structured_cst::nodes::StateVariableAttribute) -> core::result::Result<Self, Self::Error>
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::StateVariableVisibility
 pub fn slang_solidity_v2_ir::ir::StateVariableVisibility::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::hash::Hash for slang_solidity_v2_ir::ir::StateVariableVisibility

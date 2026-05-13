@@ -1,11 +1,13 @@
 mod extra_terminal;
 mod multiple_mutability_specifiers;
+mod multiple_visibility_specifiers;
 mod unexpected_eof;
 mod unexpected_terminal;
 mod unsupported_syntax;
 
 pub use extra_terminal::ExtraTerminal;
 pub use multiple_mutability_specifiers::MultipleMutabilitySpecifiers;
+pub use multiple_visibility_specifiers::MultipleVisibilitySpecifiers;
 use serde::Serialize;
 pub use unexpected_eof::UnexpectedEof;
 pub use unexpected_terminal::UnexpectedTerminal;
@@ -32,5 +34,7 @@ define_diagnostic_kind! {
 
         /// More than one mutability specifier was provided on a definition.
         MultipleMutabilitySpecifiers(MultipleMutabilitySpecifiers),
+        /// More than one visibility specifier was provided on a definition.
+        MultipleVisibilitySpecifiers(MultipleVisibilitySpecifiers),
     }
 }
