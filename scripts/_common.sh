@@ -9,11 +9,15 @@ _github_collapse_group() {
   local title="$1"
   shift
 
-  [[ -n "${CI:-}" ]] && echo "::group::${title}"
+  if [[ -n "${CI:-}" ]]; then
+    echo "::group::${title}"
+  fi
 
   "$@"
 
-  [[ -n "${CI:-}" ]] && echo "::endgroup::"
+  if [[ -n "${CI:-}" ]]; then
+    echo "::endgroup::"
+  fi
 }
 
 #
