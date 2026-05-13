@@ -5,8 +5,8 @@ use crate::diagnostics::kinds::syntax::SyntaxDiagnosticKind;
 use crate::diagnostics::kinds::DiagnosticKind;
 use crate::diagnostics::severity::DiagnosticSeverity;
 
-/// Diagnostic emitted when a function or function-type declaration carries
-/// more than one mutability specifier (e.g. both `pure` and `view`).
+/// Diagnostic emitted when a definition carries more than one mutability
+/// specifier (e.g. both `pure` and `view`).
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 pub struct MultipleMutabilitySpecifiers;
 

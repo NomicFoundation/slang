@@ -30,8 +30,7 @@ define_diagnostic_kind! {
         /// A piece of syntax is not supported by the currently selected version.
         UnsupportedSyntax(UnsupportedSyntax),
 
-        /// More than one mutability specifier was provided on a function or
-        /// function-type declaration.
+        /// More than one mutability specifier was provided on a definition.
         MultipleMutabilitySpecifiers(MultipleMutabilitySpecifiers),
     }
 }

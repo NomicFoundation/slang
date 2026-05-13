@@ -212,7 +212,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         };
         let parameters = self.build_parameters_declaration(&source.parameters);
         let visibility = Self::function_visibility(&source.attributes);
-        let mutability = self.function_mutability(&source.attributes);
+        let mutability = self
+            .extract_mutability_specifier(&source.attributes.elements)
+            .unwrap_or(output::FunctionMutability::NonPayable);
         let virtual_keyword = source.attributes.elements.iter().find_map(|attribute| {
             if let input::FunctionAttribute::VirtualKeyword(virtual_keyword) = attribute {
                 Some(self.build_virtual_keyword(virtual_keyword))
@@ -250,7 +252,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let range = source.calculate_text_range().unwrap_or_default();
         let parameters = self.build_parameters_declaration(&source.parameters);
         let visibility = Self::function_type_visibility(&source.attributes);
-        let mutability = self.function_type_mutability(&source.attributes);
+        let mutability = self
+            .extract_mutability_specifier(&source.attributes.elements)
+            .unwrap_or(output::FunctionMutability::NonPayable);
         let returns = source
             .returns
             .as_ref()
@@ -338,7 +342,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             .as_ref()
             .map(|value| self.build_state_variable_definition_value(value));
         let visibility = Self::state_variable_visibility(&source.attributes);
-        let mutability = Self::state_variable_mutability(&source.attributes);
+        let mutability = self
+            .extract_mutability_specifier(&source.attributes.elements)
+            .unwrap_or(output::StateVariableMutability::Mutable);
         let override_specifier = self.state_variable_override_specifier(&source.attributes);
 
         Rc::new(output::StateVariableDefinitionStruct {
@@ -456,40 +462,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         )
     }
 
-    fn function_mutability(
-        &mut self,
-        attributes: &input::FunctionAttributes,
-    ) -> output::FunctionMutability {
-        let mut result: Option<output::FunctionMutability> = None;
-
-        for attribute in &attributes.elements {
-            let (current, range) = match attribute {
-                input::FunctionAttribute::PayableKeyword(keyword) => {
-                    (output::FunctionMutability::Payable, &keyword.range)
-                }
-                input::FunctionAttribute::PureKeyword(keyword) => {
-                    (output::FunctionMutability::Pure, &keyword.range)
-                }
-                input::FunctionAttribute::ViewKeyword(keyword) => {
-                    (output::FunctionMutability::View, &keyword.range)
-                }
-                _ => continue,
-            };
-
-            if result.is_some() {
-                self.diagnostics.push(
-                    self.file_id.to_owned(),
-                    range.to_owned(),
-                    MultipleMutabilitySpecifiers,
-                );
-            } else {
-                result = Some(current);
-            }
-        }
-
-        result.unwrap_or(output::FunctionMutability::NonPayable)
-    }
-
     fn function_override_specifier(
         &mut self,
         attributes: &input::FunctionAttributes,
@@ -544,40 +516,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         )
     }
 
-    fn function_type_mutability(
-        &mut self,
-        attributes: &input::FunctionTypeAttributes,
-    ) -> output::FunctionMutability {
-        let mut result: Option<output::FunctionMutability> = None;
-
-        for attribute in &attributes.elements {
-            let (current, range) = match attribute {
-                input::FunctionTypeAttribute::PayableKeyword(keyword) => {
-                    (output::FunctionMutability::Payable, &keyword.range)
-                }
-                input::FunctionTypeAttribute::PureKeyword(keyword) => {
-                    (output::FunctionMutability::Pure, &keyword.range)
-                }
-                input::FunctionTypeAttribute::ViewKeyword(keyword) => {
-                    (output::FunctionMutability::View, &keyword.range)
-                }
-                _ => continue,
-            };
-
-            if result.is_some() {
-                self.diagnostics.push(
-                    self.file_id.to_owned(),
-                    range.to_owned(),
-                    MultipleMutabilitySpecifiers,
-                );
-            } else {
-                result = Some(current);
-            }
-        }
-
-        result.unwrap_or(output::FunctionMutability::NonPayable)
-    }
-
     //
     // Constructor / Fallback / Receive / Modifier → FunctionDefinition
     //
@@ -592,7 +530,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let name = None;
         let parameters = self.build_parameters_declaration(&source.parameters);
         let visibility = Self::constructor_visibility(&source.attributes);
-        let mutability = Self::constructor_mutability(&source.attributes);
+        let mutability = self
+            .extract_mutability_specifier(&source.attributes.elements)
+            .unwrap_or(output::FunctionMutability::NonPayable);
         // v2 ConstructorAttribute has no VirtualKeyword
         let virtual_keyword = None;
         // v2 ConstructorAttribute has no OverrideSpecifier
@@ -620,6 +560,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
     fn constructor_visibility(
         attributes: &input::ConstructorAttributes,
     ) -> output::FunctionVisibility {
+        // TODO(validation): only a single visibility keyword can be provided
         attributes.elements.iter().fold(
             output::FunctionVisibility::Public,
             |visibility, attribute| match attribute {
@@ -628,20 +569,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
                 }
                 input::ConstructorAttribute::PublicKeyword(_) => output::FunctionVisibility::Public,
                 _ => visibility,
-            },
-        )
-    }
-
-    fn constructor_mutability(
-        attributes: &input::ConstructorAttributes,
-    ) -> output::FunctionMutability {
-        attributes.elements.iter().fold(
-            output::FunctionMutability::NonPayable,
-            |mutability, attribute| match attribute {
-                input::ConstructorAttribute::PayableKeyword(_) => {
-                    output::FunctionMutability::Payable
-                }
-                _ => mutability,
             },
         )
     }
@@ -674,7 +601,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let parameters = self.build_parameters_declaration(&source.parameters);
         // TODO(validation): fallback functions *must* have external visibility
         let visibility = output::FunctionVisibility::External;
-        let mutability = Self::fallback_function_mutability(&source.attributes);
+        let mutability = self
+            .extract_mutability_specifier(&source.attributes.elements)
+            .unwrap_or(output::FunctionMutability::NonPayable);
         let virtual_keyword = source.attributes.elements.iter().find_map(|attribute| {
             if let input::FallbackFunctionAttribute::VirtualKeyword(virtual_keyword) = attribute {
                 Some(self.build_virtual_keyword(virtual_keyword))
@@ -704,26 +633,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             returns,
             body,
         })
-    }
-
-    fn fallback_function_mutability(
-        attributes: &input::FallbackFunctionAttributes,
-    ) -> output::FunctionMutability {
-        attributes.elements.iter().fold(
-            output::FunctionMutability::NonPayable,
-            |mutability, attribute| match attribute {
-                input::FallbackFunctionAttribute::PayableKeyword(_) => {
-                    output::FunctionMutability::Payable
-                }
-                input::FallbackFunctionAttribute::PureKeyword(_) => {
-                    output::FunctionMutability::Pure
-                }
-                input::FallbackFunctionAttribute::ViewKeyword(_) => {
-                    output::FunctionMutability::View
-                }
-                _ => mutability,
-            },
-        )
     }
 
     fn fallback_function_override_specifier(
@@ -767,8 +676,10 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let parameters = self.build_parameters_declaration(&source.parameters);
         // TODO(validation): receive functions *must* have external visibility
         let visibility = output::FunctionVisibility::External;
-        // TODO(validation): receive functions *must* be payable
-        let mutability = output::FunctionMutability::Payable;
+        // TODO(validation): receive functions *must* have a 'payable' specifier
+        let mutability = self
+            .extract_mutability_specifier(&source.attributes.elements)
+            .unwrap_or(output::FunctionMutability::Payable);
         let virtual_keyword = source.attributes.elements.iter().find_map(|attribute| {
             if let input::ReceiveFunctionAttribute::VirtualKeyword(virtual_keyword) = attribute {
                 Some(self.build_virtual_keyword(virtual_keyword))
@@ -841,6 +752,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let visibility = output::FunctionVisibility::Internal;
         // mutability is irrelevant for modifiers
         let mutability = output::FunctionMutability::NonPayable;
+        // TODO(validation): check for duplicate attributes (virtual, ...)
         let virtual_keyword = source.attributes.elements.iter().find_map(|attribute| {
             if let input::ModifierAttribute::VirtualKeyword(virtual_keyword) = attribute {
                 Some(self.build_virtual_keyword(virtual_keyword))
@@ -903,27 +815,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
                     output::StateVariableVisibility::Public
                 }
                 _ => visibility,
-            },
-        )
-    }
-
-    fn state_variable_mutability(
-        attributes: &input::StateVariableAttributes,
-    ) -> output::StateVariableMutability {
-        // TODO(validation): only one mutability keyword is allowed
-        attributes.elements.iter().fold(
-            output::StateVariableMutability::Mutable,
-            |mutability, attribute| match attribute {
-                input::StateVariableAttribute::ConstantKeyword(_) => {
-                    output::StateVariableMutability::Constant
-                }
-                input::StateVariableAttribute::ImmutableKeyword(_) => {
-                    output::StateVariableMutability::Immutable
-                }
-                input::StateVariableAttribute::TransientKeyword(_) => {
-                    output::StateVariableMutability::Transient
-                }
-                _ => mutability,
             },
         )
     }
@@ -1080,5 +971,32 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             name,
             indexed: None,
         })
+    }
+
+    fn extract_mutability_specifier<'a, Input, Output>(
+        &mut self,
+        attributes: impl IntoIterator<Item = &'a Input>,
+    ) -> Option<Output>
+    where
+        Input: TextRange + 'a,
+        &'a Input: TryInto<Output>,
+    {
+        let mut result: Option<Output> = None;
+
+        for attribute in attributes {
+            if let Ok(current) = attribute.try_into() {
+                if result.is_some() {
+                    self.diagnostics.push(
+                        self.file_id.to_owned(),
+                        attribute.calculate_text_range().unwrap(),
+                        MultipleMutabilitySpecifiers,
+                    );
+                } else {
+                    result = Some(current);
+                }
+            }
+        }
+
+        result
     }
 }

@@ -2,6 +2,8 @@
 mod nodes;
 pub use nodes::*;
 
+mod node_extensions;
+
 mod builder;
 
 mod source;
