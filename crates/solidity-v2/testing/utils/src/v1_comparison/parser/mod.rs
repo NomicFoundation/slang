@@ -1,40 +1,43 @@
 #[path = "node_checker.generated.rs"]
 mod node_checker;
 
-use std::ops::Range;
-
 pub use node_checker::{NodeChecker, NodeCheckerError};
 use semver::Version;
 use slang_solidity::cst::Cursor;
+use slang_solidity_v2_common::diagnostics::{Diagnostic, DiagnosticExtensions, DiagnosticSeverity};
 use slang_solidity_v2_common::versions::LanguageVersion;
-use slang_solidity_v2_parser::{ParseOutput, Parser as V2Parser, ParserError};
+use slang_solidity_v2_parser::{ParseOutput, Parser as V2Parser};
 
-use crate::reporting::diagnostic::{Diagnostic, Severity};
+use crate::reporting::diagnostic::RenderDiagnostic;
 
 pub enum ComparisonError {
-    ParsingError(ParserError),
+    CompilationDiagnostic(Diagnostic),
     NodeCheckerError(NodeCheckerError),
 }
 
-impl Diagnostic for ComparisonError {
-    fn message(&self) -> String {
+impl RenderDiagnostic for ComparisonError {
+    fn text_range(&self) -> std::ops::Range<usize> {
         match self {
-            ComparisonError::ParsingError(error) => error.message(),
-            ComparisonError::NodeCheckerError(error) => error.message(),
-        }
-    }
-
-    fn text_range(&self) -> Range<usize> {
-        match self {
-            ComparisonError::ParsingError(error) => error.text_range(),
+            ComparisonError::CompilationDiagnostic(diagnostic) => diagnostic.text_range().clone(),
             ComparisonError::NodeCheckerError(error) => error.text_range(),
         }
     }
 
-    fn severity(&self) -> Severity {
+    fn severity(&self) -> DiagnosticSeverity {
         match self {
-            ComparisonError::ParsingError(error) => error.severity(),
+            ComparisonError::CompilationDiagnostic(diagnostic) => {
+                DiagnosticExtensions::severity(diagnostic)
+            }
             ComparisonError::NodeCheckerError(error) => error.severity(),
+        }
+    }
+
+    fn message(&self) -> String {
+        match self {
+            ComparisonError::CompilationDiagnostic(diagnostic) => {
+                DiagnosticExtensions::message(diagnostic)
+            }
+            ComparisonError::NodeCheckerError(error) => error.message(),
         }
     }
 }
@@ -47,13 +50,13 @@ pub fn compare_with_v1_cursor(
     let lang_version = LanguageVersion::try_from(version.clone()).unwrap();
     let ParseOutput {
         source_unit,
-        errors,
-    } = V2Parser::parse(source, lang_version);
+        diagnostics,
+    } = V2Parser::parse("v1_comparison", source, lang_version);
 
-    if !errors.is_empty() {
-        return errors
+    if !diagnostics.is_empty() {
+        return diagnostics
             .into_iter()
-            .map(ComparisonError::ParsingError)
+            .map(ComparisonError::CompilationDiagnostic)
             .collect();
     }
 

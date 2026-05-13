@@ -2,8 +2,9 @@
 mod language_versions;
 
 pub use language_versions::{FromSemverError, LanguageVersion};
+use serde::Serialize;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 pub enum LanguageVersionSpecifier {
     From {
         from: LanguageVersion,

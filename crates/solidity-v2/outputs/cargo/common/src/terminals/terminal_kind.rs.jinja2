@@ -1,8 +1,9 @@
 {%- set model = model.structured_cst_model -%}
 
+use serde::Serialize;
 use strum::Display;
 
-#[derive(Clone, Copy, Debug, Display, Eq, Hash, PartialEq, PartialOrd, Ord)]
+#[derive(Clone, Copy, Debug, Display, Eq, Hash, PartialEq, PartialOrd, Ord, Serialize)]
 pub enum TerminalKind {
     #[allow(clippy::upper_case_acronyms)]
     UNRECOGNIZED,

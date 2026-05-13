@@ -1,8 +1,6 @@
 mod builder;
 mod file;
-mod internal_builder;
 mod unit;
 
-pub use builder::{CompilationBuilder, CompilationBuilderConfig, CompilationBuilderError};
-pub use slang_solidity_v2_parser::ParserError;
+pub use builder::{CompilationBuilder, CompilationBuilderConfig};
 pub use unit::CompilationUnit;
