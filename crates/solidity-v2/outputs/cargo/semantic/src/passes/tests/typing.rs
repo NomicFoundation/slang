@@ -178,6 +178,129 @@ fn test_binary_arithmetic_folds_to_narrowed_literal() {
 }
 
 #[test]
+fn test_binary_bitwise_folds_to_literal() {
+    // OR
+    let (type_, _) = type_of_value_expression("1 | 2");
+    assert_eq!(
+        type_,
+        Type::Literal(LiteralKind::Integer {
+            value: BigInt::from(3)
+        })
+    );
+
+    // AND
+    let (type_, _) = type_of_value_expression("12 & 10");
+    assert_eq!(
+        type_,
+        Type::Literal(LiteralKind::Integer {
+            value: BigInt::from(8)
+        })
+    );
+
+    // XOR
+    let (type_, _) = type_of_value_expression("6 ^ 3");
+    assert_eq!(
+        type_,
+        Type::Literal(LiteralKind::Integer {
+            value: BigInt::from(5)
+        })
+    );
+
+    // Folding hex operands demotes the result to a plain `Integer`
+    // (mirroring the additive folding behaviour).
+    let (type_, _) = type_of_value_expression("0xf0 | 0x0f");
+    assert_eq!(
+        type_,
+        Type::Literal(LiteralKind::Integer {
+            value: BigInt::from(0xff)
+        })
+    );
+
+    // Bitwise AND with a negative literal: BigInt uses arbitrary-precision
+    // two's-complement, so `-1 & 0xff` masks to the low byte.
+    let (type_, _) = type_of_value_expression("(-1) & 0xff");
+    assert_eq!(
+        type_,
+        Type::Literal(LiteralKind::Integer {
+            value: BigInt::from(0xff)
+        })
+    );
+
+    // Bitwise OR of a folded constant feeds further folding.
+    let (type_, _) = type_of_value_expression("(1 | 2) ^ 4");
+    assert_eq!(
+        type_,
+        Type::Literal(LiteralKind::Integer {
+            value: BigInt::from(7)
+        })
+    );
+}
+
+#[test]
+fn test_bitwise_not_folds_to_literal() {
+    // ~x = -x - 1 (two's complement on an infinite-precision integer).
+    let (type_, _) = type_of_value_expression("~1");
+    assert_eq!(
+        type_,
+        Type::Literal(LiteralKind::Integer {
+            value: BigInt::from(-2)
+        })
+    );
+
+    let (type_, _) = type_of_value_expression("~0");
+    assert_eq!(
+        type_,
+        Type::Literal(LiteralKind::Integer {
+            value: BigInt::from(-1)
+        })
+    );
+
+    // Double-complement returns to the original value.
+    let (type_, _) = type_of_value_expression("~(-1)");
+    assert_eq!(
+        type_,
+        Type::Literal(LiteralKind::Integer {
+            value: BigInt::from(0)
+        })
+    );
+
+    // Folding `~hex` demotes the result to a plain `Integer`.
+    let (type_, _) = type_of_value_expression("~0xff");
+    assert_eq!(
+        type_,
+        Type::Literal(LiteralKind::Integer {
+            value: BigInt::from(-256)
+        })
+    );
+
+    // `~` of a folded constant.
+    let (type_, _) = type_of_value_expression("~(1 | 2)");
+    assert_eq!(
+        type_,
+        Type::Literal(LiteralKind::Integer {
+            value: BigInt::from(-4)
+        })
+    );
+}
+
+#[test]
+fn test_bitwise_operations_unresolved_for_rationals() {
+    // Bitwise binary operators don't apply to non-reducing rationals.
+    let (type_, _) = try_type_of_value_expression("1.5 | 1");
+    assert_eq!(type_, None);
+
+    let (type_, _) = try_type_of_value_expression("1 & 0.5");
+    assert_eq!(type_, None);
+
+    let (type_, _) = try_type_of_value_expression("0.5 ^ 0.25");
+    assert_eq!(type_, None);
+
+    // Likewise for the unary bitwise NOT.
+    let (type_, _) = try_type_of_value_expression("~0.5");
+    assert_eq!(type_, None);
+}
+
+#[test]
 fn test_implicit_conversion_uses_literal_value() {
     let (_, mut types) = type_of_value_expression("0");
 

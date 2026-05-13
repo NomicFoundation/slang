@@ -187,7 +187,7 @@ impl<Scope> CompileConstantEvaluator<'_, Scope> {
         let operand = self.evaluate_expression(&prefix_expression.operand)?;
         match &prefix_expression.operator {
             ir::PrefixExpressionOperator::Minus(_) => Some(operand.negate()),
-            // No unary plus in Solidity >= 0.5.0 (v2 only supports >= 0.8.0)
+            ir::PrefixExpressionOperator::Tilde(_) => Some(operand.bit_not()?),
             _ => None,
         }
     }
@@ -407,6 +407,19 @@ mod tests {
     fn test_prefix_expression() {
         assert!(eval_string("-42")
             .is_some_and(|value| value == Number::Integer((-42).to_bigint().unwrap())));
+
+        // Bitwise NOT on an arbitrary-precision integer: `~x = -x - 1`.
+        assert!(eval_string("~1")
+            .is_some_and(|value| value == Number::Integer((-2).to_bigint().unwrap())));
+        assert!(eval_string("~0")
+            .is_some_and(|value| value == Number::Integer((-1).to_bigint().unwrap())));
+        assert!(eval_string("~(-1)")
+            .is_some_and(|value| value == Number::Integer(0.to_bigint().unwrap())));
+        // Hex source: `~` operates on the integer value (provenance is irrelevant here).
+        assert!(eval_string("~0xff")
+            .is_some_and(|value| value == Number::Integer((-256).to_bigint().unwrap())));
+        // Bitwise NOT is not defined on rationals.
+        assert!(eval_string("~0.5").is_none());
     }
 
     #[test]

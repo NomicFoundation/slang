@@ -129,25 +129,27 @@ impl Pass<'_> {
         node: &ir::PrefixExpression,
     ) -> Option<TypeId> {
         match node.operator {
-            ir::PrefixExpressionOperator::Minus(_) => {
+            ir::PrefixExpressionOperator::Minus(_) | ir::PrefixExpressionOperator::Tilde(_) => {
+                // Fold `-<constant>` or `~<constant>` by operating on the
+                // operand's known number value.
                 let operand_type_id = self.typing_of_expression(&node.operand).as_type_id()?;
-                // Fold `-literal` (and more generally `-<constant>`) by
-                // negating the operand's known number value.
                 if let Some(value) = self.types.number_value_of_type_id(operand_type_id) {
+                    let result = match node.operator {
+                        ir::PrefixExpressionOperator::Minus(_) => value.negate(),
+                        ir::PrefixExpressionOperator::Tilde(_) => value.bit_not()?,
+                        _ => unreachable!(),
+                    };
                     Some(
                         self.types
-                            .register_type(Type::Literal(value.negate().to_literal_kind())),
+                            .register_type(Type::Literal(result.to_literal_kind())),
                     )
                 } else {
-                    // TODO(validation): check that the operand type supports
-                    // negation (ie. uint does not)
+                    // TODO(validation): check that the operand type supports the operator
                     Some(operand_type_id)
                 }
             }
             ir::PrefixExpressionOperator::PlusPlus(_)
-            | ir::PrefixExpressionOperator::MinusMinus(_)
-            | ir::PrefixExpressionOperator::Tilde(_) => {
-                // TODO(validation): check that the operand is integer
+            | ir::PrefixExpressionOperator::MinusMinus(_) => {
                 self.typing_of_expression(&node.operand).as_type_id()
             }
             ir::PrefixExpressionOperator::Bang(_) => {

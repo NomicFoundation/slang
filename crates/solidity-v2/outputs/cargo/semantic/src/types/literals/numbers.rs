@@ -228,6 +228,13 @@ impl Number {
         }
     }
 
+    pub(crate) fn bit_not(&self) -> Option<Self> {
+        match self {
+            Self::Integer(value) => Some(Self::Integer(!value)),
+            Self::Rational(_) => None,
+        }
+    }
+
     pub(crate) fn bit_and(&self, other: &Self) -> Option<Self> {
         match (self, other) {
             (Self::Integer(lhs), Self::Integer(rhs)) => Some(Self::Integer(lhs & rhs)),

@@ -237,6 +237,8 @@ impl Visitor for Pass<'_> {
     }
 
     fn leave_shift_expression(&mut self, node: &ir::ShiftExpression) {
+        // TODO(validation): check that the left operand is an integer and the
+        // right operand is an _unsigned_ integer
         let type_id = self.type_of_left_typed_binary_operator_expression(
             &node.left_operand,
             &node.right_operand,
