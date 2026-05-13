@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 1
+
+Error: Unexpected Semicolon. One of AddressKeyword, AtKeyword, Bang, BoolKeyword, BytesKeyword, DecimalLiteral, DeleteKeyword, ErrorKeyword, FalseKeyword, FixedKeyword, FromKeyword, GlobalKeyword, HexLiteral, HexStringLiteral, Identifier, IntKeyword, LayoutKeyword, Minus, MinusMinus, NewKeyword, OpenBracket, OpenParen, PayableKeyword, PlusPlus, RevertKeyword, StringKeyword, StringLiteral, SuperKeyword, ThisKeyword, Tilde, TransientKeyword, TrueKeyword, TypeKeyword, UfixedKeyword, UintKeyword, UnicodeStringLiteral was expected
+   ╭─[input.sol:1:25]
+   │
+ 1 │ contract Foo { uint x = ; }
+   │                         ┬  
+   │                         ╰── Error occurred here.
+───╯
