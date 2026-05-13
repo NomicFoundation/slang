@@ -80,7 +80,7 @@ jobs:
 
       - name: "Smoke Test > infra perf cargo --smoke slang"
         if: "${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
-        run: "./scripts/bin/infra perf cargo --smoke slang"
+        run: "./scripts/bin/infra perf cargo --smoke --pr-benchmark slang"
 
       - name: "Benchmark > infra perf cargo slang"
         if: "${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"
@@ -90,6 +90,34 @@ jobs:
           BENCHER_PR_START_POINT_HASH: "${{ github.event.pull_request.base.sha }}"
           BENCHER_PR_HEAD_HASH: "${{ github.event.pull_request.head.sha }}"
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: "Bench list > Detect diff"
+        id: "bench_list_diff_slang"
+        if: "${{ github.event_name == 'pull_request' }}"
+        continue-on-error: true
+        run: |
+          f="target/perf-new-benches-slang.md"
+          if [ -s "$f" ]; then
+            echo "has_diff=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_diff=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: "Bench list > Sticky comment with diff"
+        if: "${{ steps.bench_list_diff_slang.outputs.has_diff == 'true' }}"
+        continue-on-error: true
+        uses: "marocchino/sticky-pull-request-comment@52423e01640425a022ef5fd42c6fb5f633a02728" # v2.9.4
+        with:
+          header: "bench-list-slang"
+          path: "target/perf-new-benches-slang.md"
+
+      - name: "Bench list > Resolve sticky comment when bench-list matches"
+        if: "${{ steps.bench_list_diff_slang.outputs.has_diff == 'false' }}"
+        continue-on-error: true
+        uses: "marocchino/sticky-pull-request-comment@52423e01640425a022ef5fd42c6fb5f633a02728" # v2.9.4
+        with:
+          header: "bench-list-slang"
+          delete: true
 
       - name: "Benchmark > Upload Benchmarking Data"
         if: "${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:perf') }}"

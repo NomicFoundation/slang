@@ -1,3 +1,4 @@
+use anyhow::{Context, Result};
 use infra_utils::commands::Command;
 use infra_utils::github::GitHub;
 
@@ -151,4 +152,55 @@ fn bencher_archive_command(action: &str, project: &str, branch: &str) {
         .property("--branch", branch)
         .secret("BENCHER_API_TOKEN", token)
         .run();
+}
+
+/// List every benchmark name recorded for `project` on bencher.dev,
+/// paginating through the bencher API.
+///
+/// Honours the `SLANG_BENCHER_PROJECT` env var as an override, matching
+/// `run_bench`. Unauthenticated: slang's bencher projects allow public
+/// read-only listing.
+pub(crate) fn list_project_benchmarks(project: &str) -> Result<Vec<String>> {
+    // 255 is the bencher API's per-page cap; using it minimizes round trips.
+    const PER_PAGE: usize = 255;
+
+    let project = std::env::var("SLANG_BENCHER_PROJECT").unwrap_or(project.to_owned());
+
+    let mut names = Vec::new();
+    let mut page = 1usize;
+    loop {
+        let output = Command::new("bencher")
+            .args([
+                "benchmark",
+                "list",
+                &project,
+                "--per-page",
+                &PER_PAGE.to_string(),
+                "--page",
+                &page.to_string(),
+            ])
+            .evaluate()?;
+
+        let entries: Vec<serde_json::Value> = serde_json::from_str(&output)
+            .with_context(|| format!("failed to parse bencher response for {project}"))?;
+
+        if entries.is_empty() {
+            break;
+        }
+
+        let count = entries.len();
+        names.extend(
+            entries
+                .iter()
+                .filter_map(|entry| entry.get("name").and_then(|v| v.as_str()))
+                .map(str::to_owned),
+        );
+
+        if count < PER_PAGE {
+            break;
+        }
+        page += 1;
+    }
+
+    Ok(names)
 }

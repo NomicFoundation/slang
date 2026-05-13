@@ -1,4 +1,5 @@
 mod archive;
+mod bench_list;
 mod cargo;
 mod npm;
 
