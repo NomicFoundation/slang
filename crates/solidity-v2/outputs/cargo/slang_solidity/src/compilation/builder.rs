@@ -5,7 +5,6 @@ use slang_solidity_v2_common::diagnostics::kinds::compilation::{MissingFile, Unr
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes as cst;
-use slang_solidity_v2_ir::ir;
 use slang_solidity_v2_ir::ir::{self, BuildOutput};
 use slang_solidity_v2_parser::{ParseOutput, Parser};
 use slang_solidity_v2_semantic::context::{

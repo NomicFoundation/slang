@@ -2,7 +2,7 @@
 
 Diagnostics: 1
 
-Error: Only a single mutability keyword can be provided. Found `ViewKeyword` after `PureKeyword`.
+Error: Only a single mutability specifier can be provided.
    ╭─[input.sol:2:23]
    │
  2 │   function foo() pure view returns (uint) {

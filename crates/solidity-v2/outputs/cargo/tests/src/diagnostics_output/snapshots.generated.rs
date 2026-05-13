@@ -21,6 +21,20 @@ mod compilation {
 mod syntax {
     use super::*;
 
+    mod multiple_mutability_specifiers {
+        use super::*;
+
+        #[test]
+        fn function_types() -> Result<()> {
+            run("syntax/multiple_mutability_specifiers", "function_types")
+        }
+
+        #[test]
+        fn functions() -> Result<()> {
+            run("syntax/multiple_mutability_specifiers", "functions")
+        }
+    }
+
     #[test]
     fn unexpected_eof() -> Result<()> {
         run("syntax", "unexpected_eof")
