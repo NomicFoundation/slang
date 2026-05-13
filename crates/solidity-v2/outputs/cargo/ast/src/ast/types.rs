@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use paste::paste;
 use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_semantic::binder;
 use slang_solidity_v2_semantic::context::SemanticContext;
 use slang_solidity_v2_semantic::types::{
     self, DataLocation, FunctionMutability, FunctionVisibility, TypeId,
@@ -136,6 +137,38 @@ impl Type {
             Type::UserDefinedValue(details) => details.type_id,
             Type::Void(details) => details.type_id,
         }
+    }
+
+    /// Returns the data location of this type when it has one.
+    ///
+    /// Container types (`Array`, `Bytes`, `FixedSizeArray`, `String`, `Struct`)
+    /// carry their data location explicitly. `Mapping` is always `Storage`.
+    /// All other types are value types with no associated location and return
+    /// `None`.
+    pub fn data_location(&self) -> Option<DataLocation> {
+        match self {
+            Type::Array(details) => Some(details.location()),
+            Type::Bytes(details) => Some(details.location()),
+            Type::FixedSizeArray(details) => Some(details.location()),
+            Type::String(details) => Some(details.location()),
+            Type::Struct(details) => Some(details.location()),
+            Type::Mapping(_) => Some(DataLocation::Storage),
+            _ => None,
+        }
+    }
+
+    /// Returns `true` if this type is a Solidity reference type
+    /// (`array`, `fixed-size array`, `bytes`, `string`, `mapping`, `struct`).
+    pub fn is_reference_type(&self) -> bool {
+        matches!(
+            self,
+            Type::Array(_)
+                | Type::FixedSizeArray(_)
+                | Type::Bytes(_)
+                | Type::String(_)
+                | Type::Mapping(_)
+                | Type::Struct(_)
+        )
     }
 }
 
@@ -396,6 +429,26 @@ impl UserDefinedValueType {
         };
         Definition::try_create(*definition_id, &self.semantic)
             .expect("invalid user defined value definition")
+    }
+
+    /// Returns the underlying elementary type that this UDVT wraps, or `None`
+    /// if the binder did not resolve a target type (e.g., the declaration is
+    /// ill-formed or references an unsupported elementary type).
+    pub fn target_type(&self) -> Option<Type> {
+        let types::Type::UserDefinedValue { definition_id } = self.internal_type() else {
+            unreachable!("invalid user defined value type");
+        };
+        let binder_definition = self
+            .semantic
+            .binder()
+            .find_definition_by_id(*definition_id)?;
+        let binder::Definition::UserDefinedValueType(udvt_definition) = binder_definition else {
+            unreachable!("UDVT type id should map to UDVT definition");
+        };
+        Some(Type::create(
+            udvt_definition.target_type_id?,
+            &self.semantic,
+        ))
     }
 }
 

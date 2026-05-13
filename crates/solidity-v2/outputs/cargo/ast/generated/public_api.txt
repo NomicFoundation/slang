@@ -923,6 +923,8 @@ pub slang_solidity_v2_ast::ast::Type::UserDefinedValue(slang_solidity_v2_ast::as
 pub slang_solidity_v2_ast::ast::Type::Void(slang_solidity_v2_ast::ast::types::VoidType)
 impl slang_solidity_v2_ast::ast::Type
 pub fn slang_solidity_v2_ast::ast::Type::create(type_id: slang_solidity_v2_semantic::types::TypeId, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> Self
+pub fn slang_solidity_v2_ast::ast::Type::data_location(&self) -> core::option::Option<slang_solidity_v2_semantic::types::DataLocation>
+pub fn slang_solidity_v2_ast::ast::Type::is_reference_type(&self) -> bool
 pub fn slang_solidity_v2_ast::ast::Type::try_create_for_node_id(node_id: slang_solidity_v2_common::nodes::NodeId, semantic: &alloc::sync::Arc<slang_solidity_v2_semantic::context::SemanticContext>) -> core::option::Option<Self>
 pub fn slang_solidity_v2_ast::ast::Type::type_id(&self) -> slang_solidity_v2_semantic::types::TypeId
 impl core::clone::Clone for slang_solidity_v2_ast::ast::Type
