@@ -32,7 +32,14 @@ pub fn default_benchmark_config() -> LibraryBenchmarkConfig {
         // At t-end blocks:         How many heap blocks were alive at the end of execution (were not explicitly freed).
         // Reads bytes:             How many bytes within heap blocks were read during the entire execution.
         // Writes bytes:            How many bytes within heap blocks were written during the entire execution.
-        .tool(Dhat::default())
+        // Keep DHAT's default entry point (the bench fn, with gungraun's
+        // `__gungraun_wrapper_mod` / `__gungraun_wrapper_id_mod_*` fallback)
+        // so setup-time allocations are correctly excluded. However, bump
+        // valgrind's `--num-callers` from the default 12 to 50: slang's
+        // bench-body call chains (parser/IR builder/semantic) can run deeper
+        // than 12 stack frames, so the wrapper falls past the cap and the
+        // PP gets dropped from the filter even though it belongs in scope.
+        .tool(Dhat::with_args(["--num-callers=50"]))
         // 'valgrind' executes tests without any environment variables set by default.
         // Let's disable this behavior to be able to execute our infra utilities:
         .env_clear(false);
