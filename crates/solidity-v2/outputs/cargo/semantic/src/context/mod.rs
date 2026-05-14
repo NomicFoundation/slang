@@ -3,6 +3,7 @@ use std::rc::Rc;
 
 use file_node_mapper::FileNodeMapper;
 use slang_solidity_v2_common::nodes::NodeId;
+use slang_solidity_v2_common::utils::strip_string_literal_quotes;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_ir::ir;
 
@@ -35,16 +36,17 @@ pub fn extract_import_paths_from_source_unit(
         let ir::SourceUnitMember::ImportClause(import_clause) = member else {
             continue;
         };
-        let (node_id, path) = match import_clause {
+        let (node_id, path_string_literal) = match import_clause {
             ir::ImportClause::PathImport(path_import) => {
-                (path_import.id(), path_import.path.unparse().to_owned())
+                (path_import.id(), path_import.path.unparse())
             }
             ir::ImportClause::ImportDeconstruction(import_deconstruction) => (
                 import_deconstruction.id(),
-                import_deconstruction.path.unparse().to_owned(),
+                import_deconstruction.path.unparse(),
             ),
         };
-        import_paths.push((node_id, path));
+        let import_path = strip_string_literal_quotes(path_string_literal).to_owned();
+        import_paths.push((node_id, import_path));
     }
     import_paths
 }

@@ -1,3 +1,4 @@
+use slang_solidity_v2_common::utils::strip_string_literal_prefix_and_quotes;
 use slang_solidity_v2_ir::ir;
 
 /// Decodes the concatenated value of a collection of `StringLiteral` to its raw bytes.
@@ -6,7 +7,7 @@ use slang_solidity_v2_ir::ir;
 pub fn value_of_string_literals(literals: &[ir::StringLiteral]) -> Vec<u8> {
     let mut result = Vec::new();
     for literal in literals {
-        let content = strip_prefix_and_quotes(&literal.text, "");
+        let content = strip_string_literal_prefix_and_quotes(&literal.text, "");
         result.extend(decode_escape_sequences(content));
     }
     result
@@ -18,7 +19,7 @@ pub fn value_of_string_literals(literals: &[ir::StringLiteral]) -> Vec<u8> {
 pub fn value_of_hex_string_literals(literals: &[ir::HexStringLiteral]) -> Vec<u8> {
     let mut result = Vec::new();
     for literal in literals {
-        let content = strip_prefix_and_quotes(&literal.text, "hex");
+        let content = strip_string_literal_prefix_and_quotes(&literal.text, "hex");
         result.extend(decode_hex_string(content));
     }
     result
@@ -31,25 +32,10 @@ pub fn value_of_hex_string_literals(literals: &[ir::HexStringLiteral]) -> Vec<u8
 pub fn value_of_unicode_string_literals(literals: &[ir::UnicodeStringLiteral]) -> Vec<u8> {
     let mut result = Vec::new();
     for literal in literals {
-        let content = strip_prefix_and_quotes(&literal.text, "unicode");
+        let content = strip_string_literal_prefix_and_quotes(&literal.text, "unicode");
         result.extend(decode_escape_sequences(content));
     }
     result
-}
-
-fn strip_prefix_and_quotes<'a>(text: &'a str, prefix: &str) -> &'a str {
-    text.strip_prefix(prefix)
-        .and_then(|stripped| {
-            stripped
-                .strip_prefix('"')
-                .and_then(|s| s.strip_suffix('"'))
-                .or_else(|| {
-                    stripped
-                        .strip_prefix('\'')
-                        .and_then(|s| s.strip_suffix('\''))
-                })
-        })
-        .expect("string prefix mismatch or not quoted")
 }
 
 fn decode_hex_string(content: &str) -> Vec<u8> {
@@ -124,7 +110,7 @@ fn decode_escape_sequences(content: &str) -> Vec<u8> {
 
 #[cfg(test)]
 mod tests {
-    use super::{decode_escape_sequences, decode_hex_string, strip_prefix_and_quotes};
+    use super::{decode_escape_sequences, decode_hex_string};
 
     // ----- decode_hex_string ------
 
@@ -244,49 +230,5 @@ mod tests {
         // Raw multibyte input (legal in unicode strings) passes through as
         // its UTF-8 encoding.
         assert_eq!(decode_escape_sequences("ñ"), &[0xC3, 0xB1]);
-    }
-
-    // ----- strip_prefix_and_quotes -----
-
-    #[test]
-    fn strip_double_quotes_no_prefix() {
-        assert_eq!(strip_prefix_and_quotes(r#""hello""#, ""), "hello");
-    }
-
-    #[test]
-    fn strip_single_quotes_no_prefix() {
-        assert_eq!(strip_prefix_and_quotes("'hello'", ""), "hello");
-    }
-
-    #[test]
-    fn strip_hex_prefix_double_quotes() {
-        assert_eq!(strip_prefix_and_quotes(r#"hex"414243""#, "hex"), "414243");
-    }
-
-    #[test]
-    fn strip_hex_prefix_single_quotes() {
-        assert_eq!(strip_prefix_and_quotes("hex'414243'", "hex"), "414243");
-    }
-
-    #[test]
-    fn strip_unicode_prefix() {
-        assert_eq!(strip_prefix_and_quotes(r#"unicode"ñ""#, "unicode"), "ñ");
-    }
-
-    #[test]
-    fn strip_empty_content() {
-        assert_eq!(strip_prefix_and_quotes(r#""""#, ""), "");
-    }
-
-    #[test]
-    #[should_panic(expected = "string prefix mismatch or not quoted")]
-    fn strip_panics_when_not_quoted() {
-        strip_prefix_and_quotes("unquoted", "");
-    }
-
-    #[test]
-    #[should_panic(expected = "string prefix mismatch or not quoted")]
-    fn strip_panics_on_prefix_mismatch() {
-        strip_prefix_and_quotes("hex'1234'", "unicode");
     }
 }

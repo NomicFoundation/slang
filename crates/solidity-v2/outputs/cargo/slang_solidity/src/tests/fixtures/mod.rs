@@ -69,11 +69,7 @@ impl CompilationBuilderConfig for FixtureBuildConfig<'_> {
         _source_file_id: &str,
         import_path: &str,
     ) -> Result<String, String> {
-        import_path
-            .strip_prefix(|c: char| matches!(c, '"' | '\''))
-            .and_then(|p| p.strip_suffix(|c: char| matches!(c, '"' | '\'')))
-            .map(|p| p.to_owned())
-            .ok_or_else(|| format!("failed to resolve import: {import_path}"))
+        Ok(import_path.to_owned())
     }
 }
 
