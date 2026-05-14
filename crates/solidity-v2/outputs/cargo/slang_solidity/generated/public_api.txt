@@ -27,10 +27,17 @@ pub fn slang_solidity_v2::compilation::CompilationUnit::diagnostics(&self) -> &s
 pub fn slang_solidity_v2::compilation::CompilationUnit::file_ids(&self) -> alloc::vec::Vec<alloc::string::String>
 pub fn slang_solidity_v2::compilation::CompilationUnit::find_contract_by_name(&self, name: &str) -> core::option::Option<slang_solidity_v2_ast::ast::nodes::ContractDefinition>
 pub fn slang_solidity_v2::compilation::CompilationUnit::get_file_ast_root(&self, file_id: &str) -> core::option::Option<slang_solidity_v2_ast::ast::nodes::SourceUnit>
+pub fn slang_solidity_v2::compilation::CompilationUnit::get_file_by_id(&self, id: &str) -> core::option::Option<slang_solidity_v2::compilation::File>
+pub fn slang_solidity_v2::compilation::CompilationUnit::iter_files(&self) -> impl core::iter::traits::iterator::Iterator<Item = slang_solidity_v2::compilation::File> + use<'_>
 pub fn slang_solidity_v2::compilation::CompilationUnit::language_version(&self) -> slang_solidity_v2_common::versions::language_versions::LanguageVersion
+pub struct slang_solidity_v2::compilation::FileStruct
+impl slang_solidity_v2::compilation::FileStruct
+pub fn slang_solidity_v2::compilation::FileStruct::ast_root(&self) -> slang_solidity_v2_ast::ast::nodes::SourceUnit
+pub fn slang_solidity_v2::compilation::FileStruct::id(&self) -> &str
 pub trait slang_solidity_v2::compilation::CompilationBuilderConfig
 pub fn slang_solidity_v2::compilation::CompilationBuilderConfig::read_file(&mut self, file_id: &str) -> core::result::Result<alloc::string::String, alloc::string::String>
 pub fn slang_solidity_v2::compilation::CompilationBuilderConfig::resolve_import(&mut self, source_file_id: &str, import_path: &str) -> core::result::Result<alloc::string::String, alloc::string::String>
+pub type slang_solidity_v2::compilation::File = alloc::sync::Arc<slang_solidity_v2::compilation::FileStruct>
 pub mod slang_solidity_v2::diagnostics
 pub use slang_solidity_v2::diagnostics::Diagnostic
 pub use slang_solidity_v2::diagnostics::DiagnosticCollection

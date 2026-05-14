@@ -6,11 +6,12 @@ use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_semantic::context::{SemanticContext, SemanticFile};
 
-use super::file::File;
+use super::file::InternalFile;
+use super::{File, FileStruct};
 
 pub struct CompilationUnit {
     language_version: LanguageVersion,
-    files: BTreeMap<String, Arc<File>>,
+    files: BTreeMap<String, Arc<InternalFile>>,
     semantic: Arc<SemanticContext>,
     diagnostics: DiagnosticCollection,
 }
@@ -18,11 +19,11 @@ pub struct CompilationUnit {
 impl CompilationUnit {
     pub(super) fn create(
         language_version: LanguageVersion,
-        files: Vec<File>,
+        files: Vec<InternalFile>,
         semantic: SemanticContext,
         diagnostics: DiagnosticCollection,
     ) -> Self {
-        let files: BTreeMap<String, Arc<File>> = files
+        let files: BTreeMap<String, Arc<InternalFile>> = files
             .into_iter()
             .map(|file| (file.id().to_string(), Arc::new(file)))
             .collect();
@@ -47,6 +48,18 @@ impl CompilationUnit {
     /// Returns a list of all file IDs in the compilation unit.
     pub fn file_ids(&self) -> Vec<String> {
         self.files.keys().cloned().collect()
+    }
+
+    pub fn iter_files(&self) -> impl Iterator<Item = File> + use<'_> {
+        self.files
+            .values()
+            .map(|internal_file| FileStruct::create(internal_file, &self.semantic))
+    }
+
+    pub fn get_file_by_id(&self, id: &str) -> Option<File> {
+        self.files
+            .get(id)
+            .map(|internal_file| FileStruct::create(internal_file, &self.semantic))
     }
 
     #[cfg(feature = "__private_testing_utils")]
