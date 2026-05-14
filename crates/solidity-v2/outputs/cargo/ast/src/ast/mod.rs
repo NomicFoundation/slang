@@ -15,7 +15,12 @@ pub use references::Reference;
 mod serialize;
 
 mod types;
-pub use types::{LiteralKind, Number, Type};
+pub use types::{
+    AddressType, ArrayType, BooleanType, ByteArrayType, BytesType, ContractType, EnumType,
+    FixedPointNumberType, FixedSizeArrayType, FunctionType, IntegerType, InterfaceType,
+    LiteralKind, LiteralType, MappingType, Number, StringType, StructType, TupleType, Type,
+    UserDefinedValueType, VoidType,
+};
 
 #[path = "visitor.generated.rs"]
 pub mod visitor;
