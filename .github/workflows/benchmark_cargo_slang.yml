@@ -70,8 +70,6 @@ jobs:
 
       - name: "Restore Cargo Target Cache"
         uses: "./.github/actions/cache/cargo-target/restore"
-        with:
-          cacheKeySuffix: "benchmark-cargo"
 
       - name: "infra setup cargo pipenv"
         run: "./scripts/bin/infra setup cargo pipenv"
