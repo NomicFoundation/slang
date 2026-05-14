@@ -1,7 +1,8 @@
 use std::sync::Arc;
 
 use slang_solidity_v2_common::diagnostics::kinds::syntax::{
-    MultipleMutabilitySpecifiers, MultipleVisibilitySpecifiers,
+    InvalidConstructorVisibility, InvalidFallbackVisibility, MultipleMutabilitySpecifiers,
+    MultipleVisibilitySpecifiers,
 };
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_cst::structured_cst::nodes as input;
@@ -40,6 +41,11 @@ impl Default for NodeIdGenerator {
 pub struct BuildOutput {
     pub ir_root: output::SourceUnit,
     pub diagnostics: DiagnosticCollection,
+}
+
+struct ExtractedVisibilitySpecifier<Output> {
+    visibility: Option<Output>,
+    unique_range: Option<std::ops::Range<usize>>,
 }
 
 pub fn build_source_unit(
@@ -450,6 +456,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         // TODO(validation): free functions are always internal, but
         // otherwise a visibility *must* be set explicitly (>= 0.8.0)
         self.extract_visibility_specifier(&attributes.elements)
+            .visibility
             .unwrap_or(output::FunctionVisibility::Internal)
     }
 
@@ -488,6 +495,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         attributes: &input::FunctionTypeAttributes,
     ) -> output::FunctionVisibility {
         self.extract_visibility_specifier(&attributes.elements)
+            .visibility
             .unwrap_or(output::FunctionVisibility::Internal)
     }
 
@@ -536,11 +544,26 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         attributes: &input::ConstructorAttributes,
     ) -> output::FunctionVisibility {
-        // TODO(validation): starting from 0.7.0 solc only accepts 'public' as a constructor
-        // visibility. It produces a warning saying that visibility is ignored. For any other
-        // visibility solc emits an error "Constructor cannot have visibility." It diagnoses
-        // multiple visibility keywords in all cases.
-        self.extract_visibility_specifier(&attributes.elements)
+        // Constructor visibility in solc starting from 0.7.0:
+        // - `public` is accepted, and solc emits a warning saying that visibility is ignored.
+        // - non-public constructor visibility is rejected.
+        // We don't emit the `public` warning for now.
+        // `MultipleVisibilitySpecifiers` is emitted separately for duplicate visibility keywords.
+        // `InvalidConstructorVisibility` is emitted for non-public constructor visibility.
+        let extracted = self.extract_visibility_specifier(&attributes.elements);
+
+        if matches!(
+            extracted.visibility.as_ref(),
+            Some(output::FunctionVisibility::Internal)
+        ) {
+            if let Some(range) = extracted.unique_range {
+                self.diagnostics
+                    .push(self.file_id.to_owned(), range, InvalidConstructorVisibility);
+            }
+        }
+
+        extracted
+            .visibility
             .unwrap_or(output::FunctionVisibility::Public)
     }
 
@@ -570,8 +593,18 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let kind = output::FunctionKind::Fallback;
         let name = None;
         let parameters = self.build_parameters_declaration(&source.parameters);
-        // TODO(validation): fallback functions *must* have external visibility
-        let visibility = output::FunctionVisibility::External;
+        // Fallback functions *must* have external visibility
+        let visibility = match self.extract_fallback_visibility(&source.attributes.elements) {
+            Some(v) => v,
+            None => {
+                self.diagnostics.push(
+                    self.file_id.to_owned(),
+                    range.clone(),
+                    InvalidFallbackVisibility,
+                );
+                output::FunctionVisibility::External
+            }
+        };
         let mutability = self
             .extract_mutability_specifier(&source.attributes.elements)
             .unwrap_or(output::FunctionMutability::NonPayable);
@@ -774,6 +807,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         attributes: &input::StateVariableAttributes,
     ) -> output::StateVariableVisibility {
         self.extract_visibility_specifier(&attributes.elements)
+            .visibility
             .unwrap_or(output::StateVariableVisibility::Internal)
     }
 
@@ -958,30 +992,74 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         result
     }
 
+    /// Extracts visibility from attributes and tracks whether it is unique.
+    ///
+    /// Returns:
+    /// - `visibility`: first parsed visibility, if any.
+    /// - `unique_range`: source range of that visibility only when it is the only one.
+    ///
+    /// If additional visibility specifiers are found, emits `MultipleVisibilitySpecifiers` for
+    /// each duplicate and clears `unique_range`.
     fn extract_visibility_specifier<'a, Input, Output>(
         &mut self,
         attributes: impl IntoIterator<Item = &'a Input>,
-    ) -> Option<Output>
+    ) -> ExtractedVisibilitySpecifier<Output>
     where
         Input: TextRange + 'a,
         &'a Input: TryInto<Output>,
     {
-        let mut result: Option<Output> = None;
+        let mut visibility: Option<Output> = None;
+        let mut unique_range: Option<std::ops::Range<usize>> = None;
 
         for attribute in attributes {
             if let Ok(current) = attribute.try_into() {
-                if result.is_some() {
+                let range = attribute.calculate_text_range().unwrap();
+
+                if visibility.is_some() {
                     self.diagnostics.push(
                         self.file_id.to_owned(),
-                        attribute.calculate_text_range().unwrap(),
+                        range,
                         MultipleVisibilitySpecifiers,
                     );
+                    unique_range = None;
                 } else {
-                    result = Some(current);
+                    visibility = Some(current);
+                    unique_range = Some(range);
                 }
             }
         }
 
+        ExtractedVisibilitySpecifier {
+            visibility,
+            unique_range,
+        }
+    }
+
+    /// Extracts fallback function visibility.
+    ///
+    /// This is needed because fallback function attributes are a distinct enum
+    /// (`FallbackFunctionAttribute`) and do not implement the same conversion traits
+    /// as ordinary function attributes. Only `external` is valid for fallback visibility.
+    fn extract_fallback_visibility(
+        &mut self,
+        attributes: &[input::FallbackFunctionAttribute],
+    ) -> Option<output::FunctionVisibility> {
+        let mut result = None;
+        for attribute in attributes {
+            if let input::FallbackFunctionAttribute::ExternalKeyword(keyword) = attribute {
+                if let Some(range) = keyword.calculate_text_range() {
+                    if result.is_some() {
+                        self.diagnostics.push(
+                            self.file_id.to_owned(),
+                            range,
+                            MultipleVisibilitySpecifiers,
+                        );
+                    } else {
+                        result = Some(output::FunctionVisibility::External);
+                    }
+                }
+            }
+        }
         result
     }
 }

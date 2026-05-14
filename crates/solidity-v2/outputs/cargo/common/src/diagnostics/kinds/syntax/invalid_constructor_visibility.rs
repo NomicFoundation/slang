@@ -3,21 +3,21 @@ use serde::Serialize;
 use crate::diagnostics::extensions::DiagnosticExtensions;
 use crate::diagnostics::severity::DiagnosticSeverity;
 
-/// Diagnostic emitted when a definition carries more than one visibility
-/// specifier (e.g. both `public` and `private`).
+/// Diagnostic emitted when a constructor declares a visibility other than
+/// `public`.
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
-pub struct MultipleVisibilitySpecifiers;
+pub struct InvalidConstructorVisibility;
 
-impl DiagnosticExtensions for MultipleVisibilitySpecifiers {
+impl DiagnosticExtensions for InvalidConstructorVisibility {
     fn severity(&self) -> DiagnosticSeverity {
         DiagnosticSeverity::Error
     }
 
     fn code(&self) -> &'static str {
-        "syntax/multiple-visibility-specifiers"
+        "syntax/invalid-constructor-visibility"
     }
 
     fn message(&self) -> String {
-        "Only a single visibility specifier can be provided.".to_string()
+        "Constructor visibility must be `public` or omitted.".to_string()
     }
 }

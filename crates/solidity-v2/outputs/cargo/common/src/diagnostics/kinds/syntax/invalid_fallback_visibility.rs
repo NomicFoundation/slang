@@ -3,21 +3,20 @@ use serde::Serialize;
 use crate::diagnostics::extensions::DiagnosticExtensions;
 use crate::diagnostics::severity::DiagnosticSeverity;
 
-/// Diagnostic emitted when a definition carries more than one visibility
-/// specifier (e.g. both `public` and `private`).
+/// Diagnostic emitted when a fallback function does not declare explicit `external` visibility.
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
-pub struct MultipleVisibilitySpecifiers;
+pub struct InvalidFallbackVisibility;
 
-impl DiagnosticExtensions for MultipleVisibilitySpecifiers {
+impl DiagnosticExtensions for InvalidFallbackVisibility {
     fn severity(&self) -> DiagnosticSeverity {
         DiagnosticSeverity::Error
     }
 
     fn code(&self) -> &'static str {
-        "syntax/multiple-visibility-specifiers"
+        "syntax/invalid-fallback-visibility"
     }
 
     fn message(&self) -> String {
-        "Only a single visibility specifier can be provided.".to_string()
+        "Fallback function must have explicit `external` visibility.".to_string()
     }
 }

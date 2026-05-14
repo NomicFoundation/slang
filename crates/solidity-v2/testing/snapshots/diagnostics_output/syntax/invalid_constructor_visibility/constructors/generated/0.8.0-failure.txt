@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 4
+
+Error: Constructor visibility must be `public` or omitted.
+   ╭─[input.sol:2:17]
+   │
+ 2 │   constructor() internal {}
+   │                 ────┬───  
+   │                     ╰───── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:4:24]
+   │
+ 4 │   constructor() public internal {}
+   │                        ────┬───  
+   │                            ╰───── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:6:26]
+   │
+ 6 │   constructor() internal public {}
+   │                          ───┬──  
+   │                             ╰──── Error occurred here.
+───╯
+
+Error: Only a single visibility specifier can be provided.
+   ╭─[input.sol:8:26]
+   │
+ 8 │   constructor() internal internal {}
+   │                          ────┬───  
+   │                              ╰───── Error occurred here.
+───╯

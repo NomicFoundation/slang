@@ -240,6 +240,8 @@ pub fn slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImpo
 pub mod slang_solidity_v2_common::diagnostics::kinds::syntax
 pub enum slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
 pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::ExtraTerminal(slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal)
+pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::InvalidConstructorVisibility(slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility)
+pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::InvalidFallbackVisibility(slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility)
 pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::MultipleMutabilitySpecifiers(slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers)
 pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::MultipleVisibilitySpecifiers(slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers)
 pub slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::UnexpectedEof(slang_solidity_v2_common::diagnostics::kinds::syntax::UnexpectedEof)
@@ -252,6 +254,10 @@ impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::synt
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::eq(&self, other: &slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind) -> bool
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
@@ -293,6 +299,44 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility::eq(&self, other: &slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+pub struct slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility
+impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility
+impl core::cmp::Eq for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility
+impl core::cmp::PartialEq for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility::eq(&self, other: &slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility) -> bool
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility> for slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::SyntaxDiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility) -> Self
+impl core::fmt::Debug for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility
+impl serde_core::ser::Serialize for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 pub struct slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers
 impl core::clone::Clone for slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers::clone(&self) -> slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers
@@ -408,6 +452,10 @@ impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::compilati
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::compilation::UnresolvedImport) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility) -> Self
+impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
+pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
 pub fn slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind::from(d: slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers) -> Self
 impl core::convert::From<slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleVisibilitySpecifiers> for slang_solidity_v2_common::diagnostics::kinds::DiagnosticKind
@@ -513,6 +561,14 @@ impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solid
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal::message(&self) -> alloc::string::String
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::ExtraTerminal::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidConstructorVisibility::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
+impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility::code(&self) -> &'static str
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility::message(&self) -> alloc::string::String
+pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::InvalidFallbackVisibility::severity(&self) -> slang_solidity_v2_common::diagnostics::DiagnosticSeverity
 impl slang_solidity_v2_common::diagnostics::DiagnosticExtensions for slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers::code(&self) -> &'static str
 pub fn slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers::message(&self) -> alloc::string::String

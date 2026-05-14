@@ -1,4 +1,6 @@
 mod extra_terminal;
+mod invalid_constructor_visibility;
+mod invalid_fallback_visibility;
 mod multiple_mutability_specifiers;
 mod multiple_visibility_specifiers;
 mod unexpected_eof;
@@ -6,6 +8,8 @@ mod unexpected_terminal;
 mod unsupported_syntax;
 
 pub use extra_terminal::ExtraTerminal;
+pub use invalid_constructor_visibility::InvalidConstructorVisibility;
+pub use invalid_fallback_visibility::InvalidFallbackVisibility;
 pub use multiple_mutability_specifiers::MultipleMutabilitySpecifiers;
 pub use multiple_visibility_specifiers::MultipleVisibilitySpecifiers;
 use serde::Serialize;
@@ -36,5 +40,9 @@ define_diagnostic_kind! {
         MultipleMutabilitySpecifiers(MultipleMutabilitySpecifiers),
         /// More than one visibility specifier was provided on a definition.
         MultipleVisibilitySpecifiers(MultipleVisibilitySpecifiers),
+        /// A constructor has a visibility specifier other than `public`.
+        InvalidConstructorVisibility(InvalidConstructorVisibility),
+        /// Fallback function does not have external visibility.
+        InvalidFallbackVisibility(InvalidFallbackVisibility),
     }
 }

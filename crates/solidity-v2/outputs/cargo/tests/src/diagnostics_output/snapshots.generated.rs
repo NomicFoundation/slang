@@ -21,6 +21,24 @@ mod compilation {
 mod syntax {
     use super::*;
 
+    mod invalid_constructor_visibility {
+        use super::*;
+
+        #[test]
+        fn constructors() -> Result<()> {
+            run("syntax/invalid_constructor_visibility", "constructors")
+        }
+    }
+
+    mod invalid_fallback_visibility {
+        use super::*;
+
+        #[test]
+        fn fallbacks() -> Result<()> {
+            run("syntax/invalid_fallback_visibility", "fallbacks")
+        }
+    }
+
     mod multiple_mutability_specifiers {
         use super::*;
 
