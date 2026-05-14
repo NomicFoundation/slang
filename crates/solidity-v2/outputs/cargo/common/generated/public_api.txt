@@ -764,6 +764,9 @@ impl core::marker::Copy for slang_solidity_v2_common::terminals::TerminalKind
 impl core::marker::StructuralPartialEq for slang_solidity_v2_common::terminals::TerminalKind
 impl serde_core::ser::Serialize for slang_solidity_v2_common::terminals::TerminalKind
 pub fn slang_solidity_v2_common::terminals::TerminalKind::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+pub mod slang_solidity_v2_common::utils
+pub fn slang_solidity_v2_common::utils::strip_string_literal_prefix_and_quotes<'a>(text: &'a str, prefix: &str) -> &'a str
+pub fn slang_solidity_v2_common::utils::strip_string_literal_quotes(text: &str) -> &str
 pub mod slang_solidity_v2_common::versions
 pub enum slang_solidity_v2_common::versions::FromSemverError
 pub slang_solidity_v2_common::versions::FromSemverError::UnexpectedMetadata
