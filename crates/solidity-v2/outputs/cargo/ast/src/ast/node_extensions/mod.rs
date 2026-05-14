@@ -1,6 +1,10 @@
+mod common;
+
 mod contract_base;
 mod contract_definition;
 mod contract_members;
+mod decimal_number_expression;
+mod hex_number_expression;
 mod interface_definition;
 pub use contract_base::ContractBase;
 

@@ -281,6 +281,10 @@ pub fn slang_solidity_v2_semantic::context::SemanticFile::ir_root(&self) -> &sla
 pub fn slang_solidity_v2_semantic::context::SemanticFile::resolved_import_by_node_id(&self, node_id: slang_solidity_v2_common::nodes::NodeId) -> core::option::Option<&alloc::string::String>
 pub fn slang_solidity_v2_semantic::context::extract_import_paths_from_source_unit(source_unit: &slang_solidity_v2_ir::ir::nodes::SourceUnit) -> alloc::vec::Vec<(slang_solidity_v2_common::nodes::NodeId, alloc::string::String)>
 pub mod slang_solidity_v2_semantic::types
+pub mod slang_solidity_v2_semantic::types::literals
+pub fn slang_solidity_v2_semantic::types::literals::value_of_hex_string_literals(literals: &[slang_solidity_v2_ir::ir::nodes::HexStringLiteral]) -> alloc::vec::Vec<u8>
+pub fn slang_solidity_v2_semantic::types::literals::value_of_string_literals(literals: &[slang_solidity_v2_ir::ir::nodes::StringLiteral]) -> alloc::vec::Vec<u8>
+pub fn slang_solidity_v2_semantic::types::literals::value_of_unicode_string_literals(literals: &[slang_solidity_v2_ir::ir::nodes::UnicodeStringLiteral]) -> alloc::vec::Vec<u8>
 pub enum slang_solidity_v2_semantic::types::DataLocation
 pub slang_solidity_v2_semantic::types::DataLocation::Calldata
 pub slang_solidity_v2_semantic::types::DataLocation::Inherited
@@ -339,15 +343,17 @@ impl core::marker::Copy for slang_solidity_v2_semantic::types::FunctionVisibilit
 impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::types::FunctionVisibility
 pub enum slang_solidity_v2_semantic::types::LiteralKind
 pub slang_solidity_v2_semantic::types::LiteralKind::Address
-pub slang_solidity_v2_semantic::types::LiteralKind::DecimalInteger
 pub slang_solidity_v2_semantic::types::LiteralKind::HexInteger
 pub slang_solidity_v2_semantic::types::LiteralKind::HexInteger::bytes: u32
+pub slang_solidity_v2_semantic::types::LiteralKind::HexInteger::value: num_bigint::bigint::BigInt
 pub slang_solidity_v2_semantic::types::LiteralKind::HexString
-pub slang_solidity_v2_semantic::types::LiteralKind::HexString::bytes: u32
+pub slang_solidity_v2_semantic::types::LiteralKind::HexString::bytes: usize
+pub slang_solidity_v2_semantic::types::LiteralKind::Integer
+pub slang_solidity_v2_semantic::types::LiteralKind::Integer::value: num_bigint::bigint::BigInt
 pub slang_solidity_v2_semantic::types::LiteralKind::Rational
+pub slang_solidity_v2_semantic::types::LiteralKind::Rational::value: num_rational::BigRational
 pub slang_solidity_v2_semantic::types::LiteralKind::String
-pub slang_solidity_v2_semantic::types::LiteralKind::String::bytes: u32
-pub slang_solidity_v2_semantic::types::LiteralKind::Zero
+pub slang_solidity_v2_semantic::types::LiteralKind::String::bytes: usize
 impl core::clone::Clone for slang_solidity_v2_semantic::types::LiteralKind
 pub fn slang_solidity_v2_semantic::types::LiteralKind::clone(&self) -> slang_solidity_v2_semantic::types::LiteralKind
 impl core::cmp::Eq for slang_solidity_v2_semantic::types::LiteralKind
@@ -358,6 +364,20 @@ pub fn slang_solidity_v2_semantic::types::LiteralKind::fmt(&self, f: &mut core::
 impl core::hash::Hash for slang_solidity_v2_semantic::types::LiteralKind
 pub fn slang_solidity_v2_semantic::types::LiteralKind::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
 impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::types::LiteralKind
+pub enum slang_solidity_v2_semantic::types::Number
+pub slang_solidity_v2_semantic::types::Number::Integer(num_bigint::bigint::BigInt)
+pub slang_solidity_v2_semantic::types::Number::Rational(num_rational::BigRational)
+impl slang_solidity_v2_semantic::types::Number
+pub fn slang_solidity_v2_semantic::types::Number::from_literal_kind(kind: &slang_solidity_v2_semantic::types::LiteralKind) -> core::option::Option<Self>
+pub fn slang_solidity_v2_semantic::types::Number::is_negative(&self) -> bool
+pub fn slang_solidity_v2_semantic::types::Number::is_zero(&self) -> bool
+impl core::clone::Clone for slang_solidity_v2_semantic::types::Number
+pub fn slang_solidity_v2_semantic::types::Number::clone(&self) -> slang_solidity_v2_semantic::types::Number
+impl core::cmp::PartialEq for slang_solidity_v2_semantic::types::Number
+pub fn slang_solidity_v2_semantic::types::Number::eq(&self, other: &slang_solidity_v2_semantic::types::Number) -> bool
+impl core::fmt::Debug for slang_solidity_v2_semantic::types::Number
+pub fn slang_solidity_v2_semantic::types::Number::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::types::Number
 pub enum slang_solidity_v2_semantic::types::Type
 pub slang_solidity_v2_semantic::types::Type::Address
 pub slang_solidity_v2_semantic::types::Type::Address::payable: bool
@@ -404,8 +424,10 @@ pub slang_solidity_v2_semantic::types::Type::Void
 impl slang_solidity_v2_semantic::types::Type
 pub fn slang_solidity_v2_semantic::types::Type::can_return_from_getter(&self) -> bool
 pub fn slang_solidity_v2_semantic::types::Type::data_location(&self) -> core::option::Option<slang_solidity_v2_semantic::types::DataLocation>
+pub fn slang_solidity_v2_semantic::types::Type::is_contract_or_interface(&self) -> bool
 pub fn slang_solidity_v2_semantic::types::Type::is_inherited_location(&self) -> bool
 pub fn slang_solidity_v2_semantic::types::Type::is_literal_number(&self) -> bool
+pub fn slang_solidity_v2_semantic::types::Type::number_value(&self) -> core::option::Option<slang_solidity_v2_semantic::types::Number>
 impl slang_solidity_v2_semantic::types::Type
 pub fn slang_solidity_v2_semantic::types::Type::from_bytes_keyword(keyword: &str, data_location: core::option::Option<slang_solidity_v2_semantic::types::DataLocation>) -> core::option::Option<Self>
 pub fn slang_solidity_v2_semantic::types::Type::from_fixed_keyword(keyword: &str) -> Self
@@ -456,6 +478,7 @@ impl core::marker::StructuralPartialEq for slang_solidity_v2_semantic::types::Ty
 pub struct slang_solidity_v2_semantic::types::TypeRegistry
 impl slang_solidity_v2_semantic::types::TypeRegistry
 pub fn slang_solidity_v2_semantic::types::TypeRegistry::get_type_by_id(&self, type_id: slang_solidity_v2_semantic::types::TypeId) -> &slang_solidity_v2_semantic::types::Type
+pub fn slang_solidity_v2_semantic::types::TypeRegistry::number_value_of_type_id(&self, type_id: slang_solidity_v2_semantic::types::TypeId) -> core::option::Option<slang_solidity_v2_semantic::types::Number>
 pub fn slang_solidity_v2_semantic::types::TypeRegistry::type_id_is_function_and_overrides(&self, type_id: slang_solidity_v2_semantic::types::TypeId, other_type_id: slang_solidity_v2_semantic::types::TypeId) -> bool
 impl core::default::Default for slang_solidity_v2_semantic::types::TypeRegistry
 pub fn slang_solidity_v2_semantic::types::TypeRegistry::default() -> Self

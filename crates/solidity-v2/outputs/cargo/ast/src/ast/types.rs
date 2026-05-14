@@ -6,6 +6,7 @@ use slang_solidity_v2_semantic::context::SemanticContext;
 use slang_solidity_v2_semantic::types::{
     self, DataLocation, FunctionMutability, FunctionVisibility, TypeId,
 };
+pub use slang_solidity_v2_semantic::types::{LiteralKind, Number};
 
 use super::Definition;
 
@@ -324,7 +325,15 @@ impl InterfaceType {
     }
 }
 
-impl LiteralType {}
+impl LiteralType {
+    /// Returns the narrowed kind of this literal type.
+    pub fn kind(&self) -> LiteralKind {
+        let types::Type::Literal(kind) = self.internal_type() else {
+            unreachable!("LiteralType wraps a literal variant by construction")
+        };
+        kind.clone()
+    }
+}
 
 impl MappingType {
     pub fn key_type(&self) -> Type {
