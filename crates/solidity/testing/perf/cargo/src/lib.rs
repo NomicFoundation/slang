@@ -17,7 +17,7 @@ mod unit_tests {
     const PROJECT_TO_TEST: &str = "ui_pool_data_provider_v3";
     // Sum of the contracts, interfaces, and libraries in all of the files of the project.
     const CONTRACT_COUNT: usize = 25;
-    // Sum of the identifiers resolved by the binder.
+    // Sum of the identifiers in the project.
     const IDENTIFIER_COUNT: usize = 2829;
     // Sum of the references resolved by the binder.
     const RESOLVED_REFERENCES_COUNT: usize = 1443;

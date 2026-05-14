@@ -54,18 +54,21 @@ pub fn build_files(
             let import_paths = extract_import_paths_from_source_unit(&ir_root);
             let resolved_imports = import_paths
                 .iter()
-                .filter_map(|(node_id, import_path)| {
+                .map(|(node_id, import_path)| {
                     // Import paths come from the IR as the unparsed string
                     // literal, including the surrounding quotes; strip them
                     // before delegating to the resolver (which expects the
                     // unquoted path).
                     let stripped = import_path
                         .strip_prefix(|c: char| matches!(c, '"' | '\''))
-                        .and_then(|p| p.strip_suffix(|c: char| matches!(c, '"' | '\'')))?
+                        .and_then(|p| p.strip_suffix(|c: char| matches!(c, '"' | '\'')))
+                        .expect("import path should be a quoted string literal")
                         .trim();
-                    let resolved_file_id =
-                        project.import_resolver.resolve_import(file_id, stripped)?;
-                    Some((*node_id, resolved_file_id))
+                    let resolved_file_id = project
+                        .import_resolver
+                        .resolve_import(file_id, stripped)
+                        .expect("files to be resolved");
+                    (*node_id, resolved_file_id)
                 })
                 .collect();
             File {

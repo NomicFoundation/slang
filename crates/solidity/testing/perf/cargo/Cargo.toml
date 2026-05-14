@@ -25,9 +25,6 @@ streaming-iterator = { workspace = true }
 tree-sitter-solidity = { workspace = true }
 tree-sitter = { workspace = true }
 
-[dev-dependencies]
-paste = { workspace = true }
-
 [[bench]]
 name = "slang"
 harness = false
