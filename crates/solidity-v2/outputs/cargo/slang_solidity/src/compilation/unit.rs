@@ -68,12 +68,6 @@ impl CompilationUnit {
         &self.semantic
     }
 
-    pub fn get_file_ast_root(&self, file_id: &str) -> Option<ast::SourceUnit> {
-        self.files
-            .get(file_id)
-            .map(|file| ast::create_source_unit(file.ir_root(), &self.semantic))
-    }
-
     #[cfg(feature = "__private_testing_utils")]
     #[doc(hidden)]
     pub fn get_file_ir_root(&self, file_id: &str) -> Option<slang_solidity_v2_ir::ir::SourceUnit> {
