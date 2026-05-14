@@ -64,4 +64,10 @@ impl FileStruct {
     pub fn ast_root(&self) -> ast::SourceUnit {
         ast::create_source_unit(&self.file.ir_root, &self.semantic)
     }
+
+    #[cfg(feature = "__private_testing_utils")]
+    #[doc(hidden)]
+    pub fn ir_root(&self) -> ir::SourceUnit {
+        Arc::clone(&self.file.ir_root)
+    }
 }

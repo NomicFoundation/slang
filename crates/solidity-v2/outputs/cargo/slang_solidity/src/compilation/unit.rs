@@ -68,14 +68,6 @@ impl CompilationUnit {
         &self.semantic
     }
 
-    #[cfg(feature = "__private_testing_utils")]
-    #[doc(hidden)]
-    pub fn get_file_ir_root(&self, file_id: &str) -> Option<slang_solidity_v2_ir::ir::SourceUnit> {
-        self.files
-            .get(file_id)
-            .map(|file| Arc::clone(file.ir_root()))
-    }
-
     pub fn all_definitions(&self) -> impl Iterator<Item = ast::Definition> + use<'_> {
         self.semantic.all_definitions().map(|definition| {
             ast::Definition::try_create(definition.node_id(), &self.semantic).unwrap()
