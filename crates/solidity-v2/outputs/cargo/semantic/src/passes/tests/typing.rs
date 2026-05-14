@@ -598,3 +598,125 @@ fn test_hex_string_literal_byte_count() {
     let (type_, _) = type_of_value_expression(r#"hex"4142" hex"43""#);
     assert_eq!(type_, Type::Literal(LiteralKind::HexString { bytes: 3 }));
 }
+
+/// Locates a function definition by `contract_name` and `function_name` within
+/// a source unit. Panics if either the contract or the function is not found.
+fn find_contract_function<'a>(
+    source_unit: &'a ir::SourceUnit,
+    contract_name: &str,
+    function_name: &str,
+) -> &'a ir::FunctionDefinition {
+    let contract = source_unit
+        .members
+        .iter()
+        .find_map(|member| match member {
+            ir::SourceUnitMember::ContractDefinition(contract)
+                if contract.name.unparse() == contract_name =>
+            {
+                Some(contract)
+            }
+            _ => None,
+        })
+        .unwrap_or_else(|| panic!("contract {contract_name} not found"));
+
+    contract
+        .members
+        .iter()
+        .find_map(|member| match member {
+            ir::ContractMember::FunctionDefinition(function)
+                if function
+                    .name
+                    .as_ref()
+                    .is_some_and(|name| name.unparse() == function_name) =>
+            {
+                Some(function)
+            }
+            _ => None,
+        })
+        .unwrap_or_else(|| panic!("function {function_name} not found in contract {contract_name}"))
+}
+
+/// Resolves expression statement types in the body of the given function, in
+/// source order. Skips non-expression statements.
+fn expression_statement_types(
+    function: &ir::FunctionDefinition,
+    binder: &Binder,
+    types: &TypeRegistry,
+) -> Vec<Type> {
+    let body = function.body.as_ref().expect("function has no body");
+    body.statements
+        .iter()
+        .filter_map(|stmt| {
+            let ir::Statement::ExpressionStatement(expression_statement) = stmt else {
+                return None;
+            };
+            let node_id = node_id_for_expression_typing(&expression_statement.expression)
+                .expect("expression has no NodeId for typing");
+            let Typing::Resolved(type_id) = binder.node_typing(node_id) else {
+                panic!("expression did not resolve to a type");
+            };
+            Some(types.get_type_by_id(type_id).clone())
+        })
+        .collect()
+}
+
+#[test]
+fn test_data_locations_of_state_variable_and_getter_accesses() {
+    const CONTENTS: &str = r#"
+contract Test {
+    struct Foo {
+        bytes xs;
+    }
+    bytes public bs;
+    Foo public foo;
+
+    function test(Test t) internal view {
+        bs;      // bytes storage
+        foo.xs;  // bytes storage
+        t.bs();  // bytes memory
+        t.foo(); // bytes memory
+    }
+}
+"#;
+
+    let mut id_generator = NodeIdGenerator::default();
+    let file = build_file("test.sol", CONTENTS, &mut id_generator);
+    let files = [file];
+
+    let mut binder = Binder::default();
+    let mut types = TypeRegistry::default();
+    let language_version = LanguageVersion::V0_8_30;
+
+    p1_collect_definitions::run(&files, &mut binder);
+    p2_linearise_contracts::run(&files, &mut binder);
+    p3_type_definitions::run(&files, &mut binder, &mut types);
+    p4_resolve_references::run(&files, &mut binder, &mut types, language_version);
+
+    let function = find_contract_function(files[0].ir_root(), "Test", "test");
+    let expression_types = expression_statement_types(function, &binder, &types);
+
+    // In source order:
+    //  - `bs;` — internal access to a `bytes` storage variable: `bytes storage`.
+    //  - `foo.xs;` — `xs` is declared with `Inherited` location inside the
+    //    struct; the member access propagates the operand's storage location.
+    //  - `t.bs();` — external call to the auto-generated getter of `bytes bs`;
+    //    the returned reference type lives in memory.
+    //  - `t.foo();` — external call to the auto-generated getter of `Foo foo`.
+    //    `Foo` has a single returnable field (`bytes xs`), so the getter
+    //    returns just `bytes`, again in memory.
+    let expected = vec![
+        Type::Bytes {
+            location: DataLocation::Storage,
+        },
+        Type::Bytes {
+            location: DataLocation::Storage,
+        },
+        Type::Bytes {
+            location: DataLocation::Memory,
+        },
+        Type::Bytes {
+            location: DataLocation::Memory,
+        },
+    ];
+    assert_eq!(expression_types, expected);
+}

@@ -168,25 +168,29 @@ impl Pass<'_> {
                 Type::Address { .. }
                 | Type::Boolean
                 | Type::ByteArray { .. }
-                | Type::Bytes { .. }
                 | Type::Contract { .. }
                 | Type::Enum { .. }
                 | Type::FixedPointNumber { .. }
                 | Type::Function { .. }
                 | Type::Integer { .. }
                 | Type::Interface { .. }
-                | Type::String { .. }
                 | Type::UserDefinedValue { .. } => break,
 
-                Type::Struct {
-                    definition_id,
-                    location,
-                } => {
+                Type::Bytes { .. } => {
+                    // getters will always return values in memory
+                    return_type = self.types.bytes_memory();
+                    break;
+                }
+                Type::String { .. } => {
+                    // getters will always return values in memory
+                    return_type = self.types.string();
+                    break;
+                }
+
+                Type::Struct { definition_id, .. } => {
                     // For structs the getter will return a tuple with all value
                     // type and string/bytes fields. It won't return nested
                     // structs or arrays.
-                    let struct_location = *location;
-
                     // To retrieve the fields we need to go through the
                     // scope associated to the struct...
                     let scope_id = self
@@ -209,16 +213,17 @@ impl Pass<'_> {
                         if !member_type.can_return_from_getter() {
                             continue;
                         }
-                        // Struct member types carry `DataLocation::Inherited` by
-                        // design (the location is the containing struct's).
-                        // Substitute the struct's location so the getter's
-                        // return type doesn't leak `Inherited` out.
-                        let member_type_id = if member_type.is_inherited_location() {
+                        let member_type_id = if member_type
+                            .data_location()
+                            .is_none_or(|location| location == DataLocation::Memory)
+                        {
+                            member_type_id
+                        } else {
+                            // Data location is always memory for getters, so we
+                            // need to override it if necessary
                             let member_type = member_type.clone();
                             self.types
-                                .register_type_with_data_location(member_type, struct_location)
-                        } else {
-                            member_type_id
+                                .register_type_with_data_location(member_type, DataLocation::Memory)
                         };
                         types.push(member_type_id);
                     }
