@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use slang_solidity_v2_common::diagnostics::kinds::syntax;
 use slang_solidity_v2_common::diagnostics::kinds::syntax::{
     InvalidConstructorVisibility, InvalidFallbackVisibility, InvalidReceiveAttributes,
     MultipleMutabilitySpecifiers, MultipleVisibilitySpecifiers,
@@ -219,7 +220,20 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             input::FunctionName::ReceiveKeyword(_) => (output::FunctionKind::Receive, None),
         };
         let parameters = self.build_parameters_declaration(&source.parameters);
-        let visibility = self.function_visibility(&source.attributes);
+        let extracted_visibility = self.extract_visibility_specifier(&source.attributes.elements);
+        let visibility = match extracted_visibility.visibility {
+            Some(v) => v,
+            None => {
+                self.diagnostics.push(
+                    self.file_id.to_owned(),
+                    extracted_visibility
+                        .unique_range
+                        .unwrap_or_else(|| range.clone()),
+                    syntax::InvalidFunctionVisibility,
+                );
+                output::FunctionVisibility::Internal
+            }
+        };
         let mutability = self
             .extract_mutability_specifier(&source.attributes.elements)
             .unwrap_or(output::FunctionMutability::NonPayable);
@@ -447,17 +461,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             input::FunctionBody::Block(block) => Some(self.build_block(block)),
             input::FunctionBody::Semicolon(_) => None,
         }
-    }
-
-    fn function_visibility(
-        &mut self,
-        attributes: &input::FunctionAttributes,
-    ) -> output::FunctionVisibility {
-        // TODO(validation): free functions are always internal, but
-        // otherwise a visibility *must* be set explicitly (>= 0.8.0)
-        self.extract_visibility_specifier(&attributes.elements)
-            .visibility
-            .unwrap_or(output::FunctionVisibility::Internal)
     }
 
     fn function_override_specifier(

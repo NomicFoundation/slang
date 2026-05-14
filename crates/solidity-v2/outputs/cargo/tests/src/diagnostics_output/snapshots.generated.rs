@@ -39,6 +39,15 @@ mod syntax {
         }
     }
 
+    mod invalid_function_visibility {
+        use super::*;
+
+        #[test]
+        fn free_functions() -> Result<()> {
+            run("syntax/invalid_function_visibility", "free_functions")
+        }
+    }
+
     mod invalid_receive_attributes {
         use super::*;
 
@@ -91,6 +100,11 @@ mod syntax {
         #[test]
         fn constructors() -> Result<()> {
             run("syntax/multiple_visibility_specifiers", "constructors")
+        }
+
+        #[test]
+        fn free_functions() -> Result<()> {
+            run("syntax/multiple_visibility_specifiers", "free_functions")
         }
 
         #[test]
