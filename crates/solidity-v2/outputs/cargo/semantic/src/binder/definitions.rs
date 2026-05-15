@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use ruint::aliases::U256;
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
 
@@ -47,8 +48,7 @@ pub struct ContractDefinition {
     pub ir_node: ir::ContractDefinition,
     pub bases: Option<Vec<NodeId>>,
     pub(crate) constructor_parameters_scope_id: Option<ScopeId>,
-    // TODO: this should be `Option<u256>`
-    pub base_slot: Option<usize>,
+    pub base_slot: Option<U256>,
 }
 
 #[derive(Debug)]

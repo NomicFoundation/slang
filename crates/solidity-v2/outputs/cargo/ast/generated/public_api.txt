@@ -118,7 +118,7 @@ impl slang_solidity_v2_ast::abi::StorageItem
 pub fn slang_solidity_v2_ast::abi::StorageItem::label(&self) -> &str
 pub fn slang_solidity_v2_ast::abi::StorageItem::node_id(&self) -> slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_ast::abi::StorageItem::offset(&self) -> usize
-pub fn slang_solidity_v2_ast::abi::StorageItem::slot(&self) -> usize
+pub fn slang_solidity_v2_ast::abi::StorageItem::slot(&self) -> ruint::aliases::U256
 pub fn slang_solidity_v2_ast::abi::StorageItem::type_name(&self) -> &str
 impl core::clone::Clone for slang_solidity_v2_ast::abi::StorageItem
 pub fn slang_solidity_v2_ast::abi::StorageItem::clone(&self) -> slang_solidity_v2_ast::abi::StorageItem

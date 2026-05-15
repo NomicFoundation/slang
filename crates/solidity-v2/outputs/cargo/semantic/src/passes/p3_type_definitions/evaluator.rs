@@ -1,14 +1,24 @@
+use num_bigint::BigInt;
 use slang_solidity_v2_ir::ir;
 
 use crate::types::Number;
 
-pub(crate) fn evaluate_compile_time_uint_constant<Scope>(
+pub(crate) fn evaluate_compile_time_usize_constant<Scope>(
     expression: &ir::Expression,
     start_scope: Scope,
     identifier_resolver: &dyn ConstantIdentifierResolver<Scope>,
 ) -> Option<usize> {
     evaluate_compile_time_number_constant(expression, start_scope, identifier_resolver)
         .and_then(|value| value.as_usize())
+}
+
+pub(crate) fn evaluate_compile_time_integer_constant<Scope>(
+    expression: &ir::Expression,
+    start_scope: Scope,
+    identifier_resolver: &dyn ConstantIdentifierResolver<Scope>,
+) -> Option<BigInt> {
+    evaluate_compile_time_number_constant(expression, start_scope, identifier_resolver)
+        .and_then(Number::into_integer)
 }
 
 fn evaluate_compile_time_number_constant<Scope>(

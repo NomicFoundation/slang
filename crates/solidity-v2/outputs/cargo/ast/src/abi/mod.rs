@@ -4,6 +4,7 @@ use std::cmp::Ordering;
 use std::collections::HashSet;
 use std::sync::Arc;
 
+use ruint::aliases::U256;
 use sha3::{Digest, Keccak256};
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::binder::Definition;
@@ -313,7 +314,7 @@ impl AbiParameter {
 pub struct StorageItem {
     node_id: NodeId,
     label: String,
-    slot: usize,
+    slot: U256,
     offset: usize,
     type_name: String,
 }
@@ -327,7 +328,7 @@ impl StorageItem {
         &self.label
     }
 
-    pub fn slot(&self) -> usize {
+    pub fn slot(&self) -> U256 {
         self.slot
     }
 

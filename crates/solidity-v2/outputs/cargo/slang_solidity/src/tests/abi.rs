@@ -1,3 +1,5 @@
+use ruint::uint;
+
 use super::fixtures;
 use crate::abi::AbiEntry;
 
@@ -62,7 +64,7 @@ macro_rules! assert_layout_item_eq {
     ($item:expr, $name:expr, $slot:expr, $offset:expr, $type:expr) => {
         assert_eq!($item.label(), $name);
         assert_eq!($item.type_name(), $type);
-        assert_eq!($item.slot(), $slot);
+        assert_eq!($item.slot(), uint!($slot));
         assert_eq!($item.offset(), $offset);
     };
 }
@@ -81,18 +83,18 @@ fn test_storage_layout() {
 
     assert_eq!(layout.len(), 12);
 
-    assert_layout_item_eq!(layout[0], "a", 0, 0, "uint256");
-    assert_layout_item_eq!(layout[1], "e", 1, 0, "uint8[]");
-    assert_layout_item_eq!(layout[2], "f", 2, 0, "mapping(uint256 => S)");
-    assert_layout_item_eq!(layout[3], "g", 3, 0, "uint16");
-    assert_layout_item_eq!(layout[4], "h", 3, 2, "uint16");
-    assert_layout_item_eq!(layout[5], "s", 4, 0, "S");
-    assert_layout_item_eq!(layout[6], "k", 5, 0, "int8");
-    assert_layout_item_eq!(layout[7], "l", 5, 1, "bytes21");
-    assert_layout_item_eq!(layout[8], "m", 6, 0, "uint8[10]");
-    assert_layout_item_eq!(layout[9], "n", 7, 0, "bytes5[8]");
-    assert_layout_item_eq!(layout[10], "t", 9, 0, "T[2]");
-    assert_layout_item_eq!(layout[11], "o", 13, 0, "bytes5");
+    assert_layout_item_eq!(layout[0], "a", 0_U256, 0, "uint256");
+    assert_layout_item_eq!(layout[1], "e", 1_U256, 0, "uint8[]");
+    assert_layout_item_eq!(layout[2], "f", 2_U256, 0, "mapping(uint256 => S)");
+    assert_layout_item_eq!(layout[3], "g", 3_U256, 0, "uint16");
+    assert_layout_item_eq!(layout[4], "h", 3_U256, 2, "uint16");
+    assert_layout_item_eq!(layout[5], "s", 4_U256, 0, "S");
+    assert_layout_item_eq!(layout[6], "k", 5_U256, 0, "int8");
+    assert_layout_item_eq!(layout[7], "l", 5_U256, 1, "bytes21");
+    assert_layout_item_eq!(layout[8], "m", 6_U256, 0, "uint8[10]");
+    assert_layout_item_eq!(layout[9], "n", 7_U256, 0, "bytes5[8]");
+    assert_layout_item_eq!(layout[10], "t", 9_U256, 0, "T[2]");
+    assert_layout_item_eq!(layout[11], "o", 13_U256, 0, "bytes5");
 
     let transient_layout = counter_abi.transient_storage_layout();
     assert!(transient_layout.is_empty());

@@ -1,5 +1,4 @@
-use std::ops::Div;
-
+use ruint::aliases::U256;
 use slang_solidity_v2_semantic::binder;
 use slang_solidity_v2_semantic::context::SemanticContext;
 
@@ -53,7 +52,7 @@ impl ContractDefinitionStruct {
     /// Retrieves the custom base slot for this contract, if specified. This is
     /// used for computing the base of the storage layout for non-transient
     /// state variables.
-    fn base_slot(&self) -> Option<usize> {
+    fn base_slot(&self) -> Option<U256> {
         let binder::Definition::Contract(definition) = self
             .semantic
             .binder()
@@ -71,7 +70,7 @@ impl ContractDefinitionStruct {
         // TODO(validation): it is an error if any contract in the hierarchy
         // other than the leaf has a custom offset layout
         let storage_layout = self.lay_out_state_variables(
-            self.base_slot().unwrap_or_default() * SemanticContext::SLOT_SIZE,
+            self.base_slot().unwrap_or(U256::ZERO),
             all_state_variables.iter().filter(|state_variable| {
                 matches!(
                     state_variable.mutability(),
@@ -80,7 +79,7 @@ impl ContractDefinitionStruct {
             }),
         )?;
         let transient_storage_layout = self.lay_out_state_variables(
-            0usize,
+            U256::ZERO,
             all_state_variables.iter().filter(|state_variable| {
                 matches!(
                     state_variable.mutability(),
@@ -93,36 +92,39 @@ impl ContractDefinitionStruct {
 
     fn lay_out_state_variables<'a>(
         &self,
-        base_ptr: usize,
+        base_slot: U256,
         variables: impl Iterator<Item = &'a StateVariableDefinition>,
     ) -> Option<Vec<StorageItem>> {
         let mut storage_layout = Vec::new();
-        let mut ptr: usize = base_ptr;
+        let mut current_slot: U256 = base_slot;
+        let mut byte_offset_in_slot: usize = 0;
         for state_variable in variables {
             let node_id = state_variable.ir_node.id();
             let variable_type_id = self.semantic.binder().node_typing(node_id).as_type_id()?;
             let variable_size = self.semantic.storage_size_of_type_id(variable_type_id)?;
 
-            // check if we can pack the variable in the previous slot
-            let remaining_bytes = SemanticContext::SLOT_SIZE - (ptr % SemanticContext::SLOT_SIZE);
-            if remaining_bytes < SemanticContext::SLOT_SIZE && variable_size > remaining_bytes {
-                ptr += remaining_bytes;
+            // Check if we can pack the variable in the current slot, otherwise
+            // we start at the beginning of the next slot.
+            let remaining_bytes = SemanticContext::SLOT_SIZE - byte_offset_in_slot;
+            if byte_offset_in_slot > 0 && variable_size > remaining_bytes {
+                current_slot += U256::from(1u64);
+                byte_offset_in_slot = 0;
             }
 
             let label = state_variable.ir_node.name.unparse().to_string();
-            let slot = ptr.div(SemanticContext::SLOT_SIZE);
-            let offset = ptr % SemanticContext::SLOT_SIZE;
             let type_name = self.semantic.type_internal_name(variable_type_id);
             storage_layout.push(StorageItem {
                 node_id,
                 label,
-                slot,
-                offset,
+                slot: current_slot,
+                offset: byte_offset_in_slot,
                 type_name,
             });
 
-            // ready pointer for the next variable
-            ptr += variable_size;
+            // Ready slot and offset for the next variable
+            byte_offset_in_slot += variable_size;
+            current_slot += U256::from(byte_offset_in_slot / SemanticContext::SLOT_SIZE);
+            byte_offset_in_slot %= SemanticContext::SLOT_SIZE;
         }
         Some(storage_layout)
     }
