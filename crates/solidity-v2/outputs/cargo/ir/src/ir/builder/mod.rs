@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
 use slang_solidity_v2_common::diagnostics::kinds::syntax::{
-    InvalidConstructorVisibility, InvalidFallbackVisibility, MultipleMutabilitySpecifiers,
-    MultipleVisibilitySpecifiers,
+    InvalidConstructorVisibility, InvalidFallbackVisibility, InvalidReceiveAttributes,
+    MultipleMutabilitySpecifiers, MultipleVisibilitySpecifiers,
 };
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_cst::structured_cst::nodes as input;
@@ -594,17 +594,17 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let name = None;
         let parameters = self.build_parameters_declaration(&source.parameters);
         // Fallback functions *must* have external visibility
-        let visibility = match self.extract_fallback_visibility(&source.attributes.elements) {
-            Some(v) => v,
-            None => {
+        let visibility =
+            if let Some(v) = self.extract_fallback_visibility(&source.attributes.elements) {
+                v
+            } else {
                 self.diagnostics.push(
                     self.file_id.to_owned(),
                     range.clone(),
                     InvalidFallbackVisibility,
                 );
                 output::FunctionVisibility::External
-            }
-        };
+            };
         let mutability = self
             .extract_mutability_specifier(&source.attributes.elements)
             .unwrap_or(output::FunctionMutability::NonPayable);
@@ -678,12 +678,17 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let kind = output::FunctionKind::Receive;
         let name = None;
         let parameters = self.build_parameters_declaration(&source.parameters);
-        // TODO(validation): receive functions *must* have external visibility
-        let visibility = output::FunctionVisibility::External;
-        // TODO(validation): receive functions *must* have a 'payable' specifier
-        let mutability = self
-            .extract_mutability_specifier(&source.attributes.elements)
-            .unwrap_or(output::FunctionMutability::Payable);
+        // Receive functions must have explicit `external` visibility and `payable` mutability.
+        // Emit InvalidReceiveAttributes if either of these is missing.
+        // Duplicate visibility or mutability specifiers are handled by extract_receive_attributes.
+        let (visibility, mutability) = self.extract_receive_attributes(&source.attributes.elements);
+        if visibility.is_none() || mutability.is_none() {
+            self.diagnostics.push(
+                self.file_id.to_owned(),
+                range.clone(),
+                InvalidReceiveAttributes,
+            );
+        }
         let virtual_keyword = source.attributes.elements.iter().find_map(|attribute| {
             if let input::ReceiveFunctionAttribute::VirtualKeyword(virtual_keyword) = attribute {
                 Some(self.build_virtual_keyword(virtual_keyword))
@@ -702,14 +707,51 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             kind,
             name,
             parameters,
-            visibility,
-            mutability,
+            visibility: visibility.unwrap_or(output::FunctionVisibility::External),
+            mutability: mutability.unwrap_or(output::FunctionMutability::Payable),
             virtual_keyword,
             override_specifier,
             modifier_invocations,
             returns,
             body,
         })
+    }
+
+    fn extract_receive_attributes(
+        &mut self,
+        attributes: &Vec<input::ReceiveFunctionAttribute>,
+    ) -> (
+        Option<output::FunctionVisibility>,
+        Option<output::FunctionMutability>,
+    ) {
+        let mut visibility: Option<output::FunctionVisibility> = None;
+        let mut mutability: Option<output::FunctionMutability> = None;
+        for attr in attributes {
+            match attr {
+                input::ReceiveFunctionAttribute::ExternalKeyword(keyword) => {
+                    if visibility.is_some() {
+                        self.diagnostics.push(
+                            self.file_id.to_owned(),
+                            keyword.range.clone(),
+                            MultipleVisibilitySpecifiers,
+                        );
+                    }
+                    visibility = Some(output::FunctionVisibility::External);
+                }
+                input::ReceiveFunctionAttribute::PayableKeyword(keyword) => {
+                    if mutability.is_some() {
+                        self.diagnostics.push(
+                            self.file_id.to_owned(),
+                            keyword.range.clone(),
+                            MultipleMutabilitySpecifiers,
+                        );
+                    }
+                    mutability = Some(output::FunctionMutability::Payable);
+                }
+                _ => {}
+            }
+        }
+        (visibility, mutability)
     }
 
     fn receive_function_override_specifier(

@@ -1,6 +1,7 @@
 mod extra_terminal;
 mod invalid_constructor_visibility;
 mod invalid_fallback_visibility;
+mod invalid_receive_attributes;
 mod multiple_mutability_specifiers;
 mod multiple_visibility_specifiers;
 mod unexpected_eof;
@@ -10,6 +11,7 @@ mod unsupported_syntax;
 pub use extra_terminal::ExtraTerminal;
 pub use invalid_constructor_visibility::InvalidConstructorVisibility;
 pub use invalid_fallback_visibility::InvalidFallbackVisibility;
+pub use invalid_receive_attributes::InvalidReceiveAttributes;
 pub use multiple_mutability_specifiers::MultipleMutabilitySpecifiers;
 pub use multiple_visibility_specifiers::MultipleVisibilitySpecifiers;
 use serde::Serialize;
@@ -44,5 +46,7 @@ define_diagnostic_kind! {
         InvalidConstructorVisibility(InvalidConstructorVisibility),
         /// Fallback function does not have external visibility.
         InvalidFallbackVisibility(InvalidFallbackVisibility),
+        /// Receive function does not have external visibility and payable modifier.
+        InvalidReceiveAttributes(InvalidReceiveAttributes),
     }
 }

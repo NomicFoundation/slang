@@ -39,6 +39,15 @@ mod syntax {
         }
     }
 
+    mod invalid_receive_attributes {
+        use super::*;
+
+        #[test]
+        fn receives() -> Result<()> {
+            run("syntax/invalid_receive_attributes", "receives")
+        }
+    }
+
     mod multiple_mutability_specifiers {
         use super::*;
 
