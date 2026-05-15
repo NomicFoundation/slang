@@ -18,6 +18,7 @@ mod __dependencies_used_in_lib__ {
     use serde as _;
     use serde_json as _;
     use slang_solidity as _;
+    use slang_solidity_v2_ast as _;
     use slang_solidity_v2_common as _;
     use slang_solidity_v2_cst as _;
     use slang_solidity_v2_ir as _;

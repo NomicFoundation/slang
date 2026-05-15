@@ -9,6 +9,7 @@ use slang_solidity_v2_semantic::context::{
 
 use crate::dataset::SolidityProject;
 
+#[derive(Clone)]
 pub struct File {
     id: String,
     ir_root: ir::SourceUnit,
