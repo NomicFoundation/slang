@@ -1,16 +1,12 @@
 /// Resolve an import path relative to a source file.
 ///
-/// `import_path` is the raw string literal text from the source (with quotes),
-/// as provided by the v2 `CompilationBuilderConfig::resolve_import` callback.
+/// `import_path` is the unquoted import path as provided by the v2
+/// `CompilationBuilderConfig::resolve_import` callback.
 pub(crate) fn resolve_import(source_file_id: &str, import_path: &str) -> Option<String> {
-    let path = import_path
-        .strip_prefix(|c| matches!(c, '"' | '\''))?
-        .strip_suffix(|c| matches!(c, '"' | '\''))?;
-
-    if is_relative_path(path) {
-        normalize_path(path, get_parent_path(source_file_id))
+    if is_relative_path(import_path) {
+        normalize_path(import_path, get_parent_path(source_file_id))
     } else {
-        Some(path.to_owned())
+        Some(import_path.to_owned())
     }
 }
 

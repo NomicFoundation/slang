@@ -3,6 +3,7 @@ use std::rc::Rc;
 
 use slang_solidity_v2_common::diagnostics::kinds::compilation::{MissingFile, UnresolvedImport};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
+use slang_solidity_v2_common::utils::strip_string_literal_quotes;
 use slang_solidity_v2_common::versions::LanguageVersion;
 use slang_solidity_v2_cst::structured_cst::nodes as cst;
 use slang_solidity_v2_ir::ir::{self, BuildOutput};
@@ -29,8 +30,8 @@ pub trait CompilationBuilderConfig {
     /// import {Foo} from "foo.sol";
     /// ```
     ///
-    /// Then the API will invoke the callback with the value of the `"foo.sol"`
-    /// string literal, including the surrounding quotes.
+    /// Then the API will invoke the callback with the value `foo.sol` (the
+    /// contents of the string literal, with the surrounding quotes stripped).
     ///
     /// The user is responsible for resolving it to a file in the compilation,
     /// and returning its ID. Any error returned is surfaced as a compilation
@@ -192,7 +193,8 @@ fn extract_import_paths_from_cst(
                 &import_deconstruction.path.range
             }
         };
-        import_paths.insert(contents[range.clone()].to_owned());
+        let literal = &contents[range.clone()];
+        import_paths.insert(strip_string_literal_quotes(literal).to_owned());
     }
     import_paths
 }
