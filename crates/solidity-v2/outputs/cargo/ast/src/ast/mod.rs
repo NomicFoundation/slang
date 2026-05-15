@@ -11,6 +11,9 @@ pub use nodes::*;
 mod references;
 pub use references::Reference;
 
+#[path = "serialize.generated.rs"]
+mod serialize;
+
 mod types;
 pub use types::{LiteralKind, Number, Type};
 

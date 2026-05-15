@@ -1,0 +1,104 @@
+{%- set target = model.ir_language_model.target -%}
+use std::ops::Range;
+
+use serde::ser::{SerializeMap, SerializeSeq, Serializer};
+use serde::Serialize;
+
+#[allow(clippy::wildcard_imports)]
+use super::nodes::*;
+
+struct SerializeRange<'a>(&'a Range<usize>);
+
+impl Serialize for SerializeRange<'_> {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        let mut map = serializer.serialize_map(Some(2))?;
+        map.serialize_entry("start", &self.0.start)?;
+        map.serialize_entry("end", &self.0.end)?;
+        map.end()
+    }
+}
+
+//
+// Sequences
+//
+
+{% for parent_type, sequence in target.sequences %}
+impl Serialize for {{ parent_type }}Struct {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        let mut map = serializer.serialize_map(Some({{ sequence.fields | length + 4 }}))?;
+        map.serialize_entry("id", &self.node_id())?;
+        map.serialize_entry("type", "{{ parent_type }}")?;
+        map.serialize_entry("range", &SerializeRange(self.get_text_range()))?;
+        map.serialize_entry("file", self.get_file_id())?;
+        {%- for field in sequence.fields %}
+        {%- set field_name = field.label | snake_case %}
+        map.serialize_entry("{{ field_name }}", &self.{{ field_name }}())?;
+        {%- endfor %}
+        map.end()
+    }
+}
+
+{% endfor %}
+
+//
+// Choices
+//
+
+{% for parent_type, choice in target.choices %}
+impl Serialize for {{ parent_type }} {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        match self {
+            {%- for variant in choice.variants %}
+            {% if variant.kind == "External" -%}
+            {{ parent_type }}::{{ variant.name }} => {
+                let mut map = serializer.serialize_map(Some(1))?;
+                map.serialize_entry("type", "{{ parent_type }}::{{ variant.name }}")?;
+                map.end()
+            }
+            {%- else -%}
+            {{ parent_type }}::{{ variant.name }}(inner) => inner.serialize(serializer),
+            {%- endif %}
+            {%- endfor %}
+        }
+    }
+}
+
+{% endfor %}
+
+//
+// Repeated & Separated
+//
+
+{% for parent_type, collection in target.collections %}
+impl Serialize for {{ parent_type }}Struct {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        let mut seq = serializer.serialize_seq(Some(self.len()))?;
+        for item in self.iter() {
+            seq.serialize_element(&item)?;
+        }
+        seq.end()
+    }
+}
+
+{% endfor %}
+
+//
+// Terminals
+//
+
+{% for terminal_type, terminal in target.terminals %}
+impl Serialize for {{ terminal_type }}Struct {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        let mut map = serializer.serialize_map(Some({% if terminal.is_unique %}4{% else %}5{% endif %}))?;
+        map.serialize_entry("id", &self.ir_node.id())?;
+        map.serialize_entry("type", "{{ terminal_type }}")?;
+        map.serialize_entry("range", &SerializeRange(&self.ir_node.range))?;
+        map.serialize_entry("file", self.get_file_id())?;
+        {%- if not terminal.is_unique %}
+        map.serialize_entry("text", self.ir_node.unparse())?;
+        {%- endif %}
+        map.end()
+    }
+}
+
+{% endfor %}

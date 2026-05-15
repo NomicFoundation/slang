@@ -528,6 +528,8 @@ impl core::hash::Hash for slang_solidity_v2_common::nodes::NodeId
 pub fn slang_solidity_v2_common::nodes::NodeId::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
 impl core::marker::Copy for slang_solidity_v2_common::nodes::NodeId
 impl core::marker::StructuralPartialEq for slang_solidity_v2_common::nodes::NodeId
+impl serde_core::ser::Serialize for slang_solidity_v2_common::nodes::NodeId
+pub fn slang_solidity_v2_common::nodes::NodeId::serialize<S: serde_core::ser::Serializer>(&self, serializer: S) -> core::result::Result<<S as serde_core::ser::Serializer>::Ok, <S as serde_core::ser::Serializer>::Error>
 pub mod slang_solidity_v2_common::terminals
 pub enum slang_solidity_v2_common::terminals::TerminalKind
 pub slang_solidity_v2_common::terminals::TerminalKind::ABIEncoderV2Keyword
