@@ -36,7 +36,7 @@ fn try_type_of_value_expression(input: &str) -> (Option<Type>, TypeRegistry) {
 
     p1_collect_definitions::run(&files, &mut binder);
     p2_linearise_contracts::run(&files, &mut binder);
-    p3_type_definitions::run(&files, &mut binder, &mut types);
+    p3_type_definitions::run(&files, &mut binder, &mut types, language_version);
     p4_resolve_references::run(&files, &mut binder, &mut types, language_version);
 
     let value_expr = match files[0].ir_root().members.first().unwrap() {
@@ -689,7 +689,7 @@ contract Test {
 
     p1_collect_definitions::run(&files, &mut binder);
     p2_linearise_contracts::run(&files, &mut binder);
-    p3_type_definitions::run(&files, &mut binder, &mut types);
+    p3_type_definitions::run(&files, &mut binder, &mut types, language_version);
     p4_resolve_references::run(&files, &mut binder, &mut types, language_version);
 
     let function = find_contract_function(files[0].ir_root(), "Test", "test");

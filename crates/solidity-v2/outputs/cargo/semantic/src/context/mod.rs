@@ -64,7 +64,7 @@ impl SemanticContext {
 
         p1_collect_definitions::run(files, &mut binder);
         p2_linearise_contracts::run(files, &mut binder);
-        p3_type_definitions::run(files, &mut binder, &mut types);
+        p3_type_definitions::run(files, &mut binder, &mut types, language_version);
         p4_resolve_references::run(files, &mut binder, &mut types, language_version);
 
         let file_node_mapper = FileNodeMapper::build_from(files);

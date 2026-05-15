@@ -48,5 +48,10 @@ contract E layout at BASE * 2 + 10 {
     bytes5 r;
     bytes5 transient rt;
 }
+
+contract F layout at erc7201("example.main") {
+    uint256 u;
+    uint256 v;
+}
 "#,
 );

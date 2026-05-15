@@ -173,12 +173,8 @@ contract Test is Base {
     "###;
 
     let mut id_generator = NodeIdGenerator::default();
-    let file = build_file(
-        "test.sol",
-        CONTENTS,
-        &mut id_generator,
-        LanguageVersion::V0_8_35,
-    );
+    let language_version = LanguageVersion::V0_8_35;
+    let file = build_file("test.sol", CONTENTS, &mut id_generator, language_version);
 
     let files = [file];
     let mut binder = Binder::default();
@@ -188,7 +184,7 @@ contract Test is Base {
     p2_linearise_contracts::run(&files, &mut binder);
 
     let types_before = types.iter_types().count();
-    p3_type_definitions::run(&files, &mut binder, &mut types);
+    p3_type_definitions::run(&files, &mut binder, &mut types, language_version);
     let types_after = types.iter_types().count();
 
     // The pass registers new types for: contracts, mappings, structs, enums,
@@ -240,7 +236,7 @@ contract Test is Base {
 
     p1_collect_definitions::run(&files, &mut binder);
     p2_linearise_contracts::run(&files, &mut binder);
-    p3_type_definitions::run(&files, &mut binder, &mut types);
+    p3_type_definitions::run(&files, &mut binder, &mut types, language_version);
     p4_resolve_references::run(&files, &mut binder, &mut types, language_version);
 
     // Verify that references were created and most are resolved
