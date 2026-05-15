@@ -27,12 +27,12 @@ fn type_of_value_expression(input: &str) -> (Type, TypeRegistry) {
 fn try_type_of_value_expression(input: &str) -> (Option<Type>, TypeRegistry) {
     let source = format!("uint constant x = {input};");
     let mut id_generator = NodeIdGenerator::default();
-    let file = build_file("test.sol", &source, &mut id_generator);
+    let language_version = LanguageVersion::V0_8_35;
+    let file = build_file("test.sol", &source, &mut id_generator, language_version);
     let files = [file];
 
     let mut binder = Binder::default();
     let mut types = TypeRegistry::default();
-    let language_version = LanguageVersion::V0_8_30;
 
     p1_collect_definitions::run(&files, &mut binder);
     p2_linearise_contracts::run(&files, &mut binder);
@@ -680,12 +680,12 @@ contract Test {
 "#;
 
     let mut id_generator = NodeIdGenerator::default();
-    let file = build_file("test.sol", CONTENTS, &mut id_generator);
+    let language_version = LanguageVersion::V0_8_35;
+    let file = build_file("test.sol", CONTENTS, &mut id_generator, language_version);
     let files = [file];
 
     let mut binder = Binder::default();
     let mut types = TypeRegistry::default();
-    let language_version = LanguageVersion::V0_8_30;
 
     p1_collect_definitions::run(&files, &mut binder);
     p2_linearise_contracts::run(&files, &mut binder);
