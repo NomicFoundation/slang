@@ -1,7 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 #![allow(unused)]
-#![allow(non_camel_case_types)]
 use std::ops::Range;
 use std::rc::Rc;
 

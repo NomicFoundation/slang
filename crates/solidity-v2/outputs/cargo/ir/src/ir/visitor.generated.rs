@@ -1,7 +1,5 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-#![allow(non_camel_case_types)]
-
 #[allow(clippy::wildcard_imports)]
 use super::nodes::*;
 
