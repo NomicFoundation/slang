@@ -1,3 +1,4 @@
+use std::hint::black_box;
 use std::sync::Arc;
 use std::thread;
 
@@ -16,9 +17,9 @@ fn parallel_access_via_arc_consistent_with_serial_baseline() {
     let serial_contract_abis = unit.compute_contracts_abi().len();
     let serial_file_ids: Vec<_> = unit.file_ids();
 
-    assert_eq!(serial_definitions, EXPECTED_DEFINITIONS,);
-    assert_eq!(serial_references, EXPECTED_REFERENCES,);
-    assert_eq!(serial_contract_abis, EXPECTED_CONTRACT_ABIS,);
+    assert_eq!(serial_definitions, EXPECTED_DEFINITIONS);
+    assert_eq!(serial_references, EXPECTED_REFERENCES);
+    assert_eq!(serial_contract_abis, EXPECTED_CONTRACT_ABIS);
 
     let worker_count = 8;
     let handles: Vec<_> = (0..worker_count)
@@ -59,7 +60,7 @@ fn parallel_access_via_arc_consistent_with_serial_baseline() {
 
                 // Exercise type resolution via references in each thread.
                 for reference in unit.all_references() {
-                    let _ = reference.resolve_to_definition();
+                    let _ = black_box(reference.resolve_to_definition());
                 }
             })
         })

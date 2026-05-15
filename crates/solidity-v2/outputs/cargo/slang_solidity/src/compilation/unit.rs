@@ -10,7 +10,7 @@ use super::file::File;
 
 pub struct CompilationUnit {
     language_version: LanguageVersion,
-    files: BTreeMap<String, File>,
+    files: BTreeMap<String, Arc<File>>,
     semantic: Arc<SemanticContext>,
     diagnostics: DiagnosticCollection,
 }
@@ -22,9 +22,9 @@ impl CompilationUnit {
         semantic: SemanticContext,
         diagnostics: DiagnosticCollection,
     ) -> Self {
-        let files: BTreeMap<String, File> = files
+        let files: BTreeMap<String, Arc<File>> = files
             .into_iter()
-            .map(|file| (file.id().to_string(), file))
+            .map(|file| (file.id().to_string(), Arc::new(file)))
             .collect();
         Self {
             language_version,
