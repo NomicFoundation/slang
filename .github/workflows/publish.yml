@@ -3,30 +3,42 @@ name: "publish"
 # Three trigger flows:
 #
 #   push to main            — Full release flow: process changesets, publish docs,
-#                             and (when a version-bump PR just merged) build, validate,
-#                             and publish to npm/crates.io/GitHub Releases.
+#                             and (when a version-bump PR just merged) prepare,
+#                             review, and publish to npm/crates.io/GitHub Releases.
 #                             Requires manual approval via the slang-release environment.
 #
 #   workflow_dispatch       — Replays the push-to-main path (e.g. to retry a
 #                             flaky publish). Requires manual approval.
 #
-#   pull_request             — Build and validate only: exercises the full
-#                             build-and-validate pipeline (WASM build, cargo/npm
-#                             dry-run) but skips actual publishing. No approval needed.
+#   pull_request             — Prepare and review only: builds the exact artifacts
+#                             that would be published (WASM, npm tarball, cargo
+#                             .crate files) and validates them, but skips the
+#                             actual upload. No approval needed.
 #
-# Execution paths:
+# Job topology — split into prepare → review → publish to enforce that the bytes
+# reviewed are the bytes uploaded:
 #
-#   Trigger          repo-check  changesets        build-and-validate  notify-deploy  publish
-#   ───────────────  ──────────  ────────────────  ──────────────────  ─────────────  ───────
-#   PR               ✓ gate      ⊘ skip (no push)  ✓ validate          ⊘ skip          ⊘ skip
-#   push (pending)   ✓ gate      ✓ has changesets   ✓ validate          ⊘ skip          ⊘ skip
-#   push (no-op)     ✓ gate      ✓ no new version   ✓ validate          ⊘ skip          ⊘ skip
-#   push (release)   ✓ gate      ✓ new version      ✓ validate          ✓ notify        ✓ publish
+#   Trigger          repo-check  changesets        prepare    review     notify-deploy  publish
+#   ───────────────  ──────────  ────────────────  ─────────  ─────────  ─────────────  ───────
+#   PR               ✓ gate      ⊘ skip (no push)  ✓ build    ✓ validate  ⊘ skip          ⊘ skip
+#   push (pending)   ✓ gate      ✓ has changesets   ✓ build    ✓ validate  ⊘ skip          ⊘ skip
+#   push (no-op)     ✓ gate      ✓ no new version   ✓ build    ✓ validate  ⊘ skip          ⊘ skip
+#   push (release)   ✓ gate      ✓ new version      ✓ build    ✓ validate  ✓ notify        ✓ publish
+#
+# Why split prepare/review/publish:
+#   - prepare runs the full workspace build (WASM, cargo package per crate, pnpm
+#     pack) and uploads the result as an artifact. This is the only place where
+#     build.rs and proc-macros from the dep graph execute.
+#   - review downloads that artifact, verifies SHA-256s, and runs `--dry-run`
+#     publishes against the *exact* bytes that will be uploaded. PR reviewers can
+#     also download this artifact from the run UI to inspect contents manually.
+#   - publish downloads the *same* artifact and does only registry uploads — no
+#     cargo build, no WASM toolchain, no TypeScript compiler in scope of the
+#     short-lived OIDC tokens (npm Trusted Publishing + crates.io OIDC).
 #
 # Every job has an explicit 'if' condition — no job relies on implicit skip
-# propagation from needs. The one exception is build-and-validate, which uses
-# !cancelled() to override skip propagation from the changesets job (skipped
-# on PRs).
+# propagation from needs. The one exception is prepare, which uses !cancelled()
+# to override skip propagation from the changesets job (skipped on PRs).
 
 on:
   # Run using manual triggers from GitHub UI:
@@ -140,11 +152,13 @@ jobs:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
   # ───────────────────────────────────────────────
-  # Build & Validate: build WASM and dry-run publish
+  # Prepare: build the exact artifacts that will be published, once.
+  # WASM build, pnpm pack, cargo package per crate, plus a manifest with SHA-256s.
+  # Uploads target/publish-artifacts/ for downstream review and publish.
   # Runs on every trigger (PRs and pushes alike).
   # ───────────────────────────────────────────────
 
-  build-and-validate:
+  prepare:
     needs:
       - "repo-check"
       - "changesets"
@@ -158,6 +172,8 @@ jobs:
     runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
     permissions:
       contents: "read"
+    outputs:
+      artifact-name: "${{ steps.artifact-name.outputs.name }}"
     steps:
       - name: "Checkout Repository"
         uses: "actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd" # v6.0.2
@@ -180,11 +196,8 @@ jobs:
       - name: "infra setup"
         run: "./scripts/bin/infra setup"
 
-      - name: "infra publish npm --dry-run"
-        run: "./scripts/bin/infra publish npm --dry-run"
-
-      - name: "infra publish cargo --dry-run"
-        run: "./scripts/bin/infra publish cargo --dry-run"
+      - name: "infra publish prepare"
+        run: "./scripts/bin/infra publish prepare"
 
       - name: "infra publish mkdocs --dry-run"
         run: |
@@ -192,24 +205,81 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           ./scripts/bin/infra publish mkdocs --target main-branch --dry-run
 
-      - name: "PR: publish summary"
-        if: "github.event_name == 'pull_request'"
+      - name: "Compute artifact name"
+        id: "artifact-name"
         run: |
           VERSION=$(grep '^version = ' Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
-          echo "## Publish Validation Summary" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "**Version:** \`${VERSION}\`" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "The build-and-validate pipeline completed successfully." >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "### What was validated" >> "$GITHUB_STEP_SUMMARY"
-          echo "- WASM package build" >> "$GITHUB_STEP_SUMMARY"
-          echo "- \`cargo publish --dry-run\` (skips crates whose version is already published)" >> "$GITHUB_STEP_SUMMARY"
-          echo "- \`pnpm publish --dry-run\` (skips if version is already published)" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "### Skipped (only on push/dispatch)" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Actual npm/cargo publishing" >> "$GITHUB_STEP_SUMMARY"
-          echo "- GitHub release creation" >> "$GITHUB_STEP_SUMMARY"
+          SHORT_SHA="${GITHUB_SHA::12}"
+          echo "name=slang-publish-artifacts-${VERSION}-${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+
+      # PR artifacts (including from forks) are intentionally produced so that PR
+      # reviewers can download the exact bytes that would be published, and so
+      # that the review job validates against the same artifact shape used in
+      # production. The actual security gate is the `publish` job's
+      # github.event_name != 'pull_request' condition.
+      - name: "Upload publish artifacts"
+        uses: "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a" # v7.0.1
+        with:
+          name: "${{ steps.artifact-name.outputs.name }}"
+          path: "target/publish-artifacts/"
+          if-no-files-found: "error"
+          retention-days: 2
+
+  # ───────────────────────────────────────────────
+  # Review: download the prepared artifact, verify integrity, and dry-run
+  # publish against the exact bytes that would be uploaded. No build infra here.
+  # ───────────────────────────────────────────────
+
+  review:
+    needs:
+      - "repo-check"
+      - "prepare"
+    if: >-
+      !cancelled()
+      && needs.repo-check.result == 'success'
+      && needs.prepare.result == 'success'
+    runs-on: "ubuntu-24.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    permissions:
+      contents: "read"
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd" # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: "Download publish artifacts"
+        uses: "actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c" # v8.0.1
+        with:
+          name: "${{ needs.prepare.outputs.artifact-name }}"
+          path: "target/publish-artifacts/"
+
+      - name: "infra publish npm --dry-run"
+        run: "./scripts/bin/infra publish npm --dry-run"
+
+      - name: "infra publish cargo --dry-run"
+        run: "./scripts/bin/infra publish cargo --dry-run"
+
+      - name: "Publish review summary"
+        run: |
+          VERSION=$(grep '^version = ' Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
+          ARTIFACT_NAME='${{ needs.prepare.outputs.artifact-name }}'
+          {
+            echo "## Publish Review Summary"
+            echo ""
+            echo "**Version:** \`${VERSION}\`"
+            echo "**Artifact:** \`${ARTIFACT_NAME}\` — download from the run's Artifacts panel to inspect."
+            echo ""
+            echo "### What was validated against the prepared artifact"
+            echo "- SHA-256 integrity for every file in \`manifest.json\`"
+            echo "- \`pnpm publish --dry-run <tarball>\` (npm pack/structure check)"
+            echo "- \`cargo publish --dry-run\` batched workspace verify-build (catches cross-crate path-dep rewrites)"
+            if [ "${{ github.event_name }}" = "pull_request" ]; then
+              echo ""
+              echo "### Skipped (only on push/dispatch)"
+              echo "- Actual npm/cargo publishing"
+              echo "- GitHub release creation"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
 
   # ───────────────────────────────────────────────
   # Notify: Slack notification that review is requested
@@ -218,7 +288,8 @@ jobs:
   notify-deploy:
     needs:
       - "changesets"
-      - "build-and-validate"
+      - "prepare"
+      - "review"
     if: >-
       github.event_name != 'pull_request'
       && needs.changesets.outputs.hasChangesets == 'false'
@@ -269,10 +340,13 @@ jobs:
   publish:
     needs:
       - "changesets"
+      - "prepare"
+      - "review"
       - "notify-deploy"
     # Redundant with needs chain, but explicit for safety: never publish
-    # from PRs, when there are pending changesets, or when the version is
-    # already published.
+    # from PRs (even though prepare/review run on PRs to validate the artifact
+    # flow, the actual upload only happens here), when there are pending
+    # changesets, or when the version is already published.
     if: >-
       github.event_name != 'pull_request'
       && needs.changesets.outputs.hasChangesets == 'false'
@@ -319,26 +393,21 @@ jobs:
               ]
             }
 
+      # Minimal checkout for the infra wrapper, Hermit binaries, and CHANGELOG.md
+      # (read by `infra publish github-release`). No fetch-depth: 0 — mtime
+      # restoration is not needed because nothing in this job compiles workspace
+      # crates. No caches restored either; the publish step is artifact-in,
+      # bytes-out.
       - name: "Checkout Repository"
         uses: "actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd" # v6.0.2
         with:
           persist-credentials: false
-          fetch-depth: 0 # Full history is needed by 'git/restore-mtime' to find each file's last commit time.
 
-      - name: "Free up disk space"
-        uses: "./.github/actions/free-disk-space"
-
-      - name: "Restore file mtimes from git"
-        uses: "./.github/actions/git/restore-mtime"
-
-      - name: "Restore Dependencies Cache"
-        uses: "./.github/actions/cache/dependencies/restore"
-
-      - name: "Restore Cargo Target Cache"
-        uses: "./.github/actions/cache/cargo-target/restore"
-
-      - name: "infra setup"
-        run: "./scripts/bin/infra setup"
+      - name: "Download publish artifacts"
+        uses: "actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c" # v8.0.1
+        with:
+          name: "${{ needs.prepare.outputs.artifact-name }}"
+          path: "target/publish-artifacts/"
 
       - name: "infra publish npm"
         run: "./scripts/bin/infra publish npm"

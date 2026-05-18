@@ -1,8 +1,10 @@
+mod artifacts;
 mod cargo;
 mod changesets;
 mod github_release;
 mod mkdocs;
 mod npm;
+mod prepare;
 
 use anyhow::Result;
 use clap::{Parser, Subcommand};
@@ -12,6 +14,7 @@ use crate::commands::publish::changesets::ChangesetsController;
 use crate::commands::publish::github_release::GithubReleaseController;
 use crate::commands::publish::mkdocs::MkdocsController;
 use crate::commands::publish::npm::NpmController;
+use crate::commands::publish::prepare::PrepareController;
 
 #[derive(Clone, Debug, Parser)]
 pub struct PublishController {
@@ -23,11 +26,14 @@ pub struct PublishController {
 pub enum PublishCommand {
     /// Consume pending changesets, update changelogs and package versions, then send a PR.
     Changesets(ChangesetsController),
+    /// Build npm and cargo artifacts once into `target/publish-artifacts/` for later
+    /// review-then-publish handoff.
+    Prepare(PrepareController),
     /// Publish the documentation to GitHub pages.
     Mkdocs(MkdocsController),
-    /// Publish source packages to [npmjs.com].
+    /// Publish the prebuilt npm package from `target/publish-artifacts/` to [npmjs.com].
     Npm(NpmController),
-    /// Publish source crates to [crates.io].
+    /// Publish the prebuilt cargo crates from `target/publish-artifacts/` to [crates.io].
     Cargo(CargoController),
     /// Publish a new release in the GitHub repository.
     GithubRelease(GithubReleaseController),
@@ -43,6 +49,7 @@ impl PublishCommand {
     pub fn execute(&self) -> Result<()> {
         match self {
             PublishCommand::Changesets(controller) => controller.execute(),
+            PublishCommand::Prepare(controller) => controller.execute(),
             PublishCommand::Mkdocs(controller) => controller.execute(),
             PublishCommand::Npm(controller) => controller.execute(),
             PublishCommand::Cargo(controller) => controller.execute(),

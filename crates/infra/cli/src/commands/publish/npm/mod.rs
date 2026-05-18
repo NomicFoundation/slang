@@ -1,11 +1,9 @@
-use anyhow::Result;
+use anyhow::{bail, Result};
 use clap::Parser;
-use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 use infra_utils::paths::PathExtensions;
 
-use crate::toolchains::npm::Npm;
-use crate::toolchains::wasm::{WasmPackage, NPM_CRATE};
+use crate::commands::publish::artifacts::{ArtifactPaths, Manifest};
 use crate::utils::DryRun;
 
 #[derive(Clone, Debug, Parser)]
@@ -16,36 +14,42 @@ pub struct NpmController {
 
 impl NpmController {
     pub fn execute(&self) -> Result<()> {
-        let package_dir = CargoWorkspace::locate_source_crate(NPM_CRATE)?;
+        let manifest = Manifest::load()?;
+        manifest.verify_integrity()?;
 
-        WasmPackage::build()?;
-
-        println!("Publishing: {package_dir:?}");
-
-        let local_version = Npm::local_version(&package_dir)?;
-        println!("Local version: {local_version}");
-
-        let published_version = Npm::published_version(&package_dir)?;
-        println!("Published version: {published_version}");
-
-        if local_version == published_version {
-            println!("Skipping package, since the local version is already published.");
+        let Some(npm) = manifest.npm.as_ref() else {
+            println!("No npm artifact in manifest; nothing to publish.");
             return Ok(());
+        };
+
+        let tarball = manifest.absolute_path(&npm.path);
+        if !tarball.exists() {
+            bail!("Prebuilt npm tarball missing: {tarball:?}");
         }
 
+        println!("Publishing prebuilt tarball: {tarball:?}");
+        println!("Workspace version: {}", manifest.workspace_version);
+        println!("SHA-256: {}", npm.sha256);
+
         let mut command = Command::new("pnpm")
-            .args(["publish", package_dir.unwrap_str()])
+            .arg("publish")
+            .arg(tarball.unwrap_str())
             .property("--access", "public")
             // CI checkout is detached HEAD, which fails pnpm's branch check.
             // The workflow's `branches:` filter and the slang-release environment
             // gate are what actually authorize a release.
-            .flag("--no-git-checks");
+            .flag("--no-git-checks")
+            // Don't run the npm package's lifecycle scripts during publish; the
+            // tarball was already built in the prepare step.
+            .flag("--ignore-scripts");
 
         if self.dry_run.get() {
             command = command.flag("--dry-run");
         }
 
-        command.run();
+        command
+            .current_dir(ArtifactPaths::root())
+            .run();
 
         Ok(())
     }
