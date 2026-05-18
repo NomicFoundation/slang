@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
 use crate::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit};
 use crate::utils::LanguageVersion;
@@ -39,7 +39,7 @@ macro_rules! define_fixture {
 
         impl $name {
             pub(crate) fn build_compilation_unit(
-            ) -> std::rc::Rc<$crate::compilation::CompilationUnit> {
+            ) -> std::sync::Arc<$crate::compilation::CompilationUnit> {
                 $crate::tests::fixtures::build_compilation_unit_from_fixture(FILES)
             }
         }
@@ -75,7 +75,7 @@ impl CompilationBuilderConfig for FixtureBuildConfig<'_> {
 
 pub(super) fn build_compilation_unit_from_fixture(
     files: &[FixtureFile<'_>],
-) -> Rc<CompilationUnit> {
+) -> Arc<CompilationUnit> {
     let version = LanguageVersion::V0_8_30;
     let mut builder = CompilationBuilder::create(version, FixtureBuildConfig { files });
 
@@ -91,7 +91,7 @@ pub(super) fn build_compilation_unit_from_fixture(
         unit.diagnostics()
     );
 
-    Rc::new(unit)
+    Arc::new(unit)
 }
 
 // Fixture build tests

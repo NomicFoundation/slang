@@ -1,5 +1,5 @@
 use std::collections::HashSet;
-use std::rc::Rc;
+use std::sync::Arc;
 
 use file_node_mapper::FileNodeMapper;
 use slang_solidity_v2_common::nodes::NodeId;
@@ -100,7 +100,7 @@ impl SemanticContext {
                 return None;
             };
             if definition.identifier().unparse() == name {
-                Some(Rc::clone(&contract.ir_node))
+                Some(Arc::clone(&contract.ir_node))
             } else {
                 None
             }

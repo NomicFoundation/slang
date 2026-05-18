@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
 use slang_solidity_v2_common::built_ins::BuiltIn;
 use slang_solidity_v2_common::nodes::NodeId;
@@ -12,7 +12,7 @@ pub struct Reference {
 }
 
 impl Reference {
-    pub fn try_create(ir_node: &ir::Identifier, semantic: &Rc<SemanticContext>) -> Option<Self> {
+    pub fn try_create(ir_node: &ir::Identifier, semantic: &Arc<SemanticContext>) -> Option<Self> {
         // ensure the terminal node is actually functioning as a reference
         semantic
             .binder()
@@ -42,7 +42,7 @@ impl Reference {
 
 pub(crate) fn references_binding_to_definition(
     node_id: NodeId,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> Vec<Reference> {
     semantic
         .binder()

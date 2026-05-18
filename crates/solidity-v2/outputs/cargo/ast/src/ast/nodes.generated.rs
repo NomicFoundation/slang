@@ -2,7 +2,7 @@
 
 #![allow(unused)]
 use std::ops::Range;
-use std::rc::Rc;
+use std::sync::Arc;
 
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
@@ -14,20 +14,20 @@ use super::types::Type;
 // Sequences
 //
 
-pub type AbicoderPragma = Rc<AbicoderPragmaStruct>;
+pub type AbicoderPragma = Arc<AbicoderPragmaStruct>;
 
 pub struct AbicoderPragmaStruct {
     pub(crate) ir_node: ir::AbicoderPragma,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_abicoder_pragma(
     ir_node: &ir::AbicoderPragma,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> AbicoderPragma {
-    Rc::new(AbicoderPragmaStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(AbicoderPragmaStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -53,20 +53,20 @@ impl AbicoderPragmaStruct {
     }
 }
 
-pub type AdditiveExpression = Rc<AdditiveExpressionStruct>;
+pub type AdditiveExpression = Arc<AdditiveExpressionStruct>;
 
 pub struct AdditiveExpressionStruct {
     pub(crate) ir_node: ir::AdditiveExpression,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_additive_expression(
     ir_node: &ir::AdditiveExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> AdditiveExpression {
-    Rc::new(AdditiveExpressionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(AdditiveExpressionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -100,20 +100,20 @@ impl AdditiveExpressionStruct {
     }
 }
 
-pub type AddressType = Rc<AddressTypeStruct>;
+pub type AddressType = Arc<AddressTypeStruct>;
 
 pub struct AddressTypeStruct {
     pub(crate) ir_node: ir::AddressType,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_address_type(
     ir_node: &ir::AddressType,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> AddressType {
-    Rc::new(AddressTypeStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(AddressTypeStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -142,20 +142,20 @@ impl AddressTypeStruct {
     }
 }
 
-pub type AndExpression = Rc<AndExpressionStruct>;
+pub type AndExpression = Arc<AndExpressionStruct>;
 
 pub struct AndExpressionStruct {
     pub(crate) ir_node: ir::AndExpression,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_and_expression(
     ir_node: &ir::AndExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> AndExpression {
-    Rc::new(AndExpressionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(AndExpressionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -185,20 +185,20 @@ impl AndExpressionStruct {
     }
 }
 
-pub type ArrayExpression = Rc<ArrayExpressionStruct>;
+pub type ArrayExpression = Arc<ArrayExpressionStruct>;
 
 pub struct ArrayExpressionStruct {
     pub(crate) ir_node: ir::ArrayExpression,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_array_expression(
     ir_node: &ir::ArrayExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ArrayExpression {
-    Rc::new(ArrayExpressionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(ArrayExpressionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -224,20 +224,20 @@ impl ArrayExpressionStruct {
     }
 }
 
-pub type ArrayTypeName = Rc<ArrayTypeNameStruct>;
+pub type ArrayTypeName = Arc<ArrayTypeNameStruct>;
 
 pub struct ArrayTypeNameStruct {
     pub(crate) ir_node: ir::ArrayTypeName,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_array_type_name(
     ir_node: &ir::ArrayTypeName,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ArrayTypeName {
-    Rc::new(ArrayTypeNameStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(ArrayTypeNameStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -270,20 +270,20 @@ impl ArrayTypeNameStruct {
     }
 }
 
-pub type AssemblyStatement = Rc<AssemblyStatementStruct>;
+pub type AssemblyStatement = Arc<AssemblyStatementStruct>;
 
 pub struct AssemblyStatementStruct {
     pub(crate) ir_node: ir::AssemblyStatement,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_assembly_statement(
     ir_node: &ir::AssemblyStatement,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> AssemblyStatement {
-    Rc::new(AssemblyStatementStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(AssemblyStatementStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -323,20 +323,20 @@ impl AssemblyStatementStruct {
     }
 }
 
-pub type AssignmentExpression = Rc<AssignmentExpressionStruct>;
+pub type AssignmentExpression = Arc<AssignmentExpressionStruct>;
 
 pub struct AssignmentExpressionStruct {
     pub(crate) ir_node: ir::AssignmentExpression,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_assignment_expression(
     ir_node: &ir::AssignmentExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> AssignmentExpression {
-    Rc::new(AssignmentExpressionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(AssignmentExpressionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -370,20 +370,20 @@ impl AssignmentExpressionStruct {
     }
 }
 
-pub type BitwiseAndExpression = Rc<BitwiseAndExpressionStruct>;
+pub type BitwiseAndExpression = Arc<BitwiseAndExpressionStruct>;
 
 pub struct BitwiseAndExpressionStruct {
     pub(crate) ir_node: ir::BitwiseAndExpression,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_bitwise_and_expression(
     ir_node: &ir::BitwiseAndExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> BitwiseAndExpression {
-    Rc::new(BitwiseAndExpressionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(BitwiseAndExpressionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -413,20 +413,20 @@ impl BitwiseAndExpressionStruct {
     }
 }
 
-pub type BitwiseOrExpression = Rc<BitwiseOrExpressionStruct>;
+pub type BitwiseOrExpression = Arc<BitwiseOrExpressionStruct>;
 
 pub struct BitwiseOrExpressionStruct {
     pub(crate) ir_node: ir::BitwiseOrExpression,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_bitwise_or_expression(
     ir_node: &ir::BitwiseOrExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> BitwiseOrExpression {
-    Rc::new(BitwiseOrExpressionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(BitwiseOrExpressionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -456,20 +456,20 @@ impl BitwiseOrExpressionStruct {
     }
 }
 
-pub type BitwiseXorExpression = Rc<BitwiseXorExpressionStruct>;
+pub type BitwiseXorExpression = Arc<BitwiseXorExpressionStruct>;
 
 pub struct BitwiseXorExpressionStruct {
     pub(crate) ir_node: ir::BitwiseXorExpression,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_bitwise_xor_expression(
     ir_node: &ir::BitwiseXorExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> BitwiseXorExpression {
-    Rc::new(BitwiseXorExpressionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(BitwiseXorExpressionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -499,17 +499,17 @@ impl BitwiseXorExpressionStruct {
     }
 }
 
-pub type Block = Rc<BlockStruct>;
+pub type Block = Arc<BlockStruct>;
 
 pub struct BlockStruct {
     pub(crate) ir_node: ir::Block,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
-pub fn create_block(ir_node: &ir::Block, semantic: &Rc<SemanticContext>) -> Block {
-    Rc::new(BlockStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+pub fn create_block(ir_node: &ir::Block, semantic: &Arc<SemanticContext>) -> Block {
+    Arc::new(BlockStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -535,20 +535,20 @@ impl BlockStruct {
     }
 }
 
-pub type BreakStatement = Rc<BreakStatementStruct>;
+pub type BreakStatement = Arc<BreakStatementStruct>;
 
 pub struct BreakStatementStruct {
     pub(crate) ir_node: ir::BreakStatement,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_break_statement(
     ir_node: &ir::BreakStatement,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> BreakStatement {
-    Rc::new(BreakStatementStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(BreakStatementStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -570,20 +570,20 @@ impl BreakStatementStruct {
     }
 }
 
-pub type CallOptionsExpression = Rc<CallOptionsExpressionStruct>;
+pub type CallOptionsExpression = Arc<CallOptionsExpressionStruct>;
 
 pub struct CallOptionsExpressionStruct {
     pub(crate) ir_node: ir::CallOptionsExpression,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_call_options_expression(
     ir_node: &ir::CallOptionsExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> CallOptionsExpression {
-    Rc::new(CallOptionsExpressionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(CallOptionsExpressionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -613,20 +613,20 @@ impl CallOptionsExpressionStruct {
     }
 }
 
-pub type CatchClause = Rc<CatchClauseStruct>;
+pub type CatchClause = Arc<CatchClauseStruct>;
 
 pub struct CatchClauseStruct {
     pub(crate) ir_node: ir::CatchClause,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_catch_clause(
     ir_node: &ir::CatchClause,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> CatchClause {
-    Rc::new(CatchClauseStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(CatchClauseStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -659,20 +659,20 @@ impl CatchClauseStruct {
     }
 }
 
-pub type CatchClauseError = Rc<CatchClauseErrorStruct>;
+pub type CatchClauseError = Arc<CatchClauseErrorStruct>;
 
 pub struct CatchClauseErrorStruct {
     pub(crate) ir_node: ir::CatchClauseError,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_catch_clause_error(
     ir_node: &ir::CatchClauseError,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> CatchClauseError {
-    Rc::new(CatchClauseErrorStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(CatchClauseErrorStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -705,20 +705,20 @@ impl CatchClauseErrorStruct {
     }
 }
 
-pub type ConditionalExpression = Rc<ConditionalExpressionStruct>;
+pub type ConditionalExpression = Arc<ConditionalExpressionStruct>;
 
 pub struct ConditionalExpressionStruct {
     pub(crate) ir_node: ir::ConditionalExpression,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_conditional_expression(
     ir_node: &ir::ConditionalExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ConditionalExpression {
-    Rc::new(ConditionalExpressionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(ConditionalExpressionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -752,20 +752,20 @@ impl ConditionalExpressionStruct {
     }
 }
 
-pub type ConstantDefinition = Rc<ConstantDefinitionStruct>;
+pub type ConstantDefinition = Arc<ConstantDefinitionStruct>;
 
 pub struct ConstantDefinitionStruct {
     pub(crate) ir_node: ir::ConstantDefinition,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_constant_definition(
     ir_node: &ir::ConstantDefinition,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ConstantDefinition {
-    Rc::new(ConstantDefinitionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(ConstantDefinitionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -809,20 +809,20 @@ impl ConstantDefinitionStruct {
     }
 }
 
-pub type ContinueStatement = Rc<ContinueStatementStruct>;
+pub type ContinueStatement = Arc<ContinueStatementStruct>;
 
 pub struct ContinueStatementStruct {
     pub(crate) ir_node: ir::ContinueStatement,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_continue_statement(
     ir_node: &ir::ContinueStatement,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ContinueStatement {
-    Rc::new(ContinueStatementStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(ContinueStatementStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -844,20 +844,20 @@ impl ContinueStatementStruct {
     }
 }
 
-pub type ContractDefinition = Rc<ContractDefinitionStruct>;
+pub type ContractDefinition = Arc<ContractDefinitionStruct>;
 
 pub struct ContractDefinitionStruct {
     pub(crate) ir_node: ir::ContractDefinition,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_contract_definition(
     ir_node: &ir::ContractDefinition,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ContractDefinition {
-    Rc::new(ContractDefinitionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(ContractDefinitionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -905,20 +905,20 @@ impl ContractDefinitionStruct {
     }
 }
 
-pub type DecimalNumberExpression = Rc<DecimalNumberExpressionStruct>;
+pub type DecimalNumberExpression = Arc<DecimalNumberExpressionStruct>;
 
 pub struct DecimalNumberExpressionStruct {
     pub(crate) ir_node: ir::DecimalNumberExpression,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_decimal_number_expression(
     ir_node: &ir::DecimalNumberExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> DecimalNumberExpression {
-    Rc::new(DecimalNumberExpressionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(DecimalNumberExpressionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -951,20 +951,20 @@ impl DecimalNumberExpressionStruct {
     }
 }
 
-pub type DoWhileStatement = Rc<DoWhileStatementStruct>;
+pub type DoWhileStatement = Arc<DoWhileStatementStruct>;
 
 pub struct DoWhileStatementStruct {
     pub(crate) ir_node: ir::DoWhileStatement,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_do_while_statement(
     ir_node: &ir::DoWhileStatement,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> DoWhileStatement {
-    Rc::new(DoWhileStatementStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(DoWhileStatementStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -994,20 +994,20 @@ impl DoWhileStatementStruct {
     }
 }
 
-pub type EmitStatement = Rc<EmitStatementStruct>;
+pub type EmitStatement = Arc<EmitStatementStruct>;
 
 pub struct EmitStatementStruct {
     pub(crate) ir_node: ir::EmitStatement,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_emit_statement(
     ir_node: &ir::EmitStatement,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> EmitStatement {
-    Rc::new(EmitStatementStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(EmitStatementStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -1037,20 +1037,20 @@ impl EmitStatementStruct {
     }
 }
 
-pub type EnumDefinition = Rc<EnumDefinitionStruct>;
+pub type EnumDefinition = Arc<EnumDefinitionStruct>;
 
 pub struct EnumDefinitionStruct {
     pub(crate) ir_node: ir::EnumDefinition,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_enum_definition(
     ir_node: &ir::EnumDefinition,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> EnumDefinition {
-    Rc::new(EnumDefinitionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(EnumDefinitionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -1080,20 +1080,20 @@ impl EnumDefinitionStruct {
     }
 }
 
-pub type EqualityExpression = Rc<EqualityExpressionStruct>;
+pub type EqualityExpression = Arc<EqualityExpressionStruct>;
 
 pub struct EqualityExpressionStruct {
     pub(crate) ir_node: ir::EqualityExpression,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_equality_expression(
     ir_node: &ir::EqualityExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> EqualityExpression {
-    Rc::new(EqualityExpressionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(EqualityExpressionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -1127,20 +1127,20 @@ impl EqualityExpressionStruct {
     }
 }
 
-pub type ErrorDefinition = Rc<ErrorDefinitionStruct>;
+pub type ErrorDefinition = Arc<ErrorDefinitionStruct>;
 
 pub struct ErrorDefinitionStruct {
     pub(crate) ir_node: ir::ErrorDefinition,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_error_definition(
     ir_node: &ir::ErrorDefinition,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ErrorDefinition {
-    Rc::new(ErrorDefinitionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(ErrorDefinitionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -1170,20 +1170,20 @@ impl ErrorDefinitionStruct {
     }
 }
 
-pub type EventDefinition = Rc<EventDefinitionStruct>;
+pub type EventDefinition = Arc<EventDefinitionStruct>;
 
 pub struct EventDefinitionStruct {
     pub(crate) ir_node: ir::EventDefinition,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_event_definition(
     ir_node: &ir::EventDefinition,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> EventDefinition {
-    Rc::new(EventDefinitionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(EventDefinitionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -1220,20 +1220,20 @@ impl EventDefinitionStruct {
     }
 }
 
-pub type ExperimentalPragma = Rc<ExperimentalPragmaStruct>;
+pub type ExperimentalPragma = Arc<ExperimentalPragmaStruct>;
 
 pub struct ExperimentalPragmaStruct {
     pub(crate) ir_node: ir::ExperimentalPragma,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_experimental_pragma(
     ir_node: &ir::ExperimentalPragma,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ExperimentalPragma {
-    Rc::new(ExperimentalPragmaStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(ExperimentalPragmaStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -1259,20 +1259,20 @@ impl ExperimentalPragmaStruct {
     }
 }
 
-pub type ExponentiationExpression = Rc<ExponentiationExpressionStruct>;
+pub type ExponentiationExpression = Arc<ExponentiationExpressionStruct>;
 
 pub struct ExponentiationExpressionStruct {
     pub(crate) ir_node: ir::ExponentiationExpression,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_exponentiation_expression(
     ir_node: &ir::ExponentiationExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ExponentiationExpression {
-    Rc::new(ExponentiationExpressionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(ExponentiationExpressionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -1302,20 +1302,20 @@ impl ExponentiationExpressionStruct {
     }
 }
 
-pub type ExpressionStatement = Rc<ExpressionStatementStruct>;
+pub type ExpressionStatement = Arc<ExpressionStatementStruct>;
 
 pub struct ExpressionStatementStruct {
     pub(crate) ir_node: ir::ExpressionStatement,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_expression_statement(
     ir_node: &ir::ExpressionStatement,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ExpressionStatement {
-    Rc::new(ExpressionStatementStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(ExpressionStatementStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -1341,20 +1341,20 @@ impl ExpressionStatementStruct {
     }
 }
 
-pub type ForStatement = Rc<ForStatementStruct>;
+pub type ForStatement = Arc<ForStatementStruct>;
 
 pub struct ForStatementStruct {
     pub(crate) ir_node: ir::ForStatement,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_for_statement(
     ir_node: &ir::ForStatement,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ForStatement {
-    Rc::new(ForStatementStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(ForStatementStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -1395,20 +1395,20 @@ impl ForStatementStruct {
     }
 }
 
-pub type FunctionCallExpression = Rc<FunctionCallExpressionStruct>;
+pub type FunctionCallExpression = Arc<FunctionCallExpressionStruct>;
 
 pub struct FunctionCallExpressionStruct {
     pub(crate) ir_node: ir::FunctionCallExpression,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_function_call_expression(
     ir_node: &ir::FunctionCallExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> FunctionCallExpression {
-    Rc::new(FunctionCallExpressionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(FunctionCallExpressionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -1438,20 +1438,20 @@ impl FunctionCallExpressionStruct {
     }
 }
 
-pub type FunctionDefinition = Rc<FunctionDefinitionStruct>;
+pub type FunctionDefinition = Arc<FunctionDefinitionStruct>;
 
 pub struct FunctionDefinitionStruct {
     pub(crate) ir_node: ir::FunctionDefinition,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_function_definition(
     ir_node: &ir::FunctionDefinition,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> FunctionDefinition {
-    Rc::new(FunctionDefinitionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(FunctionDefinitionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -1528,20 +1528,20 @@ impl FunctionDefinitionStruct {
     }
 }
 
-pub type FunctionType = Rc<FunctionTypeStruct>;
+pub type FunctionType = Arc<FunctionTypeStruct>;
 
 pub struct FunctionTypeStruct {
     pub(crate) ir_node: ir::FunctionType,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_function_type(
     ir_node: &ir::FunctionType,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> FunctionType {
-    Rc::new(FunctionTypeStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(FunctionTypeStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -1582,20 +1582,20 @@ impl FunctionTypeStruct {
     }
 }
 
-pub type HexNumberExpression = Rc<HexNumberExpressionStruct>;
+pub type HexNumberExpression = Arc<HexNumberExpressionStruct>;
 
 pub struct HexNumberExpressionStruct {
     pub(crate) ir_node: ir::HexNumberExpression,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_hex_number_expression(
     ir_node: &ir::HexNumberExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> HexNumberExpression {
-    Rc::new(HexNumberExpressionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(HexNumberExpressionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -1621,20 +1621,20 @@ impl HexNumberExpressionStruct {
     }
 }
 
-pub type IfStatement = Rc<IfStatementStruct>;
+pub type IfStatement = Arc<IfStatementStruct>;
 
 pub struct IfStatementStruct {
     pub(crate) ir_node: ir::IfStatement,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_if_statement(
     ir_node: &ir::IfStatement,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> IfStatement {
-    Rc::new(IfStatementStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(IfStatementStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -1671,20 +1671,20 @@ impl IfStatementStruct {
     }
 }
 
-pub type ImportDeconstruction = Rc<ImportDeconstructionStruct>;
+pub type ImportDeconstruction = Arc<ImportDeconstructionStruct>;
 
 pub struct ImportDeconstructionStruct {
     pub(crate) ir_node: ir::ImportDeconstruction,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_import_deconstruction(
     ir_node: &ir::ImportDeconstruction,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ImportDeconstruction {
-    Rc::new(ImportDeconstructionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(ImportDeconstructionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -1714,20 +1714,20 @@ impl ImportDeconstructionStruct {
     }
 }
 
-pub type ImportDeconstructionSymbol = Rc<ImportDeconstructionSymbolStruct>;
+pub type ImportDeconstructionSymbol = Arc<ImportDeconstructionSymbolStruct>;
 
 pub struct ImportDeconstructionSymbolStruct {
     pub(crate) ir_node: ir::ImportDeconstructionSymbol,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_import_deconstruction_symbol(
     ir_node: &ir::ImportDeconstructionSymbol,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ImportDeconstructionSymbol {
-    Rc::new(ImportDeconstructionSymbolStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(ImportDeconstructionSymbolStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -1760,20 +1760,20 @@ impl ImportDeconstructionSymbolStruct {
     }
 }
 
-pub type IndexAccessExpression = Rc<IndexAccessExpressionStruct>;
+pub type IndexAccessExpression = Arc<IndexAccessExpressionStruct>;
 
 pub struct IndexAccessExpressionStruct {
     pub(crate) ir_node: ir::IndexAccessExpression,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_index_access_expression(
     ir_node: &ir::IndexAccessExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> IndexAccessExpression {
-    Rc::new(IndexAccessExpressionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(IndexAccessExpressionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -1813,20 +1813,20 @@ impl IndexAccessExpressionStruct {
     }
 }
 
-pub type InequalityExpression = Rc<InequalityExpressionStruct>;
+pub type InequalityExpression = Arc<InequalityExpressionStruct>;
 
 pub struct InequalityExpressionStruct {
     pub(crate) ir_node: ir::InequalityExpression,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_inequality_expression(
     ir_node: &ir::InequalityExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> InequalityExpression {
-    Rc::new(InequalityExpressionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(InequalityExpressionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -1860,20 +1860,20 @@ impl InequalityExpressionStruct {
     }
 }
 
-pub type InheritanceType = Rc<InheritanceTypeStruct>;
+pub type InheritanceType = Arc<InheritanceTypeStruct>;
 
 pub struct InheritanceTypeStruct {
     pub(crate) ir_node: ir::InheritanceType,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_inheritance_type(
     ir_node: &ir::InheritanceType,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> InheritanceType {
-    Rc::new(InheritanceTypeStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(InheritanceTypeStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -1906,20 +1906,20 @@ impl InheritanceTypeStruct {
     }
 }
 
-pub type InterfaceDefinition = Rc<InterfaceDefinitionStruct>;
+pub type InterfaceDefinition = Arc<InterfaceDefinitionStruct>;
 
 pub struct InterfaceDefinitionStruct {
     pub(crate) ir_node: ir::InterfaceDefinition,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_interface_definition(
     ir_node: &ir::InterfaceDefinition,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> InterfaceDefinition {
-    Rc::new(InterfaceDefinitionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(InterfaceDefinitionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -1956,20 +1956,20 @@ impl InterfaceDefinitionStruct {
     }
 }
 
-pub type LibraryDefinition = Rc<LibraryDefinitionStruct>;
+pub type LibraryDefinition = Arc<LibraryDefinitionStruct>;
 
 pub struct LibraryDefinitionStruct {
     pub(crate) ir_node: ir::LibraryDefinition,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_library_definition(
     ir_node: &ir::LibraryDefinition,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> LibraryDefinition {
-    Rc::new(LibraryDefinitionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(LibraryDefinitionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -1999,20 +1999,20 @@ impl LibraryDefinitionStruct {
     }
 }
 
-pub type MappingType = Rc<MappingTypeStruct>;
+pub type MappingType = Arc<MappingTypeStruct>;
 
 pub struct MappingTypeStruct {
     pub(crate) ir_node: ir::MappingType,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_mapping_type(
     ir_node: &ir::MappingType,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> MappingType {
-    Rc::new(MappingTypeStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(MappingTypeStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -2042,20 +2042,20 @@ impl MappingTypeStruct {
     }
 }
 
-pub type MemberAccessExpression = Rc<MemberAccessExpressionStruct>;
+pub type MemberAccessExpression = Arc<MemberAccessExpressionStruct>;
 
 pub struct MemberAccessExpressionStruct {
     pub(crate) ir_node: ir::MemberAccessExpression,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_member_access_expression(
     ir_node: &ir::MemberAccessExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> MemberAccessExpression {
-    Rc::new(MemberAccessExpressionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(MemberAccessExpressionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -2085,20 +2085,20 @@ impl MemberAccessExpressionStruct {
     }
 }
 
-pub type ModifierInvocation = Rc<ModifierInvocationStruct>;
+pub type ModifierInvocation = Arc<ModifierInvocationStruct>;
 
 pub struct ModifierInvocationStruct {
     pub(crate) ir_node: ir::ModifierInvocation,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_modifier_invocation(
     ir_node: &ir::ModifierInvocation,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ModifierInvocation {
-    Rc::new(ModifierInvocationStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(ModifierInvocationStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -2131,20 +2131,20 @@ impl ModifierInvocationStruct {
     }
 }
 
-pub type MultiTypedDeclaration = Rc<MultiTypedDeclarationStruct>;
+pub type MultiTypedDeclaration = Arc<MultiTypedDeclarationStruct>;
 
 pub struct MultiTypedDeclarationStruct {
     pub(crate) ir_node: ir::MultiTypedDeclaration,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_multi_typed_declaration(
     ir_node: &ir::MultiTypedDeclaration,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> MultiTypedDeclaration {
-    Rc::new(MultiTypedDeclarationStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(MultiTypedDeclarationStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -2174,20 +2174,20 @@ impl MultiTypedDeclarationStruct {
     }
 }
 
-pub type MultiTypedDeclarationElement = Rc<MultiTypedDeclarationElementStruct>;
+pub type MultiTypedDeclarationElement = Arc<MultiTypedDeclarationElementStruct>;
 
 pub struct MultiTypedDeclarationElementStruct {
     pub(crate) ir_node: ir::MultiTypedDeclarationElement,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_multi_typed_declaration_element(
     ir_node: &ir::MultiTypedDeclarationElement,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> MultiTypedDeclarationElement {
-    Rc::new(MultiTypedDeclarationElementStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(MultiTypedDeclarationElementStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -2216,20 +2216,20 @@ impl MultiTypedDeclarationElementStruct {
     }
 }
 
-pub type MultiplicativeExpression = Rc<MultiplicativeExpressionStruct>;
+pub type MultiplicativeExpression = Arc<MultiplicativeExpressionStruct>;
 
 pub struct MultiplicativeExpressionStruct {
     pub(crate) ir_node: ir::MultiplicativeExpression,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_multiplicative_expression(
     ir_node: &ir::MultiplicativeExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> MultiplicativeExpression {
-    Rc::new(MultiplicativeExpressionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(MultiplicativeExpressionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -2263,20 +2263,20 @@ impl MultiplicativeExpressionStruct {
     }
 }
 
-pub type NamedArgument = Rc<NamedArgumentStruct>;
+pub type NamedArgument = Arc<NamedArgumentStruct>;
 
 pub struct NamedArgumentStruct {
     pub(crate) ir_node: ir::NamedArgument,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_named_argument(
     ir_node: &ir::NamedArgument,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> NamedArgument {
-    Rc::new(NamedArgumentStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(NamedArgumentStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -2306,20 +2306,20 @@ impl NamedArgumentStruct {
     }
 }
 
-pub type NewExpression = Rc<NewExpressionStruct>;
+pub type NewExpression = Arc<NewExpressionStruct>;
 
 pub struct NewExpressionStruct {
     pub(crate) ir_node: ir::NewExpression,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_new_expression(
     ir_node: &ir::NewExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> NewExpression {
-    Rc::new(NewExpressionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(NewExpressionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -2345,20 +2345,20 @@ impl NewExpressionStruct {
     }
 }
 
-pub type OrExpression = Rc<OrExpressionStruct>;
+pub type OrExpression = Arc<OrExpressionStruct>;
 
 pub struct OrExpressionStruct {
     pub(crate) ir_node: ir::OrExpression,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_or_expression(
     ir_node: &ir::OrExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> OrExpression {
-    Rc::new(OrExpressionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(OrExpressionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -2388,17 +2388,17 @@ impl OrExpressionStruct {
     }
 }
 
-pub type Parameter = Rc<ParameterStruct>;
+pub type Parameter = Arc<ParameterStruct>;
 
 pub struct ParameterStruct {
     pub(crate) ir_node: ir::Parameter,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
-pub fn create_parameter(ir_node: &ir::Parameter, semantic: &Rc<SemanticContext>) -> Parameter {
-    Rc::new(ParameterStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+pub fn create_parameter(ir_node: &ir::Parameter, semantic: &Arc<SemanticContext>) -> Parameter {
+    Arc::new(ParameterStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -2445,17 +2445,17 @@ impl ParameterStruct {
     }
 }
 
-pub type PathImport = Rc<PathImportStruct>;
+pub type PathImport = Arc<PathImportStruct>;
 
 pub struct PathImportStruct {
     pub(crate) ir_node: ir::PathImport,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
-pub fn create_path_import(ir_node: &ir::PathImport, semantic: &Rc<SemanticContext>) -> PathImport {
-    Rc::new(PathImportStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+pub fn create_path_import(ir_node: &ir::PathImport, semantic: &Arc<SemanticContext>) -> PathImport {
+    Arc::new(PathImportStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -2488,20 +2488,20 @@ impl PathImportStruct {
     }
 }
 
-pub type PostfixExpression = Rc<PostfixExpressionStruct>;
+pub type PostfixExpression = Arc<PostfixExpressionStruct>;
 
 pub struct PostfixExpressionStruct {
     pub(crate) ir_node: ir::PostfixExpression,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_postfix_expression(
     ir_node: &ir::PostfixExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> PostfixExpression {
-    Rc::new(PostfixExpressionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(PostfixExpressionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -2531,20 +2531,20 @@ impl PostfixExpressionStruct {
     }
 }
 
-pub type PragmaDirective = Rc<PragmaDirectiveStruct>;
+pub type PragmaDirective = Arc<PragmaDirectiveStruct>;
 
 pub struct PragmaDirectiveStruct {
     pub(crate) ir_node: ir::PragmaDirective,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_pragma_directive(
     ir_node: &ir::PragmaDirective,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> PragmaDirective {
-    Rc::new(PragmaDirectiveStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(PragmaDirectiveStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -2570,20 +2570,20 @@ impl PragmaDirectiveStruct {
     }
 }
 
-pub type PrefixExpression = Rc<PrefixExpressionStruct>;
+pub type PrefixExpression = Arc<PrefixExpressionStruct>;
 
 pub struct PrefixExpressionStruct {
     pub(crate) ir_node: ir::PrefixExpression,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_prefix_expression(
     ir_node: &ir::PrefixExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> PrefixExpression {
-    Rc::new(PrefixExpressionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(PrefixExpressionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -2613,20 +2613,20 @@ impl PrefixExpressionStruct {
     }
 }
 
-pub type ReturnStatement = Rc<ReturnStatementStruct>;
+pub type ReturnStatement = Arc<ReturnStatementStruct>;
 
 pub struct ReturnStatementStruct {
     pub(crate) ir_node: ir::ReturnStatement,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_return_statement(
     ir_node: &ir::ReturnStatement,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ReturnStatement {
-    Rc::new(ReturnStatementStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(ReturnStatementStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -2655,20 +2655,20 @@ impl ReturnStatementStruct {
     }
 }
 
-pub type RevertStatement = Rc<RevertStatementStruct>;
+pub type RevertStatement = Arc<RevertStatementStruct>;
 
 pub struct RevertStatementStruct {
     pub(crate) ir_node: ir::RevertStatement,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_revert_statement(
     ir_node: &ir::RevertStatement,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> RevertStatement {
-    Rc::new(RevertStatementStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(RevertStatementStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -2698,20 +2698,20 @@ impl RevertStatementStruct {
     }
 }
 
-pub type ShiftExpression = Rc<ShiftExpressionStruct>;
+pub type ShiftExpression = Arc<ShiftExpressionStruct>;
 
 pub struct ShiftExpressionStruct {
     pub(crate) ir_node: ir::ShiftExpression,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_shift_expression(
     ir_node: &ir::ShiftExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ShiftExpression {
-    Rc::new(ShiftExpressionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(ShiftExpressionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -2745,20 +2745,20 @@ impl ShiftExpressionStruct {
     }
 }
 
-pub type SingleTypedDeclaration = Rc<SingleTypedDeclarationStruct>;
+pub type SingleTypedDeclaration = Arc<SingleTypedDeclarationStruct>;
 
 pub struct SingleTypedDeclarationStruct {
     pub(crate) ir_node: ir::SingleTypedDeclaration,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_single_typed_declaration(
     ir_node: &ir::SingleTypedDeclaration,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> SingleTypedDeclaration {
-    Rc::new(SingleTypedDeclarationStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(SingleTypedDeclarationStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -2791,17 +2791,17 @@ impl SingleTypedDeclarationStruct {
     }
 }
 
-pub type SourceUnit = Rc<SourceUnitStruct>;
+pub type SourceUnit = Arc<SourceUnitStruct>;
 
 pub struct SourceUnitStruct {
     pub(crate) ir_node: ir::SourceUnit,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
-pub fn create_source_unit(ir_node: &ir::SourceUnit, semantic: &Rc<SemanticContext>) -> SourceUnit {
-    Rc::new(SourceUnitStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+pub fn create_source_unit(ir_node: &ir::SourceUnit, semantic: &Arc<SemanticContext>) -> SourceUnit {
+    Arc::new(SourceUnitStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -2827,20 +2827,20 @@ impl SourceUnitStruct {
     }
 }
 
-pub type StateVariableDefinition = Rc<StateVariableDefinitionStruct>;
+pub type StateVariableDefinition = Arc<StateVariableDefinitionStruct>;
 
 pub struct StateVariableDefinitionStruct {
     pub(crate) ir_node: ir::StateVariableDefinition,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_state_variable_definition(
     ir_node: &ir::StateVariableDefinition,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> StateVariableDefinition {
-    Rc::new(StateVariableDefinitionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(StateVariableDefinitionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -2892,20 +2892,20 @@ impl StateVariableDefinitionStruct {
     }
 }
 
-pub type StructDefinition = Rc<StructDefinitionStruct>;
+pub type StructDefinition = Arc<StructDefinitionStruct>;
 
 pub struct StructDefinitionStruct {
     pub(crate) ir_node: ir::StructDefinition,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_struct_definition(
     ir_node: &ir::StructDefinition,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> StructDefinition {
-    Rc::new(StructDefinitionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(StructDefinitionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -2935,20 +2935,20 @@ impl StructDefinitionStruct {
     }
 }
 
-pub type StructMember = Rc<StructMemberStruct>;
+pub type StructMember = Arc<StructMemberStruct>;
 
 pub struct StructMemberStruct {
     pub(crate) ir_node: ir::StructMember,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_struct_member(
     ir_node: &ir::StructMember,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> StructMember {
-    Rc::new(StructMemberStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(StructMemberStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -2978,20 +2978,20 @@ impl StructMemberStruct {
     }
 }
 
-pub type TryStatement = Rc<TryStatementStruct>;
+pub type TryStatement = Arc<TryStatementStruct>;
 
 pub struct TryStatementStruct {
     pub(crate) ir_node: ir::TryStatement,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_try_statement(
     ir_node: &ir::TryStatement,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> TryStatement {
-    Rc::new(TryStatementStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(TryStatementStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -3032,20 +3032,20 @@ impl TryStatementStruct {
     }
 }
 
-pub type TupleExpression = Rc<TupleExpressionStruct>;
+pub type TupleExpression = Arc<TupleExpressionStruct>;
 
 pub struct TupleExpressionStruct {
     pub(crate) ir_node: ir::TupleExpression,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_tuple_expression(
     ir_node: &ir::TupleExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> TupleExpression {
-    Rc::new(TupleExpressionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(TupleExpressionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -3071,17 +3071,17 @@ impl TupleExpressionStruct {
     }
 }
 
-pub type TupleValue = Rc<TupleValueStruct>;
+pub type TupleValue = Arc<TupleValueStruct>;
 
 pub struct TupleValueStruct {
     pub(crate) ir_node: ir::TupleValue,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
-pub fn create_tuple_value(ir_node: &ir::TupleValue, semantic: &Rc<SemanticContext>) -> TupleValue {
-    Rc::new(TupleValueStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+pub fn create_tuple_value(ir_node: &ir::TupleValue, semantic: &Arc<SemanticContext>) -> TupleValue {
+    Arc::new(TupleValueStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -3110,20 +3110,20 @@ impl TupleValueStruct {
     }
 }
 
-pub type TypeExpression = Rc<TypeExpressionStruct>;
+pub type TypeExpression = Arc<TypeExpressionStruct>;
 
 pub struct TypeExpressionStruct {
     pub(crate) ir_node: ir::TypeExpression,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_type_expression(
     ir_node: &ir::TypeExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> TypeExpression {
-    Rc::new(TypeExpressionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(TypeExpressionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -3149,20 +3149,20 @@ impl TypeExpressionStruct {
     }
 }
 
-pub type UncheckedBlock = Rc<UncheckedBlockStruct>;
+pub type UncheckedBlock = Arc<UncheckedBlockStruct>;
 
 pub struct UncheckedBlockStruct {
     pub(crate) ir_node: ir::UncheckedBlock,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_unchecked_block(
     ir_node: &ir::UncheckedBlock,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> UncheckedBlock {
-    Rc::new(UncheckedBlockStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(UncheckedBlockStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -3188,20 +3188,20 @@ impl UncheckedBlockStruct {
     }
 }
 
-pub type UserDefinedValueTypeDefinition = Rc<UserDefinedValueTypeDefinitionStruct>;
+pub type UserDefinedValueTypeDefinition = Arc<UserDefinedValueTypeDefinitionStruct>;
 
 pub struct UserDefinedValueTypeDefinitionStruct {
     pub(crate) ir_node: ir::UserDefinedValueTypeDefinition,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_user_defined_value_type_definition(
     ir_node: &ir::UserDefinedValueTypeDefinition,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> UserDefinedValueTypeDefinition {
-    Rc::new(UserDefinedValueTypeDefinitionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(UserDefinedValueTypeDefinitionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -3231,20 +3231,20 @@ impl UserDefinedValueTypeDefinitionStruct {
     }
 }
 
-pub type UsingDeconstruction = Rc<UsingDeconstructionStruct>;
+pub type UsingDeconstruction = Arc<UsingDeconstructionStruct>;
 
 pub struct UsingDeconstructionStruct {
     pub(crate) ir_node: ir::UsingDeconstruction,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_using_deconstruction(
     ir_node: &ir::UsingDeconstruction,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> UsingDeconstruction {
-    Rc::new(UsingDeconstructionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(UsingDeconstructionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -3270,20 +3270,20 @@ impl UsingDeconstructionStruct {
     }
 }
 
-pub type UsingDeconstructionSymbol = Rc<UsingDeconstructionSymbolStruct>;
+pub type UsingDeconstructionSymbol = Arc<UsingDeconstructionSymbolStruct>;
 
 pub struct UsingDeconstructionSymbolStruct {
     pub(crate) ir_node: ir::UsingDeconstructionSymbol,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_using_deconstruction_symbol(
     ir_node: &ir::UsingDeconstructionSymbol,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> UsingDeconstructionSymbol {
-    Rc::new(UsingDeconstructionSymbolStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(UsingDeconstructionSymbolStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -3316,20 +3316,20 @@ impl UsingDeconstructionSymbolStruct {
     }
 }
 
-pub type UsingDirective = Rc<UsingDirectiveStruct>;
+pub type UsingDirective = Arc<UsingDirectiveStruct>;
 
 pub struct UsingDirectiveStruct {
     pub(crate) ir_node: ir::UsingDirective,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_using_directive(
     ir_node: &ir::UsingDirective,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> UsingDirective {
-    Rc::new(UsingDirectiveStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(UsingDirectiveStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -3366,20 +3366,20 @@ impl UsingDirectiveStruct {
     }
 }
 
-pub type VariableDeclaration = Rc<VariableDeclarationStruct>;
+pub type VariableDeclaration = Arc<VariableDeclarationStruct>;
 
 pub struct VariableDeclarationStruct {
     pub(crate) ir_node: ir::VariableDeclaration,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_variable_declaration(
     ir_node: &ir::VariableDeclaration,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> VariableDeclaration {
-    Rc::new(VariableDeclarationStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(VariableDeclarationStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -3416,20 +3416,20 @@ impl VariableDeclarationStruct {
     }
 }
 
-pub type VariableDeclarationStatement = Rc<VariableDeclarationStatementStruct>;
+pub type VariableDeclarationStatement = Arc<VariableDeclarationStatementStruct>;
 
 pub struct VariableDeclarationStatementStruct {
     pub(crate) ir_node: ir::VariableDeclarationStatement,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_variable_declaration_statement(
     ir_node: &ir::VariableDeclarationStatement,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> VariableDeclarationStatement {
-    Rc::new(VariableDeclarationStatementStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(VariableDeclarationStatementStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -3455,20 +3455,20 @@ impl VariableDeclarationStatementStruct {
     }
 }
 
-pub type VersionPragma = Rc<VersionPragmaStruct>;
+pub type VersionPragma = Arc<VersionPragmaStruct>;
 
 pub struct VersionPragmaStruct {
     pub(crate) ir_node: ir::VersionPragma,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_version_pragma(
     ir_node: &ir::VersionPragma,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> VersionPragma {
-    Rc::new(VersionPragmaStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(VersionPragmaStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -3494,20 +3494,20 @@ impl VersionPragmaStruct {
     }
 }
 
-pub type VersionRange = Rc<VersionRangeStruct>;
+pub type VersionRange = Arc<VersionRangeStruct>;
 
 pub struct VersionRangeStruct {
     pub(crate) ir_node: ir::VersionRange,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_version_range(
     ir_node: &ir::VersionRange,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> VersionRange {
-    Rc::new(VersionRangeStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(VersionRangeStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -3537,20 +3537,20 @@ impl VersionRangeStruct {
     }
 }
 
-pub type VersionTerm = Rc<VersionTermStruct>;
+pub type VersionTerm = Arc<VersionTermStruct>;
 
 pub struct VersionTermStruct {
     pub(crate) ir_node: ir::VersionTerm,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_version_term(
     ir_node: &ir::VersionTerm,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> VersionTerm {
-    Rc::new(VersionTermStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(VersionTermStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -3583,20 +3583,20 @@ impl VersionTermStruct {
     }
 }
 
-pub type WhileStatement = Rc<WhileStatementStruct>;
+pub type WhileStatement = Arc<WhileStatementStruct>;
 
 pub struct WhileStatementStruct {
     pub(crate) ir_node: ir::WhileStatement,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_while_statement(
     ir_node: &ir::WhileStatement,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> WhileStatement {
-    Rc::new(WhileStatementStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(WhileStatementStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -3626,17 +3626,17 @@ impl WhileStatementStruct {
     }
 }
 
-pub type YulBlock = Rc<YulBlockStruct>;
+pub type YulBlock = Arc<YulBlockStruct>;
 
 pub struct YulBlockStruct {
     pub(crate) ir_node: ir::YulBlock,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
-pub fn create_yul_block(ir_node: &ir::YulBlock, semantic: &Rc<SemanticContext>) -> YulBlock {
-    Rc::new(YulBlockStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+pub fn create_yul_block(ir_node: &ir::YulBlock, semantic: &Arc<SemanticContext>) -> YulBlock {
+    Arc::new(YulBlockStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -3662,20 +3662,20 @@ impl YulBlockStruct {
     }
 }
 
-pub type YulBreakStatement = Rc<YulBreakStatementStruct>;
+pub type YulBreakStatement = Arc<YulBreakStatementStruct>;
 
 pub struct YulBreakStatementStruct {
     pub(crate) ir_node: ir::YulBreakStatement,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_yul_break_statement(
     ir_node: &ir::YulBreakStatement,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> YulBreakStatement {
-    Rc::new(YulBreakStatementStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(YulBreakStatementStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -3697,20 +3697,20 @@ impl YulBreakStatementStruct {
     }
 }
 
-pub type YulContinueStatement = Rc<YulContinueStatementStruct>;
+pub type YulContinueStatement = Arc<YulContinueStatementStruct>;
 
 pub struct YulContinueStatementStruct {
     pub(crate) ir_node: ir::YulContinueStatement,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_yul_continue_statement(
     ir_node: &ir::YulContinueStatement,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> YulContinueStatement {
-    Rc::new(YulContinueStatementStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(YulContinueStatementStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -3732,20 +3732,20 @@ impl YulContinueStatementStruct {
     }
 }
 
-pub type YulDefaultCase = Rc<YulDefaultCaseStruct>;
+pub type YulDefaultCase = Arc<YulDefaultCaseStruct>;
 
 pub struct YulDefaultCaseStruct {
     pub(crate) ir_node: ir::YulDefaultCase,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_yul_default_case(
     ir_node: &ir::YulDefaultCase,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> YulDefaultCase {
-    Rc::new(YulDefaultCaseStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(YulDefaultCaseStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -3771,20 +3771,20 @@ impl YulDefaultCaseStruct {
     }
 }
 
-pub type YulForStatement = Rc<YulForStatementStruct>;
+pub type YulForStatement = Arc<YulForStatementStruct>;
 
 pub struct YulForStatementStruct {
     pub(crate) ir_node: ir::YulForStatement,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_yul_for_statement(
     ir_node: &ir::YulForStatement,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> YulForStatement {
-    Rc::new(YulForStatementStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(YulForStatementStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -3822,20 +3822,20 @@ impl YulForStatementStruct {
     }
 }
 
-pub type YulFunctionCallExpression = Rc<YulFunctionCallExpressionStruct>;
+pub type YulFunctionCallExpression = Arc<YulFunctionCallExpressionStruct>;
 
 pub struct YulFunctionCallExpressionStruct {
     pub(crate) ir_node: ir::YulFunctionCallExpression,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_yul_function_call_expression(
     ir_node: &ir::YulFunctionCallExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> YulFunctionCallExpression {
-    Rc::new(YulFunctionCallExpressionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(YulFunctionCallExpressionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -3865,20 +3865,20 @@ impl YulFunctionCallExpressionStruct {
     }
 }
 
-pub type YulFunctionDefinition = Rc<YulFunctionDefinitionStruct>;
+pub type YulFunctionDefinition = Arc<YulFunctionDefinitionStruct>;
 
 pub struct YulFunctionDefinitionStruct {
     pub(crate) ir_node: ir::YulFunctionDefinition,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_yul_function_definition(
     ir_node: &ir::YulFunctionDefinition,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> YulFunctionDefinition {
-    Rc::new(YulFunctionDefinitionStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(YulFunctionDefinitionStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -3919,20 +3919,20 @@ impl YulFunctionDefinitionStruct {
     }
 }
 
-pub type YulIfStatement = Rc<YulIfStatementStruct>;
+pub type YulIfStatement = Arc<YulIfStatementStruct>;
 
 pub struct YulIfStatementStruct {
     pub(crate) ir_node: ir::YulIfStatement,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_yul_if_statement(
     ir_node: &ir::YulIfStatement,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> YulIfStatement {
-    Rc::new(YulIfStatementStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(YulIfStatementStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -3962,20 +3962,20 @@ impl YulIfStatementStruct {
     }
 }
 
-pub type YulLeaveStatement = Rc<YulLeaveStatementStruct>;
+pub type YulLeaveStatement = Arc<YulLeaveStatementStruct>;
 
 pub struct YulLeaveStatementStruct {
     pub(crate) ir_node: ir::YulLeaveStatement,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_yul_leave_statement(
     ir_node: &ir::YulLeaveStatement,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> YulLeaveStatement {
-    Rc::new(YulLeaveStatementStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(YulLeaveStatementStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -3997,20 +3997,20 @@ impl YulLeaveStatementStruct {
     }
 }
 
-pub type YulSwitchStatement = Rc<YulSwitchStatementStruct>;
+pub type YulSwitchStatement = Arc<YulSwitchStatementStruct>;
 
 pub struct YulSwitchStatementStruct {
     pub(crate) ir_node: ir::YulSwitchStatement,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_yul_switch_statement(
     ir_node: &ir::YulSwitchStatement,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> YulSwitchStatement {
-    Rc::new(YulSwitchStatementStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(YulSwitchStatementStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -4040,20 +4040,20 @@ impl YulSwitchStatementStruct {
     }
 }
 
-pub type YulValueCase = Rc<YulValueCaseStruct>;
+pub type YulValueCase = Arc<YulValueCaseStruct>;
 
 pub struct YulValueCaseStruct {
     pub(crate) ir_node: ir::YulValueCase,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_yul_value_case(
     ir_node: &ir::YulValueCase,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> YulValueCase {
-    Rc::new(YulValueCaseStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(YulValueCaseStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -4083,20 +4083,20 @@ impl YulValueCaseStruct {
     }
 }
 
-pub type YulVariableAssignmentStatement = Rc<YulVariableAssignmentStatementStruct>;
+pub type YulVariableAssignmentStatement = Arc<YulVariableAssignmentStatementStruct>;
 
 pub struct YulVariableAssignmentStatementStruct {
     pub(crate) ir_node: ir::YulVariableAssignmentStatement,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_yul_variable_assignment_statement(
     ir_node: &ir::YulVariableAssignmentStatement,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> YulVariableAssignmentStatement {
-    Rc::new(YulVariableAssignmentStatementStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(YulVariableAssignmentStatementStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -4126,20 +4126,20 @@ impl YulVariableAssignmentStatementStruct {
     }
 }
 
-pub type YulVariableDeclarationStatement = Rc<YulVariableDeclarationStatementStruct>;
+pub type YulVariableDeclarationStatement = Arc<YulVariableDeclarationStatementStruct>;
 
 pub struct YulVariableDeclarationStatementStruct {
     pub(crate) ir_node: ir::YulVariableDeclarationStatement,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_yul_variable_declaration_statement(
     ir_node: &ir::YulVariableDeclarationStatement,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> YulVariableDeclarationStatement {
-    Rc::new(YulVariableDeclarationStatementStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(YulVariableDeclarationStatementStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -4172,20 +4172,20 @@ impl YulVariableDeclarationStatementStruct {
     }
 }
 
-pub type YulVariableDeclarationValue = Rc<YulVariableDeclarationValueStruct>;
+pub type YulVariableDeclarationValue = Arc<YulVariableDeclarationValueStruct>;
 
 pub struct YulVariableDeclarationValueStruct {
     pub(crate) ir_node: ir::YulVariableDeclarationValue,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub fn create_yul_variable_declaration_value(
     ir_node: &ir::YulVariableDeclarationValue,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> YulVariableDeclarationValue {
-    Rc::new(YulVariableDeclarationValueStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(YulVariableDeclarationValueStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
@@ -4224,7 +4224,7 @@ pub enum AbicoderVersion {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_abicoder_version(
     ir_node: &ir::AbicoderVersion,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> AbicoderVersion {
     match ir_node {
         ir::AbicoderVersion::AbicoderV1Keyword(variant) => {
@@ -4245,7 +4245,7 @@ pub enum AdditiveExpressionOperator {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_additive_expression_operator(
     ir_node: &ir::AdditiveExpressionOperator,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> AdditiveExpressionOperator {
     match ir_node {
         ir::AdditiveExpressionOperator::Minus(variant) => {
@@ -4266,7 +4266,7 @@ pub enum ArgumentsDeclaration {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_arguments_declaration(
     ir_node: &ir::ArgumentsDeclaration,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ArgumentsDeclaration {
     match ir_node {
         ir::ArgumentsDeclaration::PositionalArguments(nodes) => {
@@ -4297,7 +4297,7 @@ pub enum AssignmentExpressionOperator {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_assignment_expression_operator(
     ir_node: &ir::AssignmentExpressionOperator,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> AssignmentExpressionOperator {
     match ir_node {
         ir::AssignmentExpressionOperator::AmpersandEqual(variant) => {
@@ -4361,7 +4361,7 @@ pub enum ContractMember {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_contract_member(
     ir_node: &ir::ContractMember,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ContractMember {
     match ir_node {
         ir::ContractMember::UsingDirective(variant) => {
@@ -4413,7 +4413,7 @@ pub enum ElementaryType {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_elementary_type(
     ir_node: &ir::ElementaryType,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ElementaryType {
     match ir_node {
         ir::ElementaryType::BoolKeyword(variant) => {
@@ -4452,7 +4452,7 @@ pub enum EqualityExpressionOperator {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_equality_expression_operator(
     ir_node: &ir::EqualityExpressionOperator,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> EqualityExpressionOperator {
     match ir_node {
         ir::EqualityExpressionOperator::BangEqual(variant) => {
@@ -4474,7 +4474,7 @@ pub enum ExperimentalFeature {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_experimental_feature(
     ir_node: &ir::ExperimentalFeature,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ExperimentalFeature {
     match ir_node {
         ir::ExperimentalFeature::ABIEncoderV2Keyword(variant) => {
@@ -4531,7 +4531,7 @@ pub enum Expression {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_expression(
     ir_node: &ir::Expression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> Expression {
     match ir_node {
         ir::Expression::AssignmentExpression(variant) => {
@@ -4645,7 +4645,7 @@ pub enum ForStatementCondition {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_for_statement_condition(
     ir_node: &ir::ForStatementCondition,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ForStatementCondition {
     match ir_node {
         ir::ForStatementCondition::ExpressionStatement(variant) => {
@@ -4669,7 +4669,7 @@ pub enum ForStatementInitialization {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_for_statement_initialization(
     ir_node: &ir::ForStatementInitialization,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ForStatementInitialization {
     match ir_node {
         ir::ForStatementInitialization::VariableDeclarationStatement(variant) => {
@@ -4700,7 +4700,7 @@ pub enum FunctionKind {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_function_kind(
     ir_node: &ir::FunctionKind,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> FunctionKind {
     match ir_node {
         ir::FunctionKind::Regular => FunctionKind::Regular,
@@ -4722,7 +4722,7 @@ pub enum FunctionMutability {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_function_mutability(
     ir_node: &ir::FunctionMutability,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> FunctionMutability {
     match ir_node {
         ir::FunctionMutability::Pure => FunctionMutability::Pure,
@@ -4743,7 +4743,7 @@ pub enum FunctionVisibility {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_function_visibility(
     ir_node: &ir::FunctionVisibility,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> FunctionVisibility {
     match ir_node {
         ir::FunctionVisibility::Public => FunctionVisibility::Public,
@@ -4762,7 +4762,7 @@ pub enum ImportClause {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_import_clause(
     ir_node: &ir::ImportClause,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ImportClause {
     match ir_node {
         ir::ImportClause::PathImport(variant) => {
@@ -4785,7 +4785,7 @@ pub enum InequalityExpressionOperator {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_inequality_expression_operator(
     ir_node: &ir::InequalityExpressionOperator,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> InequalityExpressionOperator {
     match ir_node {
         ir::InequalityExpressionOperator::GreaterThan(variant) => {
@@ -4815,7 +4815,7 @@ pub enum MultiplicativeExpressionOperator {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_multiplicative_expression_operator(
     ir_node: &ir::MultiplicativeExpressionOperator,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> MultiplicativeExpressionOperator {
     match ir_node {
         ir::MultiplicativeExpressionOperator::Asterisk(variant) => {
@@ -4845,7 +4845,7 @@ pub enum NumberUnit {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_number_unit(
     ir_node: &ir::NumberUnit,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> NumberUnit {
     match ir_node {
         ir::NumberUnit::WeiKeyword(variant) => {
@@ -4884,7 +4884,7 @@ pub enum PostfixExpressionOperator {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_postfix_expression_operator(
     ir_node: &ir::PostfixExpressionOperator,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> PostfixExpressionOperator {
     match ir_node {
         ir::PostfixExpressionOperator::MinusMinus(variant) => {
@@ -4904,7 +4904,7 @@ pub enum Pragma {
 
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
-pub(crate) fn create_pragma(ir_node: &ir::Pragma, semantic: &Rc<SemanticContext>) -> Pragma {
+pub(crate) fn create_pragma(ir_node: &ir::Pragma, semantic: &Arc<SemanticContext>) -> Pragma {
     match ir_node {
         ir::Pragma::VersionPragma(variant) => {
             Pragma::VersionPragma(create_version_pragma(variant, semantic))
@@ -4931,7 +4931,7 @@ pub enum PrefixExpressionOperator {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_prefix_expression_operator(
     ir_node: &ir::PrefixExpressionOperator,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> PrefixExpressionOperator {
     match ir_node {
         ir::PrefixExpressionOperator::Bang(variant) => {
@@ -4965,7 +4965,7 @@ pub enum ShiftExpressionOperator {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_shift_expression_operator(
     ir_node: &ir::ShiftExpressionOperator,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ShiftExpressionOperator {
     match ir_node {
         ir::ShiftExpressionOperator::GreaterThanGreaterThan(variant) => {
@@ -5004,7 +5004,7 @@ pub enum SourceUnitMember {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_source_unit_member(
     ir_node: &ir::SourceUnitMember,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> SourceUnitMember {
     match ir_node {
         ir::SourceUnitMember::PragmaDirective(variant) => {
@@ -5062,7 +5062,7 @@ pub enum StateVariableMutability {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_state_variable_mutability(
     ir_node: &ir::StateVariableMutability,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> StateVariableMutability {
     match ir_node {
         ir::StateVariableMutability::Mutable => StateVariableMutability::Mutable,
@@ -5082,7 +5082,7 @@ pub enum StateVariableVisibility {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_state_variable_visibility(
     ir_node: &ir::StateVariableVisibility,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> StateVariableVisibility {
     match ir_node {
         ir::StateVariableVisibility::Public => StateVariableVisibility::Public,
@@ -5113,7 +5113,7 @@ pub enum Statement {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_statement(
     ir_node: &ir::Statement,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> Statement {
     match ir_node {
         ir::Statement::IfStatement(variant) => {
@@ -5174,7 +5174,7 @@ pub enum StorageLocation {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_storage_location(
     ir_node: &ir::StorageLocation,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> StorageLocation {
     match ir_node {
         ir::StorageLocation::MemoryKeyword(variant) => {
@@ -5199,7 +5199,7 @@ pub enum StringExpression {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_string_expression(
     ir_node: &ir::StringExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> StringExpression {
     match ir_node {
         ir::StringExpression::StringLiterals(nodes) => {
@@ -5224,7 +5224,10 @@ pub enum TypeName {
 
 #[allow(clippy::too_many_lines)]
 #[allow(clippy::trivially_copy_pass_by_ref)]
-pub(crate) fn create_type_name(ir_node: &ir::TypeName, semantic: &Rc<SemanticContext>) -> TypeName {
+pub(crate) fn create_type_name(
+    ir_node: &ir::TypeName,
+    semantic: &Arc<SemanticContext>,
+) -> TypeName {
     match ir_node {
         ir::TypeName::ArrayTypeName(variant) => {
             TypeName::ArrayTypeName(create_array_type_name(variant, semantic))
@@ -5253,7 +5256,7 @@ pub enum UsingClause {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_using_clause(
     ir_node: &ir::UsingClause,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> UsingClause {
     match ir_node {
         ir::UsingClause::IdentifierPath(nodes) => {
@@ -5287,7 +5290,7 @@ pub enum UsingOperator {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_using_operator(
     ir_node: &ir::UsingOperator,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> UsingOperator {
     match ir_node {
         ir::UsingOperator::Ampersand(variant) => {
@@ -5335,7 +5338,7 @@ pub enum UsingTarget {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_using_target(
     ir_node: &ir::UsingTarget,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> UsingTarget {
     match ir_node {
         ir::UsingTarget::TypeName(variant) => {
@@ -5356,7 +5359,7 @@ pub enum VariableDeclarationTarget {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_variable_declaration_target(
     ir_node: &ir::VariableDeclarationTarget,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> VariableDeclarationTarget {
     match ir_node {
         ir::VariableDeclarationTarget::SingleTypedDeclaration(variant) => {
@@ -5381,7 +5384,7 @@ pub enum VersionExpression {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_version_expression(
     ir_node: &ir::VersionExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> VersionExpression {
     match ir_node {
         ir::VersionExpression::VersionRange(variant) => {
@@ -5402,7 +5405,7 @@ pub enum VersionLiteral {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_version_literal(
     ir_node: &ir::VersionLiteral,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> VersionLiteral {
     match ir_node {
         ir::VersionLiteral::SimpleVersionLiteral(nodes) => {
@@ -5428,7 +5431,7 @@ pub enum VersionOperator {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_version_operator(
     ir_node: &ir::VersionOperator,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> VersionOperator {
     match ir_node {
         ir::VersionOperator::PragmaCaret(variant) => {
@@ -5467,7 +5470,7 @@ pub enum YulExpression {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_yul_expression(
     ir_node: &ir::YulExpression,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> YulExpression {
     match ir_node {
         ir::YulExpression::YulFunctionCallExpression(variant) => {
@@ -5497,7 +5500,7 @@ pub enum YulLiteral {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_yul_literal(
     ir_node: &ir::YulLiteral,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> YulLiteral {
     match ir_node {
         ir::YulLiteral::TrueKeyword(variant) => {
@@ -5539,7 +5542,7 @@ pub enum YulStatement {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_yul_statement(
     ir_node: &ir::YulStatement,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> YulStatement {
     match ir_node {
         ir::YulStatement::YulBlock(variant) => {
@@ -5591,7 +5594,7 @@ pub enum YulSwitchCase {
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub(crate) fn create_yul_switch_case(
     ir_node: &ir::YulSwitchCase,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> YulSwitchCase {
     match ir_node {
         ir::YulSwitchCase::YulDefaultCase(variant) => {
@@ -5607,21 +5610,21 @@ pub(crate) fn create_yul_switch_case(
 // Repeated & Separated
 //
 
-pub type ArrayValues = Rc<ArrayValuesStruct>;
+pub type ArrayValues = Arc<ArrayValuesStruct>;
 
 pub(crate) fn create_array_values(
     nodes: &[ir::Expression],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ArrayValues {
-    Rc::new(ArrayValuesStruct {
+    Arc::new(ArrayValuesStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct ArrayValuesStruct {
     pub(crate) ir_nodes: Vec<ir::Expression>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl ArrayValuesStruct {
@@ -5639,21 +5642,21 @@ impl ArrayValuesStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type CallOptions = Rc<CallOptionsStruct>;
+pub type CallOptions = Arc<CallOptionsStruct>;
 
 pub(crate) fn create_call_options(
     nodes: &[ir::NamedArgument],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> CallOptions {
-    Rc::new(CallOptionsStruct {
+    Arc::new(CallOptionsStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct CallOptionsStruct {
     pub(crate) ir_nodes: Vec<ir::NamedArgument>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl CallOptionsStruct {
@@ -5671,21 +5674,21 @@ impl CallOptionsStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type CatchClauses = Rc<CatchClausesStruct>;
+pub type CatchClauses = Arc<CatchClausesStruct>;
 
 pub(crate) fn create_catch_clauses(
     nodes: &[ir::CatchClause],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> CatchClauses {
-    Rc::new(CatchClausesStruct {
+    Arc::new(CatchClausesStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct CatchClausesStruct {
     pub(crate) ir_nodes: Vec<ir::CatchClause>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl CatchClausesStruct {
@@ -5703,21 +5706,21 @@ impl CatchClausesStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type ContractMembers = Rc<ContractMembersStruct>;
+pub type ContractMembers = Arc<ContractMembersStruct>;
 
 pub(crate) fn create_contract_members(
     nodes: &[ir::ContractMember],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ContractMembers {
-    Rc::new(ContractMembersStruct {
+    Arc::new(ContractMembersStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct ContractMembersStruct {
     pub(crate) ir_nodes: Vec<ir::ContractMember>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl ContractMembersStruct {
@@ -5735,21 +5738,21 @@ impl ContractMembersStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type EnumMembers = Rc<EnumMembersStruct>;
+pub type EnumMembers = Arc<EnumMembersStruct>;
 
 pub(crate) fn create_enum_members(
     nodes: &[ir::Identifier],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> EnumMembers {
-    Rc::new(EnumMembersStruct {
+    Arc::new(EnumMembersStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct EnumMembersStruct {
     pub(crate) ir_nodes: Vec<ir::Identifier>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl EnumMembersStruct {
@@ -5767,21 +5770,21 @@ impl EnumMembersStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type HexStringLiterals = Rc<HexStringLiteralsStruct>;
+pub type HexStringLiterals = Arc<HexStringLiteralsStruct>;
 
 pub(crate) fn create_hex_string_literals(
     nodes: &[ir::HexStringLiteral],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> HexStringLiterals {
-    Rc::new(HexStringLiteralsStruct {
+    Arc::new(HexStringLiteralsStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct HexStringLiteralsStruct {
     pub(crate) ir_nodes: Vec<ir::HexStringLiteral>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl HexStringLiteralsStruct {
@@ -5799,21 +5802,21 @@ impl HexStringLiteralsStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type IdentifierPath = Rc<IdentifierPathStruct>;
+pub type IdentifierPath = Arc<IdentifierPathStruct>;
 
 pub(crate) fn create_identifier_path(
     nodes: &[ir::Identifier],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> IdentifierPath {
-    Rc::new(IdentifierPathStruct {
+    Arc::new(IdentifierPathStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct IdentifierPathStruct {
     pub(crate) ir_nodes: Vec<ir::Identifier>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl IdentifierPathStruct {
@@ -5831,21 +5834,21 @@ impl IdentifierPathStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type ImportDeconstructionSymbols = Rc<ImportDeconstructionSymbolsStruct>;
+pub type ImportDeconstructionSymbols = Arc<ImportDeconstructionSymbolsStruct>;
 
 pub(crate) fn create_import_deconstruction_symbols(
     nodes: &[ir::ImportDeconstructionSymbol],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ImportDeconstructionSymbols {
-    Rc::new(ImportDeconstructionSymbolsStruct {
+    Arc::new(ImportDeconstructionSymbolsStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct ImportDeconstructionSymbolsStruct {
     pub(crate) ir_nodes: Vec<ir::ImportDeconstructionSymbol>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl ImportDeconstructionSymbolsStruct {
@@ -5863,21 +5866,21 @@ impl ImportDeconstructionSymbolsStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type InheritanceTypes = Rc<InheritanceTypesStruct>;
+pub type InheritanceTypes = Arc<InheritanceTypesStruct>;
 
 pub(crate) fn create_inheritance_types(
     nodes: &[ir::InheritanceType],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> InheritanceTypes {
-    Rc::new(InheritanceTypesStruct {
+    Arc::new(InheritanceTypesStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct InheritanceTypesStruct {
     pub(crate) ir_nodes: Vec<ir::InheritanceType>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl InheritanceTypesStruct {
@@ -5895,21 +5898,21 @@ impl InheritanceTypesStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type InterfaceMembers = Rc<InterfaceMembersStruct>;
+pub type InterfaceMembers = Arc<InterfaceMembersStruct>;
 
 pub(crate) fn create_interface_members(
     nodes: &[ir::ContractMember],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> InterfaceMembers {
-    Rc::new(InterfaceMembersStruct {
+    Arc::new(InterfaceMembersStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct InterfaceMembersStruct {
     pub(crate) ir_nodes: Vec<ir::ContractMember>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl InterfaceMembersStruct {
@@ -5927,21 +5930,21 @@ impl InterfaceMembersStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type LibraryMembers = Rc<LibraryMembersStruct>;
+pub type LibraryMembers = Arc<LibraryMembersStruct>;
 
 pub(crate) fn create_library_members(
     nodes: &[ir::ContractMember],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> LibraryMembers {
-    Rc::new(LibraryMembersStruct {
+    Arc::new(LibraryMembersStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct LibraryMembersStruct {
     pub(crate) ir_nodes: Vec<ir::ContractMember>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl LibraryMembersStruct {
@@ -5959,21 +5962,21 @@ impl LibraryMembersStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type ModifierInvocations = Rc<ModifierInvocationsStruct>;
+pub type ModifierInvocations = Arc<ModifierInvocationsStruct>;
 
 pub(crate) fn create_modifier_invocations(
     nodes: &[ir::ModifierInvocation],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ModifierInvocations {
-    Rc::new(ModifierInvocationsStruct {
+    Arc::new(ModifierInvocationsStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct ModifierInvocationsStruct {
     pub(crate) ir_nodes: Vec<ir::ModifierInvocation>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl ModifierInvocationsStruct {
@@ -5991,21 +5994,21 @@ impl ModifierInvocationsStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type MultiTypedDeclarationElements = Rc<MultiTypedDeclarationElementsStruct>;
+pub type MultiTypedDeclarationElements = Arc<MultiTypedDeclarationElementsStruct>;
 
 pub(crate) fn create_multi_typed_declaration_elements(
     nodes: &[ir::MultiTypedDeclarationElement],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> MultiTypedDeclarationElements {
-    Rc::new(MultiTypedDeclarationElementsStruct {
+    Arc::new(MultiTypedDeclarationElementsStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct MultiTypedDeclarationElementsStruct {
     pub(crate) ir_nodes: Vec<ir::MultiTypedDeclarationElement>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl MultiTypedDeclarationElementsStruct {
@@ -6023,21 +6026,21 @@ impl MultiTypedDeclarationElementsStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type NamedArguments = Rc<NamedArgumentsStruct>;
+pub type NamedArguments = Arc<NamedArgumentsStruct>;
 
 pub(crate) fn create_named_arguments(
     nodes: &[ir::NamedArgument],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> NamedArguments {
-    Rc::new(NamedArgumentsStruct {
+    Arc::new(NamedArgumentsStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct NamedArgumentsStruct {
     pub(crate) ir_nodes: Vec<ir::NamedArgument>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl NamedArgumentsStruct {
@@ -6055,21 +6058,21 @@ impl NamedArgumentsStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type OverridePaths = Rc<OverridePathsStruct>;
+pub type OverridePaths = Arc<OverridePathsStruct>;
 
 pub(crate) fn create_override_paths(
     nodes: &[ir::IdentifierPath],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> OverridePaths {
-    Rc::new(OverridePathsStruct {
+    Arc::new(OverridePathsStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct OverridePathsStruct {
     pub(crate) ir_nodes: Vec<ir::IdentifierPath>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl OverridePathsStruct {
@@ -6087,21 +6090,21 @@ impl OverridePathsStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type Parameters = Rc<ParametersStruct>;
+pub type Parameters = Arc<ParametersStruct>;
 
 pub(crate) fn create_parameters(
     nodes: &[ir::Parameter],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> Parameters {
-    Rc::new(ParametersStruct {
+    Arc::new(ParametersStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct ParametersStruct {
     pub(crate) ir_nodes: Vec<ir::Parameter>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl ParametersStruct {
@@ -6119,21 +6122,21 @@ impl ParametersStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type PositionalArguments = Rc<PositionalArgumentsStruct>;
+pub type PositionalArguments = Arc<PositionalArgumentsStruct>;
 
 pub(crate) fn create_positional_arguments(
     nodes: &[ir::Expression],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> PositionalArguments {
-    Rc::new(PositionalArgumentsStruct {
+    Arc::new(PositionalArgumentsStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct PositionalArgumentsStruct {
     pub(crate) ir_nodes: Vec<ir::Expression>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl PositionalArgumentsStruct {
@@ -6151,21 +6154,21 @@ impl PositionalArgumentsStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type SimpleVersionLiteral = Rc<SimpleVersionLiteralStruct>;
+pub type SimpleVersionLiteral = Arc<SimpleVersionLiteralStruct>;
 
 pub(crate) fn create_simple_version_literal(
     nodes: &[ir::VersionSpecifier],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> SimpleVersionLiteral {
-    Rc::new(SimpleVersionLiteralStruct {
+    Arc::new(SimpleVersionLiteralStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct SimpleVersionLiteralStruct {
     pub(crate) ir_nodes: Vec<ir::VersionSpecifier>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl SimpleVersionLiteralStruct {
@@ -6183,21 +6186,21 @@ impl SimpleVersionLiteralStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type SourceUnitMembers = Rc<SourceUnitMembersStruct>;
+pub type SourceUnitMembers = Arc<SourceUnitMembersStruct>;
 
 pub(crate) fn create_source_unit_members(
     nodes: &[ir::SourceUnitMember],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> SourceUnitMembers {
-    Rc::new(SourceUnitMembersStruct {
+    Arc::new(SourceUnitMembersStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct SourceUnitMembersStruct {
     pub(crate) ir_nodes: Vec<ir::SourceUnitMember>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl SourceUnitMembersStruct {
@@ -6215,21 +6218,21 @@ impl SourceUnitMembersStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type Statements = Rc<StatementsStruct>;
+pub type Statements = Arc<StatementsStruct>;
 
 pub(crate) fn create_statements(
     nodes: &[ir::Statement],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> Statements {
-    Rc::new(StatementsStruct {
+    Arc::new(StatementsStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct StatementsStruct {
     pub(crate) ir_nodes: Vec<ir::Statement>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl StatementsStruct {
@@ -6247,21 +6250,21 @@ impl StatementsStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type StringLiterals = Rc<StringLiteralsStruct>;
+pub type StringLiterals = Arc<StringLiteralsStruct>;
 
 pub(crate) fn create_string_literals(
     nodes: &[ir::StringLiteral],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> StringLiterals {
-    Rc::new(StringLiteralsStruct {
+    Arc::new(StringLiteralsStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct StringLiteralsStruct {
     pub(crate) ir_nodes: Vec<ir::StringLiteral>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl StringLiteralsStruct {
@@ -6279,21 +6282,21 @@ impl StringLiteralsStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type StructMembers = Rc<StructMembersStruct>;
+pub type StructMembers = Arc<StructMembersStruct>;
 
 pub(crate) fn create_struct_members(
     nodes: &[ir::StructMember],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> StructMembers {
-    Rc::new(StructMembersStruct {
+    Arc::new(StructMembersStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct StructMembersStruct {
     pub(crate) ir_nodes: Vec<ir::StructMember>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl StructMembersStruct {
@@ -6311,21 +6314,21 @@ impl StructMembersStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type TupleValues = Rc<TupleValuesStruct>;
+pub type TupleValues = Arc<TupleValuesStruct>;
 
 pub(crate) fn create_tuple_values(
     nodes: &[ir::TupleValue],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> TupleValues {
-    Rc::new(TupleValuesStruct {
+    Arc::new(TupleValuesStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct TupleValuesStruct {
     pub(crate) ir_nodes: Vec<ir::TupleValue>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl TupleValuesStruct {
@@ -6343,21 +6346,21 @@ impl TupleValuesStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type UnicodeStringLiterals = Rc<UnicodeStringLiteralsStruct>;
+pub type UnicodeStringLiterals = Arc<UnicodeStringLiteralsStruct>;
 
 pub(crate) fn create_unicode_string_literals(
     nodes: &[ir::UnicodeStringLiteral],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> UnicodeStringLiterals {
-    Rc::new(UnicodeStringLiteralsStruct {
+    Arc::new(UnicodeStringLiteralsStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct UnicodeStringLiteralsStruct {
     pub(crate) ir_nodes: Vec<ir::UnicodeStringLiteral>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl UnicodeStringLiteralsStruct {
@@ -6375,21 +6378,21 @@ impl UnicodeStringLiteralsStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type UsingDeconstructionSymbols = Rc<UsingDeconstructionSymbolsStruct>;
+pub type UsingDeconstructionSymbols = Arc<UsingDeconstructionSymbolsStruct>;
 
 pub(crate) fn create_using_deconstruction_symbols(
     nodes: &[ir::UsingDeconstructionSymbol],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> UsingDeconstructionSymbols {
-    Rc::new(UsingDeconstructionSymbolsStruct {
+    Arc::new(UsingDeconstructionSymbolsStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct UsingDeconstructionSymbolsStruct {
     pub(crate) ir_nodes: Vec<ir::UsingDeconstructionSymbol>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl UsingDeconstructionSymbolsStruct {
@@ -6407,21 +6410,21 @@ impl UsingDeconstructionSymbolsStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type VersionExpressionSet = Rc<VersionExpressionSetStruct>;
+pub type VersionExpressionSet = Arc<VersionExpressionSetStruct>;
 
 pub(crate) fn create_version_expression_set(
     nodes: &[ir::VersionExpression],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> VersionExpressionSet {
-    Rc::new(VersionExpressionSetStruct {
+    Arc::new(VersionExpressionSetStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct VersionExpressionSetStruct {
     pub(crate) ir_nodes: Vec<ir::VersionExpression>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl VersionExpressionSetStruct {
@@ -6439,21 +6442,21 @@ impl VersionExpressionSetStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type VersionExpressionSets = Rc<VersionExpressionSetsStruct>;
+pub type VersionExpressionSets = Arc<VersionExpressionSetsStruct>;
 
 pub(crate) fn create_version_expression_sets(
     nodes: &[ir::VersionExpressionSet],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> VersionExpressionSets {
-    Rc::new(VersionExpressionSetsStruct {
+    Arc::new(VersionExpressionSetsStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct VersionExpressionSetsStruct {
     pub(crate) ir_nodes: Vec<ir::VersionExpressionSet>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl VersionExpressionSetsStruct {
@@ -6471,21 +6474,21 @@ impl VersionExpressionSetsStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type YulArguments = Rc<YulArgumentsStruct>;
+pub type YulArguments = Arc<YulArgumentsStruct>;
 
 pub(crate) fn create_yul_arguments(
     nodes: &[ir::YulExpression],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> YulArguments {
-    Rc::new(YulArgumentsStruct {
+    Arc::new(YulArgumentsStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct YulArgumentsStruct {
     pub(crate) ir_nodes: Vec<ir::YulExpression>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl YulArgumentsStruct {
@@ -6503,21 +6506,21 @@ impl YulArgumentsStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type YulFlags = Rc<YulFlagsStruct>;
+pub type YulFlags = Arc<YulFlagsStruct>;
 
 pub(crate) fn create_yul_flags(
     nodes: &[ir::StringLiteral],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> YulFlags {
-    Rc::new(YulFlagsStruct {
+    Arc::new(YulFlagsStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct YulFlagsStruct {
     pub(crate) ir_nodes: Vec<ir::StringLiteral>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl YulFlagsStruct {
@@ -6535,21 +6538,21 @@ impl YulFlagsStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type YulParameters = Rc<YulParametersStruct>;
+pub type YulParameters = Arc<YulParametersStruct>;
 
 pub(crate) fn create_yul_parameters(
     nodes: &[ir::Identifier],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> YulParameters {
-    Rc::new(YulParametersStruct {
+    Arc::new(YulParametersStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct YulParametersStruct {
     pub(crate) ir_nodes: Vec<ir::Identifier>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl YulParametersStruct {
@@ -6567,18 +6570,21 @@ impl YulParametersStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type YulPath = Rc<YulPathStruct>;
+pub type YulPath = Arc<YulPathStruct>;
 
-pub(crate) fn create_yul_path(nodes: &[ir::Identifier], semantic: &Rc<SemanticContext>) -> YulPath {
-    Rc::new(YulPathStruct {
+pub(crate) fn create_yul_path(
+    nodes: &[ir::Identifier],
+    semantic: &Arc<SemanticContext>,
+) -> YulPath {
+    Arc::new(YulPathStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct YulPathStruct {
     pub(crate) ir_nodes: Vec<ir::Identifier>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl YulPathStruct {
@@ -6596,18 +6602,18 @@ impl YulPathStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type YulPaths = Rc<YulPathsStruct>;
+pub type YulPaths = Arc<YulPathsStruct>;
 
-pub(crate) fn create_yul_paths(nodes: &[ir::YulPath], semantic: &Rc<SemanticContext>) -> YulPaths {
-    Rc::new(YulPathsStruct {
+pub(crate) fn create_yul_paths(nodes: &[ir::YulPath], semantic: &Arc<SemanticContext>) -> YulPaths {
+    Arc::new(YulPathsStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct YulPathsStruct {
     pub(crate) ir_nodes: Vec<ir::YulPath>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl YulPathsStruct {
@@ -6625,21 +6631,21 @@ impl YulPathsStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type YulStatements = Rc<YulStatementsStruct>;
+pub type YulStatements = Arc<YulStatementsStruct>;
 
 pub(crate) fn create_yul_statements(
     nodes: &[ir::YulStatement],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> YulStatements {
-    Rc::new(YulStatementsStruct {
+    Arc::new(YulStatementsStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct YulStatementsStruct {
     pub(crate) ir_nodes: Vec<ir::YulStatement>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl YulStatementsStruct {
@@ -6657,21 +6663,21 @@ impl YulStatementsStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type YulSwitchCases = Rc<YulSwitchCasesStruct>;
+pub type YulSwitchCases = Arc<YulSwitchCasesStruct>;
 
 pub(crate) fn create_yul_switch_cases(
     nodes: &[ir::YulSwitchCase],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> YulSwitchCases {
-    Rc::new(YulSwitchCasesStruct {
+    Arc::new(YulSwitchCasesStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct YulSwitchCasesStruct {
     pub(crate) ir_nodes: Vec<ir::YulSwitchCase>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl YulSwitchCasesStruct {
@@ -6689,21 +6695,21 @@ impl YulSwitchCasesStruct {
         self.ir_nodes.is_empty()
     }
 }
-pub type YulVariableNames = Rc<YulVariableNamesStruct>;
+pub type YulVariableNames = Arc<YulVariableNamesStruct>;
 
 pub(crate) fn create_yul_variable_names(
     nodes: &[ir::Identifier],
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> YulVariableNames {
-    Rc::new(YulVariableNamesStruct {
+    Arc::new(YulVariableNamesStruct {
         ir_nodes: nodes.to_vec(),
-        semantic: Rc::clone(semantic),
+        semantic: Arc::clone(semantic),
     })
 }
 
 pub struct YulVariableNamesStruct {
     pub(crate) ir_nodes: Vec<ir::Identifier>,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 impl YulVariableNamesStruct {
@@ -6726,25 +6732,25 @@ impl YulVariableNamesStruct {
 // Terminals
 //
 
-pub type ABIEncoderV2Keyword = Rc<ABIEncoderV2KeywordStruct>;
+pub type ABIEncoderV2Keyword = Arc<ABIEncoderV2KeywordStruct>;
 
 pub struct ABIEncoderV2KeywordStruct {
     pub(crate) ir_node: ir::ABIEncoderV2Keyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_abi_encoder_v2_keyword(
     ir_node: &ir::ABIEncoderV2Keyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ABIEncoderV2Keyword {
-    Rc::new(ABIEncoderV2KeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(ABIEncoderV2KeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl ABIEncoderV2KeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -6761,25 +6767,25 @@ impl ABIEncoderV2KeywordStruct {
     }
 }
 
-pub type AbicoderV1Keyword = Rc<AbicoderV1KeywordStruct>;
+pub type AbicoderV1Keyword = Arc<AbicoderV1KeywordStruct>;
 
 pub struct AbicoderV1KeywordStruct {
     pub(crate) ir_node: ir::AbicoderV1Keyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_abicoder_v1_keyword(
     ir_node: &ir::AbicoderV1Keyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> AbicoderV1Keyword {
-    Rc::new(AbicoderV1KeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(AbicoderV1KeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl AbicoderV1KeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -6796,25 +6802,25 @@ impl AbicoderV1KeywordStruct {
     }
 }
 
-pub type AbicoderV2Keyword = Rc<AbicoderV2KeywordStruct>;
+pub type AbicoderV2Keyword = Arc<AbicoderV2KeywordStruct>;
 
 pub struct AbicoderV2KeywordStruct {
     pub(crate) ir_node: ir::AbicoderV2Keyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_abicoder_v2_keyword(
     ir_node: &ir::AbicoderV2Keyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> AbicoderV2Keyword {
-    Rc::new(AbicoderV2KeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(AbicoderV2KeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl AbicoderV2KeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -6831,25 +6837,25 @@ impl AbicoderV2KeywordStruct {
     }
 }
 
-pub type AbstractKeyword = Rc<AbstractKeywordStruct>;
+pub type AbstractKeyword = Arc<AbstractKeywordStruct>;
 
 pub struct AbstractKeywordStruct {
     pub(crate) ir_node: ir::AbstractKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_abstract_keyword(
     ir_node: &ir::AbstractKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> AbstractKeyword {
-    Rc::new(AbstractKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(AbstractKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl AbstractKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -6866,25 +6872,25 @@ impl AbstractKeywordStruct {
     }
 }
 
-pub type Ampersand = Rc<AmpersandStruct>;
+pub type Ampersand = Arc<AmpersandStruct>;
 
 pub struct AmpersandStruct {
     pub(crate) ir_node: ir::Ampersand,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_ampersand(
     ir_node: &ir::Ampersand,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> Ampersand {
-    Rc::new(AmpersandStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(AmpersandStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl AmpersandStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -6901,25 +6907,25 @@ impl AmpersandStruct {
     }
 }
 
-pub type AmpersandEqual = Rc<AmpersandEqualStruct>;
+pub type AmpersandEqual = Arc<AmpersandEqualStruct>;
 
 pub struct AmpersandEqualStruct {
     pub(crate) ir_node: ir::AmpersandEqual,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_ampersand_equal(
     ir_node: &ir::AmpersandEqual,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> AmpersandEqual {
-    Rc::new(AmpersandEqualStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(AmpersandEqualStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl AmpersandEqualStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -6936,25 +6942,25 @@ impl AmpersandEqualStruct {
     }
 }
 
-pub type AnonymousKeyword = Rc<AnonymousKeywordStruct>;
+pub type AnonymousKeyword = Arc<AnonymousKeywordStruct>;
 
 pub struct AnonymousKeywordStruct {
     pub(crate) ir_node: ir::AnonymousKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_anonymous_keyword(
     ir_node: &ir::AnonymousKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> AnonymousKeyword {
-    Rc::new(AnonymousKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(AnonymousKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl AnonymousKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -6971,22 +6977,22 @@ impl AnonymousKeywordStruct {
     }
 }
 
-pub type Asterisk = Rc<AsteriskStruct>;
+pub type Asterisk = Arc<AsteriskStruct>;
 
 pub struct AsteriskStruct {
     pub(crate) ir_node: ir::Asterisk,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
-pub(crate) fn create_asterisk(ir_node: &ir::Asterisk, semantic: &Rc<SemanticContext>) -> Asterisk {
-    Rc::new(AsteriskStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+pub(crate) fn create_asterisk(ir_node: &ir::Asterisk, semantic: &Arc<SemanticContext>) -> Asterisk {
+    Arc::new(AsteriskStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl AsteriskStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7003,25 +7009,25 @@ impl AsteriskStruct {
     }
 }
 
-pub type AsteriskEqual = Rc<AsteriskEqualStruct>;
+pub type AsteriskEqual = Arc<AsteriskEqualStruct>;
 
 pub struct AsteriskEqualStruct {
     pub(crate) ir_node: ir::AsteriskEqual,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_asterisk_equal(
     ir_node: &ir::AsteriskEqual,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> AsteriskEqual {
-    Rc::new(AsteriskEqualStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(AsteriskEqualStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl AsteriskEqualStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7038,22 +7044,22 @@ impl AsteriskEqualStruct {
     }
 }
 
-pub type Bang = Rc<BangStruct>;
+pub type Bang = Arc<BangStruct>;
 
 pub struct BangStruct {
     pub(crate) ir_node: ir::Bang,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
-pub(crate) fn create_bang(ir_node: &ir::Bang, semantic: &Rc<SemanticContext>) -> Bang {
-    Rc::new(BangStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+pub(crate) fn create_bang(ir_node: &ir::Bang, semantic: &Arc<SemanticContext>) -> Bang {
+    Arc::new(BangStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl BangStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7070,25 +7076,25 @@ impl BangStruct {
     }
 }
 
-pub type BangEqual = Rc<BangEqualStruct>;
+pub type BangEqual = Arc<BangEqualStruct>;
 
 pub struct BangEqualStruct {
     pub(crate) ir_node: ir::BangEqual,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_bang_equal(
     ir_node: &ir::BangEqual,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> BangEqual {
-    Rc::new(BangEqualStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(BangEqualStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl BangEqualStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7105,22 +7111,22 @@ impl BangEqualStruct {
     }
 }
 
-pub type Bar = Rc<BarStruct>;
+pub type Bar = Arc<BarStruct>;
 
 pub struct BarStruct {
     pub(crate) ir_node: ir::Bar,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
-pub(crate) fn create_bar(ir_node: &ir::Bar, semantic: &Rc<SemanticContext>) -> Bar {
-    Rc::new(BarStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+pub(crate) fn create_bar(ir_node: &ir::Bar, semantic: &Arc<SemanticContext>) -> Bar {
+    Arc::new(BarStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl BarStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7137,22 +7143,25 @@ impl BarStruct {
     }
 }
 
-pub type BarEqual = Rc<BarEqualStruct>;
+pub type BarEqual = Arc<BarEqualStruct>;
 
 pub struct BarEqualStruct {
     pub(crate) ir_node: ir::BarEqual,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
-pub(crate) fn create_bar_equal(ir_node: &ir::BarEqual, semantic: &Rc<SemanticContext>) -> BarEqual {
-    Rc::new(BarEqualStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+pub(crate) fn create_bar_equal(
+    ir_node: &ir::BarEqual,
+    semantic: &Arc<SemanticContext>,
+) -> BarEqual {
+    Arc::new(BarEqualStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl BarEqualStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7169,25 +7178,25 @@ impl BarEqualStruct {
     }
 }
 
-pub type BoolKeyword = Rc<BoolKeywordStruct>;
+pub type BoolKeyword = Arc<BoolKeywordStruct>;
 
 pub struct BoolKeywordStruct {
     pub(crate) ir_node: ir::BoolKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_bool_keyword(
     ir_node: &ir::BoolKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> BoolKeyword {
-    Rc::new(BoolKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(BoolKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl BoolKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7204,25 +7213,25 @@ impl BoolKeywordStruct {
     }
 }
 
-pub type BytesKeyword = Rc<BytesKeywordStruct>;
+pub type BytesKeyword = Arc<BytesKeywordStruct>;
 
 pub struct BytesKeywordStruct {
     pub(crate) ir_node: ir::BytesKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_bytes_keyword(
     ir_node: &ir::BytesKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> BytesKeyword {
-    Rc::new(BytesKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(BytesKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl BytesKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
     pub fn unparse(&self) -> &str {
@@ -7242,25 +7251,25 @@ impl BytesKeywordStruct {
     }
 }
 
-pub type CallDataKeyword = Rc<CallDataKeywordStruct>;
+pub type CallDataKeyword = Arc<CallDataKeywordStruct>;
 
 pub struct CallDataKeywordStruct {
     pub(crate) ir_node: ir::CallDataKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_call_data_keyword(
     ir_node: &ir::CallDataKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> CallDataKeyword {
-    Rc::new(CallDataKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(CallDataKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl CallDataKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7277,22 +7286,22 @@ impl CallDataKeywordStruct {
     }
 }
 
-pub type Caret = Rc<CaretStruct>;
+pub type Caret = Arc<CaretStruct>;
 
 pub struct CaretStruct {
     pub(crate) ir_node: ir::Caret,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
-pub(crate) fn create_caret(ir_node: &ir::Caret, semantic: &Rc<SemanticContext>) -> Caret {
-    Rc::new(CaretStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+pub(crate) fn create_caret(ir_node: &ir::Caret, semantic: &Arc<SemanticContext>) -> Caret {
+    Arc::new(CaretStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl CaretStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7309,25 +7318,25 @@ impl CaretStruct {
     }
 }
 
-pub type CaretEqual = Rc<CaretEqualStruct>;
+pub type CaretEqual = Arc<CaretEqualStruct>;
 
 pub struct CaretEqualStruct {
     pub(crate) ir_node: ir::CaretEqual,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_caret_equal(
     ir_node: &ir::CaretEqual,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> CaretEqual {
-    Rc::new(CaretEqualStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(CaretEqualStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl CaretEqualStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7344,25 +7353,25 @@ impl CaretEqualStruct {
     }
 }
 
-pub type DaysKeyword = Rc<DaysKeywordStruct>;
+pub type DaysKeyword = Arc<DaysKeywordStruct>;
 
 pub struct DaysKeywordStruct {
     pub(crate) ir_node: ir::DaysKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_days_keyword(
     ir_node: &ir::DaysKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> DaysKeyword {
-    Rc::new(DaysKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(DaysKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl DaysKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7379,25 +7388,25 @@ impl DaysKeywordStruct {
     }
 }
 
-pub type DecimalLiteral = Rc<DecimalLiteralStruct>;
+pub type DecimalLiteral = Arc<DecimalLiteralStruct>;
 
 pub struct DecimalLiteralStruct {
     pub(crate) ir_node: ir::DecimalLiteral,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_decimal_literal(
     ir_node: &ir::DecimalLiteral,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> DecimalLiteral {
-    Rc::new(DecimalLiteralStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(DecimalLiteralStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl DecimalLiteralStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
     pub fn unparse(&self) -> &str {
@@ -7417,25 +7426,25 @@ impl DecimalLiteralStruct {
     }
 }
 
-pub type DeleteKeyword = Rc<DeleteKeywordStruct>;
+pub type DeleteKeyword = Arc<DeleteKeywordStruct>;
 
 pub struct DeleteKeywordStruct {
     pub(crate) ir_node: ir::DeleteKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_delete_keyword(
     ir_node: &ir::DeleteKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> DeleteKeyword {
-    Rc::new(DeleteKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(DeleteKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl DeleteKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7452,22 +7461,22 @@ impl DeleteKeywordStruct {
     }
 }
 
-pub type Equal = Rc<EqualStruct>;
+pub type Equal = Arc<EqualStruct>;
 
 pub struct EqualStruct {
     pub(crate) ir_node: ir::Equal,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
-pub(crate) fn create_equal(ir_node: &ir::Equal, semantic: &Rc<SemanticContext>) -> Equal {
-    Rc::new(EqualStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+pub(crate) fn create_equal(ir_node: &ir::Equal, semantic: &Arc<SemanticContext>) -> Equal {
+    Arc::new(EqualStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl EqualStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7484,25 +7493,25 @@ impl EqualStruct {
     }
 }
 
-pub type EqualEqual = Rc<EqualEqualStruct>;
+pub type EqualEqual = Arc<EqualEqualStruct>;
 
 pub struct EqualEqualStruct {
     pub(crate) ir_node: ir::EqualEqual,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_equal_equal(
     ir_node: &ir::EqualEqual,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> EqualEqual {
-    Rc::new(EqualEqualStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(EqualEqualStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl EqualEqualStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7519,25 +7528,25 @@ impl EqualEqualStruct {
     }
 }
 
-pub type EtherKeyword = Rc<EtherKeywordStruct>;
+pub type EtherKeyword = Arc<EtherKeywordStruct>;
 
 pub struct EtherKeywordStruct {
     pub(crate) ir_node: ir::EtherKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_ether_keyword(
     ir_node: &ir::EtherKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> EtherKeyword {
-    Rc::new(EtherKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(EtherKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl EtherKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7554,25 +7563,25 @@ impl EtherKeywordStruct {
     }
 }
 
-pub type FalseKeyword = Rc<FalseKeywordStruct>;
+pub type FalseKeyword = Arc<FalseKeywordStruct>;
 
 pub struct FalseKeywordStruct {
     pub(crate) ir_node: ir::FalseKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_false_keyword(
     ir_node: &ir::FalseKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> FalseKeyword {
-    Rc::new(FalseKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(FalseKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl FalseKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7589,25 +7598,25 @@ impl FalseKeywordStruct {
     }
 }
 
-pub type FixedKeyword = Rc<FixedKeywordStruct>;
+pub type FixedKeyword = Arc<FixedKeywordStruct>;
 
 pub struct FixedKeywordStruct {
     pub(crate) ir_node: ir::FixedKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_fixed_keyword(
     ir_node: &ir::FixedKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> FixedKeyword {
-    Rc::new(FixedKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(FixedKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl FixedKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
     pub fn unparse(&self) -> &str {
@@ -7627,25 +7636,25 @@ impl FixedKeywordStruct {
     }
 }
 
-pub type GlobalKeyword = Rc<GlobalKeywordStruct>;
+pub type GlobalKeyword = Arc<GlobalKeywordStruct>;
 
 pub struct GlobalKeywordStruct {
     pub(crate) ir_node: ir::GlobalKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_global_keyword(
     ir_node: &ir::GlobalKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> GlobalKeyword {
-    Rc::new(GlobalKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(GlobalKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl GlobalKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7662,25 +7671,25 @@ impl GlobalKeywordStruct {
     }
 }
 
-pub type GreaterThan = Rc<GreaterThanStruct>;
+pub type GreaterThan = Arc<GreaterThanStruct>;
 
 pub struct GreaterThanStruct {
     pub(crate) ir_node: ir::GreaterThan,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_greater_than(
     ir_node: &ir::GreaterThan,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> GreaterThan {
-    Rc::new(GreaterThanStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(GreaterThanStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl GreaterThanStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7697,25 +7706,25 @@ impl GreaterThanStruct {
     }
 }
 
-pub type GreaterThanEqual = Rc<GreaterThanEqualStruct>;
+pub type GreaterThanEqual = Arc<GreaterThanEqualStruct>;
 
 pub struct GreaterThanEqualStruct {
     pub(crate) ir_node: ir::GreaterThanEqual,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_greater_than_equal(
     ir_node: &ir::GreaterThanEqual,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> GreaterThanEqual {
-    Rc::new(GreaterThanEqualStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(GreaterThanEqualStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl GreaterThanEqualStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7732,25 +7741,25 @@ impl GreaterThanEqualStruct {
     }
 }
 
-pub type GreaterThanGreaterThan = Rc<GreaterThanGreaterThanStruct>;
+pub type GreaterThanGreaterThan = Arc<GreaterThanGreaterThanStruct>;
 
 pub struct GreaterThanGreaterThanStruct {
     pub(crate) ir_node: ir::GreaterThanGreaterThan,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_greater_than_greater_than(
     ir_node: &ir::GreaterThanGreaterThan,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> GreaterThanGreaterThan {
-    Rc::new(GreaterThanGreaterThanStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(GreaterThanGreaterThanStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl GreaterThanGreaterThanStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7767,25 +7776,25 @@ impl GreaterThanGreaterThanStruct {
     }
 }
 
-pub type GreaterThanGreaterThanEqual = Rc<GreaterThanGreaterThanEqualStruct>;
+pub type GreaterThanGreaterThanEqual = Arc<GreaterThanGreaterThanEqualStruct>;
 
 pub struct GreaterThanGreaterThanEqualStruct {
     pub(crate) ir_node: ir::GreaterThanGreaterThanEqual,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_greater_than_greater_than_equal(
     ir_node: &ir::GreaterThanGreaterThanEqual,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> GreaterThanGreaterThanEqual {
-    Rc::new(GreaterThanGreaterThanEqualStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(GreaterThanGreaterThanEqualStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl GreaterThanGreaterThanEqualStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7802,25 +7811,25 @@ impl GreaterThanGreaterThanEqualStruct {
     }
 }
 
-pub type GreaterThanGreaterThanGreaterThan = Rc<GreaterThanGreaterThanGreaterThanStruct>;
+pub type GreaterThanGreaterThanGreaterThan = Arc<GreaterThanGreaterThanGreaterThanStruct>;
 
 pub struct GreaterThanGreaterThanGreaterThanStruct {
     pub(crate) ir_node: ir::GreaterThanGreaterThanGreaterThan,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_greater_than_greater_than_greater_than(
     ir_node: &ir::GreaterThanGreaterThanGreaterThan,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> GreaterThanGreaterThanGreaterThan {
-    Rc::new(GreaterThanGreaterThanGreaterThanStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(GreaterThanGreaterThanGreaterThanStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl GreaterThanGreaterThanGreaterThanStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7837,25 +7846,25 @@ impl GreaterThanGreaterThanGreaterThanStruct {
     }
 }
 
-pub type GreaterThanGreaterThanGreaterThanEqual = Rc<GreaterThanGreaterThanGreaterThanEqualStruct>;
+pub type GreaterThanGreaterThanGreaterThanEqual = Arc<GreaterThanGreaterThanGreaterThanEqualStruct>;
 
 pub struct GreaterThanGreaterThanGreaterThanEqualStruct {
     pub(crate) ir_node: ir::GreaterThanGreaterThanGreaterThanEqual,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_greater_than_greater_than_greater_than_equal(
     ir_node: &ir::GreaterThanGreaterThanGreaterThanEqual,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> GreaterThanGreaterThanGreaterThanEqual {
-    Rc::new(GreaterThanGreaterThanGreaterThanEqualStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(GreaterThanGreaterThanGreaterThanEqualStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl GreaterThanGreaterThanGreaterThanEqualStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7872,25 +7881,25 @@ impl GreaterThanGreaterThanGreaterThanEqualStruct {
     }
 }
 
-pub type GweiKeyword = Rc<GweiKeywordStruct>;
+pub type GweiKeyword = Arc<GweiKeywordStruct>;
 
 pub struct GweiKeywordStruct {
     pub(crate) ir_node: ir::GweiKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_gwei_keyword(
     ir_node: &ir::GweiKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> GweiKeyword {
-    Rc::new(GweiKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(GweiKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl GweiKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -7907,25 +7916,25 @@ impl GweiKeywordStruct {
     }
 }
 
-pub type HexLiteral = Rc<HexLiteralStruct>;
+pub type HexLiteral = Arc<HexLiteralStruct>;
 
 pub struct HexLiteralStruct {
     pub(crate) ir_node: ir::HexLiteral,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_hex_literal(
     ir_node: &ir::HexLiteral,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> HexLiteral {
-    Rc::new(HexLiteralStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(HexLiteralStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl HexLiteralStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
     pub fn unparse(&self) -> &str {
@@ -7945,25 +7954,25 @@ impl HexLiteralStruct {
     }
 }
 
-pub type HexStringLiteral = Rc<HexStringLiteralStruct>;
+pub type HexStringLiteral = Arc<HexStringLiteralStruct>;
 
 pub struct HexStringLiteralStruct {
     pub(crate) ir_node: ir::HexStringLiteral,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_hex_string_literal(
     ir_node: &ir::HexStringLiteral,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> HexStringLiteral {
-    Rc::new(HexStringLiteralStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(HexStringLiteralStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl HexStringLiteralStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
     pub fn unparse(&self) -> &str {
@@ -7983,25 +7992,25 @@ impl HexStringLiteralStruct {
     }
 }
 
-pub type HoursKeyword = Rc<HoursKeywordStruct>;
+pub type HoursKeyword = Arc<HoursKeywordStruct>;
 
 pub struct HoursKeywordStruct {
     pub(crate) ir_node: ir::HoursKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_hours_keyword(
     ir_node: &ir::HoursKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> HoursKeyword {
-    Rc::new(HoursKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(HoursKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl HoursKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8018,25 +8027,25 @@ impl HoursKeywordStruct {
     }
 }
 
-pub type Identifier = Rc<IdentifierStruct>;
+pub type Identifier = Arc<IdentifierStruct>;
 
 pub struct IdentifierStruct {
     pub(crate) ir_node: ir::Identifier,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_identifier(
     ir_node: &ir::Identifier,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> Identifier {
-    Rc::new(IdentifierStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(IdentifierStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl IdentifierStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
     pub fn unparse(&self) -> &str {
@@ -8056,25 +8065,25 @@ impl IdentifierStruct {
     }
 }
 
-pub type IndexedKeyword = Rc<IndexedKeywordStruct>;
+pub type IndexedKeyword = Arc<IndexedKeywordStruct>;
 
 pub struct IndexedKeywordStruct {
     pub(crate) ir_node: ir::IndexedKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_indexed_keyword(
     ir_node: &ir::IndexedKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> IndexedKeyword {
-    Rc::new(IndexedKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(IndexedKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl IndexedKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8091,25 +8100,25 @@ impl IndexedKeywordStruct {
     }
 }
 
-pub type IntKeyword = Rc<IntKeywordStruct>;
+pub type IntKeyword = Arc<IntKeywordStruct>;
 
 pub struct IntKeywordStruct {
     pub(crate) ir_node: ir::IntKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_int_keyword(
     ir_node: &ir::IntKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> IntKeyword {
-    Rc::new(IntKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(IntKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl IntKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
     pub fn unparse(&self) -> &str {
@@ -8129,22 +8138,25 @@ impl IntKeywordStruct {
     }
 }
 
-pub type LessThan = Rc<LessThanStruct>;
+pub type LessThan = Arc<LessThanStruct>;
 
 pub struct LessThanStruct {
     pub(crate) ir_node: ir::LessThan,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
-pub(crate) fn create_less_than(ir_node: &ir::LessThan, semantic: &Rc<SemanticContext>) -> LessThan {
-    Rc::new(LessThanStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+pub(crate) fn create_less_than(
+    ir_node: &ir::LessThan,
+    semantic: &Arc<SemanticContext>,
+) -> LessThan {
+    Arc::new(LessThanStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl LessThanStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8161,25 +8173,25 @@ impl LessThanStruct {
     }
 }
 
-pub type LessThanEqual = Rc<LessThanEqualStruct>;
+pub type LessThanEqual = Arc<LessThanEqualStruct>;
 
 pub struct LessThanEqualStruct {
     pub(crate) ir_node: ir::LessThanEqual,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_less_than_equal(
     ir_node: &ir::LessThanEqual,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> LessThanEqual {
-    Rc::new(LessThanEqualStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(LessThanEqualStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl LessThanEqualStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8196,25 +8208,25 @@ impl LessThanEqualStruct {
     }
 }
 
-pub type LessThanLessThan = Rc<LessThanLessThanStruct>;
+pub type LessThanLessThan = Arc<LessThanLessThanStruct>;
 
 pub struct LessThanLessThanStruct {
     pub(crate) ir_node: ir::LessThanLessThan,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_less_than_less_than(
     ir_node: &ir::LessThanLessThan,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> LessThanLessThan {
-    Rc::new(LessThanLessThanStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(LessThanLessThanStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl LessThanLessThanStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8231,25 +8243,25 @@ impl LessThanLessThanStruct {
     }
 }
 
-pub type LessThanLessThanEqual = Rc<LessThanLessThanEqualStruct>;
+pub type LessThanLessThanEqual = Arc<LessThanLessThanEqualStruct>;
 
 pub struct LessThanLessThanEqualStruct {
     pub(crate) ir_node: ir::LessThanLessThanEqual,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_less_than_less_than_equal(
     ir_node: &ir::LessThanLessThanEqual,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> LessThanLessThanEqual {
-    Rc::new(LessThanLessThanEqualStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(LessThanLessThanEqualStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl LessThanLessThanEqualStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8266,25 +8278,25 @@ impl LessThanLessThanEqualStruct {
     }
 }
 
-pub type MemoryKeyword = Rc<MemoryKeywordStruct>;
+pub type MemoryKeyword = Arc<MemoryKeywordStruct>;
 
 pub struct MemoryKeywordStruct {
     pub(crate) ir_node: ir::MemoryKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_memory_keyword(
     ir_node: &ir::MemoryKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> MemoryKeyword {
-    Rc::new(MemoryKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(MemoryKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl MemoryKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8301,22 +8313,22 @@ impl MemoryKeywordStruct {
     }
 }
 
-pub type Minus = Rc<MinusStruct>;
+pub type Minus = Arc<MinusStruct>;
 
 pub struct MinusStruct {
     pub(crate) ir_node: ir::Minus,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
-pub(crate) fn create_minus(ir_node: &ir::Minus, semantic: &Rc<SemanticContext>) -> Minus {
-    Rc::new(MinusStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+pub(crate) fn create_minus(ir_node: &ir::Minus, semantic: &Arc<SemanticContext>) -> Minus {
+    Arc::new(MinusStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl MinusStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8333,25 +8345,25 @@ impl MinusStruct {
     }
 }
 
-pub type MinusEqual = Rc<MinusEqualStruct>;
+pub type MinusEqual = Arc<MinusEqualStruct>;
 
 pub struct MinusEqualStruct {
     pub(crate) ir_node: ir::MinusEqual,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_minus_equal(
     ir_node: &ir::MinusEqual,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> MinusEqual {
-    Rc::new(MinusEqualStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(MinusEqualStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl MinusEqualStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8368,25 +8380,25 @@ impl MinusEqualStruct {
     }
 }
 
-pub type MinusMinus = Rc<MinusMinusStruct>;
+pub type MinusMinus = Arc<MinusMinusStruct>;
 
 pub struct MinusMinusStruct {
     pub(crate) ir_node: ir::MinusMinus,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_minus_minus(
     ir_node: &ir::MinusMinus,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> MinusMinus {
-    Rc::new(MinusMinusStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(MinusMinusStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl MinusMinusStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8403,25 +8415,25 @@ impl MinusMinusStruct {
     }
 }
 
-pub type MinutesKeyword = Rc<MinutesKeywordStruct>;
+pub type MinutesKeyword = Arc<MinutesKeywordStruct>;
 
 pub struct MinutesKeywordStruct {
     pub(crate) ir_node: ir::MinutesKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_minutes_keyword(
     ir_node: &ir::MinutesKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> MinutesKeyword {
-    Rc::new(MinutesKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(MinutesKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl MinutesKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8438,25 +8450,25 @@ impl MinutesKeywordStruct {
     }
 }
 
-pub type PayableKeyword = Rc<PayableKeywordStruct>;
+pub type PayableKeyword = Arc<PayableKeywordStruct>;
 
 pub struct PayableKeywordStruct {
     pub(crate) ir_node: ir::PayableKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_payable_keyword(
     ir_node: &ir::PayableKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> PayableKeyword {
-    Rc::new(PayableKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(PayableKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl PayableKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8473,22 +8485,22 @@ impl PayableKeywordStruct {
     }
 }
 
-pub type Percent = Rc<PercentStruct>;
+pub type Percent = Arc<PercentStruct>;
 
 pub struct PercentStruct {
     pub(crate) ir_node: ir::Percent,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
-pub(crate) fn create_percent(ir_node: &ir::Percent, semantic: &Rc<SemanticContext>) -> Percent {
-    Rc::new(PercentStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+pub(crate) fn create_percent(ir_node: &ir::Percent, semantic: &Arc<SemanticContext>) -> Percent {
+    Arc::new(PercentStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl PercentStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8505,25 +8517,25 @@ impl PercentStruct {
     }
 }
 
-pub type PercentEqual = Rc<PercentEqualStruct>;
+pub type PercentEqual = Arc<PercentEqualStruct>;
 
 pub struct PercentEqualStruct {
     pub(crate) ir_node: ir::PercentEqual,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_percent_equal(
     ir_node: &ir::PercentEqual,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> PercentEqual {
-    Rc::new(PercentEqualStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(PercentEqualStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl PercentEqualStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8540,22 +8552,22 @@ impl PercentEqualStruct {
     }
 }
 
-pub type Plus = Rc<PlusStruct>;
+pub type Plus = Arc<PlusStruct>;
 
 pub struct PlusStruct {
     pub(crate) ir_node: ir::Plus,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
-pub(crate) fn create_plus(ir_node: &ir::Plus, semantic: &Rc<SemanticContext>) -> Plus {
-    Rc::new(PlusStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+pub(crate) fn create_plus(ir_node: &ir::Plus, semantic: &Arc<SemanticContext>) -> Plus {
+    Arc::new(PlusStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl PlusStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8572,25 +8584,25 @@ impl PlusStruct {
     }
 }
 
-pub type PlusEqual = Rc<PlusEqualStruct>;
+pub type PlusEqual = Arc<PlusEqualStruct>;
 
 pub struct PlusEqualStruct {
     pub(crate) ir_node: ir::PlusEqual,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_plus_equal(
     ir_node: &ir::PlusEqual,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> PlusEqual {
-    Rc::new(PlusEqualStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(PlusEqualStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl PlusEqualStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8607,22 +8619,25 @@ impl PlusEqualStruct {
     }
 }
 
-pub type PlusPlus = Rc<PlusPlusStruct>;
+pub type PlusPlus = Arc<PlusPlusStruct>;
 
 pub struct PlusPlusStruct {
     pub(crate) ir_node: ir::PlusPlus,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
-pub(crate) fn create_plus_plus(ir_node: &ir::PlusPlus, semantic: &Rc<SemanticContext>) -> PlusPlus {
-    Rc::new(PlusPlusStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+pub(crate) fn create_plus_plus(
+    ir_node: &ir::PlusPlus,
+    semantic: &Arc<SemanticContext>,
+) -> PlusPlus {
+    Arc::new(PlusPlusStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl PlusPlusStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8639,25 +8654,25 @@ impl PlusPlusStruct {
     }
 }
 
-pub type PragmaCaret = Rc<PragmaCaretStruct>;
+pub type PragmaCaret = Arc<PragmaCaretStruct>;
 
 pub struct PragmaCaretStruct {
     pub(crate) ir_node: ir::PragmaCaret,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_pragma_caret(
     ir_node: &ir::PragmaCaret,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> PragmaCaret {
-    Rc::new(PragmaCaretStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(PragmaCaretStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl PragmaCaretStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8674,25 +8689,25 @@ impl PragmaCaretStruct {
     }
 }
 
-pub type PragmaEqual = Rc<PragmaEqualStruct>;
+pub type PragmaEqual = Arc<PragmaEqualStruct>;
 
 pub struct PragmaEqualStruct {
     pub(crate) ir_node: ir::PragmaEqual,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_pragma_equal(
     ir_node: &ir::PragmaEqual,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> PragmaEqual {
-    Rc::new(PragmaEqualStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(PragmaEqualStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl PragmaEqualStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8709,25 +8724,25 @@ impl PragmaEqualStruct {
     }
 }
 
-pub type PragmaGreaterThan = Rc<PragmaGreaterThanStruct>;
+pub type PragmaGreaterThan = Arc<PragmaGreaterThanStruct>;
 
 pub struct PragmaGreaterThanStruct {
     pub(crate) ir_node: ir::PragmaGreaterThan,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_pragma_greater_than(
     ir_node: &ir::PragmaGreaterThan,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> PragmaGreaterThan {
-    Rc::new(PragmaGreaterThanStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(PragmaGreaterThanStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl PragmaGreaterThanStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8744,25 +8759,25 @@ impl PragmaGreaterThanStruct {
     }
 }
 
-pub type PragmaGreaterThanEqual = Rc<PragmaGreaterThanEqualStruct>;
+pub type PragmaGreaterThanEqual = Arc<PragmaGreaterThanEqualStruct>;
 
 pub struct PragmaGreaterThanEqualStruct {
     pub(crate) ir_node: ir::PragmaGreaterThanEqual,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_pragma_greater_than_equal(
     ir_node: &ir::PragmaGreaterThanEqual,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> PragmaGreaterThanEqual {
-    Rc::new(PragmaGreaterThanEqualStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(PragmaGreaterThanEqualStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl PragmaGreaterThanEqualStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8779,25 +8794,25 @@ impl PragmaGreaterThanEqualStruct {
     }
 }
 
-pub type PragmaLessThan = Rc<PragmaLessThanStruct>;
+pub type PragmaLessThan = Arc<PragmaLessThanStruct>;
 
 pub struct PragmaLessThanStruct {
     pub(crate) ir_node: ir::PragmaLessThan,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_pragma_less_than(
     ir_node: &ir::PragmaLessThan,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> PragmaLessThan {
-    Rc::new(PragmaLessThanStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(PragmaLessThanStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl PragmaLessThanStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8814,25 +8829,25 @@ impl PragmaLessThanStruct {
     }
 }
 
-pub type PragmaLessThanEqual = Rc<PragmaLessThanEqualStruct>;
+pub type PragmaLessThanEqual = Arc<PragmaLessThanEqualStruct>;
 
 pub struct PragmaLessThanEqualStruct {
     pub(crate) ir_node: ir::PragmaLessThanEqual,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_pragma_less_than_equal(
     ir_node: &ir::PragmaLessThanEqual,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> PragmaLessThanEqual {
-    Rc::new(PragmaLessThanEqualStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(PragmaLessThanEqualStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl PragmaLessThanEqualStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8849,25 +8864,25 @@ impl PragmaLessThanEqualStruct {
     }
 }
 
-pub type PragmaTilde = Rc<PragmaTildeStruct>;
+pub type PragmaTilde = Arc<PragmaTildeStruct>;
 
 pub struct PragmaTildeStruct {
     pub(crate) ir_node: ir::PragmaTilde,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_pragma_tilde(
     ir_node: &ir::PragmaTilde,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> PragmaTilde {
-    Rc::new(PragmaTildeStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(PragmaTildeStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl PragmaTildeStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8884,25 +8899,25 @@ impl PragmaTildeStruct {
     }
 }
 
-pub type SMTCheckerKeyword = Rc<SMTCheckerKeywordStruct>;
+pub type SMTCheckerKeyword = Arc<SMTCheckerKeywordStruct>;
 
 pub struct SMTCheckerKeywordStruct {
     pub(crate) ir_node: ir::SMTCheckerKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_smt_checker_keyword(
     ir_node: &ir::SMTCheckerKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> SMTCheckerKeyword {
-    Rc::new(SMTCheckerKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(SMTCheckerKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl SMTCheckerKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8919,25 +8934,25 @@ impl SMTCheckerKeywordStruct {
     }
 }
 
-pub type SecondsKeyword = Rc<SecondsKeywordStruct>;
+pub type SecondsKeyword = Arc<SecondsKeywordStruct>;
 
 pub struct SecondsKeywordStruct {
     pub(crate) ir_node: ir::SecondsKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_seconds_keyword(
     ir_node: &ir::SecondsKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> SecondsKeyword {
-    Rc::new(SecondsKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(SecondsKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl SecondsKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8954,25 +8969,25 @@ impl SecondsKeywordStruct {
     }
 }
 
-pub type Semicolon = Rc<SemicolonStruct>;
+pub type Semicolon = Arc<SemicolonStruct>;
 
 pub struct SemicolonStruct {
     pub(crate) ir_node: ir::Semicolon,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_semicolon(
     ir_node: &ir::Semicolon,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> Semicolon {
-    Rc::new(SemicolonStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(SemicolonStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl SemicolonStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -8989,22 +9004,22 @@ impl SemicolonStruct {
     }
 }
 
-pub type Slash = Rc<SlashStruct>;
+pub type Slash = Arc<SlashStruct>;
 
 pub struct SlashStruct {
     pub(crate) ir_node: ir::Slash,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
-pub(crate) fn create_slash(ir_node: &ir::Slash, semantic: &Rc<SemanticContext>) -> Slash {
-    Rc::new(SlashStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+pub(crate) fn create_slash(ir_node: &ir::Slash, semantic: &Arc<SemanticContext>) -> Slash {
+    Arc::new(SlashStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl SlashStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -9021,25 +9036,25 @@ impl SlashStruct {
     }
 }
 
-pub type SlashEqual = Rc<SlashEqualStruct>;
+pub type SlashEqual = Arc<SlashEqualStruct>;
 
 pub struct SlashEqualStruct {
     pub(crate) ir_node: ir::SlashEqual,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_slash_equal(
     ir_node: &ir::SlashEqual,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> SlashEqual {
-    Rc::new(SlashEqualStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(SlashEqualStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl SlashEqualStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -9056,25 +9071,25 @@ impl SlashEqualStruct {
     }
 }
 
-pub type StorageKeyword = Rc<StorageKeywordStruct>;
+pub type StorageKeyword = Arc<StorageKeywordStruct>;
 
 pub struct StorageKeywordStruct {
     pub(crate) ir_node: ir::StorageKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_storage_keyword(
     ir_node: &ir::StorageKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> StorageKeyword {
-    Rc::new(StorageKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(StorageKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl StorageKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -9091,25 +9106,25 @@ impl StorageKeywordStruct {
     }
 }
 
-pub type StringKeyword = Rc<StringKeywordStruct>;
+pub type StringKeyword = Arc<StringKeywordStruct>;
 
 pub struct StringKeywordStruct {
     pub(crate) ir_node: ir::StringKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_string_keyword(
     ir_node: &ir::StringKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> StringKeyword {
-    Rc::new(StringKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(StringKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl StringKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -9126,25 +9141,25 @@ impl StringKeywordStruct {
     }
 }
 
-pub type StringLiteral = Rc<StringLiteralStruct>;
+pub type StringLiteral = Arc<StringLiteralStruct>;
 
 pub struct StringLiteralStruct {
     pub(crate) ir_node: ir::StringLiteral,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_string_literal(
     ir_node: &ir::StringLiteral,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> StringLiteral {
-    Rc::new(StringLiteralStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(StringLiteralStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl StringLiteralStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
     pub fn unparse(&self) -> &str {
@@ -9164,25 +9179,25 @@ impl StringLiteralStruct {
     }
 }
 
-pub type SuperKeyword = Rc<SuperKeywordStruct>;
+pub type SuperKeyword = Arc<SuperKeywordStruct>;
 
 pub struct SuperKeywordStruct {
     pub(crate) ir_node: ir::SuperKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_super_keyword(
     ir_node: &ir::SuperKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> SuperKeyword {
-    Rc::new(SuperKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(SuperKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl SuperKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -9199,25 +9214,25 @@ impl SuperKeywordStruct {
     }
 }
 
-pub type ThisKeyword = Rc<ThisKeywordStruct>;
+pub type ThisKeyword = Arc<ThisKeywordStruct>;
 
 pub struct ThisKeywordStruct {
     pub(crate) ir_node: ir::ThisKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_this_keyword(
     ir_node: &ir::ThisKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> ThisKeyword {
-    Rc::new(ThisKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(ThisKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl ThisKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -9234,22 +9249,22 @@ impl ThisKeywordStruct {
     }
 }
 
-pub type Tilde = Rc<TildeStruct>;
+pub type Tilde = Arc<TildeStruct>;
 
 pub struct TildeStruct {
     pub(crate) ir_node: ir::Tilde,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
-pub(crate) fn create_tilde(ir_node: &ir::Tilde, semantic: &Rc<SemanticContext>) -> Tilde {
-    Rc::new(TildeStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+pub(crate) fn create_tilde(ir_node: &ir::Tilde, semantic: &Arc<SemanticContext>) -> Tilde {
+    Arc::new(TildeStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl TildeStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -9266,25 +9281,25 @@ impl TildeStruct {
     }
 }
 
-pub type TrueKeyword = Rc<TrueKeywordStruct>;
+pub type TrueKeyword = Arc<TrueKeywordStruct>;
 
 pub struct TrueKeywordStruct {
     pub(crate) ir_node: ir::TrueKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_true_keyword(
     ir_node: &ir::TrueKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> TrueKeyword {
-    Rc::new(TrueKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(TrueKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl TrueKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -9301,25 +9316,25 @@ impl TrueKeywordStruct {
     }
 }
 
-pub type UfixedKeyword = Rc<UfixedKeywordStruct>;
+pub type UfixedKeyword = Arc<UfixedKeywordStruct>;
 
 pub struct UfixedKeywordStruct {
     pub(crate) ir_node: ir::UfixedKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_ufixed_keyword(
     ir_node: &ir::UfixedKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> UfixedKeyword {
-    Rc::new(UfixedKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(UfixedKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl UfixedKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
     pub fn unparse(&self) -> &str {
@@ -9339,25 +9354,25 @@ impl UfixedKeywordStruct {
     }
 }
 
-pub type UintKeyword = Rc<UintKeywordStruct>;
+pub type UintKeyword = Arc<UintKeywordStruct>;
 
 pub struct UintKeywordStruct {
     pub(crate) ir_node: ir::UintKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_uint_keyword(
     ir_node: &ir::UintKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> UintKeyword {
-    Rc::new(UintKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(UintKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl UintKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
     pub fn unparse(&self) -> &str {
@@ -9377,25 +9392,25 @@ impl UintKeywordStruct {
     }
 }
 
-pub type UnicodeStringLiteral = Rc<UnicodeStringLiteralStruct>;
+pub type UnicodeStringLiteral = Arc<UnicodeStringLiteralStruct>;
 
 pub struct UnicodeStringLiteralStruct {
     pub(crate) ir_node: ir::UnicodeStringLiteral,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_unicode_string_literal(
     ir_node: &ir::UnicodeStringLiteral,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> UnicodeStringLiteral {
-    Rc::new(UnicodeStringLiteralStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(UnicodeStringLiteralStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl UnicodeStringLiteralStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
     pub fn unparse(&self) -> &str {
@@ -9415,25 +9430,25 @@ impl UnicodeStringLiteralStruct {
     }
 }
 
-pub type VersionSpecifier = Rc<VersionSpecifierStruct>;
+pub type VersionSpecifier = Arc<VersionSpecifierStruct>;
 
 pub struct VersionSpecifierStruct {
     pub(crate) ir_node: ir::VersionSpecifier,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_version_specifier(
     ir_node: &ir::VersionSpecifier,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> VersionSpecifier {
-    Rc::new(VersionSpecifierStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(VersionSpecifierStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl VersionSpecifierStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
     pub fn unparse(&self) -> &str {
@@ -9453,25 +9468,25 @@ impl VersionSpecifierStruct {
     }
 }
 
-pub type VirtualKeyword = Rc<VirtualKeywordStruct>;
+pub type VirtualKeyword = Arc<VirtualKeywordStruct>;
 
 pub struct VirtualKeywordStruct {
     pub(crate) ir_node: ir::VirtualKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_virtual_keyword(
     ir_node: &ir::VirtualKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> VirtualKeyword {
-    Rc::new(VirtualKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(VirtualKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl VirtualKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -9488,25 +9503,25 @@ impl VirtualKeywordStruct {
     }
 }
 
-pub type WeeksKeyword = Rc<WeeksKeywordStruct>;
+pub type WeeksKeyword = Arc<WeeksKeywordStruct>;
 
 pub struct WeeksKeywordStruct {
     pub(crate) ir_node: ir::WeeksKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_weeks_keyword(
     ir_node: &ir::WeeksKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> WeeksKeyword {
-    Rc::new(WeeksKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(WeeksKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl WeeksKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 
@@ -9523,25 +9538,25 @@ impl WeeksKeywordStruct {
     }
 }
 
-pub type WeiKeyword = Rc<WeiKeywordStruct>;
+pub type WeiKeyword = Arc<WeiKeywordStruct>;
 
 pub struct WeiKeywordStruct {
     pub(crate) ir_node: ir::WeiKeyword,
-    pub(crate) semantic: Rc<SemanticContext>,
+    pub(crate) semantic: Arc<SemanticContext>,
 }
 
 pub(crate) fn create_wei_keyword(
     ir_node: &ir::WeiKeyword,
-    semantic: &Rc<SemanticContext>,
+    semantic: &Arc<SemanticContext>,
 ) -> WeiKeyword {
-    Rc::new(WeiKeywordStruct {
-        ir_node: Rc::clone(ir_node),
-        semantic: Rc::clone(semantic),
+    Arc::new(WeiKeywordStruct {
+        ir_node: Arc::clone(ir_node),
+        semantic: Arc::clone(semantic),
     })
 }
 
 impl WeiKeywordStruct {
-    pub fn id(self: &Rc<Self>) -> NodeId {
+    pub fn id(&self) -> NodeId {
         self.ir_node.id()
     }
 

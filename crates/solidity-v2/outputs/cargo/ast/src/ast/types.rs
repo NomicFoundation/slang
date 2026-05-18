@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
 use paste::paste;
 use slang_solidity_v2_common::nodes::NodeId;
@@ -40,7 +40,7 @@ macro_rules! define_type_variant {
             #[derive(Clone)]
             pub struct [<$type Type>] {
                 type_id: TypeId,
-                semantic: Rc<SemanticContext>,
+                semantic: Arc<SemanticContext>,
             }
 
             impl [<$type Type>] {
@@ -74,14 +74,17 @@ define_type_variant!(UserDefinedValue);
 define_type_variant!(Void);
 
 impl Type {
-    pub fn try_create_for_node_id(node_id: NodeId, semantic: &Rc<SemanticContext>) -> Option<Self> {
+    pub fn try_create_for_node_id(
+        node_id: NodeId,
+        semantic: &Arc<SemanticContext>,
+    ) -> Option<Self> {
         let type_id = semantic.binder().node_typing(node_id).as_type_id()?;
         Some(Self::create(type_id, semantic))
     }
 
-    pub fn create(type_id: TypeId, semantic: &Rc<SemanticContext>) -> Self {
+    pub fn create(type_id: TypeId, semantic: &Arc<SemanticContext>) -> Self {
         let type_ = semantic.types().get_type_by_id(type_id);
-        let semantic = Rc::clone(semantic);
+        let semantic = Arc::clone(semantic);
         match type_ {
             types::Type::Address { .. } => Self::Address(AddressType { type_id, semantic }),
             types::Type::Array { .. } => Self::Array(ArrayType { type_id, semantic }),

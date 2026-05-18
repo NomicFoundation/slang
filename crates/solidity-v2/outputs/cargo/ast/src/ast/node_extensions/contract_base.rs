@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
 use super::super::{ContractDefinition, Definition, InterfaceDefinition};
 
@@ -10,8 +10,8 @@ pub enum ContractBase {
 impl ContractBase {
     pub(crate) fn from_definition(definition: &Definition) -> Option<Self> {
         match definition {
-            Definition::Contract(contract) => Some(Self::Contract(Rc::clone(contract))),
-            Definition::Interface(interface) => Some(Self::Interface(Rc::clone(interface))),
+            Definition::Contract(contract) => Some(Self::Contract(Arc::clone(contract))),
+            Definition::Interface(interface) => Some(Self::Interface(Arc::clone(interface))),
             _ => None,
         }
     }

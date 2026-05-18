@@ -1,5 +1,5 @@
 use std::collections::HashSet;
-use std::rc::Rc;
+use std::sync::Arc;
 
 use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_ir::ir;
@@ -388,7 +388,7 @@ impl Pass<'_> {
                 .as_definition_id()
                 .and_then(|definition_id| self.binder.scope_id_for_node_id(definition_id));
 
-            let reference = Reference::new(Rc::clone(identifier), resolution);
+            let reference = Reference::new(Arc::clone(identifier), resolution);
             self.binder.insert_reference(reference);
         }
     }
@@ -410,7 +410,7 @@ impl Pass<'_> {
                     self.binder
                         .resolve_in_scope_as_namespace(parameters_scope_id, identifier.unparse())
                 });
-            let reference = Reference::new(Rc::clone(identifier), resolution);
+            let reference = Reference::new(Arc::clone(identifier), resolution);
             self.binder.insert_reference(reference);
         }
     }
