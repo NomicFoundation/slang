@@ -607,7 +607,7 @@ impl<H> metaslang_stack_graphs::cycles::Appendables<H>
 pub fn metaslang_stack_graphs::cycles::Appendables<H>::new() -> Self
 pub struct metaslang_stack_graphs::cycles::AppendingCycleDetector<H>
 impl<H> metaslang_stack_graphs::cycles::AppendingCycleDetector<H> where H: core::clone::Clone
-pub fn metaslang_stack_graphs::cycles::AppendingCycleDetector<H>::is_cyclic<'a, A, Db>(&self, graph: &metaslang_stack_graphs::graph::StackGraph, partials: &mut metaslang_stack_graphs::partial::PartialPaths, db: &'a Db, appendables: &mut metaslang_stack_graphs::cycles::Appendables<H>) -> core::result::Result<enumset::set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>, metaslang_stack_graphs::paths::PathResolutionError> where A: metaslang_stack_graphs::stitching::Appendable + 'a, Db: metaslang_stack_graphs::stitching::ToAppendable<H, A>
+pub fn metaslang_stack_graphs::cycles::AppendingCycleDetector<H>::is_cyclic<'a, A, Db>(&self, graph: &metaslang_stack_graphs::graph::StackGraph, partials: &mut metaslang_stack_graphs::partial::PartialPaths, db: &'a Db, appendables: &mut metaslang_stack_graphs::cycles::Appendables<H>) -> core::result::Result<enumset::impl_set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>, metaslang_stack_graphs::paths::PathResolutionError> where A: metaslang_stack_graphs::stitching::Appendable + 'a, Db: metaslang_stack_graphs::stitching::ToAppendable<H, A>
 impl<H> metaslang_stack_graphs::cycles::AppendingCycleDetector<H>
 pub fn metaslang_stack_graphs::cycles::AppendingCycleDetector<H>::append(&mut self, appendables: &mut metaslang_stack_graphs::cycles::Appendables<H>, appendage: H)
 pub fn metaslang_stack_graphs::cycles::AppendingCycleDetector<H>::from(appendables: &mut metaslang_stack_graphs::cycles::Appendables<H>, path: metaslang_stack_graphs::partial::PartialPath) -> Self
@@ -919,13 +919,13 @@ pub fn metaslang_stack_graphs::partial::Cyclicity::clone(&self) -> Self
 impl core::cmp::Eq for metaslang_stack_graphs::partial::Cyclicity
 impl core::cmp::PartialEq for metaslang_stack_graphs::partial::Cyclicity
 pub fn metaslang_stack_graphs::partial::Cyclicity::eq(&self, other: &Self) -> bool
-impl core::cmp::PartialEq<enumset::set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>> for metaslang_stack_graphs::partial::Cyclicity
-pub fn metaslang_stack_graphs::partial::Cyclicity::eq(&self, other: &enumset::set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>) -> bool
+impl core::cmp::PartialEq<enumset::impl_set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>> for metaslang_stack_graphs::partial::Cyclicity
+pub fn metaslang_stack_graphs::partial::Cyclicity::eq(&self, other: &enumset::impl_set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>) -> bool
 impl core::fmt::Debug for metaslang_stack_graphs::partial::Cyclicity
 pub fn metaslang_stack_graphs::partial::Cyclicity::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::Copy for metaslang_stack_graphs::partial::Cyclicity
 impl core::ops::bit::Not for metaslang_stack_graphs::partial::Cyclicity
-pub type metaslang_stack_graphs::partial::Cyclicity::Output = enumset::set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>
+pub type metaslang_stack_graphs::partial::Cyclicity::Output = enumset::impl_set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>
 pub fn metaslang_stack_graphs::partial::Cyclicity::not(self) -> Self::Output
 impl enumset::traits::EnumSetConstHelper for metaslang_stack_graphs::partial::Cyclicity
 pub type metaslang_stack_graphs::partial::Cyclicity::ConstInitHelper = __EnumSetInitHelper
@@ -940,17 +940,17 @@ pub const metaslang_stack_graphs::partial::Cyclicity::BIT_WIDTH: u32
 pub const metaslang_stack_graphs::partial::Cyclicity::VARIANT_COUNT: u32
 pub unsafe fn metaslang_stack_graphs::partial::Cyclicity::enum_from_u32(val: u32) -> Self
 pub fn metaslang_stack_graphs::partial::Cyclicity::enum_into_u32(self) -> u32
-impl<O: core::convert::Into<enumset::set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>>> core::ops::arith::Sub<O> for metaslang_stack_graphs::partial::Cyclicity
-pub type metaslang_stack_graphs::partial::Cyclicity::Output = enumset::set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>
+impl<O: core::convert::Into<enumset::impl_set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>>> core::ops::arith::Sub<O> for metaslang_stack_graphs::partial::Cyclicity
+pub type metaslang_stack_graphs::partial::Cyclicity::Output = enumset::impl_set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>
 pub fn metaslang_stack_graphs::partial::Cyclicity::sub(self, other: O) -> Self::Output
-impl<O: core::convert::Into<enumset::set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>>> core::ops::bit::BitAnd<O> for metaslang_stack_graphs::partial::Cyclicity
-pub type metaslang_stack_graphs::partial::Cyclicity::Output = enumset::set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>
+impl<O: core::convert::Into<enumset::impl_set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>>> core::ops::bit::BitAnd<O> for metaslang_stack_graphs::partial::Cyclicity
+pub type metaslang_stack_graphs::partial::Cyclicity::Output = enumset::impl_set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>
 pub fn metaslang_stack_graphs::partial::Cyclicity::bitand(self, other: O) -> Self::Output
-impl<O: core::convert::Into<enumset::set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>>> core::ops::bit::BitOr<O> for metaslang_stack_graphs::partial::Cyclicity
-pub type metaslang_stack_graphs::partial::Cyclicity::Output = enumset::set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>
+impl<O: core::convert::Into<enumset::impl_set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>>> core::ops::bit::BitOr<O> for metaslang_stack_graphs::partial::Cyclicity
+pub type metaslang_stack_graphs::partial::Cyclicity::Output = enumset::impl_set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>
 pub fn metaslang_stack_graphs::partial::Cyclicity::bitor(self, other: O) -> Self::Output
-impl<O: core::convert::Into<enumset::set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>>> core::ops::bit::BitXor<O> for metaslang_stack_graphs::partial::Cyclicity
-pub type metaslang_stack_graphs::partial::Cyclicity::Output = enumset::set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>
+impl<O: core::convert::Into<enumset::impl_set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>>> core::ops::bit::BitXor<O> for metaslang_stack_graphs::partial::Cyclicity
+pub type metaslang_stack_graphs::partial::Cyclicity::Output = enumset::impl_set::EnumSet<metaslang_stack_graphs::partial::Cyclicity>
 pub fn metaslang_stack_graphs::partial::Cyclicity::bitxor(self, other: O) -> Self::Output
 #[repr(C)] pub struct metaslang_stack_graphs::partial::PartialPath
 pub metaslang_stack_graphs::partial::PartialPath::edges: metaslang_stack_graphs::partial::PartialPathEdgeList
