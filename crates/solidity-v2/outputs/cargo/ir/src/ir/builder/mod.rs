@@ -594,17 +594,19 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let name = None;
         let parameters = self.build_parameters_declaration(&source.parameters);
         // Fallback functions *must* have external visibility
-        let visibility =
-            if let Some(v) = self.extract_fallback_visibility(&source.attributes.elements) {
-                v
-            } else {
-                self.diagnostics.push(
-                    self.file_id.to_owned(),
-                    range.clone(),
-                    InvalidFallbackVisibility,
-                );
-                output::FunctionVisibility::External
-            };
+        let visibility = if let Some(v) = self
+            .extract_visibility_specifier(&source.attributes.elements)
+            .visibility
+        {
+            v
+        } else {
+            self.diagnostics.push(
+                self.file_id.to_owned(),
+                range.clone(),
+                InvalidFallbackVisibility,
+            );
+            output::FunctionVisibility::External
+        };
         let mutability = self
             .extract_mutability_specifier(&source.attributes.elements)
             .unwrap_or(output::FunctionMutability::NonPayable);
@@ -1075,33 +1077,5 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             visibility,
             unique_range,
         }
-    }
-
-    /// Extracts fallback function visibility.
-    ///
-    /// This is needed because fallback function attributes are a distinct enum
-    /// (`FallbackFunctionAttribute`) and do not implement the same conversion traits
-    /// as ordinary function attributes. Only `external` is valid for fallback visibility.
-    fn extract_fallback_visibility(
-        &mut self,
-        attributes: &[input::FallbackFunctionAttribute],
-    ) -> Option<output::FunctionVisibility> {
-        let mut result = None;
-        for attribute in attributes {
-            if let input::FallbackFunctionAttribute::ExternalKeyword(keyword) = attribute {
-                if let Some(range) = keyword.calculate_text_range() {
-                    if result.is_some() {
-                        self.diagnostics.push(
-                            self.file_id.to_owned(),
-                            range,
-                            MultipleVisibilitySpecifiers,
-                        );
-                    } else {
-                        result = Some(output::FunctionVisibility::External);
-                    }
-                }
-            }
-        }
-        result
     }
 }

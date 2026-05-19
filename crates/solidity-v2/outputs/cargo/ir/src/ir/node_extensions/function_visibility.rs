@@ -41,3 +41,16 @@ impl TryFrom<&cst::ConstructorAttribute> for ir::FunctionVisibility {
         }
     }
 }
+
+impl TryFrom<&cst::FallbackFunctionAttribute> for ir::FunctionVisibility {
+    type Error = ();
+
+    fn try_from(value: &cst::FallbackFunctionAttribute) -> Result<Self, Self::Error> {
+        match value {
+            // The Slang parser only accepts external visibility for fallback functions.
+            // TODO(validation) For better diagnostics, this restriction could be relaxed and validated in the IR builder.
+            cst::FallbackFunctionAttribute::ExternalKeyword(_) => Ok(Self::External),
+            _ => Err(()),
+        }
+    }
+}
