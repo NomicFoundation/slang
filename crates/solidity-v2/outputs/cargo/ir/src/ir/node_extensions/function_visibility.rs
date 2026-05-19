@@ -54,3 +54,14 @@ impl TryFrom<&cst::FallbackFunctionAttribute> for ir::FunctionVisibility {
         }
     }
 }
+
+impl TryFrom<&cst::ReceiveFunctionAttribute> for ir::FunctionVisibility {
+    type Error = ();
+
+    fn try_from(value: &cst::ReceiveFunctionAttribute) -> Result<Self, Self::Error> {
+        match value {
+            cst::ReceiveFunctionAttribute::ExternalKeyword(_) => Ok(Self::External),
+            _ => Err(()),
+        }
+    }
+}

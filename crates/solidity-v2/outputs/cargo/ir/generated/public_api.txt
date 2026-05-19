@@ -680,6 +680,9 @@ pub fn slang_solidity_v2_ir::ir::FunctionVisibility::try_from(value: &slang_soli
 impl core::convert::TryFrom<&slang_solidity_v2_cst::structured_cst::nodes::FunctionTypeAttribute> for slang_solidity_v2_ir::ir::FunctionVisibility
 pub type slang_solidity_v2_ir::ir::FunctionVisibility::Error = ()
 pub fn slang_solidity_v2_ir::ir::FunctionVisibility::try_from(value: &slang_solidity_v2_cst::structured_cst::nodes::FunctionTypeAttribute) -> core::result::Result<Self, Self::Error>
+impl core::convert::TryFrom<&slang_solidity_v2_cst::structured_cst::nodes::ReceiveFunctionAttribute> for slang_solidity_v2_ir::ir::FunctionVisibility
+pub type slang_solidity_v2_ir::ir::FunctionVisibility::Error = ()
+pub fn slang_solidity_v2_ir::ir::FunctionVisibility::try_from(value: &slang_solidity_v2_cst::structured_cst::nodes::ReceiveFunctionAttribute) -> core::result::Result<Self, Self::Error>
 impl core::fmt::Debug for slang_solidity_v2_ir::ir::FunctionVisibility
 pub fn slang_solidity_v2_ir::ir::FunctionVisibility::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::hash::Hash for slang_solidity_v2_ir::ir::FunctionVisibility

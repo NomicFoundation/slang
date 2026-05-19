@@ -682,8 +682,11 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         let parameters = self.build_parameters_declaration(&source.parameters);
         // Receive functions must have explicit `external` visibility and `payable` mutability.
         // Emit InvalidReceiveAttributes if either of these is missing.
-        // Duplicate visibility or mutability specifiers are handled by extract_receive_attributes.
-        let (visibility, mutability) = self.extract_receive_attributes(&source.attributes.elements);
+        // Duplicate visibility or mutability specifiers are handled by generic extractors.
+        let visibility = self
+            .extract_visibility_specifier(&source.attributes.elements)
+            .visibility;
+        let mutability = self.extract_mutability_specifier(&source.attributes.elements);
         if visibility.is_none() || mutability.is_none() {
             self.diagnostics.push(
                 self.file_id.to_owned(),
@@ -717,43 +720,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             returns,
             body,
         })
-    }
-
-    fn extract_receive_attributes(
-        &mut self,
-        attributes: &Vec<input::ReceiveFunctionAttribute>,
-    ) -> (
-        Option<output::FunctionVisibility>,
-        Option<output::FunctionMutability>,
-    ) {
-        let mut visibility: Option<output::FunctionVisibility> = None;
-        let mut mutability: Option<output::FunctionMutability> = None;
-        for attr in attributes {
-            match attr {
-                input::ReceiveFunctionAttribute::ExternalKeyword(keyword) => {
-                    if visibility.is_some() {
-                        self.diagnostics.push(
-                            self.file_id.to_owned(),
-                            keyword.range.clone(),
-                            MultipleVisibilitySpecifiers,
-                        );
-                    }
-                    visibility = Some(output::FunctionVisibility::External);
-                }
-                input::ReceiveFunctionAttribute::PayableKeyword(keyword) => {
-                    if mutability.is_some() {
-                        self.diagnostics.push(
-                            self.file_id.to_owned(),
-                            keyword.range.clone(),
-                            MultipleMutabilitySpecifiers,
-                        );
-                    }
-                    mutability = Some(output::FunctionMutability::Payable);
-                }
-                _ => {}
-            }
-        }
-        (visibility, mutability)
     }
 
     fn receive_function_override_specifier(
