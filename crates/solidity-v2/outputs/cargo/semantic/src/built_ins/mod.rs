@@ -435,7 +435,7 @@ impl<'a> BuiltInsResolver<'a> {
             }
             BuiltIn::TxGasPrice => Typing::Resolved(self.types.uint256()),
             BuiltIn::TxOrigin => Typing::Resolved(self.types.address()),
-            BuiltIn::TypeName => Typing::Resolved(self.types.string()),
+            BuiltIn::TypeName => Typing::Resolved(self.types.string_memory()),
             BuiltIn::TypeCreationCode => Typing::Resolved(self.types.bytes_memory()),
             BuiltIn::TypeRuntimeCode => Typing::Resolved(self.types.bytes_memory()),
             BuiltIn::TypeInterfaceId => Typing::Resolved(self.types.bytes4()),
@@ -530,7 +530,7 @@ impl<'a> BuiltInsResolver<'a> {
             BuiltIn::Ripemd160 => Typing::Resolved(self.types.bytes20()),
             BuiltIn::Selfdestruct => Typing::Resolved(self.types.void()),
             BuiltIn::Sha256 => Typing::Resolved(self.types.bytes32()),
-            BuiltIn::StringConcat => Typing::Resolved(self.types.string()),
+            BuiltIn::StringConcat => Typing::Resolved(self.types.string_memory()),
             BuiltIn::Unwrap(definition_id) => {
                 let Some(Definition::UserDefinedValueType(udvt)) =
                     self.binder.find_definition_by_id(*definition_id)
