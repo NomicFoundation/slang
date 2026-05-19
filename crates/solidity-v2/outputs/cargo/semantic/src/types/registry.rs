@@ -31,7 +31,7 @@ pub struct TypeRegistry {
     bytes20_type_id: TypeId,
     bytes32_type_id: TypeId,
     bytes4_type_id: TypeId,
-    string_type_id: TypeId,
+    string_memory_type_id: TypeId,
     uint256_type_id: TypeId,
     uint8_type_id: TypeId,
     void_type_id: TypeId,
@@ -54,7 +54,7 @@ impl Default for TypeRegistry {
         let (bytes20_type, _) = types.insert_full(Type::ByteArray { width: 20 });
         let (bytes32_type, _) = types.insert_full(Type::ByteArray { width: 32 });
         let (bytes4_type, _) = types.insert_full(Type::ByteArray { width: 4 });
-        let (string_type, _) = types.insert_full(Type::String {
+        let (string_memory_type, _) = types.insert_full(Type::String {
             location: DataLocation::Memory,
         });
         let (uint256_type, _) = types.insert_full(Type::Integer {
@@ -85,7 +85,7 @@ impl Default for TypeRegistry {
             bytes20_type_id: TypeId(bytes20_type),
             bytes32_type_id: TypeId(bytes32_type),
             bytes4_type_id: TypeId(bytes4_type),
-            string_type_id: TypeId(string_type),
+            string_memory_type_id: TypeId(string_memory_type),
             uint256_type_id: TypeId(uint256_type),
             uint8_type_id: TypeId(uint8_type),
             void_type_id: TypeId(void_type),
@@ -744,8 +744,8 @@ impl TypeRegistry {
     pub(crate) fn bytes4(&self) -> TypeId {
         self.bytes4_type_id
     }
-    pub(crate) fn string(&self) -> TypeId {
-        self.string_type_id
+    pub(crate) fn string_memory(&self) -> TypeId {
+        self.string_memory_type_id
     }
     pub(crate) fn uint256(&self) -> TypeId {
         self.uint256_type_id

@@ -529,7 +529,7 @@ fn test_array_literal_unifies_element_types() {
         panic!("expected FixedSizeArray, got {expr_type:?}");
     };
     assert_eq!(size, 2);
-    assert_eq!(element_type, types.string());
+    assert_eq!(element_type, types.string_memory());
 }
 
 #[test]

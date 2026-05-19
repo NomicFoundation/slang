@@ -183,7 +183,7 @@ impl Pass<'_> {
                 }
                 Type::String { .. } => {
                     // getters will always return values in memory
-                    return_type = self.types.string();
+                    return_type = self.types.string_memory();
                     break;
                 }
 
