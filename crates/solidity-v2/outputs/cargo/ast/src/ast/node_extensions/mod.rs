@@ -8,6 +8,7 @@ mod hex_number_expression;
 mod interface_definition;
 pub use contract_base::ContractBase;
 
+mod expression;
 mod function_call_expression;
 mod function_definition;
 mod identifier;

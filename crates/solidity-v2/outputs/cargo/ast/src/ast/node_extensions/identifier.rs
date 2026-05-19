@@ -1,5 +1,4 @@
 use slang_solidity_v2_common::built_ins::BuiltIn;
-use slang_solidity_v2_common::nodes::NodeId;
 use slang_solidity_v2_semantic::binder;
 
 use super::super::nodes::IdentifierStruct;
@@ -7,10 +6,6 @@ use crate::ast::references::references_binding_to_definition;
 use crate::ast::{Definition, Reference};
 
 impl IdentifierStruct {
-    pub fn node_id(&self) -> NodeId {
-        self.ir_node.id()
-    }
-
     pub fn name(&self) -> String {
         self.ir_node.unparse().to_string()
     }
