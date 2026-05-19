@@ -550,7 +550,7 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         // Constructor visibility in solc starting from 0.7.0:
         // - `public` is accepted, and solc emits a warning saying that visibility is ignored.
         // - non-public constructor visibility is rejected.
-        // We don't emit the `public` warning for now.
+        // TODO(validation): We don't emit the `public` warning for now.
         // `MultipleVisibilitySpecifiers` is emitted separately for duplicate visibility keywords.
         // `InvalidConstructorVisibility` is emitted for non-public constructor visibility.
         let extracted = self.extract_visibility_specifier(&attributes.elements);
