@@ -125,7 +125,7 @@ enum ManifestDependency {
     Detailed(DetailedDependency),
 }
 
-#[derive(Debug, Default, Deserialize)]
+#[derive(Clone, Debug, Default, Deserialize)]
 struct DetailedDependency {
     version: Option<String>,
     #[serde(default)]
@@ -148,16 +148,11 @@ impl PackagedManifest {
         collect_dep_table(&self.dependencies, "normal", None, &mut deps);
         collect_dep_table(&self.dev_dependencies, "dev", None, &mut deps);
         collect_dep_table(&self.build_dependencies, "build", None, &mut deps);
-        for (target_name, target_table) in self.target {
-            let target = Some(target_name);
-            collect_dep_table(&target_table.dependencies, "normal", target.clone(), &mut deps);
-            collect_dep_table(&target_table.dev_dependencies, "dev", target.clone(), &mut deps);
-            collect_dep_table(
-                &target_table.build_dependencies,
-                "build",
-                target.clone(),
-                &mut deps,
-            );
+        for (target_name, target_table) in &self.target {
+            let target = Some(target_name.as_str());
+            collect_dep_table(&target_table.dependencies, "normal", target, &mut deps);
+            collect_dep_table(&target_table.dev_dependencies, "dev", target, &mut deps);
+            collect_dep_table(&target_table.build_dependencies, "build", target, &mut deps);
         }
 
         let (readme, readme_file) = match self.package.readme {
@@ -191,7 +186,7 @@ impl PackagedManifest {
 fn collect_dep_table(
     table: &BTreeMap<String, ManifestDependency>,
     kind: &str,
-    target: Option<String>,
+    target: Option<&str>,
     out: &mut Vec<RegistryDependency>,
 ) {
     for (key, dep) in table {
@@ -199,7 +194,7 @@ fn collect_dep_table(
             ManifestDependency::Simple(v) => (v.clone(), DetailedDependency::default()),
             ManifestDependency::Detailed(d) => {
                 let v = d.version.clone().unwrap_or_else(|| "*".to_owned());
-                (v, clone_detailed(d))
+                (v, d.clone())
             }
         };
         // If the manifest renames the dep via `package = "real-name"`, the registry
@@ -214,22 +209,11 @@ fn collect_dep_table(
             features: detailed.features,
             optional: detailed.optional,
             default_features: detailed.default_features,
-            target: target.clone(),
+            target: target.map(str::to_owned),
             kind: kind.to_owned(),
             registry: detailed.registry,
             explicit_name_in_toml,
         });
-    }
-}
-
-fn clone_detailed(d: &DetailedDependency) -> DetailedDependency {
-    DetailedDependency {
-        version: d.version.clone(),
-        features: d.features.clone(),
-        optional: d.optional,
-        default_features: d.default_features,
-        registry: d.registry.clone(),
-        package: d.package.clone(),
     }
 }
 

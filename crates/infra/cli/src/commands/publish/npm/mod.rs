@@ -22,7 +22,7 @@ impl NpmController {
             return Ok(());
         };
 
-        let tarball = manifest.absolute_path(&npm.path);
+        let tarball = Manifest::absolute_path(&npm.path);
         if !tarball.exists() {
             bail!("Prebuilt npm tarball missing: {tarball:?}");
         }

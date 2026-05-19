@@ -73,7 +73,7 @@ impl Manifest {
         fs::write(&path, json).with_context(|| format!("Failed to write manifest: {path:?}"))
     }
 
-    pub fn absolute_path(&self, relative: &str) -> PathBuf {
+    pub fn absolute_path(relative: &str) -> PathBuf {
         ArtifactPaths::root().join(relative)
     }
 
@@ -81,7 +81,7 @@ impl Manifest {
     /// Called by `npm` and `cargo` publish steps before uploading.
     pub fn verify_integrity(&self) -> Result<()> {
         if let Some(npm) = &self.npm {
-            let abs = self.absolute_path(&npm.path);
+            let abs = Self::absolute_path(&npm.path);
             let actual = sha256_hex_of_file(&abs)?;
             if actual != npm.sha256 {
                 bail!(
@@ -95,7 +95,7 @@ impl Manifest {
                 (&entry.crate_path, &entry.crate_sha256),
                 (&entry.metadata_path, &entry.metadata_sha256),
             ] {
-                let abs = self.absolute_path(rel);
+                let abs = Self::absolute_path(rel);
                 let actual = sha256_hex_of_file(&abs)?;
                 if actual != *expected {
                     bail!(

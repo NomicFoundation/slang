@@ -90,8 +90,8 @@ fn run_registry_upload() -> Result<()> {
         .with_context(|| format!("${TOKEN_ENV} not set; cannot authenticate with crates.io"))?;
 
     for entry in &manifest.cargo {
-        let crate_bytes = fs::read(manifest.absolute_path(&entry.crate_path))?;
-        let metadata_bytes = fs::read(manifest.absolute_path(&entry.metadata_path))?;
+        let crate_bytes = fs::read(Manifest::absolute_path(&entry.crate_path))?;
+        let metadata_bytes = fs::read(Manifest::absolute_path(&entry.metadata_path))?;
 
         println!(
             "Publishing {name} v{version}",

@@ -21,6 +21,9 @@ use crate::toolchains::wasm::{WasmPackage, NPM_CRATE};
 pub struct PrepareController {}
 
 impl PrepareController {
+    // Empty controller — no flags, just runs the pipeline. `&self` is required by
+    // the surrounding `PublishCommand::execute` dispatch, hence the allow.
+    #[allow(clippy::unused_self)]
     pub fn execute(&self) -> Result<()> {
         let root = ArtifactPaths::root();
         if root.exists() {
