@@ -5,14 +5,11 @@ use anyhow::{bail, Context, Result};
 use clap::Parser;
 use infra_utils::cargo::{CargoWorkspace, UserFacingV1Crate};
 use infra_utils::commands::Command;
+use infra_utils::hash::sha256_hex_of_file;
 use infra_utils::paths::PathExtensions;
 use strum::IntoEnumIterator;
 
-use infra_utils::hash::sha256_hex_of_file;
-
-use crate::commands::publish::artifacts::{
-    ArtifactPaths, CargoArtifact, Manifest, NpmArtifact,
-};
+use crate::commands::publish::artifacts::{ArtifactPaths, CargoArtifact, Manifest, NpmArtifact};
 use crate::commands::publish::cargo::metadata::build_from_packaged_manifest;
 use crate::toolchains::npm::Npm;
 use crate::toolchains::wasm::{WasmPackage, NPM_CRATE};
@@ -148,7 +145,8 @@ fn prepare_cargo() -> Result<Vec<CargoArtifact>> {
         // registry-publish JSON. `cargo package --no-verify` doesn't leave a
         // directory around — only the .crate itself — so we read from inside it.
         let version_str = local_version.to_string();
-        let normalized_manifest = extract_normalized_manifest(&dest_crate, crate_name, &version_str)?;
+        let normalized_manifest =
+            extract_normalized_manifest(&dest_crate, crate_name, &version_str)?;
         let metadata = build_from_packaged_manifest(&normalized_manifest)?;
         let metadata_filename = format!("{crate_name}-{local_version}.json");
         let dest_metadata = ArtifactPaths::cargo_dir().join(&metadata_filename);
@@ -181,8 +179,7 @@ fn extract_normalized_manifest(
     version: &str,
 ) -> Result<PathBuf> {
     let inner = format!("{crate_name}-{version}/Cargo.toml");
-    let extracted = ArtifactPaths::cargo_dir()
-        .join(format!("{crate_name}-{version}.Cargo.toml"));
+    let extracted = ArtifactPaths::cargo_dir().join(format!("{crate_name}-{version}.Cargo.toml"));
     // Stream the .crate, decompress it, pick the Cargo.toml entry, write to disk.
     let contents = Command::new("tar")
         .args(["-xzOf", crate_path.unwrap_str(), inner.as_str()])
@@ -195,9 +192,7 @@ fn extract_normalized_manifest(
 
 fn find_single_file_with_extension(dir: &Path, extension: &str) -> Result<PathBuf> {
     let mut matches = vec![];
-    for entry in fs::read_dir(dir)
-        .with_context(|| format!("Failed to read dir: {dir:?}"))?
-    {
+    for entry in fs::read_dir(dir).with_context(|| format!("Failed to read dir: {dir:?}"))? {
         let entry = entry?;
         let path = entry.path();
         if path.extension().and_then(|s| s.to_str()) == Some(extension) {

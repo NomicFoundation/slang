@@ -47,9 +47,7 @@ impl NpmController {
             command = command.flag("--dry-run");
         }
 
-        command
-            .current_dir(ArtifactPaths::root())
-            .run();
+        command.current_dir(ArtifactPaths::root()).run();
 
         Ok(())
     }

@@ -98,9 +98,7 @@ impl Manifest {
                 let abs = Self::absolute_path(rel);
                 let actual = sha256_hex_of_file(&abs)?;
                 if actual != *expected {
-                    bail!(
-                        "Integrity check failed for {abs:?}: expected {expected}, got {actual}",
-                    );
+                    bail!("Integrity check failed for {abs:?}: expected {expected}, got {actual}",);
                 }
             }
         }

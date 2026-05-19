@@ -1,9 +1,7 @@
 pub mod metadata;
 
-use std::env;
-use std::fs;
-use std::thread;
 use std::time::Duration;
+use std::{env, fs, thread};
 
 use anyhow::{bail, Context, Result};
 use clap::Parser;
