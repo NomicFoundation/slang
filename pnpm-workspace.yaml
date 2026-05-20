@@ -33,9 +33,7 @@ catalog:
 overrides:
   # Temporary fixes until our dependencies are updated:
   "basic-ftp@<5.3.0": "^5.3.0" # GHSA-rp42-5vxx-qpwr
-  "brace-expansion@<1.1.13": "^1.1.13" # GHSA-f886-m6hf-6m8v
-  "brace-expansion@>=2.0.0 <2.0.3": "^2.0.3" # GHSA-f886-m6hf-6m8v
-  "brace-expansion@>=4.0.0 <5.0.5": "^5.0.5" # GHSA-f886-m6hf-6m8v
+  "brace-expansion": "^5.0.6" # GHSA-f886-m6hf-6m8v, GHSA-jxxr-4gwj-5jf2
   "diff@>=4.0.0 <4.0.4": "^4.0.4" # GHSA-73rr-hh4g-fpgx
   "follow-redirects@<1.16.0": "^1.16.0" # GHSA-r4q5-vmmm-2653
   "picomatch@<2.3.2": "^2.3.2" # GHSA-c2c7-rcm5-vvqj
