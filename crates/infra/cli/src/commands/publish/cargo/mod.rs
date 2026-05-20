@@ -15,6 +15,7 @@ const LOCAL_REGISTRY_NAME: &str = "local";
 
 #[derive(Clone, Debug, Parser)]
 pub struct CargoController {
+    /// Tests the verify-compile of each packaged crate, which the local smoke test can't cover.
     #[command(flatten)]
     dry_run: DryRun,
 

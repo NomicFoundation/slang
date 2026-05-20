@@ -140,9 +140,7 @@ jobs:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
   # ───────────────────────────────────────────────
-  # Prepare: build the npm tarball that will be published. WASM build + pnpm pack,
-  # plus a manifest with the tarball's SHA-256. Uploads target/publish-artifacts/
-  # for downstream review and publish. Runs on every trigger.
+  # Prepare: build the npm tarball for downstream review and publish.
   # ───────────────────────────────────────────────
 
   prepare:
@@ -199,11 +197,6 @@ jobs:
           SHORT_SHA="${GITHUB_SHA::12}"
           echo "name=slang-publish-artifacts-${VERSION}-${SHORT_SHA}" >> "$GITHUB_OUTPUT"
 
-      # PR artifacts (including from forks) are intentionally produced so that PR
-      # reviewers can download the exact bytes that would be published, and so
-      # that the review job validates against the same artifact shape used in
-      # production. The actual security gate is the `publish` job's
-      # github.event_name != 'pull_request' condition.
       - name: "Upload publish artifacts"
         uses: "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a" # v7.0.1
         with:
@@ -214,7 +207,7 @@ jobs:
 
   # ───────────────────────────────────────────────
   # Review: download the prepared artifact, verify integrity, and dry-run
-  # publish against the exact bytes that would be uploaded. No build infra here.
+  # publish against the exact bytes that would be uploaded.
   # ───────────────────────────────────────────────
 
   review:
@@ -246,8 +239,6 @@ jobs:
       - name: "infra publish cargo --dry-run"
         run: "./scripts/bin/infra publish cargo --dry-run"
 
-      # End-to-end smoke test: run the same per-crate `cargo publish --no-verify`
-      # production uses, against a local `cargo-http-registry`.
       - name: "infra publish cargo --local-smoke"
         run: "./scripts/bin/infra publish cargo --local-smoke"
 
@@ -336,9 +327,7 @@ jobs:
       - "prepare"
       - "review"
       - "notify-deploy"
-    # Mirrors notify-deploy's gating so the two fire together; the
-    # event_name check is an explicit assertion that survives needs-chain
-    # refactors.
+    # Explicit redundant condition for safety.
     if: >-
       github.event_name != 'pull_request'
       && needs.changesets.outputs.hasChangesets == 'false'
