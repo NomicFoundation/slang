@@ -5,10 +5,9 @@ use anyhow::{bail, Context, Result};
 use clap::Parser;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
-use infra_utils::hash::sha256_hex_of_file;
 use infra_utils::paths::PathExtensions;
 
-use crate::commands::publish::artifacts::{ArtifactPaths, Manifest, NpmArtifact};
+use crate::commands::publish::artifacts::{sha256_hex_of_file, ArtifactPaths, Manifest, NpmArtifact};
 use crate::toolchains::npm::Npm;
 use crate::toolchains::wasm::{WasmPackage, NPM_CRATE};
 

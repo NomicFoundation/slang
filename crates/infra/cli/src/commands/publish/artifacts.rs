@@ -2,9 +2,14 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use anyhow::{bail, Context, Result};
-use infra_utils::hash::sha256_hex_of_file;
 use infra_utils::paths::PathExtensions;
 use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha256};
+
+pub fn sha256_hex_of_file(path: &Path) -> Result<String> {
+    let bytes = fs::read(path).with_context(|| format!("Failed to read for hashing: {path:?}"))?;
+    Ok(format!("{:x}", Sha256::digest(&bytes)))
+}
 
 /// Paths under `target/publish-artifacts/`. Produced by `infra publish prepare`,
 /// consumed by `infra publish npm`. The cargo side does not flow through here —

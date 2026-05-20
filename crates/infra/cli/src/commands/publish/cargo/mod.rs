@@ -164,8 +164,9 @@ fn run_smoke_inner(storage_root: &std::path::Path, crate_names: &[String]) -> Re
 
     for name in crate_names {
         println!("--- Publishing {name} to local registry ---");
-        // std::process::Command instead of the project's Command so failures
-        // return Err and let the caller kill the server before exiting.
+        // Bypass `infra_utils::commands::Command` here — its `run()` calls
+        // `process::exit` on non-zero status, which would skip the server
+        // teardown in `run_local_smoke`.
         let status = std::process::Command::new("cargo")
             .arg("publish")
             .args(["--no-verify", "--all-features"])
@@ -174,13 +175,9 @@ fn run_smoke_inner(storage_root: &std::path::Path, crate_names: &[String]) -> Re
             .args(["--registry", LOCAL_REGISTRY_NAME])
             .args(["--package", name])
             .env(&index_env, &index_url)
-            // cargo-http-registry documents that it doesn't validate tokens
-            // (accepts any string), but cargo refuses to publish without one.
-            // Set per-registry so it doesn't leak into other commands.
             .env(&token_env, "fake-token-local-registry-ignores-it")
-            // cargo-http-registry serves the index over plain HTTP git;
-            // cargo's built-in libgit2 won't talk plain HTTP, so shell out to
-            // the system git binary (present on all CI runners).
+            // cargo-http-registry's index is plain HTTP git; libgit2 can't
+            // fetch that, so this flag falls back to the system git binary.
             .env("CARGO_NET_GIT_FETCH_WITH_CLI", "true")
             .status()
             .with_context(|| format!("Failed to invoke cargo publish for {name}"))?;
@@ -199,9 +196,8 @@ fn run_smoke_inner(storage_root: &std::path::Path, crate_names: &[String]) -> Re
     Ok(())
 }
 
-/// `cargo-http-registry` writes its assigned address to `<root>/config.json`
-/// once it has bound the socket. With `--addr 127.0.0.1:0` we need to read
-/// that file to learn which port the kernel handed us.
+/// Read the API URL cargo-http-registry writes to `<root>/config.json` after
+/// binding, polling until the file appears.
 fn read_registry_api_url(root: &std::path::Path) -> Result<String> {
     #[derive(Deserialize)]
     struct RegistryConfig {
