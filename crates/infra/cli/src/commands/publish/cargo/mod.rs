@@ -1,17 +1,24 @@
-use std::net::{SocketAddr, TcpStream};
+use std::net::TcpStream;
 use std::time::{Duration, Instant};
 use std::{fs, thread};
 
-use anyhow::{bail, Context, Result};
+use anyhow::{anyhow, bail, Context, Result};
 use clap::Parser;
 use infra_utils::cargo::{CargoWorkspace, UserFacingV1Crate};
 use infra_utils::commands::Command;
+use semver::Version;
 use serde::Deserialize;
 use strum::IntoEnumIterator;
+use url::Url;
 
 use crate::utils::DryRun;
 
 const LOCAL_REGISTRY_NAME: &str = "local";
+
+#[derive(Deserialize)]
+struct RegistryConfig {
+    api: String,
+}
 
 #[derive(Clone, Debug, Parser)]
 pub struct CargoController {
@@ -28,20 +35,14 @@ pub struct CargoController {
 
 impl CargoController {
     pub fn execute(&self) -> Result<()> {
-        // Local registry starts empty; publish every user-facing crate
-        // regardless of crates.io state.
-        let crates_to_run: Vec<String> = if self.local_smoke {
-            UserFacingV1Crate::iter().map(|c| c.to_string()).collect()
-        } else {
-            let mut v = vec![];
-            for c in UserFacingV1Crate::iter() {
-                let name = c.to_string();
-                if needs_publish(&name)? {
-                    v.push(name);
-                }
-            }
-            v
-        };
+        let local_version = CargoWorkspace::local_version()?;
+        let mut crates_to_run: Vec<String> =
+            UserFacingV1Crate::iter().map(|c| c.to_string()).collect();
+        // Local smoke publishes every crate to a fresh empty registry,
+        // so the crates.io version check doesn't apply.
+        if !self.local_smoke {
+            crates_to_run.retain(|name| needs_publish(name, &local_version));
+        }
 
         if crates_to_run.is_empty() {
             println!("No crates to publish.");
@@ -51,16 +52,9 @@ impl CargoController {
         if self.local_smoke {
             run_local_smoke(&crates_to_run)
         } else if self.dry_run.get() {
-            // Per-crate dry-runs against crates.io fail because the bumped
-            // versions of internal deps aren't on crates.io yet. Batch them
-            // into one invocation so cargo resolves internal path-deps locally.
             run_batched_dry_run(&crates_to_run);
             Ok(())
         } else {
-            // `--no-verify` skips the verification compile so no `build.rs` or
-            // proc-macros from the workspace dep graph run alongside the
-            // OIDC-exchanged crates.io token. cargo still does dep resolution
-            // + tarball creation, but those are cargo's own code paths.
             for crate_name in &crates_to_run {
                 run_cargo_publish(crate_name);
             }
@@ -69,21 +63,24 @@ impl CargoController {
     }
 }
 
-fn needs_publish(crate_name: &str) -> Result<bool> {
+fn needs_publish(crate_name: &str, local_version: &Version) -> bool {
     if let Ok(published_version) = CargoWorkspace::published_version(crate_name) {
         println!("Published version of {crate_name}: {published_version}");
-        let local_version = CargoWorkspace::local_version()?;
         println!("Local version: {local_version}");
-        if local_version == published_version {
+        if *local_version == published_version {
             println!("Skipping crate {crate_name}, since the local version is already published.");
-            return Ok(false);
+            return false;
         }
     } else {
         println!("No published version found for crate {crate_name}.");
     }
-    Ok(true)
+    true
 }
 
+/// `--no-verify` skips the verification compile so no `build.rs` or
+/// proc-macros from the workspace dep graph run alongside the
+/// OIDC-exchanged crates.io token. cargo still does dep resolution +
+/// tarball creation, but those are cargo's own code paths.
 fn run_cargo_publish(crate_name: &str) {
     Command::new("cargo")
         .arg("publish")
@@ -93,6 +90,9 @@ fn run_cargo_publish(crate_name: &str) {
         .run();
 }
 
+/// Per-crate dry-runs against crates.io fail because the bumped versions
+/// of internal deps aren't on crates.io yet. Batch them into one invocation
+/// so cargo resolves internal path-deps locally.
 fn run_batched_dry_run(crate_names: &[String]) {
     let mut command = Command::new("cargo")
         .arg("publish")
@@ -137,8 +137,9 @@ fn run_local_smoke(crate_names: &[String]) -> Result<()> {
     let _ = server.wait();
 
     if result.is_err() {
-        print_log_if_present("cargo-http-registry stdout", &stdout_log);
-        print_log_if_present("cargo-http-registry stderr", &stderr_log);
+        for (label, path) in [("stdout", &stdout_log), ("stderr", &stderr_log)] {
+            print_log_if_present(&format!("cargo-http-registry {label}"), path);
+        }
     }
 
     result
@@ -199,10 +200,6 @@ fn run_smoke_inner(storage_root: &std::path::Path, crate_names: &[String]) -> Re
 /// Read the API URL cargo-http-registry writes to `<root>/config.json` after
 /// binding, polling until the file appears.
 fn read_registry_api_url(root: &std::path::Path) -> Result<String> {
-    #[derive(Deserialize)]
-    struct RegistryConfig {
-        api: String,
-    }
     let config_path = root.join("config.json");
     let deadline = Instant::now() + Duration::from_secs(15);
     let mut last_err = None;
@@ -229,12 +226,13 @@ fn read_registry_api_url(root: &std::path::Path) -> Result<String> {
 /// Verify the server is actually serving on its advertised address (not just
 /// that the file appeared on disk).
 fn wait_for_server(api_url: &str) -> Result<()> {
-    let host_and_port = api_url
-        .trim_start_matches("http://")
-        .trim_start_matches("https://");
-    let socket: SocketAddr = host_and_port
-        .parse()
-        .with_context(|| format!("Invalid registry api URL: {api_url}"))?;
+    let socket = Url::parse(api_url)
+        .with_context(|| format!("Invalid registry api URL: {api_url}"))?
+        .socket_addrs(|| None)
+        .with_context(|| format!("Could not resolve {api_url}"))?
+        .into_iter()
+        .next()
+        .ok_or_else(|| anyhow!("{api_url} resolved to no addresses"))?;
     let deadline = Instant::now() + Duration::from_secs(15);
     while Instant::now() < deadline {
         if TcpStream::connect_timeout(&socket, Duration::from_millis(200)).is_ok() {
