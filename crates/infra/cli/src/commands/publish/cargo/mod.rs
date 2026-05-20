@@ -1,5 +1,4 @@
 use std::net::{SocketAddr, TcpStream};
-use std::process::Stdio;
 use std::time::{Duration, Instant};
 use std::{fs, thread};
 
@@ -114,23 +113,42 @@ fn run_local_smoke(crate_names: &[String]) -> Result<()> {
 
     // Ephemeral port (`:0`): cargo-http-registry writes the assigned port to
     // `<root>/config.json` once bound; we read it back below.
+    let stdout_log = storage.path().join("cargo-http-registry.stdout");
+    let stderr_log = storage.path().join("cargo-http-registry.stderr");
     let mut server = std::process::Command::new("cargo-http-registry")
         .arg(storage.path())
         .args(["--addr", "127.0.0.1:0"])
-        .stdout(Stdio::null())
-        .stderr(Stdio::null())
+        .stdout(
+            fs::File::create(&stdout_log)
+                .with_context(|| format!("Failed to create {stdout_log:?}"))?,
+        )
+        .stderr(
+            fs::File::create(&stderr_log)
+                .with_context(|| format!("Failed to create {stderr_log:?}"))?,
+        )
         .spawn()
         .context("Failed to spawn cargo-http-registry")?;
 
-    // Explicit teardown rather than `Drop`: `Command::run` calls
-    // `process::exit` on failure, bypassing destructors.
     let result = run_smoke_inner(storage.path(), crate_names);
 
     println!("Stopping local registry...");
     let _ = server.kill();
     let _ = server.wait();
 
+    if result.is_err() {
+        print_log_if_present("cargo-http-registry stdout", &stdout_log);
+        print_log_if_present("cargo-http-registry stderr", &stderr_log);
+    }
+
     result
+}
+
+fn print_log_if_present(label: &str, path: &std::path::Path) {
+    if let Ok(contents) = fs::read_to_string(path) {
+        if !contents.trim().is_empty() {
+            eprintln!("--- {label} ---\n{contents}");
+        }
+    }
 }
 
 fn run_smoke_inner(storage_root: &std::path::Path, crate_names: &[String]) -> Result<()> {
@@ -223,6 +241,7 @@ fn wait_for_server(api_url: &str) -> Result<()> {
     let deadline = Instant::now() + Duration::from_secs(15);
     while Instant::now() < deadline {
         if TcpStream::connect_timeout(&socket, Duration::from_millis(200)).is_ok() {
+            // TCP bind can return before warp's accept loop is ready to serve HTTP.
             thread::sleep(Duration::from_millis(100));
             return Ok(());
         }
