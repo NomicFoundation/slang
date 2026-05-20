@@ -32,7 +32,10 @@ pub fn default_benchmark_config() -> LibraryBenchmarkConfig {
         // At t-end blocks:         How many heap blocks were alive at the end of execution (were not explicitly freed).
         // Reads bytes:             How many bytes within heap blocks were read during the entire execution.
         // Writes bytes:            How many bytes within heap blocks were written during the entire execution.
-        .tool(Dhat::default())
+        //
+        // We also set the `--num-callers` argument to 80, which is the maximum number of stack frames that DHAT will report for each allocation.
+        // The default of 12 is too small, and some of our benchmarks will have deeper call stacks and report wrong values.
+        .tool(Dhat::with_args(["--num-callers=80"]))
         // 'valgrind' executes tests without any environment variables set by default.
         // Let's disable this behavior to be able to execute our infra utilities:
         .env_clear(false);
