@@ -552,9 +552,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         // `InvalidConstructorVisibility` is emitted for non-public constructor visibility.
         let extracted = self.extract_visibility_specifier(&attributes.elements);
 
-        if matches!(
+        if !matches!(
             extracted.visibility.as_ref(),
-            Some(output::FunctionVisibility::Internal)
+            Some(output::FunctionVisibility::Public)
         ) {
             if let Some(range) = extracted.unique_range {
                 self.diagnostics
