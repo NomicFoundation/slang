@@ -9,12 +9,8 @@ description = "Commands to build, test, version, and publish projects in this re
 
 [dependencies]
 anyhow = { workspace = true }
-cargo-manifest = { workspace = true }
 clap = { workspace = true }
 clap_complete = { workspace = true }
-crates-io = { workspace = true }
-curl = { workspace = true }
-flate2 = { workspace = true }
 infra_utils = { workspace = true }
 itertools = { workspace = true }
 markdown = { workspace = true }
@@ -25,7 +21,6 @@ semver = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 strum = { workspace = true }
-tar = { workspace = true }
 tempfile = { workspace = true }
 toml = { workspace = true }
 

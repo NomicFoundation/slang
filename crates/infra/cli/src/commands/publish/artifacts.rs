@@ -8,7 +8,12 @@ use serde::{Deserialize, Serialize};
 
 /// Filesystem layout for build-once / publish-from-artifact handoff.
 /// Files in this tree are produced by `infra publish prepare` and consumed
-/// (verified + uploaded) by `infra publish npm` and `infra publish cargo`.
+/// (verified + uploaded) by `infra publish npm`.
+///
+/// The cargo side does *not* go through this artifact pipeline: `cargo publish
+/// --no-verify` re-packages from the workspace source at publish time. That's
+/// the handover doc's "Middle tier" — we accept that the `.crate` is regenerated
+/// in exchange for not maintaining any custom cargo metadata / wire-format code.
 pub struct ArtifactPaths;
 
 impl ArtifactPaths {
@@ -20,10 +25,6 @@ impl ArtifactPaths {
         Self::root().join("npm")
     }
 
-    pub fn cargo_dir() -> PathBuf {
-        Self::root().join("cargo")
-    }
-
     pub fn manifest_path() -> PathBuf {
         Self::root().join("manifest.json")
     }
@@ -33,9 +34,6 @@ impl ArtifactPaths {
 pub struct Manifest {
     pub workspace_version: String,
     pub npm: Option<NpmArtifact>,
-    /// Cargo crates in dependency order: each crate's deps must already be
-    /// uploaded before it can be uploaded.
-    pub cargo: Vec<CargoArtifact>,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -43,19 +41,6 @@ pub struct NpmArtifact {
     /// Relative to `target/publish-artifacts/`.
     pub path: String,
     pub sha256: String,
-}
-
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct CargoArtifact {
-    pub crate_name: String,
-    pub version: String,
-    /// `.crate` source tarball — relative to `target/publish-artifacts/`.
-    pub crate_path: String,
-    pub crate_sha256: String,
-    /// Registry-publish JSON metadata — relative to `target/publish-artifacts/`.
-    /// Built from the rewritten `Cargo.toml` `cargo package` produces.
-    pub metadata_path: String,
-    pub metadata_sha256: String,
 }
 
 impl Manifest {
@@ -78,7 +63,7 @@ impl Manifest {
     }
 
     /// Recompute SHA-256 for every recorded artifact and bail if any mismatch.
-    /// Called by `npm` and `cargo` publish steps before uploading.
+    /// Called by `infra publish npm` before uploading.
     pub fn verify_integrity(&self) -> Result<()> {
         if let Some(npm) = &self.npm {
             let abs = Self::absolute_path(&npm.path);
@@ -88,18 +73,6 @@ impl Manifest {
                     "Integrity check failed for {abs:?}: expected {expected}, got {actual}",
                     expected = npm.sha256,
                 );
-            }
-        }
-        for entry in &self.cargo {
-            for (rel, expected) in [
-                (&entry.crate_path, &entry.crate_sha256),
-                (&entry.metadata_path, &entry.metadata_sha256),
-            ] {
-                let abs = Self::absolute_path(rel);
-                let actual = sha256_hex_of_file(&abs)?;
-                if actual != *expected {
-                    bail!("Integrity check failed for {abs:?}: expected {expected}, got {actual}",);
-                }
             }
         }
         Ok(())

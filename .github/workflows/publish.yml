@@ -402,11 +402,10 @@ jobs:
               ]
             }
 
-      # Minimal checkout for the infra wrapper, Hermit binaries, and CHANGELOG.md
-      # (read by `infra publish github-release`). No fetch-depth: 0 — mtime
-      # restoration is not needed because nothing in this job compiles workspace
-      # crates. No caches restored either; the publish step is artifact-in,
-      # bytes-out.
+      # Full checkout: `cargo publish --no-verify` packages each crate from the
+      # workspace source at publish time, so it needs Cargo.toml, Cargo.lock,
+      # and every crate's source on disk. The npm tarball still comes from the
+      # prepare-time artifact (downloaded below).
       - name: "Checkout Repository"
         uses: "actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd" # v6.0.2
         with:
