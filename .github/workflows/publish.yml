@@ -203,7 +203,7 @@ jobs:
           name: "${{ steps.artifact-name.outputs.name }}"
           path: "target/publish-artifacts/"
           if-no-files-found: "error"
-          retention-days: 2
+          retention-days: 7
 
   # ───────────────────────────────────────────────
   # Review: download the prepared artifact, verify integrity, and dry-run
