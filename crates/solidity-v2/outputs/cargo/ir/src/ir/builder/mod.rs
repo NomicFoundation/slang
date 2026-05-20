@@ -1,6 +1,8 @@
 use std::sync::Arc;
 
-use slang_solidity_v2_common::diagnostics::kinds::syntax::MultipleMutabilitySpecifiers;
+use slang_solidity_v2_common::diagnostics::kinds::syntax::{
+    MultipleMutabilitySpecifiers, MultipleOverrideSpecifiers,
+};
 use slang_solidity_v2_common::diagnostics::DiagnosticCollection;
 use slang_solidity_v2_cst::structured_cst::nodes as input;
 use slang_solidity_v2_cst::structured_cst::text_range::TextRange;
@@ -222,7 +224,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
                 None
             }
         });
-        // TODO(validation): function definitions can have only a single override specifier
         let override_specifier = self.function_override_specifier(&source.attributes);
         let modifier_invocations = self.function_modifier_invocations(&source.attributes);
         let returns = source
@@ -466,9 +467,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         attributes: &input::FunctionAttributes,
     ) -> Option<output::OverridePaths> {
-        attributes.elements.iter().find_map(|attribute| {
+        self.extract_override_specifier(&attributes.elements, |attribute| {
             if let input::FunctionAttribute::OverrideSpecifier(specifier) = attribute {
-                Some(self.build_override_specifier_as_paths(specifier))
+                Some(specifier)
             } else {
                 None
             }
@@ -611,7 +612,14 @@ impl<S: Source> CstToIrBuilder<'_, S> {
                 None
             }
         });
-        let override_specifier = self.fallback_function_override_specifier(&source.attributes);
+        let override_specifier =
+            self.extract_override_specifier(&source.attributes.elements, |attribute| {
+                if let input::FallbackFunctionAttribute::OverrideSpecifier(specifier) = attribute {
+                    Some(specifier)
+                } else {
+                    None
+                }
+            });
         let modifier_invocations = self.fallback_function_modifier_invocations(&source.attributes);
         let returns = source
             .returns
@@ -632,19 +640,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             modifier_invocations,
             returns,
             body,
-        })
-    }
-
-    fn fallback_function_override_specifier(
-        &mut self,
-        attributes: &input::FallbackFunctionAttributes,
-    ) -> Option<output::OverridePaths> {
-        attributes.elements.iter().find_map(|attribute| {
-            if let input::FallbackFunctionAttribute::OverrideSpecifier(specifier) = attribute {
-                Some(self.build_override_specifier_as_paths(specifier))
-            } else {
-                None
-            }
         })
     }
 
@@ -712,9 +707,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         attributes: &input::ReceiveFunctionAttributes,
     ) -> Option<output::OverridePaths> {
-        attributes.elements.iter().find_map(|attribute| {
+        self.extract_override_specifier(&attributes.elements, |attribute| {
             if let input::ReceiveFunctionAttribute::OverrideSpecifier(specifier) = attribute {
-                Some(self.build_override_specifier_as_paths(specifier))
+                Some(specifier)
             } else {
                 None
             }
@@ -760,7 +755,14 @@ impl<S: Source> CstToIrBuilder<'_, S> {
                 None
             }
         });
-        let override_specifier = self.modifier_override_specifier(&source.attributes);
+        let override_specifier =
+            self.extract_override_specifier(&source.attributes.elements, |attribute| {
+                if let input::ModifierAttribute::OverrideSpecifier(specifier) = attribute {
+                    Some(specifier)
+                } else {
+                    None
+                }
+            });
         let modifier_invocations = Vec::new();
         let returns = None;
         let body = self.build_function_body(&source.body);
@@ -778,19 +780,6 @@ impl<S: Source> CstToIrBuilder<'_, S> {
             modifier_invocations,
             returns,
             body,
-        })
-    }
-
-    fn modifier_override_specifier(
-        &mut self,
-        attributes: &input::ModifierAttributes,
-    ) -> Option<output::OverridePaths> {
-        attributes.elements.iter().find_map(|attribute| {
-            if let input::ModifierAttribute::OverrideSpecifier(specifier) = attribute {
-                Some(self.build_override_specifier_as_paths(specifier))
-            } else {
-                None
-            }
         })
     }
 
@@ -823,10 +812,9 @@ impl<S: Source> CstToIrBuilder<'_, S> {
         &mut self,
         attributes: &input::StateVariableAttributes,
     ) -> Option<output::OverridePaths> {
-        // TODO(validation): only one override specifier is allowed
-        attributes.elements.iter().find_map(|attribute| {
+        self.extract_override_specifier(&attributes.elements, |attribute| {
             if let input::StateVariableAttribute::OverrideSpecifier(specifier) = attribute {
-                Some(self.build_override_specifier_as_paths(specifier))
+                Some(specifier)
             } else {
                 None
             }
@@ -993,6 +981,33 @@ impl<S: Source> CstToIrBuilder<'_, S> {
                     );
                 } else {
                     result = Some(current);
+                }
+            }
+        }
+
+        result
+    }
+
+    fn extract_override_specifier<'a, Input>(
+        &mut self,
+        attributes: impl IntoIterator<Item = &'a Input>,
+        override_specifier_of: impl Fn(&'a Input) -> Option<&'a input::OverrideSpecifier>,
+    ) -> Option<output::OverridePaths>
+    where
+        Input: TextRange + 'a,
+    {
+        let mut result: Option<output::OverridePaths> = None;
+
+        for attribute in attributes {
+            if let Some(specifier) = override_specifier_of(attribute) {
+                if result.is_some() {
+                    self.diagnostics.push(
+                        self.file_id.to_owned(),
+                        attribute.calculate_text_range().unwrap(),
+                        MultipleOverrideSpecifiers,
+                    );
+                } else {
+                    result = Some(self.build_override_specifier_as_paths(specifier));
                 }
             }
         }

@@ -1,0 +1,43 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Diagnostics: 5
+
+Error: Only a single override specifier can be provided.
+    ╭─[input.sol:12:36]
+    │
+ 12 │     function foo() public override override {}
+    │                                    ────┬───  
+    │                                        ╰───── Error occurred here.
+────╯
+
+Error: Only a single override specifier can be provided.
+    ╭─[input.sol:13:34]
+    │
+ 13 │     fallback() external override override payable {}
+    │                                  ────┬───  
+    │                                      ╰───── Error occurred here.
+────╯
+
+Error: Only a single override specifier can be provided.
+    ╭─[input.sol:14:33]
+    │
+ 14 │     receive() external override override payable {}
+    │                                 ────┬───  
+    │                                     ╰───── Error occurred here.
+────╯
+
+Error: Only a single override specifier can be provided.
+    ╭─[input.sol:15:26]
+    │
+ 15 │     uint public override override x;
+    │                          ────┬───  
+    │                              ╰───── Error occurred here.
+────╯
+
+Error: Only a single override specifier can be provided.
+    ╭─[input.sol:16:35]
+    │
+ 16 │     modifier onlyOwner() override override {}
+    │                                   ────┬───  
+    │                                       ╰───── Error occurred here.
+────╯
