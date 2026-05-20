@@ -169,13 +169,18 @@ jobs:
       - name: "Free up disk space"
         uses: "./.github/actions/free-disk-space"
 
+      # Skip cache + mtime restore on a real release so the published artifact
+      # comes from a clean build with no side inputs.
       - name: "Restore file mtimes from git"
+        if: "${{ needs.changesets.outputs.publishNeeded != 'true' }}"
         uses: "./.github/actions/git/restore-mtime"
 
       - name: "Restore Dependencies Cache"
+        if: "${{ needs.changesets.outputs.publishNeeded != 'true' }}"
         uses: "./.github/actions/cache/dependencies/restore"
 
       - name: "Restore Cargo Target Cache"
+        if: "${{ needs.changesets.outputs.publishNeeded != 'true' }}"
         uses: "./.github/actions/cache/cargo-target/restore"
 
       - name: "infra setup"
