@@ -77,10 +77,9 @@ fn needs_publish(crate_name: &str, local_version: &Version) -> bool {
     true
 }
 
-/// `--no-verify` skips the verification compile so no `build.rs` or
-/// proc-macros from the workspace dep graph run alongside the
-/// OIDC-exchanged crates.io token. cargo still does dep resolution +
-/// tarball creation, but those are cargo's own code paths.
+/// `--no-verify` skips the verification compile — no workspace
+/// `build.rs` or proc-macros run alongside the OIDC crates.io token.
+/// cargo's own code (dep resolution, packaging) still runs.
 fn run_cargo_publish(crate_name: &str) {
     Command::new("cargo")
         .arg("publish")
