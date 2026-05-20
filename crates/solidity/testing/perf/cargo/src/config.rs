@@ -2,7 +2,14 @@ use iai_callgrind::{Direction, FlamegraphConfig, LibraryBenchmarkConfig, Tool, V
 
 /// Shared `LibraryBenchmarkConfig` used by every perf benchmark in this crate.
 /// Centralised so the bench `main!` calls can't drift apart.
-pub fn default_benchmark_config() -> LibraryBenchmarkConfig {
+pub fn benchmark_config(num_callers: usize) -> LibraryBenchmarkConfig {
+    assert!(
+        0 < num_callers && num_callers <= 500,
+        "num_callers must be between 1 and 500"
+    );
+    // We set the DHAT arguments to whatever the user provided
+    let dhat_args = [format!("--num-callers={num_callers}")];
+
     let mut config = LibraryBenchmarkConfig::default();
     config
         // 'valgrind' supports many tools. By default, it runs 'callgrind', which reports these metrics:
@@ -26,7 +33,7 @@ pub fn default_benchmark_config() -> LibraryBenchmarkConfig {
         // At t-end blocks:         How many heap blocks were alive at the end of execution (were not explicitly freed).
         // Reads bytes:             How many bytes within heap blocks were read during the entire execution.
         // Writes bytes:            How many bytes within heap blocks were written during the entire execution.
-        .tool(Tool::new(ValgrindTool::DHAT))
+        .tool(Tool::new(ValgrindTool::DHAT).args(dhat_args))
         // This enables generating flame graphs into Cargo's 'target' directory.
         // They will be listed by 'infra perf' at the end of the run:
         .flamegraph(FlamegraphConfig::default().direction(Direction::BottomToTop))

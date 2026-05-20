@@ -6,7 +6,7 @@ use std::rc::Rc;
 use iai_callgrind::{library_benchmark, library_benchmark_group, main};
 use paste::paste;
 use slang_solidity::compilation::CompilationUnit;
-use solidity_testing_perf_cargo::config::default_benchmark_config;
+use solidity_testing_perf_cargo::config::benchmark_config;
 use solidity_testing_perf_cargo::dataset::SolidityProject;
 use solidity_testing_perf_cargo::tests;
 use solidity_testing_perf_cargo::tests::slang::binder_v2_run::BuiltSemanticAnalysis;
@@ -117,7 +117,9 @@ slang_define_full_tests!(weighted_pool);
 slang_define_full_tests!(merkle_proof);
 
 main!(
-    config = default_benchmark_config();
+    // Slang v1 is quite slow, so we use a smaller `num-callers` value
+    // and live with not so accurate DHAT measurements.
+    config = benchmark_config(12);
 
     // NOTE: the trailing comma is required: without it, it won't test the last one
     // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
