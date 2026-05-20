@@ -1,4 +1,6 @@
 use std::net::TcpStream;
+use std::path::PathBuf;
+use std::process::Child;
 use std::time::{Duration, Instant};
 use std::{fs, thread};
 
@@ -9,6 +11,7 @@ use infra_utils::commands::Command;
 use semver::Version;
 use serde::Deserialize;
 use strum::IntoEnumIterator;
+use tempfile::TempDir;
 use url::Url;
 
 use crate::utils::DryRun;
@@ -107,54 +110,17 @@ fn run_batched_dry_run(crate_names: &[String]) {
 /// `cargo publish --no-verify` production uses, tear it down.
 fn run_local_smoke(crate_names: &[String]) -> Result<()> {
     CargoWorkspace::install_binary("cargo-http-registry")?;
+    let registry = LocalRegistry::spawn()?;
 
-    let storage = tempfile::tempdir().context("Failed to create temp registry dir")?;
-    println!("Local registry root: {}", storage.path().display());
-
-    // Ephemeral port (`:0`): cargo-http-registry writes the assigned port to
-    // `<root>/config.json` once bound; we read it back below.
-    let stdout_log = storage.path().join("cargo-http-registry.stdout");
-    let stderr_log = storage.path().join("cargo-http-registry.stderr");
-    let mut server = std::process::Command::new("cargo-http-registry")
-        .arg(storage.path())
-        .args(["--addr", "127.0.0.1:0"])
-        .stdout(
-            fs::File::create(&stdout_log)
-                .with_context(|| format!("Failed to create {stdout_log:?}"))?,
-        )
-        .stderr(
-            fs::File::create(&stderr_log)
-                .with_context(|| format!("Failed to create {stderr_log:?}"))?,
-        )
-        .spawn()
-        .context("Failed to spawn cargo-http-registry")?;
-
-    let result = run_smoke_inner(storage.path(), crate_names);
-
-    println!("Stopping local registry...");
-    let _ = server.kill();
-    let _ = server.wait();
-
+    let result = publish_each(crate_names, registry.api_url());
     if result.is_err() {
-        for (label, path) in [("stdout", &stdout_log), ("stderr", &stderr_log)] {
-            print_log_if_present(&format!("cargo-http-registry {label}"), path);
-        }
+        registry.surface_logs();
     }
-
     result
+    // `registry` drops here: the child gets killed + reaped automatically.
 }
 
-fn print_log_if_present(label: &str, path: &std::path::Path) {
-    if let Ok(contents) = fs::read_to_string(path) {
-        if !contents.trim().is_empty() {
-            eprintln!("--- {label} ---\n{contents}");
-        }
-    }
-}
-
-fn run_smoke_inner(storage_root: &std::path::Path, crate_names: &[String]) -> Result<()> {
-    let api_url = read_registry_api_url(storage_root)?;
-    wait_for_server(&api_url)?;
+fn publish_each(crate_names: &[String], api_url: &str) -> Result<()> {
     let index_url = format!("{api_url}/git");
     println!("Local registry ready (api={api_url}, index={index_url})");
 
@@ -165,8 +131,8 @@ fn run_smoke_inner(storage_root: &std::path::Path, crate_names: &[String]) -> Re
     for name in crate_names {
         println!("--- Publishing {name} to local registry ---");
         // Bypass `infra_utils::commands::Command` here — its `run()` calls
-        // `process::exit` on non-zero status, which would skip the server
-        // teardown in `run_local_smoke`.
+        // `process::exit` on non-zero status, which would skip the registry
+        // teardown by the surrounding `LocalRegistry` drop.
         let status = std::process::Command::new("cargo")
             .arg("publish")
             .args(["--no-verify", "--all-features"])
@@ -180,11 +146,11 @@ fn run_smoke_inner(storage_root: &std::path::Path, crate_names: &[String]) -> Re
             // fetch that, so this flag falls back to the system git binary.
             .env("CARGO_NET_GIT_FETCH_WITH_CLI", "true")
             .status()
-            .with_context(|| format!("Failed to invoke cargo publish for {name}"))?;
+            .with_context(|| format!("Failed to spawn cargo publish for {name}"))?;
         if !status.success() {
             bail!(
-                "cargo publish to local registry failed for {name}: exit code {}",
-                status.code().map_or("?".to_owned(), |c| c.to_string()),
+                "cargo publish to local registry failed for {name}: exit code {:?}",
+                status.code(),
             );
         }
     }
@@ -194,6 +160,96 @@ fn run_smoke_inner(storage_root: &std::path::Path, crate_names: &[String]) -> Re
         crate_names.len()
     );
     Ok(())
+}
+
+/// A running `cargo-http-registry` instance. Owns its child process and the
+/// tempdir it serves from; `Drop` kills + reaps the child so the server can't
+/// outlive this value.
+struct LocalRegistry {
+    server: Child,
+    // Held so the storage dir survives until Drop.
+    storage: TempDir,
+    api_url: String,
+    stdout_log: PathBuf,
+    stderr_log: PathBuf,
+}
+
+impl LocalRegistry {
+    /// Spawn on an ephemeral port and wait until accepting connections.
+    /// Caller is responsible for `install_binary("cargo-http-registry")` first.
+    fn spawn() -> Result<Self> {
+        let storage = tempfile::tempdir().context("Failed to create temp registry dir")?;
+        println!("Local registry root: {}", storage.path().display());
+
+        let stdout_log = storage.path().join("cargo-http-registry.stdout");
+        let stderr_log = storage.path().join("cargo-http-registry.stderr");
+        // Ephemeral port (`:0`): cargo-http-registry writes the assigned port
+        // to `<root>/config.json` once bound; we read it back below.
+        let server = std::process::Command::new("cargo-http-registry")
+            .arg(storage.path())
+            .args(["--addr", "127.0.0.1:0"])
+            .stdout(
+                fs::File::create(&stdout_log)
+                    .with_context(|| format!("Failed to create {stdout_log:?}"))?,
+            )
+            .stderr(
+                fs::File::create(&stderr_log)
+                    .with_context(|| format!("Failed to create {stderr_log:?}"))?,
+            )
+            .spawn()
+            .context("Failed to spawn cargo-http-registry")?;
+
+        let mut registry = Self {
+            server,
+            storage,
+            api_url: String::new(),
+            stdout_log,
+            stderr_log,
+        };
+
+        // Drop fires on Err — child gets reaped — but logs would be lost
+        // without an explicit surface here.
+        if let Err(e) = registry.wait_until_ready() {
+            registry.surface_logs();
+            return Err(e);
+        }
+        Ok(registry)
+    }
+
+    fn wait_until_ready(&mut self) -> Result<()> {
+        let api_url = read_registry_api_url(self.storage.path())?;
+        wait_for_server(&api_url)?;
+        self.api_url = api_url;
+        Ok(())
+    }
+
+    fn api_url(&self) -> &str {
+        &self.api_url
+    }
+
+    /// Print captured stdout/stderr from the server. Called only on failure;
+    /// success runs don't need the noise.
+    fn surface_logs(&self) {
+        for (label, path) in [("stdout", &self.stdout_log), ("stderr", &self.stderr_log)] {
+            print_log_if_present(&format!("cargo-http-registry {label}"), path);
+        }
+    }
+}
+
+impl Drop for LocalRegistry {
+    fn drop(&mut self) {
+        println!("Stopping local registry...");
+        let _ = self.server.kill();
+        let _ = self.server.wait();
+    }
+}
+
+fn print_log_if_present(label: &str, path: &std::path::Path) {
+    if let Ok(contents) = fs::read_to_string(path) {
+        if !contents.trim().is_empty() {
+            eprintln!("--- {label} ---\n{contents}");
+        }
+    }
 }
 
 /// Read the API URL cargo-http-registry writes to `<root>/config.json` after

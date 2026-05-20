@@ -239,10 +239,29 @@ jobs:
       - name: "infra publish cargo --dry-run"
         run: "./scripts/bin/infra publish cargo --dry-run"
 
+      # Gate the (slow) local-smoke on actual relevance: any PR touching publish
+      # code, an explicit `ci:smoke-publish` label, or a non-PR trigger.
+      - name: "Detect publish-relevant changes"
+        id: "publish-changes"
+        uses: "dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d" # v4.0.1
+        with:
+          filters: |
+            publish:
+              - '.github/workflows/publish.yml'
+              - 'crates/infra/cli/src/commands/publish/**'
+              - 'crates/infra/utils/src/cargo/crates.rs'
+
       - name: "infra publish cargo --local-smoke"
+        if: >-
+          github.event_name != 'pull_request'
+          || steps.publish-changes.outputs.publish == 'true'
+          || contains(github.event.pull_request.labels.*.name, 'ci:smoke-publish')
         run: "./scripts/bin/infra publish cargo --local-smoke"
 
       - name: "Publish review summary"
+        env:
+          PUBLISH_CHANGED: "${{ steps.publish-changes.outputs.publish }}"
+          HAS_SMOKE_LABEL: "${{ contains(github.event.pull_request.labels.*.name, 'ci:smoke-publish') }}"
         run: |
           VERSION=$(grep '^version = ' Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
           ARTIFACT_NAME='${{ needs.prepare.outputs.artifact-name }}'
@@ -256,7 +275,12 @@ jobs:
             echo "- SHA-256 integrity for every file in \`manifest.json\`"
             echo "- \`pnpm publish --dry-run <tarball>\` (npm pack/structure check)"
             echo "- \`cargo publish --dry-run\` batched workspace verify-build (catches cross-crate path-dep rewrites)"
-            echo "- \`cargo publish --no-verify\` sequentially per crate against a local \`cargo-http-registry\` (end-to-end smoke of the production publish path)"
+            if [ "${{ github.event_name }}" != "pull_request" ] || [ "$PUBLISH_CHANGED" = "true" ] || [ "$HAS_SMOKE_LABEL" = "true" ]; then
+              echo "- \`cargo publish --no-verify\` sequentially per crate against a local \`cargo-http-registry\` (end-to-end smoke of the production publish path)"
+            else
+              echo ""
+              echo "_The local-registry smoke test was skipped (no publish-relevant changes; add the \`ci:smoke-publish\` label to force-run)._"
+            fi
             if [ "${{ github.event_name }}" = "pull_request" ]; then
               echo ""
               echo "### Skipped (only on push/dispatch)"
