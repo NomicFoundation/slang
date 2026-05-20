@@ -1,19 +1,22 @@
 pub mod metadata;
 
+use std::fs::File;
 use std::time::Duration;
-use std::{env, fs, thread};
+use std::{env, thread};
 
 use anyhow::{bail, Context, Result};
 use clap::Parser;
+use crates_io::{NewCrate, Registry, Warnings};
+use curl::easy::Easy;
 use infra_utils::cargo::{CargoWorkspace, UserFacingV1Crate};
 use infra_utils::commands::Command;
-use infra_utils::http::{fetch_index_versions, put_crate_to_registry};
+use infra_utils::http::fetch_index_versions;
 use strum::IntoEnumIterator;
 
 use crate::commands::publish::artifacts::Manifest;
 use crate::utils::DryRun;
 
-const CRATES_IO_PUBLISH_URL: &str = "https://crates.io/api/v1/crates/new";
+const CRATES_IO_HOST: &str = "https://crates.io";
 const TOKEN_ENV: &str = "CARGO_REGISTRY_TOKEN";
 const USER_AGENT_VALUE: &str = "slang-infra-publish (https://github.com/NomicFoundation/slang)";
 
@@ -87,9 +90,25 @@ fn run_registry_upload() -> Result<()> {
     let token = env::var(TOKEN_ENV)
         .with_context(|| format!("${TOKEN_ENV} not set; cannot authenticate with crates.io"))?;
 
+    // `crates_io::Registry` does all the wire-format work — length-prefixed body,
+    // `Authorization` header, response parsing, 30-second timeout heuristic. We
+    // just supply a curl handle with the right user-agent.
+    let mut handle = Easy::new();
+    handle
+        .useragent(USER_AGENT_VALUE)
+        .context("Failed to set curl user-agent")?;
+    let mut registry = Registry::new_handle(CRATES_IO_HOST.to_owned(), Some(token), handle, true);
+
     for entry in &manifest.cargo {
-        let crate_bytes = fs::read(Manifest::absolute_path(&entry.crate_path))?;
-        let metadata_bytes = fs::read(Manifest::absolute_path(&entry.metadata_path))?;
+        let crate_path = Manifest::absolute_path(&entry.crate_path);
+        let metadata_path = Manifest::absolute_path(&entry.metadata_path);
+
+        let metadata_bytes = std::fs::read(&metadata_path)
+            .with_context(|| format!("Failed to read {metadata_path:?}"))?;
+        let new_crate: NewCrate = serde_json::from_slice(&metadata_bytes)
+            .with_context(|| format!("Failed to deserialize {metadata_path:?}"))?;
+        let tarball =
+            File::open(&crate_path).with_context(|| format!("Failed to open {crate_path:?}"))?;
 
         println!(
             "Publishing {name} v{version}",
@@ -97,19 +116,27 @@ fn run_registry_upload() -> Result<()> {
             version = entry.version,
         );
 
-        put_crate_to_registry(
-            CRATES_IO_PUBLISH_URL,
-            &metadata_bytes,
-            &crate_bytes,
-            &token,
-            USER_AGENT_VALUE,
-        )
-        .with_context(|| format!("Failed to publish {}", entry.crate_name))?;
+        let warnings = registry.publish(&new_crate, &tarball).with_context(|| {
+            format!("crates.io rejected {} v{}", entry.crate_name, entry.version)
+        })?;
+        print_warnings(&entry.crate_name, &warnings);
 
         wait_for_index_propagation(&entry.crate_name, &entry.version)?;
     }
 
     Ok(())
+}
+
+fn print_warnings(crate_name: &str, warnings: &Warnings) {
+    for category in &warnings.invalid_categories {
+        eprintln!("{crate_name}: invalid category ignored by crates.io: {category}");
+    }
+    for badge in &warnings.invalid_badges {
+        eprintln!("{crate_name}: invalid badge ignored by crates.io: {badge}");
+    }
+    for other in &warnings.other {
+        eprintln!("{crate_name}: registry warning: {other}");
+    }
 }
 
 /// crates.io confirms a successful upload immediately, but the sparse index can

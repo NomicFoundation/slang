@@ -131,11 +131,14 @@ ariadne = { version = "0.2.0" }
 bencher_cli = { git = "https://github.com/bencherdev/bencher", rev = "99117a626dc634b8ad817f38abcf4876b3b0668b" } # __SLANG_BENCHER_CLI_RELEASE__
 bitvec = { version = "1.0.1" }
 cargo-edit = { version = "0.13.0" }
+cargo-manifest = { version = "0.20.0" }
 cargo-nextest = { version = "0.9.72" }
 clap = { version = "4.5.40", features = ["derive", "wrap_help"] }
 clap_complete = { version = "4.5.54" }
 console = { version = "0.16.3" }
 controlled-option = { version = "0.4.1" }
+crates-io = { version = "0.40.18" }
+curl = { version = "0.4.49" }
 derive-new = { version = "0.7.0" }
 either = { version = "1.6.0" }
 enumset = { version = "1.1.10" }

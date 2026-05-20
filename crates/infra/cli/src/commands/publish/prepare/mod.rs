@@ -10,7 +10,7 @@ use infra_utils::paths::PathExtensions;
 use strum::IntoEnumIterator;
 
 use crate::commands::publish::artifacts::{ArtifactPaths, CargoArtifact, Manifest, NpmArtifact};
-use crate::commands::publish::cargo::metadata::build_from_packaged_manifest;
+use crate::commands::publish::cargo::metadata::build_new_crate;
 use crate::toolchains::npm::Npm;
 use crate::toolchains::wasm::{WasmPackage, NPM_CRATE};
 
@@ -152,7 +152,7 @@ fn prepare_cargo() -> Result<Vec<CargoArtifact>> {
         let version_str = local_version.to_string();
         let normalized_manifest =
             extract_normalized_manifest(&dest_crate, crate_name, &version_str)?;
-        let metadata = build_from_packaged_manifest(&normalized_manifest)?;
+        let metadata = build_new_crate(&normalized_manifest)?;
         let metadata_filename = format!("{crate_name}-{local_version}.json");
         let dest_metadata = ArtifactPaths::cargo_dir().join(&metadata_filename);
         fs::write(&dest_metadata, serde_json::to_vec_pretty(&metadata)?)

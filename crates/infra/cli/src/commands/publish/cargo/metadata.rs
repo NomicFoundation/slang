@@ -1,237 +1,179 @@
 //! Build the registry-publish JSON payload that crates.io's `/api/v1/crates/new`
 //! endpoint expects.
 //!
-//! Format reference: <https://doc.rust-lang.org/cargo/reference/registries.html#publish>
+//! We parse the rewritten `Cargo.toml` that `cargo package` produces (workspace
+//! inheritance resolved, path deps stripped) with `cargo-manifest`, then convert
+//! to `crates_io::NewCrate` — the official, version-tracked schema the cargo
+//! team ships in `rust-lang/cargo`. The on-disk JSON is whatever
+//! `serde_json::to_vec_pretty(&NewCrate)` produces, so it tracks any future
+//! schema additions automatically.
 //!
-//! We construct this in the prepare step from the rewritten `Cargo.toml` that
-//! `cargo package` produces (workspace inheritance resolved, path deps stripped),
-//! and ship the resulting JSON alongside the `.crate` in `target/publish-artifacts/`.
-//! The publish step is then a pure download-and-POST — no cargo binary involved.
-
+//! Format reference: <https://doc.rust-lang.org/cargo/reference/registries.html#publish>
 use std::collections::BTreeMap;
-use std::fs;
 use std::path::Path;
 
-use anyhow::{Context, Result};
-use serde::{Deserialize, Serialize};
+use anyhow::{bail, Context, Result};
+use cargo_manifest::{Dependency, DepsSet, Manifest, MaybeInherited, Package, StringOrBool};
+use crates_io::{NewCrate, NewCrateDependency};
 
-#[derive(Debug, Serialize)]
-pub struct RegistryMetadata {
-    pub name: String,
-    pub vers: String,
-    pub deps: Vec<RegistryDependency>,
-    pub features: BTreeMap<String, Vec<String>>,
-    pub authors: Vec<String>,
-    pub description: Option<String>,
-    pub documentation: Option<String>,
-    pub homepage: Option<String>,
-    pub readme: Option<String>,
-    pub readme_file: Option<String>,
-    pub keywords: Vec<String>,
-    pub categories: Vec<String>,
-    pub license: Option<String>,
-    pub license_file: Option<String>,
-    pub repository: Option<String>,
-    pub badges: BTreeMap<String, BTreeMap<String, String>>,
-    pub links: Option<String>,
-    pub rust_version: Option<String>,
-}
+pub fn build_new_crate(packaged_manifest_path: &Path) -> Result<NewCrate> {
+    let manifest = Manifest::from_path(packaged_manifest_path).with_context(|| {
+        format!("Failed to parse packaged Cargo.toml: {packaged_manifest_path:?}")
+    })?;
+    let package = manifest
+        .package
+        .with_context(|| format!("Missing [package] in {packaged_manifest_path:?}"))?;
 
-#[derive(Debug, Serialize)]
-pub struct RegistryDependency {
-    pub name: String,
-    pub version_req: String,
-    pub features: Vec<String>,
-    pub optional: bool,
-    pub default_features: bool,
-    pub target: Option<String>,
-    pub kind: String,
-    pub registry: Option<String>,
-    pub explicit_name_in_toml: Option<String>,
-}
-
-/// Read the Cargo.toml that `cargo package` wrote into the extracted package
-/// directory. After `cargo package`, workspace inheritance is resolved and
-/// path-deps are rewritten to version-only specs — exactly what crates.io needs.
-pub fn build_from_packaged_manifest(manifest_path: &Path) -> Result<RegistryMetadata> {
-    let contents = fs::read_to_string(manifest_path)
-        .with_context(|| format!("Failed to read packaged Cargo.toml: {manifest_path:?}"))?;
-    let parsed: PackagedManifest = toml::from_str(&contents)
-        .with_context(|| format!("Failed to parse packaged Cargo.toml: {manifest_path:?}"))?;
-    Ok(parsed.into_registry_metadata())
-}
-
-#[derive(Debug, Deserialize)]
-struct PackagedManifest {
-    package: PackageTable,
-    #[serde(default)]
-    dependencies: BTreeMap<String, ManifestDependency>,
-    #[serde(default, rename = "dev-dependencies")]
-    dev_dependencies: BTreeMap<String, ManifestDependency>,
-    #[serde(default, rename = "build-dependencies")]
-    build_dependencies: BTreeMap<String, ManifestDependency>,
-    #[serde(default)]
-    target: BTreeMap<String, TargetTable>,
-    #[serde(default)]
-    features: BTreeMap<String, Vec<String>>,
-}
-
-#[derive(Debug, Default, Deserialize)]
-struct TargetTable {
-    #[serde(default)]
-    dependencies: BTreeMap<String, ManifestDependency>,
-    #[serde(default, rename = "dev-dependencies")]
-    dev_dependencies: BTreeMap<String, ManifestDependency>,
-    #[serde(default, rename = "build-dependencies")]
-    build_dependencies: BTreeMap<String, ManifestDependency>,
-}
-
-#[derive(Debug, Deserialize)]
-struct PackageTable {
-    name: String,
-    version: String,
-    #[serde(default)]
-    authors: Vec<String>,
-    description: Option<String>,
-    documentation: Option<String>,
-    homepage: Option<String>,
-    readme: Option<ReadmeField>,
-    #[serde(default)]
-    keywords: Vec<String>,
-    #[serde(default)]
-    categories: Vec<String>,
-    license: Option<String>,
-    license_file: Option<String>,
-    repository: Option<String>,
-    links: Option<String>,
-    #[serde(rename = "rust-version")]
-    rust_version: Option<String>,
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(untagged)]
-enum ReadmeField {
-    /// `readme = "README.md"`.
-    Path(String),
-    /// `readme = false` — boolean form is allowed in TOML; we treat any value
-    /// downstream as "no readme", but we match against the bool so the field
-    /// isn't dead code.
-    Disabled(bool),
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(untagged)]
-enum ManifestDependency {
-    Simple(String),
-    Detailed(DetailedDependency),
-}
-
-#[derive(Clone, Debug, Default, Deserialize)]
-struct DetailedDependency {
-    version: Option<String>,
-    #[serde(default)]
-    features: Vec<String>,
-    #[serde(default)]
-    optional: bool,
-    #[serde(default = "default_true", rename = "default-features")]
-    default_features: bool,
-    registry: Option<String>,
-    package: Option<String>,
-}
-
-fn default_true() -> bool {
-    true
-}
-
-impl PackagedManifest {
-    fn into_registry_metadata(self) -> RegistryMetadata {
-        let mut deps = vec![];
-        collect_dep_table(&self.dependencies, "normal", None, &mut deps);
-        collect_dep_table(&self.dev_dependencies, "dev", None, &mut deps);
-        collect_dep_table(&self.build_dependencies, "build", None, &mut deps);
-        for (target_name, target_table) in &self.target {
-            let target = Some(target_name.as_str());
-            collect_dep_table(&target_table.dependencies, "normal", target, &mut deps);
-            collect_dep_table(&target_table.dev_dependencies, "dev", target, &mut deps);
-            collect_dep_table(&target_table.build_dependencies, "build", target, &mut deps);
+    let mut deps = vec![];
+    if let Some(d) = &manifest.dependencies {
+        collect_deps(d, "normal", None, &mut deps)?;
+    }
+    if let Some(d) = &manifest.dev_dependencies {
+        collect_deps(d, "dev", None, &mut deps)?;
+    }
+    if let Some(d) = &manifest.build_dependencies {
+        collect_deps(d, "build", None, &mut deps)?;
+    }
+    if let Some(targets) = &manifest.target {
+        for (target_name, target) in targets {
+            let t = Some(target_name.as_str());
+            collect_deps(&target.dependencies, "normal", t, &mut deps)?;
+            collect_deps(&target.dev_dependencies, "dev", t, &mut deps)?;
+            collect_deps(&target.build_dependencies, "build", t, &mut deps)?;
         }
+    }
 
-        let (readme, readme_file) = match self.package.readme {
-            Some(ReadmeField::Path(p)) => (Some(p.clone()), Some(p)),
-            Some(ReadmeField::Disabled(false)) | None => (None, None),
-            // `readme = true` is not a valid TOML manifest shape — fail loudly
-            // rather than silently emitting weird registry metadata.
-            Some(ReadmeField::Disabled(true)) => {
-                panic!("readme = true is not a valid Cargo.toml shape")
-            }
-        };
+    let (readme, readme_file) = extract_readme(&package);
 
-        RegistryMetadata {
-            name: self.package.name,
-            vers: self.package.version,
-            deps,
-            features: self.features,
-            authors: self.package.authors,
-            description: self.package.description,
-            documentation: self.package.documentation,
-            homepage: self.package.homepage,
-            readme,
-            readme_file,
-            keywords: self.package.keywords,
-            categories: self.package.categories,
-            license: self.package.license,
-            license_file: self.package.license_file,
-            repository: self.package.repository,
-            badges: BTreeMap::new(),
-            links: self.package.links,
-            rust_version: self.package.rust_version,
+    Ok(NewCrate {
+        name: package.name,
+        vers: resolve_inherited(package.version)
+            .context("package.version missing from packaged manifest")?,
+        deps,
+        features: manifest.features.unwrap_or_default(),
+        authors: resolve_inherited(package.authors).unwrap_or_default(),
+        description: resolve_inherited(package.description),
+        documentation: resolve_inherited(package.documentation),
+        homepage: resolve_inherited(package.homepage),
+        readme,
+        readme_file,
+        keywords: resolve_inherited(package.keywords).unwrap_or_default(),
+        categories: resolve_inherited(package.categories).unwrap_or_default(),
+        license: resolve_inherited(package.license),
+        license_file: resolve_inherited(package.license_file),
+        repository: resolve_inherited(package.repository),
+        // `badges` is a deprecated crates.io concept; cargo-manifest exposes it
+        // as `Option<Badges>` (a typed wrapper), but the registry API expects
+        // a freeform string-map-of-string-maps. Emit an empty map to match
+        // what `cargo publish` does for crates that don't use badges.
+        badges: BTreeMap::new(),
+        links: package.links,
+        rust_version: resolve_inherited(package.rust_version),
+    })
+}
+
+/// `cargo package` resolves workspace inheritance in the manifest it writes, so
+/// every field arrives here as `MaybeInherited::Local`. If we see an
+/// `Inherited` variant in a packaged manifest, cargo's packaging is broken —
+/// bail rather than silently drop the value.
+fn resolve_inherited<T>(value: Option<MaybeInherited<T>>) -> Option<T> {
+    match value {
+        Some(MaybeInherited::Local(v)) => Some(v),
+        Some(MaybeInherited::Inherited { .. }) => {
+            panic!("Packaged manifest contains an unresolved workspace-inherited field")
+        }
+        None => None,
+    }
+}
+
+fn extract_readme<M>(package: &Package<M>) -> (Option<String>, Option<String>) {
+    match &package.readme {
+        Some(MaybeInherited::Local(StringOrBool::String(p))) => (Some(p.clone()), Some(p.clone())),
+        Some(MaybeInherited::Local(StringOrBool::Bool(false))) | None => (None, None),
+        Some(MaybeInherited::Local(StringOrBool::Bool(true))) => {
+            // `readme = true` isn't a valid Cargo.toml shape.
+            panic!("readme = true is not valid in Cargo.toml")
+        }
+        Some(MaybeInherited::Inherited { .. }) => {
+            panic!("Packaged manifest contains an unresolved workspace-inherited readme")
         }
     }
 }
 
-fn collect_dep_table(
-    table: &BTreeMap<String, ManifestDependency>,
+fn collect_deps(
+    table: &DepsSet,
     kind: &str,
     target: Option<&str>,
-    out: &mut Vec<RegistryDependency>,
-) {
+    out: &mut Vec<NewCrateDependency>,
+) -> Result<()> {
     for (key, dep) in table {
-        let (version_req, detailed) = match dep {
-            ManifestDependency::Simple(v) => (v.clone(), DetailedDependency::default()),
-            ManifestDependency::Detailed(d) => {
-                let v = d.version.clone().unwrap_or_else(|| "*".to_owned());
-                (v, d.clone())
-            }
-        };
-        // If the manifest renames the dep via `package = "real-name"`, the registry
-        // entry uses the real name and `explicit_name_in_toml` carries the alias.
-        let (name, explicit_name_in_toml) = match &detailed.package {
-            Some(real) => (real.clone(), Some(key.clone())),
-            None => (key.clone(), None),
-        };
-        out.push(RegistryDependency {
-            name,
-            version_req,
-            features: detailed.features,
-            optional: detailed.optional,
-            default_features: detailed.default_features,
+        out.push(convert_dep(key, dep, kind, target)?);
+    }
+    Ok(())
+}
+
+fn convert_dep(
+    key: &str,
+    dep: &Dependency,
+    kind: &str,
+    target: Option<&str>,
+) -> Result<NewCrateDependency> {
+    let dep = match dep {
+        Dependency::Simple(version) => NewCrateDependency {
+            optional: false,
+            default_features: true,
+            name: key.to_owned(),
+            features: vec![],
+            version_req: version.clone(),
             target: target.map(str::to_owned),
             kind: kind.to_owned(),
-            registry: detailed.registry,
-            explicit_name_in_toml,
-        });
-    }
+            registry: None,
+            explicit_name_in_toml: None,
+            artifact: None,
+            bindep_target: None,
+            lib: false,
+        },
+        Dependency::Detailed(detail) => {
+            // `key = { package = "real" }` renames a dep: registry sees the real
+            // crate name, the alias goes in `explicit_name_in_toml`.
+            let (name, explicit_name_in_toml) = match &detail.package {
+                Some(real) => (real.clone(), Some(key.to_owned())),
+                None => (key.to_owned(), None),
+            };
+            NewCrateDependency {
+                optional: detail.optional.unwrap_or(false),
+                default_features: detail.default_features.unwrap_or(true),
+                name,
+                features: detail.features.clone().unwrap_or_default(),
+                version_req: detail.version.clone().unwrap_or_else(|| "*".to_owned()),
+                target: target.map(str::to_owned),
+                kind: kind.to_owned(),
+                registry: detail.registry.clone(),
+                explicit_name_in_toml,
+                artifact: None,
+                bindep_target: None,
+                lib: false,
+            }
+        }
+        Dependency::Inherited(_) => {
+            bail!(
+                "Dependency {key:?} is still workspace-inherited in packaged manifest; \
+                 cargo should have resolved it"
+            )
+        }
+    };
+    Ok(dep)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    fn parse(toml_str: &str) -> RegistryMetadata {
+    fn parse(toml_str: &str) -> NewCrate {
         let dir = tempfile::tempdir().unwrap();
         let path = dir.path().join("Cargo.toml");
         std::fs::write(&path, toml_str).unwrap();
-        build_from_packaged_manifest(&path).expect("parse failed")
+        build_new_crate(&path).expect("parse failed")
     }
 
     /// Real `.crate`-normalized `Cargo.toml` for `metaslang_cst` — captured
@@ -495,7 +437,7 @@ readme = false
         }
         assert!(found, "Cargo.toml not found inside .crate");
 
-        let md = build_from_packaged_manifest(&manifest_path).expect("parse should succeed");
+        let md = build_new_crate(&manifest_path).expect("parse should succeed");
         assert_eq!(md.name, "metaslang_cst");
         assert!(!md.deps.is_empty(), "expected metaslang_cst to have deps");
     }
