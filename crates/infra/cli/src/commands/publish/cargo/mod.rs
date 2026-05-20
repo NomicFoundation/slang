@@ -19,19 +19,17 @@ pub struct CargoController {
     #[command(flatten)]
     dry_run: DryRun,
 
-    /// Smoke-test the per-crate publish flow end-to-end against a local
-    /// `cargo-http-registry` instead of crates.io. Used in CI's `review` job
-    /// to catch flag-set drift and sequential-flow issues that the existing
-    /// batched `--dry-run` doesn't exercise. Mutually exclusive with --dry-run.
+    /// Publish to a local `cargo-http-registry` instead of crates.io,
+    /// exercising the same per-crate sequential path production uses.
+    /// Mutually exclusive with --dry-run.
     #[arg(long, conflicts_with = "dry_run")]
     local_smoke: bool,
 }
 
 impl CargoController {
     pub fn execute(&self) -> Result<()> {
-        // The local-smoke registry starts empty, so every user-facing crate
-        // gets published to it regardless of what's on crates.io — we're
-        // exercising the publish *path*, not bringing crates.io up to date.
+        // Local registry starts empty; publish every user-facing crate
+        // regardless of crates.io state.
         let crates_to_run: Vec<String> = if self.local_smoke {
             UserFacingV1Crate::iter().map(|c| c.to_string()).collect()
         } else {
@@ -106,26 +104,16 @@ fn run_batched_dry_run(crate_names: &[String]) {
     command.run();
 }
 
-/// Spin up a local `cargo-http-registry`, run the same per-crate sequential
-/// `cargo publish --no-verify` we'll run in production, then tear it down.
-/// Catches:
-/// - Flag-set drift between dry-run and real publish.
-/// - Sequential-flow issues (each crate's upload must propagate before the
-///   next crate's dep resolution).
-/// - Cargo+slang interaction with the real publish code path.
-///
-/// Does NOT catch crates.io-specific server rejection (badge slug whitelist,
-/// SPDX license validation, name conflicts) — the local registry accepts
-/// anything cargo sends.
+/// Spin up a local `cargo-http-registry`, run the same per-crate
+/// `cargo publish --no-verify` production uses, tear it down.
 fn run_local_smoke(crate_names: &[String]) -> Result<()> {
     CargoWorkspace::install_binary("cargo-http-registry")?;
 
     let storage = tempfile::tempdir().context("Failed to create temp registry dir")?;
     println!("Local registry root: {}", storage.path().display());
 
-    // `--addr 127.0.0.1:0` asks the kernel for an ephemeral port; cargo-http-registry
-    // writes the assigned port to `<root>/config.json` once it has bound. Ephemeral
-    // is safer than a pinned port for parallel CI jobs or local dev machines.
+    // Ephemeral port (`:0`): cargo-http-registry writes the assigned port to
+    // `<root>/config.json` once bound; we read it back below.
     let mut server = std::process::Command::new("cargo-http-registry")
         .arg(storage.path())
         .args(["--addr", "127.0.0.1:0"])
@@ -134,10 +122,8 @@ fn run_local_smoke(crate_names: &[String]) -> Result<()> {
         .spawn()
         .context("Failed to spawn cargo-http-registry")?;
 
-    // Run the smoke test with explicit Result-based control flow; the inner
-    // function's errors propagate up, then we *always* kill the server below.
-    // `Drop` won't help because the underlying `Command::run` for cargo publish
-    // calls `process::exit` on failure, bypassing destructors.
+    // Explicit teardown rather than `Drop`: `Command::run` calls
+    // `process::exit` on failure, bypassing destructors.
     let result = run_smoke_inner(storage.path(), crate_names);
 
     println!("Stopping local registry...");
@@ -159,16 +145,12 @@ fn run_smoke_inner(storage_root: &std::path::Path, crate_names: &[String]) -> Re
 
     for name in crate_names {
         println!("--- Publishing {name} to local registry ---");
-        // Use std::process::Command directly so failures propagate as Err
-        // instead of `process::exit`, letting us tear down the server before
-        // surfacing the error.
+        // std::process::Command instead of the project's Command so failures
+        // return Err and let the caller kill the server before exiting.
         let status = std::process::Command::new("cargo")
             .arg("publish")
             .args(["--no-verify", "--all-features"])
-            // `--allow-dirty` is safe here: this runs against a throwaway
-            // registry, and locally the working tree is often dirty from
-            // in-progress edits. In CI the workspace is freshly checked out,
-            // so the flag is a no-op there.
+            // Throwaway registry — local dev workspaces are often dirty.
             .arg("--allow-dirty")
             .args(["--registry", LOCAL_REGISTRY_NAME])
             .args(["--package", name])

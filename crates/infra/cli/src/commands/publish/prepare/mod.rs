@@ -54,9 +54,8 @@ fn prepare_npm() -> Result<Option<NpmArtifact>> {
         }
     }
 
-    // The npm package's WASM payload + transpiled JS is built into the package source tree.
-    // Re-running `WasmPackage::build()` here keeps the build step in prepare; publish never
-    // touches the toolchain.
+    // Generates the WASM payload + transpiled JS into the package source tree
+    // so `pnpm pack` below sees the fully-built package.
     WasmPackage::build()?;
 
     let dest = ArtifactPaths::npm_dir();

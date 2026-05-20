@@ -10,10 +10,9 @@ name: "publish"
 #   workflow_dispatch       — Replays the push-to-main path (e.g. to retry a
 #                             flaky publish). Requires manual approval.
 #
-#   pull_request             — Prepare and review only: builds the exact artifacts
-#                             that would be published (WASM, npm tarball, cargo
-#                             .crate files) and validates them, but skips the
-#                             actual upload. No approval needed.
+#   pull_request             — Prepare and review only: builds the npm tarball
+#                             that would be published and validates it, but
+#                             skips the actual upload. No approval needed.
 #
 # Job topology — split into prepare → review → publish to enforce that the bytes
 # reviewed are the bytes uploaded:
@@ -24,17 +23,6 @@ name: "publish"
 #   push (pending)   ✓ gate      ✓ has changesets   ✓ build    ✓ validate  ⊘ skip          ⊘ skip
 #   push (no-op)     ✓ gate      ✓ no new version   ✓ build    ✓ validate  ⊘ skip          ⊘ skip
 #   push (release)   ✓ gate      ✓ new version      ✓ build    ✓ validate  ✓ notify        ✓ publish
-#
-# Why split prepare/review/publish:
-#   - prepare runs the full workspace build (WASM, cargo package per crate, pnpm
-#     pack) and uploads the result as an artifact. This is the only place where
-#     build.rs and proc-macros from the dep graph execute.
-#   - review downloads that artifact, verifies SHA-256s, and runs `--dry-run`
-#     publishes against the *exact* bytes that will be uploaded. PR reviewers can
-#     also download this artifact from the run UI to inspect contents manually.
-#   - publish downloads the *same* artifact and does only registry uploads — no
-#     cargo build, no WASM toolchain, no TypeScript compiler in scope of the
-#     short-lived OIDC tokens (npm Trusted Publishing + crates.io OIDC).
 #
 # Every job has an explicit 'if' condition — no job relies on implicit skip
 # propagation from needs. The one exception is prepare, which uses !cancelled()
@@ -152,10 +140,9 @@ jobs:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
   # ───────────────────────────────────────────────
-  # Prepare: build the exact artifacts that will be published, once.
-  # WASM build, pnpm pack, cargo package per crate, plus a manifest with SHA-256s.
-  # Uploads target/publish-artifacts/ for downstream review and publish.
-  # Runs on every trigger (PRs and pushes alike).
+  # Prepare: build the npm tarball that will be published. WASM build + pnpm pack,
+  # plus a manifest with the tarball's SHA-256. Uploads target/publish-artifacts/
+  # for downstream review and publish. Runs on every trigger.
   # ───────────────────────────────────────────────
 
   prepare:
@@ -266,10 +253,8 @@ jobs:
       - name: "infra publish cargo --dry-run"
         run: "./scripts/bin/infra publish cargo --dry-run"
 
-      # End-to-end smoke test: actually run the per-crate sequential
-      # `cargo publish --no-verify` we'll run in production, against a local
-      # `cargo-http-registry`. Catches flag-set drift and sequential-flow
-      # issues the batched --dry-run above can't exercise.
+      # End-to-end smoke test: run the same per-crate `cargo publish --no-verify`
+      # production uses, against a local `cargo-http-registry`.
       - name: "infra publish cargo --local-smoke"
         run: "./scripts/bin/infra publish cargo --local-smoke"
 

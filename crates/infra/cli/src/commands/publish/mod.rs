@@ -26,14 +26,13 @@ pub struct PublishController {
 pub enum PublishCommand {
     /// Consume pending changesets, update changelogs and package versions, then send a PR.
     Changesets(ChangesetsController),
-    /// Build npm and cargo artifacts once into `target/publish-artifacts/` for later
-    /// review-then-publish handoff.
+    /// Build the npm tarball into `target/publish-artifacts/` for the review and publish jobs.
     Prepare(PrepareController),
     /// Publish the documentation to GitHub pages.
     Mkdocs(MkdocsController),
-    /// Publish the prebuilt npm package from `target/publish-artifacts/` to [npmjs.com].
+    /// Publish the prebuilt npm tarball from `target/publish-artifacts/` to [npmjs.com].
     Npm(NpmController),
-    /// Publish the prebuilt cargo crates from `target/publish-artifacts/` to [crates.io].
+    /// Publish the user-facing v1 cargo crates to [crates.io].
     Cargo(CargoController),
     /// Publish a new release in the GitHub repository.
     GithubRelease(GithubReleaseController),

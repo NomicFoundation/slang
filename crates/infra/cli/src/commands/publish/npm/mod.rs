@@ -3,7 +3,7 @@ use clap::Parser;
 use infra_utils::commands::Command;
 use infra_utils::paths::PathExtensions;
 
-use crate::commands::publish::artifacts::{ArtifactPaths, Manifest};
+use crate::commands::publish::artifacts::Manifest;
 use crate::utils::DryRun;
 
 #[derive(Clone, Debug, Parser)]
@@ -35,27 +35,16 @@ impl NpmController {
             .arg("publish")
             .arg(tarball.unwrap_str())
             .property("--access", "public")
-            // CI checkout is detached HEAD, which fails pnpm's branch check.
+            // CI checkout is detached HEAD; pnpm's branch check would reject it.
             // The workflow's `branches:` filter and the slang-release environment
             // gate are what actually authorize a release.
-            .flag("--no-git-checks")
-            // Don't run the npm package's lifecycle scripts during publish; the
-            // tarball was already built in the prepare step.
-            .flag("--ignore-scripts");
+            .flag("--no-git-checks");
 
         if self.dry_run.get() {
             command = command.flag("--dry-run");
-        } else {
-            // Attach a sigstore-signed provenance attestation. `pnpm publish`
-            // (unlike `npm publish`) requires the flag explicitly even when
-            // OIDC trusted publishing is in use — the prior slang 1.3.5 release
-            // was OIDC-published but has `attestations: null` on the registry
-            // for exactly this reason. Requires the `id-token: write` permission
-            // already present on the publish job.
-            command = command.flag("--provenance");
         }
 
-        command.current_dir(ArtifactPaths::root()).run();
+        command.run();
 
         Ok(())
     }

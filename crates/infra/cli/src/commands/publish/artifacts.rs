@@ -6,14 +6,10 @@ use infra_utils::hash::sha256_hex_of_file;
 use infra_utils::paths::PathExtensions;
 use serde::{Deserialize, Serialize};
 
-/// Filesystem layout for build-once / publish-from-artifact handoff.
-/// Files in this tree are produced by `infra publish prepare` and consumed
-/// (verified + uploaded) by `infra publish npm`.
-///
-/// The cargo side does *not* go through this artifact pipeline: `cargo publish
-/// --no-verify` re-packages from the workspace source at publish time. That's
-/// the handover doc's "Middle tier" — we accept that the `.crate` is regenerated
-/// in exchange for not maintaining any custom cargo metadata / wire-format code.
+/// Paths under `target/publish-artifacts/`. Produced by `infra publish prepare`,
+/// consumed by `infra publish npm`. The cargo side does not flow through here —
+/// `infra publish cargo` invokes `cargo publish --no-verify` against the
+/// workspace source directly.
 pub struct ArtifactPaths;
 
 impl ArtifactPaths {
@@ -63,7 +59,6 @@ impl Manifest {
     }
 
     /// Recompute SHA-256 for every recorded artifact and bail if any mismatch.
-    /// Called by `infra publish npm` before uploading.
     pub fn verify_integrity(&self) -> Result<()> {
         if let Some(npm) = &self.npm {
             let abs = Self::absolute_path(&npm.path);
